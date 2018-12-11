@@ -1,0 +1,98 @@
+object frmFontDetails: TfrmFontDetails
+  Left = 342
+  Height = 385
+  Top = 195
+  Width = 473
+  Caption = 'Font Details'
+  ClientHeight = 385
+  ClientWidth = 473
+  OnShow = FormShow
+  LCLVersion = '0.9.30'
+  object lblTexName: TLabel
+    Left = 8
+    Height = 18
+    Top = 9
+    Width = 114
+    Caption = 'Texture File Name'
+    ParentColor = False
+  end
+  object edTexName: TEdit
+    Left = 8
+    Height = 27
+    Top = 32
+    Width = 456
+    TabOrder = 0
+  end
+  object lblAuthor: TLabel
+    Left = 8
+    Height = 18
+    Top = 120
+    Width = 44
+    Caption = 'Author'
+    ParentColor = False
+  end
+  object edAuthor: TEdit
+    Left = 8
+    Height = 27
+    Top = 143
+    Width = 456
+    TabOrder = 1
+  end
+  object lblDescription: TLabel
+    Left = 8
+    Height = 18
+    Top = 176
+    Width = 73
+    Caption = 'Description'
+    ParentColor = False
+  end
+  object lblFontName: TLabel
+    Left = 8
+    Height = 18
+    Top = 64
+    Width = 72
+    Caption = 'Font Name'
+    ParentColor = False
+  end
+  object edFontName: TEdit
+    Left = 8
+    Height = 27
+    Top = 87
+    Width = 456
+    TabOrder = 2
+  end
+  object mDescription: TMemo
+    Left = 8
+    Height = 130
+    Top = 200
+    Width = 456
+    TabOrder = 3
+  end
+  object btnOK: TBitBtn
+    Left = 8
+    Height = 30
+    Top = 344
+    Width = 155
+    Caption = 'OK'
+    OnClick = btnOKClick
+    TabOrder = 4
+  end
+  object btnRevert: TBitBtn
+    Left = 171
+    Height = 30
+    Top = 344
+    Width = 152
+    Caption = 'Revert'
+    OnClick = btnRevertClick
+    TabOrder = 5
+  end
+  object btnCancel: TBitBtn
+    Left = 331
+    Height = 30
+    Top = 344
+    Width = 133
+    Caption = 'Cancel'
+    OnClick = btnCancelClick
+    TabOrder = 6
+  end
+end

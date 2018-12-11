@@ -1,0 +1,252 @@
+{
+   vmMath, general math operations
+   Copyright (C) 2010. Dejan Boras
+
+   Started On:    03.10.2010.
+}
+
+{$MODE OBJFPC}{$H+}
+UNIT vmMath;
+
+INTERFACE
+
+   USES
+      math, uStd, vmVector;
+
+VAR
+   vmcPow2: array[0..63] of int64;
+
+{square root for integers}
+function vmSqrt(i: longint): longint;
+function vmSqrt(i: int64): int64;
+
+{checks whether a number is a prime number}
+function vmIsPrime(i: longint): boolean;
+function vmIsPrime(i: int64): boolean;
+
+{ INTERPOLATION }
+function vmLinearInterpolation(a, b, z: single): single;
+function vmCosineInterpolation(a, b, z: single): single;
+function vmCubicInterpolation(v0, v1, v2, v3, z: single): single;
+
+{ STANDARD }
+function vmCopySign(x, y: single): single; inline;
+function vmMax(x, y: single): single; inline;
+
+{ CLAMPING }
+procedure vmClampMax(var value: single; max: single); inline;
+function vmClampMaxf(value, max: single): single; inline;
+procedure vmClampMax(var value: longint; max: longint); inline;
+function vmClampMaxf(value, max: longint): longint; inline;
+
+procedure vmIncClamp(var value: longint; increment, max: longint);
+
+{checks if the given value is power of 2}
+function vmIsPow2(value: int64): boolean;
+{find the next power of 2}
+function vmNextPow2(value: int64): int64;
+
+operator mod(const a, b: double): double; inline;
+operator mod(const a, b: single): single; inline;
+
+IMPLEMENTATION
+
+function vmSqrt(i: longint): longint;
+var
+   r, rnew, rold: longint;
+
+begin
+   rnew := 1;
+   r := 1;
+
+   repeat
+      rold  := r;
+      r     := rnew;
+      rnew  := (r + round(i / r));
+      rnew  := rnew shr 1;
+   until (rold = rnew);
+
+   result := rnew;
+end;
+
+function vmSqrt(i: int64): int64;
+var
+   r,
+   rnew,
+   rold: int64;
+
+begin
+   rnew := 1;
+   r := 1;
+
+   repeat
+      rold  := r;
+      r     := rnew;
+      rnew  := (r + round(i / r));
+      rnew   := rnew shr 1;
+   until (rold = rnew);
+
+   result := rnew;
+end;
+
+function vmIsPrime(i: longint): boolean;
+var
+   si,
+   j: longint;
+
+begin
+	si := vmSqrt(i);
+	
+	for j := 2 to si do begin
+      if(i mod j = 0) then
+         exit(false);
+	end;
+	
+	result := true;
+end;
+
+function vmIsPrime(i: int64): boolean;
+var
+   si, j: int64;
+
+begin
+	si := vmSqrt(i);
+
+   j := 2;
+   repeat
+      if(i mod j = 0) then
+         exit(false);
+      inc(j);
+   until (j > si);
+	
+	result := true;	
+end;
+
+{ INTERPOLATION }
+
+function vmLinearInterpolation(a, b, z: single): single;
+begin
+   result := a * (1 - z) + b * z;
+end;
+
+function vmCosineInterpolation(a, b, z: single): single;
+var
+   ft, f: single;
+
+begin
+   ft := z * vmcPI;
+   f  := (1 - cos(ft)) * 0.5;
+
+   result := a * (1 - f) + b * f;
+end;
+
+function vmCubicInterpolation(v0, v1, v2, v3, z: single): single;
+var
+   p, q, r, s: single;
+
+begin
+   p := (v3 - v2) - (v0 - v1);
+   q := (v0 - v1) - p;
+   r := v2 - v0;
+   s := v1;
+
+   result := power(p * z, 3) + sqr(q * z) + r * z + s;
+end;
+
+{ STANDARD }
+
+function vmCopySign(x, y: single): single; inline;
+begin
+   result := abs(x) * sign(y);
+end;
+
+function vmMax(x, y: single): single; inline;
+begin
+   if(x < y) then
+      result := y
+   else
+      result := x;
+end;
+
+procedure vmClampMax(var value: single; max: single);
+begin
+   if(value > max) then
+      value := max;
+end;
+
+function vmClampMaxf(value, max: single): single;
+begin
+   if(value <= max) then
+      result := value
+   else
+      result := max;
+end;
+
+procedure vmClampMax(var value: longint; max: longint);
+begin
+   if(value > max) then
+      value := max;
+end;
+
+function vmClampMaxf(value, max: longint): longint;
+begin
+   if(value <= max) then
+      result := value
+   else
+      result := max;
+end;
+
+procedure vmIncClamp(var value: longint; increment, max: longint);
+begin
+   if(value + increment <= max) then
+      inc(value, increment)
+   else
+      value := max;
+end;
+
+function vmIsPow2(value: int64): boolean;
+begin
+   result := value and (value - 1) = 0;
+end;
+
+function vmNextPow2(value: int64): int64;
+var
+   i: loopint;
+
+begin
+   for i := 0 to High(vmcPow2) do begin
+      if(vmcPow2[i] >= value) then
+         exit(vmcPow2[i])
+   end;
+
+   exit(-1);
+end;
+
+operator mod(const a, b: double): double;
+begin
+   Result := a - b * Int(a / b);
+end;
+
+operator mod(const a, b: single): single;
+begin
+   Result := a - b * Int(a / b);
+end;
+
+procedure calculatePow2Constants();
+var
+   i: longint;
+
+begin
+   vmcPow2[0] := 0;
+   vmcPow2[1] := 1;
+   vmcPow2[2] := 2;
+
+   for i := 3 to High(vmcPow2) do begin
+      vmcPow2[i] := vmcPow2[i - 1] * 2;
+   end;
+end;
+
+INITIALIZATION
+   calculatePow2Constants();
+
+END.

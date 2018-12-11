@@ -1,0 +1,1 @@
+appInfo.setName('basic', 'oxcart');

@@ -1,0 +1,55 @@
+VectorMachine (vmVector, vmQuaternions, vmCollision)
+
+Document Information >
+   Started On:  30.06.2008.
+   Last Update: 03.10.2010.
+   Copyright (c) 2008. - 2010. Dejan Boras
+
+1. Introduction
+
+   These units are intended to provide vector mathematics routines, as well
+as associated mathematical routines(matrices, quaternions, etc).
+
+2. Performance
+
+   The routines are fairly fast, and without assembly, they are as fast as
+possible, or as fast as the compiler makes them. However, it is possible to
+improve performance(speed) at the cost of increased code size. 
+
+By defining the symbol VM_INLINE most of the routines will be inline, and thus
+will gain a significant boost of speed(up to 2x depending on the routine used).
+However, this also means that the size of the code will be increased. If you
+rely on many VM routines, the code increase might be significant. It is up
+to you to decide what you need more, greater speed or lower memory use(though
+it seems a trend today to squander memory).
+
+3. Procedural Versions
+
+Some functions also have procedural versions, which operate directly on the
+specified argument, instead of returning a result. These are usually those
+routines which accept only one argument. Names of these routines are similar
+to those of functions, except they end in a v(as in var).
+
+These versions are useful when you wan't to perform a operation directly
+on a variable, instead of (re)assigning it. Needless to say, these are faster
+than their functional counterparts.
+
+4. Improvement
+
+   I am constantly (read: sometimes) improving these units. I will add, improve
+and optimize routines on a as needed basis. If you notice a bug or have
+code to share give me a hint (patch would be nice), I'd appreciate it and 
+will credit you somewhere in the eternal comments. Since it's GPL, you can fork
+your own version of the code or do whatever you want (read the GPL, as you can't
+really do whatever you want).
+
+These units were pulled from various sources (too many to name), some modified,
+some translated from C to Pascal, some with my own quirks, some coded myself,
+some of which probably will make you think WTF.
+
+5. Contact
+
+   You can contact me for whatever reason via following:
+mail: de_jean_7777@yahoo.com
+msn:  de_jean_7777@hotmail.com
+web:  http://dbx.orgfree.com

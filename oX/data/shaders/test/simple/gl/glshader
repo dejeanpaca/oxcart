@@ -1,0 +1,17 @@
+# GL shader
+
+# minimum glsl version
+minversion: 1.0
+
+# oX shader
+shader: test/simple/simple
+
+# specific version (highest version is used if higher not found or applicable)
+version: 110
+# glsl shader files
+vertex: simple.vs.glsl
+fragment: simple.fs.glsl
+
+version: 120
+vertex: simple.vs.glsl
+fragment: simple.120.fs.glsl

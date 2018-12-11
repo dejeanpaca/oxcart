@@ -1,0 +1,1 @@
+q3makeshaderdefs q3shaderdefs.inc q3shaderdefinitions.inc

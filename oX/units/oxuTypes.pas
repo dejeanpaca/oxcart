@@ -1,0 +1,720 @@
+{
+   oxuTypes, common oX data types
+   Copyright (c) 2011. Dejan Boras
+
+   Started On:    09.02.2011.
+}
+
+{$INCLUDE oxdefines.inc}
+UNIT oxuTypes;
+
+INTERFACE
+
+   USES
+      sysutils, uStd, uPreallocatedArray, StringUtils;
+
+TYPE
+
+   { oxTPoint }
+
+   oxTPoint = record
+      x,
+      y: longint;
+
+      procedure Assign(nx, ny: longint);
+      class function Make(nx, ny: longint): oxTPoint; static;
+      class function MakeCenterPoint(w, h, w2, h2: longint): oxTPoint; static;
+      class function Null(): oxTPoint; static;
+
+      function ToString(): string;
+   end;
+
+   { oxTPointf }
+
+   oxTPointf = record
+      x,
+      y: single;
+
+      procedure Assign(nx, ny: single);
+      class function Make(nx, ny: single): oxTPointf; static;
+      class function MakeCenterPoint(w, h, w2, h2: single): oxTPointf; static;
+      class function Null(): oxTPointf; static;
+   end;
+
+   { oxTDimensions }
+
+   oxTDimensions = record
+      w, h: longint;
+
+      procedure Assign(nw, nh: longint);
+      class function Make(width, height: longint): oxTDimensions; static;
+      class function Fit(width, width2, height, height2: longint): oxTDimensions; static;
+      class function Null(): oxTDimensions; static;
+
+      {tells if both dimensions have a positive value}
+      function IsPositive(): boolean;
+
+      function ToString(): string;
+   end;
+
+   { oxTDimensionsf }
+
+   oxTDimensionsf = record
+      w, h: single;
+
+      procedure Assign(nw, nh: longint);
+      class function Make(width, height: single): oxTDimensionsf; static;
+      class function Fit(width, width2, height, height2: single): oxTDimensionsf; static;
+      class function Null(): oxTDimensionsf; static;
+
+      {tells if both dimensions have a positive value}
+      function IsPositive(): boolean;
+   end;
+
+   { oxTRect }
+
+   oxTRect = record
+      x,
+      y,
+      w,
+      h: longint;
+
+      procedure Assign(nx, ny, nw, nh: longint);
+      procedure Assign(const p: oxTPoint; const d: oxTDimensions);
+      class function Make(nx, ny, nw, nh: longint): oxTRect; static;
+      function Inside(px, py: longint): Boolean;
+      {fits another rect inside this one, if can't fit inside it resizes the given rect}
+      procedure FitInside(var another: oxTRect);
+      {fits another rect inside this one, if it can't fit inside it centers it}
+      procedure PositionInside(var another: oxTRect);
+   end;
+
+   { oxTRectf }
+
+   oxTRectf = record
+      x,
+      y,
+      w,
+      h: single;
+
+      procedure Assign(nx, ny, nw, nh: single);
+      procedure Assign(const p: oxTPointf; const d: oxTDimensionsf);
+      class function Make(nx, ny, nw, nh: single): oxTRectf; static;
+      function Inside(px, py: single): Boolean;
+
+      {fits another rect inside this one, if can't fit inside it resizes the given rect}
+      procedure FitInside(var another: oxTRectf);
+      {fits another rect inside this one, if it can't fit inside it centers it}
+      procedure PositionInside(var another: oxTRectf);
+   end;
+
+   oxTProgressIndicatorType = (
+      oxPROGRESS_INDICATOR_NONE,
+      oxPROGRESS_INDICATOR_RATIO,
+      oxPROGRESS_INDICATOR_PERCENTAGE,
+      oxPROGRESS_INDICATOR_ITEMS
+   );
+
+   { oxTProgressIndicatorData }
+
+   oxTProgressIndicatorData = record
+      {show progress as a caption}
+      Caption: string;
+      {progress as a ratio (from 0 to 1) (negative number means this is not used)}
+      Ratio,
+      {progress as a percentage (from 0 to 100) (negative number means this is not used)}
+      Percentage: single;
+      {items currently done (set ShowItems to show in the string)}
+      ItemsDone,
+      {total items that can be done (if 0 this is not enabled)}
+      ItemsTotal: loopint;
+
+      {what value to use to show progress with (what would fill up a bar on a progress bar)}
+      ShowProgressWith: oxTProgressIndicatorType;
+      {show items in text (affects ToString method)}
+      ItemsInText,
+      {show percentage in text (affects ToString method)}
+      PercentageInText,
+      {show ratio in text (affects ToString method)}
+      RatioInText: boolean;
+
+      procedure SetPercentage(p: single);
+      procedure SetRatio(r: single);
+
+      {get a textual representation}
+      function ToString(): string;
+      {initialize record}
+      class procedure Init(out p: oxTProgressIndicatorData); static;
+   end;
+
+   {base class for any resource}
+
+   { oxTResource }
+
+   oxTResource = class
+      Path: string;
+      ReferenceCount: loopint;
+      Pool: TObject;
+
+      {$IFDEF OX_RESOURCE_DEBUG}
+      DebugAllocationPoint,
+      DebugFreePoint: string;
+      {mark as freed without actually freeing}
+      DebugFreed,
+      {are we doing object free from a resource method}
+      FreeInResourceMethod: boolean;
+      {$ENDIF}
+
+      constructor Create(); virtual;
+      destructor Destroy; override;
+
+      {mark the resource as used (increase the reference count)}
+      procedure MarkUsed();
+      {mark the resource as permanent (cannot be destroyed via oxResource.Destroy())}
+      procedure MarkPermanent();
+      {mark resource as unused (decrease the reference count)}
+      procedure Unused();
+
+      {get normalized path}
+      function GetPath(): string;
+   end;
+
+   oxTPreallocatedResourceArrayListClass = specialize TPreallocatedArrayListClass<oxTResource>;
+
+   oxTTextureID = type longword;
+
+   oxTTextureFilter = (
+      oxTEXTURE_FILTER_NONE,
+      oxTEXTURE_FILTER_LINEAR,
+      oxTEXTURE_FILTER_BILINEAR,
+      oxTEXTURE_FILTER_TRILINEAR,
+      oxTEXTURE_FILTER_ANISOTROPIC
+   );
+
+   oxTNormalsMode = (
+      oxNORMALS_MODE_NONE,
+      oxNORMALS_MODE_PER_POLY,
+      oxNORMALS_MODE_PER_VERTEX,
+      oxNORMALS_MODE_NORMALIZED_VERTICES
+   );
+
+   oxTCullFace = (
+      oxCULL_FACE_NONE,
+      oxCULL_FACE_BACK,
+      oxCULL_FACE_FRONT
+   );
+
+   oxTPrimitives = (
+      oxPRIMITIVE_NONE,
+      oxPRIMITIVE_POINTS,
+      oxPRIMITIVE_LINES,
+      oxPRIMITIVE_LINE_LOOP,
+      oxPRIMITIVE_LINE_STRIP,
+      oxPRIMITIVE_TRIANGLES,
+      oxPRIMITIVE_TRIANGLE_STRIP,
+      oxPRIMITIVE_TRIANGLE_FAN,
+      oxPRIMITIVE_QUADS
+   );
+
+   oxTTestFunction = (
+      oxTEST_FUNCTION_NONE,
+      oxTEST_FUNCTION_NEVER,
+      oxTEST_FUNCTION_EQUAL,
+      oxTEST_FUNCTION_GREATER,
+      oxTEST_FUNCTION_GEQUAL,
+      oxTEST_FUNCTION_LEQUAL,
+      oxTEST_FUNCTION_LESS,
+      oxTEST_FUNCTION_ALWAYS
+   );
+
+   oxTBlendFunction = (
+      oxBLEND_NONE,
+      oxBLEND_ALPHA,
+      oxBLEND_ADD,
+      oxBLEND_FILTER
+   );
+
+   { TEXTURE TYPE }
+   oxTTextureType = (
+      oxTEXTURE_1D,
+      oxTEXTURE_2D,
+      oxTEXTURE_3D
+   );
+
+CONST
+   oxrBUFFER_CLEAR_COLOR               = $1;
+   oxrBUFFER_CLEAR_DEPTH               = $2;
+   oxrBUFFER_CLEAR_STENCIL             = $4;
+   oxrBUFFER_CLEAR_ACCUM               = $8;
+
+   oxrBUFFER_CLEAR_NOTHING             = $0;
+   oxrBUFFER_CLEAR_DEFAULT             = oxrBUFFER_CLEAR_COLOR or oxrBUFFER_CLEAR_DEPTH;
+   oxrBUFFER_CLEAR_ALL                 = oxrBUFFER_CLEAR_COLOR or oxrBUFFER_CLEAR_DEPTH or oxrBUFFER_CLEAR_STENCIL;
+
+   oxNORMALS_MODE_MAX = oxNORMALS_MODE_NORMALIZED_VERTICES;
+   oxTEST_FUNCTION_DEFAULT = oxTEST_FUNCTION_LEQUAL;
+   oxBLEND_DEFAULT = oxBLEND_ALPHA;
+   oxCULL_FACE_DEFAULT = oxCULL_FACE_BACK;
+
+   oxcMAXIMUM_WINDOWS               = 4;
+   oxcMAX_WINDOW                    = oxcMAXIMUM_WINDOWS - 1;
+
+   {maximum number of rendering contexts}
+   oxMAXIMUM_RENDER_CONTEXTS  = 32;
+   oxMAXIMUM_RENDER_CONTEXT   = oxMAXIMUM_RENDER_CONTEXTS - 1;
+
+   oxcCONTEXT_WINDOW_IDX            = -1;
+
+
+VAR
+   oxNullPoint: oxTPoint;
+   oxNullDimensions: oxTDimensions;
+
+{return an oxTPoint record with the specified coordinates}
+function oxPoint(x, y: longint): oxTPoint;
+{return an oxTDimensions record with the specified width and height}
+function oxDimensions(w, h: longint): oxTDimensions;
+
+IMPLEMENTATION
+
+function oxPoint(x, y: longint): oxTPoint;
+begin
+   result.x := x;
+   result.y := y;
+end;
+
+function oxDimensions(w, h: longint): oxTDimensions;
+begin
+   result.w := w;
+   result.h := h;
+end;
+
+{ oxTProgressIndicatorData }
+
+procedure oxTProgressIndicatorData.SetPercentage(p: single);
+begin
+   if(p < 0) then
+      p := 0
+   else if(p > 100) then
+      p := 100;
+
+   Percentage := p;
+end;
+
+procedure oxTProgressIndicatorData.SetRatio(r: single);
+begin
+   if(r < 0) then
+      r := 0
+   else if(r > 1) then
+      r := 1;
+
+   Ratio := r;
+end;
+
+function oxTProgressIndicatorData.ToString(): string;
+var
+   s: TAppendableString;
+
+begin
+   s := '';
+
+   if(Caption <> '') then
+      s := Caption;
+
+   if(Percentage >= 0) and (PercentageInText) then
+      s.AddSpaced(sf(Percentage, 0) + '%');
+
+   if(Ratio >= 0) and (RatioInText) then
+      s.AddSpaced(sf(Ratio, 2));
+
+   if(ItemsTotal > 0) and (ItemsInText) then
+      s.AddSpaced(sf(ItemsDone) + '/' + sf(ItemsTotal));
+
+   Result := s;
+end;
+
+class procedure oxTProgressIndicatorData.Init(out p: oxTProgressIndicatorData);
+begin
+   ZeroPtr(@p, SizeOf(p));
+   p.Percentage := -1;
+   p.Ratio := -1;
+   p.PercentageInText := true;
+   p.RatioInText := true;
+   p.ShowProgressWith := oxPROGRESS_INDICATOR_ITEMS;
+end;
+
+{ oxTResource }
+
+constructor oxTResource.Create();
+begin
+   {$IFDEF OX_RESOURCE_DEBUG}
+   DebugAllocationPoint := DumpCallStack(1);
+   {$ENDIF}
+end;
+
+destructor oxTResource.Destroy;
+begin
+   inherited Destroy;
+
+   {$IFDEF OX_RESOURCE_DEBUG}
+   if(ReferenceCount = -1) then
+      assert(FreeInResourceMethod, 'Permanent resource object freed outside of resource methods (do not free directlly) ' + LineEnding + DebugAllocationPoint)
+   else
+      assert(FreeInResourceMethod, 'Resource object freed outside of resource methods (do not free directly) ' + LineEnding + DebugAllocationPoint);
+   {$ENDIF}
+end;
+
+procedure oxTResource.MarkUsed();
+begin
+   if(ReferenceCount <> -1) then
+      Inc(ReferenceCount);
+end;
+
+procedure oxTResource.MarkPermanent();
+begin
+   ReferenceCount := -1;
+end;
+
+procedure oxTResource.Unused();
+begin
+   dec(ReferenceCount);
+end;
+
+function oxTResource.GetPath(): string;
+begin
+   Result := ExtractFilePath(Path);
+
+   if(Result <> '') then
+      Result := IncludeTrailingPathDelimiter(Result);
+end;
+
+{ oxTRectf }
+
+procedure oxTRectf.Assign(nx, ny, nw, nh: single);
+begin
+   x := nx;
+   y := ny;
+   w := nw;
+   h := nh;
+end;
+
+procedure oxTRectf.Assign(const p: oxTPointf; const d: oxTDimensionsf);
+begin
+   self.x := p.x;
+   self.y := p.y;
+   self.w := d.w;
+   self.h := d.h;
+end;
+
+class function oxTRectf.Make(nx, ny, nw, nh: single): oxTRectf;
+begin
+   result.x := nx;
+   result.y := ny;
+   result.w := nw;
+   result.h := nh;
+end;
+
+function oxTRectf.Inside(px, py: single): Boolean;
+begin
+   result := (px >= x) and (px < x + w) and (py <= y) and (py > y - h);
+end;
+
+procedure oxTRectf.FitInside(var another: oxTRectf);
+begin
+   { check horizontal }
+
+   if(another.x < self.x) then
+      another.x := self.x;
+
+   if(another.x >= self.x + Self.w) then
+      another.x := self.x + self.w - another.w;
+
+   { check vertical }
+
+   if(another.y > self.y) then
+      another.y := self.y;
+
+   if(another.y <= self.y - Self.h) then
+      another.y := self.y - self.h + another.h;
+
+   { if still out of bounds, resize }
+
+   if(another.x < self.x) or (another.x >= self.x + Self.w) or (another.x + another.w >= self.x + self.w) then begin
+      another.x := self.x;
+      another.w := self.w;
+   end;
+
+   if(another.y > self.y) or (another.y <= self.y - Self.h) or (another.y - another.h <= self.y - self.h) then begin
+      another.y := self.y;
+      another.h := self.h;
+   end;
+end;
+
+procedure oxTRectf.PositionInside(var another: oxTRectf);
+var
+   diff: single;
+
+begin
+   { check horizontal }
+
+   if(another.x < self.x) then
+      another.x := self.x;
+
+   if(another.x >= self.x + Self.w) then
+      another.x := self.x + self.w - another.w;
+
+   { check vertical }
+
+   if(another.y > self.y) then
+      another.y := self.y;
+
+   if(another.y <= self.y - Self.h) then
+      another.y := self.y - self.h + another.h;
+
+   { if still out of bounds, resize }
+
+   if(another.x < self.x) or (another.x >= self.x + Self.w) or (another.x + another.w >= self.x + self.w) then begin
+      diff := abs(Self.w - another.w) / 2;
+
+      another.x := self.x - diff;
+   end;
+
+   if(another.y > self.y) or (another.y <= self.y - Self.h) or (another.y - another.h <= self.y - self.h) then begin
+      diff := abs(Self.h - another.h) / 2;
+
+      another.y := self.y + diff;
+   end;
+end;
+
+{ oxTDimensionsf }
+
+procedure oxTDimensionsf.Assign(nw, nh: longint);
+begin
+   w := nw;
+   h := nh;
+end;
+
+class function oxTDimensionsf.Make(width, height: single): oxTDimensionsf;
+begin
+   result.w := width;
+   result.h := height;
+end;
+
+class function oxTDimensionsf.Fit(width, width2, height, height2: single): oxTDimensionsf;
+begin
+   result.w := width;
+   if width2 < result.w then
+      result.w := width2;
+
+   result.h := height;
+   if height2 < result.h then
+      result.h := height2;
+end;
+
+class function oxTDimensionsf.Null(): oxTDimensionsf;
+begin
+   result.w := 0;
+   result.h := 0;
+end;
+
+function oxTDimensionsf.IsPositive: boolean;
+begin
+   result := (w > 0) and (h > 0);
+end;
+
+{ oxTPointf }
+
+procedure oxTPointf.Assign(nx, ny: single);
+begin
+   x := nx;
+   y := ny;
+end;
+
+class function oxTPointf.Make(nx, ny: single): oxTPointf;
+begin
+   result.x := nx;
+   result.y := ny;
+end;
+
+class function oxTPointf.MakeCenterPoint(w, h, w2, h2: single): oxTPointf;
+var
+   cw, ch: single;
+
+begin
+   cw := w2 / 2;
+   ch := h2 / 2;
+
+   result.x := cw - (w / 2);
+   result.y := ch + (h / 2);
+end;
+
+class function oxTPointf.Null: oxTPointf;
+begin
+   result.x := 0;
+   result.y := 0;
+end;
+
+{ oxTPoint }
+
+procedure oxTPoint.Assign(nx, ny: longint);
+begin
+   x := nx;
+   y := ny;
+end;
+
+class function oxTPoint.Make(nx, ny: longint): oxTPoint;
+begin
+   result.x := nx;
+   result.y := ny;
+end;
+
+class function oxTPoint.MakeCenterPoint(w, h, w2, h2: longint): oxTPoint;
+var
+   cw, ch: longint;
+
+begin
+   cw := w2 div 2;
+   ch := h2 div 2;
+
+   result.x := cw - (w div 2);
+   result.y := ch + (h div 2);
+end;
+
+class function oxTPoint.Null(): oxTPoint;
+begin
+   result.x := 0;
+   result.y := 0;
+end;
+
+function oxTPoint.ToString: string;
+begin
+   WriteStr(result, x, 'x', y);
+end;
+
+{ oxTRect }
+
+procedure oxTRect.Assign(nx, ny, nw, nh: longint);
+begin
+   x := nx;
+   y := ny;
+   w := nw;
+   h := nh;
+end;
+
+procedure oxTRect.Assign(const p: oxTPoint; const d: oxTDimensions);
+begin
+   self.x := p.x;
+   self.y := p.y;
+   self.w := d.w;
+   self.h := d.h;
+end;
+
+class function oxTRect.Make(nx, ny, nw, nh: longint): oxTRect;
+begin
+   result.x := nx;
+   result.y := ny;
+   result.w := nw;
+   result.h := nh;
+end;
+
+function oxTRect.Inside(px, py: longint): Boolean;
+begin
+   result := (px >= x) and (px < x + w) and (py <= y) and (py > y - h);
+end;
+
+procedure oxTRect.FitInside(var another: oxTRect);
+begin
+   { check horizontal }
+
+   if(another.x < self.x) then
+      another.x := self.x;
+
+   if(another.x >= self.x + Self.w) then
+      another.x := self.x + self.w - another.w;
+
+   { check vertical }
+
+   if(another.y > self.y) then
+      another.y := self.y;
+
+   if(another.y <= self.y - Self.h) then
+      another.y := self.y - self.h + another.h;
+
+   { if still out of bounds, resize }
+
+   if(another.x < self.x) or (another.x >= self.x + Self.w) or (another.x + another.w >= self.x + self.w) then begin
+      another.x := self.x;
+      another.w := self.w;
+   end;
+
+   if(another.y > self.y) or (another.y <= self.y - Self.h) or (another.y - another.h <= self.y - self.h) then begin
+      another.y := self.y;
+      another.h := self.h;
+   end;
+end;
+
+procedure oxTRect.PositionInside(var another: oxTRect);
+begin
+   { check horizontal }
+
+   if(another.x < self.x) then
+      another.x := self.x;
+
+   if(another.x >= self.x + Self.w) then
+      another.x := self.x + self.w - another.w;
+
+   { check vertical }
+
+   if(another.y > self.y) then
+      another.y := self.y;
+
+   if(another.y <= self.y - Self.h) then
+      another.y := self.y - self.h + another.h;
+end;
+
+{ oxTDimensions }
+
+procedure oxTDimensions.Assign(nw, nh: longint);
+begin
+   w := nw;
+   h := nh;
+end;
+
+class function oxTDimensions.Make(width, height: longint): oxTDimensions;
+begin
+   result.w := width;
+   Result.h := height;
+end;
+
+class function oxTDimensions.Fit(width, width2, height, height2: longint): oxTDimensions;
+begin
+   result.w := width;
+   if width2 < result.w then
+      result.w := width2;
+
+   result.h := height;
+   if height2 < result.h then
+      result.h := height2;
+end;
+
+class function oxTDimensions.Null(): oxTDimensions;
+begin
+   result.w := 0;
+   result.h := 0;
+end;
+
+function oxTDimensions.IsPositive(): boolean;
+begin
+   result := (w > 0) and (h > 0);
+end;
+
+function oxTDimensions.ToString: string;
+begin
+   WriteStr(result, w, 'x', h);
+end;
+
+INITIALIZATION
+   oxNullPoint := oxTPoint.Null();
+   oxNullDimensions := oxTDimensions.Null();
+
+END.
