@@ -129,7 +129,6 @@ var
 procedure getNameAndDescription();
 begin
    name := '';
-   writeln(p.CurrentLine);
 
    idx := pos('''', p.currentLine);
    Delete(p.currentLine, 1, idx);
