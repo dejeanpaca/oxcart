@@ -10,9 +10,9 @@ This is still a major `WORK IN PROGRESS` and may go nowhere, as it is purely a h
 
 You will need Free Pascal 3.0.4 and Lazarus 1.8.4 or newer. `lazbuild` should be in your PATH.
 
-- To setup the workspace, run the deploy script in `setup/deploy` with instantfpc. You can run the script directly under unix (includes a shebang for instanfpc).
-- You can pass symbols to the deploy tool via the `-d SYMBOL` parameters if you want to deploy for a different kind of environment. Such as `-d X11` to build for X11 (needed by e.g. Vulkan 3rd party libraries).
-- To rebuild the third party libraries, if you need a different environment, you can run the `thirdparty` tool in setup. It also accepts symbols like `deploy`.
+- To setup the workspace, run the setup script (cmd or sh) in `setup/`. Or build setup.lpi with lazarus.
+- You can pass symbols to the setup scripts/tool via the `-d SYMBOL` parameters if you want to deploy for a different kind of environment. Such as `-d X11` to build for X11 (needed by e.g. Vulkan 3rd party libraries, as oxc assumes X11 by default).
+- To rebuild the third party libraries, if you need a different environment, you can run the `thirdparty` tool in setup. It also accepts symbols like `setup`.
 
 ## Units
 
