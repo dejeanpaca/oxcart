@@ -17,7 +17,7 @@ CONST
    PROGRAMS_SOURCE = '../programs/';
    BUILD_SOURCE= '../build/';
 
-   laz_tools: array[0..7] of TTool = (
+   laz_tools: array[0..6] of TTool = (
       (Name: 'file2code'; Path: PROGRAMS_SOURCE + 'file2code/file2code'),
       (Name: 'txt2passtr'; Path: PROGRAMS_SOURCE + 'pasutils/txt2passtr'),
       (Name: 'ypak'; Path: '../units/uFile/yPak/yPakTool'),
