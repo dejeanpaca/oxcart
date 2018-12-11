@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="10"/>
+    <PathDelim Value="\"/>
+    <General>
+      <Flags>
+        <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+        <MainUnitHasScaledStatement Value="False"/>
+      </Flags>
+      <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="0"/>
+      <Title Value="setup"/>
+      <UseAppBundle Value="False"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+      </local>
+    </RunParams>
+    <RequiredPackages Count="1">
+      <Item1>
+        <PackageName Value="LazUtils"/>
+      </Item1>
+    </RequiredPackages>
+    <Units Count="1">
+      <Unit0>
+        <Filename Value="setup.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit0>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="setup"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir);..\units"/>
+      <OtherUnitFiles Value="..\units;..\..\android\units;..\..\build\units;..\units\console;..\units\components;..\units\input;..\units\mdl;..\units\media;..\units\media\al;..\units\platforms;..\units\platforms\win;..\units\platforms\unix;..\units\platforms\android;..\units\platforms\oxed;..\units\q3;..\units\render;..\units\renderers;..\units\renderers\console;..\units\renderers\dx;..\units\renderers\gl;..\units\renderers\vulkan;..\units\scene;..\units\ui;..\units\ui\wdg;..\units\ui\wnd;..\..\units;..\..\units\binfileutils;..\..\units\common;..\..\units\common\log;..\..\units\dTVideo;..\..\units\linux;..\..\units\parsers;..\..\units\parsers\ini;..\..\units\parsers\q3;..\..\units\parsers\simple;..\..\units\udVars;..\..\units\uFile;..\..\units\uFile\yPak;..\..\units\var;..\..\units\VectorMachine;..\..\units\win;..\..\units\3rdparty;..\..\components\app\units;..\..\components\app\units\android;..\..\components\app\units\controllers;..\..\components\app\units\keys;..\..\components\app\units\linux;..\..\components\app\units\mouse;..\..\components\app\units\win;..\..\components\dimg\units;..\..\3rdparty\bgrabitmap;..\..\3rdparty\dglOpenGL;..\..\3rdparty\dx;..\..\3rdparty\openal;..\..\3rdparty\Vulkan;..\..\components\dAL\units"/>
+      <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

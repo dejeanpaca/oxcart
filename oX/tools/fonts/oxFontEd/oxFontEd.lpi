@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="9"/>
+    <General>
+      <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="0"/>
+      <Title Value="oxFontEd"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <Icon Value="0"/>
+    </General>
+    <i18n>
+      <EnableI18N LFM="False"/>
+    </i18n>
+    <VersionInfo>
+      <StringTable ProductVersion=""/>
+    </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+      </local>
+    </RunParams>
+    <RequiredPackages Count="1">
+      <Item1>
+        <PackageName Value="LCL"/>
+      </Item1>
+    </RequiredPackages>
+    <Units Count="3">
+      <Unit0>
+        <Filename Value="oxFontEd.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="oxFontEd"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="frmuMain.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmMain"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmuMain"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="frmuFontDetails.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmFontDetails"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmuFontDetails"/>
+      </Unit2>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="9"/>
+    <Target>
+      <Filename Value="oxFontEd"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir);../../../units/gl;..\..\..\units\;../../../units/"/>
+      <OtherUnitFiles Value="../../../../3rdparty/bgrabitmap;../../../../units/uFile;../../../../units/common;../../../units;..\..\..\..\android\units;..\..\..\..\app\units;..\..\..\..\app\units\android;..\..\..\..\app\units\controllers;..\..\..\..\app\units\keys;..\..\..\..\app\units\linux;..\..\..\..\app\units\mouse;..\..\..\..\app\units\win;..\..\..\..\build\units;..\..\..\..\dimg\units;..\..\..\units\;..\..\..\units\console;..\..\..\units\components;..\..\..\units\input;..\..\..\units\mdl;..\..\..\units\media;..\..\..\units\platforms;..\..\..\units\platforms\win;..\..\..\units\platforms\unix;..\..\..\units\platforms\android;..\..\..\units\q3;..\..\..\units\render;..\..\..\units\renderers;..\..\..\units\renderers\console;..\..\..\units\renderers\dx;..\..\..\units\renderers\gl;..\..\..\units\renderers\vulkan;..\..\..\units\scene;..\..\..\units\ui;..\..\..\units\ui\wdg;..\..\..\units\ui\wnd;..\..\..\..\units;..\..\..\..\units\binfileutils;..\..\..\..\units\common;..\..\..\..\units\common\log;..\..\..\..\units\dTVideo;..\..\..\..\units\linux;..\..\..\..\units\parsers;..\..\..\..\units\parsers\ini;..\..\..\..\units\parsers\q3;..\..\..\..\units\parsers\simple;..\..\..\..\units\udVars;..\..\..\..\units\uFile;..\..\..\..\units\uFile\yPak;..\..\..\..\units\var;..\..\..\..\units\VectorMachine;..\..\..\..\units\win;../../../../units/3rdparty;../../../../android/units;../../../../components/app/units;../../../../components/app/units/android;../../../../components/app/units/controllers;../../../../components/app/units/keys;../../../../components/app/units/linux;../../../../components/app/units/mouse;../../../../components/app/units/win;../../../../build/units;../../../../components/dimg/units;../../../../3rdparty/dglOpenGL;../../../../3rdparty/dx;../../../../3rdparty/openal;../../../../3rdparty/Vulkan;../../../units/;../../../units/console;../../../units/components;../../../units/input;../../../units/mdl;../../../units/media;../../../units/media/al;../../../units/platforms;../../../units/platforms/win;../../../units/platforms/unix;../../../units/platforms/android;../../../units/platforms/oxed;../../../units/platforms/osx;../../../units/q3;../../../units/render;../../../units/renderers;../../../units/renderers/console;../../../units/renderers/dx;../../../units/renderers/gl;../../../units/renderers/vulkan;../../../units/scene;../../../units/ui;../../../units/ui/wdg;../../../units/ui/wnd;../../../../units;../../../../units/binfileutils;../../../../units/common/log;../../../../units/dTVideo;../../../../units/linux;../../../../units/parsers;../../../../units/parsers/ini;../../../../units/parsers/json;../../../../units/parsers/q3;../../../../units/parsers/scopes;../../../../units/parsers/simple;../../../../units/udVars;../../../../units/uFile/yPak;../../../../units/var;../../../../units/VectorMachine;../../../../units/win;../../../../components/dAL/units"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Other>
+      <CompilerMessages>
+        <UseMsgFile Value="True"/>
+      </CompilerMessages>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>
