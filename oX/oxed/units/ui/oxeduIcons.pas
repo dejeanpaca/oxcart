@@ -108,6 +108,10 @@ begin
    oxFileIcons.Add(tex, 'h264');
    oxFileIcons.Add(tex, 'h264');
    oxFileIcons.Add(tex, 'wmv');
+
+   {git}
+   tex := oxedIcons.Create($f1d3{git});
+   oxFileIcons.Add(tex, 'gitignore');
 end;
 
 procedure deinit();
