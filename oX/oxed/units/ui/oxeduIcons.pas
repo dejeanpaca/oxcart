@@ -91,32 +91,29 @@ begin
    oxFileIcons.Add(tex, 'wmv');
 
    {git}
-   tex := oxedIcons.Create($f1d3{git});
+   tex := oxedIcons.Create($f1d2{git});
    oxFileIcons.Add(tex, 'gitignore');
-end;
-
-procedure deinit();
-begin
-
 end;
 
 { oxedTIconsGlobal }
 
 function oxedTIconsGlobal.Create(c: longword; size: longint; const name: string): oxTTexture;
 var
-   map: oxPGlyphMap;
+   map: oxPGlyphMap = nil;
    codeName: string;
 
 begin
    if(name = '') then begin
       codeName := sf(c);
       map := oxGlyphs.Load(codeName, codeName, size);
+   end else
+      map := oxGlyphs.Load(name, name, size);
 
-      if(AlwaysReturnGlyphs) and (map^.Texture = nil) then
-         exit(oxDefaultTexture.Texture);
-
+   if(map <> nil) and (map^.Texture <> nil) then
       exit(map^.Texture);
-   end;
+
+   if(AlwaysReturnGlyphs) then
+      exit(oxDefaultTexture.Texture);
 
    Result := nil;
 end;
@@ -142,6 +139,5 @@ INITIALIZATION
    oxedIcons.AlwaysReturnGlyphs := true;
 
    oxed.Init.iAdd('oxed.icons', @init);
-   ox.PreInit.dAdd('oxed.icons', @deinit);
 
 END.
