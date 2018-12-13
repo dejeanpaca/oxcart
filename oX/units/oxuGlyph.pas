@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uLog,
       {ox}
-      oxuTexture, oxuTexturePool, oxuFreetype;
+      uOX, oxuResourcePool, oxuTexture, oxuTexturePool, oxuFreetype;
 
 TYPE
    oxPGlyphs = ^oxTGlyphs;
@@ -22,12 +22,23 @@ TYPE
    { oxTGlyphMap }
 
    oxTGlyphMap = record
+      {font code for the glyph}
+      Code,
+      {size of the glyph in pixels}
+      Size: loopint;
+      {glyph name}
       Name: string;
+      {source and path to the glyph}
       Path: string;
+      {texture associated with the glyph}
       Texture: oxTTexture;
+      {glyph manager}
       Root: oxPGlyphs;
 
+      {load the glyph}
       function Load(): boolean;
+      {unload the glyph}
+      procedure Unload();
    end;
 
    oxTGlyphMaps = specialize TPreallocatedArrayList<oxTGlyphMap>;
@@ -39,15 +50,20 @@ TYPE
       GlyphPool: oxTTexturePool;
       DefaultSize: loopint;
 
-      procedure Init();
+      class procedure Init(out glyphs: oxTGlyphs); static;
 
+      {get an existing map with the given name}
       function Get(const name: string): oxPGlyphMap;
-      function Load(const name: string; const path: string): oxPGlyphMap;
+      function Load(const name: string; const path: string; size: loopint = 0): oxPGlyphMap;
 
-      function AddMap(const name: string; const path: string): oxPGlyphMap;
+      {adds new map or returns matching existing one}
+      function AddMap(const name: string; const path: string; size: loopint = 0): oxPGlyphMap;
 
-      function GetSourceNameFromPath(const path: string): string;
-      function SeparatePathInSource(const path: string): string;
+      {split path into source and name(the actual path in the source)}
+      class procedure SplitSourceName(const path: string; out source, name: string); static;
+
+      {destroy all glyphs}
+      procedure Destroy();
    end;
 
 VAR
@@ -59,35 +75,53 @@ IMPLEMENTATION
 
 function oxTGlyphMap.Load(): boolean;
 var
-   source, newPath: string;
+   source,
+   newPath: string;
    font: oxTFreetypeFont;
    c: LongWord;
-   code: loopint;
-   tex: oxTTexture = nil;
+   valCode: loopint;
+
+   monospaced,
+   exactSize: boolean;
+   alphaType: oxTFreetypeAlphaType;
 
 begin
    if(Texture = nil) then begin
-      source := Root^.GetSourceNameFromPath(path);
+      oxTGlyphs.SplitSourceName(path, source, newPath);
 
-      if(source <> '') then begin
-         font := oxFreetypeManager.FindFont(source);
+      if(source <> '') then
+         font := oxFreetypeManager.FindFont(source)
+      else
+         font := oxFreetypeManager.FindFont('default');
 
-         if(font <> nil) then begin
-            newPath := Root^.SeparatePathInSource(Path);
-            Val(newPath, c, code);
+      if(font <> nil) then begin
+         Val(newPath, c, valCode);
 
-            if(code = 0) then begin
-               font.CreateGlyphTexture(c, tex, Root^.DefaultSize);
+         if(valCode = 0) then begin
+            Code := c;
 
+            monospaced := font.Square;
+            exactSize := font.ExactSize;
+            alphaType := font.AlphaType;
+
+            font.Square := true;
+            font.ExactSize := true;
+            font.AlphaType := oxFREETYPE_ALPHA_AVERAGE;
+
+            font.CreateGlyphTexture(c, Texture, Size);
+
+            font.Square := monospaced;
+            font.ExactSize := exactSize;
+            font.AlphaType := alphaType;
+
+            if(Texture <> nil) then begin
                Root^.GlyphPool.AddResource(texture);
                Texture.MarkUsed();
-
                exit(True);
             end else
-               log.w('Invalid glyph font code for ' + Path);
-         end;
-      end else begin
-         // TODO: Load texture
+               exit(False);
+         end else
+            log.w('Invalid glyph font code for ' + Path);
       end;
 
       exit(False);
@@ -96,12 +130,19 @@ begin
    Result := True;
 end;
 
+procedure oxTGlyphMap.Unload();
+begin
+   oxResource.Destroy(Texture);
+end;
+
 { oxTGlyphs }
 
-procedure oxTGlyphs.Init();
+class procedure oxTGlyphs.Init(out glyphs: oxTGlyphs);
 begin
-   ZeroOut(Self, SizeOf(Self));
-   DefaultSize := 256;
+   ZeroOut(glyphs, SizeOf(glyphs));
+   glyphs.DefaultSize := 128;
+   glyphs.Maps.InitializeValues(glyphs.Maps);
+   glyphs.GlyphPool := oxTTexturePool.Create();
 end;
 
 function oxTGlyphs.Get(const name: string): oxPGlyphMap;
@@ -117,9 +158,9 @@ begin
    Result := nil;
 end;
 
-function oxTGlyphs.Load(const name: string; const path: string): oxPGlyphMap;
+function oxTGlyphs.Load(const name: string; const path: string; size: loopint): oxPGlyphMap;
 begin
-   Result := AddMap(name, path);
+   Result := AddMap(name, path, size);
 
    if(Result <> nil) then begin
       if(Result^.Texture = nil) then
@@ -127,7 +168,7 @@ begin
    end;
 end;
 
-function oxTGlyphs.AddMap(const name: string; const path: string): oxPGlyphMap;
+function oxTGlyphs.AddMap(const name: string; const path: string; size: loopint): oxPGlyphMap;
 var
    map: oxTGlyphMap;
 
@@ -139,48 +180,63 @@ begin
       map.Name := name;
       map.Path := path;
       map.Root := @Self;
+      if(size = 0) then
+         map.Size := DefaultSize
+      else
+         map.Size := size;
 
       Maps.Add(map);
       Result := Maps.GetLast();
    end;
 end;
 
-function oxTGlyphs.GetSourceNameFromPath(const path: string): string;
+class procedure oxTGlyphs.SplitSourceName(const path: string; out source, name: string);
 var
    p: loopint;
-   source: string;
 
 begin
+   source := '';
+   name := '';
+
    if(path[1] = '@') then begin
       p := Pos(':', path);
+
       if(p > 0) then begin
          source := Copy(path, 2, p - 2);
-         exit(source);
+         name := Copy(path, p + 1, Length(path) - p);
+
+         exit();
       end;
    end;
 
-   Result := '';
+   name := path;
 end;
 
-function oxTGlyphs.SeparatePathInSource(const path: string): string;
+procedure oxTGlyphs.Destroy();
 var
-   p: loopint;
-   newPath: string;
+   i: loopint;
 
 begin
-   if(path[1] = '@') then begin
-      p := Pos(':', path);
-
-      if(p > 0) then begin
-         newPath := Copy(path, p + 1, Length(path) - p);
-         exit(newPath);
-      end;
+   for i := 0 to Maps.n - 1 do begin
+      Maps.List[i].Unload();
    end;
 
-   Result := '';
+   Maps.Dispose();
+
+   FreeObject(GlyphPool);
+end;
+
+procedure init();
+begin
+   oxTGlyphs.Init(oxGlyphs);
+end;
+
+procedure deinit();
+begin
+   oxGlyphs.Destroy();
 end;
 
 INITIALIZATION
-   oxGlyphs.Init();
+   ox.Init.Add('ox.glyphs', @init, @deinit);
 
 END.
