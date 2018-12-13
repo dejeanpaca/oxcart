@@ -169,6 +169,7 @@ TYPE
 
       function Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTFileList;
 
+      {get the file icon for a given file descriptor}
       function GetFileIcon(const f: TFileDescriptor): wdgTListGlyph;
 
       {sort files}
@@ -222,7 +223,6 @@ begin
    OddColored := true;
    IncludeParentDirectoryLink := true;
    ManageData := true;
-   ShowHiddenFiles := uiFileSettings.ShowHiddenFiles;
 
    FileAttributes := faAnyFile or faDirectory;
    Pattern := '*';
@@ -515,7 +515,6 @@ begin
    HighlightHovered := true;
    ShowFileIcons := true;
    IncludeParentDirectoryLink := true;
-   ShowHiddenFiles := uiFileSettings.ShowHiddenFiles;
 
    FileAttributes := faAnyFile or faDirectory;
    Pattern := '*';
