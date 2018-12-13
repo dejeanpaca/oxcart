@@ -19,7 +19,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont, oxuFileIcons, oxuRender, oxuTexture, oxuRenderUtilities,
       {ui}
-      uiuTypes, uiuWindowTypes, uiuWidget, uiWidgets, wdguGrid, wdguList, wdguHierarchyList;
+      uiuTypes, uiuWindowTypes, uiuFiles,
+      uiuWidget, uiWidgets, wdguGrid, wdguList, wdguHierarchyList;
 
 
 TYPE
@@ -112,7 +113,9 @@ TYPE
       {list only directories}
       DirectoriesOnly,
       {include back navigation file}
-      IncludeParentDirectoryLink: Boolean;
+      IncludeParentDirectoryLink,
+      {show hidden files}
+      ShowHiddenFiles: Boolean;
 
       RootFile: string;
       BaseLevel: loopint;
@@ -161,8 +164,6 @@ TYPE
 
    wdgTFileListGlobal = record
       DirectoryColor: TColor4ub;
-      {place directories first}
-      DirectoriesFirst: boolean;
       {sort files}
       Sort: boolean;
 
@@ -221,6 +222,7 @@ begin
    OddColored := true;
    IncludeParentDirectoryLink := true;
    ManageData := true;
+   ShowHiddenFiles := uiFileSettings.ShowHiddenFiles;
 
    FileAttributes := faAnyFile or faDirectory;
    Pattern := '*';
@@ -405,6 +407,9 @@ begin
    if(DirectoriesOnly) then
       props := props or FILE_FIND_ALL_ONLY_DIRECTORIES;
 
+   if(ShowHiddenFiles) or (uiFileSettings.ShowHiddenFiles) then
+      props := props or FILE_FIND_ALL_HIDDEN;
+
    CurrentFiles.Dispose();
    FileUtils.FindAll(p + Pattern, FileAttributes, CurrentFiles, props);
    wdgFileList.SortFiles(CurrentFiles);
@@ -510,6 +515,7 @@ begin
    HighlightHovered := true;
    ShowFileIcons := true;
    IncludeParentDirectoryLink := true;
+   ShowHiddenFiles := uiFileSettings.ShowHiddenFiles;
 
    FileAttributes := faAnyFile or faDirectory;
    Pattern := '*';
@@ -731,7 +737,7 @@ begin
    if(DirectoriesOnly) then
       props := props or FILE_FIND_ALL_ONLY_DIRECTORIES;
 
-   if(ShowHiddenFiles) then
+   if(ShowHiddenFiles) or (uiFileSettings.ShowHiddenFiles) then
       props := props or FILE_FIND_ALL_HIDDEN;
 
    Files.Dispose();
@@ -889,8 +895,8 @@ end;
 procedure wdgTFileListGlobal.SortFiles(var files: TFileDescriptorList);
 begin
    if(Sort) then
-      FileUtils.Sort(files, DirectoriesFirst)
-   else if(DirectoriesFirst) then
+      FileUtils.Sort(files, uiFileSettings.SortFoldersFirst)
+   else if(uiFileSettings.SortFoldersFirst) then
       FileUtils.SortDirectoriesFirst(files);
 end;
 
@@ -932,7 +938,6 @@ INITIALIZATION
    internal.Register('widget.hierarchicalfilelist', @InitHierarchicalWidget);
 
    wdgFileList.Sort := true;
-   wdgFileList.DirectoriesFirst := true;
 
    wdgFileGrid.FileNameLines := 2;
 
