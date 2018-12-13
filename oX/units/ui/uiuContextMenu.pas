@@ -124,6 +124,7 @@ TYPE
 
       {insert item at a specific place}
       procedure InsertAt(index: loopint);
+      procedure InsertAfter(index: loopint);
 
       {add an existing item to this menu}
       function AddItem(const existing: uiTContextMenuItem): uiPContextMenuItem;
@@ -715,6 +716,18 @@ end;
 procedure uiTContextMenu.InsertAt(index: loopint);
 begin
    if(index >= 0) and (index < Items.n) then begin
+      Items.InsertRange(index, 1);
+      ZeroOut(Items.List[index], SizeOf(Items.List[index]));
+
+      InsertIndex := index;
+   end;
+end;
+
+procedure uiTContextMenu.InsertAfter(index: loopint);
+begin
+   if(index >= 0) and (index < Items.n) then begin
+      index := index + 1;
+
       Items.InsertRange(index, 1);
       ZeroOut(Items.List[index], SizeOf(Items.List[index]));
 
