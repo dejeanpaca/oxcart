@@ -30,6 +30,8 @@ TYPE
       {array(list) of the elements}
       List: array of T;
 
+      constructor Create(); virtual;
+
       {allocate specified number of elements (allocates to the multiple of Increment)}
       procedure Allocate(count: loopint);
       {increase allocated number of elements by specified count (allocates to the multiple of Increment)}
@@ -67,6 +69,12 @@ TYPE
 IMPLEMENTATION
 
 { TPreallocatedArrayListClass }
+
+constructor TPreallocatedArrayListClass.Create();
+begin
+   Increment := 32;
+   InitializeMemory := true;
+end;
 
 procedure TPreallocatedArrayListClass.Allocate(count: loopint);
 var
