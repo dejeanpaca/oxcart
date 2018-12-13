@@ -31,7 +31,7 @@ VAR
 
 function componentReturn(): TObject;
 begin
-   result := oglTextureGenerate;
+   Result := oglTextureGenerate;
 end;
 
 { oglTextureGenerateComponent }
@@ -51,14 +51,13 @@ var
 {$ENDIF}
 
 begin
-   fmt := 0;
-
    {$IFNDEF GLES}
+   fmt := 0;
    glTexImage2D(GL_PROXY_TEXTURE_2D, 0, typ, gen.image.Width, gen.image.Height, 0, typ, storageType, nil);
    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, @fmt);
-   result := fmt <> 0;
+   Result := fmt <> 0;
    {$ELSE}
-   result := true;
+   Result := true;
    {$ENDIF}
 end;
 
@@ -67,7 +66,7 @@ begin
    if(glErr <> 0) then
       Log.e('gl > error at start of generating texture: ' + ogl.ErrorString(glErr));
 
-   result         := eNONE;
+   Result := eNONE;
 
    texDim := GL_TEXTURE_2D;
 
@@ -95,8 +94,7 @@ begin
 
    if(enoughMem() = false) then begin
       log.e('gl > Insufficient graphics memory to generate texture.');
-      result := oxeNO_GRAPHICS_MEM;
-      exit;
+      exit(oxeNO_GRAPHICS_MEM);
    end;
 
    mips := (gen.MipCount = -1) or (gen.MipCount > 0);
@@ -110,12 +108,14 @@ begin
    glTexImage2D(texDim, 0, typ, gen.Image.Width, gen.Image.Height, 0, typ, storageType, gen.Image.Image);
 
    {generate 2D mipmaps}
+   {$IFNDEF GLES}
    if(mips) then begin
       glGenerateMipmap(texDim);
 
       if(ogl.eRaise(-1) <> 0) then
          log.w('Failed to generate mip-maps for: ' + gen.Image.FileName);
    end;
+   {$ENDIF}
 
    glErr := glGetError();
    if(glErr <> 0) then begin

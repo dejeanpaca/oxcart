@@ -50,8 +50,14 @@ begin
    glGetIntegerv(GL_MAX_MODELVIEW_STACK_DEPTH,  @wnd.Limits.MaxModelViewStackDepth);
    glGetIntegerv(GL_MAX_TEXTURE_STACK_DEPTH,    @wnd.Limits.maxTextureStackDepth);
 
+   wnd.Info.GLSL.Version := 'none';
+   wnd.Info.GLSL.Major := 0;
+   wnd.Info.GLSL.Minor := 0;
+   wnd.Info.GLSL.Compact := 0;
+
    {get shader information}
    if(wnd.glSettings.Version.Major > 1) then begin
+      {$IFNDEF GLES}
       {get GLSL version}
       wnd.Info.GLSL.Version := ogl.GetString(GL_SHADING_LANGUAGE_VERSION);
 
@@ -61,11 +67,7 @@ begin
 
       if(wnd.Info.GLSL.Compact = 0) then
          log.w('Failed to get/parse GLSL version');
-   end else begin
-     wnd.Info.GLSL.Version := 'none';
-     wnd.Info.GLSL.Major := 0;
-     wnd.Info.GLSL.Minor := 0;
-     wnd.Info.GLSL.Compact := 0;
+      {$ENDIF}
    end;
 
    log.Collapsed('OpenGL Information');

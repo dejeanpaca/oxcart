@@ -49,7 +49,7 @@ TYPE
       glUniformLocations: oxglTUniformLocations;
 
       function GetTypesString(): TAppendableString;
-      function GetGLDescriptor(shaderType: GLenum = GL_NONE): string;
+      function GetGLDescriptor(shaderType: GLenum = oglNONE): string;
 
       function Compile(var obj: oxglTShaderObject; shaderType: GLenum): boolean;
       function Compile(): boolean; override;

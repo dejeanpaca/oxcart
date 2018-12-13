@@ -19,6 +19,9 @@ INTERFACE
       {$IFDEF WINDOWS}windows, oxuWindowsOS{$ENDIF}
       {$IFDEF COCOA}CocoaAll, oxuCocoaPlatform{$ENDIF};
 
+CONST
+   oglNONE = {$IFNDEF GLES}GL_NONE{$ELSE}GL_ZERO{$ENDIF};
+
 TYPE
    oglTProfile = (
       oglPROFILE_ANY,
@@ -151,9 +154,9 @@ TYPE
 CONST
    oxglTexRepeat: array[0..longint(high(oxTTextureRepeat))] of GLenum = (
       GL_REPEAT,
-      GL_MIRRORED_REPEAT,
+      {$IFNDEF GLES}GL_MIRRORED_REPEAT{$ELSE}GL_REPEAT{$ENDIF},
       GL_CLAMP_TO_EDGE,
-      GL_CLAMP_TO_BORDER
+      {$IFNDEF GLES}GL_CLAMP_TO_BORDER{$ELSE}GL_CLAMP_TO_EDGE{$ENDIF}
    );
 
    oxglTexFilters: array[0..longint(high(oxTTextureFilter))] of oxglTTextureFilter = (
@@ -354,7 +357,9 @@ begin
       GL_INVALID_VALUE:       Result := Result + 'GL_INVALID_VALUE';
       GL_INVALID_OPERATION:   Result := Result + 'GL_INVALID_OPERATION';
       GL_INVALID_ENUM:        Result := Result + 'GL_INVALID_ENUM';
+      {$IFNDEF GLES}
       GL_INVALID_FRAMEBUFFER_OPERATION: Result := Result + 'GL_INVALID_FRAMEBUFFER_OPERATION';
+      {$ENDIF}
       GL_OUT_OF_MEMORY:       Result := Result + 'GL_OUT_OF_MEMORY';
       GL_STACK_UNDERFLOW:     Result := Result + 'GL_STACK_UNDERFLOW';
       GL_STACK_OVERFLOW:      Result := Result + 'GL_STACK_OVERFLOW';
@@ -530,6 +535,7 @@ end;
 
 class function oglTGlobal.GetShaderTypeString(shaderType: GLenum): string;
 begin
+   {$IFNDEF GLES}
    if(shaderType = GL_VERTEX_SHADER) then
       Result := 'vertex'
    else if(shaderType = GL_FRAGMENT_SHADER) then
@@ -544,6 +550,9 @@ begin
       Result := 'compute'
    else
       Result := '';
+   {$ELSE}
+   Result := 'unsupported';
+   {$ENDIF}
 end;
 
 function oglTGlobal.ValidRC(rc: oglTRenderingContext): boolean;

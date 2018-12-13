@@ -117,6 +117,7 @@ begin
    Result := pFormat;
 end;
 
+{$IFNDEF GLES}
 function getPFARB(wnd: oglTWindow; var pfd: PIXELFORMATDESCRIPTOR): longint;
 var
    vals: specialize TPreallocatedArrayList<GLint>;
@@ -190,7 +191,9 @@ begin
       Result := 0;
    end;
 end;
+{$ENDIF}
 
+{$IFNDEF GLES}
 function winGetContext(wnd: oglTWindow; sharedContext: HGLRC = 0): HGLRC;
 var
    vals: specialize TPreallocatedArrayList<GLint>;
@@ -253,6 +256,7 @@ begin
 
    vals.Dispose();
 end;
+{$ENDIF}
 
 function oxwglTGlobal.PreInitWIndow(wnd: oglTWindow): boolean;
 var
@@ -270,10 +274,14 @@ begin
    buildPFD(wnd, pfd);
 
    {get a pixel format}
+   {$IFNDEF GLES}
    if(not extPixelFormat) then
-      pFormat     := getPF(wnd, pfd)
+      pFormat := getPF(wnd, pfd)
    else
-      pFormat     := getPFARB(wnd, pfd);
+      pFormat := getPFARB(wnd, pfd);
+   {$ELSE}
+      pFormat := getPF(wnd, pfd);
+   {$ENDIF}
 
    if(pFormat = 0) or (wnd.wd.LastError <> 0) then begin
       if(not extPixelFormat) then
@@ -298,20 +306,24 @@ end;
 
 function oxwglTGlobal.GetContext(wnd: oglTWindow; shareContext: HGLRC): HGLRC;
 var
-   extContext: boolean           = false;
-   requiresContext: boolean      = false;
+   extContext: boolean = false;
+   requiresContext: boolean = false;
    method: string = '';
 
 begin
+   {$IFNDEF GLES}
    extContext := oglExtensions.PlatformSupported(cWGL_ARB_create_context);
 
    {requires new context creation for opengl 3.0 and higher}
    requiresContext := ogl.ContextRequired(oglTWindow(wnd).DefaultSettings);
+   {$ENDIF}
 
    if(extContext) and (requiresContext) then begin
-      {do it the modern gl way}
       method := 'wglCreateContextAttribs';
+      {$IFNDEF GLES}
+      {do it the modern gl way}
       Result := winGetContext(wnd, shareContext);
+      {$ENDIF}
    end else begin
       { ye olde way }
       method := 'wglCreateContext';

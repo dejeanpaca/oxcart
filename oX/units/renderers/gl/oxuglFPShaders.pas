@@ -17,7 +17,7 @@ INTERFACE
       {gl}
       oxuShader, oxuTexture, oxuTypes, oxuRenderers, oxuResourcePool,
       {gl}
-      oxuglShader, oxuglRenderer, oxuglFP, oxuglTextureComponent,
+      oxuglRenderer, oxuglFP, oxuglTextureComponent,
       {$INCLUDE usesgl.inc};
 
 TYPE
@@ -26,7 +26,6 @@ TYPE
    oxglTFPShader = class(oxTShader)
       constructor Create; override;
 
-      function Compile(var obj: oxglTShaderObject; {%H-}shaderType: GLenum): boolean;
       function Compile(): boolean; override;
 
       procedure OnApply(); override;
@@ -53,12 +52,6 @@ begin
    inherited Create;
 end;
 
-function oxglTFPShader.Compile(var obj: oxglTShaderObject; shaderType: GLenum): boolean;
-begin
-   obj.Compiled := True;
-   Result := true;
-end;
-
 function oxglTFPShader.Compile(): boolean;
 begin
    Include(Properties, oxpSHADER_COMPILED);
@@ -76,7 +69,11 @@ var
 
 begin
    if(index = fpuColor) then begin
+      {$IFNDEF GLES}
       glColor4fv(PGLfloat(value));
+      {$ELSE}
+      glColor4f(PGLfloat(value)[0], PGLfloat(value)[1], PGLfloat(value)[2], PGLfloat(value)[3]);
+      {$ENDIF}
 
       if(PGLfloat(value)[3] < 1.0) then
          glEnable(GL_BLEND)
