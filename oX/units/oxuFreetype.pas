@@ -637,8 +637,13 @@ begin
 end;
 
 class procedure oxTFreetypeManager.Initialize();
+{$IFDEF OX_FEATURE_FREETYPE}
 var
-   major, minor, patch: integer;
+   major,
+   minor,
+   patch: integer;
+   path: string;
+{$ENDIF}
 
 begin
    oxFreetypeManager.Enabled := false;
@@ -653,6 +658,12 @@ begin
 
       FT_Library_Version(oxFreetypeManager.Lib, major, minor, patch);
       log.v('FreeType (' + sf(major) + '.' + sf(minor) + '.' + sf(patch) + ') initialized');
+
+      {add default font}
+      path := oxAssetPaths.Find(oxPaths.Fonts + 'FontAwesome.otf');
+
+      if(path <> '') then
+         oxFreetypeManager.Load('default', path);
    end else
       log.e('FreeType library initialization failed');
    {$ELSE}
