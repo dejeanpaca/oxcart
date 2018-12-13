@@ -97,31 +97,32 @@ begin
       if(font <> nil) then begin
          Val(newPath, c, valCode);
 
+         monospaced := font.Square;
+         exactSize := font.ExactSize;
+         alphaType := font.AlphaType;
+
+         font.Square := true;
+         font.ExactSize := true;
+         font.AlphaType := oxFREETYPE_ALPHA_AVERAGE;
+
          if(valCode = 0) then begin
             Code := c;
 
-            monospaced := font.Square;
-            exactSize := font.ExactSize;
-            alphaType := font.AlphaType;
-
-            font.Square := true;
-            font.ExactSize := true;
-            font.AlphaType := oxFREETYPE_ALPHA_AVERAGE;
-
             font.CreateGlyphTexture(c, Texture, Size);
+         end else begin
+            font.CreateGlyphTexture(Name, Texture, Size);
+         end;
 
-            font.Square := monospaced;
-            font.ExactSize := exactSize;
-            font.AlphaType := alphaType;
+         font.Square := monospaced;
+         font.ExactSize := exactSize;
+         font.AlphaType := alphaType;
 
-            if(Texture <> nil) then begin
-               Root^.GlyphPool.AddResource(texture);
-               Texture.MarkUsed();
-               exit(True);
-            end else
-               exit(False);
-         end else
-            log.w('Invalid glyph font code for ' + Path);
+         if(Texture <> nil) then begin
+            Root^.GlyphPool.AddResource(texture);
+            Texture.MarkUsed();
+         end;
+
+         exit(Texture <> nil);
       end;
 
       exit(False);
