@@ -1,11 +1,11 @@
 {File generated via oxbuildglextdscr.}
 
-   oxglnExtensionDescriptors = 1;
+   oglnExtensionDescriptors = 1;
 
 { extension IDs }
-   oxglcGLES_none = 0;
+   cGLES_none = 0;
 
 { extension descriptors }
-   oxglcExtensionDescriptors: array[0..0] of oxglTExtensionDescriptor = (
+   oglcExtensionDescriptors: array[0..oglnExtensionDescriptors - 1] of oglTExtensionDescriptor = (
       (Name: 'GLES_none'; Present: false)
    );
