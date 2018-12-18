@@ -120,6 +120,7 @@ INTERFACE
       {$IFDEF OX_FEATURE_SCENE}
          oxuSceneRender,
          {$IFDEF OX_LIBRARY}
+         oxulibInputUpdater,
          oxuLibSceneLoader,
          {$ENDIF}
          oxuCameraComponent,

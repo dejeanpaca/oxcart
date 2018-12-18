@@ -85,5 +85,6 @@ INITIALIZATION
    appKeyEvents.ProcessingRoutine := @processKey;
 
    oxGlobalInstances.Add(oxTKeyGlobal, @oxKey, @instance);
+   oxGlobalInstances.Add('appTKeyGlobal', @appk);
 
 END.
