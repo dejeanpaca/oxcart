@@ -269,7 +269,7 @@ begin
       Border.Assign(16, 16, 16, 255);
 
       {input colors}
-      InputSurface.Assign(180, 180, 180, 255);
+      InputSurface.Assign(232, 232, 232, 255);
       InputText := cBlack4ub;
       InputPlaceholder.Assign(140, 140, 140, 255);
       InputCursor := cBlack4ub;
