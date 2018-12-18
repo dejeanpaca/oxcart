@@ -280,6 +280,7 @@ begin
    Camera.vPos.Assign(0, 0, 5);
    Camera.vView.Assign(0, 0, -1);
    Camera.vView.Normalize();
+   Camera.vUp.Assign(0, 1, 0);
    Camera.SetupAngles();
 end;
 
