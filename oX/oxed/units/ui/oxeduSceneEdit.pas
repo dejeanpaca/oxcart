@@ -258,14 +258,7 @@ begin
    Camera.Transform.Matrix := tempMatrix;
    Camera.Transform.Translate(x, y, z);
 
-   if(rX <> 0) then
-      Camera.Transform.RotateX(rX);
-
-   if(rY <> 0) then
-      Camera.Transform.RotateY(rY);
-
-   if(rZ <> 0) then
-      Camera.Transform.RotateZ(rZ);
+   Camera.Transform.Rotate(rX, rY, Rz);
 
    Camera.Transform.Apply();
    oxCurrentMaterial.ApplyColor('color', AxisColors[index]);
