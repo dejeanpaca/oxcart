@@ -30,6 +30,8 @@ function vmCosineInterpolation(a, b, z: single): single;
 function vmCubicInterpolation(v0, v1, v2, v3, z: single): single;
 
 { STANDARD }
+function vmSign(x: longint): longint; inline;
+function vmSign(x: int64): int64; inline;
 function vmCopySign(x, y: single): single; inline;
 function vmMax(x, y: single): single; inline;
 
@@ -154,6 +156,16 @@ begin
 end;
 
 { STANDARD }
+
+function vmSign(x: longint): longint;
+begin
+   Result := integer(x > 0) - integer(x < 0);
+end;
+
+function vmSign(x: int64): int64;
+begin
+   Result := int64(x > 0) - int64(x < 0);
+end;
 
 function vmCopySign(x, y: single): single; inline;
 begin
