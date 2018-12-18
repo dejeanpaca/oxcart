@@ -114,6 +114,8 @@ TYPE
       function Find(const k: appTKey): appPKeyListItem;
    end;
 
+   appPKeyGlobal = ^appTKeyGlobal;
+
    { appTKeyGlobal }
 
    appTKeyGlobal = record
