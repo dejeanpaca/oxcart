@@ -59,42 +59,45 @@ function keyProcess(wnd: uiTWindow; var d: TData): boolean;
 begin
    Result := false;
 
-   if(d.Key.Released()) then begin
-      case d.Key.Code of
-         kcTAB: begin
+   case d.Key.Code of
+      kcTAB: begin
+         if(d.Key.Released()) then begin
             {shift+tab}
             if(d.Key.State.IsSet(kmSHIFT)) then
                uiWidget.SelectPrevious(wnd)
             {tab}
             else
                uiWidget.SelectNext(wnd);
+         end;
+
+         Result := true;
+      end;
+      else begin
+         if((uiwndpNO_ESCAPE_KEY in wnd.Properties)) and (uiWindow.EscapeKeys.Find(d.Key) <> nil) then begin
+            exit(true);
+         end;
+
+         {check for escape key}
+         if(not (uiwndpNO_ESCAPE_KEY in wnd.Properties)) and (uiWindow.EscapeKeys.Find(d.Key) <> nil) then begin
+            if(d.Key.Released()) then begin
+               if(wndHandler(wnd, uiWINDOW_CLOSE_ON_ESCAPE) = -1) then
+                  wnd.Close();
+            end;
+
+            Result := true;
+         {check for confirmation key}
+         end else if(uiWindow.ConfirmationKeys.Find(d.Key) <> nil) then begin
+            if(d.Key.Released()) then;
+            {TODO: Find default confirmation action, and react on it}
+         end else if(d.Key = uiWindow.CloseKey) and (wnd.Parent <> nil) then begin
+            if(d.Key.Released()) then
+               wnd.CloseQueue();
 
             Result := true;
          end;
-         else begin
-            Result := false;
 
-            if((uiwndpNO_ESCAPE_KEY in wnd.Properties)) and (uiWindow.EscapeKeys.Find(d.Key) <> nil) and (d.Key.Released()) then begin
-               exit(true);
-            end;
-
-            {check for escape key}
-            if(not (uiwndpNO_ESCAPE_KEY in wnd.Properties)) and (uiWindow.EscapeKeys.Find(d.Key) <> nil) and (d.Key.Released()) then begin
-               if(wndHandler(wnd, uiWINDOW_CLOSE_ON_ESCAPE) = -1) then begin
-                  wnd.Close();
-                  Result := true;
-               end;
-            {check for confirmation key}
-            end else if(uiWindow.ConfirmationKeys.Find(d.Key) <> nil) and (d.Key.Released()) then
-               {TODO: Find default confirmation action, and react on it}
-            else if(d.Key = uiWindow.CloseKey) and (wnd.Parent <> nil) and (d.Key.Released()) then begin
-               wnd.CloseQueue();
-               Result := true;
-            end;
-
-            if(not Result) and (wnd.Parent <> nil) then
-               keyProcess(uiTWindow(wnd.Parent), d);
-         end;
+         if(not Result) and (wnd.Parent <> nil) then
+            keyProcess(uiTWindow(wnd.Parent), d);
       end;
    end;
 end;
