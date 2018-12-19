@@ -53,6 +53,12 @@ begin
 
    Loaded(scene);
    log.v('scene > Loaded scene');
+
+   scene.LoadComponentsInChildren();
+   log.v('scene > Loaded components');
+
+   scene.StartComponentsInChildren();
+   log.v('scene > Started components');
 end;
 
 procedure oxTSceneLoader.Loaded(scene: oxTScene);
