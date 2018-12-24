@@ -498,10 +498,10 @@ begin
    TotalWidth := 0;
    if(not Vertical) then begin
       relativePosition := PaddingLeft;
-      itemSize := Height - PaddingTop - PaddingBottom;
+      itemSize := Height - (PaddingTop + PaddingBottom);
    end else begin
       relativePosition := PaddingTop;
-      itemSize := Height - PaddingLeft - PaddingRight;
+      itemSize := Height - (PaddingLeft + PaddingRight);
    end;
 
    for i := 0 to (Items.n - 1) do begin
