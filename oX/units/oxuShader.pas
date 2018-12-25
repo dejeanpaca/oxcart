@@ -1,6 +1,6 @@
 {
-   oxuShades, oX shader management
-   Copyright (C) 2017.. Dejan Boras
+   oxuShader, oX shader management
+   Copyright (C) 2017. Dejan Boras
 
    Started On:    25.04.2017.
 }
@@ -96,8 +96,6 @@ TYPE
       function Compile(): boolean; virtual;
       function SetupUniforms(): boolean; virtual;
       function GetIndex(const uniformName: string): loopint;
-
-      procedure ComputeTypeIndexes();
 
       procedure SetUniform(const uniformName: string; value: pointer);
       procedure SetUniform({%H-}index: loopint; {%H-}value: pointer); virtual;
@@ -284,11 +282,6 @@ begin
    end;
 
    Result := -1;
-end;
-
-procedure oxTShader.ComputeTypeIndexes();
-begin
-
 end;
 
 procedure oxTShader.SetUniform(const uniformName: string; value: pointer);
