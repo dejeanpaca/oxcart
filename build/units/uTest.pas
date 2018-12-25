@@ -10,7 +10,7 @@ UNIT uTest;
 
 INTERFACE
 
-   USES uStd, uLog, uFileUtils, ParamUtils, StringUtils, uKeyValueFile;
+   USES uStd, uLog, uFileUtils, ParamUtils, StringUtils, uSimpleParser;
 
 CONST
    TEST_RESULTS_FILENAME = 'testresults.txt';
@@ -119,6 +119,8 @@ TYPE
       procedure RemoveAll();
    end;
 
+
+   PUnitTests = ^TUnitTests;
    { TUnitTests }
 
    TUnitTests = record
@@ -552,99 +554,119 @@ begin
    Result := expression;
 end;
 
+function WriteResults(var p: TParseData): boolean;
+var
+   i: loopint;
+   tests: PUnitTests;
+
+begin
+   tests := p.ExternalData;
+
+   p.WriteLine('@count = ' + sf(tests^.Tests.n));
+   p.WriteLine('@group = ' + tests^.group);
+
+   for i := 0 to (tests^.Tests.n - 1) do
+      p.WriteLine(tests^.Tests.List[i].Descriptor.Name + ' = ' + tests^.Tests.List[i].Descriptor.SuccessString());
+
+   if(p.f.Error <> 0) then
+      tests^.ErrorDescription := 'could not write to the test results file, error: ' + p.f.GetErrorString()
+   else begin
+      Result := true;
+      log.i('Written results to: ' + p.f.fn);
+   end;
+end;
+
 function TUnitTests.WriteResults(): boolean;
 var
-   i: longint;
    fn: string;
 
-   f: TKeyValueFile;
+   p:TParseData;
 
 begin
    Result := false;
    fn :=  TEST_RESULTS_FILENAME;
 
-   KeyValueFiles.Init(f);
+   TParseData.Init(p);
+   p.WriteMethod := TParseExtMethod(@writeResults);
+   p.ExternalData := @Self;
+   p.Write(fn);
+end;
 
-   f.Add('@count', sf(Tests.n));
-   f.Add('@group', group);
-
-   for i := 0 to (Tests.n - 1) do
-      f.Add(tests.List[i].Descriptor.Name, Tests.List[i].Descriptor.SuccessString());
-
-   f.Write(fn);
-   if(f.ioE <> 0) then
-      ErrorDescription := 'could not write to the test results file, error: ' + sf(f.ioE)
-   else begin
-      Result := true;
-      log.i('Written results to: ' + fn);
+TYPE
+   PLoadResultsData = ^TLoadResultsData;
+   TLoadResultsData = record
+      tests: PUnitTests;
+      results: PUnitTestResults;
+      {current test result}
+      index: loopint;
+      {set to true when all metadata was loaded}
+      ok: boolean;
    end;
 
-   f.Dispose();
+
+function ReadResults(var p: TParseData): boolean;
+var
+   tests: PUnitTests;
+   data: PLoadResultsData;
+   results: PUnitTestResults;
+
+   count,
+   code: loopint;
+
+begin
+   Result := true;
+   data := p.ExternalData;
+   tests := data^.tests;
+   results := data^.results;
+
+   if(data^.ok) then begin
+      if(data^.index < results^.List.n) then begin
+         results^.List.List[data^.index].Name := p.Key;
+         results^.List.List[data^.index].Success := lowercase(p.Value) = 'pass';
+      end;
+
+      inc(data^.index);
+   end else begin
+      if(p.Key = '@count') then begin
+         {get test count}
+         Val(p.Value, count, code);
+
+         if(code <> 0) then begin
+            tests^.ErrorDescription := 'Results file has an invalid test count field';
+            exit(False);
+         end;
+
+         results^.Allocate(count);
+      end else if(p.Key = '@group') then
+         {get test group}
+         results^.Group := p.Value;
+
+      if(results^.List.n > 0) and (results^.Group <> '') then
+         data^.ok := true;
+   end;
 end;
 
 function TUnitTests.LoadResults(var results: TUnitTestResults): boolean;
 var
-   key,
-   value: string;
-
-   {set to true when all metadata was loaded}
-   ok: boolean;
-
-   i,
-   index,
-   count,
-   code: longint;
-   f: TKeyValueFile;
+   p: TParseData;
+   loadResultsData: TLoadResultsData;
 
 begin
    Result := false;
 
-   KeyValueFiles.Init(f);
+   ZeroPtr(@loadResultsData, SizeOf(loadResultsData));
+   loadResultsData.tests := @Self;
+   loadResultsData.results := @results;
 
-   f.Load(TEST_RESULTS_FILENAME);
-   if(f.ioE <> 0) then begin
-      ErrorDescription := 'could not load test results file, error: ' + sf(f.ioE);
-      exit();
-   end;
+   TParseData.InitKeyValue(p);
+   p.ExternalData := @loadResultsData;
+   p.ReadMethod := TParseExtMethod(@ReadResults);
+   p.Read(TEST_RESULTS_FILENAME);
 
-   index := 0;
-   ok := false;
+   Result := p.ErrorCode = 0;
 
-   for i := 0 to (f.List.n - 1) do begin
-      key := f.List.List[i].key;
-      value := f.List.List[i].value;
-
-      if(ok) then begin
-         if(index < Results.List.n) then begin
-            Results.List.List[index].Name := key;
-            Results.List.List[index].Success := lowercase(value) = 'pass';
-         end;
-
-         inc(index);
-      end else begin
-         if(key = '@count') then begin
-            {get test count}
-            Val(value, count, code);
-
-            if(code <> 0) then begin
-               ErrorDescription := 'Results file has an invalid test count field';
-               break;
-            end;
-
-            Results.Allocate(count);
-         end else if(key = '@group') then
-            {get test group}
-            Results.Group := value;
-
-         if(Results.List.n > 0) and (Results.Group <> '') then
-            ok := true;
-      end;
-   end;
-
-   f.Dispose();
-
-   if(index <> Results.List.n) then
-      ErrorDescription := 'Results file has mismatched test count (' + sf(index) + ') and test reports ' + sf(Results.List.n);
+   if(loadResultsData.index <> Results.List.n) then
+      ErrorDescription := 'Results file has mismatched test count (' + sf(loadResultsData.index) + ') and test reports ' + sf(Results.List.n);
 
    if(ErrorDescription <> '') then
       Result := true;
