@@ -15,7 +15,7 @@ INTERFACE
       {events}
       appuActionEvents, appuEvents,
       {oX}
-      oxuWindows, oxuTexture, oxuScene, oxuThreadTask,
+      oxuWindows, oxuTexture, oxuScene, oxuThreadTask, oxuFont, oxuFreetypeFonts,
       {ui}
       uiuContextMenu, oxuwndAbout, oxuwndSettings,
       {widgets}
@@ -194,12 +194,12 @@ begin
    item := Project.AddItem('Recode', oxedActions.RECODE);
 
    if(oxedPlatform.GlyphCode <> 0) then
-      oxedIcons.Create(item, oxedPlatform.GlyphCode);
+      oxedIcons.Create(item, oxedPlatform.GlyphCode, oxedPlatform.GlyphName);
 
    item := Project.AddItem('Rebuild', oxedActions.BUILD);
 
    if(oxedPlatform.GlyphCode <> 0) then
-      oxedIcons.Create(item, oxedPlatform.GlyphCode);
+      oxedIcons.Create(item, oxedPlatform.GlyphCode, oxedPlatform.GlyphName);
 
    Project.AddItem('Cleanup', oxedActions.CLEANUP);
    Project.AddItem('Rescan', oxedActions.RESCAN);
@@ -379,14 +379,14 @@ begin
       if(platform.Supports32) then begin
          item := build.AddItem(platform.Name);
          if(platform.GlyphCode <> 0) then
-            oxedIcons.Create(item, platform.GlyphCode);
+            oxedIcons.Create(item, oxedPlatform.GlyphCode, oxedPlatform.GlyphName);
       end;
 
       if(platform.Supports64) then begin
          item := build.AddItem(platform.Name + ' (x64)');
 
          if(platform.GlyphCode <> 0) then
-            oxedIcons.Create(item, platform.GlyphCode);
+            oxedIcons.Create(item, oxedPlatform.GlyphCode, oxedPlatform.GlyphName);
       end;
    end;
 

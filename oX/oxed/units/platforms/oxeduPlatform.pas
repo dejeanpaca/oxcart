@@ -26,6 +26,7 @@ TYPE
       Supports32,
       Supports64: boolean;
 
+      GlyphName: string;
       GlyphCode: longword;
 
       {compiler symbols to use when building}
@@ -65,7 +66,6 @@ begin
    id := 'unknown';
    Supports32 := true;
    Supports64 := true;
-      GlyphCode := 0;
 end;
 
 { oxedTPlatforms }

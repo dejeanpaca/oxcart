@@ -32,7 +32,7 @@ begin
 
    Name := 'Windows';
    id := 'windows';
-   GlyphCode := $f17a;
+   GlyphName := 'brands:61818';
 end;
 
 procedure init();

@@ -32,7 +32,7 @@ begin
 
    Name := 'Linux';
    id := 'linux';
-   GlyphCode := $f17c;
+   GlyphName := 'brands:61820';
 end;
 
 procedure init();
