@@ -63,7 +63,8 @@ begin
    f.Texture := tex;
    f.FileType := fileType;
 
-   tex.MarkUsed();
+   if(tex <> nil) then
+      tex.MarkUsed();
 
    Icons.Add(f);
 end;
