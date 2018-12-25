@@ -174,7 +174,7 @@ begin
 
    TParseData.Init(data.parser);
    data.parser.externalData := @data;
-   data.parser.Read(fn, TParseExtMethod(@readTextFile));
+   data.parser.Read(fn, TParseMethod(@readTextFile));
 end;
 
 procedure dvarTFileGlobal.ReadText(const fn: string);
@@ -319,7 +319,7 @@ begin
    if(dv.sub.s <> nil) or (dv.vs <> nil) then begin
       TParseData.Init(data.parser);
       data.parser.externalData := @data;
-      data.parser.Write(fn, TParseExtMethod(@writeTextFile));
+      data.parser.Write(fn, TParseMethod(@writeTextFile));
    end;
 end;
 

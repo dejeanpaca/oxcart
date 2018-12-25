@@ -146,7 +146,7 @@ begin
 
    TParseData.Init(parseData);
    parseData.externalData := @parseOptions;
-   parseData.ReadMethod := TParseExtMethod(@parseShaderFile);
+   parseData.ReadMethod := TParseMethod(@parseShaderFile);
    parseData.StripWhitespace := false;
 
    if(parseData.Read(path + 'glshader')) then begin
