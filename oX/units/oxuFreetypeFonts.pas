@@ -37,6 +37,7 @@ TYPE
 
       function FindFont(const name: string): oxTFreetypeFont;
 
+      function CreateFont(ft: oxTFreetypeFont; size: longint = 12; base: longint = 32; charCount: longint = 94): oxTFont;
       function CreateFont(const path: string; size: longint = 12; base: longint = 32; charCount: longint = 94): oxTFont;
 
       procedure LoadFontsList();
@@ -132,19 +133,20 @@ begin
    Result := nil;
 end;
 
-function oxTFreetypeManager.CreateFont(const path: string; size: longint; base: longint; charCount: longint): oxTFont;
+function oxTFreetypeManager.CreateFont(ft: oxTFreetypeFont; size: longint; base: longint; charCount: longint): oxTFont;
 const
    MAX_CHARS = 4096;
 
 var
    i: loopint;
 
-   ftFont: oxTFreetypeFont;
    fontImages: array[0..MAX_CHARS - 1] of imgTImage;
    Characters: array[0..MAX_CHARS - 1] of oxTFreetypeFontGlyphData;
    font: oxTFont;
    fontImage: imgTImage;
    fontTexture: oxTTexture;
+
+   pFlipVertically: boolean;
 
    {width of the generated image}
    imageWidth,
@@ -202,6 +204,8 @@ begin
 end;
 
 begin
+   Result := nil;
+
    if(charCount <= 0) then
       exit(nil);
 
@@ -211,18 +215,16 @@ begin
    ZeroOut(fontImages, SizeOf(fontImages));
    ZeroOut(Characters, SizeOf(Characters));
 
-   ftFont := Load('', path, 0, 0, false);
-
-   if(ftFont <> nil) then begin
+   if(ft <> nil) then begin
+      pFlipVertically := ft.FlipVertically;
       {we'll do this ourselves anyways}
-      ftFont.FlipVertically := false;
+      ft.FlipVertically := false;
 
       font := oxTFont.Create();
       font.base := base;
       font.chars := charCount;
       font.TextureBaseline := true;
-      font.fn := path;
-
+      font.fn := ft.FontName + '-' + sf(size);
       font.fw := size;
       font.fh := size;
 
@@ -234,7 +236,7 @@ begin
       font.AllocateChars(false);
 
       for i := 0 to (charCount - 1) do begin
-         Characters[i] := ftFont.CreateGlyphImage(base + i, fontImages[i], size);
+         Characters[i] := ft.CreateGlyphImage(base + i, fontImages[i], size);
       end;
 
       {get total glyph length}
@@ -271,6 +273,8 @@ begin
       gen.Filter := oxFont.Filter;
       imgOperations.FlipV(fontImage);
       oxTextureGenerate.Generate(fontImage, fontTexture);
+      if(fontTexture <> nil) then
+         fontTexture.MarkUsed();
 
       font.Texture := fontTexture;
       font.tw := imageWidth;
@@ -284,6 +288,8 @@ begin
             img.Dispose(fontImages[i]);
       end;
 
+      ft.FlipVertically := pFlipVertically;
+
       FreeObject(fontImage);
 
       gen.Dispose();
@@ -291,6 +297,32 @@ begin
    end;
 
    Result := nil;
+end;
+
+function oxTFreetypeManager.CreateFont(const path: string; size: longint; base: longint; charCount: longint): oxTFont;
+var
+   ftFont: oxTFreetypeFont;
+   fontLoaded: boolean = false;
+
+begin
+   Result := nil;
+
+   if(charCount <= 0) then
+      exit(nil);
+
+   ftFont := oxFreetypeManager.FindFont(path);
+
+   if(ftFont = nil) then begin
+      ftFont := Load('', path, 0, 0, false);
+      fontLoaded := true;
+   end;
+
+   if(ftFont <> nil) then begin
+      Result := CreateFont(ftFont, size, base, charCount);
+
+      if(fontLoaded) then
+         FreeObject(ftFont);
+   end;
 end;
 
 function readFontList(var p: TParseData): boolean;
