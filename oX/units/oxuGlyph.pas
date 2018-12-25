@@ -146,25 +146,8 @@ begin
 end;
 
 class procedure oxTGlyphs.SplitSourceName(const path: string; out source, name: string);
-var
-   p: loopint;
-
 begin
-   source := '';
-   name := '';
-
-   if(path[1] = '@') then begin
-      p := Pos(':', path);
-
-      if(p > 0) then begin
-         source := Copy(path, 2, p - 2);
-         name := Copy(path, p + 1, Length(path) - p);
-
-         exit();
-      end;
-   end;
-
-   name := path;
+   GetKeyValue(path, source, name, ':');
 end;
 
 procedure oxTGlyphs.Destroy();
