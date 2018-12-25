@@ -29,11 +29,19 @@ TYPE
       Log: string;
 
       {current data}
-      CurrentLine: string;
+      CurrentLine,
+      {current key if in key/value mode}
+      Key,
+      {current value if in key/value mode}
+      Value: string;
 
       {callbacks}
       ReadMethod,
       WriteMethod: TParseExtMethod;
+      {are we in key/value mode (only applicable if reading)}
+      KeyValue: boolean;
+      {key/value separator}
+      KeyValueSeparator: char;
 
       {parsing}
       StripWhitespace,
@@ -56,6 +64,8 @@ TYPE
 
       {initialize a TParseData record}
       class procedure Init(out p: TParseData); static;
+      {initialize a TParseData record}
+      class procedure InitKeyValue(out p: TParseData); static;
    end;
 
 IMPLEMENTATION
@@ -63,8 +73,14 @@ IMPLEMENTATION
 class procedure TParseData.Init(out p: TParseData);
 begin
    p.Create();
-
+   p.KeyValueSeparator := '=';
    p.StripWhitespace := true;
+end;
+
+class procedure TParseData.InitKeyValue(out p: TParseData);
+begin
+   Init(p);
+   p.KeyValue := true;
 end;
 
 
@@ -83,6 +99,9 @@ begin
       {strip white space}
       if(StripWhitespace) then
          StringUtils.StripWhiteSpace(CurrentLine);
+
+      if(KeyValue) then
+         GetKeyValue(CurrentLine, Key, Value, KeyValueSeparator);
 
       if(ReadMethod <> nil) then begin
          if(Length(CurrentLine) > minimumLength) then begin
