@@ -560,6 +560,7 @@ var
    tests: PUnitTests;
 
 begin
+   Result := true;
    tests := p.ExternalData;
 
    p.WriteLine('@count = ' + sf(tests^.Tests.n));
@@ -568,12 +569,11 @@ begin
    for i := 0 to (tests^.Tests.n - 1) do
       p.WriteLine(tests^.Tests.List[i].Descriptor.Name + ' = ' + tests^.Tests.List[i].Descriptor.SuccessString());
 
-   if(p.f.Error <> 0) then
+   if(p.f.Error <> 0) then begin
+      Result := false;
       tests^.ErrorDescription := 'could not write to the test results file, error: ' + p.f.GetErrorString()
-   else begin
-      Result := true;
+   end else
       log.i('Written results to: ' + p.f.fn);
-   end;
 end;
 
 function TUnitTests.WriteResults(): boolean;
