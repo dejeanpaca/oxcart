@@ -17,7 +17,7 @@ INTERFACE
       uStd, uLog, StringUtils, vmMath,
       uImage, imguOperations,
       {ox}
-      uOX, oxuPaths, oxuTexture, oxuTextureGenerate, oxuTypes, oxuFont, oxuFreetype;
+      uOX, oxuPaths, oxuTexture, oxuTextureGenerate, oxuTypes, oxuFont, oxuFreetype, uSimpleParser;
 
 TYPE
    { oxTFreetypeManager }
@@ -39,6 +39,7 @@ TYPE
 
       function CreateFont(const path: string; size: longint = 12; base: longint = 32; charCount: longint = 94): oxTFont;
 
+      procedure LoadFontsList();
       class procedure Initialize(); static;
       class procedure Deinitialize(); static;
    end;
@@ -292,13 +293,57 @@ begin
    Result := nil;
 end;
 
+function readFontList(var p: TParseData): boolean;
+var
+   path: string;
+
+begin
+   Result := true;
+
+   {add font specified with value (path)}
+   if(p.Value <> '') then begin
+      path := oxAssetPaths.Find(oxPaths.Fonts + p.Value);
+
+      if(path <> '') then begin
+         oxFreetypeManager.Load(p.Key, path);
+         log.v('Loaded font as ' + p.Key);
+      end else
+         log.w('Cannot find font ' + p.Key + ' in path: ' + p.Value);
+   end;
+end;
+
+procedure oxTFreetypeManager.LoadFontsList();
+var
+   path: string;
+   p: TParseData;
+
+begin
+   path := oxAssetPaths.Find(oxPaths.Fonts + 'fonts.list');
+
+   if(path <> '') then begin
+      TParseData.InitKeyValue(p);
+      p.ReadMethod := TParseMethod(@readFontList);
+      p.KeyValueSeparator := ' ';
+      p.Read(path);
+
+      log.v('Loaded fonts list from: ' + path);
+   end;
+
+   if(FindFont('default') = nil) then begin
+      {add default font}
+      path := oxAssetPaths.Find(oxPaths.Fonts + 'FontAwesome.otf');
+
+      if(path <> '') then
+         Load('default', path);
+   end;
+end;
+
 class procedure oxTFreetypeManager.Initialize();
 {$IFDEF OX_FEATURE_FREETYPE}
 var
    major,
    minor,
    patch: integer;
-   path: string;
 {$ENDIF}
 
 begin
@@ -315,11 +360,7 @@ begin
       FT_Library_Version(oxFreetypeManager.Lib, major, minor, patch);
       log.v('FreeType (' + sf(major) + '.' + sf(minor) + '.' + sf(patch) + ') initialized');
 
-      {add default font}
-      path := oxAssetPaths.Find(oxPaths.Fonts + 'FontAwesome.otf');
-
-      if(path <> '') then
-         oxFreetypeManager.Load('default', path);
+      oxFreetypeManager.LoadFontsList();
    end else
       log.e('FreeType library initialization failed');
    {$ELSE}
