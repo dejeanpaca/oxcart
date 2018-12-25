@@ -71,7 +71,7 @@ TYPE
       {index for the same type}
       TypeIndex: loopint;
 
-      procedure Init(out uniform: oxTShaderUniform);
+      class procedure Init(out uniform: oxTShaderUniform); static;
    end;
 
    oxTShaderUniforms = specialize TPreallocatedArrayList<oxTShaderUniform>;
@@ -162,7 +162,7 @@ IMPLEMENTATION
 
 { oxTShaderUniform }
 
-procedure oxTShaderUniform.Init(out uniform: oxTShaderUniform);
+class procedure oxTShaderUniform.Init(out uniform: oxTShaderUniform);
 begin
    ZeroPtr(@uniform, SizeOf(uniform));
 end;
