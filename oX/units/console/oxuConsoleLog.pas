@@ -40,20 +40,22 @@ end;
 
 procedure hwriteln({%H-}logf: PLog; priority: longint; const s: string);
 begin
-   if(priority = logcINFO) then
-      oxConsole.console.i(s)
-   else if(priority = logcWARNING) then
-      oxConsole.console.w(s)
-   else if(priority = logcERROR) then
-      oxConsole.console.e(s)
-   else if(priority = logcVERBOSE) then
-      oxConsole.console.v(s)
-   else if(priority = logcFATAL) then
-      oxConsole.console.f(s)
-   else if(priority = logcDEBUG) then
-      oxConsole.console.d(s)
-   else
-      oxConsole.console.i(s);
+   if(oxConsole.Console.Contents.a > 0) then begin
+      if(priority = logcINFO) then
+         oxConsole.Console.i(s)
+      else if(priority = logcWARNING) then
+         oxConsole.Console.w(s)
+      else if(priority = logcERROR) then
+         oxConsole.Console.e(s)
+      else if(priority = logcVERBOSE) then
+         oxConsole.Console.v(s)
+      else if(priority = logcFATAL) then
+         oxConsole.Console.f(s)
+      else if(priority = logcDEBUG) then
+         oxConsole.Console.d(s)
+      else
+         oxConsole.Console.i(s);
+   end;
 end;
 
 {output nothing to the console until oX is initialized, then use the actual handler method}
