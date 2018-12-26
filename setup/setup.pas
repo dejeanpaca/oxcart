@@ -17,12 +17,9 @@ CONST
    PROGRAMS_SOURCE = '../programs/';
    BUILD_SOURCE= '../build/';
 
-   laz_tools: array[0..6] of TTool = (
+   laz_tools: array[0..3] of TTool = (
       (Name: 'file2code'; Path: PROGRAMS_SOURCE + 'file2code/file2code'),
       (Name: 'txt2passtr'; Path: PROGRAMS_SOURCE + 'pasutils/txt2passtr'),
-      (Name: 'ypak'; Path: '../units/uFile/yPak/yPakTool'),
-      (Name: 'androidbuild'; Path: '../android/tools/androidbuild/androidbuild'),
-      (Name: 'buildypak'; Path: BUILD_SOURCE + 'tools/buildypak'),
       (Name: 'testtool'; Path: BUILD_SOURCE + 'tools/testtool'),
       (Name: 'lpitool'; Path: BUILD_SOURCE + 'tools/lpitool')
    );
