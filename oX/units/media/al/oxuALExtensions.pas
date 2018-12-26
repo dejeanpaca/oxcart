@@ -27,9 +27,9 @@ INTERFACE
 
    USES
       {$IFNDEF OX_LIBRARY}
-      openal,
+      openal, ustrList,
       {$ENDIF}
-      uStd, uLog, StringUtils, ustrList,
+      uStd, uLog, StringUtils,
       {ox}
       oxuAL;
 

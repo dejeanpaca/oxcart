@@ -11,10 +11,10 @@ UNIT oxuALDevices;
 INTERFACE
 
    USES
-     uStd, uLog, ustrList, StringUtils,
+     uStd, uLog, StringUtils,
      {dal}
      {$IFNDEF OX_LIBRARY}
-     ctypes,
+     ctypes, ustrList,
      {$ENDIF}
      openal,
      {ox}
