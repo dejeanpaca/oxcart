@@ -12,7 +12,10 @@ INTERFACE
 
    USES
       {$INCLUDE usesgl.inc},
-      uStd, uLog, StringUtils, ustrList,
+      uStd, uLog, StringUtils,
+      {$IFNDEF OX_LIBRARY}
+      ustrList,
+      {$ENDIF}
       {oX}
       oxuWindowTypes;
 

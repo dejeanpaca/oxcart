@@ -371,8 +371,8 @@ begin
       for i := 0 to serializer.Properties.n - 1 do begin
          prop := serializer.Properties.List[i];
 
-         sourceProp := @(pointer(source)^) {%H-}+ prop.Offset;
-         targetProp := @(pointer(target)^) {%H-}+ prop.Offset;
+         sourceProp := @(pointer(source)^) + prop.Offset;
+         targetProp := @(pointer(target)^) + prop.Offset;
 
          if(prop.Dt^.Kind = tkPointer) then
             pointer(targetProp^) := pointer(sourceProp^)
@@ -1006,8 +1006,11 @@ begin
 end;
 
 procedure oxTSerialization.AddObjectProperty(const name: string; offset: pointer);
+var
+   poffset: PtrInt absolute offset;
+
 begin
-   AddProperty(name, {%H-}PtrInt(offset), oxSerialization.Types.tObject);
+   AddProperty(name, poffset, oxSerialization.Types.tObject);
 end;
 
 procedure oxTSerialization.AddDynArrayProperty(const name: string; ti: PTypeInfo);
@@ -1056,13 +1059,14 @@ end;
 procedure oxTSerialization.AddProperty(const name: string; offset: pointer; const dt: oxTSerializationDataType);
 var
    prop: oxTSerializationProperty;
+   poffset: PtrInt absolute offset;
 
 begin
    InitProp(prop);
 
    prop.Name := name;
    prop.Dt := @dt;
-   prop.Offset := {%H-}PtrInt(offset);
+   prop.Offset := poffset;
    prop.PropInfo := nil;
 
    Properties.Add(prop);
@@ -1071,13 +1075,14 @@ end;
 procedure oxTSerialization.AddProperty(const name: string; offset: pointer; const dt: oxTSerializationDataType; newTypeInfo: PTypeInfo);
 var
    prop: oxTSerializationProperty;
+   poffset: PtrInt absolute offset;
 
 begin
    InitProp(prop);
 
    prop.Name := name;
    prop.Dt := @dt;
-   prop.Offset := {%H-}PtrInt(offset);
+   prop.Offset := poffset;
    prop.TypeInfo := newTypeInfo;
 
    Properties.Add(prop);
