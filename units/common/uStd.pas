@@ -220,6 +220,9 @@ VAR
    ioE: longint = eNONE;
    GlobalStartTime: TDateTime;
 
+{essentially does nothing}
+procedure Pass();
+
 {convert an address to a string}
 function addr2str(address: pointer): string;
 
@@ -299,6 +302,11 @@ IMPLEMENTATION
 
 VAR
    oldExitProc: pointer;
+
+procedure Pass();
+begin
+
+end;
 
 function addr2str(address: pointer): string;
 var
