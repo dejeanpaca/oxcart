@@ -577,9 +577,11 @@ begin
    try
       p.Execute();
    except
-     log.e('build > Failed to execute lazbuild: ' + lazarusPath);
-     p.Free();
-     exit;
+      on e: Exception do begin
+         log.e('build > Failed to execute lazbuild: ' + lazarusPath + ' (' + e.ToString() + ')');
+         p.Free();
+         exit;
+      end;
    end;
 
    repeat
@@ -690,9 +692,11 @@ begin
    try
       p.Execute();
    except
-      log.e('build > Failed running: ' + p.Executable);
-      p.Free();
-      exit();
+      on e: Exception do begin
+         log.e('build > Failed running: ' + p.Executable + ' (' + e.ToString() + ')');
+         p.Free();
+         exit();
+     end;
    end;
 
 (*   repeat
