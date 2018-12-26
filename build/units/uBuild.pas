@@ -1107,6 +1107,7 @@ begin
       process := GetToolProcess();
       process.Executable := GetExecutableName(p^.FpcPath + 'fpc');
       process.Parameters.Add('-iW');
+      process.Options := process.Options + [poUsePipes];
 
       try
          process.Execute();
