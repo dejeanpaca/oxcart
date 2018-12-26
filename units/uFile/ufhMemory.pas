@@ -60,7 +60,7 @@ end;
 
 procedure memfOpen(var f: TFile; mem: pointer; size: fileint);
 begin
-   f.fn           := 'mem:' + HexStr({%H-}ptrint(mem), SizeOf(mem) div 2) + ':' + sf(Size);
+   f.fn           := 'mem:' + addr2str(mem) + ':' + sf(Size);
 
    f.extData      := mem;
    f.fSizeLimit   := size;
@@ -74,7 +74,7 @@ begin
 
    if(f.extData <> nil) then begin
       f.fSizeLimit := size;
-      f.fn := 'mem:' + HexStr({%H-}ptrint(f.extData), SizeOf(f.extData) div 2) + ':' + sf(Size);
+      f.fn := 'mem:' + addr2str(f.extData) + ':' + sf(Size);
    end else
       f.raiseError(eNO_MEMORY);
 end;
