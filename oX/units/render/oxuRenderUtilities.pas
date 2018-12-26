@@ -113,10 +113,18 @@ var
 
 begin
    {top}
-   {%H-}vx[0].Assign(x, y);
-   vx[1].Assign(x2, y);
-   vx[2].Assign(x2, y2);
-   vx[3].Assign(x, y2);
+   vx[0][0] := x;
+   vx[0][1] := y;
+
+   vx[1][0] := x2;
+   vx[1][1] := y;
+
+
+   vx[2][0] := x2;
+   vx[2][1] := y2;
+
+   vx[3][0] := x;
+   vx[3][1] := y2;
 
    oxRender.Vertex(vx[0]);
    oxRender.DrawArrays(oxPRIMITIVE_LINE_LOOP, length(vx));
