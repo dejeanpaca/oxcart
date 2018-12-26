@@ -116,6 +116,7 @@ TYPE
       procedure Assign(c: byte);
       function ToString(): string;
       procedure Assign(r, g, b: byte); inline;
+      class function Create(r, g, b: byte): TColor3ub; static; inline;
       function Darken(percent: single): TColor3ub;
       function Lighten(mul: single): TColor3ub;
       function ToColor3f(): TColor3f;
@@ -130,6 +131,7 @@ TYPE
       procedure Assign(c: byte);
       function ToString(): string;
       procedure Assign(r, g, b, a: byte); inline;
+      class function Create(r, g, b, a: byte): TColor4ub; static; inline;
       function Darken(percent: single): TColor4ub;
       function Lighten(mul: single): TColor4ub;
       function ToHex(): string;
@@ -146,6 +148,7 @@ TYPE
       procedure Assign(c: single);
       function ToString(dec: longint = 2): string;
       procedure Assign(r, g, b: single); inline;
+      class function Create(r, g, b: single): TColor3f; static; inline;
       function Darken(percent: single): TColor3f;
       function Lighten(mul: single): TColor3f;
       function ToColor3ub(): TColor3ub;
@@ -159,6 +162,7 @@ TYPE
       procedure Assign(c: single);
       function ToString(dec: longint = 2): string;
       procedure Assign(r, g, b, a: single); inline;
+      class function Create(r, g, b, a: single): TColor4f; static; inline;
       procedure Assign(const color: TColor3f); inline;
       function Darken(percent: single): TColor4f;
       function Lighten(mul: single): TColor4f;
@@ -260,6 +264,13 @@ begin
    Self[2] := b;
 end;
 
+class function TColor3ubHelper.Create(r, g, b: byte): TColor3ub;
+begin
+   Result[0] := r;
+   Result[1] := g;
+   Result[2] := b;
+end;
+
 function TColor3ubHelper.Darken(percent: single): TColor3ub;
 var
    mul: single;
@@ -353,6 +364,14 @@ begin
    Self[1] := g;
    Self[2] := b;
    Self[3] := a;
+end;
+
+class function TColor4ubHelper.Create(r, g, b, a: byte): TColor4ub;
+begin
+   Result[0] := r;
+   Result[1] := g;
+   Result[2] := b;
+   Result[3] := a;
 end;
 
 function TColor4ubHelper.Darken(percent: single): TColor4ub;
@@ -458,6 +477,13 @@ begin
    Self[2] := b;
 end;
 
+class function TColor3fHelper.Create(r, g, b: single): TColor3f;
+begin
+   Result[0] := r;
+   Result[1] := g;
+   Result[2] := b;
+end;
+
 function TColor3fHelper.Darken(percent: single): TColor3f;
 var
    mul: single;
@@ -508,8 +534,8 @@ end;
 
 function TColor3fHelper.ToColor4f(): TColor4f;
 begin
-   Move(Self, Result{%H-}, SizeOf(single) * 3);
    Result[3] := 1.0;
+   Move(Self, Result, SizeOf(single) * 3);
 end;
 
 { TColor4fHelper }
@@ -534,6 +560,14 @@ begin
    Self[1] := g;
    Self[2] := b;
    Self[3] := a;
+end;
+
+class function TColor4fHelper.Create(r, g, b, a: single): TColor4f;
+begin
+   Result[0] := r;
+   Result[1] := g;
+   Result[2] := b;
+   Result[3] := a;
 end;
 
 procedure TColor4fHelper.Assign(const color: TColor3f);
@@ -599,7 +633,9 @@ end;
 
 function TColor4fHelper.ToColor3f(): TColor4f;
 begin
-   Move(Self, Result{%H-}, SizeOf(Single) * 3);
+   Result[0] := Self[0];
+   Result[1] := Self[1];
+   Result[2] := Self[2];
 end;
 
 INITIALIZATION
