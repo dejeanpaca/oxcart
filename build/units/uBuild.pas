@@ -183,6 +183,8 @@ TYPE
       {get the platform we're compiled with}
       function GetCurrentPlatform(): string;
 
+      {test all platforms}
+      procedure TestPlatforms();
       {sets the platform based on what is available}
       procedure SetupAvailablePlatform();
 
@@ -274,6 +276,7 @@ var
 begin
    defaultPlatform.Initialize(defaultPlatform);
 
+   defaultPlatform.Name := 'default';
    build.Platforms.Dispose();
    build.Platforms.Add(defaultPlatform);
 
@@ -432,6 +435,8 @@ begin
 
    {go through platforms and find an available platform}
    SetupAvailablePlatform();
+
+   TestPlatforms();
 
    Initialized := true;
 end;
@@ -1087,6 +1092,34 @@ end;
 function TBuildSystem.GetCurrentPlatform(): string;
 begin
    Result := lowercase({$I %FPCTARGETOS%});
+end;
+
+procedure TBuildSystem.TestPlatforms();
+var
+   i: loopint;
+   p: PBuildPlatform;
+   process: TProcess;
+
+begin
+   for i := 0 to Platforms.n - 1 do begin
+      p := @Platforms.List[i];
+
+      process := GetToolProcess();
+      process.Executable := GetExecutableName(p^.FpcPath + 'fpc');
+      process.Parameters.Add('-iW');
+
+      try
+         process.Execute();
+
+         log.v('Found fpc executable for platform ' + p^.Name + ' at path ' + process.Executable);
+      except
+         on e: Exception do begin
+            log.w('Could not execute fpc for platform ' + p^.Name + ' at path ' + process.Executable);
+         end;
+      end;
+
+      FreeObject(process);
+   end;
 end;
 
 procedure TBuildSystem.SetupAvailablePlatform();
