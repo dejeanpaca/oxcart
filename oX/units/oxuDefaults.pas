@@ -64,7 +64,7 @@ INTERFACE
       {%H-}oxuRendererVulkan,
       {$ENDIF}
       {$IFDEF OX_RENDERER_DX11}
-      {%H-}oxudxRenderer,
+      {%H-}oxuRendererDX,
       {$ENDIF}
 
       { default handlers }
