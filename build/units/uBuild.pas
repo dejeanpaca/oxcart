@@ -800,6 +800,9 @@ var
    bufferRead: longint;
 
 begin
+   {$IFDEF DEBUG}
+   buffer[0] := #0;
+   {$ENDIF}
    if(p.Output <> nil) and (p.Output.NumBytesAvailable > 0) then begin
       bufferRead := p.Output.Read(buffer{%H-}, Length(buffer));
       buffer[bufferRead] := #0;
