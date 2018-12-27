@@ -401,6 +401,9 @@ begin
    result := 0;
    count := 0;
    written := 0;
+   {$IFDEF DEBUG}
+   buffer[0] := 0;
+   {$ENDIF}
 
    ZeroOut(sf, SizeOf(sF));
    ZeroOut(df, SizeOf(dF));
@@ -422,7 +425,7 @@ begin
    Result := FileSize(sF);
 
    repeat
-      BlockRead(sF, buffer{%H-}, BUFFER_SIZE, count);
+      BlockRead(sF, buffer, BUFFER_SIZE, count);
       if(ioerror() <> 0) then begin
          result := eFILE_COPY_READ_SOURCE;
          break;
