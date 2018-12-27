@@ -124,9 +124,9 @@ begin
    w := GetWidgetsContainer();
 
    // go through widgets
-   for i := 0 to w.n - 1 do
-      if (uiTWidget(w.w[i]).Group = Group) and (w.w[i].ClassType = wdgTRadioButton) then
-         Exclude(wdgTRadioButton(w.w[i]).Properties, wdgpTRUE);
+   for i := 0 to w.w.n - 1 do
+      if (uiTWidget(w.w.List[i]).Group = Group) and (w.w.List[i].ClassType = wdgTRadioButton) then
+         Exclude(wdgTRadioButton(w.w.List[i]).Properties, wdgpTRUE);
 
    Include(Properties, wdgpTRUE);
 
