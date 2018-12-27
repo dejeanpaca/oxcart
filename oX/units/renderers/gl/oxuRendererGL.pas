@@ -16,6 +16,7 @@ UNIT oxuRendererGL;
 INTERFACE
 
    USES
+      uStd,
       oxuglRenderer,
       oxuglTextureComponent,
       oxuglTextureGenerate,
@@ -31,5 +32,8 @@ INTERFACE
       oxuglFPShaders;
 
 IMPLEMENTATION
+
+INITIALIZATION
+   Pass();
 
 END.

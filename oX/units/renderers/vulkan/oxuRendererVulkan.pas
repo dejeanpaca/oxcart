@@ -14,8 +14,13 @@ UNIT oxuRendererVulkan;
 
 INTERFACE
 
-   USES oxuVulkanRenderer;
+   USES
+      uStd,
+      oxuVulkanRenderer;
 
 IMPLEMENTATION
+
+INITIALIZATION
+   Pass();
 
 END.
