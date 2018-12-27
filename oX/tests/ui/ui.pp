@@ -6,14 +6,14 @@
 PROGRAM ui;
 
    USES
-      {$INCLUDE oxappuses.inc}, uStd, StringUtils, uLog, uTypeHelper,
+      {$INCLUDE oxappuses.inc}, uStd, StringUtils, uLog,
       {oX}
       oxuWindowTypes,
       oxuWindows, oxuWindow, oxumPrimitive, oxuTransform, oxuPaths, oxuTexture, oxuTextureGenerate,
       oxuRender, oxuScreenshot, oxuWindowSettings,
       {UI}
       uiuControl,
-      uiuSurface, uiuWindowTypes, uiuWindow, uiWidgets, uiuDraw,
+      uiuSurface, uiuWindowTypes, uiuWindow, uiWidgets,
       wdguButton, wdguLabel, wdguTitleButtons, wdguCheckbox, wdguScrollbar, wdguRadioButton, wdguProgressBar,
       wdguList, wdguTabs, wdguInputBox, wdguGrid, wdguTextEdit,
       oxuwndAbout, oxuwndToast, oxuwndQuickMenu, oxuwndSplash, oxuwndSettings, oxuwndColorPicker,
@@ -41,8 +41,6 @@ procedure loadQuad();
 begin
    q.InitQuad();
    q.Scale(50.0, 50.0, 1.0);
-   q.SetTexRender(true);
-   oxTextureGenerate.Generate(oxPaths.textures + 'main.tga', q.texture);
 end;
 
 procedure createSurface();
@@ -172,9 +170,9 @@ begin
    oxwndQuickMenu.Open();
    oxwndSplash.Open();
    oxwndSettings.Open();
-   oxwndColorPicker.Open();
+   oxwndColorPicker.Open();}
 
-   showToast();}
+   showToast();
 end;
 
 procedure onDeinitialize();
