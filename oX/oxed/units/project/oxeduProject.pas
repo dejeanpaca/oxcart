@@ -122,6 +122,9 @@ TYPE
 
       {mark the project as modified}
       procedure MarkModified(newModified: boolean = true);
+
+      {is the project valid}
+      function Valid(): boolean;
    end;
 
 VAR
@@ -161,6 +164,7 @@ end;
 constructor oxedTProject.Create;
 begin
    Name := 'Project';
+   SetIdentifier(Name);
    Session.IncludeThirdPartyUnits := true;
 
    Units.Initialize(Units);
@@ -223,6 +227,11 @@ procedure oxedTProject.MarkModified(newModified: boolean);
 begin
    Modified := newModified;
    oxedTProject.OnProjectModified.Call();
+end;
+
+function oxedTProject.Valid(): boolean;
+begin
+   Result := (Name <> '') and (Identifier <> '');
 end;
 
 INITIALIZATION
