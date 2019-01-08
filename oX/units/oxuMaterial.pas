@@ -174,7 +174,9 @@ TYPE
       {default material}
       Default: oxTMaterial;
 
-      function Instance(): oxTMaterial;
+      function Instance(shader: oxTShader = nil): oxTMaterial;
+      {create a material with the given shader (or default if nil)}
+      function Make(shader: oxTShader = nil): oxTMaterial;
    end;
 
 VAR
@@ -202,14 +204,23 @@ end;
 
 { oxTMaterialGlobal }
 
-function oxTMaterialGlobal.Instance: oxTMaterial;
+function oxTMaterialGlobal.Instance(shader: oxTShader = nil): oxTMaterial;
 begin
    if(MaterialInstance.return <> nil) then
-      Result := oxTMaterial(MaterialInstance.return())
+      Result := oxTMaterial(MaterialInstance.Return())
    else
       Result := oxTMaterial.Create();
 
-   Result.AssignShader(oxShader.Default);
+   if(shader = nil) then
+      shader := oxShader.Default;
+
+   Result.AssignShader(shader);
+end;
+
+function oxTMaterialGlobal.Make(shader: oxTShader): oxTMaterial;
+begin
+   Result := Instance(shader);
+   Result.FromShader();
 end;
 
 { oxTMaterial }
