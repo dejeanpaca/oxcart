@@ -19,6 +19,8 @@ TYPE
    { oxTModelRenderGlobal }
 
    oxTModelRenderGlobal = record
+      class function GetMaterial(material: oxTMaterial): oxTMaterial; static;
+
       {render mesh with the given mesh material}
       procedure RenderMesh(const mesh: oxTMesh; material: oxTMaterial; const pM: oxTMeshMaterial);
       {render mesh with the given material}
@@ -33,6 +35,17 @@ IMPLEMENTATION
 
 { oxTModelRenderGlobal }
 
+class function oxTModelRenderGlobal.GetMaterial(material: oxTMaterial): oxTMaterial;
+begin
+   Result := material;
+
+   if(Result = nil) then
+      Result := oxCurrentMaterial;
+
+   if(Result = nil) then
+      Result := oxMaterial.Default;
+end;
+
 procedure oxTModelRenderGlobal.RenderMesh(const mesh: oxTMesh; material: oxTMaterial; const pM: oxTMeshMaterial);
 var
    currentMaterial: oxTMaterial;
@@ -40,7 +53,7 @@ var
 begin
    currentMaterial := pM.Material;
    if(currentMaterial = nil) then
-      currentMaterial := material;
+      currentMaterial := GetMaterial(material);
 
    currentMaterial.Apply();
 
@@ -58,8 +71,7 @@ begin
    if(mesh.Data.nVertices <> 0) then begin
       oxRender.CullFace(mesh.CullFace);
 
-      if(material = nil) then
-         material := oxMaterial.Default;
+      material := GetMaterial(material);
 
       oxRender.Vertex(Mesh.Data.v[Mesh.Data.vertexOffset]);
 
