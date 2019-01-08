@@ -41,6 +41,8 @@ end;
 INITIALIZATION
    oxedTProject.OnProjectModified.Add(@updateTitle);
 
+   oxedProjectManagement.OnNewProject.Add(@updateTitle);
+   oxedProjectManagement.OnProjectSaved.Add(@updateTitle);
    oxedProjectManagement.OnProjectClosed.Add(@updateTitle);
    oxedProjectManagement.OnProjectOpen.Add(@updateTitle);
 

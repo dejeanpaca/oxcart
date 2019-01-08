@@ -799,7 +799,7 @@ begin
    Result := inherited Key(k);
 
    if(not Result) then begin
-      if(k.Key.Equal(kcBACKSPACE)) then begin
+      if(k.Key.Equal(kcBACKSPACE) or (k.Key.Equal(kcUP, kmALT))) then begin
          if(k.Key.Released()) then
             GoUp();
 

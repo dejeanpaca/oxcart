@@ -57,8 +57,7 @@ begin
 
          GetKeyValue(s, key, value, ' ');
          if(key = 'newmtl') then begin
-            m := oxMaterial.Instance();
-            m.FromShader();
+            m := oxMaterial.Make();
             inc(ld.MaterialCount);
 
             log.v('Loading material: ' + value);
