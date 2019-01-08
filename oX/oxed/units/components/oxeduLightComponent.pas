@@ -20,8 +20,6 @@ TYPE
 
    oxedTLightEditRenderer = class(oxedTEditRenderer)
       constructor Create();
-
-      procedure Initialize(); override;
    end;
 
 VAR
@@ -34,13 +32,8 @@ IMPLEMENTATION
 constructor oxedTLightEditRenderer.Create();
 begin
    Name := 'Light';
-   Glyph := 'lightbulb';
+   GlyphCode := $f0eb;
    ComponentType := oxTLightComponent;
-end;
-
-procedure oxedTLightEditRenderer.Initialize();
-begin
-   GlyphFromFont($f0eb);
 end;
 
 procedure init();

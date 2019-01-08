@@ -35,12 +35,13 @@ constructor oxedTCameraEditRenderer.Create();
 begin
    Name := 'Camera';
    Glyph := 'video-camera';
+   GlyphCode := $f03d;
    ComponentType := oxTCameraComponent;
 end;
 
 procedure oxedTCameraEditRenderer.Initialize();
 begin
-   GlyphFromFont($f03d);
+   inherited;
 end;
 
 procedure init();
