@@ -16,7 +16,7 @@ INTERFACE
       appuMouse, appuActionEvents,
       {ox}
       oxuGridRender, oxuCamera, oxuRender, oxuRenderUtilities,
-      oxuScene, oxuSceneRender, oxuEntity, oxuTypes, oxuTransform, oxumPrimitive,
+      oxuScene, oxuSceneRender, oxuEntity, oxuTypes, oxuTransform, oxumPrimitive, oxuResourcePool,
       {ui}
       oxuUI, uiuWindow, oxuMaterial,
       {oxed}
@@ -203,6 +203,7 @@ begin
    inherited DeInitialize;
 
    FreeObject(Transform);
+   oxResource.Free(Material);
 end;
 
 procedure oxedTSceneEditWindow.SceneRenderEnd;
