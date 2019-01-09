@@ -12,7 +12,7 @@ INTERFACE
 
    USES
       {ox}
-      oxuComponent;
+      oxuComponent, oxuComponentDescriptors;
 
 TYPE
    { oxTRenderComponent }

@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, vmVector,
       {ox}
-      oxumPrimitive, oxuComponent, oxuRenderComponent, oxuSerialization;
+      oxumPrimitive, oxuComponent, oxuComponentDescriptors, oxuRenderComponent, oxuSerialization;
 
 TYPE
 
