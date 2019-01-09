@@ -213,6 +213,13 @@ begin
    oxedIcons.Create(item, $f1b2);
    item := oxedEntityMenu.AddToMenu('Sphere', @oxPrimitiveModelEntities.Sphere, oxedEntityMenu.Menus.Primitives);
    oxedIcons.Create(item, $f111);
+
+   item := oxedEntityMenu.AddToMenu('Circle', @oxPrimitiveModelEntities.Circle, oxedEntityMenu.Menus.Primitives);
+   item := oxedEntityMenu.AddToMenu('Disk', @oxPrimitiveModelEntities.Disk, oxedEntityMenu.Menus.Primitives);
+   item := oxedEntityMenu.AddToMenu('Torus', @oxPrimitiveModelEntities.Torus, oxedEntityMenu.Menus.Primitives);
+   item := oxedEntityMenu.AddToMenu('Cylinder', @oxPrimitiveModelEntities.Cylinder, oxedEntityMenu.Menus.Primitives);
+   item := oxedEntityMenu.AddToMenu('Cone', @oxPrimitiveModelEntities.Cone, oxedEntityMenu.Menus.Primitives);
+
 end;
 
 procedure deinit();
