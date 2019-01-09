@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, vmVector,
       {ox}
-      oxuTransform, oxuProjection, oxuCamera, oxuEntity, oxuComponent, oxuSerialization;
+      oxuTransform, oxuProjection, oxuCamera, oxuEntity, oxuComponent, oxuComponentDescriptors, oxuSerialization;
 
 TYPE
 
@@ -45,7 +45,6 @@ IMPLEMENTATION
 VAR
    serialization: oxTSerialization;
    descriptor: oxTComponentDescriptor;
-
 
 function instance(): TObject;
 begin
