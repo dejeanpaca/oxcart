@@ -15,7 +15,7 @@ INTERFACE
       {app}
       appuMouse,
       {ox}
-      oxuTypes, oxuEntity, oxuComponent,
+      oxuTypes, oxuEntity, oxuComponent, oxuComponentDescriptors,
       {ui}
       uiuTypes, uiWidgets, uiuWidget,
       wdguLabel, wdguWorkbar, wdguCheckbox, wdguInputBox, wdguGroup,

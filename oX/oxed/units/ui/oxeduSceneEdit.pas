@@ -21,7 +21,7 @@ INTERFACE
       oxuUI, uiuWindow, oxuMaterial,
       {oxed}
       uOXED, oxeduMenubar, oxeduWindow, oxeduSceneWindow, oxeduScene, oxeduEditRenderers, oxeduEntityTypes,
-      oxeduSettings, oxeduActions, oxeduDefaultScene, oxeduProjectRunner;
+      oxeduSettings, oxeduActions, oxeduDefaultScene, oxeduProjectRunner, oxeduComponentGlyph;
 
 CONST
    OXED_DISTANCE_SCALE: single = 1 / 6.0;
@@ -342,8 +342,8 @@ begin
    for i := 0 to (componentPairs.n - 1) do begin
       renderer := componentPairs.List[i].Renderer;
 
-      if(renderer <> nil) and (renderer.GlyphTexture <> nil) then
-         RenderGlyph(oxTEntity(componentPairs.List[i].Component.Parent), renderer);
+      if(renderer <> nil) and (renderer.Component^.Glyph.Texture <> nil) then
+         RenderGlyph(oxTEntity(componentPairs.List[i].ComponentObject.Parent), renderer);
    end;
 
    RenderGlyphDone();
@@ -390,7 +390,7 @@ begin
 
    Camera.Transform.Apply();
 
-   oxRenderingUtilities.StartQuad(renderer.GlyphTexture);
+   oxRenderingUtilities.StartQuad(renderer.Component^.Glyph.Texture);
 
    {shadow}
    Camera.Transform.Scale(1.15, 1.15, 1);

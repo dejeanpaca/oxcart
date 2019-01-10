@@ -13,15 +13,13 @@ INTERFACE
    USES
       uStd,
       {ox}
-      oxuCameraComponent, oxeduEditRenderers;
+      oxuCameraComponent, oxeduEditRenderers, oxeduComponent, oxeduComponentGlyph, oxeduComponentGlyphs;
 
 TYPE
    { oxedTCameraEditRenderer }
 
    oxedTCameraEditRenderer = class(oxedTEditRenderer)
       constructor Create();
-
-      procedure Initialize(); override;
    end;
 
 VAR
@@ -34,14 +32,8 @@ IMPLEMENTATION
 constructor oxedTCameraEditRenderer.Create();
 begin
    Name := 'Camera';
-   Glyph := 'video-camera';
-   GlyphCode := $f03d;
-   ComponentType := oxTCameraComponent;
-end;
-
-procedure oxedTCameraEditRenderer.Initialize();
-begin
-   inherited;
+   oxedComponentGlyphs.Add(oxTCameraComponent, '', $f03d);
+   Component := oxedComponents.Find(oxTCameraComponent);
 end;
 
 procedure init();
