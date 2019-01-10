@@ -74,12 +74,12 @@ end;
 
 procedure componentRemoveRenderers(entity: oxTEntity; component: oxTComponent);
 begin
-   oxedTEntityData(entity.Editor).ComponentRenderers := oxedEditRenderers.Renderers.FindForEntity(entity, component);
+   oxedTEntityData(entity.Editor).ComponentRenderers := oxedEditRenderers.FindForEntity(entity, component);
 end;
 
 procedure componentAddRenderers(entity: oxTEntity; {%H-}component: oxTComponent);
 begin
-   oxedTEntityData(entity.Editor).ComponentRenderers := oxedEditRenderers.Renderers.FindForEntity(entity);
+   oxedTEntityData(entity.Editor).ComponentRenderers := oxedEditRenderers.FindForEntity(entity);
 end;
 
 procedure entityCreateData(entity: oxTEntity);
@@ -91,7 +91,7 @@ end;
 procedure entityCloneData(entity: oxTEntity);
 begin
    entityCreateData(entity);
-   oxedTEntityData(entity.Editor).ComponentRenderers := oxedEditRenderers.Renderers.FindForEntity(entity);
+   oxedTEntityData(entity.Editor).ComponentRenderers := oxedEditRenderers.FindForEntity(entity);
 end;
 
 procedure init();

@@ -34,15 +34,12 @@ begin
    Name := 'Light';
 
    oxedComponentGlyphs.Add(oxTLightComponent, '', $f0eb);
-   Component := oxedComponents.Find(oxTLightComponent);
+   Associate(oxTLightComponent);
 end;
 
 procedure init();
 begin
    oxedLightEditRenderer := oxedTLightEditRenderer.Create();
-
-   oxedEditRenderers.Renderers.Add(oxedLightEditRenderer);
-   oxedEditRenderers.Selection.Add(oxedLightEditRenderer);
 end;
 
 procedure deinit();

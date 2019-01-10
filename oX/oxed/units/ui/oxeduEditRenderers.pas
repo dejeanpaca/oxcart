@@ -13,7 +13,7 @@ UNIT oxeduEditRenderers;
 INTERFACE
 
    USES
-      uStd, uInit,
+      uStd, uInit, uLog,
       {ox}
       oxuProjection, oxuCamera, oxuEntity, oxuScene, oxuComponent,
       oxuTexture, oxuDefaultTexture,
@@ -49,6 +49,8 @@ TYPE
       procedure RenderSelected(var {%H-}parameters: oxedTEditRenderParameters); virtual;
       procedure Initialize(); virtual;
       procedure Deinitialize(); virtual;
+
+      procedure Associate(componentType: oxTComponentType);
    end;
 
    oxedTEditRenderComponentPair = record
@@ -57,15 +59,7 @@ TYPE
       ComponentObject: oxTComponent;
    end;
 
-   oxedTEditRenderers = specialize TPreallocatedArrayList<oxedTEditRenderer>;
    oxedTEditRendererComponentPairs = specialize TPreallocatedArrayList<oxedTEditRenderComponentPair>;
-
-   { oxedTEditRenderersHelper }
-
-   oxedTEditRenderersHelper = record helper for oxedTEditRenderers
-      function Find(componentType: oxTComponentType): oxedTEditRenderer;
-      function FindForEntity(entity: oxTEntity; exclude: oxTComponent = nil): oxedTEditRendererComponentPairs;
-   end;
 
    { oxedTEditRendererComponentPairsHelper }
 
@@ -80,13 +74,11 @@ TYPE
       {are the glyphs rendered in 3d}
       Glyphs3D: boolean;
 
-      {renderers active on selection}
-      Selection,
-      {list of all renderers}
-      Renderers: oxedTEditRenderers;
-
       {renderer initialization routines}
       Init: TInitializationProcs;
+
+      function Find(componentType: oxTComponentType): oxedTEditRenderer;
+      function FindForEntity(entity: oxTEntity; exclude: oxTComponent = nil): oxedTEditRendererComponentPairs;
 
       procedure InitParams(out params: oxedTEditRenderParameters);
 
@@ -120,6 +112,7 @@ var
 
 begin
    for i := 0 to (n - 1) do begin
+      params.ComponentObject := List[i].ComponentObject;
       params.Component := List[i].Component;
 
       if(List[i].Renderer <> nil) then
@@ -139,22 +132,21 @@ begin
    editRenderer.Initialize();
 end;
 
-{ oxedTEditRenderersHelper }
 
-function oxedTEditRenderersHelper.Find(componentType: oxTComponentType): oxedTEditRenderer;
+function oxedTEditRenderersGlobal.Find(componentType: oxTComponentType): oxedTEditRenderer;
 var
    i: loopint;
 
 begin
-   for i := 0 to (n - 1) do begin
-      if(List[i].Component^.Component = componentType) then
-         exit(List[i]);
+   for i := 0 to (oxedComponents.List.n - 1) do begin
+      if(oxedComponents.List[i].Component = componentType) then
+         exit(oxedTEditRenderer(oxedComponents.List[i].EditRenderer));
    end;
 
-   result := nil;
+   Result := nil;
 end;
 
-function oxedTEditRenderersHelper.FindForEntity(entity: oxTEntity; exclude: oxTComponent): oxedTEditRendererComponentPairs;
+function oxedTEditRenderersGlobal.FindForEntity(entity: oxTEntity; exclude: oxTComponent): oxedTEditRendererComponentPairs;
 var
    i: loopint;
    pair: oxedTEditRenderComponentPair;
@@ -172,6 +164,7 @@ begin
       end;
    end;
 end;
+
 
 { oxTEditRenderer }
 
@@ -194,6 +187,16 @@ begin
 
 end;
 
+procedure oxedTEditRenderer.Associate(componentType: oxTComponentType);
+begin
+   Component := oxedComponents.Find(componentType);
+
+   if(Component <> nil) then
+      Component^.EditRenderer := Self
+   else
+      log.w('Could not associate component ' + componentType.ClassName + ' with renderer ' + Self.ClassName);
+end;
+
 procedure init();
 var
    i: loopint;
@@ -201,8 +204,17 @@ var
 begin
    oxedEditRenderers.Init.iCall();
 
-   for i := 0 to (oxedEditRenderers.Renderers.n - 1) do begin
-      oxedEditRenderers.Initialize(oxedEditRenderers.Renderers.List[i]);
+   for i := 0 to (oxedComponents.List.n - 1) do begin
+      {$IFDEF DEBUG_EXTENDED}
+      if(oxedComponents.List[i].EditRenderer <> nil) and (oxedComponents.List[i].Component = nil) then
+         log.v('Edit renderer for nil component: ', oxedComponents.List[i].EditRenderer.ClassName);
+
+      if(oxedComponents.List[i].EditRenderer = nil) and (oxedComponents.List[i].Component <> nil) then
+         log.v('Missing edit renderer: ', oxedComponents.List[i].Component.ClassName);
+      {$ENDIF}
+
+      if(oxedComponents.List[i].EditRenderer <> nil) then
+         oxedEditRenderers.Initialize(oxedTEditRenderer(oxedComponents.List[i].EditRenderer));
    end;
 end;
 
@@ -211,19 +223,17 @@ var
    i: loopint;
 
 begin
-   for i := 0 to (oxedEditRenderers.Renderers.n - 1) do
-      oxedEditRenderers.Renderers.List[i].Deinitialize();
+   for i := 0 to (oxedComponents.List.n - 1) do begin
+      if(oxedComponents.List[i].EditRenderer <> nil) then
+         oxedTEditRenderer(oxedComponents.List[i].EditRenderer).Deinitialize();
+   end;
 
    oxedEditRenderers.Init.dCall();
-   oxedEditRenderers.Renderers.Dispose();
 end;
 
 INITIALIZATION
    oxedEditRenderers.Init.Init('oxed.edit_renderers');
    oxedEditRenderers.Glyphs3D := true;
-
-   oxedEditRenderers.Selection.Initialize(oxedEditRenderers.Selection);
-   oxedEditRenderers.Renderers.Initialize(oxedEditRenderers.Renderers);
 
    oxed.Init.Add('oxed.edit_renderers', @init, @deinit);
 

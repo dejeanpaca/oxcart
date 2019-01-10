@@ -33,15 +33,12 @@ constructor oxedTCameraEditRenderer.Create();
 begin
    Name := 'Camera';
    oxedComponentGlyphs.Add(oxTCameraComponent, '', $f03d);
-   Component := oxedComponents.Find(oxTCameraComponent);
+   Associate(oxTCameraComponent);
 end;
 
 procedure init();
 begin
    oxedCameraEditRenderer := oxedTCameraEditRenderer.Create();
-
-   oxedEditRenderers.Renderers.Add(oxedCameraEditRenderer);
-   oxedEditRenderers.Selection.Add(oxedCameraEditRenderer);
 end;
 
 procedure deinit();

@@ -29,7 +29,7 @@ INTERFACE
       oxeduTasksUI, oxeduProjectContextMenu, oxeduProjectSettingsWindow,
       oxeduViewScene, oxeduSceneView, oxeduProjectDialog, oxeduSceneEditTools,
       {components}
-      oxeduCameraComponent, oxeduLightComponent,
+      oxeduNilComponent, oxeduCameraComponent, oxeduLightComponent,
       {initialize keys last}
       oxeduKeys,
       {ui}

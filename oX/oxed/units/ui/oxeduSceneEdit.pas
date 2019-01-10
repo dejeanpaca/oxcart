@@ -20,7 +20,7 @@ INTERFACE
       {ui}
       oxuUI, uiuWindow, oxuMaterial,
       {oxed}
-      uOXED, oxeduMenubar, oxeduWindow, oxeduSceneWindow, oxeduScene, oxeduEditRenderers, oxeduEntityTypes,
+      uOXED, oxeduMenubar, oxeduWindow, oxeduSceneWindow, oxeduScene, oxeduComponent, oxeduEditRenderers, oxeduEntityTypes,
       oxeduSettings, oxeduActions, oxeduDefaultScene, oxeduProjectRunner, oxeduComponentGlyph;
 
 CONST
@@ -72,7 +72,7 @@ TYPE
       procedure RenderSelectAxes();
       procedure RenderGlyphs(const componentPairs: oxedTEditRendererComponentPairs);
       procedure RenderGlyphStart();
-      procedure RenderGlyph(entity: oxTEntity; renderer: oxedTEditRenderer);
+      procedure RenderGlyph(entity: oxTEntity; component: oxedPComponent);
       procedure RenderGlyphDone();
 
       function GetDistanceScale(const p: TVector3f): single;
@@ -334,16 +334,16 @@ end;
 procedure oxedTSceneEditWindow.RenderGlyphs(const componentPairs: oxedTEditRendererComponentPairs);
 var
    i: loopint;
-   renderer: oxedTEditRenderer;
+   component: oxedPComponent;
 
 begin
    RenderGlyphStart();
 
    for i := 0 to (componentPairs.n - 1) do begin
-      renderer := componentPairs.List[i].Renderer;
+      component := componentPairs.List[i].Component;
 
-      if(renderer <> nil) and (renderer.Component^.Glyph.Texture <> nil) then
-         RenderGlyph(oxTEntity(componentPairs.List[i].ComponentObject.Parent), renderer);
+      if(component <> nil) and (component^.Glyph.Texture <> nil) then
+         RenderGlyph(oxTEntity(componentPairs.List[i].ComponentObject.Parent), component);
    end;
 
    RenderGlyphDone();
@@ -359,7 +359,7 @@ begin
    oxRender.AlphaTest(oxTEST_FUNCTION_GREATER, 0.5);
 end;
 
-procedure oxedTSceneEditWindow.RenderGlyph(entity: oxTEntity; renderer: oxedTEditRenderer);
+procedure oxedTSceneEditWindow.RenderGlyph(entity: oxTEntity; component: oxedPComponent);
 var
    p,
    rotation: TVector3f;
@@ -390,7 +390,7 @@ begin
 
    Camera.Transform.Apply();
 
-   oxRenderingUtilities.StartQuad(renderer.Component^.Glyph.Texture);
+   oxRenderingUtilities.StartQuad(component^.Glyph.Texture);
 
    {shadow}
    Camera.Transform.Scale(1.15, 1.15, 1);
