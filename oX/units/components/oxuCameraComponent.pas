@@ -99,7 +99,7 @@ INITIALIZATION
    serialization := oxTSerialization.Create(oxTCameraComponent, @instance);
    serialization.AddObjectProperty('Camera', @oxTCameraComponent(nil).Camera);
 
-   descriptor.Create('camera');
+   descriptor.Create('camera', oxTCameraComponent);
    descriptor.Name := 'Camera';
 
 FINALIZATION
