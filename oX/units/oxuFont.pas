@@ -243,7 +243,7 @@ begin
 
    {allocate memory for texture coordinates}
    try
-      SetLength(buf.t, chars * 4);
+      SetLength(Buf.t, chars * 4);
    except
       exit(eNO_MEMORY);
    end;
@@ -297,9 +297,9 @@ begin
 
          {build texture coordinates}
          if(not oxFont.flippedGen) then {normal texture coordinates}
-            oxPrimitives.GetQuadTextureCoords(cx, cy, px, currentPY, @buf.t[cht])
+            oxPrimitives.GetQuadTextureCoords(cx, cy, px, currentPY, @Buf.t[cht])
          else {vertically flipped texture coordinates}
-            oxPrimitives.GetQuadTextureCoordsFlipped(cx, cy, px, currentPY, @buf.t[cht]);
+            oxPrimitives.GetQuadTextureCoordsFlipped(cx, cy, px, currentPY, @Buf.t[cht]);
 
          {go to next character}
          cx := cx + px;
@@ -322,14 +322,14 @@ begin
       cy := cy - py;
    end;
 
-   buf.Built := true;
+   Buf.Built := true;
 end;
 
 procedure oxTFont.Dispose();
 begin
    oxResource.Destroy(Texture);
 
-   SetLength(buf.t, 0);
+   SetLength(Buf.t, 0);
 end;
 
 procedure oxTFont.Start();
@@ -348,7 +348,7 @@ begin
       if(oxCurrentMaterial <> nil) then
          oxCurrentMaterial.ApplyTexture('texture', Texture);
 
-      oxRender.TextureCoords(buf.t[0]);
+      oxRender.TextureCoords(Buf.t[0]);
 
       if(oxFont.writeUpsideDown) then
          oxTransform.Rotate(180.0, 1.0, 0.0, 0.0);
@@ -835,7 +835,7 @@ end;
 
 function oxTFont.Valid(): boolean;
 begin
-   Result := oxTex.ValidId(Texture) and buf.Built;
+   Result := oxTex.ValidId(Texture) and Buf.Built;
 end;
 
 { oxTFontGlobal }
