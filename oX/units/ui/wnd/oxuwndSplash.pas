@@ -16,7 +16,7 @@ USES
    uAppInfo, appuEvents, appuMouse, appuMouseEvents,
    {oX}
    uOX, oxuTypes, oxuRenderer, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
-   oxuwndBase,
+   oxuwndBase, oxuPaths,
    {ui}
    uiuWindowTypes, uiuWindow, uiWidgets, uiuWidget, uiuControl, uiuTypes,
    {widgets}
@@ -200,7 +200,7 @@ VAR
 INITIALIZATION
    oxTSplashWindow.ShowOnStart := true;
    oxTSplashWindow.AlwaysShowOnStart := false;
-   oxTSplashWindow.ImageFileName := 'data' + DirectorySeparator + 'splash.png';
+   oxTSplashWindow.ImageFileName := oxPaths.Data + 'splash.png';
    oxTSplashWindow.Link := '';
    oxTSplashWindow.LinkCaption := '';
    oxTSplashWindow.BuildInformation := {$I %FPCTarget%} + ' (fpc ' + {$INCLUDE %FPCVersion%} + ')';
