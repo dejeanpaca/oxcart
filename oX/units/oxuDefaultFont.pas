@@ -71,7 +71,7 @@ end;
 
 INITIALIZATION
    oxDefaultFont.Load := true;
-   ox.Init.Add('default_font', @load, @dispose);
+   ox.BaseInit.Add('default_font', @load, @dispose);
 
    oxTFD.Init(tfd);
 

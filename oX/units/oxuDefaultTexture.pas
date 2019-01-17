@@ -65,7 +65,7 @@ end;
 
 INITIALIZATION
    oxDefaultTexture.Load := true;
-   ox.Init.Add('default_texture', @load, @dispose);
+   ox.BaseInit.Add('default_texture', @load, @dispose);
 
 END.
 
