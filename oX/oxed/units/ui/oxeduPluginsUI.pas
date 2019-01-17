@@ -16,7 +16,7 @@ INTERFACE
       uOX, oxuTypes, oxuwndBase, uiWidgets, uiuWidget,
       wdguButton, wdguDivisor, wdguGrid, uiuContextMenu,
       {oxed}
-      oxeduMenubar, oxeduPlugins, oxeduIcons;
+      uOXED, oxeduMenubar, oxeduPlugins, oxeduIcons;
 
 TYPE
 
@@ -138,7 +138,7 @@ begin
 end;
 
 INITIALIZATION
-   ox.Init.Add('ox.settings', @init, @deinit);
+   oxed.Init.Add('ox.settings', @init, @deinit);
    oxedMenubar.OnInit.Add(@menubarInit);
 
 END.
