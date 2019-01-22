@@ -93,12 +93,19 @@ TYPE
 
       {get the world matrix}
       procedure GetWorldMatrix(out m: TMatrix4f);
-      {get the world matrix}
+      {get the world position}
       procedure GetWorldPosition(out p: TVector3f);
-      {get the world matrix}
+      {get the world rotation}
       procedure GetWorldRotation(out p: TVector3f);
-      {get the world matrix}
+      {get the world scale}
       procedure GetWorldScale(out p: TVector3f);
+
+      {set the world position}
+      procedure SetWorldPosition(const p: TVector3f);
+      {set the world rotation}
+      procedure SetWorldRotation(const r: TVector3f);
+      {set the world scale}
+      procedure SetWorldScale(const s: TVector3f);
 
       {call component load methods}
       procedure LoadComponents();
@@ -557,13 +564,91 @@ var
 
 begin
    cur := self;
-   p := vmvZero3f;
+   p := vScale;
 
-   repeat
-      p := p + cur.vScale;
-
+   if(cur.Parent <> nil) then begin
       cur := cur.Parent;
-   until (cur = nil);
+
+      repeat
+         p := p * cur.vScale;
+
+         cur := cur.Parent;
+      until (cur = nil);
+   end;
+end;
+
+procedure oxTEntity.SetWorldPosition(const p: TVector3f);
+var
+   cP: TVector3f;
+   cur: oxTEntity;
+
+begin
+   cP := vmvZero3f;
+
+   if(self.Parent <> nil) then begin
+      cur := self.Parent;
+
+      repeat
+         cP := cP + cur.vScale;
+
+         cur := cur.Parent;
+      until (cur = nil);
+   end;
+
+   vPosition[0] := p[0] - cP[0];
+   vPosition[1] := p[1] - cP[1];
+   vPosition[2] := p[2] - cP[2];
+end;
+
+procedure oxTEntity.SetWorldRotation(const r: TVector3f);
+var
+   cR: TVector3f;
+   cur: oxTEntity;
+
+begin
+   cR := vmvZero3f;
+
+   if(self.Parent <> nil) then begin
+      cur := self.Parent;
+
+      repeat
+         cR := cR + cur.vRotation;
+
+         cur := cur.Parent;
+      until (cur = nil);
+   end;
+
+   vRotation[0] := r[0] - cR[0];
+   vRotation[1] := r[1] - cR[1];
+   vRotation[2] := r[2] - cR[2];
+end;
+
+procedure oxTEntity.SetWorldScale(const s: TVector3f);
+var
+   cS: TVector3f;
+   cur: oxTEntity;
+
+begin
+   cS := vmvZero3f;
+
+   if(self.Parent <> nil) then begin
+      cur := self.Parent;
+      cS := cur.vScale;
+
+      if(cur.Parent <> nil) then begin
+         cur := cur.Parent;
+
+         repeat
+            cS := cS * cur.vScale;
+
+            cur := cur.Parent;
+         until (cur = nil);
+      end;
+   end;
+
+   vRotation[0] := s[0] / cS[0];
+   vRotation[1] := s[1] / cS[1];
+   vRotation[2] := s[2] / cS[2];
 end;
 
 procedure oxTEntity.LoadComponents();
