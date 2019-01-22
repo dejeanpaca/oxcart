@@ -248,7 +248,7 @@ begin
       if(appk.Shift()) then
          distance := 5;
 
-      distance := distance * oxedSettings.CameraSpeed * oxMainTimeFlow;
+      distance := distance * oxedSettings.CameraSpeed * oxTime.Flow;
 
       if(appk.Pressed[kcW] or appk.Pressed[kcUP]) then {forward}
          Camera.MoveForward(distance);
