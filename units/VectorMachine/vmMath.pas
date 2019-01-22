@@ -41,7 +41,11 @@ function vmClampMaxf(value, max: single): single; inline;
 procedure vmClampMax(var value: longint; max: longint); inline;
 function vmClampMaxf(value, max: longint): longint; inline;
 
+procedure vmIncClamp(var value: single; increment, max: single);
+procedure vmDecClamp(var value: single; decrement, min: single);
+
 procedure vmIncClamp(var value: longint; increment, max: longint);
+procedure vmDecClamp(var value: longint; decrement, min: longint);
 
 {checks if the given value is power of 2}
 function vmIsPow2(value: int64): boolean;
@@ -208,12 +212,36 @@ begin
       result := max;
 end;
 
+procedure vmIncClamp(var value: single; increment, max: single);
+begin
+   if(value + increment <= max) then
+      value := value + increment
+   else
+      value := max;
+end;
+
+procedure vmDecClamp(var value: single; decrement, min: single);
+begin
+   if(value - decrement >= min) then
+      value := value - decrement
+   else
+      value := min;
+end;
+
 procedure vmIncClamp(var value: longint; increment, max: longint);
 begin
    if(value + increment <= max) then
       inc(value, increment)
    else
       value := max;
+end;
+
+procedure vmDecClamp(var value: longint; decrement, min: longint);
+begin
+   if(value - decrement >= min) then
+      dec(value, decrement)
+   else
+      value := min;
 end;
 
 function vmIsPow2(value: int64): boolean;
