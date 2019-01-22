@@ -51,7 +51,9 @@ TYPE
       {does the list include a glyph in it's items}
       HasGlyphs,
       {navigation also means selecting}
-      NavigationIsSelection: boolean;
+      NavigationIsSelection,
+      {allows looping navigation}
+      AllowLoopingNavigation: boolean;
 
       {constant item height}
       ItemHeight,
@@ -1035,6 +1037,9 @@ var
    item: loopint;
 
 begin
+   if(AllowLoopingNavigation) and (start >= ItemCount) then
+      start := 0;
+
    if(start < ItemCount) then begin
       item := start;
 
@@ -1043,7 +1048,10 @@ begin
             break;
 
          inc(item);
-      until item >= ItemCount;
+
+         if(AllowLoopingNavigation) and (item >= ItemCount) then
+            item := 0;
+      until (item >= ItemCount) or (item = start);
 
       {we went to the end while finding no navigable items}
       if(item >= ItemCount) then
@@ -1058,6 +1066,9 @@ var
    item: loopint;
 
 begin
+   if(AllowLoopingNavigation) and (start < 0) then
+      start := ItemCount - 1;
+
    if(start >= 0) then begin
       item := start;
 
@@ -1066,7 +1077,10 @@ begin
             break;
 
          dec(item);
-      until item < 0;
+
+         if(AllowLoopingNavigation) and (item < 0) then
+            item := ItemCount - 1;
+      until (item < 0) or (item = start);
 
       {we went below the item list while finding no navigable item}
       if(item < 0) then
