@@ -469,8 +469,16 @@ begin
 end;
 
 procedure oxTEntity.SetPosition(const v: TVector3f);
+var
+   i: loopint;
+
 begin
-   SetPosition(v[0], v[1], v[2]);
+   vPosition := v;
+
+   SetupMatrix();
+
+   for i := 0 to (Components.n - 1) do
+      Components.List[i].OnPositionChanged();
 end;
 
 procedure oxTEntity.SetRotation(x, y, z: single);
@@ -489,8 +497,16 @@ begin
 end;
 
 procedure oxTEntity.SetRotation(const v: TVector3f);
+var
+   i: loopint;
+
 begin
-   SetRotation(v[0], v[1], v[2]);
+   vRotation := v;
+
+   SetupMatrix();
+
+   for i := 0 to (Components.n - 1) do
+      Components.List[i].OnRotationChanged();
 end;
 
 procedure oxTEntity.SetScale(x, y, z: single);
@@ -509,8 +525,16 @@ begin
 end;
 
 procedure oxTEntity.SetScale(const v: TVector3f);
+var
+   i: loopint;
+
 begin
-   SetScale(v[0], v[1], v[2]);
+   vScale := v;
+
+   SetupMatrix();
+
+   for i := 0 to (Components.n - 1) do
+      Components.List[i].OnScaleChanged();
 end;
 
 procedure oxTEntity.GetWorldMatrix(out m: TMatrix4f);
@@ -595,9 +619,7 @@ begin
       until (cur = nil);
    end;
 
-   vPosition[0] := p[0] - cP[0];
-   vPosition[1] := p[1] - cP[1];
-   vPosition[2] := p[2] - cP[2];
+   SetPosition(p - cP);
 end;
 
 procedure oxTEntity.SetWorldRotation(const r: TVector3f);
@@ -618,9 +640,7 @@ begin
       until (cur = nil);
    end;
 
-   vRotation[0] := r[0] - cR[0];
-   vRotation[1] := r[1] - cR[1];
-   vRotation[2] := r[2] - cR[2];
+   SetRotation(r - CR);
 end;
 
 procedure oxTEntity.SetWorldScale(const s: TVector3f);
@@ -646,9 +666,7 @@ begin
       end;
    end;
 
-   vRotation[0] := s[0] / cS[0];
-   vRotation[1] := s[1] / cS[1];
-   vRotation[2] := s[2] / cS[2];
+   SetScale(s / cS);
 end;
 
 procedure oxTEntity.LoadComponents();
