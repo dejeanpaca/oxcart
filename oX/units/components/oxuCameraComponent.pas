@@ -75,7 +75,7 @@ end;
 
 procedure oxTCameraComponent.OnRotationChanged();
 begin
-   Camera.PitchYaw(oxTTransform(Parent).vRotation[0], oxTTransform(Parent).vRotation[1]);
+   Camera.SetForward(oxTTransform(Parent).vRotation);
 end;
 
 procedure oxTCameraComponent.GetBoundingBox(out bbox: TBoundingBox);
