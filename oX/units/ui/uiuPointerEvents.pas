@@ -70,22 +70,22 @@ begin
    end else if(oxui.PointerCapture.WindowOperation = uiWINDOW_POINTER_SIZE_RIGHT) then begin
       w.Resize(w.Dimensions.w + mv.x, w.Dimensions.h);
    end else if(oxui.PointerCapture.WindowOperation = uiWINDOW_POINTER_SIZE_TOP) then begin
-      w.Move(w.Position.x, w.Position.y - mv.y);
-      w.Resize(w.Dimensions.w, w.Dimensions.h - mv.y);
-   end else if(oxui.PointerCapture.WindowOperation = uiWINDOW_POINTER_SIZE_BOTTOM) then begin
+      w.Move(w.Position.x, w.Position.y + mv.y);
       w.Resize(w.Dimensions.w, w.Dimensions.h + mv.y);
+   end else if(oxui.PointerCapture.WindowOperation = uiWINDOW_POINTER_SIZE_BOTTOM) then begin
+      w.Resize(w.Dimensions.w, w.Dimensions.h - mv.y);
    end else if(oxui.PointerCapture.WindowOperation = uiWINDOW_POINTER_SIZE_TL) then begin
-      w.Move(w.Position.x + mv.x, w.Position.y - mv.y);
-      w.Resize(w.Dimensions.w - mv.x, w.Dimensions.h - mv.y);
+      w.Move(w.Position.x + mv.x, w.Position.y + mv.y);
+      w.Resize(w.Dimensions.w - mv.x, w.Dimensions.h + mv.y);
    end else if(oxui.PointerCapture.WindowOperation = uiWINDOW_POINTER_SIZE_TR) then begin
-      w.Move(w.Position.x, w.Position.y - mv.y);
-      w.Resize(w.Dimensions.w + mv.x, w.Dimensions.h - mv.y);
+      w.Move(w.Position.x, w.Position.y + mv.y);
+      w.Resize(w.Dimensions.w + mv.x, w.Dimensions.h + mv.y);
    end else if(oxui.PointerCapture.WindowOperation = uiWINDOW_POINTER_SIZE_BL) then begin
       w.Move(w.Position.x + mv.x, w.Position.y);
-      w.Resize(w.Dimensions.w - mv.x, w.Dimensions.h + mv.y);
+      w.Resize(w.Dimensions.w - mv.x, w.Dimensions.h - mv.y);
    end else if(oxui.PointerCapture.WindowOperation = uiWINDOW_POINTER_SIZE_BR) then begin
       w.Move(w.Position.x, w.Position.y);
-      w.Resize(w.Dimensions.w + mv.x, w.Dimensions.h + mv.y);
+      w.Resize(w.Dimensions.w + mv.x, w.Dimensions.h - mv.y);
    end;
 end;
 
