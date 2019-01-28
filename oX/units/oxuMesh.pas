@@ -80,6 +80,8 @@ TYPE
       {scales a primitive model}
       procedure Scale(scalar: single);
       procedure Scale(x, y, z: single);
+      {rotate given angles around origin (0, 0, 0)}
+      procedure Rotate(x, y, z: single);
       {scale texture coordinates}
       procedure ScaleTexture(scalar: single); inline;
       procedure ScaleTexture(x, y: single);
@@ -211,6 +213,26 @@ begin
    {scale all vertices}
    if(data.nVertices > 0) then
       vmScale(data.v[0], data.nVertices, x, y, z);
+end;
+
+procedure oxTMesh.Rotate(x, y, z: single);
+var
+   i: loopint;
+
+begin
+   {scale all vertices}
+   if(data.nVertices > 0) then begin
+      for i := 0 to Data.nVertices - 1 do begin
+         if(x <> 0) then
+            vmRotateAroundPoint(x * vmcToRad, 1, 0, 0, vmvZero3f, data.v[i]);
+
+         if(y <> 0) then
+            vmRotateAroundPoint(y * vmcToRad, 0, 1, 0, vmvZero3f, data.v[i]);
+
+         if(z <> 0) then
+            vmRotateAroundPoint(z * vmcToRad, 0, 0, 1, vmvZero3f, data.v[i]);
+      end;
+   end;
 end;
 
 procedure oxTMesh.ScaleTexture(scalar: single); inline;
