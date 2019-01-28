@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, vmVector, uLog,
       {ox}
-      oxuSerialization, oxuRenderComponent, oxuModel, oxuModelRender, oxuModelFile;
+      oxuSerialization, oxuComponentDescriptors, oxuRenderComponent, oxuModel, oxuModelRender, oxuModelFile;
 
 TYPE
 
@@ -32,11 +32,14 @@ TYPE
 
       procedure Deserialized; override;
       procedure LoadResources(); override;
+
+      function GetDescriptor(): oxPComponentDescriptor; override;
    end;
 
 IMPLEMENTATION
 
 VAR
+   descriptor: oxTComponentDescriptor;
    serializer: oxTSerialization;
 
 { oxTModelComponent }
@@ -70,12 +73,20 @@ begin
       Model := oxfModel.Load(Path);
 end;
 
+function oxTModelComponent.GetDescriptor(): oxPComponentDescriptor;
+begin
+   Result := @descriptor;
+end;
+
 function instance(): TObject;
 begin
    Result := oxTModelComponent.Create();
 end;
 
 INITIALIZATION
+   descriptor.Create('render', oxTModelComponent);
+   descriptor.Name := 'Model Render';
+
    serializer := oxTSerialization.Create(oxTModelComponent, @instance);
    serializer.AddProperty('Path', @oxTModelComponent(nil).Path, oxSerialization.Types.AnsiString);
 
