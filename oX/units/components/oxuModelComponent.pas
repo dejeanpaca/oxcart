@@ -66,7 +66,8 @@ end;
 
 procedure oxTModelComponent.LoadResources();
 begin
-   Model := oxfModel.Load(Path);
+   if(Model = nil) then
+      Model := oxfModel.Load(Path);
 end;
 
 function instance(): TObject;
