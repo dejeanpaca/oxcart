@@ -314,7 +314,7 @@ end;
 
 procedure oxwglTGlobal.SwapBuffers(wnd: oglTWindow);
 begin
-   if(not windows.SwapBuffers(wnd.wd.dc)) then
+   if(not windows.SwapBuffers(wnd.wd.dc)) and (wnd.wd.dc <> 0) then
       winos.LogError('SwapBuffers');
 end;
 

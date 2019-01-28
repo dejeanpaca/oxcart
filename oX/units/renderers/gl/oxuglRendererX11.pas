@@ -220,8 +220,10 @@ end;
 procedure oxglxTGlobal.SwapBuffers(wnd: oglTWindow);
 begin
    if(x11.DPY <> nil) then begin
-      glXSwapBuffers(x11.DPY, wnd.wd.h);
-      wnd.wd.LastError := x11.GetError();
+      if(wnd.wd.h <> 0) and (x11.DPY <> nil) then begin
+         glXSwapBuffers(x11.DPY, wnd.wd.h);
+         wnd.wd.LastError := x11.GetError();
+      end;
    end;
 end;
 
@@ -295,7 +297,7 @@ begin
    if(Result = nil) then
       log.e('gl > (' + method + ') Failed getting rendering context ' + x11.LastErrorDescription)
    else
-      log.v('gl > (' + method + ') Got rendering context')
+      log.v('gl > (' + method + ') Got rendering context');
 end;
 
 END.
