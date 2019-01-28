@@ -230,8 +230,7 @@ end;
 procedure oxglTRenderer.SwapBuffers(wnd: oxTWindow);
 begin
    {$IFDEF WINDOWS}
-   if(not windows.SwapBuffers(winosTWindow(wnd).wd.dc)) then
-      winos.LogError('SwapBuffers');
+   oxwgl.SwapBuffers(oglTWindow(wnd));
    {$ENDIF}
 
    {$IFDEF X11}

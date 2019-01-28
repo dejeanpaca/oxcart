@@ -24,6 +24,7 @@ TYPE
    oxwglTGlobal = record
       function PreInitWIndow(wnd: oglTWindow): boolean;
 
+      procedure SwapBuffers(wnd: oglTWindow);
       function GetContext(wnd: oglTWindow; shareContext: HGLRC): HGLRC;
    end;
 
@@ -309,6 +310,12 @@ begin
       exit(false);
 
    Result := true;
+end;
+
+procedure oxwglTGlobal.SwapBuffers(wnd: oglTWindow);
+begin
+   if(not windows.SwapBuffers(wnd.wd.dc)) then
+      winos.LogError('SwapBuffers');
 end;
 
 function oxwglTGlobal.GetContext(wnd: oglTWindow; shareContext: HGLRC): HGLRC;
