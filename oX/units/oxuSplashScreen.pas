@@ -13,7 +13,7 @@ UNIT oxuSplashScreen;
 INTERFACE
 
    USES
-      uTiming, uStd, uColors, vmVector,
+      uTiming, uStd, uColors, vmVector, StringUtils,
       appuRun,
       {oX}
       uOX, oxuUI, oxuTypes, oxuTexture, oxuTextureGenerate, oxuPaths, oxuRenderer, oxuRender, oxuThreadTask, oxuMaterial,
@@ -174,12 +174,7 @@ begin
       h := f.GetHeight();
 
       dotsString := '';
-      if(dots = 1) then
-         dotsString := '.'
-      else if(dots = 2) then
-         dotsString := '..'
-      else if(dots = 3) then
-         dotsString := '...';
+      AddLeadingPadding(dotsString, '.', dots);
 
       f.Write(AssociatedWindow.Dimensions.w - (f.GetWidth() * 3) {%H-}- round(w * 0.5), round(h * 0.5), dotsString);
 
