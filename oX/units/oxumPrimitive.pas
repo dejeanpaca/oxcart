@@ -55,7 +55,7 @@ TYPE
       Material: oxTMaterial;
 
       Transform: record
-         Offset,
+         Translation,
          Scale: TVector3f;
          EdgeOffset: single;
       end;
@@ -70,7 +70,7 @@ TYPE
       procedure ScaleTexture(scalar: single); inline;
       procedure ScaleTexture(x, y: single);
       {offset a primitive model}
-      procedure Offset(x, y, z: single);
+      procedure Translate(x, y, z: single);
 
       {render a primitive model}
       procedure Render();
@@ -242,15 +242,15 @@ begin
    Mesh.ScaleTexture(x, y);
 end;
 
-procedure oxTPrimitiveModel.Offset(x, y, z: single);
+procedure oxTPrimitiveModel.Translate(x, y, z: single);
 begin
    {store the offset vertex}
-   Transform.Offset[0] := Transform.Offset[0] + x;
-   Transform.Offset[1] := Transform.Offset[1] + y;
-   Transform.Offset[2] := Transform.Offset[2] + z;
+   Transform.Translation[0] := Transform.Translation[0] + x;
+   Transform.Translation[1] := Transform.Translation[1] + y;
+   Transform.Translation[2] := Transform.Translation[2] + z;
 
    {offset all vertices by specified amount}
-   Mesh.Offset(x, y, z);
+   Mesh.Translate(x, y, z);
 end;
 
 procedure oxTPrimitiveModel.Render();
@@ -370,11 +370,9 @@ begin
    if(Length(Mesh.Data.v) >= QUAD_VERTICES) then
       move(QuadVertices[0], Mesh.Data.v[0], QUAD_VERTICES * SizeOf(TVector3f));
 
-   Transform.Scale[0] := 1.0;
-   Transform.scale[1] := 1.0;
-   Transform.scale[2] := 1.0;
+   Transform.Scale := vmvOne3f;
 
-   Transform.Offset := vmvZero3f;
+   Transform.Translation := vmvZero3f;
 end;
 
 procedure oxTPrimitiveModel.InitCircleDisk(r: single; d: longint; pT: oxTPrimitiveModelType);
