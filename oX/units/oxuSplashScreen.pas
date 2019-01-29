@@ -129,7 +129,7 @@ begin
 
    Quad.Quad();
    Quad.Scale(round(AssociatedWindow.Dimensions.w / 2), round(AssociatedWindow.Dimensions.h / 2), 0);
-   Quad.Offset(round(AssociatedWindow.Dimensions.w / 2), -round(AssociatedWindow.Dimensions.h / 2), 0);
+   Quad.Translate(round(AssociatedWindow.Dimensions.w / 2), -round(AssociatedWindow.Dimensions.h / 2), 0);
 end;
 
 procedure oxTBasicSplashScreen.Unload;
