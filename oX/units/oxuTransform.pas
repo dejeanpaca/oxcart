@@ -61,19 +61,6 @@ TYPE
       class function OrthoFrustum(l, r, b, t, n, f: single): TMatrix4f; static;
 
       class function Instance(): oxTTransform; static;
-
-      published
-         property vpPositionX: single read vPosition[0] write vPosition[0];
-         property vpPositionY: single read vPosition[1] write vPosition[1];
-         property vpPositionZ: single read vPosition[2] write vPosition[2];
-
-         property vpScaleX: single read vScale[0] write vScale[0];
-         property vpScaleY: single read vScale[1] write vScale[1];
-         property vpScaleZ: single read vScale[2] write vScale[2];
-
-         property vpRotationX: single read vRotation[0] write vRotation[0];
-         property vpRotationY: single read vRotation[1] write vRotation[1];
-         property vpRotationZ: single read vRotation[2] write vRotation[2];
    end;
 
 VAR
