@@ -82,14 +82,17 @@ TYPE
       {set position}
       procedure SetPosition(x, y, z: single);
       procedure SetPosition(const v: TVector3f);
+      procedure TranslateValues(x, y, z: single);
 
       {set rotation}
       procedure SetRotation(x, y, z: single);
       procedure SetRotation(const v: TVector3f);
+      procedure RotateValues(x, y, z: Single);
 
       {set scale}
       procedure SetScale(x, y, z: single);
       procedure SetScale(const v: TVector3f);
+      procedure ScaleValues(x, y, z: Single);
 
       {get the world matrix}
       procedure GetWorldMatrix(out m: TMatrix4f);
@@ -119,6 +122,10 @@ TYPE
       procedure UpdateComponents();
       {update children}
       procedure UpdateComponentsInChildren();
+
+      procedure UpdateComponentPosition();
+      procedure UpdateComponentRotation();
+      procedure UpdateComponentScale();
 
       {remove components and children}
       procedure Empty();
@@ -171,7 +178,7 @@ TYPE
       Serialization: oxTSerialization; static;
 
       {create a new empty entity}
-      function New(const name: string = ''): oxTEntity; virtual;
+      function New(const name: string = ''; component: oxTComponent = nil): oxTEntity; virtual;
 
       constructor Create;
    end;
@@ -454,9 +461,6 @@ begin
 end;
 
 procedure oxTEntity.SetPosition(x, y, z: single);
-var
-   i: loopint;
-
 begin
    vPosition[0] := x;
    vPosition[1] := y;
@@ -464,27 +468,28 @@ begin
 
    SetupMatrix();
 
-   for i := 0 to (Components.n - 1) do
-      Components.List[i].OnPositionChanged();
+   UpdateComponentPosition();
 end;
 
 procedure oxTEntity.SetPosition(const v: TVector3f);
-var
-   i: loopint;
-
 begin
    vPosition := v;
 
    SetupMatrix();
 
-   for i := 0 to (Components.n - 1) do
-      Components.List[i].OnPositionChanged();
+   UpdateComponentPosition();
+end;
+
+procedure oxTEntity.TranslateValues(x, y, z: single);
+begin
+   vPosition[0] := vPosition[0] + x;
+   vPosition[1] := vPosition[1] + y;
+   vPosition[2] := vPosition[2] + z;
+
+   SetPosition(vPosition);
 end;
 
 procedure oxTEntity.SetRotation(x, y, z: single);
-var
-   i: loopint;
-
 begin
    vRotation[0] := x;
    vRotation[1] := y;
@@ -492,27 +497,28 @@ begin
 
    SetupMatrix();
 
-   for i := 0 to (Components.n - 1) do
-      Components.List[i].OnRotationChanged();
+   UpdateComponentRotation();
 end;
 
 procedure oxTEntity.SetRotation(const v: TVector3f);
-var
-   i: loopint;
-
 begin
    vRotation := v;
 
    SetupMatrix();
 
-   for i := 0 to (Components.n - 1) do
-      Components.List[i].OnRotationChanged();
+   UpdateComponentRotation();
+end;
+
+procedure oxTEntity.RotateValues(x, y, z: Single);
+begin
+   vRotation[0] := vRotation[0] + x;
+   vRotation[1] := vRotation[1] + y;
+   vRotation[2] := vRotation[2] + z;
+
+   SetRotation(vRotation);
 end;
 
 procedure oxTEntity.SetScale(x, y, z: single);
-var
-   i: loopint;
-
 begin
    vScale[0] := x;
    vScale[1] := y;
@@ -520,21 +526,26 @@ begin
 
    SetupMatrix();
 
-   for i := 0 to (Components.n - 1) do
-      Components.List[i].OnScaleChanged();
+   UpdateComponentScale();
 end;
 
 procedure oxTEntity.SetScale(const v: TVector3f);
-var
-   i: loopint;
 
 begin
    vScale := v;
 
    SetupMatrix();
 
-   for i := 0 to (Components.n - 1) do
-      Components.List[i].OnScaleChanged();
+   UpdateComponentScale();
+end;
+
+procedure oxTEntity.ScaleValues(x, y, z: Single);
+begin
+   vScale[0] := vScale[0] + x;
+   vScale[1] := vScale[1] + y;
+   vScale[2] := vScale[2] + z;
+
+   SetScale(vScale);
 end;
 
 procedure oxTEntity.GetWorldMatrix(out m: TMatrix4f);
@@ -729,6 +740,33 @@ begin
       oxTEntity(Children.List[i]).UpdateComponentsInChildren();
 end;
 
+procedure oxTEntity.UpdateComponentPosition();
+var
+   i: loopint;
+
+begin
+   for i := 0 to (Components.n - 1) do
+      Components.List[i].OnPositionChanged();
+end;
+
+procedure oxTEntity.UpdateComponentRotation();
+var
+   i: loopint;
+
+begin
+   for i := 0 to (Components.n - 1) do
+      Components.List[i].OnRotationChanged();
+end;
+
+procedure oxTEntity.UpdateComponentScale();
+var
+   i: loopint;
+
+begin
+   for i := 0 to (Components.n - 1) do
+      Components.List[i].OnScaleChanged();
+end;
+
 procedure oxTEntity.Empty();
 begin
    Children.Destroy();
@@ -762,10 +800,13 @@ end;
 
 { oxTEntitiesGlobal }
 
-function oxTEntityGlobal.New(const name: string): oxTEntity;
+function oxTEntityGlobal.New(const name: string; component: oxTComponent): oxTEntity;
 begin
    Result := oxTEntity.Create();
    Result.Name := name;
+
+   if(component <> nil) then
+      Result.Add(component);
 end;
 
 constructor oxTEntityGlobal.Create;
