@@ -28,6 +28,9 @@ CONST
    kmDOWN         = $80;
    kmEXTENDED     = $100;
 
+   {list of modifiers}
+   kmMODIFIERS_MASK = kmSHIFT or kmCONTROL or kmALT or kmALTGR or kmCAPS or kmNUM or kmSCROLL;
+
    {key modifiers which are not relevant for comparison}
    kmCOMPARISON_IRRELEVANT = kmCAPS or kmNUM or kmSCROLL or kmDOWN;
 
