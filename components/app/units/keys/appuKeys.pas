@@ -10,7 +10,10 @@ UNIT appuKeys;
 
 INTERFACE
 
-   USES sysutils, StringUtils, uStd, appukcNames;
+   USES
+      sysutils, StringUtils, uStd,
+      {app}
+      appukcNames, appuRun;
 
 CONST
    {key state and modifier constants}
@@ -124,6 +127,12 @@ TYPE
       {determines which keys are pressed and which are not, keycode corresponds to
       a key in the array} {useful for games}
       Pressed: array[0..appkcKEYS_PRESSED_SIZE - 1] of boolean;
+      {was the key pressed in the current cycle}
+      CurrentCyclePressed: array[0..appkcKEYS_PRESSED_SIZE - 1] of boolean;
+      {pressed and released in the same cycle}
+      ReleasePressed: array[0..appkcKEYS_PRESSED_SIZE - 1] of boolean;
+      {Previous state of Pressed array, for more advanced input handling}
+      WasPressed: array[0..appkcKEYS_PRESSED_SIZE - 1] of boolean;
 
       {initialize a appTKey record}
       class procedure Init(out k: appTKey); static;
@@ -149,6 +158,13 @@ TYPE
       function Context(): boolean;
       {checks whether a key with the specified keycode is pressed}
       function IsPressed(KeyCode: longint): boolean;
+
+      {get an interpolated value for keypressed}
+      function Interpolated(kc: loopint): single;
+      function Interpolated(kc, optionalKC: loopint): single;
+
+      {update state of WasPressed array}
+      procedure UpdatePressed();
    end;
 
 VAR
@@ -454,7 +470,7 @@ begin
    Result := appk.pressed[kcLCTRL] or appk.pressed[kcRCTRL];
 end;
 
-function appTKeyGlobal.Alt: boolean;
+function appTKeyGlobal.Alt(): boolean;
 begin
    Result := appk.pressed[kcLALT] or appk.pressed[kcRALT];
 end;
@@ -474,9 +490,33 @@ end;
 function appTKeyGlobal.IsPressed(KeyCode: longint): boolean;
 begin
    if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
-      Result := appk.pressed[KeyCode]
+      Result := appk.Pressed[KeyCode]
    else
       Result := false;
+end;
+
+function appTKeyGlobal.Interpolated(kc: loopint): single;
+begin
+   if(ReleasePressed[kc]) then
+      Result := 0.25
+   else if(Pressed[kc] and WasPressed[kc]) then
+      Result := 1.0
+   else if(WasPressed[kc] or (Pressed[kc])) then
+      Result := 0.5
+   else
+      Result := 0;
+end;
+
+function appTKeyGlobal.Interpolated(kc, optionalKC: loopint): single;
+begin
+   Result := Interpolated(kc);
+   if(Result = 0) then
+      Result := Interpolated(optionalKC);
+end;
+
+procedure appTKeyGlobal.UpdatePressed();
+begin
+   WasPressed := Pressed;
 end;
 
 { KEY LIST }
@@ -521,5 +561,21 @@ function appTKeyList.Find(const k: appTKey): appPKeyListItem;
 begin
    Result := Find(k.Code, k.State);
 end;
+
+procedure run();
+begin
+   {clear keypressed for current cycle}
+   ZeroPtr(@appk.CurrentCyclePressed, SizeOf(appk.CurrentCyclePressed));
+   {clear releasepressed for current cycle}
+   ZeroPtr(@appk.ReleasePressed, SizeOf(appk.ReleasePressed));
+   {move current cycle results to previous cycle results}
+   appk.WasPressed := appk.Pressed;
+end;
+
+VAR
+   runRoutine: appTRunRoutine;
+
+INITIALIZATION
+   appRun.AddRoutine(runRoutine, 'appKeys', @run);
 
 END.

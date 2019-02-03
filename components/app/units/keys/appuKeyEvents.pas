@@ -10,7 +10,8 @@ UNIT appuKeyEvents;
 
 INTERFACE
 
-   USES appuKeys, appuEvents;
+   USES
+      uStd, appuKeys, appuEvents;
 
 CONST
    {event actions}
@@ -25,7 +26,7 @@ TYPE
      ProcessingRoutine: procedure(var e: appTEvent);
 
      {queues a key event}
-     function Queue(var k: appTKey; evID: longword = appKEY_EVENT): appPEvent;
+     function Queue(var k: appTKey; evID: longword = appKEY_EVENT; process: boolean = true): appPEvent;
    end;
 
 VAR
@@ -33,7 +34,7 @@ VAR
 
 IMPLEMENTATION
 
-function appTKeyEvents.Queue(var k: appTKey; evID: longword): appPEvent;
+function appTKeyEvents.Queue(var k: appTKey; evID: longword; process: boolean): appPEvent;
 var
    event: appTEvent;
    kEvent: appTKeyEvent;
@@ -44,7 +45,19 @@ begin
 
    kEvent.Key := k;
 
-   result := appEvents.Queue(event, kEvent, SizeOf(kEvent));
+   Result := appEvents.Queue(event, kEvent, SizeOf(kEvent));
+
+   if(process) then begin
+      {determine if key was pressed in this cycle}
+      if((not appk.Pressed[k.Code]) and k.IsPressed()) then
+         appk.CurrentCyclePressed[k.Code] := True;
+
+      {is the key still pressed}
+      appk.Pressed[k.Code] := k.IsPressed();
+
+      if(appk.CurrentCyclePressed[k.Code] and (not appk.Pressed[k.Code])) then
+         appk.ReleasePressed[k.Code] := true;
+   end;
 end;
 
 procedure keyAction(var event: appTEvent);
