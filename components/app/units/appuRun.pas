@@ -25,6 +25,7 @@ TYPE
    { appTRunGlobal }
 
    appTRunGlobal = record
+      PreRunRoutines,
       RunRoutines: record
          s,
          e: appPRunRoutine;
@@ -92,6 +93,15 @@ var
 
 begin
    Result := true;
+
+   {call all pre-run routines}
+   curRoutine := PreRunRoutines.s;
+   if(curRoutine <> nil) then repeat
+      if(curRoutine^.Exec <> nil) then
+         curRoutine^.Exec();
+
+      curRoutine := curRoutine^.Next;
+   until (curRoutine = nil);
 
    {call all run routines}
    curRoutine := RunRoutines.s;
