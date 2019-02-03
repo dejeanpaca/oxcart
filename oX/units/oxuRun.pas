@@ -53,6 +53,7 @@ IMPLEMENTATION
 
 VAR
    old: TBoolFunction = nil;
+   ProgramInitStartTime: TDateTime;
 
 procedure oxCycle();
 begin
@@ -72,9 +73,6 @@ begin
 
    ox.OnRunAfter.Call();
 end;
-
-VAR
-   ProgramInitStartTime: TDateTime;
 
 function Init(): boolean;
 begin
@@ -174,7 +172,8 @@ begin
 end;
 
 INITIALIZATION
-   oxRun.CycleRoutine.name := 'ox.cycle';
-   oxRun.CycleRoutine.exec := @oxCycle;
-   oxRun.CycleRoutine.next := nil;
+   oxRun.CycleRoutine.Name := 'ox.cycle';
+   oxRun.CycleRoutine.Exec := @oxCycle;
+   oxRun.CycleRoutine.Next := nil;
+
 END.
