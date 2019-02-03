@@ -241,6 +241,7 @@ end;
 procedure oxedTSceneWindow.Update();
 var
    distance: single = 1;
+   interpolated: single = 0;
 
 begin
    if(ControlCamera) and (IsSelected()) then begin
@@ -252,23 +253,29 @@ begin
 
       distance := distance * oxedSettings.CameraSpeed * oxTime.Flow;
 
-      if(appk.Pressed[kcW] or appk.Pressed[kcUP]) then {forward}
-         Camera.MoveForward(distance);
+      interpolated := appk.Interpolated(kcW, kcUP);
+      if(interpolated <> 0) then {forward}
+         Camera.MoveForward(distance * interpolated);
 
-      if(appk.Pressed[kcS] or appk.Pressed[kcDOWN]) then {back}
-         Camera.MoveForward(-distance);
+      interpolated := appk.Interpolated(kcS, kcDOWN);
+      if(interpolated <> 0) then {back}
+         Camera.MoveForward(-distance * interpolated);
 
-      if(appk.Pressed[kcA] or appk.Pressed[kcLEFT]) then {left}
-         Camera.Strafe(-distance);
+      interpolated := appk.Interpolated(kcA, kcLEFT);
+      if(interpolated <> 0) then {left}
+         Camera.Strafe(-distance * interpolated);
 
-      if(appk.Pressed[kcD] or appk.Pressed[kcRIGHT]) then {right}
-         Camera.Strafe(distance);
+      interpolated := appk.Interpolated(kcD, kcRIGHT);
+      if(interpolated <> 0) then {right}
+         Camera.Strafe(distance * interpolated);
 
-      if(appk.Pressed[kcPGUP]) then {up}
-         Camera.MoveVertical(distance);
+      interpolated := appk.Interpolated(kcPGUP);
+      if(interpolated <> 0) then {up}
+         Camera.MoveVertical(distance * interpolated);
 
-      if(appk.Pressed[kcPGDN]) then {down}
-         Camera.MoveVertical(-distance);
+      interpolated := appk.Interpolated(kcPGDN);
+      if(interpolated <> 0) then {down}
+         Camera.MoveVertical(-distance * interpolated);
    end;
 end;
 
