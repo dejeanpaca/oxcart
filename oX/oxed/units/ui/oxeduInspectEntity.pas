@@ -37,9 +37,9 @@ TYPE
       Y,
       Z: wdgTInputBox;
 
-      procedure SetValue(w: wdgTInputBox; p, v: single; update: boolean = true);
+      procedure SetValue(w: wdgTInputBox; p, v: single; update: boolean = true; initial: boolean = false);
 
-      procedure SetValue(const value: TVector3f; update: boolean = true);
+      procedure SetValue(const value: TVector3f; update: boolean = true; initial: boolean = false);
       procedure GetValues(out xValue, yValue, zValue: single);
    end;
 
@@ -78,22 +78,23 @@ IMPLEMENTATION
 
 { oxedTInspectorWindowTransformWidgets }
 
-procedure oxedTInspectorWindowTransformWidgets.SetValue(w: wdgTInputBox; p, v: single; update: boolean);
+procedure oxedTInspectorWindowTransformWidgets.SetValue(w: wdgTInputBox; p, v: single; update: boolean; initial: boolean);
 begin
-   if(w <> nil) and (p <> v) then begin
+   if(w <> nil) and ((p <> v) or initial) then begin
       w.SetText(FormatFloat('', v), wdgINPUT_BOX_NO_TEXT_CHANGE);
-      w.GoToHome();
 
       if(update) then
          w.CallTextChanged();
+
+      w.GoToHome();
    end;
 end;
 
-procedure oxedTInspectorWindowTransformWidgets.SetValue(const value: TVector3f; update: boolean);
+procedure oxedTInspectorWindowTransformWidgets.SetValue(const value: TVector3f; update: boolean; initial: boolean);
 begin
-   SetValue(X, Previous[0], value[0], update);
-   SetValue(Y, Previous[1], value[1], update);
-   SetValue(Z, Previous[2], value[2], update);
+   SetValue(X, Previous[0], value[0], update, initial);
+   SetValue(Y, Previous[1], value[1], update, initial);
+   SetValue(Z, Previous[2], value[2], update, initial);
 
    Previous := value;
 end;
@@ -211,9 +212,9 @@ begin
       if(wdg.Name <> nil) then
          wdg.Name.SetText(Entity.Name);
 
-      wdg.Position.SetValue(Entity.vPosition, false);
-      wdg.Rotation.SetValue(Entity.vRotation, false);
-      wdg.Scale.SetValue(Entity.vScale, false);
+      wdg.Position.SetValue(Entity.vPosition, false, true);
+      wdg.Rotation.SetValue(Entity.vRotation, false, true);
+      wdg.Scale.SetValue(Entity.vScale, false, true);
 
       for i := 0 to (Entity.Components.n - 1) do begin
          descriptor := Entity.Components.List[i].GetDescriptor();
@@ -227,9 +228,9 @@ begin
 
       wdg.Enable.Check(true);
       wdg.Name.SetText('');
-      wdg.Position.SetValue(vmvZero3f);
-      wdg.Rotation.SetValue(vmvZero3f);
-      wdg.Scale.SetValue(vmvUnit3f);
+      wdg.Position.SetValue(vmvZero3f, false);
+      wdg.Rotation.SetValue(vmvZero3f, false);
+      wdg.Scale.SetValue(vmvUnit3f, false);
    end;
 end;
 
@@ -293,16 +294,19 @@ begin
 
    v.Z.Move(parentW - wdgDEFAULT_SPACING - iw, y);
    v.Z.Resize(iw, 15);
+   v.Z.GoToHome();
 
    v.ZLabel.Move(v.Z.LeftOf(0) - v.ZLabel.Dimensions.w, y - 2);
 
    v.Y.Move(v.ZLabel.LeftOf(0) - iw - spacing, y);
    v.Y.Resize(iw, 15);
+   v.Y.GoToHome();
 
    v.YLabel.Move(v.Y.LeftOf(0) - v.YLabel.Dimensions.w, y - 2);
 
    v.X.Move(v.YLabel.LeftOf(0) - iw - spacing, y);
    v.X.Resize(iw, 15);
+   v.X.GoToHome();
 
    v.XLabel.Move(v.X.LeftOf(0) - v.XLabel.Dimensions.w, y - 2);
 end;
