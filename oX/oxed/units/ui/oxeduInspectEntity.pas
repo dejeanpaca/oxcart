@@ -37,9 +37,9 @@ TYPE
       Y,
       Z: wdgTInputBox;
 
-      procedure SetValue(w: wdgTInputBox; p, v: single);
+      procedure SetValue(w: wdgTInputBox; p, v: single; update: boolean = true);
 
-      procedure SetValue(const value: TVector3f);
+      procedure SetValue(const value: TVector3f; update: boolean = true);
       procedure GetValues(out xValue, yValue, zValue: single);
    end;
 
@@ -78,20 +78,22 @@ IMPLEMENTATION
 
 { oxedTInspectorWindowTransformWidgets }
 
-procedure oxedTInspectorWindowTransformWidgets.SetValue(w: wdgTInputBox; p, v: single);
+procedure oxedTInspectorWindowTransformWidgets.SetValue(w: wdgTInputBox; p, v: single; update: boolean);
 begin
    if(w <> nil) and (p <> v) then begin
       w.SetText(FormatFloat('', v), wdgINPUT_BOX_NO_TEXT_CHANGE);
       w.GoToHome();
-      w.CallTextChanged();
+
+      if(update) then
+         w.CallTextChanged();
    end;
 end;
 
-procedure oxedTInspectorWindowTransformWidgets.SetValue(const value: TVector3f);
+procedure oxedTInspectorWindowTransformWidgets.SetValue(const value: TVector3f; update: boolean);
 begin
-   SetValue(X, Previous[0], value[0]);
-   SetValue(Y, Previous[1], value[1]);
-   SetValue(Z, Previous[2], value[2]);
+   SetValue(X, Previous[0], value[0], update);
+   SetValue(Y, Previous[1], value[1], update);
+   SetValue(Z, Previous[2], value[2], update);
 
    Previous := value;
 end;
@@ -209,9 +211,9 @@ begin
       if(wdg.Name <> nil) then
          wdg.Name.SetText(Entity.Name);
 
-      wdg.Position.SetValue(Entity.vPosition);
-      wdg.Rotation.SetValue(Entity.vRotation);
-      wdg.Scale.SetValue(Entity.vScale);
+      wdg.Position.SetValue(Entity.vPosition, false);
+      wdg.Rotation.SetValue(Entity.vRotation, false);
+      wdg.Scale.SetValue(Entity.vScale, false);
 
       for i := 0 to (Entity.Components.n - 1) do begin
          descriptor := Entity.Components.List[i].GetDescriptor();
@@ -227,7 +229,7 @@ begin
       wdg.Name.SetText('');
       wdg.Position.SetValue(vmvZero3f);
       wdg.Rotation.SetValue(vmvZero3f);
-      wdg.Scale.SetValue(vmvZero3f);
+      wdg.Scale.SetValue(vmvUnit3f);
    end;
 end;
 
@@ -308,9 +310,9 @@ end;
 procedure oxedTInspectEntity.Update(wnd: oxedTWindow);
 begin
    if(Entity <> nil) then begin
-      wdg.Position.SetValue(Entity.vPosition);
-      wdg.Rotation.SetValue(Entity.vRotation);
-      wdg.Scale.SetValue(Entity.vScale);
+      wdg.Position.SetValue(Entity.vPosition, false);
+      wdg.Rotation.SetValue(Entity.vRotation, false);
+      wdg.Scale.SetValue(Entity.vScale, false);
    end;
 end;
 
