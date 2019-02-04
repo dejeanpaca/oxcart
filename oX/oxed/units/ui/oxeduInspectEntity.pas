@@ -37,6 +37,8 @@ TYPE
       Y,
       Z: wdgTInputBox;
 
+      procedure SetValue(w: wdgTInputBox; p, v: single);
+
       procedure SetValue(const value: TVector3f);
       procedure GetValues(out xValue, yValue, zValue: single);
    end;
@@ -66,7 +68,7 @@ TYPE
       procedure CreateVector(const caption: string; var v: oxedTInspectorWindowTransformWidgets; onChange: wdgTInputBoxOnChangeMethod = nil);
       procedure PositionVector(y: loopint; var v: oxedTInspectorWindowTransformWidgets);
 
-      procedure Update(wnd: oxedTWindow); override;
+      procedure Update({%H-}wnd: oxedTWindow); override;
    end;
 
 VAR
@@ -76,25 +78,20 @@ IMPLEMENTATION
 
 { oxedTInspectorWindowTransformWidgets }
 
+procedure oxedTInspectorWindowTransformWidgets.SetValue(w: wdgTInputBox; p, v: single);
+begin
+   if(w <> nil) and (p <> v) then begin
+      w.SetText(FormatFloat('', v), wdgINPUT_BOX_NO_TEXT_CHANGE);
+      w.GoToHome();
+      w.CallTextChanged();
+   end;
+end;
+
 procedure oxedTInspectorWindowTransformWidgets.SetValue(const value: TVector3f);
 begin
-   if(X <> nil) and (Previous[0] <> value[0]) then begin
-      X.SetText(FormatFloat('', value[0]), wdgINPUT_BOX_NO_TEXT_CHANGE);
-      X.GoToHome();
-      X.CallTextChanged();
-   end;
-
-   if(Y <> nil) and (Previous[1] <> value[1])  then begin
-      Y.SetText(FormatFloat('', value[1]), wdgINPUT_BOX_NO_TEXT_CHANGE);
-      Y.GoToHome();
-      Y.CallTextChanged();
-   end;
-
-   if(Z <> nil) and (Previous[2] <> value[2]) then begin
-      Z.SetText(FormatFloat('', value[2]), wdgINPUT_BOX_NO_TEXT_CHANGE);
-      Z.GoToHome();
-      Z.CallTextChanged();
-   end;
+   SetValue(X, Previous[0], value[0]);
+   SetValue(Y, Previous[1], value[1]);
+   SetValue(Z, Previous[2], value[2]);
 
    Previous := value;
 end;
@@ -356,4 +353,3 @@ INITIALIZATION
    oxedProjectRunner.OnBeforeStop.Add(@sceneChange);
 
 END.
-
