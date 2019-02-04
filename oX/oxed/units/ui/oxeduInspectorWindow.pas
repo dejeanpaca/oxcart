@@ -42,6 +42,8 @@ TYPE
       procedure Open({%H-}wnd: oxedTWindow); virtual;
       procedure Close({%H-}wnd: oxedTWindow); virtual;
       procedure SizeChanged({%H-}wnd: oxedTWindow); virtual;
+      {called each cycle on update}
+      procedure Update({%H-}wnd: oxedTWindow); virtual;
    end;
 
    oxedTInspectorClass = class of oxedTInspector;
@@ -67,6 +69,8 @@ TYPE
 
       procedure Open(inspector: oxedTInspector);
       procedure Close();
+
+      procedure Update(); override;
    end;
 
    { oxedTInspectorEdit }
@@ -116,6 +120,11 @@ begin
 
 end;
 
+procedure oxedTInspector.Update(wnd: oxedTWindow);
+begin
+
+end;
+
 { oxedTInspectorWindow }
 
 procedure oxedTInspectorWindow.Initialize;
@@ -150,7 +159,7 @@ begin
    wdg.Groups.Add(Result);
 end;
 
-procedure oxedTInspectorWindow.SizeGroups;
+procedure oxedTInspectorWindow.SizeGroups();
 var
    i, size: loopint;
 
@@ -178,7 +187,7 @@ begin
    end;
 end;
 
-procedure oxedTInspectorWindow.SetGroupWidths;
+procedure oxedTInspectorWindow.SetGroupWidths();
 var
    i: loopint;
 
@@ -204,7 +213,7 @@ begin
       CurrentInspector.SizeChanged(Self);
 end;
 
-procedure oxedTInspectorWindow.SizeChanged;
+procedure oxedTInspectorWindow.SizeChanged();
 begin
    inherited SizeChanged;
 
@@ -230,9 +239,15 @@ begin
    end;
 end;
 
-procedure oxedTInspectorWindow.Close;
+procedure oxedTInspectorWindow.Close();
 begin
    Open(nil);
+end;
+
+procedure oxedTInspectorWindow.Update();
+begin
+   if(CurrentInspector <> nil) then
+      CurrentInspector.Update(Self);
 end;
 
 { oxedTInspectorEdit }
