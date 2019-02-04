@@ -209,7 +209,7 @@ begin
    end;
 end;
 
-procedure afterProjectInitialize();
+procedure onStart();
 begin
    projectKey := oxTKeyGlobal(oxLibReferences.FindInstance('oxTKeyGlobal'));
    if(projectKey = nil) then
@@ -218,6 +218,10 @@ begin
    projectPointer := oxTPointerGlobal(oxLibReferences.FindInstance('oxTPointerGlobal'));
    if(projectPointer = nil) then
       log.e('Failed to get project global pointer reference');
+
+   {set ox lib to focused if any of our windows is selected}
+   if(oxedGameView.Instance <> nil) then
+      oxedLib.Settings^.Focused := oxedGameView.Instance.IsSelected();
 end;
 
 procedure projectStop();
@@ -231,7 +235,7 @@ INITIALIZATION
    oxedMenubar.OnInit.Add(@initMenubar);
 
    oxedProjectRunner.OnBeforeStart.Add(@beforeProjectStart);
-   oxedProjectRunner.OnStart.Add(@afterProjectInitialize);
+   oxedProjectRunner.OnStart.Add(@onStart);
    oxedProjectRunner.OnStop.Add(@projectStop);
 
 END.
