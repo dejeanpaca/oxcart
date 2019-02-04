@@ -27,6 +27,8 @@ TYPE
    { oxedTInspectorWindowTransformWidgets }
 
    oxedTInspectorWindowTransformWidgets = record
+      Previous: TVector3f;
+
       Lbl,
       XLabel,
       YLabel,
@@ -63,6 +65,8 @@ TYPE
 
       procedure CreateVector(const caption: string; var v: oxedTInspectorWindowTransformWidgets; onChange: wdgTInputBoxOnChangeMethod = nil);
       procedure PositionVector(y: loopint; var v: oxedTInspectorWindowTransformWidgets);
+
+      procedure Update(wnd: oxedTWindow); override;
    end;
 
 VAR
@@ -74,18 +78,25 @@ IMPLEMENTATION
 
 procedure oxedTInspectorWindowTransformWidgets.SetValue(const value: TVector3f);
 begin
-   if(X <> nil) then
+   if(X <> nil) and (Previous[0] <> value[0]) then begin
       X.SetText(FormatFloat('', value[0]), wdgINPUT_BOX_NO_TEXT_CHANGE);
+      X.GoToHome();
+      X.CallTextChanged();
+   end;
 
-   if(Y <> nil) then
+   if(Y <> nil) and (Previous[1] <> value[1])  then begin
       Y.SetText(FormatFloat('', value[1]), wdgINPUT_BOX_NO_TEXT_CHANGE);
+      Y.GoToHome();
+      Y.CallTextChanged();
+   end;
 
-   if(Z <> nil) then
+   if(Z <> nil) and (Previous[2] <> value[2]) then begin
       Z.SetText(FormatFloat('', value[2]), wdgINPUT_BOX_NO_TEXT_CHANGE);
+      Z.GoToHome();
+      Z.CallTextChanged();
+   end;
 
-   X.CallTextChanged();
-   Y.CallTextChanged();
-   Z.CallTextChanged();
+   Previous := value;
 end;
 
 
@@ -295,6 +306,15 @@ begin
    v.X.Resize(iw, 15);
 
    v.XLabel.Move(v.X.LeftOf(0) - v.XLabel.Dimensions.w, y - 2);
+end;
+
+procedure oxedTInspectEntity.Update(wnd: oxedTWindow);
+begin
+   if(Entity <> nil) then begin
+      wdg.Position.SetValue(Entity.vPosition);
+      wdg.Rotation.SetValue(Entity.vRotation);
+      wdg.Scale.SetValue(Entity.vScale);
+   end;
 end;
 
 procedure entityRemoved(entity: oxTEntity);
