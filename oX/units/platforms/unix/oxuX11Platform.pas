@@ -394,45 +394,45 @@ begin
    XkbGetState(x11.DPY, xkbUSeCoreKbd, @state);
 
    if(state.mods and ShiftMask = 0) then begin
-      appk.Pressed[kcLSHIFT] := False;
-      appk.Pressed[kcRSHIFT] := False;
+      appk.Properties[kcLSHIFT].Clear(kpPRESSED);
+      appk.Properties[kcLSHIFT].Clear(kpPRESSED);
 
       appk.Modifiers.Clear(kmSHIFT);
    end else
       appk.Modifiers.Prop(kmSHIFT);
 
    if (state.mods and modifiers.alt = 0)  then begin
-      appk.Pressed[kcLALT] := False;
-      appk.Pressed[kcRALT] := False;
+      appk.Properties[kcLALT].Clear(kpPRESSED);
+      appk.Properties[kcRALT].Clear(kpPRESSED);
 
       appk.Modifiers.Clear(kmALT);
    end else
       appk.Modifiers.Prop(kmALT);
 
    if (state.mods and ControlMask = 0)  then begin
-      appk.Pressed[kcLCTRL] := False;
-      appk.Pressed[kcRCTRL] := False;
+      appk.Properties[kcLCTRL].Clear(kpPRESSED);
+      appk.Properties[kcRCTRL].Clear(kpPRESSED);
 
       appk.Modifiers.Clear(kmCONTROL);
    end else
       appk.Modifiers.Prop(kmCONTROL);
 
    if (state.mods and modifiers.numlock = 0)  then begin
-      appk.Pressed[kcNUMLOCK] := False;
+      appk.Properties[kcNUMLOCK].Clear(kpPRESSED);
 
       appk.Modifiers.Clear(kmNUM);
    end else
       appk.Modifiers.Prop(kmNUM);
 
    if (state.mods and LockMask = 0)  then begin
-      appk.Pressed[kcCAPSLOCK] := False;
+      appk.Properties[kcCAPSLOCK].Clear(kpPRESSED);
 
       appk.Modifiers.Clear(kmCAPS);
    end else
       appk.Modifiers.Prop(kmCAPS);
 
    if (state.mods and modifiers.scroll = 0)  then begin
-      appk.Pressed[kcSCROLLLOCK] := False;
+      appk.Properties[kcSCROLLLOCK].Clear(kpPRESSED);
 
       appk.Modifiers.Clear(kmSCROLL);
    end else
