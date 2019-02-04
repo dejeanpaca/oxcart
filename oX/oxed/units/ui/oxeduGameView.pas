@@ -36,6 +36,9 @@ TYPE
 
       procedure Initialize; override;
 
+      procedure OnActivate; override;
+      procedure OnDeactivate(); override;
+
       protected
          procedure RPositionChanged; override;
          procedure PositionChanged; override;
@@ -114,6 +117,7 @@ procedure GetMouseEvent(wnd: uiTWindow; var m: appTMouseEvent; x, y: longint);
 begin
    m.x := x;
    m.y := wnd.Dimensions.h - y;
+
    {TODO: Find the library window attached to this wnd and set it to the event}
 end;
 
@@ -151,6 +155,22 @@ begin
 
    SceneRenderer := oxSceneRender.Default;
    SceneRenderer.Scene := Scene;
+end;
+
+procedure oxedTGameViewWindow.OnActivate;
+begin
+   inherited OnActivate;
+
+   if(oxedLib.Settings <> nil) then
+      oxedLib.Settings^.Focused := true;
+end;
+
+procedure oxedTGameViewWindow.OnDeactivate();
+begin
+   inherited OnDeactivate();
+
+   if(oxedLib.Settings <> nil) then
+      oxedLib.Settings^.Focused := false;
 end;
 
 procedure oxedTGameViewWindow.RPositionChanged;
