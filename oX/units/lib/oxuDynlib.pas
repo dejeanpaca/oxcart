@@ -15,7 +15,11 @@ INTERFACE
       {app}
       uAppInfo, uApp,
       {ox}
-      uOX, oxuGlobalInstances, oxuInit, oxuRun;
+      uOX, oxuGlobalInstances, oxuInit, oxuRun, oxulibSettings;
+
+CONST
+   {library interface version (does not necessarily indicate engine compatibility)}
+   OX_LIBRARY_VERSION_STRING = '3';
 
 TYPE
    { oxTLibrary }
@@ -41,6 +45,9 @@ TYPE
       procedure SetParameters(var params: TStringArray); virtual;
 
       procedure Run(); virtual;
+
+      {get library mode settings}
+      function GetSettings(): oxPLibrarySettings; virtual;
    end;
 
    oxTLibraryLoadRoutine = function(): oxTLibrary;
@@ -66,16 +73,16 @@ begin
    result := oxLibrary;
 end;
 
-procedure ox_library_unload;
+procedure ox_library_unload();
 begin
    FreeObject(oxLibrary);
 
    log.v('ox library unloaded');
 end;
 
-function ox_library_version: string;
+function ox_library_version(): string;
 begin
-   result := '2';
+   Result := OX_LIBRARY_VERSION_STRING;
 end;
 
 { oxTLibrary }
@@ -150,6 +157,11 @@ end;
 procedure oxTLibrary.Run();
 begin
    oxRun.GoCycle();
+end;
+
+function oxTLibrary.GetSettings(): oxPLibrarySettings;
+begin
+   Result := @oxLibrarySettings;
 end;
 
 INITIALIZATION

@@ -13,7 +13,7 @@ INTERFACE
    USES
       dynlibs, uStd, uLog, uAppInfo, uFileUtils,
       {ox}
-      oxuDynlib, oxuGlobalInstances, oxuWindows,
+      oxuDynlib, oxulibSettings, oxuGlobalInstances, oxuWindows,
       {oxed}
       oxeduProject, oxeduMessages;
 TYPE
@@ -32,6 +32,7 @@ TYPE
       end;
 
       oxWindows: oxTWindows;
+      Settings: oxPLibrarySettings;
 
       function Load(): boolean;
       function Unload(): boolean;
@@ -79,6 +80,7 @@ begin
 
       UnloadLibrary(Lib);
       oxLib := nil;
+      Settings := nil;
 
       Lib := 0;
       log.i('Library unloaded successfully');
@@ -91,7 +93,6 @@ end;
 function oxedTLibraryGlobal.LoadLib: string;
 var
    path: string;
-   version: string;
    size: loopint;
 
 begin
@@ -120,10 +121,8 @@ begin
    if(routines.Version = nil) then
       exit('Library loaded, but no unload routine found');
 
-   version := oxuDynlib.ox_library_version();
-
-   if(version <> routines.Version()) then
-      exit('Library version mismatch. Got ' + routines.Version() + ', expected ' + version + '. Please rebuild.');
+   if(OX_LIBRARY_VERSION_STRING <> routines.Version()) then
+      exit('Library version mismatch. Got ' + routines.Version() + ', expected ' + OX_LIBRARY_VERSION_STRING + '. Please rebuild.');
 
    oxLib := routines.Load();
 
@@ -138,6 +137,8 @@ begin
    appInfo^.SetOrganization('oxed_projects');
 
    oxLibReferences := oxLib.LibraryInstances;
+
+   Settings := oxLib.GetSettings();
 
    exit('');
 end;
