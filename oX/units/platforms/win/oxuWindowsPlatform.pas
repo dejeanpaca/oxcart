@@ -150,26 +150,26 @@ begin
       key.State.Prop(kmDOWN);
 
    {set global modifiers}
-   if(key.Code = kcCAPSLOCK)
-      appk.Modifiers.Prop(kmCAPS, key.State.IsSet(kmDOWN));
+   if(key.Code = kcCAPSLOCK) then
+      appk.Modifiers.Prop(kmCAPS, key.IsPressed());
 
-   if(key.Code = kcNUMLOCK)
-      appk.Modifiers.Prop(kmNUM, key.State.IsSet(kmDOWN));
+   if(key.Code = kcNUMLOCK) then
+      appk.Modifiers.Prop(kmNUM, key.IsPressed());
 
-   if(key.Code = kmSCROLL)
-      appk.Modifiers.Prop(kmSCROLL, key.State.IsSet(kmDOWN));
+   if(key.Code = kmSCROLL) then
+      appk.Modifiers.Prop(kmSCROLL, key.IsPressed());
 
-   if(key.Code = kcLSHIFT) or (key.Code = kcRSHIFT)
-      appk.Modifiers.Prop(kmSHIFT, key.State.IsSet(kmDOWN));
+   if(key.Code = kcLSHIFT) or (key.Code = kcRSHIFT) then
+      appk.Modifiers.Prop(kmSHIFT, key.IsPressed());
 
    if(key.Code = kcLCTRL) or (key.Code = kcRCTRL) then
-      appk.Modifiers.Prop(kmCONTROL, key.State.IsSet(kmDOWN));
+      appk.Modifiers.Prop(kmCONTROL, key.IsPressed());
 
-   if(key.Code = kcLALT)then
-      appk.Modifiers.Prop(kmALT, key.State.IsSet(kmDOWN));
+   if(key.Code = kcLALT) then
+      appk.Modifiers.Prop(kmALT, key.IsPressed());
 
    if(key.Code = kcRALT) then
-      appk.Modifiers.Prop(kmALTGR, key.State.IsSet(kmDOWN));
+      appk.Modifiers.Prop(kmALTGR, key.IsPressed());
 
    {add the key to the queue only if the key is pressed}
    if(key.Code <> 0) and (rCount > 0) then begin
@@ -188,32 +188,21 @@ var
 begin
    kbState[0] := 0;
    GetKeyboardState(kbState);
+   appk.Modifiers := 0;
 
    for i := 0 to high(kbState) do begin
       if(appkRemapCodes[i] <> 0) then begin
-         appk.Pressed[appkRemapCodes[i]] := hi(kbState[i]) <> 0;
+         appk.Properties[appkRemapCodes[i]].Prop(kpPRESSED, hi(kbState[i]) <> 0);
       end;
    end;
 
-   if(lo(kbState[VK_CAPITAL]) <> 0) then
-      appk.Modifiers.Prop(kmCAPS)
-   else
-      appk.Modifiers.Clear(kmCAPS);
+   appk.Modifiers.Prop(kmCAPS, kbState[VK_CAPITAL] and $0001 <> 0);
+   appk.Modifiers.Prop(kmSCROLL, kbState[VK_SCROLL] and $0001 <> 0);
+   appk.Modifiers.Prop(kmNUM, kbState[VK_NUMLOCK] and $0001 <> 0);
 
-   if(lo(kbState[VK_SHIFT]) <> 0) then
-      appk.Modifiers.Prop(kmSHIFT)
-   else
-      appk.Modifiers.Clear(kmSHIFT);
-
-   if(lo(kbState[VK_CONTROL]) <> 0) then
-      appk.Modifiers.Prop(kmCONTROL)
-   else
-      appk.Modifiers.Clear(kmCONTROL);
-
-   if(lo(kbState[VK_MENU]) <> 0) then
-      appk.Modifiers.Prop(kmALT)
-   else
-      appk.Modifiers.Clear(kmALT);
+   appk.Modifiers.Prop(kmSHIFT, hi(kbState[VK_SHIFT]) <> 0);
+   appk.Modifiers.Prop(kmCONTROL, hi(kbState[VK_CONTROL]) <> 0);
+   appk.Modifiers.Prop(kmALT, hi(kbState[VK_MENU]) <> 0);
 end;
 
 procedure queueMouseEvent(wnd: oxTWindow; wParam: longint; action, Button: longword);
