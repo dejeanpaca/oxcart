@@ -84,6 +84,8 @@ VAR
    {mouse button state}
    mButtonState: longword;
 
+   pendingResetModifierKeys: boolean = false;
+
 { MOUSE HANDLER }
 function winmGetX(): longint;
 var
@@ -113,6 +115,34 @@ begin
    Windows.ShowCursor(FALSE);
 end;
 
+{ KEY }
+procedure resetModifierKeys();
+var
+   kbState: TKeyboardState;
+   i: loopint;
+
+begin
+   kbState[0] := 0;
+   GetKeyboardState(kbState);
+
+   for i := 0 to high(kbState) do begin
+      if(appkRemapCodes[i] <> 0) then begin
+         appk.Properties[appkRemapCodes[i]].Prop(kpPRESSED, hi(kbState[i]) <> 0);
+      end;
+   end;
+
+   appk.Modifiers.Prop(kmCAPS, kbState[VK_CAPITAL] and $0001 <> 0);
+   appk.Modifiers.Prop(kmSCROLL, kbState[VK_SCROLL] and $0001 <> 0);
+   appk.Modifiers.Prop(kmNUM, kbState[VK_NUMLOCK] and $0001 <> 0);
+
+   appk.Modifiers.Prop(kmSHIFT, hi(kbState[VK_SHIFT]) <> 0);
+   appk.Modifiers.Prop(kmCONTROL, hi(kbState[VK_CONTROL]) <> 0);
+   appk.Modifiers.Prop(kmALT, hi(kbState[VK_MENU]) <> 0);
+
+   pendingResetModifierKeys := false;
+end;
+
+
 { WINDOW }
 
 function findWindow(w: HWND): oxTWindow;
@@ -135,15 +165,28 @@ var
    rCount: longint;
    key: appTKey;
    ev: appPEvent;
+   extended: boolean;
 
 begin
+   if(pendingResetModifierKeys) then
+      resetModifierKeys();
+
    rCount := lo(LParam);
+
+   extended := LParam and (1 shl 24) > 0;
 
    {initialize the key}
    ZeroOut(key, SizeOf(key));
 
    {set the key code}
    key.Code := appkRemapCodes[Lo(Hi(LParam))];
+
+   if(extended) then begin
+      if(key.Code = kcLALT) then
+         key.Code := kcRALT
+      else if(key.Code = kcLCTRL) then
+         key.Code := kcRCTRL;
+   end;
 
    {set up the up/down state}
    if(AMessage = WM_KEYDOWN) or (AMessage = WM_SYSKEYDOWN) then
@@ -165,7 +208,7 @@ begin
    if(key.Code = kcLCTRL) or (key.Code = kcRCTRL) then
       appk.Modifiers.Prop(kmCONTROL, key.IsPressed());
 
-   if(key.Code = kcLALT) then
+   if(key.Code = kcLALT) or (key.Code = kcRALT) then
       appk.Modifiers.Prop(kmALT, key.IsPressed());
 
    if(key.Code = kcRALT) then
@@ -178,31 +221,6 @@ begin
          ev^.wnd := wnd;
       end;
    end;
-end;
-
-procedure resetModifierKeys();
-var
-   kbState: TKeyboardState;
-   i: loopint;
-
-begin
-   kbState[0] := 0;
-   GetKeyboardState(kbState);
-   appk.Modifiers := 0;
-
-   for i := 0 to high(kbState) do begin
-      if(appkRemapCodes[i] <> 0) then begin
-         appk.Properties[appkRemapCodes[i]].Prop(kpPRESSED, hi(kbState[i]) <> 0);
-      end;
-   end;
-
-   appk.Modifiers.Prop(kmCAPS, kbState[VK_CAPITAL] and $0001 <> 0);
-   appk.Modifiers.Prop(kmSCROLL, kbState[VK_SCROLL] and $0001 <> 0);
-   appk.Modifiers.Prop(kmNUM, kbState[VK_NUMLOCK] and $0001 <> 0);
-
-   appk.Modifiers.Prop(kmSHIFT, hi(kbState[VK_SHIFT]) <> 0);
-   appk.Modifiers.Prop(kmCONTROL, hi(kbState[VK_CONTROL]) <> 0);
-   appk.Modifiers.Prop(kmALT, hi(kbState[VK_MENU]) <> 0);
 end;
 
 procedure queueMouseEvent(wnd: oxTWindow; wParam: longint; action, Button: longword);
@@ -308,8 +326,10 @@ begin
          queueMouseEvent(wnd, WParam, appmcMOVED, mbts);
       end;
 
-      WM_SETFOCUS:
+      WM_SETFOCUS: begin
          resetModifierKeys();
+         pendingResetModifierKeys := true;
+      end;
 
       {system command has been issued}
       WM_SYSCOMMAND: begin
