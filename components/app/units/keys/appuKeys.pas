@@ -41,13 +41,13 @@ CONST
 
    { key properties }
    {key is pressed}
-   kpPRESSED               = 1;
+   kpPRESSED                  = $01;
    {key was pressed previous cycle}
-   kpWAS_PRESSED           = 2;
+   kpWAS_PRESSED              = $02;
    {key was just pressed in current cycle}
-   kpCYCLE_PRESSED         = 4;
+   kpCYCLE_PRESSED            = $04;
    {key was pressed and released in the same cycle}
-   kpPRESSED_RELEASED      = 8;
+   kpPRESSED_RELEASED         = $08;
 
 
    {list of keycodes}
@@ -71,11 +71,11 @@ TYPE
       {set keycode and state from string}
       procedure FromString(const s: string);
       {get string representation of key}
-      function ToString(kc: longint; st: TBitSet): string;
+      function ToString(kc: longint; st: TBitSet; extended: boolean = false): string;
       {get string representation of key}
-      function ToString(): string;
+      function ToString(extended: boolean = false): string;
       {get list of modifiers as string}
-      class function GetModifiersString(m: TBitSet): string; static;
+      class function GetModifiersString(m: TBitSet; extended: boolean = false): string; static;
       {get list of modifiers as string}
       function GetModifiersString(): string;
       {is the key pressed}
@@ -179,6 +179,8 @@ TYPE
 
       {update state per cycle}
       procedure UpdateCycle();
+      {update state per cycle}
+      procedure LogState();
    end;
 
 VAR
@@ -240,23 +242,13 @@ begin
       Code := appkNames.FindCode('kc' + keyCodeString);
 end;
 
-function appTKey.ToString(kc: longint; st: TBitSet): string;
+function appTKey.ToString(kc: longint; st: TBitSet; extended: boolean): string;
 var
    s: string = '';
 
 begin
    if(kc <> 0) then begin
-      if(st.IsSet(kmALT)) then
-         s := s + 'ALT+';
-
-      if(st.IsSet(kmCONTROL)) then
-         s := s + 'CTRL+';
-
-      if(st.IsSet(kmSHIFT)) then
-         s := s + 'SHIFT+';
-
-      if(st.IsSet(kmEXTENDED)) then
-         s := s + 'EXTENDED+';
+      s := GetModifiersString(st, extended);
 
       s := s + appkNames.Get(kc);
    end;
@@ -264,12 +256,12 @@ begin
    Result := s;
 end;
 
-function appTKey.ToString(): string;
+function appTKey.ToString(extended: boolean): string;
 begin
-   Result := ToString(Code, State);
+   Result := ToString(Code, State, extended);
 end;
 
-class function appTKey.GetModifiersString(m: TBitSet): string;
+class function appTKey.GetModifiersString(m: TBitSet; extended: boolean): string;
 var
    s: string = '';
 
@@ -285,6 +277,17 @@ begin
 
    if(m.IsSet(kmEXTENDED)) then
       s := s + 'EXTENDED+';
+
+   if(extended) then begin
+      if(m.IsSet(kmNUM)) then
+         s := s + 'NUM+';
+
+      if(m.IsSet(kmSCROLL)) then
+         s := s + 'SCROLL+';
+
+      if(m.IsSet(kmDOWN)) then
+         s := s + 'DOWN+';
+   end;
 
    Result := s;
 end;
@@ -432,42 +435,42 @@ begin
          Result := ' ';
       kcSEMICOLON:
          if(shiftPressed) then
-            Result := ':' 
-         else 
+            Result := ':'
+         else
             Result := ';';
-      kcAPOSTROPHE: 
+      kcAPOSTROPHE:
          if(shiftPressed) then
-            Result := '"' 
-         else 
+            Result := '"'
+         else
             Result := '''';
-      kcNUMADD: 
+      kcNUMADD:
          Result := '+';
-      kcNUMMUL: 
+      kcNUMMUL:
          Result := '*';
       kc1..kc6:
          if(shiftPressed) then
             Result := char(k.Code - $10)
-         else 
+         else
             Result := char(k.Code);
-      kc7: 
+      kc7:
          if(shiftPressed) then
-            Result := '/' 
-         else 
+            Result := '/'
+         else
             Result := '7';
-      kc8: 
+      kc8:
          if(shiftPressed) then
-            Result := '*' 
-         else 
+            Result := '*'
+         else
             Result := '8';
-      kc9: 
+      kc9:
          if(shiftPressed) then
             Result := '('
-         else 
+         else
             Result := '9';
-      kc0: 
+      kc0:
          if(shiftPressed) then
             Result := ')'
-         else 
+         else
             Result := '0';
    end;
 end;
@@ -548,6 +551,7 @@ end;
 function appTKeyGlobal.Interpolated(kc, optionalKC: loopint): single;
 begin
    Result := Interpolated(kc);
+
    if(Result = 0) then
       Result := Interpolated(optionalKC);
 end;
@@ -556,10 +560,30 @@ procedure appTKeyGlobal.UpdateCycle();
 var
    i: loopint;
 
-   begin
+begin
+   for i := Low(Properties) to High(Properties) do begin
+      Properties[i].Clear(kpCYCLE_PRESSED or kpPRESSED_RELEASED);
+      Properties[i].Prop(kpWAS_PRESSED, Properties[i].IsSet(kpPRESSED));
+   end;
+end;
+
+procedure appTKeyGlobal.LogState();
+var
+   i: loopint;
+
+begin
    for i := Low(appk.Properties) to High(appk.Properties) do begin
-      appk.Properties[i].Clear(kpCYCLE_PRESSED or kpPRESSED_RELEASED);
-      appk.Properties[i].Prop(kpWAS_PRESSED, appk.Properties[i].IsSet(kpPRESSED));
+      if(appk.Properties[i].IsSet(kpPRESSED)) then
+         writeln('Pressed: ', appkNames.Get(i));
+
+      if(appk.Properties[i].IsSet(kpWAS_PRESSED)) then
+         writeln('WasPressed: ', appkNames.Get(i));
+
+      if(appk.Properties[i].IsSet(kpCYCLE_PRESSED)) then
+         writeln('CyclePressed: ', appkNames.Get(i));
+
+      if(appk.Properties[i].IsSet(kpPRESSED_RELEASED)) then
+         writeln('PressedReleased: ', appkNames.Get(i));
    end;
 end;
 
@@ -615,6 +639,6 @@ VAR
    runRoutine: appTRunRoutine;
 
 INITIALIZATION
-   appRun.AddRoutine(runRoutine, 'appKeys', @run);
+   appRun.AddPreRoutine(runRoutine, 'appKeys', @run);
 
 END.
