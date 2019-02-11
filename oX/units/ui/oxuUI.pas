@@ -342,14 +342,11 @@ begin
    oxui.Material.MarkPermanent();
 end;
 
-VAR
-   updateControlsRoutine: appTRunRoutine;
-
 INITIALIZATION
    oxui := oxTUI.Create();
    oxRenderers.PostUseRoutines.Add(@onUse);
 
-   appRun.AddRoutine(updateControlsRoutine, 'ui.update', @updateControls);
+   ox.OnRun.Add(@updateControls);
 
    ox.dvar.Add('ui', oxTUI.dvg);
 
