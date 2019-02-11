@@ -58,7 +58,7 @@ TYPE
    TKeyState = TBitSet;
 
    {key}
-   appPKey = ^appTKEyEvent;
+   appPKey = ^appTKey;
 
    { appTKey }
 
