@@ -52,14 +52,10 @@ procedure oxCycle();
 IMPLEMENTATION
 
 VAR
-   old: TBoolFunction = nil;
    ProgramInitStartTime: TDateTime;
 
 procedure oxCycle();
 begin
-   if(old <> nil) then
-      old();
-
    oxPlatform.ProcessEvents();
 
    appRun.Control();
