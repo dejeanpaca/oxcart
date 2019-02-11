@@ -16,20 +16,32 @@ INTERFACE
 
 TYPE
    appPRunRoutine = ^appTRunRoutine;
+
+   { appTRunRoutine }
+
    appTRunRoutine = record
       Name: string;
       Exec: TProcedure;
       Next: pointer;
    end;
 
+   { appTRunRoutines }
+
+   appTRunRoutines = record
+      s,
+      e: appPRunRoutine;
+
+      procedure Call();
+      function Find(const routine: appTRunRoutine): boolean;
+      procedure Add(var routine: appTRunRoutine);
+      procedure Add(out routine: appTRunRoutine; const name: string; exec: TProcedure);
+   end;
+
    { appTRunGlobal }
 
    appTRunGlobal = record
       PreRunRoutines,
-      RunRoutines: record
-         s,
-         e: appPRunRoutine;
-      end;
+      RunRoutines: appTRunRoutines;
 
       {main app control routine}
       procedure Control();
@@ -42,15 +54,78 @@ TYPE
       procedure Run();
 
       {adds a run routine to the execution list}
-      function FindRoutine(var routine: appTRunRoutine): Boolean;
       procedure AddRoutine(var routine: appTRunRoutine);
       procedure AddRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
+      procedure AddPreRoutine(var routine: appTRunRoutine);
+      procedure AddPreRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
    end;
 
 VAR
    appRun: appTRunGlobal;
 
 IMPLEMENTATION
+
+{ appTRunRoutines }
+
+procedure appTRunRoutines.Call();
+var
+   current: appPRunRoutine;
+
+begin
+   {call all pre-run routines}
+   current := s;
+
+   if(current <> nil) then repeat
+      if(current^.Exec <> nil) then
+         current^.Exec();
+
+      current := current^.Next;
+   until (current = nil);
+end;
+
+function appTRunRoutines.Find(const routine: appTRunRoutine): boolean;
+var
+   cur: appPRunRoutine;
+
+begin
+   cur := s;
+
+   if(cur <> nil) then begin
+      repeat
+         if(cur = @routine) then
+            exit(true);
+
+         cur := cur^.Next;
+      until (cur = nil);
+   end;
+
+   Result := false;
+end;
+
+procedure appTRunRoutines.Add(var routine: appTRunRoutine);
+begin
+   {do not add same routine multiple times}
+   if(Find(routine)) then
+      exit;
+
+   routine.Next := nil;
+
+   if(s = nil) then
+      s := @routine
+   else
+      e^.Next := @routine;
+
+   e := @routine;
+end;
+
+procedure appTRunRoutines.Add(out routine: appTRunRoutine; const name: string; exec: TProcedure);
+begin
+   ZeroPtr(@routine, SizeOf(routine));
+   routine.Name := name;
+   routine.Exec := exec;
+
+   Add(routine);
+end;
 
 {main app control routine}
 procedure appTRunGlobal.Control();
@@ -88,29 +163,11 @@ end;
 
 {Application Run}
 function appTRunGlobal.Cycle(dosleep: boolean): boolean;
-var
-   curRoutine: appPRunRoutine;
-
 begin
    Result := true;
 
-   {call all pre-run routines}
-   curRoutine := PreRunRoutines.s;
-   if(curRoutine <> nil) then repeat
-      if(curRoutine^.Exec <> nil) then
-         curRoutine^.Exec();
-
-      curRoutine := curRoutine^.Next;
-   until (curRoutine = nil);
-
-   {call all run routines}
-   curRoutine := RunRoutines.s;
-   if(curRoutine <> nil) then repeat
-      if(curRoutine^.Exec <> nil) then
-         curRoutine^.Exec();
-
-      curRoutine := curRoutine^.Next;
-   until (curRoutine = nil);
+   PreRunRoutines.Call();
+   RunRoutines.Call();
 
    if(dosleep) then
       Sleep();
@@ -136,47 +193,24 @@ begin
    until (not app.Active); {repeat until the application is no longer active}
 end;
 
-function appTRunGlobal.FindRoutine(var routine: appTRunRoutine): Boolean;
-var
-   cur: appPRunRoutine;
-
-begin
-   cur := RunRoutines.s;
-   if(cur <> nil) then begin
-      repeat
-         if(cur = @routine) then
-            exit(true);
-
-         cur := cur^.Next;
-      until (cur = nil);
-   end;
-
-   Result := false;
-end;
-
 procedure appTRunGlobal.AddRoutine(var routine: appTRunRoutine);
 begin
-   {do not add same routine multiple times}
-   if(FindRoutine(routine)) then
-      exit;
-
-   routine.Next := nil;
-
-   if(RunRoutines.s = nil) then
-      RunRoutines.s := @routine
-   else
-      RunRoutines.e^.Next := @routine;
-
-   RunRoutines.e := @routine;
+   RunRoutines.Add(routine);
 end;
 
 procedure appTRunGlobal.AddRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
 begin
-   ZeroPtr(@routine, SizeOf(routine));
-   routine.Name := name;
-   routine.Exec := exec;
+   RunRoutines.Add(routine, name, exec);
+end;
 
-   AddRoutine(routine);
+procedure appTRunGlobal.AddPreRoutine(var routine: appTRunRoutine);
+begin
+   PreRunRoutines.Add(routine);
+end;
+
+procedure appTRunGlobal.AddPreRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
+begin
+   PreRunRoutines.Add(routine, name, exec);
 end;
 
 END.
