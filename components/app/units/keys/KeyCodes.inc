@@ -154,12 +154,13 @@
    {extra keys}
    kcPAUSEBREAK   = 160;
    kcSYSREQ       = 161;
+   kcPRINTSCREEN  = 162;
 
-   kcLOS          = 162;
-   kcROS          = 163;
-   kcLCONTEXT     = 164;
-   kcRCONTEXT     = 165;
-   kcSLEEP        = 166;
+   kcLOS          = 163;
+   kcROS          = 164;
+   kcLCONTEXT     = 165;
+   kcRCONTEXT     = 166;
+   kcSLEEP        = 167;
    
    {the following key codes are named for the default symbol obtained
    when the keys are pressed on a US keyboard, but may vary from system
