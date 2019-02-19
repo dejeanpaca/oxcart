@@ -96,10 +96,13 @@ end;
 procedure oxTTransform.SetupMatrix();
 begin
    Matrix := vmmUnit4;
+
    Translate(vPosition);
+
    RotateX(vRotation[0]);
    RotateY(vRotation[1]);
    RotateZ(vRotation[2]);
+
    Scale(vScale);
 end;
 
@@ -136,7 +139,11 @@ end;
 
 procedure oxTTransform.Rotate(w, x, y, z: single);
 var
-   c, s, c1, c2, c3: single;
+   c,
+   s,
+   cx,
+   cy,
+   cz: single;
    m: TMatrix4f;
 
 begin
@@ -145,23 +152,23 @@ begin
    c := cos(w);
    s := sin(w);
 
-   c1 := x * (1 - c);
-   c2 := y * (1 - c);
-   c3 := z * (1 - c);
+   cx := x * (1 - c);
+   cy := y * (1 - c);
+   cz := z * (1 - c);
 
    m := vmmUnit4;
 
-   m[0][0] := (x * c1) + c;
-   m[0][1] := (x * c2) - z * s;
-   m[0][2] := (x * c3) + y * s;
+   m[0][0] := (x * cx) + c;
+   m[0][1] := (x * cy) - z * s;
+   m[0][2] := (x * cz) + y * s;
 
-   m[1][0] := (y * c1) + z * s;
-   m[1][1] := (y * c2) + c;
-   m[1][2] := (y * c3) - x * s;
+   m[1][0] := (y * cx) + z * s;
+   m[1][1] := (y * cy) + c;
+   m[1][2] := (y * cz) - x * s;
 
-   m[2][0] := (x * c3) - y * s;
-   m[2][1] := (y * c3) + x * s;
-   m[2][2] := (z * c3) + c;
+   m[2][0] := (x * cz) - y * s;
+   m[2][1] := (y * cz) + x * s;
+   m[2][2] := (z * cz) + c;
 
    Matrix := Matrix * m;
 end;
@@ -234,16 +241,8 @@ begin
 end;
 
 function oxTTransform.GetForward(): TVector3f;
-var
-   pitch, yaw: single;
-
 begin
-   pitch := vRotation[0] * vmcToRad;
-   yaw := vRotation[1] * vmcToRad;
-
-   Result[0] := sin(yaw) * cos(pitch);
-   Result[1] := sin(pitch);
-   Result[2] := cos(yaw) * cos(pitch);
+   Result := vmForwardFromRotation(vRotation);
 end;
 
 class function oxTTransform.PerspectiveFrustum(l, r, b, t, n, f: single): TMatrix4f;
