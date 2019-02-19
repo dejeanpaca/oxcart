@@ -381,48 +381,47 @@ CONST
    vmvUnit4e: TVector4e          = (1.0, 0.0, 0.0, 0.0);
 
    {One vectors}
-   vmvOne2: TVector2            = (1.0, 1.0);
-   vmvOne3: TVector3            = (1.0, 1.0, 1.0);
-   vmvOne4: TVector4            = (1.0, 1.0, 1.0, 1.0);
+   vmvOne2: TVector2             = (1.0, 1.0);
+   vmvOne3: TVector3             = (1.0, 1.0, 1.0);
+   vmvOne4: TVector4             = (1.0, 1.0, 1.0, 1.0);
 
-   vmvOne2b: TVector2b          = (1, 0);
-   vmvOne3b: TVector3b          = (1, 0, 0);
-   vmvOne4b: TVector4b          = (1, 0, 0, 0);
+   vmvOne2b: TVector2b           = (1, 0);
+   vmvOne3b: TVector3b           = (1, 0, 0);
+   vmvOne4b: TVector4b           = (1, 0, 0, 0);
 
-   vmvOne2ub: TVector2ub        = (1, 0);
-   vmvOne3ub: TVector3ub        = (1, 0, 0);
-   vmvOne4ub: TVector4ub        = (1, 0, 0, 0);
+   vmvOne2ub: TVector2ub         = (1, 0);
+   vmvOne3ub: TVector3ub         = (1, 0, 0);
+   vmvOne4ub: TVector4ub         = (1, 0, 0, 0);
 
-   vmvOne2s: TVector2s          = (1, 0);
-   vmvOne3s: TVector3s          = (1, 0, 0);
-   vmvOne4s: TVector4s          = (1, 0, 0, 0);
+   vmvOne2s: TVector2s           = (1, 0);
+   vmvOne3s: TVector3s           = (1, 0, 0);
+   vmvOne4s: TVector4s           = (1, 0, 0, 0);
 
-   vmvOne2us: TVector2us        = (1, 0);
-   vmvOne3us: TVector3us        = (1, 0, 0);
-   vmvOne4us: TVector4us        = (1, 0, 0, 0);
+   vmvOne2us: TVector2us         = (1, 0);
+   vmvOne3us: TVector3us         = (1, 0, 0);
+   vmvOne4us: TVector4us         = (1, 0, 0, 0);
 
-   vmvOne2i: TVector2i          = (1, 0);
-   vmvOne3i: TVector3i          = (1, 0, 0);
-   vmvOne4i: TVector4i          = (1, 0, 0, 0);
+   vmvOne2i: TVector2i           = (1, 0);
+   vmvOne3i: TVector3i           = (1, 0, 0);
+   vmvOne4i: TVector4i           = (1, 0, 0, 0);
 
-   vmvOne2ui: TVector2ui        = (1, 0);
-   vmvOne3ui: TVector3ui        = (1, 0, 0);
-   vmvOne4ui: TVector4ui        = (1, 0, 0, 0);
+   vmvOne2ui: TVector2ui         = (1, 0);
+   vmvOne3ui: TVector3ui         = (1, 0, 0);
+   vmvOne4ui: TVector4ui         = (1, 0, 0, 0);
 
-   vmvOne2f: TVector2f          = (1.0, 1.0);
-   vmvOne3f: TVector3f          = (1.0, 1.0, 1.0);
-   vmvOne4f: TVector4f          = (1.0, 1.0, 1.0, 1.0);
+   vmvOne2f: TVector2f           = (1.0, 1.0);
+   vmvOne3f: TVector3f           = (1.0, 1.0, 1.0);
+   vmvOne4f: TVector4f           = (1.0, 1.0, 1.0, 1.0);
 
-   vmvOne2d: TVector2d          = (1.0, 1.0);
-   vmvOne3d: TVector3d          = (1.0, 1.0, 1.0);
-   vmvOne4d: TVector4d          = (1.0, 1.0, 1.0, 1.0);
+   vmvOne2d: TVector2d           = (1.0, 1.0);
+   vmvOne3d: TVector3d           = (1.0, 1.0, 1.0);
+   vmvOne4d: TVector4d           = (1.0, 1.0, 1.0, 1.0);
 
-   vmvOne2e: TVector2e          = (1.0, 1.0);
-   vmvOne3e: TVector3e          = (1.0, 1.0, 1.0);
-   vmvOne4e: TVector4e          = (1.0, 1.0, 1.0, 1.0);
+   vmvOne2e: TVector2e           = (1.0, 1.0);
+   vmvOne3e: TVector3e           = (1.0, 1.0, 1.0);
+   vmvOne4e: TVector4e           = (1.0, 1.0, 1.0, 1.0);
 
    {view vectors}
-   vmvView: TVector3             = (0.0, 1.0, 0.5);
    vmvUp: TVector3               = (0.0, 0.0, 1.0);
 
    {zero matrices}
