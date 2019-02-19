@@ -810,18 +810,15 @@ VAR
    laz: TProcess;
    openLazarusFlag: boolean = false;
 
-procedure openLazarusAfterRecreate();
+procedure openLazarusRecreate(recreateProject: boolean);
 begin
    if(openLazarusFlag) then begin
       openLazarusFlag := false;
 
-      if(oxedBuild.BuildType <> OXED_BUILD_TASK_RECREATE) then
-         exit;
-
       try
          laz.Options := laz.Options - [poWaitOnExit];
 
-         if(Recreate()) then
+         if(not recreateProject) or Recreate() then
             laz.Execute();
       except
          on e : Exception  do begin
@@ -829,6 +826,11 @@ begin
          end;
       end;
    end;
+end;
+
+procedure openLazarusAfterRecreate();
+begin
+   openLazarusRecreate(true);
 end;
 
 class procedure oxedTBuildGlobal.OpenLazarus();
@@ -844,13 +846,21 @@ begin
          laz.Parameters.Add('--no-splash-screen');
          laz.Parameters.Add('--force-new-instance');
          laz.Parameters.Add(oxedProject.TempPath + oxPROJECT_LIB_LPI);
-      end else
+      end else begin
+         log.v('Lazarus already running');
          exit;
+      end;
+
+      if(oxedProject.Running) then begin
+         openLazarusRecreate(false);
+         exit;
+      end;
 
       {first recreate files}
       RecreateTask();
       openLazarusFlag := true;
-   end;
+   end else
+      log.v('Cannot open lazarus. No valid project');
 end;
 
 class procedure oxedTBuildGlobal.OpenProjectDirectory();
