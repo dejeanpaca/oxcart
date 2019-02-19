@@ -166,9 +166,22 @@ begin
 end;
 
 procedure oxTCamera.SetForward(const newRotation: TVector3f);
+var
+   pitch,
+   yaw: single;
+
 begin
    Rotation := newRotation;
-   vView := vmForwardFromRotation(Rotation);
+
+   pitch := -newRotation[0] * vmcToRad;
+   yaw := newRotation[1] * vmcToRad;
+
+   vView[0] := sin(yaw) * cos(pitch);
+   vView[1] := sin(pitch);
+   vView[2] := cos(yaw) * cos(pitch);
+
+   vView.Normalize();
+
    UpFromView();
 end;
 
@@ -212,6 +225,8 @@ begin
    Rotation[0] := pitch * vmcToDeg;
    Rotation[1] := yaw * vmcToDeg;
    Rotation[2] := 0;
+
+   UpFromView();
 end;
 
 procedure oxTCamera.LookAt(apply: boolean);
@@ -346,7 +361,7 @@ begin
       LastPointerPosition[0] := nx;
       LastPointerPosition[1] := ny;
 
-      Camera.IncPitchYaw(my / CursorAngleSpeed, mx / CursorAngleSpeed);
+      Camera.IncPitchYaw(-my / CursorAngleSpeed, mx / CursorAngleSpeed);
    end;
 end;
 
