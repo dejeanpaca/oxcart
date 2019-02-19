@@ -53,6 +53,8 @@ TYPE
       procedure Scale(const v: TVector3f); virtual;
 
       function GetForward(): TVector3f; virtual;
+      function GetUp(): TVector3f; virtual;
+      function GetRight(): TVector3f; virtual;
 
       {get a perspective frustum matrix}
       class function PerspectiveFrustum(l, r, b, t, n, f: single): TMatrix4f; static;
@@ -245,6 +247,20 @@ begin
    Result[0] := Matrix[0][2];
    Result[1] := Matrix[1][2];
    Result[2] := Matrix[2][2];
+end;
+
+function oxTTransform.GetUp(): TVector3f;
+begin
+   Result[0] := Matrix[0][1];
+   Result[1] := Matrix[1][1];
+   Result[2] := Matrix[2][1];
+end;
+
+function oxTTransform.GetRight(): TVector3f;
+begin
+   Result[0] := Matrix[0][0];
+   Result[1] := Matrix[1][0];
+   Result[2] := Matrix[2][0];
 end;
 
 class function oxTTransform.PerspectiveFrustum(l, r, b, t, n, f: single): TMatrix4f;
