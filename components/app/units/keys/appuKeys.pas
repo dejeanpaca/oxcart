@@ -496,6 +496,9 @@ var
 begin
    Result := #0;
 
+   if not (((k.Code >= kcSTART_REMAP) and (k.Code <= kcEND_REMAP)) or (k.Code = kcSPACE)) then
+      exit(#0);
+
    if(c <> #0) then begin
       shiftPressed := k.State.IsSet(kmSHIFT);
       isCaps := shiftPressed;

@@ -88,25 +88,49 @@
    kcY            = 089;
    kcZ            = 090;
 
-   {NumPad keys}
-   kcNUMENTER     = 095;
-   kcNUM0         = 096;
-   kcNUM1         = 097;
-   kcNUM2         = 098;
-   kcNUM3         = 099;
-   kcNUM4         = 100;
-   kcNUM5         = 101;
-   kcNUM6         = 102;
-   kcNUM7         = 103;
-   kcNUM8         = 104;
-   kcNUM9         = 105;
+   {the following key codes are named for the default symbol obtained
+   when the keys are pressed on a US keyboard, but may vary from system
+   to system.}
 
-   kcNUMMUL       = 106;
-   kcNUMADD       = 107;
-   kcNUMSUBTRACT  = 108;
-   kcNUMSEPARATOR = 109;
-   kcNUMDIVIDE    = 110;
-   kcNUMDECIMAL   = 111;
+   {symbols}
+   kcTILDE        = 091; {~}
+   kcDASH         = 092; {-}
+   kcEQUAL        = 093; {=}
+   kcSLASH        = 094; {/}
+   kcSEMICOLON    = 095; {;}
+   kcAPOSTROPHE   = 096; {'}
+   kcBACKSLASH    = 097; {\}
+   kcCOMMA        = 098; {,}
+   kcPERIOD       = 099; {.}
+
+   {brackets}
+   kcLBRACKET     = 100;
+   kcRBRACKET     = 101;
+
+
+   { remap range }
+   kcSTART_REMAP  = kc0;
+   kcEND_REMAP    = kcRBRACKET;
+
+   {NumPad keys}
+   kcNUMENTER     = 110;
+   kcNUM0         = 111;
+   kcNUM1         = 112;
+   kcNUM2         = 113;
+   kcNUM3         = 114;
+   kcNUM4         = 115;
+   kcNUM5         = 116;
+   kcNUM6         = 117;
+   kcNUM7         = 118;
+   kcNUM8         = 119;
+   kcNUM9         = 120;
+
+   kcNUMMUL       = 121;
+   kcNUMADD       = 122;
+   kcNUMSUBTRACT  = 123;
+   kcNUMSEPARATOR = 124;
+   kcNUMDIVIDE    = 125;
+   kcNUMDECIMAL   = 126;
    kcNUMINSERT    = kcNUM0;
    kcNUMDEL       = kcNUMDECIMAL;
 
@@ -121,62 +145,44 @@
    kcNUMRIGHT     = kcNUM6;
 
    {function keys}
-   kcF1           = 122;
-   kcF2           = 123;
-   kcF3           = 124;
-   kcF4           = 125;
-   kcF5           = 126;
-   kcF6           = 127;
-   kcF7           = 128;
-   kcF8           = 129;
-   kcF9           = 130;
-   kcF10          = 131;
-   kcF11          = 132;
-   kcF12          = 133;
-   kcF13          = 134;
-   kcF14          = 135;
-   kcF15          = 136;
-   kcF16          = 137;
-   kcF17          = 138;
-   kcF18          = 139;
-   kcF19          = 140;
-   kcF20          = 141;
-   kcF21          = 142;
-   kcF22          = 143;
-   kcF23          = 144;
-   kcF24          = 145;
+   kcF1           = 130;
+   kcF2           = 131;
+   kcF3           = 132;
+   kcF4           = 133;
+   kcF5           = 134;
+   kcF6           = 135;
+   kcF7           = 136;
+   kcF8           = 137;
+   kcF9           = 138;
+   kcF10          = 139;
+   kcF11          = 140;
+   kcF12          = 141;
+   kcF13          = 142;
+   kcF14          = 143;
+   kcF15          = 144;
+   kcF16          = 145;
+   kcF17          = 146;
+   kcF18          = 147;
+   kcF19          = 148;
+   kcF20          = 149;
+   kcF21          = 150;
+   kcF22          = 151;
+   kcF23          = 152;
+   kcF24          = 153;
 
-   kcSYSBACK      = 146;
-   kcSYSHOME      = 147;
-   kcSYSMENU      = 148;
-   kcSYSSEARCH    = 149;
+   kcSYSBACK      = 160;
+   kcSYSHOME      = 161;
+   kcSYSMENU      = 162;
+   kcSYSSEARCH    = 163;
    
    {extra keys}
-   kcPAUSEBREAK   = 160;
-   kcSYSREQ       = 161;
-   kcPRINTSCREEN  = 162;
+   kcPAUSEBREAK   = 164;
+   kcSYSREQ       = 165;
+   kcPRINTSCREEN  = 166;
 
-   kcLOS          = 163;
-   kcROS          = 164;
-   kcLCONTEXT     = 165;
-   kcRCONTEXT     = 166;
-   kcSLEEP        = 167;
-   
-   {the following key codes are named for the default symbol obtained
-   when the keys are pressed on a US keyboard, but may vary from system
-   to system.}
+   kcLOS          = 167;
+   kcROS          = 168;
+   kcLCONTEXT     = 169;
+   kcRCONTEXT     = 170;
+   kcSLEEP        = 171;
 
-   {symbols}
-   kcTILDE        = 170; {~}
-   kcDASH         = 171; {-}
-   kcEQUAL        = 172; {=}
-   kcSLASH        = 173; {/}
-   kcSEMICOLON    = 174; {;}
-   kcAPOSTROPHE   = 175; {'}
-   kcBACKSLASH    = 176; {\}
-   kcCOMMA        = 177; {,}
-   kcPERIOD       = 178; {.}
-
-   {brackets}
-   kcLBRACKET     = 179;
-   kcRBRACKET     = 180;
