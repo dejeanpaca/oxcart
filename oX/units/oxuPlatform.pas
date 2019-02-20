@@ -11,7 +11,7 @@ UNIT oxuPlatform;
 INTERFACE
 
    USES
-      appuMouse,
+      appuMouse, appuKeys,
       {ox}
       oxuWindowTypes, oxuGlobalInstances,
       {ui}
@@ -64,6 +64,9 @@ TYPE
 
       procedure LoadCursor({%H-}cursorType: uiTCursorType); virtual;
       procedure SetCursor({%H-}cursorType: uiTCursorType); virtual;
+
+      {translate key into character}
+      function TranslateKey(k: appTKeyEvent): char; virtual;
    end;
 
    oxTPlatformClass = class of oxTPlatform;
@@ -212,6 +215,11 @@ end;
 
 procedure oxTPlatform.SetCursor(cursorType: uiTCursorType);
 begin
+end;
+
+function oxTPlatform.TranslateKey(k: appTKeyEvent): char;
+begin
+   Result := appk.Translate(k.Key);
 end;
 
 VAR
