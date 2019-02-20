@@ -15,7 +15,7 @@ INTERFACE
       {app}
       appuKeys, appuMouse, appuRegional,
       {oX}
-      oxuTypes, oxuFont,
+      oxuTypes, oxuFont, oxuPlatform,
       {ui}
       uiuDraw, uiuWidget, uiuWindowTypes, uiWidgets, uiuWidgetRender, uiuTypes;
 
@@ -394,80 +394,81 @@ begin
    k := keyEvent.Key;
 
    {translate the key to a character}
-   c := appk.Translate(k);
+   c := oxPlatform.TranslateKey(keyEvent);
+   c := appk.Translate(k, c);
 
-   {if the translation succeeded we have a character to add to the string}
-   if(c <> #0) then begin
-      if(not ReadOnly) and (not k.Released()) then begin
-         if(InputType = wdgINPUT_BOX_TYPE_NORMAL) then begin
-            doAdd();
-         end else if(InputType = wdgINPUT_BOX_TYPE_NUMERICAL) then begin
-            if(c in appNUMERICAL_CHARS) then
-               doAdd();
-         end else if(InputType = wdgINPUT_BOX_TYPE_FLOAT) then begin;
-            if(appRegional.IsFloatCharacter(c)) then
-               doAdd();
-         end else if(InputType = wdgINPUT_BOX_TYPE_RESTRICTED) then begin
-            if(inCharacterSet(c)) then
-               doAdd();
-         end;
-      end;
-   {else we'll process the key}
-   end else begin
-      if(k.Equal(kcBACKSPACE)) then begin
-            if(not ReadOnly) and k.IsPressed() then
-               doBackspace();
-      end else if(k.Equal(kcDEL)) then begin
+   {handle keys}
+   if(k.Equal(kcBACKSPACE)) then begin
          if(not ReadOnly) and k.IsPressed() then
-            doDel();
-      end else if(k.Equal(kcLEFT)) then begin
-         {move left/right}
-         if(k.IsPressed()) then
-            doLeft();
-      end else if(k.Equal(kcRIGHT)) then begin
-         if(k.IsPressed()) then
-            doRight();
-      end else if(k.Equal(kcHOME)) then begin
-         {go to start/end of input}
-         if(k.IsPressed()) then
+            doBackspace();
+   end else if(k.Equal(kcDEL)) then begin
+      if(not ReadOnly) and k.IsPressed() then
+         doDel();
+   end else if(k.Equal(kcLEFT)) then begin
+      {move left/right}
+      if(k.IsPressed()) then
+         doLeft();
+   end else if(k.Equal(kcRIGHT)) then begin
+      if(k.IsPressed()) then
+         doRight();
+   end else if(k.Equal(kcHOME)) then begin
+      {go to start/end of input}
+      if(k.IsPressed()) then
+         GoToHome();
+   end else if(k.Equal(kcEND)) then begin
+      if(k.IsPressed()) then
+         GoToEnd();
+   end else if(k.Equal(kcENTER) or k.Equal(kcNUMENTER)) then begin
+      {confirm entry}
+      if(k.Released()) then
+         if(OnConfirm()) then
+            exit(true);
+
+      what := wdghINPUTBOX_CONFIRM_PRESSED;
+
+      if(k.Released()) then
+         what := wdghINPUTBOX_CONFIRM;
+
+      Result := Control(what) <> -1;
+   end else if(k.Equal(kcESC)) then begin
+      if(k.Released()) then
+         if(OnEscape()) then
+            exit(true);
+
+      what := wdghINPUTBOX_ESCAPE_PRESSED;
+
+      if(k.Released()) then
+         what := wdghINPUTBOX_ESCAPE;
+
+      Result := Control(what) <> -1;
+   end else if(k.Equal(kcU, kmCONTROL)) then begin
+      {clear any text before current position}
+      if(not ReadOnly) and (k.Released()) then begin
+         if(ib.CursorPos > 1) then begin
+            changed := true;
+            delete(Content, 1, ib.CursorPos);
             GoToHome();
-      end else if(k.Equal(kcEND)) then begin
-         if(k.IsPressed()) then
-            GoToEnd();
-      end else if(k.Equal(kcENTER) or k.Equal(kcNUMENTER)) then begin
-         {confirm entry}
-         if(k.Released()) then
-            if(OnConfirm()) then
-               exit(true);
-
-         what := wdghINPUTBOX_CONFIRM_PRESSED;
-
-         if(k.Released()) then
-            what := wdghINPUTBOX_CONFIRM;
-
-         Result := Control(what) <> -1;
-      end else if(k.Equal(kcESC)) then begin
-         if(k.Released()) then
-            if(OnEscape()) then
-               exit(true);
-
-         what := wdghINPUTBOX_ESCAPE_PRESSED;
-
-         if(k.Released()) then
-            what := wdghINPUTBOX_ESCAPE;
-
-         Result := Control(what) <> -1;
-      end else if(k.Equal(kcU, kmCONTROL)) then begin
-         {clear any text before current position}
-         if(not ReadOnly) and (k.Released()) then begin
-            if(ib.CursorPos > 1) then begin
-               changed := true;
-               delete(Content, 1, ib.CursorPos);
-               GoToHome();
+         end;
+      end else
+         Result := false;
+   {other unprocessed key}
+   end else begin
+      if(c <> #0) then begin
+         Result := true;
+         if(not ReadOnly) and (not k.Released()) then begin
+            if(InputType = wdgINPUT_BOX_TYPE_NORMAL) then begin
+               doAdd();
+            end else if(InputType = wdgINPUT_BOX_TYPE_NUMERICAL) then begin
+               if(c in appNUMERICAL_CHARS) then
+                  doAdd();
+            end else if(InputType = wdgINPUT_BOX_TYPE_FLOAT) then begin;
+               if(appRegional.IsFloatCharacter(c)) then
+                  doAdd();
+            end else if(InputType = wdgINPUT_BOX_TYPE_RESTRICTED) then begin
+               if(inCharacterSet(c)) then
+                  doAdd();
             end;
-         end else
-            Result := false;
-      {other unprocessed key}
+         end;
       end else
          Result := false;
    end;
