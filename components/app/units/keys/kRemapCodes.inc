@@ -5,7 +5,7 @@
    Started On:    23.03.2008.
 }
 
-   appkRemapCodes: array[0..255] of word = (
+   appkRemapCodes: appTKeyRemapCodes = (
 000,
 {$IFDEF LINUX}
    {$INCLUDE klRemapCodes.inc}
