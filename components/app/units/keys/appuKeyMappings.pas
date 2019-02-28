@@ -69,6 +69,7 @@ TYPE
 
       procedure AddGroup(const gName, gDescription: string; out group: appTKeyMappingGroup);
       function Find(keyCode: longint; state: TBitSet): appPKeyMapping;
+      function Find(const k: appTKey): appPKeyMapping;
       function Find(action: TEventID): appPKeyMapping;
 
       function Call(const k: appTKey): appPKeyMapping;
@@ -225,6 +226,11 @@ begin
       end;
 
    result := nil;
+end;
+
+function appTKeyMappings.Find(const k: appTKey): appPKeyMapping;
+begin
+   Result := Find(k.Code, k.State);
 end;
 
 function appTKeyMappings.Find(action: TEventID): appPKeyMapping;
