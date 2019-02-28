@@ -54,7 +54,9 @@ TYPE
       Dimensions: oxTDimensions;
 
       {is the projection relative}
-      Relative: boolean;
+      Relative,
+      {always scissor when clearing}
+      ScissorOnClear: boolean;
 
       {set position and dimensions}
       Positionf: oxTPointf;
@@ -69,6 +71,8 @@ TYPE
 
       constructor Create();
       constructor Create(x, y, w, h: longint);
+
+      constructor Create(source: oxTProjection);
 
       {apply this projection}
       procedure Apply(doClear: boolean = true);
@@ -131,6 +135,8 @@ IMPLEMENTATION
 constructor oxTProjection.Create();
 begin
    Enabled        := true;
+   ScissorOnClear := true;
+
    ClearBits      := oxrBUFFER_CLEAR_DEFAULT;
    p              := oxDefaultProjection;
 
@@ -143,6 +149,11 @@ begin
    Create();
 
    SetViewport(x, y, w, h);
+end;
+
+constructor oxTProjection.Create(source: oxTProjection);
+begin
+   From(source);
 end;
 
 procedure oxTProjection.Apply(doClear: boolean);
@@ -209,12 +220,18 @@ begin
    end;
 end;
 
-procedure oxTProjection.Clear;
+procedure oxTProjection.Clear();
 begin
    oxRenderer.ClearColor(ClearColor);
 
    if(Enabled) then begin
+      if(ScissorOnClear) then
+         oxRender.Scissor(Offset.x + Position.x, Offset.y + Position.y + Dimensions.h - 1, Dimensions.w, Dimensions.h);
+
       oxRenderer.Clear(ClearBits);
+
+      if(ScissorOnClear) then
+         oxRender.DisableScissor();
    end;
 end;
 
@@ -228,7 +245,7 @@ begin
       m := oxTTransform.OrthoFrustum(p.l, p.r, p.b, p.t, p.zNear, p.zFar);
 end;
 
-procedure oxTProjection.SetProjectionMatrix;
+procedure oxTProjection.SetProjectionMatrix();
 begin
    if(not p.isOrtho) then begin
       {perspective}
@@ -300,7 +317,7 @@ begin
    oxRenderer.SetProjectionMatrix(m);
 end;
 
-procedure oxTProjection.QuickOrtho2D;
+procedure oxTProjection.QuickOrtho2D();
 var
    m: TMatrix4f;
 
@@ -342,6 +359,10 @@ end;
 
 procedure oxTProjection.From(source: oxTProjection);
 begin
+   Name := source.Name;
+   Enabled := source.Enabled;
+   ScissorOnClear := source.ScissorOnClear;
+
    Position := source.Position;
    Offset := source.Offset;
    Dimensions := source.Dimensions;
