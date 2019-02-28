@@ -54,9 +54,8 @@ TYPE
       Dimensions: oxTDimensions;
 
       {is the projection relative}
-      Relative,
-      {always scissor the projection}
-      AlwaysScissor: boolean;
+      Relative: boolean;
+
       {set position and dimensions}
       Positionf: oxTPointf;
       Dimensionsf: oxTDimensionsf;
@@ -116,7 +115,7 @@ TYPE
 
       procedure SetViewport(const pt: oxTPoint; const d: oxTDimensions);
       {get settings from another projection}
-      procedure From(cxt: oxTProjection);
+      procedure From(source: oxTProjection);
 
       {get normalized pointer coordinates}
       procedure GetNormalizedPointerCoordinates(x, y: single; out n: TVector2f);
@@ -132,7 +131,6 @@ IMPLEMENTATION
 constructor oxTProjection.Create();
 begin
    Enabled        := true;
-   AlwaysScissor := true;
    ClearBits      := oxrBUFFER_CLEAR_DEFAULT;
    p              := oxDefaultProjection;
 
@@ -216,13 +214,7 @@ begin
    oxRenderer.ClearColor(ClearColor);
 
    if(Enabled) then begin
-      if(AlwaysScissor) then
-         oxRender.Scissor(Offset.x + Position.x, Offset.y + Position.y + Dimensions.h - 1, Dimensions.w, Dimensions.h);
-
       oxRenderer.Clear(ClearBits);
-
-      if(AlwaysScissor) then
-         oxRender.DisableScissor();
    end;
 end;
 
@@ -348,13 +340,21 @@ begin
    SetViewport(pt.x, pt.y - d.h + 1, d.w, d.h);
 end;
 
-procedure oxTProjection.From(cxt: oxTProjection);
+procedure oxTProjection.From(source: oxTProjection);
 begin
-   p := cxt.p;
-   a := cxt.a;
+   Position := source.Position;
+   Offset := source.Offset;
+   Dimensions := source.Dimensions;
+   Relative := source.Relative;
+   Positionf := source.Positionf;
+   Dimensionsf := source.Dimensionsf;
 
-   ClearBits := cxt.ClearBits;
-   ClearColor := cxt.ClearColor;
+   ClearBits := source.ClearBits;
+   ClearColor := source.ClearColor;
+
+   p := source.p;
+   a := source.a;
+   ProjectionMatrix := source.ProjectionMatrix;
 end;
 
 procedure oxTProjection.GetNormalizedPointerCoordinates(x, y: single; out n: TVector2f);
