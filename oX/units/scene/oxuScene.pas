@@ -41,6 +41,9 @@ TYPE
    { oxTSceneGlobal }
 
    oxTSceneGlobal = record
+      {is scene functionality enabled (disable with care)}
+      Enabled: boolean;
+
       InstanceType: oxTSceneClass;
       OnSceneChange: TProcedures;
 
@@ -125,6 +128,7 @@ begin
 end;
 
 INITIALIZATION
+   oxSceneManagement.Enabled := True;
    oxGlobalInstances.Add(oxTScene, @oxScene, @instanceGlobal)^.Allocate := false;
 
    TProcedures.Initialize(oxSceneManagement.OnSceneChange);

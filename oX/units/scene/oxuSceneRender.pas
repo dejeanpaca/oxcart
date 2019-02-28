@@ -230,7 +230,9 @@ end;
 procedure init();
 begin
    oxSceneRender.Default := oxTSceneRenderer.Create();
-   oxWindows.OnRender.Add(@render);
+
+   if(oxSceneManagement.Enabled) then
+      oxWindows.OnRender.Add(@render);
 end;
 
 procedure deinit();
