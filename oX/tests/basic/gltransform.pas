@@ -3,11 +3,12 @@ UNIT gltransform;
 INTERFACE
 
    USES
-      uColors, vmVector, appuKeys,
+      uColors, appuKeys,
       uOX, oxuScene, oxuWindowTypes, oxuWindow, oxuWindows, oxuProjection,
       oxuTypes, oxuRender, oxuRenderer, oxuMaterial, oxuTransform,
       oxuFont, oxumPrimitive, oxuKeyboardControl,
-      {$INCLUDE usesgl.inc};
+      {$INCLUDE usesgl.inc},
+      vmVector;
 
 IMPLEMENTATION
 
@@ -46,9 +47,7 @@ begin
    oxTransform.vPosition[2] := -5.0;
 
    oxTransform.Identity();
-   oxTransform.vRotation[0] := rotation[0];
-   oxTransform.vRotation[1] := rotation[1];
-   oxTransform.vRotation[2] := rotation[2];
+   oxTransform.vRotation := rotation;
 
    oxTransform.SetupMatrix();
    oxTransform.Apply();
@@ -68,7 +67,7 @@ begin
    oxRenderer.ClearColor(0.0, 0.0, 0.0, 1.0);
 end;
 
-function key(var k: appTKeyEvent; wnd: oxTWindow): boolean;
+function key(var k: appTKeyEvent; {%H-}wnd: oxTWindow): boolean;
 begin
    Result := false;
 
