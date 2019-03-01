@@ -8,28 +8,24 @@
 PROGRAM CommandConsole;
 
    USES
+      {$INCLUDE oxappuses.inc},
       {app}
-      uAppInfo, uApp, appuKeys,
+      uApp, appuKeys,
       {oX}
-      {$INCLUDE oxappuses.inc}, oxuWindow, oxuWindows,
+      oxuWindow, oxuWindows,
       uTestTools,
       oxuConsole, oxuconDVar;
 
-function Perform(a: oxTDoAction): boolean;
+procedure Initialize();
 begin
-   result := true;
-
-   case a of
-      oxDO_INITIALIZE:
-         oxConsole.Activate();
-   end;
+   oxConsole.Activate();
 end;
 
 BEGIN
    appInfo.name   := 'Command Console';
    appInfo.name   := 'cmdconsole';
 
-   ox.DoRoutines.Add(@Perform);
+   ox.OnInitialize.Add(@Initialize);
    oxRun.Go();
 END.
 

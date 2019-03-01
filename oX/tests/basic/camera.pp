@@ -5,16 +5,17 @@
 {$INCLUDE oxdefines.inc}
 PROGRAM camera;
 
-   USES appuMouse, uAppInfo, uColors, vmVector,
+   USES
+      {$INCLUDE oxappuses.inc},
+      uColors, vmVector,
       {oX}
-      oxuDefaults, uOX, oxuTypes, oxumPrimitive, oxuWindowTypes, oxuRender, oxuContext, oxuRenderer,
-      oxuRun, oxuConstants, oxuWindows,  oxuTransform,
-      oxuCamera;
+      oxumPrimitive, oxuWindowTypes, oxuRender, oxuProjection, oxuRenderer, oxuWindows, oxuWindow,
+      oxuTransform, oxuCamera;
 
 VAR
    cam:  oxTCamera;
    prim: oxTPrimitiveModel;
-   context: oxTContext;
+   projection: oxTProjection;
 
 procedure run();
 begin
@@ -29,7 +30,7 @@ var
    m: TMatrix4f;
 
 begin
-   m := oxTTransform.PerspectiveFrustum(context.p.fovY, context.a.Aspect, context.p.zNear, context.p.zFar);
+   m := oxTTransform.PerspectiveFrustum(projection.p.fovY, projection.a.Aspect, projection.p.zNear, projection.p.zFar);
    oxRenderer.SetProjectionMatrix(m);
 
    cam.LookAt();
@@ -37,39 +38,31 @@ begin
    prim.Render();
 end;
 
-function Perform(action: oxTDoAction): boolean;
+procedure Initialize();
 begin
-   result := true;
+   oxWindows.OnRender.Add(@render);
 
-   case action of
-      oxDO_INITIALIZE: begin
-         prim.Init();
-         prim.Cube(oxmPRIMITIVE_CUBE_METHOD_DEFAULT);
+   prim.Init();
+   prim.Cube(oxmPRIMITIVE_CUBE_METHOD_DEFAULT);
 
-         cam := oxTCamera.Create();
-         cam.vPos.Assign(0, 2, -5);
-         cam.vView.Assign(0, -0.5, 1.0);
-         cam.vView.Normalize();
+   cam := oxTCamera.Create();
+   cam.vPos.Assign(0, 2, -5);
+   cam.vView.Assign(0, -0.5, 1.0);
+   cam.vView.Normalize();
 
-         cam.Radius  := 1.0;
-         cam.Style   := oxCAMERA_STYLE_FPS;
+   cam.Radius  := 1.0;
+   cam.Style   := oxCAMERA_STYLE_FPS;
 
-         context := oxTContext(oxW.context);
-         context.ClearColor.Assign(0.2, 0.2, 0.5, 1.0);
-         context.Perspective(60, 0.5, 2000.0);
-      end;
-
-      oxDO_RUN: begin
-         run();
-      end;
-   end;
+   projection := oxTProjection(oxWindow.Current.Projection);
+   projection.ClearColor.Assign(0.2, 0.2, 0.5, 1.0);
+   projection.Perspective(60, 0.5, 2000.0);
 end;
 
 BEGIN
    appInfo.SetName('Camera Test');
 
-   ox.DoRoutines.Add(@Perform);
-   oxWindows.onRender := @render;
+   ox.OnInitialize.Add(@Initialize);
+   ox.OnRun.Add(@run);
 
    oxRun.Go();
 END.

@@ -8,12 +8,13 @@
 PROGRAM Freetype;
 
    USES
+      {$INCLUDE oxappuses.inc},
       uStd, uColors, vmVector, uLog,
       {app}
-      uAppInfo, uApp,
+      uApp,
       {oX}
-      {$INCLUDE oxappuses.inc}, oxuWindowTypes, oxuWindows, oxuFont, oxuContext, oxuRender, 
-      oxuFreetype, oxuRenderer, oxuTransform;
+      oxuWindowTypes, oxuWindows, oxuFont, oxuProjection, oxuRender, oxuMaterial,
+      oxuFreetype, oxuFreetypeFonts, oxuRenderer, oxuTransform;
 
 VAR
    font: oxTFont;
@@ -33,9 +34,9 @@ var
 begin
    f := font;
    if(f = nil) then
-      f := oxDefaultFont;
+      f := oxFont.Default;
 
-   oxTContext(wnd.context).ClearColor.Assign(0.2, 0.2, 0.5, 1.0);
+   oxTProjection(wnd.Projection).ClearColor.Assign(0.2, 0.2, 0.5, 1.0);
 
    charsPerRow := 16;
 
@@ -50,14 +51,16 @@ begin
 
    f.Start();
 
-   oxRender.Color3f(1.0, 1.0, 1.0);
-   oxf.Write(-w2 + 2, h2 - f.GetHeight(), 'oX Engine');
+   oxCurrentMaterial.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
+   oxRender.BlendDefault();
+
+   f.Write(-w2 + 2, h2 - f.GetHeight(), 'oX Engine');
 
    for i := 0 to (f.chars - 1) do begin
       line := i div charsPerRow;
 
       px := (i mod charsPerRow) * f.GetWidth() - w2;
-      py := (font.lines - 1 - line) * f.GetHeight();
+      py := (f.lines - 1 - line) * f.GetHeight();
 
       f.Write(px, py, char(i + f.base));
    end;
@@ -65,24 +68,25 @@ begin
    oxf.Stop();
 end;
 
-function doRoutine(action: oxTDoAction): boolean;
+procedure Initialize();
 begin
-   result := true;
+   oxWindows.onRender.Add(@Render);
 
-   if(action = oxDO_INITIALIZE) then begin
-      font := oxFreetypeManager.CreateFont('Inconsolata.ttf', 14);
-      if(font = nil) then
-         log.e('Font failed to load');
-   end else if (action = oxDO_DEINITIALIZE) then begin
-      FreeObject(font);
-   end;
+   font := oxFreetypeManager.CreateFont('Inconsolata.ttf', 14);
+
+   if(font = nil) then
+      log.e('Font failed to load');
+end;
+procedure Deinitialize();
+begin
+   FreeObject(font);
 end;
 
 BEGIN
    appInfo.setName('font');
-   oxWindows.onRender := @Render;
 
-   ox.DoRoutines.Add(@doRoutine);
+   ox.OnInitialize.Add(@Initialize);
+   ox.OnDeinitialize.Add(@Deinitialize);
 
    oxRun.Go();
 END.
