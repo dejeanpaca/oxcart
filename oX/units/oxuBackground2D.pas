@@ -27,6 +27,8 @@ TYPE
       useCorrection, 
       restoreTranslation: boolean;
 
+      Texture: oxTTexture;
+
       q: oxTPrimitiveModel;
    end;
 
@@ -70,7 +72,7 @@ var
 begin
    result   := eNONE;
 
-   errcode  := oxTextureGenerate.Generate(fn, bk.q.texture);
+   errcode  := oxTextureGenerate.Generate(fn, bk.Texture);
    if(errcode <> 0) then
       exit(errcode);
 
@@ -100,7 +102,6 @@ end;
 procedure oxbk2dBuild(var bk: oxTBackground2D);
 begin
    bk.q.Quad();
-   bk.q.SetTexRender(true);
 end;
 
 procedure oxbk2dRender(var bk: oxTBackground2D);
