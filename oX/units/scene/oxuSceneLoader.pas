@@ -43,7 +43,7 @@ var
    startTime: TDateTime;
 
 begin
-   if(oxSceneManagement.Enabled) then begin
+   if(not oxSceneManagement.Enabled) then begin
       log.v('Scene > Not enabled to load: ' + scene.Name);
       exit;
    end;
