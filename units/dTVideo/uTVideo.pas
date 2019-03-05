@@ -300,8 +300,9 @@ TYPE
 
       {mode set}
       procedure SetMode(tvm: TVideoMode);
-      procedure SetMode(tvm: PVideoMode);
       procedure SetMode(col, row: word; color: boolean);
+      {set buffer for the current mode}
+      procedure SetModeBuffer();
       {current mode get | places current mode data into tvMode}
       procedure GetCurMode();
       {obtaines the mode data into tvGlobal.Modes | does not get any modes if
@@ -511,26 +512,20 @@ begin
    ErrorReset();
 
    if(not tvSettings.ChangeModes) and (not tvSettings.ForceUnsupportedOps) then begin
+      log.e('tv > Tried to set unsupported mode: ' + tvm.ToString());
       eRaise(tveUNSUPPORTED);
       exit;
    end;
 
    if(not SetVideoMode(tvm)) then begin
+      log.e('tv > Failed to set mode: ' + tvm.ToString());
       eRaise(tveMODE_SET_FAIL);
       exit;
    end;
 
    {some interface management}
    GetCurMode();
-   tvCurrent.Buf := VideoBuf;
-   tvCurrent.Dimensions.Assign(tvCurrent.Mode);
-   tvCurrent.Limits.Assign(tvCurrent.Mode);
-   tvCurrent.GotoXY();
-end;
-
-procedure TVideoGlobal.SetMode(tvm: PVideoMode);
-begin
-   SetMode(tvm^);
+   SetModeBuffer();
 end;
 
 procedure TVideoGlobal.SetMode(col, row: word; color: boolean);
@@ -541,12 +536,24 @@ begin
    tvm.Col     := col;
    tvm.Row     := row;
    tvm.Color   := color;
+
    SetMode(tvm);
+end;
+
+procedure TVideoGlobal.SetModeBuffer();
+begin
+   tvCurrent.Buf := VideoBuf;
+   tvCurrent.BufSize := VideoBufSize;
+
+   tvCurrent.Dimensions.Assign(tvCurrent.Mode);
+   tvCurrent.Limits.Assign(tvCurrent.Mode);
+
+   tvCurrent.GotoXY();
 end;
 
 procedure TVideoGlobal.GetCurMode();
 begin
-   GetVideoMode(tvCurrent.Mode);
+   video.GetVideoMode(tvCurrent.Mode);
 end;
 
 procedure TVideoGlobal.GetModes();
@@ -586,7 +593,7 @@ end;
 procedure TVideoGlobal.LogDC();
 begin
    if (tvSettings.Log) then begin
-      log.Collapsed('TVideo Driver Capabilities');
+      log.Collapsed('tv > Driver Capabilities');
       log.i('Underline: ' + sf(tvGlobal.DC.underline));
       log.i('Blink: ' + sf(tvGlobal.DC.blink));
       log.i('Color: ' + sf(tvGlobal.DC.color));
@@ -600,7 +607,7 @@ end;
 procedure TVideoGlobal.LogMode();
 begin
    if(tvSettings.Log) then
-      log.i('TVideo Current mode = Col: ' + sf(tvCurrent.Mode.Col) + ' | Row: ' +
+      log.i('tv > Current mode = Col: ' + sf(tvCurrent.Mode.Col) + ' | Row: ' +
          sf(tvCurrent.Mode.Row) + ' | Color: ' + sf(tvCurrent.Mode.Color));
 end;
 
@@ -611,7 +618,7 @@ var
 
 begin
    if(tvSettings.Log) and (tvGlobal.ModeCount > 0) then begin
-      log.Collapsed('TVideo Modes');
+      log.Collapsed('tv > Modes');
 
       for count := 0 to (tvGlobal.ModeCount - 1) do begin
          log.i(sf(count) + ': ' + tvGlobal.Modes[count].ToString());
@@ -624,7 +631,7 @@ end;
 procedure TVideoGlobal.LogAttributes();
 begin
    if(tvSettings.Log) then begin
-      log.i('TVideo Attributes > Color: ' + sf(tvCurrent.Attr.Color) + ' | Background Color: ' + sf(tvCurrent.Attr.BkColor) +
+      log.i('tv Attributes > Color: ' + sf(tvCurrent.Attr.Color) + ' | Background Color: ' + sf(tvCurrent.Attr.BkColor) +
                         ' | Blink: ' + sf(tvCurrent.Attr.Blink) +
                         ' | Underline: ' + sf(tvCurrent.Attr.Underline));
    end;
@@ -856,14 +863,12 @@ end;
 
 procedure TVideoGlobal.InitDefaults();
 begin
-   GetVideoMode(tvGlobal.Mode);
+   GetCurMode();
 
    tvCurrent.Attr  := tvDefaultAttributes;
    tvCurrent.Cursor := tvDefaultCursor;
 
-   tvCurrent.Dimensions.Assign(tvGlobal.Mode);
-   tvCurrent.Limits.Assign(tvGlobal.Mode);
-   tvCurrent.BufSize := 15;
+   SetModeBuffer();
 end;
 
 procedure TVideoGlobal.Initialize(rvm: TVideoMode);
@@ -881,6 +886,7 @@ begin
 
    if(not Initialized) then begin
       InitVideo();
+      log.i('tv > init video');
 
       if(video.ErrorCode <> vioOk) then begin
          eRaise(tveINIT_FAIL);
@@ -888,11 +894,17 @@ begin
       end;
 
       tvGlobal.DC.GetDriverCapabilities();
+      tvGlobal.LogDC();
 
       GetModes();
       InitDefaults();
 
+      if(Error <> 0) then
+         exit;
+
       Initialized := true;
+      log.i('tv > initialized: ' + tvCurrent.Mode.ToString());
+
       tvCurrent.GotoXY();
    end;
 end;
@@ -1838,9 +1850,11 @@ begin
    count    := (Limits.x2 - Limits.x1) + 1;
    position := (Limits.y1 * Dimensions.x * 2);
 
-   for y := Limits.y1 to Limits.y2 do begin
-      fillword((pointer(Buf) + position)^, count, cell);
-      position := position + ((Dimensions.x) * 2);
+   if(Buf <> nil) then begin
+      for y := Limits.y1 to Limits.y2 do begin
+         fillword((pointer(Buf) + position)^, count, cell);
+         position := position + ((Dimensions.x) * 2);
+      end;
    end;
 end;
 

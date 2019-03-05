@@ -5,9 +5,11 @@ PROGRAM test;
 BEGIN
    randomize();
 
-   logInitStd('test.log', 'uTVideo', logcREWRITE);
+   log.InitStd('test.log', 'uTVideo', logcREWRITE);
+   consoleLog.Close();
 
-   tvInit();
-   tvDeInit();
+   tvGlobal.Initialize();
+   tvGlobal.LogModes();
+   tvGlobal.Deinitialize();
 END.
 
