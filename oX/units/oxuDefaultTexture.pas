@@ -13,7 +13,7 @@ UNIT oxuDefaultTexture;
 INTERFACE
 
    USES
-      uStd, uLog, uFile, uFiles,
+      sysutils, uStd, uLog, uFile, uFiles, uTiming,
       {oX}
       uOX, oxuTexture, oxuTextureGenerate, oxuResourcePool;
 
@@ -35,9 +35,12 @@ procedure load();
 var
    errorCode: loopint = 0;
    f: TFile;
+   elapsedTime: TDateTime;
 
 begin
    if(oxDefaultTexture.Load) then begin
+      elapsedTime := Time();
+
       fFile.Init(f);
       f.Open(@default_texture, length(default_texture));
 
@@ -54,6 +57,8 @@ begin
 
       f.Close();
       f.Dispose();
+
+      log.v('Loaded default texture (elapsed: ' + elapsedTime.ElapsedfToString() + 's)')
    end;
 end;
 
