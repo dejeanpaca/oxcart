@@ -11,7 +11,7 @@ UNIT oxuDefaultFont;
 INTERFACE
 
    USES
-      uStd, uLog, uFile, uFiles,
+      sysutils, uStd, uLog, uFile, uFiles, uTiming,
       {oX}
       uOX, oxuTFD, oxuFont, oxuResourcePool;
 
@@ -35,9 +35,12 @@ procedure load();
 var
    errcode: longint;
    f: TFile;
+   elapsedTIme: TDateTime;
 
 begin
    if(oxDefaultFont.Load) then begin
+      elapsedTime := Time();
+
       fFile.Init(f);
       f.Open(@default_font, length(default_font));
 
@@ -59,6 +62,8 @@ begin
 
       f.Close();
       f.Dispose();
+
+      log.v('Loaded default font (elapsed: ' + elapsedTime.ElapsedfToString() + 's)')
    end;
 end;
 
