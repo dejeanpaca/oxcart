@@ -75,6 +75,8 @@ begin
 end;
 
 function oxTInitializationGlobal.InitializeInternal(): TError;
+var
+   elapsedTime: TDateTime;
 
 procedure loge(const s: string);
 begin
@@ -146,6 +148,10 @@ begin
    {initialize UI}
    oxui.Initialize();
 
+   log.i('Pre-initialization done (Elapsed: ' + GlobalStartTime.ElapsedfToString() + 's)');
+
+   elapsedTime := Time();
+
    {$IFNDEF OX_LIBRARY}
    {determine if context window is required}
    oxContextWindow.Required();
@@ -175,6 +181,10 @@ begin
    end;
    {$ENDIF}
 
+   log.i('Window setup done (Elapsed: ' + elapsedTime.ElapsedfToString() + 's)');
+
+   elapsedTime := Time();
+
    oxRenderers.StartRoutines.Call();
    oxRenderer.StartRoutines.Call();
 
@@ -185,7 +195,15 @@ begin
       exit(oxeGENERAL);
    end;
 
+   log.i('Base initialization done (Elapsed: ' + elapsedTime.ElapsedfToString() + 's)');
+
+   elapsedTime := Time();
+
    ox.OnPreInitialize.Call();
+
+   log.i('OnPreInitialize called (Elapsed: ' + elapsedTime.ElapsedfToString() + 's)');
+
+   elapsedTime := Time();
 
    {call initialization routines}
    ox.Init.iCall();
@@ -194,10 +212,11 @@ begin
       exit(oxeGENERAL);
    end;
 
-   log.i('Called all initialization routines');
+   log.i('Called all initialization routines (elapsed: ' + elapsedTime.ElapsedfToString() + 's)');
 
    {call application initialization routines}
-   if(ox.AppProcs.ilist.n > 0) then begin
+   if(ox.AppProcs.iList.n > 0) then begin
+      elapsedTime := Time();
       ox.AppProcs.iCall();
 
       if(ox.Error <> 0) then begin
@@ -205,11 +224,11 @@ begin
          exit(oxeGENERAL);
       end;
 
-      log.i('Called all application initialization routines');
+      log.i('Called all application initialization routines (elapsed: ' + elapsedTime.ElapsedfToString() + 's)');
    end;
 
    {success}
-   log.i('Initialization done. Start time: ' + GlobalStartTime.ElapsedfToString() + 's');
+   log.i('Initialization done. Elapsed: ' + GlobalStartTime.ElapsedfToString() + 's');
    log.Leave();
 
    ox.initialized := true;
