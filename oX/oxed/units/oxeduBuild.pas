@@ -810,21 +810,29 @@ VAR
    laz: TProcess;
    openLazarusFlag: boolean = false;
 
+procedure runLazarus();
+begin
+   try
+      laz.Options := laz.Options - [poWaitOnExit];
+      laz.Execute();
+   except
+      on e : Exception  do begin
+         oxedMessages.e('Failed to run Lazarus ' + e.ToString());
+      end;
+   end;
+end;
+
 procedure openLazarusRecreate(recreateProject: boolean);
 begin
    if(openLazarusFlag) then begin
       openLazarusFlag := false;
 
-      try
-         laz.Options := laz.Options - [poWaitOnExit];
-
-         if(not recreateProject) or Recreate() then
-            laz.Execute();
-      except
-         on e : Exception  do begin
-            oxedMessages.e('Failed to run Lazarus ' + e.ToString());
-         end;
+      if(recreateProject) then begin
+         if(not Recreate()) then
+            exit;
       end;
+
+      runLazarus();
    end;
 end;
 
@@ -852,7 +860,7 @@ begin
       end;
 
       if(oxedProject.Running) then begin
-         openLazarusRecreate(false);
+         runLazarus();
          exit;
       end;
 
