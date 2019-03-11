@@ -192,7 +192,7 @@ begin
    widgets.Project.Identifier := wdgInputBox.Add('', uiWidget.LastRect.BelowOf(), oxNullDimensions);
    wdgLabel.Add('Project organization (not required)');
    widgets.Project.Organization := wdgInputBox.Add('', uiWidget.LastRect.BelowOf(), oxNullDimensions);
-   wdgLabel.Add('Project organization short name (used or config directory), if empty set to default automatically');
+   wdgLabel.Add('Project organization short name (used for config directory), if empty set to default automatically');
    widgets.Project.OrganizationShort := wdgInputBox.Add('', uiWidget.LastRect.BelowOf(), oxNullDimensions);
    wdgDivisor.Add('', uiWidget.LastRect.BelowOf());
    widgets.Project.UnixLineEndings := wdgCheckbox.Add('Unix line endings', uiWidget.LastRect.BelowOf());
