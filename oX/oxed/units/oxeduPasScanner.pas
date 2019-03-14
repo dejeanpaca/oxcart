@@ -11,7 +11,7 @@ UNIT oxeduPasScanner;
 INTERFACE
 
    USES
-      uLog, sysutils, Classes, uStd, uBuild, PParser, PasTree;
+      uLog, sysutils, Classes, uStd, uBuild, PScanner, PParser, PasTree;
 
 TYPE
    oxedTPasScanResult = record
@@ -70,6 +70,11 @@ var
    commandLine: string;
 
 begin
+   {$IFDEF VER3_2}
+   if(DefaultFileResolverClass = nil) then
+      DefaultFileResolverClass := TFileResolver;
+   {$ENDIF}
+
    ZeroOut(result, SizeOf(Result));
 
    E := TSimpleParseEngine.Create;
