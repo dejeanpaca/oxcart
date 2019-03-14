@@ -23,6 +23,11 @@ CONST
    { build system name }
    SYSTEM_NAME = 'fpbuild';
 
+   FPC_VERSION = {$I %FPCVersion%};
+   FPC_TARGET = {$I %FPCTARGET%};
+   FPC_TARGETCPU = {$I %FPCTARGETCPU%};
+   FPC_TARGETOS = {$I %FPCTARGETOS%};
+
 TYPE
    PBuildPlatform = ^TBuildPlatform;
    { TBuildPlatform }
