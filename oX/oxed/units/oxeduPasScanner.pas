@@ -11,7 +11,9 @@ UNIT oxeduPasScanner;
 INTERFACE
 
    USES
-      uLog, sysutils, Classes, uStd, uBuild, PScanner, PParser, PasTree;
+      uLog, sysutils, Classes, uStd, StringUtils, uBuild,
+      PScanner, PParser, PasTree,
+      oxeduProject, oxeduProjectScanner;
 
 TYPE
    oxedTPasScanResult = record
@@ -97,5 +99,32 @@ begin
 
    FreeAndNil(E);
 end;
+
+procedure onFile(var f: oxedTScannerFile);
+var
+   unitFile: oxedTProjectUnit;
+   pasResult: oxedTPasScanResult;
+
+begin
+   unitFile.Name := ExtractFileNameNoExt(f.FileName);
+   unitFile.Path := f.FileName;
+
+   if(f.Extension = '.pas') then begin
+      pasResult := oxedPasScanner.Scan(f.FileName);
+
+      if(pasResult.IsUnit) then
+         oxedProject.Units.Add(unitFile);
+   end else if(f.Extension = '.inc') then
+      oxedProject.IncludeFiles.Add(unitFile);
+end;
+
+procedure onStart();
+begin
+   oxedPasScanner.fpcCommandLine := build.GetFPCCommandLine();
+end;
+
+INITIALIZATION
+   oxedProjectScanner.OnStart.Add(@onStart);
+   oxedProjectScanner.OnFile.Add(@onFile);
 
 END.
