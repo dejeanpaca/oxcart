@@ -17,7 +17,7 @@ INTERFACE
       {ox}
       oxuThreadTask,
       {oxed}
-      uOXED, oxeduProject, oxeduProjectManagement, oxeduTasks, oxeduActions, oxeduPasScanner;
+      uOXED, oxeduProject, oxeduProjectManagement, oxeduTasks, oxeduActions;
 
 TYPE
    { oxedTProjectScannerTask }
@@ -32,6 +32,20 @@ TYPE
       procedure ThreadDone(); override;
    end;
 
+   oxedTScannerFile = record
+      FileName,
+      Extension: string;
+   end;
+
+   oxedTProjectScannerFileProcedure = procedure(var f: oxedTScannerFile);
+   oxedTProjectScannerFileProcedures = specialize TPreallocatedArrayList<oxedTProjectScannerFileProcedure>;
+
+   { oxedTScannerOnFileProceduresHelper }
+
+   oxedTScannerOnFileProceduresHelper = record helper for oxedTProjectScannerFileProcedures
+      procedure Call(var f: oxedTScannerFile);
+   end;
+
    { oxedTProjectScannerGlobal }
 
    oxedTProjectScannerGlobal = record
@@ -40,6 +54,7 @@ TYPE
 
       OnStart,
       OnDone: TProcedures;
+      OnFile: oxedTProjectScannerFileProcedures;
 
       procedure Run();
       class procedure Initialize(); static;
@@ -52,6 +67,18 @@ VAR
 IMPLEMENTATION
 
 function scanFile(const fn: string): boolean; forward;
+
+{ oxedTScannerOnFileProceduresHelper }
+
+procedure oxedTScannerOnFileProceduresHelper.Call(var f: oxedTScannerFile);
+var
+   i: loopint;
+
+begin
+   for i := 0 to n - 1 do begin
+      List[i](f);
+   end;
+end;
 
 { oxedTProjectScannerGlobal }
 
@@ -118,8 +145,6 @@ begin
 
    oxedProject.Units.Dispose();
    oxedProject.IncludeFiles.Dispose();
-
-   oxedPasScanner.fpcCommandLine := build.GetFPCCommandLine();
 end;
 
 procedure oxedTProjectScannerTask.ThreadStart();
@@ -138,9 +163,8 @@ end;
 
 function scanFile(const fn: string): boolean;
 var
-   unitFile: oxedTProjectUnit;
    ext: string;
-   pasResult: oxedTPasScanResult;
+   f: oxedTScannerFile;
 
 begin
    Result := true;
@@ -150,22 +174,16 @@ begin
       exit;
 
    ext := ExtractFileExt(fn);
-   unitFile.Name := ExtractFileNameNoExt(fn);
-   unitFile.Path := fn;
+   f.FileName := fn;
+   f.Extension := ext;
+
+   oxedProjectScanner.OnFile.Call(f);
 
    if(oxedProjectScanner.Task.Terminated) then
-      Result := false;
-
-   if(ext = '.pas') or (ext = '.pp') then begin
-      pasResult := oxedPasScanner.Scan(fn);
-
-      if(pasResult.IsUnit) then
-         oxedProject.Units.Add(unitFile);
-   end else if(ext = '.inc') then
-      oxedProject.IncludeFiles.Add(unitFile);
+      exit(false);
 
    if(oxedProjectScanner.Task.Terminated) then
-      Result := false;
+      exit(false);
 end;
 
 procedure deinit();
@@ -196,6 +214,7 @@ INITIALIZATION
 
    TProcedures.Initialize(oxedProjectScanner.OnStart);
    TProcedures.Initialize(oxedProjectScanner.OnDone);
+   oxedTProjectScannerFileProcedures.Initialize(oxedProjectScanner.OnFile);
 
    oxedProjectManagement.OnProjectOpen.Add(@projectOpen);
    oxedProjectManagement.OnProjectClosed.Add(@projectClosed);
