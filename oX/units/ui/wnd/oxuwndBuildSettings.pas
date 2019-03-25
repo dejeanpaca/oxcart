@@ -52,6 +52,15 @@ begin
    wdgButton.Add('Open build path', uiWidget.LastRect.RightOf(), oxNullDimensions, @openBuildPath);
 
    uiWidget.LastRect.GoLeft();
+   uiWidget.LastRect.GoBelow();
+
+   wdgDivisor.Add('Built with FPC', uiWidget.LastRect.BelowOf());
+   wdgLabel.Add('Version: ' + FPC_VERSION);
+   wdgLabel.Add('OS: ' + FPC_TARGETOS);
+   wdgLabel.Add('Target: ' + FPC_TARGET);
+   wdgLabel.Add('CPU: ' + FPC_TARGETCPU);
+
+   uiWidget.LastRect.GoBelow();
 
    wdgDivisor.Add('Configuration', uiWidget.LastRect.BelowOf());
    wdgLabel.Add('Tools path:   ' + build.Tools.Path);
