@@ -87,7 +87,7 @@ TYPE
       function SetSize(_total, _visible: int64): wdgTScrollbar;
 
    private
-      OpacityStart: TTimerData;
+      OpacityStart: TTimer;
       OpacityMul: single;
 
       procedure CalcHandleRect();

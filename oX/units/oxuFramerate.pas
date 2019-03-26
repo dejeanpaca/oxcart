@@ -24,7 +24,7 @@ TYPE
       favg: single;
 
       fTimer,
-      favgTimer: TTimerData;
+      favgTimer: TTimer;
 
       fCount,
       favgCount: longint;

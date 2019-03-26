@@ -21,7 +21,7 @@ TYPE
      this is also affected by the time factor}
      MaxTimeFlow: single;
 
-     Timer: TTimerData;
+     Timer: TTimer;
      Flow: single;
    end;
 
