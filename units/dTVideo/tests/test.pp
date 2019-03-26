@@ -12,4 +12,3 @@ BEGIN
    tvGlobal.LogModes();
    tvGlobal.Deinitialize();
 END.
-
