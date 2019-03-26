@@ -291,14 +291,14 @@ IMPLEMENTATION
 
 function oxPoint(x, y: longint): oxTPoint;
 begin
-   result.x := x;
-   result.y := y;
+   Result.x := x;
+   Result.y := y;
 end;
 
 function oxDimensions(w, h: longint): oxTDimensions;
 begin
-   result.w := w;
-   result.h := h;
+   Result.w := w;
+   Result.h := h;
 end;
 
 { oxTProgressIndicatorData }
@@ -420,15 +420,15 @@ end;
 
 class function oxTRectf.Make(nx, ny, nw, nh: single): oxTRectf;
 begin
-   result.x := nx;
-   result.y := ny;
-   result.w := nw;
-   result.h := nh;
+   Result.x := nx;
+   Result.y := ny;
+   Result.w := nw;
+   Result.h := nh;
 end;
 
 function oxTRectf.Inside(px, py: single): Boolean;
 begin
-   result := (px >= x) and (px < x + w) and (py <= y) and (py > y - h);
+   Result := (px >= x) and (px < x + w) and (py <= y) and (py > y - h);
 end;
 
 procedure oxTRectf.FitInside(var another: oxTRectf);
@@ -508,30 +508,30 @@ end;
 
 class function oxTDimensionsf.Make(width, height: single): oxTDimensionsf;
 begin
-   result.w := width;
-   result.h := height;
+   Result.w := width;
+   Result.h := height;
 end;
 
 class function oxTDimensionsf.Fit(width, width2, height, height2: single): oxTDimensionsf;
 begin
-   result.w := width;
-   if width2 < result.w then
-      result.w := width2;
+   Result.w := width;
+   if width2 < Result.w then
+      Result.w := width2;
 
-   result.h := height;
-   if height2 < result.h then
-      result.h := height2;
+   Result.h := height;
+   if height2 < Result.h then
+      Result.h := height2;
 end;
 
 class function oxTDimensionsf.Null(): oxTDimensionsf;
 begin
-   result.w := 0;
-   result.h := 0;
+   Result.w := 0;
+   Result.h := 0;
 end;
 
 function oxTDimensionsf.IsPositive(): boolean;
 begin
-   result := (w > 0) and (h > 0);
+   Result := (w > 0) and (h > 0);
 end;
 
 function oxTDimensionsf.ToString(decimals: loopint): string;
@@ -549,8 +549,8 @@ end;
 
 class function oxTPointf.Make(nx, ny: single): oxTPointf;
 begin
-   result.x := nx;
-   result.y := ny;
+   Result.x := nx;
+   Result.y := ny;
 end;
 
 class function oxTPointf.MakeCenterPoint(w, h, w2, h2: single): oxTPointf;
@@ -561,14 +561,14 @@ begin
    cw := w2 / 2;
    ch := h2 / 2;
 
-   result.x := cw - (w / 2);
-   result.y := ch + (h / 2);
+   Result.x := cw - (w / 2);
+   Result.y := ch + (h / 2);
 end;
 
 class function oxTPointf.Null(): oxTPointf;
 begin
-   result.x := 0;
-   result.y := 0;
+   Result.x := 0;
+   Result.y := 0;
 end;
 
 function oxTPointf.Distance(p2: oxTPointf): single;
@@ -591,8 +591,8 @@ end;
 
 class function oxTPoint.Make(nx, ny: longint): oxTPoint;
 begin
-   result.x := nx;
-   result.y := ny;
+   Result.x := nx;
+   Result.y := ny;
 end;
 
 class function oxTPoint.MakeCenterPoint(w, h, w2, h2: longint): oxTPoint;
@@ -603,14 +603,14 @@ begin
    cw := w2 div 2;
    ch := h2 div 2;
 
-   result.x := cw - (w div 2);
-   result.y := ch + (h div 2);
+   Result.x := cw - (w div 2);
+   Result.y := ch + (h div 2);
 end;
 
 class function oxTPoint.Null(): oxTPoint;
 begin
-   result.x := 0;
-   result.y := 0;
+   Result.x := 0;
+   Result.y := 0;
 end;
 
 function oxTPoint.Distance(p2: oxTPoint): loopint;
@@ -620,7 +620,7 @@ end;
 
 function oxTPoint.ToString(): string;
 begin
-   WriteStr(result, x, 'x', y);
+   WriteStr(Result, x, 'x', y);
 end;
 
 { oxTRect }
@@ -643,15 +643,15 @@ end;
 
 class function oxTRect.Make(nx, ny, nw, nh: longint): oxTRect;
 begin
-   result.x := nx;
-   result.y := ny;
-   result.w := nw;
-   result.h := nh;
+   Result.x := nx;
+   Result.y := ny;
+   Result.w := nw;
+   Result.h := nh;
 end;
 
 function oxTRect.Inside(px, py: longint): Boolean;
 begin
-   result := (px >= x) and (px < x + w) and (py <= y) and (py > y - h);
+   Result := (px >= x) and (px < x + w) and (py <= y) and (py > y - h);
 end;
 
 procedure oxTRect.FitInside(var another: oxTRect);
@@ -714,30 +714,30 @@ end;
 
 class function oxTDimensions.Make(width, height: longint): oxTDimensions;
 begin
-   result.w := width;
+   Result.w := width;
    Result.h := height;
 end;
 
 class function oxTDimensions.Fit(width, width2, height, height2: longint): oxTDimensions;
 begin
-   result.w := width;
-   if width2 < result.w then
-      result.w := width2;
+   Result.w := width;
+   if width2 < Result.w then
+      Result.w := width2;
 
-   result.h := height;
-   if height2 < result.h then
-      result.h := height2;
+   Result.h := height;
+   if height2 < Result.h then
+      Result.h := height2;
 end;
 
 class function oxTDimensions.Null(): oxTDimensions;
 begin
-   result.w := 0;
-   result.h := 0;
+   Result.w := 0;
+   Result.h := 0;
 end;
 
 function oxTDimensions.IsPositive(): boolean;
 begin
-   result := (w > 0) and (h > 0);
+   Result := (w > 0) and (h > 0);
 end;
 
 function oxTDimensions.ToString: string;
