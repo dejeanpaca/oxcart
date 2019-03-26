@@ -14,11 +14,11 @@ INTERFACE
 
 TYPE
    {contains the start of timing, elapsed time, and the goal time}
-   PTimerData = ^TTimerData;
+   PTimer = ^TTimer;
 
-   { TTimerData }
+   { TTimer }
 
-   TTimerData = record
+   TTimer = record
       startTime,
       currentTime,
       elapsedTime: longint;
@@ -36,10 +36,10 @@ TYPE
       pausedTime: longint;
 
       {a linked timer}
-      timerLink: PTimerData;
+      timerLink: PTimer;
 
       {initialize a timer record}
-      class procedure Init(out timer: TTimerData); static;
+      class procedure Init(out timer: TTimer); static;
 
       procedure Init();
       procedure InitStart();
@@ -70,7 +70,7 @@ TYPE
       procedure Resume();
 
       {link specified timer to self}
-      procedure Link(var withTimer: TTimerData);
+      procedure Link(var withTimer: TTimer);
 
       { HELPERS }
 
@@ -95,7 +95,7 @@ TYPE
    {note: goal and elapsed time is relative of start time}
 
 CONST
-	cZeroTimer: TTimerData = (
+	cZeroTimer: TTimer = (
       startTime:        0;
       currentTime:      0;
       elapsedTime:      0;
@@ -111,7 +111,7 @@ CONST
    );
 
 VAR
-   timer: TTimerData;
+   timer: TTimer;
 
 IMPLEMENTATION
 
@@ -158,23 +158,23 @@ begin
    result := (y = oy) and (m = om) and (d = od);
 end;
 
-class procedure TTimerData.Init(out timer: TTimerData);
+class procedure TTimer.Init(out timer: TTimer);
 begin
    timer := cZeroTimer;
 end;
 
-procedure TTimerData.Init();
+procedure TTimer.Init();
 begin
 	self := cZeroTimer;
 end;
 
-procedure TTimerData.InitStart();
+procedure TTimer.InitStart();
 begin
    Init();
    Start();
 end;
 
-function TTimerData.Cur(): longint;
+function TTimer.Cur(): longint;
 begin
    if(timerLink = nil) then
       Result := DateTimeToTimestamp(Time).time
@@ -182,7 +182,7 @@ begin
       Result := timerLink^.Elapsed();
 end;
 
-procedure TTimerData.Start();
+procedure TTimer.Start();
 begin
    startTime      := Cur();
    currentTime    := startTime;
@@ -192,17 +192,17 @@ begin
    paused         := false;
 end;
 
-procedure TTimerData.StartOffset(ofs: longint);
+procedure TTimer.StartOffset(ofs: longint);
 begin
    {%H-}system.inc(startTime, ofs);
 end;
 
-procedure TTimerData.StartOffsetf(ofs: single);
+procedure TTimer.StartOffsetf(ofs: single);
 begin
    StartOffset(round(ofs * 1000));
 end;
 
-procedure TTimerData.Update();
+procedure TTimer.Update();
 begin
    if(not paused) then begin
       currentTime    := Cur();
@@ -211,34 +211,34 @@ begin
    end;
 end;
 
-procedure TTimerData.SetGoal(ms: longint);
+procedure TTimer.SetGoal(ms: longint);
 begin
    goalTime := ms;
 end;
 
-procedure TTimerData.SetFactor(newFactor: longint);
+procedure TTimer.SetFactor(newFactor: longint);
 begin
    factor      := newFactor;
    factorint   := newFactor;
 end;
 
-procedure TTimerData.SetFactor(newFactor: single);
+procedure TTimer.SetFactor(newFactor: single);
 begin
    factor      := newFactor;
    factorint   := round(newFactor);
 end;
 
-function TTimerData.Elapsed(): longint;
+function TTimer.Elapsed(): longint;
 begin
    result := elapsedTime;
 end;
 
-function TTimerData.Elapsedf(): single;
+function TTimer.Elapsedf(): single;
 begin
    result := elapsedTimef;
 end;
 
-function TTimerData.Goal(): boolean;
+function TTimer.Goal(): boolean;
 var
    current: longint;
 
@@ -248,13 +248,13 @@ begin
 end;
 
 
-procedure TTimerData.Inc();
+procedure TTimer.Inc();
 begin
    system.inc(iterations);
 end;
 
 {return the time flow}
-function TTimerData.TimeFlow(): single;
+function TTimer.TimeFlow(): single;
 begin
    Update();
    result := elapsedTimef * factor;
@@ -262,7 +262,7 @@ begin
 end;
 
 
-procedure TTimerData.Pause();
+procedure TTimer.Pause();
 begin
    if(not paused) then begin
       paused      := true;
@@ -270,7 +270,7 @@ begin
    end;
 end;
 
-procedure TTimerData.Resume();
+procedure TTimer.Resume();
 begin
    if(paused) then begin
       add         := add + (pausedTime - startTime);
@@ -280,24 +280,24 @@ begin
    end;
 end;
 
-procedure TTimerData.Link(var withTimer: TTimerData);
+procedure TTimer.Link(var withTimer: TTimer);
 begin
    withTimer.timerLink := @withTimer;
 end;
 
 { GENERAL }
 
-class function TTimerData.GetRandomIntervalf(const minTime, maxTime: single): Single;
+class function TTimer.GetRandomIntervalf(const minTime, maxTime: single): Single;
 begin
    result := minTime + (random() * (maxTime - minTime));
 end;
 
-class function TTimerData.Elapsed(const t1, t2: TDateTime): longint;
+class function TTimer.Elapsed(const t1, t2: TDateTime): longint;
 begin
    Result := DateTimeToTimestamp(t2).Time - DateTimeToTimestamp(t1).Time;
 end;
 
-class function TTimerData.Elapsedf(const t1, t2: TDateTime): single;
+class function TTimer.Elapsedf(const t1, t2: TDateTime): single;
 begin
    Result := (DateTimeToTimestamp(t2).Time - DateTimeToTimestamp(t1).Time) / 1000;
 end;
@@ -305,6 +305,6 @@ end;
 
 INITIALIZATION
    {setup the default timer}
-   TTimerData.Init(timer);
+   TTimer.Init(timer);
 
 END.
