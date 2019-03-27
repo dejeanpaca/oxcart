@@ -265,8 +265,7 @@ begin
             items.Dispose();
          end else
             Collapse(index);
-      end else
-         ItemNavigated(index);
+      end;
    end;
 end;
 
