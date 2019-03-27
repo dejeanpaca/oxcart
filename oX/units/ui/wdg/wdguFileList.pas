@@ -81,9 +81,11 @@ TYPE
 
       protected
          procedure FileClicked(index: loopint); virtual;
+         procedure FileDoubleClicked({%H-}index: loopint; {%H-}button: TBitSet); virtual;
          procedure FileClickedSecondary({%H-}index: loopint); virtual;
 
          procedure GridItemClicked(index: loopint); override;
+         procedure GridItemDoubleClicked(index: loopint; button: TBitSet); override;
          procedure GridItemClickedSecondary(index: loopint); override;
 
          procedure OnPathChanged(); virtual;
@@ -841,6 +843,10 @@ begin
    end;
 end;
 
+procedure wdgTFileList.FileDoubleClicked(index: loopint; button: TBitSet);
+begin
+end;
+
 procedure wdgTFileList.FileClickedSecondary(index: loopint);
 begin
 
@@ -849,6 +855,11 @@ end;
 procedure wdgTFileList.GridItemClicked(index: loopint);
 begin
    FileClicked(index);
+end;
+
+procedure wdgTFileList.GridItemDoubleClicked(index: loopint; button: TBitSet);
+begin
+   FileDoubleClicked(index, button);
 end;
 
 procedure wdgTFileList.GridItemClickedSecondary(index: loopint);
