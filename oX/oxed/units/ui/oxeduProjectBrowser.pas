@@ -43,7 +43,7 @@ TYPE
 
       function Key(var k: appTKeyEvent): boolean; override;
 
-      procedure FileClicked(index: loopint); override;
+      procedure FileDoubleClicked(index: loopint; button: TBitSet); override;
       procedure FileClickedSecondary(index: loopint); override;
    end;
 
@@ -112,12 +112,12 @@ begin
       Result := inherited Key(k);
 end;
 
-procedure wdgTOXEDProjectBrowserFiles.FileClicked(index: loopint);
+procedure wdgTOXEDProjectBrowserFiles.FileDoubleClicked(index: loopint; button: TBitSet);
 begin
    {open file or directory}
-   if(index > -1) then begin
+   if(index > -1) and (button = appmcLEFT) then begin
       if(Files.List[index].IsDirectory()) then
-         inherited FileClicked(index)
+         inherited FileDoubleClicked(index, button)
       else
          app.OpenLink(GetFilePath(index));
    end;
