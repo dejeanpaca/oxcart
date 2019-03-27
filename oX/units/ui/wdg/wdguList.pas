@@ -997,7 +997,7 @@ begin
                ClickItem()
             else
                ItemCleared();
-         end else then begin
+         end else begin
             index := SelectPointer();
             ItemClicked(index, e.Button);
          end;
