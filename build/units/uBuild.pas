@@ -1477,14 +1477,14 @@ end;
 function processPath(var path: string): boolean;
 begin
    Result := False;
-   ReplaceDirSeparators(currentValue);
+   ReplaceDirSeparators(path);
 
-   if(isRelativePath(currentValue)) then begin
+   if(isRelativePath(path)) then begin
       {TODO: Use current config file path}
-      currentValue := ExpandFileName(build.ConfigPath + currentValue);
+      path := ExpandFileName(build.ConfigPath + currentValue);
    end;
 
-   if(doesIncludeAll(currentValue)) then
+   if(doesIncludeAll(path)) then
       exit(True);
 end;
 
