@@ -719,7 +719,7 @@ end;
 
 procedure wdgTGrid.OnHover(index: loopint);
 begin
-   OnGridHover(LastItemUnderPointer);
+   OnGridHover(LastGridItemUnderPointer);
 end;
 
 procedure wdgTGrid.OnGridHover(index: loopint);
