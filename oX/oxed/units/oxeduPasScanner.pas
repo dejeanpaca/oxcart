@@ -104,7 +104,6 @@ end;
 procedure onFile(var f: oxedTScannerFile);
 var
    unitFile: oxedTProjectUnit;
-   pasResult: oxedTPasScanResult;
 
 begin
    unitFile.Name := ExtractFileNameNoExt(f.FileName);
