@@ -32,7 +32,7 @@ TYPE
       FileBrowser: wdgTFileGrid;
 
       procedure ItemNavigated(index: loopint); override;
-      procedure ItemClickedSecondary(index: loopint); override;
+      procedure ItemClicked(index: loopint; button: TBitSet = appmcLEFT); override;
       procedure OnLoad; override;
    end;
 
@@ -44,7 +44,7 @@ TYPE
       function Key(var k: appTKeyEvent): boolean; override;
 
       procedure FileDoubleClicked(index: loopint; button: TBitSet); override;
-      procedure FileClickedSecondary(index: loopint); override;
+      procedure FileClicked(index: loopint; button: TBitSet = appmcLEFT); override;
    end;
 
    { oxedTProjectBrowserWindow }
@@ -123,11 +123,16 @@ begin
    end;
 end;
 
-procedure wdgTOXEDProjectBrowserFiles.FileClickedSecondary(index: loopint);
+procedure wdgTOXEDProjectBrowserFiles.FileClicked(index: loopint; button: TBitSet);
 var
    origin: uiTWidgetWindowOrigin;
 
 begin
+   if(button <> appmcRIGHT) then begin
+      inherited FileClicked(index, button);
+      exit;
+   end;
+
    origin.Initialize(origin);
 
    origin.SetControl(Self);
@@ -156,11 +161,14 @@ begin
    end;
 end;
 
-procedure wdgTOXEDProjectBrowserNavigate.ItemClickedSecondary(index: loopint);
+procedure wdgTOXEDProjectBrowserNavigate.ItemClicked(index: loopint; button: TBitSet);
 var
    origin: uiTWidgetWindowOrigin;
 
 begin
+   if(button <> appmcRIGHT) then
+      exit;
+
    origin.SetPoint(GetAbsolutePointer(LastPointerPosition), Self);
 
    oxedProjectContextMenu.Parameters.IsDirectory := true;

@@ -13,7 +13,7 @@ INTERFACE
    USES
       math, uStd, uColors,
       {app}
-      appuKeys,
+      appuKeys, appuMouse,
       {oX}
       oxuTypes, oxuFont,
       {ui}
@@ -126,13 +126,11 @@ TYPE
       procedure NavigateToColumn(column: loopint; doUpdate: boolean = true);
 
       protected
-         procedure ItemClicked(index: loopint); override;
+         procedure ItemClicked(index: loopint; button: TBitSet = appmcLEFT); override;
          procedure ItemDoubleClicked(index: loopint; button: TBitSet); override;
-         procedure ItemClickedSecondary(index: loopint); override;
 
-         procedure GridItemClicked({%H-}index: loopint); virtual;
+         procedure GridItemClicked({%H-}index: loopint; {%H-}button: TBitSet = appmcLEFT); virtual;
          procedure GridItemDoubleClicked({%H-}index: loopint; {%H-}button: TBitSet); virtual;
-         procedure GridItemClickedSecondary({%H-}index: loopint); virtual;
 
          function GetItemUnderPointer(x, y: loopint; out offs: loopint): loopint; override;
 
@@ -644,16 +642,16 @@ begin
    end;
 end;
 
-procedure wdgTGrid.ItemClicked(index: loopint);
+procedure wdgTGrid.ItemClicked(index: loopint; button: TBitSet);
 begin
-   inherited ItemClicked(index);
+   inherited ItemClicked(index, button);
 
    SelectedGridItem := LastGridItemUnderPointer;
 
    if(GridMode) then
-      GridItemClicked(SelectedGridItem)
+      GridItemClicked(SelectedGridItem, button)
    else
-      GridItemClicked(SelectedItem);
+      GridItemClicked(SelectedItem, button);
 end;
 
 procedure wdgTGrid.ItemDoubleClicked(index: loopint; button: TBitSet);
@@ -668,29 +666,12 @@ begin
       GridItemDoubleClicked(SelectedItem, button);
 end;
 
-procedure wdgTGrid.ItemClickedSecondary(index: loopint);
-begin
-   inherited ItemClickedSecondary(index);
-
-   SelectedGridItem := LastGridItemUnderPointer;
-
-   if(GridMode) then
-      GridItemClickedSecondary(SelectedGridItem)
-   else
-      GridItemClickedSecondary(SelectedItem);
-end;
-
-procedure wdgTGrid.GridItemClicked(index: loopint);
+procedure wdgTGrid.GridItemClicked(index: loopint; button: TBitSet);
 begin
 
 end;
 
 procedure wdgTGrid.GridItemDoubleClicked(index: loopint; button: TBitSet);
-begin
-
-end;
-
-procedure wdgTGrid.GridItemClickedSecondary(index: loopint);
 begin
 
 end;

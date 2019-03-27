@@ -997,9 +997,9 @@ begin
                ClickItem()
             else
                ItemCleared();
-         end else if(e.Button = appmcRIGHT) then begin
+         end else then begin
             index := SelectPointer();
-            ItemClicked(index, appmcRIGHT);
+            ItemClicked(index, e.Button);
          end;
       end else begin
          index := SelectPointer();

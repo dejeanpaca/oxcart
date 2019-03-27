@@ -12,7 +12,8 @@ INTERFACE
 
    USES
       uStd,
-      appuKeys,
+      {app}
+      appuKeys, appuMouse,
       {ox}
       oxuTypes, oxuScene, oxuEntity, oxuFont,
       {ui}
@@ -44,7 +45,7 @@ TYPE
       procedure ItemNavigated(index: loopint); override;
 
       procedure ItemCleared; override;
-      procedure ItemClickedSecondary(idx: loopint); override;
+      procedure ItemClicked(index: loopint; button: TBitSet = appmcLEFT); override;
    end;
 
    { oxedTSceneHierarchyWindow }
@@ -339,15 +340,17 @@ begin
    SetInspector(nil);
 end;
 
-procedure wdgTSceneHierarchy.ItemClickedSecondary(idx: loopint);
+procedure wdgTSceneHierarchy.ItemClicked(index: loopint; button: TBitSet);
 var
    origin: uiTWidgetWindowOrigin;
 
 begin
-   origin.Initialize(origin);
+   if(button = appmcRIGHT) then begin
+      origin.Initialize(origin);
 
-   origin.SetPoint(GetAbsolutePointer(LastPointerPosition), Self);
-   OpenContext(Self, idx, origin);
+      origin.SetPoint(GetAbsolutePointer(LastPointerPosition), Self);
+      OpenContext(Self, index, origin);
+   end;
 end;
 
 { oxedTSceneHierarchyWindow }
