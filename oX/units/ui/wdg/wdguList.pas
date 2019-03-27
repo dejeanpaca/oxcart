@@ -18,6 +18,7 @@ INTERFACE
       oxuTypes, oxuFont, oxuTexture,
       {ui}
       uiuTypes, uiuWindowTypes, uiuWidget, uiWidgets, uiuDraw, uiuWidgetRender, uiuWindow, uiuSettings,
+      uiuPointerEvents,
       wdguScrollbar;
 
 TYPE
@@ -221,6 +222,8 @@ TYPE
          procedure ItemCleared(); virtual;
          {called when an item is clicked upon with the secondary button}
          procedure ItemClickedSecondary({%H-}index: loopint); virtual;
+         {called when an item is double clicked upon (but not in selection mode)}
+         procedure ItemDoubleClicked({%H-}index: loopint; {%H-}button: TBitSet); virtual;
          {called when an item is selected}
          procedure ItemSelected({%H-}index: loopint); virtual;
          {called when an item is unselected}
@@ -987,17 +990,22 @@ begin
    LastPointerPosition.y := y;
 
    if(e.Action.IsSet(appmcRELEASED)) then begin
-      if(e.Button = appmcLEFT) then begin
-         SelectedItem := SelectPointer();
-         SelectedItemOffset := HighlightedItemOffset;
+      if(not uiPointerEvents.IsDoubleClick()) then begin
+         if(e.Button = appmcLEFT) then begin
+            SelectedItem := SelectPointer();
+            SelectedItemOffset := HighlightedItemOffset;
 
-         if(SelectedItem > -1) then
-            ClickItem()
-         else
-            ItemCleared();
-      end else if(e.Button = appmcRIGHT) then begin
+            if(SelectedItem > -1) then
+               ClickItem()
+            else
+               ItemCleared();
+         end else if(e.Button = appmcRIGHT) then begin
+            index := SelectPointer();
+            ItemClickedSecondary(index);
+         end;
+      end else begin
          index := SelectPointer();
-         ItemClickedSecondary(index);
+         ItemDoubleClicked(index, e.Button);
       end;
    end else if(e.IsWheel()) then begin
       if(e.Value < 0) then begin
@@ -1408,6 +1416,10 @@ end;
 procedure wdgTList.ItemClickedSecondary(index: loopint);
 begin
 
+end;
+
+procedure wdgTList.ItemDoubleClicked(index: loopint; button: TBitSet);
+begin
 end;
 
 procedure wdgTList.ItemSelected(index: loopint);
