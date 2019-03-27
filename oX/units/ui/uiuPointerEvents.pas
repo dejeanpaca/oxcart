@@ -531,7 +531,7 @@ begin
                {both events must be releases on a matching target, with matching buttons}
                if(Events[i].m.IsReleased()) and (Events[i].Target = Events[f].Target)
                and (Events[i].m.Button = Events[f].m.Button) then begin
-                  elapsed := TTimer.Elapsed(Events[f].Time, Events[i].Time);
+                  elapsed := TTimer.Elapsed(Events[i].Time, Events[f].Time);
 
                   {two clicks must occur within the allowed time span}
                   if(elapsed < 0) or (elapsed > DoubleClick.Time) then
