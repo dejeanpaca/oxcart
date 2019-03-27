@@ -44,7 +44,7 @@ TYPE
 
       procedure ItemNavigated(index: loopint); override;
 
-      procedure ItemCleared; override;
+      procedure ItemCleared(); override;
       procedure ItemClicked(index: loopint; button: TBitSet = appmcLEFT); override;
    end;
 
@@ -345,6 +345,8 @@ var
    origin: uiTWidgetWindowOrigin;
 
 begin
+   inherited ItemClicked(index, button);
+
    if(button = appmcRIGHT) then begin
       origin.Initialize(origin);
 
