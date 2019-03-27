@@ -217,11 +217,9 @@ TYPE
          procedure Recalculate();
 
          {called when an item is clicked upon (but not in selection mode)}
-         procedure ItemClicked({%H-}index: loopint); virtual;
+         procedure ItemClicked({%H-}index: loopint; {%H-}button: TBitSet = appmcLEFT); virtual;
          {called when no item is selected}
          procedure ItemCleared(); virtual;
-         {called when an item is clicked upon with the secondary button}
-         procedure ItemClickedSecondary({%H-}index: loopint); virtual;
          {called when an item is double clicked upon (but not in selection mode)}
          procedure ItemDoubleClicked({%H-}index: loopint; {%H-}button: TBitSet); virtual;
          {called when an item is selected}
@@ -959,7 +957,7 @@ begin
          ScrollHorizontally(1);
    end else if(k.Key.IsContext()) then begin
       if(not k.Key.Released()) then
-         ItemClickedSecondary(LastItemUnderPointer);
+         ItemClicked(LastItemUnderPointer, appmcRIGHT);
    end else
       Result := false;
 end;
@@ -1001,7 +999,7 @@ begin
                ItemCleared();
          end else if(e.Button = appmcRIGHT) then begin
             index := SelectPointer();
-            ItemClickedSecondary(index);
+            ItemClicked(index, appmcRIGHT);
          end;
       end else begin
          index := SelectPointer();
@@ -1404,16 +1402,11 @@ begin
    ContentY :=  RPosition.y - GetContentY();
 end;
 
-procedure wdgTList.ItemClicked(index: loopint);
+procedure wdgTList.ItemClicked(index: loopint; button: TBitSet);
 begin
 end;
 
 procedure wdgTList.ItemCleared();
-begin
-
-end;
-
-procedure wdgTList.ItemClickedSecondary(index: loopint);
 begin
 
 end;
