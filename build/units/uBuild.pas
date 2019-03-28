@@ -156,6 +156,9 @@ TYPE
       CurrentLazarus: PBuildLazarusInstall;
       OptimizationLevels: TPreallocatedStringArrayList;
 
+      DefaultPlatform: PBuildPlatform;
+      DefaultLazarus: PBuildLazarusInstall;
+
       {initialize the build system}
       procedure Initialize();
       {load configuration}
@@ -249,6 +252,9 @@ TYPE
       procedure GetSymbolParameters();
       {set default symbols for current platform}
       procedure SetDefaultSymbols();
+
+      {set default values if these were not set through config}
+      procedure SetupDefaults();
    end;
 
    { TPascalSourceBuilder }
@@ -337,6 +343,8 @@ begin
    build.Platforms.Add(defaultPlatform);
 
    currentPlatform := build.Platforms.GetLast();
+
+   build.DefaultPlatform := currentPlatform;
 end;
 
 procedure CreateDefaultLazarus();
@@ -354,6 +362,7 @@ begin
    defaultLaz.FPC := @build.Platforms.List[0];
 
    currentLazarus := build.LazarusInstalls.GetLast();
+   build.DefaultLazarus := currentLazarus;
 end;
 
 { TLazarusInstallsHelper }
@@ -563,7 +572,10 @@ begin
 
    LoadConfiguration();
 
-   if(configPath = 'default') then
+   {setup default values if defaults were not overriden}
+   SetupDefaults();
+
+   if(ConfigPath = 'default') then
       exit;
 
    {setup unit paths}
@@ -596,14 +608,14 @@ begin
       dvarf.ReadText(dvgLocation, fn);
 
       {if can't find the specified location, restore default}
-      if (build.configPath <> 'default') then begin
-         FileUtils.NormalizePathEx(build.configPath);
-         build.configPath := IncludeTrailingPathDelimiter(build.configPath);
+      if (build.ConfigPath <> 'default') then begin
+         FileUtils.NormalizePathEx(build.ConfigPath);
+         build.ConfigPath := IncludeTrailingPathDelimiter(build.ConfigPath);
 
-         if not(FileUtils.DirectoryExists(build.configPath)) then begin
-            log.w('build > Could not find configuration directory: ' + build.configPath);
+         if not(FileUtils.DirectoryExists(build.ConfigPath)) then begin
+            log.w('build > Could not find configuration directory: ' + build.ConfigPath);
             log.i('build > Will revert location configuration to default');
-            build.configPath := 'default';
+            build.ConfigPath := 'default';
             writeConfig := true;
          end;
       end;
@@ -615,7 +627,7 @@ begin
    if(writeConfig) then
       SaveLocationConfiguration();
 
-   if(configPath = 'default') then begin
+   if(ConfigPath = 'default') then begin
       log.e('build > Configuration location is not set (location config at: ' + fn + ')');
       exit;
    end;
@@ -635,7 +647,7 @@ begin
    {$ENDIF}
 
    {read general configuration}
-   fn := configPath + 'build.config';
+   fn := ConfigPath + 'build.config';
    if(FileUtils.Exists(fn) > 0) then
       dvarf.ReadText(dvgConfig, fn);
 
@@ -644,7 +656,7 @@ begin
    if(buildMode <> '') then
       mode := '.' + buildMode;
 
-   fn := configPath + 'build.' + platform + mode + '.config';
+   fn := ConfigPath + 'build.' + platform + mode + '.config';
    if(FileUtils.Exists(fn) > 0) then
       dvarf.ReadText(dvgConfig, fn);
 
@@ -668,7 +680,7 @@ var
    fn: string;
 
 begin
-   fn := configPath + 'units.config';
+   fn := ConfigPath + 'units.config';
 
    if(FileUtils.Exists(fn) > 0) then begin
       {read units from unit configuration}
@@ -1384,6 +1396,62 @@ begin
    {$ENDIF}
 end;
 
+procedure TBuildSystem.SetupDefaults();
+begin
+   if(build.DefaultPlatform^.Path = '') then begin
+      log.v(build.ConfigPath);
+
+      {$IF DEFINED(LINUX)}
+      log.v('build > auto fpc defaults for linux');
+      build.DefaultPlatform^.Path := '/usr/bin/';
+      build.Tools.Path := '~/bin/';
+
+      if(build.ConfigPath <> 'default') then
+         build.Tools.Build :=  build.ConfigPath;
+
+      FileUtils.NormalizePathEx(build.Tools.Path);
+      FileUtils.NormalizePathEx(build.Tools.Build);
+      {$ELSEIF DEFINED(DARWIN)}
+      log.v('build > auto fpc defaults for darwin');
+      build.DefaultPlatform^.Path := '/usr/local/bin/'
+      build.Tools.Path := '~/bin/';
+
+      if(build.ConfigPath <> 'default') then
+         build.Tools.Build :=  build.ConfigPath;
+      {$ELSEIF DEFINED(WINDOWS)}
+      {TODO: Determine default fpc path for windows}
+      log.v('build > auto fpc defaults for windows');
+      if(build.ConfigPath <> 'default') then begin
+         build.Tools.Path :=  ExpandFileName(IncludeTrailingPathDelimiterNonEmpty(build.ConfigPath) + '\..\tools');
+         build.Tools.Build := build.ConfigPath;
+      end;
+      {$ENDIF}
+
+      {$IF DEFINED(CPUX86_64) OR DEFINED(CPUX86_32)}
+      build.DefaultPlatform^.OptimizationLevels.Add('sse');
+      build.DefaultPlatform^.OptimizationLevels.Add('sse2');
+      build.DefaultPlatform^.OptimizationLevels.Add('sse3');
+      {$ENDIF}
+
+      log.v('build > using auto defaults for fpc platform');
+   end;
+
+   if(build.DefaultLazarus^.Path = '') then begin
+      {$IF DEFINED(LINUX)}
+      log.v('build > auto lazarus defaults for linux');
+      build.DefaultLazarus^.Path := '/usr/bin/';
+      {$ELSEIF DEFINED(DARWIN)}
+      log.v('build > auto lazarus defaults for darwin');
+      build.DefaultLazarus^.Path := '/Developer/lazarus';
+      {$ELSEIF DEFINED(WINDOW)}
+      build.DefaultLazarus^.Path := 'C:\lazarus\';
+      {$ENDIF}
+
+      log.v('build > using auto defaults for lazarus install');
+   end;
+
+end;
+
 function getBasePath(): string;
 begin
    {$IFDEF UNIX}
@@ -1610,8 +1678,8 @@ begin
 end;
 
 INITIALIZATION
-   build.writeLog := true;
-   build.configPath := 'default';
+   build.WriteLog := true;
+   build.ConfigPath := 'default';
 
    build.dvgLocation := dvar.RootGroup;
    build.dvgLocation.Add(dvConfigLocation, 'location', dtcSTRING, @build.ConfigPath);
