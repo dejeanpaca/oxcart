@@ -350,6 +350,9 @@ begin
    build.LazarusInstalls.Dispose();
    build.LazarusInstalls.Add(defaultLaz);
 
+   defaultLaz.UseFpc := build.Platforms.List[0].Name;
+   defaultLaz.FPC := @build.Platforms.List[0];
+
    currentLazarus := build.LazarusInstalls.GetLast();
 end;
 
