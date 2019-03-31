@@ -138,9 +138,8 @@ BEGIN
    if(not build.Initialized) then begin
       if(build.ConfigPath = 'default') then begin
          log.w('Configuration path doesn''t seem set, will attempt to set one');
-         build.ConfigPath := IncludeTrailingPathDelimiter(GetParentDirectory(appPath.GetExecutablePath())) + 'build' + DirectorySeparator;
+         build.AutoDetermineConfigPath();
          build.SaveLocationConfiguration();
-         log.w('Configuration path auto set to ' + build.ConfigPath);
 
          log.w('Attempt to reinitialize build');
          build.Initialize();
