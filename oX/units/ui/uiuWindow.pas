@@ -635,7 +635,6 @@ begin
    wnd.SetBackgroundColor(wnd.Skin.Window.Colors.cBackground);
    wnd.Buttons          := createData.Buttons;
    wnd.Properties       := createData.Properties;
-   wnd.Widgets          := uiTWidgets.Create();
 
    {set minimum and maximum size, without overriding existing (constructor) if nothing is set in createData}
    if((wnd.MinimumSize.w = 0) and (wnd.MinimumSize.h = 0)) and
@@ -758,7 +757,7 @@ begin
 
    errcode := Make(create, child, title, position, dimensions, wHandler);
    if(errcode = 0) then begin
-      wnd.w.Insert(child);
+      wnd.W.Insert(child);
 
       {return a pointer to the child window}
       Result := wnd;
@@ -804,7 +803,7 @@ begin
    Destroyed(wnd);
 
    wnd.DisposeSubWindows();
-   uiWidget.DisposeObject(uiTWidgets(wnd.Widgets));
+   uiWidget.Dispose(uiTWidgets(wnd.Widgets));
 
    appEvents.DisableForWindow(wnd);
 
@@ -1533,7 +1532,7 @@ begin
 end;
 
 { FINDING WINDOWS }
-procedure uiFindNext(parentWdg: uiTWidget; widgets: uiTWidgets; x, y: longint; var s: uiTSelectInfo);
+procedure uiFindNext(parentWdg: uiTWidget; const widgets: uiTWidgets; x, y: longint; var s: uiTSelectInfo);
 var
    r: oxTRect;
    i: longint;
@@ -2055,11 +2054,8 @@ var
    i: longint;
    child,
    ext: uiTWindow;
-   wdgs: uiTWidgets;
 
 begin
-   wdgs := uiTWidgets(widgets);
-
    if(Parent <> nil) then begin
       {update relative positions}
       RPosition := Parent.RPosition;
@@ -2084,8 +2080,8 @@ begin
    end;
 
    {update the widgets}
-   for i := 0 to (wdgs.w.n - 1) do
-      uiTWidget(wdgs.w[i]).PositionUpdate();
+   for i := 0 to (Widgets.w.n - 1) do
+      uiTWidget(Widgets.w[i]).PositionUpdate();
 
    {update the children windows}
    for i := 0 to (W.w.n - 1) do begin
@@ -2102,14 +2098,11 @@ procedure uiTWindowHelper.UpdateParentSize(selfNotify: boolean = true);
 var
    i: longint;
    child: uiTWindow;
-   wdgs: uiTWidgets;
 
 begin
-   wdgs := uiTWidgets(widgets);
-
    {update the widgets}
-   for i := 0 to (wdgs.w.n - 1) do
-      uiTWidget(wdgs.w[i]).UpdateParentSize();
+   for i := 0 to (Widgets.w.n - 1) do
+      uiTWidget(Widgets.w[i]).UpdateParentSize();
 
    {update the children windows}
    for i := 0 to (W.w.n - 1) do begin

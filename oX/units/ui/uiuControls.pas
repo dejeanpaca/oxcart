@@ -18,13 +18,14 @@ INTERFACE
 TYPE
    { uiTControls }
 
-   uiTControls = class
+   uiTControls = record
       public
       s: loopint;
       w: uiTPreallocatedControlList;
       z: uiTZOrder;
 
-      constructor Create();
+      procedure Initialize();
+      class procedure Initialize(out control: uiTControls); static;
 
       procedure Insert(child: uiTControl);
       procedure Remove(index: longint);
@@ -44,11 +45,17 @@ IMPLEMENTATION
 
 { uiTControls }
 
-constructor uiTControls.Create();
+procedure uiTControls.Initialize();
 begin
    s := -1;
    z.Entries.InitializeValues(z.Entries);
    w.InitializeValues(w);
+end;
+
+class procedure uiTControls.Initialize(out control: uiTControls);
+begin
+   ZeroPtr(@control, SizeOf(control));
+   control.Initialize();
 end;
 
 procedure uiTControls.Insert(child: uiTControl);

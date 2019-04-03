@@ -117,16 +117,17 @@ end;
 
 procedure wdgTRadioButton.Mark();
 var
-   w: uiTWidgets;
+   w: uiPWidgets;
    i: longint;
 
 begin
    w := GetWidgetsContainer();
 
    // go through widgets
-   for i := 0 to w.w.n - 1 do
-      if (uiTWidget(w.w.List[i]).Group = Group) and (w.w.List[i].ClassType = wdgTRadioButton) then
-         Exclude(wdgTRadioButton(w.w.List[i]).Properties, wdgpTRUE);
+   for i := 0 to w^.w.n - 1 do begin
+      if (uiTWidget(w^.w.List[i]).Group = Group) and (w^.w.List[i].ClassType = wdgTRadioButton) then
+         Exclude(wdgTRadioButton(w^.w.List[i]).Properties, wdgpTRUE);
+   end;
 
    Include(Properties, wdgpTRUE);
 

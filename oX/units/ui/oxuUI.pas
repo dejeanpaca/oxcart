@@ -302,9 +302,8 @@ var
 begin
    wdg.Update();
 
-   if(wdg.Widgets <> nil) then
-      for i := 0 to (wdg.Widgets.w.n - 1) do
-         updateControlWdg(uiTWidget(wdg.Widgets.w[i]));
+   for i := 0 to (wdg.Widgets.w.n - 1) do
+      updateControlWdg(uiTWidget(wdg.Widgets.w[i]));
 end;
 
 procedure updateControlsWnd(wnd: uiTWindow);
@@ -314,10 +313,8 @@ var
 begin
    wnd.Update();
 
-   if(wnd.Widgets <> nil) then begin
-      for i := 0 to (uiTWidgets(wnd.Widgets).w.n - 1) do
-         updateControlWdg(uiTWidget(uiTWidgets(wnd.Widgets).w.List[i]));
-   end;
+   for i := 0 to (uiTWidgets(wnd.Widgets).w.n - 1) do
+      updateControlWdg(uiTWidget(uiTWidgets(wnd.Widgets).w.List[i]));
 
    for i := 0 to (wnd.w.w.n - 1) do
       updateControlsWnd(uiTWindow(wnd.w.w.List[i]));

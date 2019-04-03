@@ -56,7 +56,8 @@ TYPE
    uiPWidgetClass       = ^uiTWidgetClass;
 
    { WIDGETS }
-   uiTWidgets = class(uiTControls);
+   uiPWidgets = ^uiTWidgets;
+   uiTWidgets = type uiTControls;
 
    {widget control routine, default result should be 0}
    uiTWidgetControlProc = function(wdg: TObject; what: longword): longint;
@@ -171,7 +172,7 @@ TYPE
       function SetHint(const newHint: string): uiTWidget;
 
       {get the widgets container this widget is part of}
-      function GetWidgetsContainer(): uiTWidgets;
+      function GetWidgetsContainer(): uiPWidgets;
 
       function GetSurfaceColor: TColor4ub; override;
       {get right edge position}
@@ -242,11 +243,6 @@ TYPE
    end;
 
    uiTWidgetClasses = array of uiPWidgetClass;
-
-   uiTWidgetsHelper = class helper for uiTWidgets
-      {returns position of a widget if it exists, -1 if not}
-      function Exists(wdg: uiTWidget): longint;
-   end;
 
 IMPLEMENTATION
 
@@ -320,7 +316,7 @@ begin
    inherited;
 
    ControlType := uiCONTROL_WIDGET;
-   Widgets := uiTWidgets.Create();
+   Widgets.Initialize();
 
    Color := cWhite4ub;
    BkColor := cBlack4ub;
@@ -509,12 +505,12 @@ begin
    Result := Self;
 end;
 
-function uiTWidget.GetWidgetsContainer(): uiTWidgets;
+function uiTWidget.GetWidgetsContainer(): uiPWidgets;
 begin
    if(Parent.ControlType = uiCONTROL_WINDOW) then
-      Result := uiTWidgets(uiTWindow(Parent).Widgets)
+      Result := uiPWidgets(@uiTWindow(Parent).Widgets)
    else
-      Result := uiTWidget(Parent).Widgets;
+      Result := uiPWidgets(@uiTWidget(Parent).Widgets);
 end;
 
 function uiTWidget.GetSurfaceColor: TColor4ub;
@@ -597,28 +593,6 @@ end;
 
 procedure uiTWidget.CaptionChanged();
 begin
-end;
-
-function uiTWidgetsHelper.Exists(wdg: uiTWidget): longint;
-var
-   i: longint;
-
-begin
-   Result := -1;
-
-   if(wdg <> nil) then begin
-      {try to find in the current window}
-      if(w.n > 0) then begin
-         for i := 0 to (w.n - 1) do
-            if(w[i] = wdg) then
-               exit(uitWidget(w[i]).Level);
-
-         {otherwise search through sub-widgets}
-         for i := 0 to (w.n - 1) do
-            if(w[i] <> nil) then
-               exit(uiTWidget(w[i]).Widgets. Exists(wdg));
-      end;
-   end;
 end;
 
 END.

@@ -16,7 +16,7 @@ INTERFACE
       {oX}
       oxuFont, oxuTypes,
       {ui}
-      uiuControl, uiuWindowTypes, oxuUI, uiuWidget, uiWidgets, uiuDraw, wdguEmpty;
+      uiuControl, uiuControls, uiuWindowTypes, oxuUI, uiuWidget, uiWidgets, uiuDraw, wdguEmpty;
 
 TYPE
 
@@ -170,6 +170,7 @@ begin
    inherited DeInitialize;
 
    tabs := wdgTTabs(TabsParent);
+
    if(tabs.Tabs.t.n > 0) then
       Widgets := tabs.Tabs.t.List[0].Widgets;
 end;
@@ -180,7 +181,7 @@ var
    i: longint;
 
 begin
-   result := ON_NOTHING;
+   Result := ON_NOTHING;
    tabIndex := -1;
 
    if(not Vertical) then begin
@@ -243,7 +244,7 @@ begin
    if(Tabs.t.n > 1) then begin
       {destroy the rest}
       for i := 1 to (Tabs.t.n - 1) do
-         uiWidget.DisposeObject(Tabs.t.List[i].Widgets);
+         uiWidget.Dispose(Tabs.t.List[i].Widgets);
    end;
 
    Tabs.t.Dispose();
@@ -295,7 +296,7 @@ end;
 
 function wdgTTabs.Key(var k: appTKeyEvent): boolean;
 begin
-   result := false;
+   Result := false;
 
    if(k.Key.Released()) then begin
       if(k.Key.Equal(kcTAB, kmCONTROL or kmSHIFT)) then begin
@@ -594,21 +595,23 @@ begin
       SetupContainer();
    end;
 
-   ZeroOut(t, SizeOf(t));
+   ZeroPtr(@t, SizeOf(t));
 
    t.Title := Title;
    t.ID := tabID;
+   t.Widgets.Initialize();
 
-   tabs.t.Add(t);
+   Tabs.t.Add(t);
 
-   result := @tabs.t.List[tabs.t.n - 1];
+   Result := Tabs.t.GetLast();
 
    {store current widgets to the tab}
    if(RequiresWidgets) then begin
-      if(tabs.t.n > 1) then
-         Container.Widgets := uiTWidgets.Create();
+      if(Tabs.t.n > 1) then begin
+         Tabs.t.List[Tabs.t.n - 2].Widgets := uiTWidgets(Container.Widgets);
 
-      Tabs.t.List[Tabs.t.n - 1].Widgets := Container.Widgets;
+         uiTControls.Initialize(uiTControls(Container.Widgets));
+      end;
    end;
 
    Recalculate();
@@ -633,7 +636,7 @@ begin
       if(Tabs.t.List[i].ID = tabID) then
          exit(i);
 
-   result := -1;
+   Result := -1;
 end;
 
 {select a tab}
@@ -705,7 +708,7 @@ begin
    if(index >= 0) and (index < Tabs.t.n) then begin
       if(RequiresWidgets) then begin
          if(Tabs.t.n > 1) then
-            uiWidget.DisposeObject(Tabs.t.List[index].Widgets)
+            uiWidget.Dispose(Tabs.t.List[index].Widgets)
       end;
 
       Tabs.t.List[index].External := nil;
