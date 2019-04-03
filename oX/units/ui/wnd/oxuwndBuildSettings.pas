@@ -76,12 +76,14 @@ begin
       platform := @build.Platforms.List[i];
 
       if(i = 0) then
-         wdgDivisor.Add('Platform: Default', uiWidget.LastRect.BelowOf())
+         wdgDivisor.Add('FPC Platform: Default', uiWidget.LastRect.BelowOf())
       else
-         wdgDivisor.Add('Platform: ' + platform^.Name, uiWidget.LastRect.BelowOf());
+         wdgDivisor.Add('FPC Platform: ' + platform^.Name, uiWidget.LastRect.BelowOf());
 
-      wdgLabel.Add('FPC Path: ' + platform^.Path);
-      wdgLabel.Add('FPC Config Path: ' + platform^.ConfigPath);
+      wdgLabel.Add('Version: ' + platform^.Version);
+      wdgLabel.Add('Platform: ' + platform^.Platform);
+      wdgLabel.Add('Path: ' + platform^.Path);
+      wdgLabel.Add('Config Path: ' + platform^.ConfigPath);
    end;
 
    uiWidget.LastRect.GoBelow();
