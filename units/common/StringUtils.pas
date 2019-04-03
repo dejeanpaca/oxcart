@@ -106,6 +106,7 @@ procedure StripLeadingWhitespace(var st: string);
 procedure StripTrailingWhitespace(var st: string);
 procedure StripWhitespace(var st: string);
 function IsWhitespace(const st: string): boolean;
+procedure StripEndLine(var st: string);
 
 {completely remove white space from the string}
 procedure EliminateWhiteSpace(var st: string);
@@ -451,6 +452,31 @@ begin
       end;
 
    Result := true;
+end;
+
+procedure StripEndLine(var st: string);
+var
+   len: loopint;
+
+begin
+   len := Length(st);
+
+   {check if we need to strip any characters off the end}
+   if(st[len] = #13) then
+      len := len - 1
+   else if(st[len] = #10) then begin
+      if(len > 1) then begin
+         if(st[len - 1] = #13) then
+            len := len - 2
+         else
+            len := len - 1;
+      end else
+         len := len - 1;
+   end;
+
+   {correct to new length}
+   if(len <> Length(st)) then
+      SetLength(st, len);
 end;
 
 procedure EliminateWhiteSpace(var st: string);
