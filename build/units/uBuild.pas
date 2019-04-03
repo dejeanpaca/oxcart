@@ -13,7 +13,7 @@ UNIT uBuild;
 INTERFACE
 
    USES
-      process, sysutils, strutils,
+      process, sysutils, strutils, pipes, uProcessHelpers,
       uStd, uLog, uFileUtils, StringUtils, ConsoleUtils, uSimpleParser, ParamUtils, uTiming,
       udvars, dvaruFile,
       appuPaths
@@ -39,7 +39,9 @@ TYPE
       Name,
       Platform,
       Path,
-      ConfigPath: string;
+      ConfigPath,
+      {fpc version}
+      Version: string;
       OptimizationLevels: TPreallocatedStringArrayList;
 
       class procedure Initialize(out p: TBuildPlatform); static;
@@ -597,7 +599,7 @@ begin
 
    TestPlatforms();
 
-   log.v('build > Initialized (Elapsed: ' + now.ElapsedfToString() + 's)');
+   log.v('build > Initialized (Elapsed: ' + start.ElapsedfToString() + 's)');
 
    Initialized := true;
 end;
@@ -1122,12 +1124,17 @@ end;
 
 procedure TBuildSystem.StoreOutput(p: TProcess);
 begin
-   output.exitCode := p.ExitCode;
+   output.ExitCode := p.ExitCode;
+
+   if(not (poUsePipes in p.Options)) then begin
+      if(p.Stderr.NumBytesAvailable > 0) then
+         output.ErrorDecription := p.Stderr.ReadAnsiString();
+   end;
 end;
 
 procedure TBuildSystem.ResetOutput();
 begin
-   output.success := false;
+   output.Success := false;
    output.ExecutableName := '';
    output.ErrorDecription := '';
 end;
@@ -1321,7 +1328,9 @@ begin
       try
          process.Execute();
 
-         log.v('Found fpc executable for platform ' + p^.Name + ' at path ' + process.Executable);
+         p^.Version := process.GetOutputString();
+
+         log.v('Found fpc(' + p^.Version + ') executable for platform ' + p^.Name + ' at path ' + process.Executable);
       except
          on e: Exception do begin
             log.w('Could not execute fpc for platform ' + p^.Name + ' at path ' + process.Executable);
