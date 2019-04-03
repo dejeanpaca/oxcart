@@ -1126,7 +1126,7 @@ procedure TBuildSystem.StoreOutput(p: TProcess);
 begin
    output.ExitCode := p.ExitCode;
 
-   if(not (poUsePipes in p.Options)) then begin
+   if(poUsePipes in p.Options) then begin
       if(p.Stderr.NumBytesAvailable > 0) then
          output.ErrorDecription := p.Stderr.ReadAnsiString();
    end;
