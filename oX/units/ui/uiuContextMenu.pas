@@ -1021,8 +1021,8 @@ INITIALIZATION
    uiContextMenu.RenderKeyMappings := true;
    uiContextMenu.RenderBorder := true;
 
-   uiContextMenu.BackgroundColor.Assign(64, 64, 64, 244);
-   uiContextMenu.BorderColor.Assign(0, 0, 0, 255);
+   uiContextMenu.BackgroundColor.Assign(48, 48, 48, 244);
+   uiContextMenu.BorderColor.Assign(32, 32, 64, 255);
 
    internalWidget.Register('widget.context_menu', @initializeWidget);
 END.
