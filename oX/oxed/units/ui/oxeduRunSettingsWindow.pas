@@ -81,8 +81,11 @@ begin
    widgets.RunParameters := wdgStringList.Add(uiWidget.LastRect.BelowOf(), oxDimensions(Window.Dimensions.w - wdgDEFAULT_SPACING*2, 120));
    widgets.RunParameters.Selectable := true;
    widgets.RunParameters.OddColored := true;
+
    widgets.AddParameter := wdgButton.Add('Add', uiWidget.LastRect.BelowOf(), oxNullDimensions, @AddParameter);
-   widgets.RemoveParameter := wdgButton.Add('Remove', uiWidget.LastRect.RightOf(), oxNullDimensions, @RemoveParameter);
+   widgets.AddParameter.SetButtonPosition([uiCONTROL_GRID_LEFT]);
+   widgets.RemoveParameter := wdgButton.Add('Remove', uiWidget.LastRect.RightOf(0, 0, false), oxNullDimensions, @RemoveParameter);
+   widgets.RemoveParameter.SetButtonPosition([uiCONTROL_GRID_RIGHT]);
 
    Revert();
 end;

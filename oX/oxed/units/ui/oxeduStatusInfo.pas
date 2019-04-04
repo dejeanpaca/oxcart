@@ -11,7 +11,7 @@ UNIT oxeduStatusInfo;
 INTERFACE
 
    USES
-      cmem, uStd, StringUtils,
+      uStd, StringUtils, uBinarySize,
       {widgets}
       uiWidgets, wdguToolbar,
       {oxed}
@@ -56,7 +56,10 @@ begin
    if(oxedStatusInfo.Wdg.Info <> nil) then begin
       heapStatus := GetHeapStatus;
 
-      oxedStatusInfo.Wdg.Info^.Caption := sf(heapStatus.TotalFree) + '/' + sf(heapStatus.TotalAllocated) + '/' + sf(heapStatus.Unused) + '/' + sf(heapStatus.TotalAddrSpace);
+      oxedStatusInfo.Wdg.Info^.Caption := getiecByteSizeHumanReadableSI(heapStatus.TotalFree) + '/' +
+         getiecByteSizeHumanReadableSI(heapStatus.TotalAllocated) + '/' +
+         getiecByteSizeHumanReadableSI(heapStatus.Unused) + '/' +
+         getiecByteSizeHumanReadableSI(heapStatus.TotalAddrSpace);
 
       oxedStatusbar.Status.ItemChanged();
    end;

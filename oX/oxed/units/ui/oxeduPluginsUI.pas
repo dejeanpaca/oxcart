@@ -62,7 +62,7 @@ begin
 
    handler := oxedTPluginsWindow(BaseHandler);
 
-   if(handler.wdg.Ok <> nil) then begin
+   if(handler <> nil) and (handler.wdg.Ok <> nil) then begin
       handler.wdg.Ok.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT or wdgPOSITION_VERTICAL_BOTTOM);
       handler.wdg.Divisor.Move(0, handler.wdg.Ok.AboveOf() + wdgDEFAULT_SPACING);
       handler.wdg.Divisor.AutoSize();

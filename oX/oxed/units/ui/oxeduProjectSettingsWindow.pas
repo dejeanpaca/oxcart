@@ -16,7 +16,7 @@ INTERFACE
       {oX}
       uOX, oxuTypes, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
       {ui}
-      uiuWindow, uiWidgets,
+      uiuWindow, uiWidgets, uiuControl, uiuWidget,
       oxuwndSettingsBase, oxuwndBase,
       {widgets}
       wdguLabel, wdguInputBox, wdguButton, wdguDropDownList, wdguDivisor, wdguCheckbox, wdguList,
@@ -290,6 +290,7 @@ procedure oxedTSettingsWindow.AddBuildWidgets();
 var
    lastRect: uiTWidgetLastRect;
    dimensions: oxTDimensions;
+   button: wdgTButton;
 
 begin
    dimensions.Assign(100, 20);
@@ -307,10 +308,17 @@ begin
    wdgList.Add(uiWidget.LastRect.BelowOf(), oxDimensions(240, 160));
    lastRect := uiWidget.LastRect;
 
-   wdgButton.Add('Add', uiWidget.LastRect.RightOf(), dimensions, @addGlobalSymbol);
-   wdgButton.Add('Remove', uiWidget.LastRect.BelowOf(), dimensions, @removeGlobalSymbol);
-   wdgButton.Add('Move Up', uiWidget.LastRect.BelowOf(), dimensions, @moveGlobalSymbolUp);
-   wdgButton.Add('Move Down', uiWidget.LastRect.BelowOf(), dimensions, @moveGlobalSymbolDown);
+   button := wdgButton.Add('Add', uiWidget.LastRect.RightOf(wdgDEFAULT_SPACING, 0, false), dimensions, @addGlobalSymbol);
+   button.SetButtonPosition([uiCONTROL_GRID_TOP]);
+
+   button := wdgButton.Add('Remove', uiWidget.LastRect.BelowOf(0, 0, false), dimensions, @removeGlobalSymbol);
+   button.SetButtonPosition([uiCONTROL_GRID_MIDDLE]);
+
+   button := wdgButton.Add('Move Up', uiWidget.LastRect.BelowOf(0, 0, false), dimensions, @moveGlobalSymbolUp);
+   button.SetButtonPosition([uiCONTROL_GRID_MIDDLE]);
+
+   button := wdgButton.Add('Move Down', uiWidget.LastRect.BelowOf(0, 0, false), dimensions, @moveGlobalSymbolDown);
+   button.SetButtonPosition([uiCONTROL_GRID_BOTTOM]);
 
    uiWidget.LastRect := lastRect;
    uiWidget.LastRect.GoLeft();
@@ -320,10 +328,17 @@ begin
    wdgList.Add(uiWidget.LastRect.BelowOf(), oxDimensions(240, 160));
    lastRect := uiWidget.LastRect;
 
-   wdgButton.Add('Add', uiWidget.LastRect.RightOf(), dimensions, @addGlobalSymbol);
-   wdgButton.Add('Remove', uiWidget.LastRect.BelowOf(), dimensions, @removeGlobalSymbol);
-   wdgButton.Add('Move Up', uiWidget.LastRect.BelowOf(), dimensions, @moveGlobalSymbolUp);
-   wdgButton.Add('Move Down', uiWidget.LastRect.BelowOf(), dimensions, @moveGlobalSymbolDown);
+   button := wdgButton.Add('Add', uiWidget.LastRect.RightOf(wdgDEFAULT_SPACING, 0, false), dimensions, @addGlobalSymbol);
+   button.SetButtonPosition([uiCONTROL_GRID_TOP]);
+
+   button := wdgButton.Add('Remove', uiWidget.LastRect.BelowOf(0, 0, false), dimensions, @removeGlobalSymbol);
+   button.SetButtonPosition([uiCONTROL_GRID_MIDDLE]);
+
+   button := wdgButton.Add('Move Up', uiWidget.LastRect.BelowOf(0, 0, false), dimensions, @moveGlobalSymbolUp);
+   button.SetButtonPosition([uiCONTROL_GRID_MIDDLE]);
+
+   button := wdgButton.Add('Move Down', uiWidget.LastRect.BelowOf(0, 0, false), dimensions, @moveGlobalSymbolDown);
+   button.SetButtonPosition([uiCONTROL_GRID_BOTTOM]);
 
    uiWidget.LastRect := lastRect;
    uiWidget.LastRect.GoLeft();
