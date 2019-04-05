@@ -73,6 +73,7 @@ TYPE
 
       function Open(const from: uiTWidgetWindowOrigin; Instance: uiTFileContextMenuWindowClass = nil): uiTFileContextMenuWindow;
       procedure SetupItems(m: uiTContextMenu);
+
       procedure Initialize();
    end;
 
@@ -322,6 +323,7 @@ begin
    m.AddItem('Rename', Events.RENAME_FILE, @renameFile);
    m.AddItem('Delete', Events.DELETE_FILE, @deleteFile);
    m.AddItem('Create Directory', Events.CREATE_DIRECTORY, @createDirectory);
+
    item := m.AddCheckbox('Show hidden files', uiFileSettings.ShowHiddenFiles);
    item^.Callback := @clearMessagesOnStartToggle;
 end;
@@ -342,6 +344,6 @@ begin
 end;
 
 INITIALIZATION
-   oxui.InitializationProcs.Add('ox.wnd.file_context_menu', @init, @deinit);
+   oxui.BaseInitializationProcs.Add('ox.wnd.file_context_menu', @init, @deinit);
 
 END.

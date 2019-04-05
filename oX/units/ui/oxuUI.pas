@@ -117,8 +117,7 @@ TYPE
       PointerCapture: uiTPointerCapture;
 
       {initialization procedures}
-      InitializationProcs,
-      PostInitializationProcs: TInitializationProcs;
+      BaseInitializationProcs: TInitializationProcs;
 
       WindowMove: oxTPoint;
 
@@ -130,8 +129,8 @@ TYPE
 
       constructor Create();
 
-      procedure Initialize();
-      procedure DeInitialize();
+      procedure BaseInitialize();
+      procedure BaseDeInitialize();
 
       function GetUseWindow(): uiTWindow;
       procedure SetUseWindow(wnd: uiTWindow);
@@ -251,30 +250,25 @@ begin
    mSelectHoverTime := timer.Cur();
    mLastEventTime := timer.Cur();
 
-   InitializationProcs.Init('ui.initialization');
-   InitializationProcs.DontDetermineState();
-
-   PostInitializationProcs.Init('ui.postinitialization');
-   PostInitializationProcs.DontDetermineState();
+   BaseInitializationProcs.Init('ui.base_initialization');
+   BaseInitializationProcs.DontDetermineState();
 end;
 
-procedure oxTUI.Initialize();
+procedure oxTUI.BaseInitialize();
 begin
    oxui.StartedInitialization := true;
-   oxui.InitializationProcs.iCall();
-   oxui.PostInitializationProcs.iCall();
+   oxui.BaseInitializationProcs.iCall();
 
    log.i('Initialized UI');
 end;
 
-procedure oxTUI.DeInitialize;
+procedure oxTUI.BaseDeInitialize;
 begin
    if(StartedInitialization) then begin
       StartedInitialization := false;
 
       {de-initialize UI}
-      oxui.InitializationProcs.dCall();
-      oxui.PostInitializationProcs.dCall();
+      oxui.BaseInitializationProcs.dCall();
 
       oxResource.Free(Material);
 

@@ -146,7 +146,7 @@ begin
    {$ENDIF}
 
    {initialize UI}
-   oxui.Initialize();
+   oxui.BaseInitialize();
 
    log.i('Pre-initialization done (Elapsed: ' + GlobalStartTime.ElapsedfToString() + 's)');
 
@@ -231,7 +231,7 @@ begin
    log.i('Initialization done. Elapsed: ' + GlobalStartTime.ElapsedfToString() + 's');
    log.Leave();
 
-   ox.initialized := true;
+   ox.Initialized := true;
 
    result := eNONE;
 end;
@@ -313,7 +313,7 @@ begin
 
    {de-initialize UI}
    if(oxui <> nil) then
-      oxui.DeInitialize();
+      oxui.BaseDeInitialize();
 
    {call any de-initializers}
    ox.Init.dCall();
