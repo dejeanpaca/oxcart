@@ -28,7 +28,8 @@ VAR
       FocusGameViewOnStart,
       BuildOnProjectOpen,
       RequireRebuildOnOpen,
-      HandleLibraryErrors: wdgTCheckbox;
+      HandleLibraryErrors,
+      StartWithLastProject: wdgTCheckbox;
    end;
 
 procedure saveCallback();
@@ -38,6 +39,7 @@ begin
    oxedSettings.BuildOnProjectOpen := wdg.BuildOnProjectOpen.Checked();
    oxedSettings.RequireRebuildOnOpen := wdg.RequireRebuildOnOpen.Checked();
    oxedSettings.HandleLibraryErrors := wdg.HandleLibraryErrors.Checked();
+   oxedSettings.StartWithLastProject := wdg.StartWithLastProject.Checked();
 
    if(wdg.UnixLineEndings.Checked()) then
       oxedSettings.LineEndings := 'lf'
@@ -53,6 +55,7 @@ begin
    wdg.RequireRebuildOnOpen.Check(oxedSettings.RequireRebuildOnOpen);
    wdg.HandleLibraryErrors.Check(oxedSettings.HandleLibraryErrors);
    wdg.UnixLineEndings.Check(oxedSettings.LineEndings = 'lf');
+   wdg.StartWithLastProject.Check(oxedSettings.StartWithLastProject);
 end;
 
 procedure InitSettings();
@@ -79,6 +82,9 @@ begin
 
    wdg.HandleLibraryErrors := wdgCheckbox.Add('Handle library errors', uiWidget.LastRect.BelowOf());
    wdg.HandleLibraryErrors.SetHint('Editor will handle run-time library errors. If you want to debug editor/project outside (in lazarus) you can disable this.');
+
+   wdg.StartWithLastProject := wdgCheckbox.Add('Start with last opened project', uiWidget.LastRect.BelowOf());
+   wdg.StartWithLastProject.SetHint('Starts editor with the last opened project.');
 end;
 
 procedure init();

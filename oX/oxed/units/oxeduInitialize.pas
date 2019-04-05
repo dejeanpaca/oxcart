@@ -59,7 +59,7 @@ begin
       oxedMessages.w('oX asset path doesn''t seem set (set ' + OX_ASSET_PATH_ENV + ' environment variable or config)');
 
    {open a project}
-   if(oxedSettings.AlwaysLoadLastProject) and (oxedRecents.LastOpen <> '') then begin
+   if(oxedSettings.StartWithLastProject) and (oxedRecents.LastOpen <> '') then begin
       log.v('project > Opening last opened project: ' + oxedRecents.LastOpen);
       if(not oxedProjectManagement.Open(oxedRecents.LastOpen)) then
          {failed to open last open project, so clear it}
