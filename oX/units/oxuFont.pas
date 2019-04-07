@@ -56,16 +56,14 @@ TYPE
       {file name}
       fn: string;
 
-      fw, {width}
-      fh, {height}
-      tw, {texture width}
-      th, {texture height}
-      vs, {vertical spacing}
-      hs, {horizontal spacing}
-      base, {base character index}
-      chars, {character count}
-      cpline, {characters per line}
-      lines: longint; {number of lines}
+      Width, {width}
+      Height, {height}
+      VerticalSpacing, {vertical spacing}
+      HorizontalSpacing, {horizontal spacing}
+      Base, {base character index}
+      Chars, {character count}
+      CPLine, {characters per line}
+      Lines: longint; {number of lines}
 
       {scaling}
       vScale: TVector2f;
@@ -178,11 +176,9 @@ IMPLEMENTATION
 
 constructor oxTFont.Create();
 begin
-   chars    := 256;
-   fw       := 8;
-   fh       := 8;
-   tw       := 128;
-   th       := 128;
+   Chars    := 256;
+   Width       := 8;
+   Height       := 8;
 
    vScale[0] := 1.0;
    vScale[1] := 1.0;
@@ -197,18 +193,14 @@ end;
 
 procedure oxTFont.AllocateChars(initialize: boolean);
 begin
-   SetLength(Characters, chars);
+   SetLength(Characters, Chars);
 
    if(initialize) then
-      ZeroOut(Characters[0], SizeOf(Characters[0]) * int64(chars));
+      ZeroOut(Characters[0], SizeOf(Characters[0]) * int64(Chars));
 end;
 
 function oxTFont.FirstBuild(gen: oxTTextureGenerate): longint;
 begin
-   {get texture properties}
-   tw := gen.image.Width;
-   th := gen.image.Height;
-
    {build the font}
    Result := Build();
 
@@ -239,11 +231,14 @@ var
    done: boolean = false;
 
 begin
+   if(Texture = nil) then
+      exit;
+
    { ALLOCATIONS }
 
    {allocate memory for texture coordinates}
    try
-      SetLength(Buf.t, chars * 4);
+      SetLength(Buf.t, Chars * 4);
    except
       exit(eNO_MEMORY);
    end;
@@ -251,27 +246,27 @@ begin
    { CALCULATIONS }
 
    {figure out a pel (pixel) size}
-   pelx := 1.0 / tw;
-   pely := 1.0 / th;
+   pelx := 1.0 / Texture.Width;
+   pely := 1.0 / Texture.Height;
 
    {determine horizontal and vertical grid piece sizes}
-   px := pelx * fw;
-   py := pely * fh;
+   px := pelx * Width;
+   py := pely * Height;
 
    cy := 1.0;
 
-   currentWidth := fw;
-   currentHeight := fh;
+   currentWidth := Width;
+   currentHeight := Height;
    currentPY := py;
 
    if(Characters <> nil) then
-      for i := 0 to (chars - 1) do begin
+      for i := 0 to (Chars - 1) do begin
          if(Characters[i].BearingY > MaxBearingY) then
             MaxBearingY := Characters[i].BearingY;
       end;
 
-   {go through all lines}
-   for i := 0 to (lines - 1) do begin
+   {go through all Lines}
+   for i := 0 to (Lines - 1) do begin
       {go back to horizontal start of texture}
       cx := 0.0;
       currentX := 0;
@@ -286,7 +281,7 @@ begin
             px := pelx * currentWidth;
             currentPY := pely * currentHeight;
 
-            if(currentX + currentWidth >= tw) then
+            if(currentX + currentWidth >= Texture.Width) then
                break
             else
                inc(currentX, currentWidth);
@@ -306,13 +301,13 @@ begin
          inc(ch);
 
          {if processed all characters then quit}
-          if(ch >= chars) then begin
+          if(ch >= Chars) then begin
              done := true;
              break;
           end;
 
          inc(j);
-      until (j >= cpline) and (cpline <> 0);
+      until (j >= CPLine) and (CPLine <> 0);
 
       {quit if done building}
       if(done) then
@@ -393,10 +388,10 @@ begin
          if(MaxBearingY = 0) then
             py := 0
          else
-            py := (fh - MaxBearingY);
+            py := (Height - MaxBearingY);
 
-         currentWidth := fw;
-         currentHeight := fh;
+         currentWidth := Width;
+         currentHeight := Height;
 
          pvector := @v;
          ptexture := @t;
@@ -407,8 +402,8 @@ begin
 
             charIndex := i - 1;
 
-            if(b >= base) and (b < base + chars) then begin
-               b := b - base;
+            if(b >= Base) and (b < Base + Chars) then begin
+               b := b - Base;
 
                if(Characters <> nil) then begin
                   currentWidth := Characters[b].Width;
@@ -467,7 +462,7 @@ begin
                   {restore y back on baseline}
                   py := py + (Characters[b].Height - Characters[b].BearingY);
                end else
-                  px := px + fw;
+                  px := px + Width;
             end;
 
             inc(i);
@@ -506,7 +501,7 @@ begin
          if(not oxFont.writeUpsideDown) then
             py := y / vScale[1]
          else
-            py := -((y + fh) / vScale[1]);
+            py := -((y + Height) / vScale[1]);
 
          px := x / vScale[0];
 
@@ -539,9 +534,9 @@ begin
    len := GetLength(s);
 
    if(oxfpCenterVertical in props) then
-      y := r.h div 2 - fh div 2
+      y := r.h div 2 - Height div 2
    else if(oxfpCenterTop in props) then
-         y := r.h - round(h - vScale[1])
+      y := r.h - round(h - vScale[1])
    else
       y := 0;
 
@@ -756,28 +751,34 @@ end;
 {dimensions}
 function oxTFont.GetHeight(): longint;
 begin
-   Result := fh;
+   Result := Height;
 end;
 
 function oxTFont.GetHeight(c: longint): longint;
 begin
-   if(Characters <> nil) then
-      Result := Characters[c - base].Height
-   else
-      Result := fh;
+   if(Characters <> nil) then begin
+      if(c >= Base) and (c < Base + Chars) then
+         Result := Characters[c - Base].Height
+      else
+         Result := Height;
+   end else
+      Result := Height;
 end;
 
 function oxTFont.GetWidth(): longint;
 begin
-   Result := fw;
+   Result := Width;
 end;
 
 function oxTFont.GetWidth(c: longint): longint;
 begin
-   if(Characters <> nil) then
-      Result := Characters[c - base].BearingX + Characters[c - base].Advance
-   else
-      Result := fw;
+   if(Characters <> nil) then begin
+      if(c >= Base) and (c < Base + Chars) then
+         Result := Characters[c - Base].BearingX + Characters[c - Base].Advance
+      else
+         Result := Width;
+   end else
+      Result := Width;
 end;
 
 function oxTFont.GetLength(const s: string): longint;
@@ -787,11 +788,12 @@ var
 
 begin
    if(Characters = nil) then
-      Result := Length(s) * fw
+      Result := Length(s) * Width
    else begin
       l := Length(s);
 
       Result := 0;
+
       for i := 1 to l do begin
          inc(Result, GetWidth(ord(s[i])));
       end;
@@ -821,14 +823,14 @@ end;
 procedure oxTFont.Assign(const tfd: oxTTFD);
 begin
    {assign attributes}
-   fw        := tfd.Width;
-   fh        := tfd.Height;
-   hs        := tfd.SpaceX;
-   vs        := tfd.SpaceY;
-   base      := tfd.Base;
-   chars     := tfd.Chars;
-   cpline    := tfd.CPLine;
-   lines     := tfd.Lines;
+   Width        := tfd.Width;
+   Height        := tfd.Height;
+   HorizontalSpacing        := tfd.SpaceX;
+   VerticalSpacing        := tfd.SpaceY;
+   Base      := tfd.Base;
+   Chars     := tfd.Chars;
+   CPLine    := tfd.CPLine;
+   Lines     := tfd.Lines;
 
    texname   := tfd.TextureName;
 end;
