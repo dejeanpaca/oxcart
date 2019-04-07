@@ -246,6 +246,9 @@ TYPE
 
 IMPLEMENTATION
 
+USES
+   oxuUI;
+
 { uiTWidgetCallback }
 
 procedure uiTWidgetCallback.Use(setCallback: TProcedure);
@@ -462,10 +465,11 @@ end;
 
 function uiTWidget.GetFont(): oxTFont;
 begin
-   if(font <> nil) then begin
-      Result := font
-   end else
-      Result := oxf.GetDefault();
+   if(Font <> nil) then begin
+      Result := Font;
+   end else begin
+      Result := oxui.GetDefaultFont();
+   end;
 end;
 
 function uiTWidget.SetFont(fnt: oxTFont): uiTWidget;
