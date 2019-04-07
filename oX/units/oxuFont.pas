@@ -84,7 +84,7 @@ TYPE
       procedure AllocateChars(initialize: boolean = true);
 
       {builds font buffers (character triangles)}
-      function FirstBuild(gen: oxTTextureGenerate): longint;
+      function FirstBuild(): longint;
       function Build(): longint;
       {dispose a font}
       procedure Dispose();
@@ -199,7 +199,7 @@ begin
       ZeroOut(Characters[0], SizeOf(Characters[0]) * int64(Chars));
 end;
 
-function oxTFont.FirstBuild(gen: oxTTextureGenerate): longint;
+function oxTFont.FirstBuild(): longint;
 begin
    {build the font}
    Result := Build();
@@ -874,7 +874,7 @@ begin
       errCode := gen.Generate(tfn, f.Texture);
       if(errCode = 0) then begin
          f.Texture.MarkUsed();
-         f.FirstBuild(gen);
+         f.FirstBuild();
       end;
    end;
 
@@ -904,7 +904,7 @@ begin
 
    errCode := gen.Generate(extension, textureFile, f.Texture);
    if(errCode = 0) then
-      f.FirstBuild(gen);
+      f.FirstBuild();
 
    gen.Dispose();
 
