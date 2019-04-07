@@ -165,13 +165,13 @@ procedure calculateGlyph(image: imgTImage);
 begin
    if(cX + image.Width >= imageWidth) then begin
       cX := 0;
-      inc(font.lines);
+      inc(font.Lines);
    end;
 
    inc(cX, image.Width);
 
-   if(font.lines * size > imageHeight) then
-      imageHeight := vmNextPow2(int64(font.lines) * int64(size));
+   if(font.Lines * size > imageHeight) then
+      imageHeight := vmNextPow2(int64(font.Lines) * int64(size));
 end;
 
 procedure addGlyph(image: imgTImage; character: longint);
@@ -221,16 +221,16 @@ begin
       ft.FlipVertically := false;
 
       font := oxTFont.Create();
-      font.base := base;
-      font.chars := charCount;
+      font.Base := base;
+      font.Chars := charCount;
       font.TextureBaseline := true;
       font.fn := ft.FontName + '-' + sf(size);
-      font.fw := size;
-      font.fh := size;
+      font.Width := size;
+      font.Height := size;
 
       {we fit as many characters per line as possible}
-      font.cpline := 0;
-      font.lines := 1;
+      font.CPLine := 0;
+      font.Lines := 1;
 
       {allocate but do not initialize chars (we're gonna set values for them anyways)}
       font.AllocateChars(false);
@@ -277,8 +277,6 @@ begin
          fontTexture.MarkUsed();
 
       font.Texture := fontTexture;
-      font.tw := imageWidth;
-      font.th := imageHeight;
 
       font.Build();
 
