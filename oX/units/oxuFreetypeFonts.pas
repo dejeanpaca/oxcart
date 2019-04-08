@@ -482,6 +482,7 @@ INITIALIZATION
    oxFreetypeManager.Fonts.Initialize(oxFreetypeManager.Fonts);
    oxFreetypeManager.AutoSpaceCharacter := true;
    oxFreetypeManager.AutoSpaceCharacterRatio := 0.5;
+   oxFreetypeManager.AlphaType := oxFREETYPE_ALPHA_AVERAGE;
 
 
 END.

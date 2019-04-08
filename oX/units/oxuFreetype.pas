@@ -22,7 +22,8 @@ INTERFACE
 TYPE
    oxTFreetypeAlphaType = (
       oxFREETYPE_ALPHA_ZERO,
-      oxFREETYPE_ALPHA_AVERAGE
+      oxFREETYPE_ALPHA_AVERAGE,
+      oxFREETYPE_ALPHA_INVERSE_AVERAGE
    );
 
    { oxTFreetypeBitmap }
@@ -65,8 +66,12 @@ TYPE
       {create images with same width and height}
       Square,
       ExactSize,
+      {flip vertically}
       FlipVertically,
-      FlipHorizontally: boolean;
+      {flip image horizontally}
+      FlipHorizontally,
+      {set pixel values to max (non-zero to 255)}
+      MaxPixelValues: boolean;
 
       {information about the last generated glyph}
       GlyphInfo: record
@@ -103,6 +108,8 @@ IMPLEMENTATION
 constructor oxTFreetypeFont.Create;
 begin
    FlipVertically := true;
+   MaxPixelValues := true;
+   AlphaType := oxFREETYPE_ALPHA_AVERAGE;
 end;
 
 destructor oxTFreetypeFont.Destroy;
@@ -281,7 +288,12 @@ begin
          if(AlphaType = oxFREETYPE_ALPHA_ZERO) then
             imgOperations.AlphaZero(glyphImage)
          else if(AlphaType = OXFREETYPE_ALPHA_AVERAGE) then
-            imgOperations.AlphaFromAverage(glyphImage);
+            imgOperations.AlphaFromAverage(glyphImage)
+         else if(AlphaType = oxFREETYPE_ALPHA_INVERSE_AVERAGE) then
+            imgOperations.AlphaFromInverseAverage(glyphImage);
+
+         if(MaxPixelValues) then
+            imgOperations.MaxPixelValues(glyphImage);
 
          if(FlipVertically) then begin
             glyphImage.Origin := imgcORIGIN_BL;
