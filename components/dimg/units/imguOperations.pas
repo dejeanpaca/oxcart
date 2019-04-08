@@ -39,6 +39,11 @@ TYPE
       procedure AlphaZero(var image: imgTImage);
       {uses the average color as alpha value}
       procedure AlphaFromAverage(var image: imgTImage);
+      {uses the inverse level of white (rgb average value) as alpha (alpha increases the darker the pixel is)}
+      procedure AlphaFromInverseAverage(var image: imgTImage);
+
+      {set all pixels that are non-zero to max values (255)}
+      procedure MaxPixelValues(var image: imgTImage);
 
       {set the image to the target origin}
       procedure SetOrigin(var image: imgTImage; target: longint);
@@ -538,7 +543,7 @@ begin
          end;
       end else if(image.PixelDepth div 8 = 1) then begin
          {invert the colors in the image}
-         for i := 0 to (image.Pixels-1) do begin
+         for i := 0 to (image.Pixels - 1) do begin
             cPixel^[0] := 255 - cPixel^[0];
 
             inc(pointer(cPixel), Incr);
@@ -555,7 +560,7 @@ var
 begin
    if(image.Image <> nil) then begin
       {check if the image is of a supported pixel format}
-      if(image.PixF <> PIXF_RGBA) and (image.PixF <> PIXF_RGBA) then
+      if(image.PixF <> PIXF_BGRA) and (image.PixF <> PIXF_RGBA) then
          {unsupported format}
          exit;
 
@@ -581,7 +586,7 @@ var
 begin
    if(image.Image <> nil) then begin
       {check if the image is of a supported pixel format}
-      if(image.PixF <> PIXF_RGBA) and (image.PixF <> PIXF_RGBA) then
+      if(image.PixF <> PIXF_BGRA) and (image.PixF <> PIXF_RGBA) then
          {unsupported format}
          exit;
 
@@ -590,7 +595,68 @@ begin
       {invert the colors in the image}
       for i := 0 to (image.Pixels - 1) do begin
          cPixel^[3] := (cPixel^[0] + cPixel^[1] + cPixel^[2]) div 3;
+
          inc(pointer(cPixel), 4);
+      end;
+   end;
+end;
+
+procedure imgTOperations.AlphaFromInverseAverage(var image: imgTImage);
+var
+   i: loopint;
+   cPixel: PColor4ub;
+
+begin
+   if(image.Image <> nil) then begin
+      {check if the image is of a supported pixel format}
+      if(image.PixF <> PIXF_BGRA) and (image.PixF <> PIXF_RGBA) then
+         {unsupported format}
+         exit;
+
+      cPixel := pointer(image.Image);
+
+      {invert the colors in the image}
+      for i := 0 to (image.Pixels - 1) do begin
+         cPixel^[3] := 255 - ((cPixel^[0] + cPixel^[1] + cPixel^[2]) div 3);
+
+         inc(pointer(cPixel), 4);
+      end;
+   end;
+end;
+
+procedure imgTOperations.MaxPixelValues(var image: imgTImage);
+var
+   i, j: loopint;
+   cPixel: PColor4ub;
+   increment: loopint;
+
+begin
+   if(image.Image <> nil) then begin
+      {unsupported format}
+      if(not image.HasAlpha()) then
+         exit;
+
+      increment := img.PIXFIncrementBytes(image.PixF);
+
+      {unsupported format}
+      if(image.PixelDepth mod 8 <> 0) or ((increment <> 3) and (increment <> 4)) then
+         exit;
+
+      cPixel := pointer(image.Image);
+
+      {invert the colors in the image}
+      for j := 0 to (image.Height - 1) do begin
+         for i := 0 to (image.Width - 1) do begin
+            if(cPixel^[0] <> 0) or (cPixel^[1] <> 0) or (cPixel^[2] <> 0) then begin
+               cPixel^[0] := 255;
+               cPixel^[1] := 255;
+               cPixel^[2] := 255;
+            end;
+
+            inc(pointer(cPixel), 4);
+         end;
+
+         inc(Pointer(cPixel), image.RowAlignBytes);
       end;
    end;
 end;
