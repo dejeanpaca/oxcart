@@ -27,7 +27,11 @@ TYPE
       Fonts: oxTFreetypeFonts;
       Enabled: Boolean;
       {should the image be flipped when font is created}
-      FlipImage: boolean;
+      FlipImage,
+      {auto insert a space character if it does not exist in the font}
+      AutoSpaceCharacter: boolean;
+      {ratio for the space character size}
+      AutoSpaceCharacterRatio: single;
 
       AlphaType: oxTFreetypeAlphaType;
 
@@ -138,7 +142,11 @@ const
    MAX_CHARS = 4096;
 
 var
-   i: loopint;
+   i,
+   {last advance value}
+   lastAdvance,
+   {maximum advance value}
+   maxAdvance: loopint;
 
    fontImages: array[0..MAX_CHARS - 1] of imgTImage;
    Characters: array[0..MAX_CHARS - 1] of oxTFreetypeFontGlyphData;
@@ -151,6 +159,11 @@ var
    {width of the generated image}
    imageWidth,
    imageHeight: loopint;
+
+   {is the font monospace}
+   monospace: boolean;
+   {we have automatically included space}
+   autoIncludedSpace: loopint;
 
    {total width of all glyphs}
    totalGlyphWidth: loopint = 0;
@@ -217,15 +230,20 @@ begin
 
    if(ft <> nil) then begin
       pFlipVertically := ft.FlipVertically;
+      {the font is assumed monospace}
+      monospace := true;
+      {we have not auto included space yet}
+      autoIncludedSpace := -1;
+
       {we'll do this ourselves anyways}
       ft.FlipVertically := false;
 
-      font := oxTFont.Create();
-      font.Base := base;
-      font.Chars := charCount;
+      font        := oxTFont.Create();
+      font.Base   := base;
+      font.Chars  := charCount;
       font.TextureBaseline := true;
-      font.fn := ft.FontName + '-' + sf(size);
-      font.Width := size;
+      font.fn     := ft.FontName + '-' + sf(size);
+      font.Width  := size;
       font.Height := size;
 
       {we fit as many characters per line as possible}
@@ -235,8 +253,36 @@ begin
       {allocate but do not initialize chars (we're gonna set values for them anyways)}
       font.AllocateChars(false);
 
+      {no last advance value yet}
+      lastAdvance := -1;
+      maxAdvance := 0;
+
       for i := 0 to (charCount - 1) do begin
          Characters[i] := ft.CreateGlyphImage(base + i, fontImages[i], size);
+
+         {check if font is monospace}
+         if(fontImages[i] <> nil) then begin
+            if(Characters[i].Advance > maxAdvance) then
+               maxAdvance := Characters[i].Advance;
+
+            {check with last valid lastAdvance value}
+            if(lastAdvance <> -1) then begin
+               if(Characters[i].Advance <> lastAdvance) then
+                  monospace := false;
+            end;
+
+            lastAdvance := Characters[i].Advance;
+         end else begin
+            Characters[i].Advance := -1;
+         end;
+
+         {auto include space if missing}
+         if(fontImages[i] = Nil) and (char(base + i) = #32) and (oxFreetypeManager.AutoSpaceCharacter) then begin
+            autoIncludedSpace := i;
+
+            {educated guess for space size}
+            Characters[i].Advance := round(Font.Width * oxFreetypeManager.AutoSpaceCharacterRatio);
+         end;
       end;
 
       {get total glyph length}
@@ -245,13 +291,27 @@ begin
             totalGlyphWidth := totalGlyphWidth + fontImages[i].Width;
       end;
 
+      {st proper width}
+      font.Width := maxAdvance;
+
+      {set proper value for auto included space if monospace font}
+      if(monospace) and (autoIncludedSpace <> -1) then begin
+         Characters[autoIncludedSpace].Advance := maxAdvance;
+      end;
+
+      font.Monospace := monospace;
+
       {determine initial image width and height and round it to powers of two}
       imageWidth := vmNextPow2(round(sqrt(size * totalGlyphWidth)));
       imageHeight := imageWidth;
 
       {calculate dimensions}
       cX := 0;
+
       for i := 0 to (charCount - 1) do begin
+         if(Characters[i].Advance = -1) then
+            Characters[i].Advance := font.Width;
+
          if(fontImages[i] <> nil) then
             calculateGlyph(fontImages[i]);
       end;
@@ -271,8 +331,10 @@ begin
       {generate font texture}
       oxTextureGenerate.Init(gen);
       gen.Filter := oxFont.Filter;
+
       imgOperations.FlipV(fontImage);
       oxTextureGenerate.Generate(fontImage, fontTexture);
+
       if(fontTexture <> nil) then
          fontTexture.MarkUsed();
 
@@ -408,6 +470,7 @@ begin
          log.v('FreeType deinitialized')
       else
          log.e('FreeType library deinitialization failed');
+
       oxFreeTypeManager.Lib := nil;
       {$ENDIF}
    end;
@@ -417,5 +480,8 @@ INITIALIZATION
    ox.Init.Add('ox.freetype', @oxTFreetypeManager.Initialize, @oxTFreetypeManager.Deinitialize);
 
    oxFreetypeManager.Fonts.Initialize(oxFreetypeManager.Fonts);
+   oxFreetypeManager.AutoSpaceCharacter := true;
+   oxFreetypeManager.AutoSpaceCharacterRatio := 0.5;
+
 
 END.
