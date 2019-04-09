@@ -1915,7 +1915,7 @@ begin
 
       {if it's a sub-window we can render it's shape}
       if(Parent <> nil) then begin
-         f := oxf.GetDefault();
+         f := oxui.GetDefaultFont();
 
          width  := GetTotalWidth();
          fw := GetFrameWidth();
