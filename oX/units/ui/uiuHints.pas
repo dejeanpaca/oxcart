@@ -58,7 +58,7 @@ begin
 
       oxw := uiTWindow(wnd.oxwParent);
 
-      f := oxf.GetDefault();
+      f := oxui.GetDefaultFont();
       maxlen := f.GetMultilineLength(ms.Hint);
       lines := StringCount(ms.Hint, #13) + 1;
 
