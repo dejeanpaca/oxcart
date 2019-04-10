@@ -147,9 +147,9 @@ TYPE
    end;
 
 
-   { oxTRunnerThreadTask }
+   { oxTRoutineThreadTask }
 
-   oxTRunnerThreadTask = class(oxTThreadTask)
+   oxTRoutineThreadTask = class(oxTThreadTask)
       {simple task intended to run a callback procedure}
 
       Callback: record
@@ -167,9 +167,9 @@ VAR
 
 IMPLEMENTATION
 
-{ oxTRunnerThreadTask }
+{ oxTRoutineThreadTask }
 
-procedure oxTRunnerThreadTask.Run();
+procedure oxTRoutineThreadTask.Run();
 begin
    if(Callback.Routine <> nil) then
       Callback.Routine();
@@ -178,12 +178,12 @@ begin
       Callback.ObjectRoutine();;
 end;
 
-procedure oxTRunnerThreadTask.SetRoutine(routine: TProcedure);
+procedure oxTRoutineThreadTask.SetRoutine(routine: TProcedure);
 begin
    Callback.Routine := routine;
 end;
 
-procedure oxTRunnerThreadTask.SetRoutine(routine: TObjectProcedure);
+procedure oxTRoutineThreadTask.SetRoutine(routine: TObjectProcedure);
 begin
    Callback.ObjectRoutine := routine;
 end;

@@ -24,7 +24,7 @@ TYPE
 
    { oxedTTask }
 
-   oxedTTask = class(oxTRunnerThreadTask)
+   oxedTTask = class(oxTRoutineThreadTask)
       constructor Create; override;
       destructor Destroy; override;
 
