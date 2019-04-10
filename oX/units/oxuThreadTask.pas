@@ -146,10 +146,47 @@ TYPE
       procedure Queue(Task: oxTThreadTask; evID: longword);
    end;
 
+
+   { oxTRunnerThreadTask }
+
+   oxTRunnerThreadTask = class(oxTThreadTask)
+      {simple task intended to run a callback procedure}
+
+      Callback: record
+         Routine: TProcedure;
+         ObjectRoutine: TObjectProcedure;
+      end;
+
+      procedure Run(); override;
+      procedure SetRoutine(routine: TProcedure);
+      procedure SetRoutine(routine: TObjectProcedure);
+   end;
+
 VAR
    oxThreadEvents: oxTThreadEvents;
 
 IMPLEMENTATION
+
+{ oxTRunnerThreadTask }
+
+procedure oxTRunnerThreadTask.Run();
+begin
+   if(Callback.Routine <> nil) then
+      Callback.Routine();
+
+   if(Callback.ObjectRoutine <> nil) then
+      Callback.ObjectRoutine();;
+end;
+
+procedure oxTRunnerThreadTask.SetRoutine(routine: TProcedure);
+begin
+   Callback.Routine := routine;
+end;
+
+procedure oxTRunnerThreadTask.SetRoutine(routine: TObjectProcedure);
+begin
+   Callback.ObjectRoutine := routine;
+end;
 
 { oxTThreadEvents }
 
