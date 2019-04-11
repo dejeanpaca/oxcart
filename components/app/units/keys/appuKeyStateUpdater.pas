@@ -11,12 +11,14 @@ UNIT appuKeyStateUpdater;
 INTERFACE
 
    USES
-      appuKeys, appuRun, oxuRun;
+      appuKeys,
+      {ox}
+      oxuRunRoutines, oxuRun;
 
 IMPLEMENTATION
 
 VAR
-   runRoutine: appTRunRoutine;
+   runRoutine: oxTRunRoutine;
 
 procedure run();
 begin
