@@ -32,6 +32,7 @@ TYPE
 
       procedure Call();
       function Find(const routine: oxTRunRoutine): boolean;
+      function Find(const exec: TProcedure): oxPRunRoutine;
       procedure Add(var routine: oxTRunRoutine);
       procedure Add(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
    end;
@@ -73,6 +74,25 @@ begin
    end;
 
    Result := false;
+end;
+
+function oxTRunRoutines.Find(const exec: TProcedure): oxPRunRoutine;
+var
+   cur: oxPRunRoutine;
+
+begin
+   cur := s;
+
+   if(cur <> nil) then begin
+      repeat
+         if(cur^.Exec = exec) then
+            exit(cur);
+
+         cur := cur^.Next;
+      until (cur = nil);
+   end;
+
+   Result := nil;
 end;
 
 procedure oxTRunRoutines.Add(var routine: oxTRunRoutine);
