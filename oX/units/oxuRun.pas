@@ -36,7 +36,9 @@ TYPE
      {run the engine}
      procedure Go();
      {run a single cycle}
-     procedure GoCycle();
+     function GoCycle(dosleep: boolean = true): boolean;
+     {app cycle}
+     procedure Sleep(time: longint = -1);
      {run a restart}
      procedure Restart();
      {handle a restart}
@@ -46,29 +48,11 @@ TYPE
 VAR
    oxRun: oxTRunGlobal;
 
-{default cycle routine}
-procedure oxCycle();
-
 IMPLEMENTATION
 
 VAR
    ProgramInitStartTime: TDateTime;
 
-procedure oxCycle();
-begin
-   oxPlatform.ProcessEvents();
-
-   appRun.Control();
-
-   ox.OnRun.Call();
-
-   {render stuff}
-   {$IFNDEF OX_LIBRARY}
-   oxWindows.Render();
-   {$ENDIF}
-
-   ox.OnRunAfter.Call();
-end;
 
 function Init(): boolean;
 begin
@@ -113,8 +97,6 @@ begin
 
    log.Enter('oX > Running...');
 
-   appRun.AddRoutine(CycleRoutine);
-
    ox.Started := true;
    ox.OnStart.Call();
 end;
@@ -135,8 +117,13 @@ begin
       if(initialized) then begin
          Start();
 
-         {run here...}
-         appRun.Run();
+         app.Active := true;
+
+         {main loop}
+         repeat
+            if(not GoCycle(true)) then
+               break;
+         until (not app.Active); {repeat until the application is no longer active}
 
          Done();
       end;
@@ -146,9 +133,37 @@ begin
    until (not initialized) or (not HandleRestart());
 end;
 
-procedure oxTRunGlobal.GoCycle();
+function oxTRunGlobal.GoCycle(dosleep: boolean): boolean;
 begin
-   appRun.Cycle(true);
+   Result := true;
+
+   appRun.PreRunRoutines.Call();
+
+   oxPlatform.ProcessEvents();
+   appRun.RunRoutines.Call();
+
+   appRun.ControlEvents();
+
+   ox.OnRun.Call();
+
+   {render stuff}
+   {$IFNDEF OX_LIBRARY}
+   oxWindows.Render();
+   {$ENDIF}
+
+   ox.OnRunAfter.Call();
+
+   if(dosleep) then
+      Sleep();
+end;
+
+procedure oxTRunGlobal.Sleep(time: longint);
+begin
+   if(time = -1) then
+      time := app.IdleTime;
+
+   if(time > 0) then
+      SysUtils.Sleep(time);
 end;
 
 procedure oxTRunGlobal.Restart();
@@ -166,10 +181,5 @@ begin
       app.Active := true;
    end;
 end;
-
-INITIALIZATION
-   oxRun.CycleRoutine.Name := 'ox.cycle';
-   oxRun.CycleRoutine.Exec := @oxCycle;
-   oxRun.CycleRoutine.Next := nil;
 
 END.
