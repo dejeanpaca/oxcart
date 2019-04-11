@@ -15,7 +15,7 @@ INTERFACE
       {app}
       appuActionEvents,
       {ox}
-      oxuWindows, oxuThreadTask,
+      oxuRun, oxuWindows, oxuThreadTask,
       {oxed}
       oxeduProject, oxeduMessages, oxeduLib, oxeduActions, oxeduBuild, oxeduSettings;
 
@@ -245,7 +245,7 @@ VAR
    projectRunRoutine: appTRunRoutine;
 
 INITIALIZATION
-   appRun.AddRoutine(projectRunRoutine, 'oxed.project', @projectRun);
+   oxRun.AddRoutine(projectRunRoutine, 'oxed.project', @projectRun);
 
    TProcedures.Initialize(oxedProjectRunner.OnAfterInitialize);
    TProcedures.Initialize(oxedProjectRunner.OnStart);
