@@ -13,12 +13,11 @@ INTERFACE
    USES
       uStd, uLog, sysutils, uTiming,
       {app}
-      uApp, appuActionEvents,
+      uApp, appuEvents, appuActionEvents,
       {oX}
       uOX, oxuInit, oxuWindows, oxuPlatform, oxuRunRoutines;
 
 TYPE
-
    { oxTRunGlobal }
 
    oxTRunGlobal = record
@@ -46,6 +45,9 @@ TYPE
      procedure Restart();
      {handle a restart}
      function HandleRestart(): boolean;
+
+     {control events}
+     procedure ControlEvents();
 
      {adds a run routine to the execution list}
      procedure AddRoutine(var routine: oxTRunRoutine);
@@ -151,7 +153,7 @@ begin
    oxPlatform.ProcessEvents();
    RunRoutines.Call();
 
-   oxRunRoutines.ControlEvents();
+   ControlEvents();
 
    ox.OnRun.Call();
 
@@ -191,6 +193,39 @@ begin
    end;
 end;
 
+{main ox control routine}
+procedure oxTRunGlobal.ControlEvents();
+var
+   event: appTEvent;
+   evh: appPEventHandler;
+   result: longint = 0;
+
+begin
+   {process all events}
+   if(appEvents.n > 0) then repeat
+      {get the event and the event handler}
+      appEvents.Init(event);
+      appEvents.Dequeue(event);
+
+      if(event.hID <> nil) then begin
+         evh := event.hID;
+
+         result := 0;
+         if(not event.Properties.IsSet(appEVENT_PROP_DISABLED)) then begin
+            {if a event handler is set}
+            if(evh <> nil) and (result <> -1) then begin
+               {action}
+               if(evh^.Action <> nil) then
+                  evh^.Action(event);
+            end;
+         end;
+
+         {done with this event}
+         event.Dispose();
+      end;
+   {if uinEvents is 0 then there are no more events}
+   until(appEvents.n = 0);
+end;
 procedure oxTRunGlobal.AddRoutine(var routine: oxTRunRoutine);
 begin
    RunRoutines.Add(routine);
