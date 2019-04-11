@@ -15,8 +15,10 @@ USES
    uStd, appuKeys,
    {oX}
    uOX, oxuTypes, oxuRenderers, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
+   oxuAudioBase,
    {ui}
-   uiuWindow, uiWidgets, oxuAudioBase,
+   uiuWindow, uiWidgets, uiuKeyMappings,
+   {wnd}
    oxuwndSettingsBase, oxuwndDVarEditor,
    {widgets}
    wdguLabel, wdguButton, wdguDropDownList, wdguDivisor, wdguCheckbox;
@@ -169,7 +171,7 @@ begin
    inherited Create;
 
    {open settings window}
-   ox.KeyMappings.AddKey('ox.open_settings', 'Open settings', kcS, kmALT)^.
+   oxKeyMappings.AddKey('ox.open_settings', 'Open settings', kcS, kmALT)^.
       Action := OpenWindowAction;
 
    OnRevert.Add(@revertCallback);

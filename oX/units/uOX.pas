@@ -11,7 +11,7 @@ UNIT uOX;
 INTERFACE
 
    USES
-      uStd, uInit, uAppInfo, udvars, appuKeyMappings;
+      uStd, uInit, uAppInfo, udvars;
 
 CONST
    oxEngineName               = 'oX';
@@ -29,7 +29,6 @@ CONST
    { VERSION STRING PROPERTIES }
    oxVERSION_STR_SHORT        = $0001;
    oxVERSION_STR_ONLY         = $0002;
-
 
 
 TYPE
@@ -71,8 +70,6 @@ TYPE
       AppProcs: TInitializationProcs;
 
       dvar: TDVarGroup;
-
-      KeyMappings: appTKeyMappingGroup;
 
       function GetVersionString(properties: longword = 0): string;
       function GetErrorDescription(errcode: longint): string;
@@ -139,9 +136,6 @@ INITIALIZATION
    dvar.Add('ox', ox.dvar);
    ox.dvar.Add(dv_version, 'version', dtcSTRING, @ox_version);
    dv_version.Properties := dv_version.Properties + [dvarREADONLY, dvarDO_NOT_SAVE];
-
-   { FILE OPERATIONS }
-   appKeyMappings.AddGroup('Other', 'Everything else', ox.KeyMappings);
 
    {$IFDEF OX_LIBRARY}
    ox.LibraryMode := true;

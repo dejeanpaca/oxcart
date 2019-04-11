@@ -17,7 +17,8 @@ INTERFACE
       {oX}
       uOX, oxuTypes, oxuRenderers, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend, oxuConsole,{$ENDIF}
       {ui}
-      oxuUI, uiuControl, uiuWindow, uiWidgets, uiuTypes, oxuAudioBase, uiuMessageBox, uiuWidget,
+      oxuUI, uiuControl, uiuWindow, uiWidgets, uiuTypes, uiuMessageBox, uiuWidget, uiuKeyMappings,
+      {wnd}
       oxuwndSettingsBase, oxuwndBase,
       {widgets}
       wdguLabel, wdguInputBox, wdguButton, wdguTabs, wdguDropDownList, wdguDivisor, wdguCheckbox, wdguList,
@@ -153,7 +154,7 @@ begin
 
    inherited Create;
 
-   ox.KeyMappings.AddKey('ox.open_run_settings', 'Open settings', kcR, kmALT)^.
+   oxKeyMappings.AddKey('ox.open_run_settings', 'Open settings', kcR, kmALT)^.
       Action := OpenWindowAction;
 end;
 
