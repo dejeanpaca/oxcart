@@ -13,9 +13,9 @@ INTERFACE
    USES
       sysutils, uStd, uLog, StringUtils, uFileUtils, uBuild,
       {app}
-      appuRun, appuActionEvents,
+      appuActionEvents,
       {ox}
-      oxuThreadTask,
+      oxuThreadTask, oxuRun,
       {oxed}
       uOXED, oxeduProject, oxeduProjectManagement, oxeduTasks, oxeduActions;
 
@@ -198,7 +198,7 @@ begin
 
    // wait to stop running
    while(oxedProjectScanner.Walker.Running) do begin
-      appRun.Sleep(1);
+      oxRun.Sleep(1);
    end;
 end;
 

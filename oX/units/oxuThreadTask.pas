@@ -13,8 +13,7 @@ INTERFACE
    USES
       sysutils, classes,
       uStd, uTiming, uLog,
-      appuEvents
-      {$IFNDEF NO_THREADS}, appuRun{$ENDIF};
+      appuEvents, oxuRun;
 
 CONST
    OX_THREAD_TASK_START = 1;
@@ -347,7 +346,7 @@ begin
       Stop();
 
       while(not Thread.Finished) do begin
-         appRun.Sleep();
+         oxRun.Sleep();
       end;
    end;
    {$ELSE}

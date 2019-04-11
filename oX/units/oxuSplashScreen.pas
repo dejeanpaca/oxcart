@@ -17,7 +17,7 @@ INTERFACE
       appuRun,
       {oX}
       uOX, oxuUI, oxuTypes, oxuTexture, oxuTextureGenerate, oxuPaths, oxuRenderer, oxuRender, oxuThreadTask, oxuMaterial,
-      oxuWindowTypes, oxuFont, oxumPrimitive, oxuWindow, oxuTransform, oxuResourcePool, oxuPrimitives,
+      oxuWindowTypes, oxuFont, oxumPrimitive, oxuWindow, oxuTransform, oxuResourcePool, oxuPrimitives, oxuRun,
       uiuWindow;
 
 CONST
@@ -287,7 +287,7 @@ end;
 procedure oxTSplashScreen.WaitForDisplayTime;
 begin
    repeat
-      appRun.Sleep();
+      oxRun.Sleep();
    until timer.Cur() > (StartTime + DisplayTime);
 end;
 
