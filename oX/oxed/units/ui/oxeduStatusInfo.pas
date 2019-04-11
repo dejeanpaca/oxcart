@@ -12,10 +12,12 @@ INTERFACE
 
    USES
       uStd, uBinarySize,
+      {ox}
+      uOX, oxuRunRoutines,
       {widgets}
       uiWidgets, wdguToolbar,
       {oxed}
-      uOX, uOXED, oxeduIcons, oxeduStatusbar;
+      uOXED, oxeduIcons, oxeduStatusbar;
 
 TYPE
    oxedTStatusInfo = record
@@ -65,9 +67,12 @@ begin
    end;
 end;
 
+VAR
+   updateRoutine: oxTRunRoutine;
+
 INITIALIZATION
    oxed.PostInit.iAdd('status_info', @initialize);
 
-   ox.OnRun.Add(@updateInfo);
+   ox.OnRun.Add(updateRoutine, 'oxed.update_status_info', @updateInfo);
 
 END.

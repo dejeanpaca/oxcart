@@ -16,7 +16,7 @@ USES
    uAppInfo, appuEvents, appuMouse, appuMouseEvents,
    {oX}
    uOX, oxuTypes, oxuRenderer, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
-   oxuwndBase, oxuPaths,
+   oxuwndBase, oxuPaths, oxuRunRoutines,
    {ui}
    uiuWindowTypes, uiuWindow, uiWidgets, uiuWidget, uiuControl, uiuTypes,
    {widgets}
@@ -197,6 +197,8 @@ VAR
    {show on start dvar}
    dvSplashShowOnStart: TDVar;
 
+   routine: oxTRunRoutine;
+
 INITIALIZATION
    oxTSplashWindow.ShowOnStart := true;
    oxTSplashWindow.AlwaysShowOnStart := false;
@@ -213,5 +215,6 @@ INITIALIZATION
 
    { set init }
    ox.Init.Add('ox.splash', @initialize, @deinitialize);
-   ox.OnStart.Add(@splashStart);
+
+   ox.OnStart.Add(routine, 'ox.splash', @splashStart);
 END.

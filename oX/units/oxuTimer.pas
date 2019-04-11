@@ -13,7 +13,7 @@ INTERFACE
    USES
       uTiming,
       {ox}
-      uOX;
+      uOX, oxuRunRoutines;
 
 TYPE
    oxTTime = record
@@ -46,11 +46,14 @@ begin
       oxTime.Flow := maxTime;
 end;
 
+VAR
+   tickRoutine: oxTRunRoutine;
+
 {initializes the main timer}
 procedure initTimer();
 begin
    oxTime.Timer.InitStart();
-   ox.OnRun.Add(@Tick);
+   ox.OnRun.Add(tickRoutine, 'ox.tick', @tick);
 end;
 
 INITIALIZATION

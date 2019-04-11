@@ -13,7 +13,7 @@ INTERFACE
    USES
       sysutils, uStd, uLog, uTiming,
       {ox}
-      uOX, oxuEntity, oxuScene;
+      uOX, oxuEntity, oxuScene, oxuRunRoutines;
 
 TYPE
    { oxTSceneRunner }
@@ -35,7 +35,10 @@ begin
        oxScene.UpdateComponentsInChildren();
 end;
 
+VAR
+   routine: oxTRunRoutine;
+
 INITIALIZATION
-   ox.OnRun.Add(@oxTSceneRunner.Run);
+   ox.OnRun.Add(routine, 'ox.scene_runner', @oxTSceneRunner.Run);
 
 END.

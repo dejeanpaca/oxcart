@@ -13,7 +13,7 @@ INTERFACE
    USES
      StringUtils, uTiming,
      {ox}
-     uOX;
+     uOX, oxuRunRoutines;
 
 CONST
    oxcFramerateUpdateInterval: longword = 1000;
@@ -141,8 +141,12 @@ begin
    oxFramerate.Increment();
 end;
 
+VAR
+   updateRoutine: oxTRunRoutine;
+
 INITIALIZATION
    oxFramerateInit(oxFramerate);
-   ox.OnRun.Add(@update);
+
+   ox.OnRun.Add(updateRoutine, 'ox.framerate_update', @update);
 
 END.
