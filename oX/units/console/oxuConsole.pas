@@ -95,10 +95,10 @@ CONST
 
 TYPE
    oxTConsoleData = record
-      maxlines,
-      maxVisibleChars,
+      MaxLines,
+      MaxVisibleChars,
       fh,
-      outputStartY: longint;
+      OutputStartY: longint;
    end;
 
    { oxTConsoleInputBox }
@@ -133,11 +133,11 @@ begin
    if(oxConsole.Font <> nil) then begin
       data.fh              := oxConsole.Font.GetHeight() + 2;
 
-      data.outputStartY    := oxConsole.Font.GetHeight() + 4 + oxConsole.StatusHeight;
+      data.OutputStartY    := oxConsole.Font.GetHeight() + 4 + oxConsole.StatusHeight;
       clientTotal          := (oxConsole.Window.Dimensions.h - (oxConsole.wdgInput.Dimensions.h + 4 + oxConsole.StatusHeight));
 
-      data.maxlines        := (clientTotal div data.fh);
-      data.maxVisibleChars := oxConsole.Window.Dimensions.w div oxConsole.Font.GetWidth() - 4;
+      data.MaxLines        := (clientTotal div data.fh);
+      data.MaxVisibleChars := oxConsole.Window.Dimensions.w div oxConsole.Font.GetWidth() - 4;
    end;
 end;
 
@@ -210,8 +210,10 @@ end;
 
 procedure oxTConsoleGlobal.SetFont(newFont: oxTFont);
 begin
-   if(newFont <> nil) then
+   if(newFont <> nil) then begin
       oxConsole.Font := newFont;
+      consoleReconfigure();
+   end;
 end;
 
 procedure oxTConsoleGlobal.Activate();
@@ -396,11 +398,12 @@ var
    cPos: loopint;
    t: array[0..2] of TVector3f;
    f: oxTFont;
+   r: oxTRect;
 
 begin
    y := 0;
 
-   if(data.maxlines > 0) and (oxConsole.Font <> nil) then begin
+   if(data.MaxLines > 0) and (oxConsole.Font <> nil) then begin
       y := wnd.RPosition.y;
       x := wnd.RPosition.x;
 
@@ -426,9 +429,14 @@ begin
          y := wnd.RPosition.y - wnd.Dimensions.h + 3;
          y2 := y + oxConsole.IbHeight - 3;
 
+         r.x := x;
+         r.y := y2;
+         r.w := width;
+         r.h := oxConsole.IbHeight - 2;
+
          wnd.SetColor(oxConsole.Colors.InputStatus.ToColor4f());
 
-         uiDraw.Box(x, y, x + width - 1, y2);
+         uiDraw.Box(r);
 
          t[0] := vmvZero3f;
 
@@ -449,14 +457,15 @@ begin
       f.Start();
       wnd.SetColorBlended(225, 255, 255, 255);
 
-      if(oxConsole.DrawInputStatus) and (oxConsole.InputStatus <> '') then
-         f.Write(wnd.RPosition.x + 2, y + 2 + f.GetHeight() div 2, oxConsole.InputStatus);
+      if(oxConsole.DrawInputStatus) and (oxConsole.InputStatus <> '') then begin
+         f.WriteCentered(oxConsole.InputStatus, r);
+      end;
 
       if(oxConsole.StatusHeight > 0) then
          f.Write(wnd.RPosition.x + 2, wnd.RPosition.y -  2 - (data.fh), appInfo.GetVersionString());
 
       if(oxConsole.Console.Contents.n > 0) then begin
-         start := oxConsole.Console.Contents.n - data.maxlines;
+         start := oxConsole.Console.Contents.n - data.MaxLines;
          if(start < 0) then
             start := 0;
 
@@ -473,15 +482,15 @@ begin
                {make the string shorter if it is too long to be viewed entirely in the console}
                clipSize := Length(pStr);
 
-               if(clipSize > data.maxVisibleChars) then
-                  SetLength(pStr, data.maxVisibleChars);
+               if(clipSize > data.MaxVisibleChars) then
+                  SetLength(pStr, data.MaxVisibleChars);
 
                {write the string}
                if(oxConsole.WriteTime) then
-                  f.Write(2, (wnd.RPosition.y - data.outputStartY) - (data.fh * cPos),
+                  f.Write(2, (wnd.RPosition.y - data.OutputStartY) - (data.fh * cPos),
                      TimeToStr(oxConsole.Console.Contents.List[i].Time) + ' ' + pStr)
                else
-                  f.Write(2, (wnd.RPosition.y - data.outputStartY) - (data.fh * cPos), pStr);
+                  f.Write(2, (wnd.RPosition.y - data.OutputStartY) - (data.fh * cPos), pStr);
 
                {return the string size back to normal}
                SetLength(pStr, clipSize);
@@ -739,11 +748,17 @@ begin
    oxConsole.Console.AddHistory(currentHistory);
 end;
 
+procedure uiInitialize();
+begin
+   oxConsole.SetFont(oxui.GetDefaultFont());
+end;
+
 VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
    ox.Init.Add(initRoutines, 'console', @Initialize, @DeInitialize);
+   oxui.InitializationProcs.iAdd('console', @uiInitialize);
 
    oxConsole.Height        := 0.6;
    oxConsole.IbHeight      := 20;
