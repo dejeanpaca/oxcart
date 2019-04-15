@@ -197,12 +197,8 @@ end;
 
 procedure oxTRunRoutines.Add(out routine: oxTRunRoutine; const name: string; init, deinit: TProcedure);
 begin
-   ZeroPtr(@routine, SizeOf(routine));
-   routine.Name := name;
-   routine.Exec := init;
+   Add(routine, name, init);
    routine.Secondary := deinit;
-
-   Add(routine);
 end;
 
 END.
