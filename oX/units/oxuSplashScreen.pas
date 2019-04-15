@@ -123,6 +123,8 @@ end;
 procedure oxTBasicSplashScreen.Load;
 begin
    if(Texture.Path <> '') then begin
+      Unload();
+
       oxTextureGenerate.Generate(oxAssetPaths.Find(Texture.Path), Texture.Texture);
 
       if(Texture.Texture <> nil) then
