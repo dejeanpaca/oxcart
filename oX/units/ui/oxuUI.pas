@@ -118,7 +118,7 @@ TYPE
 
       {initialization procedures}
       BaseInitializationProcs,
-      InitializationProcs: TInitializationProcs;
+      InitializationProcs: oxTRunRoutines;
 
       WindowMove: oxTPoint;
 
@@ -259,12 +259,6 @@ begin
 
    mSelectHoverTime := timer.Cur();
    mLastEventTime := timer.Cur();
-
-   BaseInitializationProcs.Init('ui.base_initialization');
-   BaseInitializationProcs.DontDetermineState();
-
-   InitializationProcs.Init('ui.initialization');
-   InitializationProcs.DontDetermineState();
 end;
 
 procedure oxTUI.Initialize();

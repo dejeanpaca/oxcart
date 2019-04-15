@@ -754,11 +754,12 @@ begin
 end;
 
 VAR
-   initRoutines: oxTRunRoutine;
+   initRoutines,
+   uiInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
    ox.Init.Add(initRoutines, 'console', @Initialize, @DeInitialize);
-   oxui.InitializationProcs.iAdd('console', @uiInitialize);
+   oxui.InitializationProcs.iAdd(uiInitRoutines, 'console', @uiInitialize);
 
    oxConsole.Height        := 0.6;
    oxConsole.IbHeight      := 20;

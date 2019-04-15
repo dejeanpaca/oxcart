@@ -13,7 +13,7 @@ INTERFACE
    USES
       uColors,
       {oX}
-      uStd, oxuTypes, oxuWindow,
+      uStd, oxuTypes, oxuWindow, oxuRunRoutines,
       {ui}
       uiuWindow, oxuUI, uiuTypes, uiWidgets, uiuWidget,
       uiuContextMenu, uiuDockableWindow, uiuWidgetWindow,
@@ -99,8 +99,11 @@ begin
    uiTDockableWindowContextMenuWindow(uiContextMenu.LastWindow).TabIndex := index;
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxui.BaseInitializationProcs.Add('ui.dockable_window', @init, @deinit);
+   oxui.BaseInitializationProcs.Add(initRoutines, 'ui.dockable_window', @init, @deinit);
 
    {self destroy windows by default}
    uiDockableWindow.SelfDestroy := true;

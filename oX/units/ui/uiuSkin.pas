@@ -13,6 +13,8 @@ INTERFACE
    USES
       uStd, uColors,
       {oX}
+      oxuRunRoutines,
+      {ui}
       oxuUI, uiuTypes, uiuWindowTypes;
 
 CONST
@@ -304,8 +306,11 @@ begin
    uiSkin.Dispose();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxui.BaseInitializationProcs.Add('skin', @Initialize, @DeInitialize);
+   oxui.BaseInitializationProcs.Add(initRoutines, 'skin', @Initialize, @DeInitialize);
 
 END.
 

@@ -15,7 +15,7 @@ INTERFACE
       {app}
       uApp, appuEvents, appuKeys, appuActionEvents, appuMouse,
       {oX}
-      oxuTypes, oxuWindows, oxuFont, oxuResourcePool,
+      oxuRunRoutines, oxuTypes, oxuWindows, oxuFont, oxuResourcePool,
       oxuPrimitives, oxuWindowTypes, oxuRender, oxuTransform,
       {ui}
       oxuUI, uiuSkin, uiuZOrder, uiuTypes, uiuControl,
@@ -2470,6 +2470,9 @@ begin
       uiTWindow(ev.wnd).Close();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    {set defaults}
    uiWindow.AutoRender := true;
@@ -2523,7 +2526,7 @@ INITIALIZATION
    uiWindow.NextWindowKey.Assign(kcTAB, kmCONTROL);
    uiWindow.PreviousWindowKey.Assign(kcTAB, kmCONTROL or kmSHIFT);
 
-   oxui.BaseInitializationProcs.Add('window', @Initialize, @DeInitialize);
+   oxui.BaseInitializationProcs.Add(initRoutines, 'window', @Initialize, @DeInitialize);
 
    {events}
    uiWindow.evhp := appEvents.AddHandler(uiWindow.evh, 'ox.uiwindow', @actionHandler);
