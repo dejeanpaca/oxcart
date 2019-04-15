@@ -39,20 +39,9 @@ TYPE
    TInitializationProcs = record
       sName: string;
 
-      {true if all initialization procedures called, false if not or deinitialized}
-      Initialized,
-      {will not check if procedures have already been called}
-      DetermineState,
-      {if this is set by an outside routine, it'll break execution chain}
-      doBreak: boolean;
-
       {linked list of initialization/deinitialization procedures}
       iList,
       dList: TInitializationProcsList;
-
-      {used when calling procedures one by one}
-      curI,
-      curD: longint;
 
       procedure Init();
       procedure Init(const ipName: string);
@@ -63,8 +52,6 @@ TYPE
 
       procedure iCall();
       procedure dCall();
-
-      procedure DontDetermineState();
    end;
 
 IMPLEMENTATION
@@ -81,8 +68,6 @@ begin
    ZeroOut(self, SizeOf(self));
    iList.InitializeValues(iList);
    dList.InitializeValues(dList);
-
-   DetermineState := true;
 end;
 
 procedure TInitializationProcs.Init(const ipName: string);
@@ -174,29 +159,20 @@ var
    i: longint;
 
 begin
-   if(not Initialized) or (not DetermineState) then begin
-      if(ilist.n > 0) then begin
+   if(ilist.n > 0) then begin
+      if(initcLogProcs) then
+         log.Enter('Initializing Group > '+ sName);
+
+      for i := 0 to ilist.n - 1 do begin
          if(initcLogProcs) then
-            log.Enter('Initializing Group > '+ sName);
+            log.i('Initializing: ' + ilist.list[i].Name);
 
-         for i := 0 to ilist.n - 1 do begin
-            if(initcLogProcs) then
-               log.i('Initializing: ' + ilist.list[i].Name);
-
-            ilist.list[i].exec();
-
-            if (doBreak) then
-               break;
-         end;
-
-         if(initcLogProcs) then
-            log.Leave();
+         ilist.list[i].exec();
       end;
 
-      Initialized := true;
+      if(initcLogProcs) then
+         log.Leave();
    end;
-
-   doBreak := false;
 end;
 
 procedure TInitializationProcs.dCall();
@@ -207,31 +183,17 @@ begin
    if(initcLogProcs) then
       log.Enter('De-initializing Group > ' + sName);
 
-   if(Initialized) or (not DetermineState) then begin
-      if(dList.n > 0) then begin
-         for i := dList.n - 1 downto 0 do begin
-            if(initcLogProcs) then
-               log.i('De-initializing: ' + dList.List[i].Name);
+   if(dList.n > 0) then begin
+      for i := dList.n - 1 downto 0 do begin
+         if(initcLogProcs) then
+            log.i('De-initializing: ' + dList.List[i].Name);
 
-            dList.List[i].exec();
-
-            if (doBreak) then
-               break;
-         end;
+         dList.List[i].exec();
       end;
-
-      Initialized := false;
    end;
 
    if(initcLogProcs) then
       log.Leave();
-
-   doBreak := false;
-end;
-
-procedure TInitializationProcs.DontDetermineState();
-begin
-   DetermineState := false;
 end;
 
 INITIALIZATION
