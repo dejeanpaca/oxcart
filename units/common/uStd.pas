@@ -995,7 +995,8 @@ begin
    {display the error message}
    if(addr <> nil) and (isConsole) then begin
       s := getRunTimeErrorDescription(ErrorCode);
-      writeln('Error(', ErrorCode, '): ', s, ' @ ', addr2str(addr));
+
+      writeln('Error (', ErrorCode, '): ', s, ' @ ', addr2str(addr));
    end;
 end;
 

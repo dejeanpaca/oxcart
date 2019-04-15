@@ -90,6 +90,7 @@ begin
    if(font <> nil) then begin
       if(code = 0) then begin
          Val(newName, code, valCode);
+
          if(valCode <> 0) then
             code := 0;
       end;

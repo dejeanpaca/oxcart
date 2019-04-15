@@ -13,7 +13,8 @@ INTERFACE
    USES
       uStd,
       {ox}
-      uOX, oxuRunRoutines, oxuTypes, oxuTexture, oxuResourcePool;
+      uOX, oxuRunRoutines, oxuTypes,
+      oxuTexture, oxuResourcePool;
 
 TYPE
    oxTFileIcon = record
@@ -101,7 +102,6 @@ procedure oxTFileIcons.DestroyIcon(var icon: oxTFileIcon);
 begin
    oxResource.Destroy(icon.Texture);
 
-   icon.Texture := nil;
    icon.FileType := '';
 end;
 
@@ -146,4 +146,3 @@ INITIALIZATION
    oxFileIcons.Icons.Initialize(oxFileIcons.Icons);
 
 END.
-
