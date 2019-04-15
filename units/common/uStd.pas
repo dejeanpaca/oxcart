@@ -994,9 +994,11 @@ var
 begin
    {display the error message}
    if(addr <> nil) and (isConsole) then begin
+      writeln(stdout, '┻━┻ ︵ ╯(°□° ╯)');
+
       s := getRunTimeErrorDescription(ErrorCode);
 
-      writeln('Error (', ErrorCode, '): ', s, ' @ ', addr2str(addr));
+      writeln(stdout, 'Error (', ErrorCode, '): ', s, ' @ $', addr2str(addr));
    end;
 end;
 
@@ -1004,7 +1006,21 @@ procedure RunTimeError();
 begin
    {restore the previous error handler}
    ExitProc := oldExitProc;
+
    RunTimeErrorDisplay(ErrorAddr);
+end;
+
+procedure UnhandledException(Obj: TObject; Addr: Pointer; {%H-}FrameCount: Longint; {%H-}Frames: PPointer);
+begin
+   writeln(stdout, '(╯°□°)╯︵ ┻━┻');
+   writeln(stdout, 'Unhandled exception @ $',  addr2str(Addr), ' :');
+
+   if(Obj is exception) then begin
+      writeln(stdout, DumpExceptionCallStack(Exception(Obj)));
+   end else
+      writeLn(stdout, 'Exception object ', Obj.ClassName, ' is not of class Exception.');
+
+   writeln(stdout,'');
 end;
 
 { GENERAL }
@@ -1282,5 +1298,7 @@ INITIALIZATION
    {store the old exit proc and set the new one}
    oldExitProc := ExitProc;
    ExitProc := @RunTimeError;
+
+   ExceptProc := @UnhandledException;
 
 END.
