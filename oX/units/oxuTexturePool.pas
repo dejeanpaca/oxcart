@@ -14,7 +14,7 @@ INTERFACE
    USES
       uStd,
       {oX}
-      uOX, oxuResourcePool;
+      uOX, oxuRunRoutines, oxuResourcePool;
 
 TYPE
    oxTTexturePool = class(oxTResourcePool)
@@ -35,7 +35,10 @@ begin
    FreeObject(oxTexturePool);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.Add('texture-pool', @init, @deinit);
+   ox.Init.Add(initRoutines, 'texture-pool', @init, @deinit);
 
 END.

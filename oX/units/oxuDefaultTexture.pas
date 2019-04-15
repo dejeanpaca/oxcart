@@ -15,7 +15,7 @@ INTERFACE
    USES
       sysutils, uStd, uLog, uFile, uFiles, uTiming,
       {oX}
-      uOX, oxuTexture, oxuTextureGenerate, oxuResourcePool;
+      uOX, oxuRunRoutines, oxuTexture, oxuTextureGenerate, oxuResourcePool;
 
 TYPE
    oxTDefaultTextureGlobal = record
@@ -68,9 +68,12 @@ begin
    oxResource.Free(oxDefaultTexture.Texture);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    oxDefaultTexture.Load := true;
-   ox.BaseInit.Add('default_texture', @load, @dispose);
+   ox.BaseInit.Add(initRoutines, 'default_texture', @load, @dispose);
 
 END.
 

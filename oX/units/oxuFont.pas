@@ -13,7 +13,8 @@ INTERFACE
    USES
       uStd, StringUtils, vmVector, uColors, uFile,
       {oX}
-      uOX, oxuProjection, oxuTypes, oxuTexture, oxuTextureGenerate, oxuPaths, oxuTFD, oxuRender, oxuPrimitives,
+      uOX, oxuRunRoutines, oxuProjection, oxuTypes,
+      oxuTexture, oxuTextureGenerate, oxuPaths, oxuTFD, oxuRender, oxuPrimitives,
       oxuResourcePool, oxuMaterial, oxuTransform, oxuRenderer;
 
 TYPE
@@ -974,8 +975,11 @@ begin
    oxf.Default := nil;
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.Add('ox.font', @init, @deinit);
+   ox.Init.Add(initRoutines, 'ox.font', @init, @deinit);
 
    {this indicates whether vertically flipped texture coordinates should be generated}
    oxFont.FlippedGen := false;

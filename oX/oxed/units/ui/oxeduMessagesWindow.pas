@@ -15,7 +15,7 @@ INTERFACE
       {app}
       appuMouse,
       {ox}
-      oxuTypes, oxuScene, oxuPaths, oxuRender, oxuRenderer, oxuTimer, oxuFont,
+      oxuTypes, oxuScene, oxuPaths, oxuFont, oxuRunRoutines,
       {ui}
       uiuControl, uiuTypes, uiuWindow, uiWidgets, wdguWorkbar, wdguToolbar, wdguList,
       {oxed}
@@ -215,8 +215,11 @@ begin
    oxedMessages.Clear();
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('scene.messages', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'scene.messages', @init, @deinit);
    oxedMenubar.OnInit.Add(@initMenubar);
 
    oxedProjectRunner.OnBeforeStart.Add(@onStart);

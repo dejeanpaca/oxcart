@@ -22,7 +22,7 @@ INTERFACE
    USES
       uStd, uLog, appukcNames, appuKeys,
       {oX}
-      uOX, oxuWindowTypes;
+      uOX, oxuRunRoutines, oxuWindowTypes;
 
 TYPE
    oxTGlobalKeyHandlerCallback = procedure(wnd: oxTWindow);
@@ -245,8 +245,11 @@ begin
    oxGlobalKeys.Dispose();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.dAdd('globalkeys', @DeInitialize);
+   ox.Init.dAdd(initRoutines, 'globalkeys', @DeInitialize);
 
 END.
 

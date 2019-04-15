@@ -12,8 +12,10 @@ INTERFACE
 
    USES
       uStd, uBuild, StringUtils,
+      {app}
+      uApp,
       {ox}
-      uOX, oxuTypes, oxuwndSettings, uApp,
+      uOX, oxuTypes, oxuRunRoutines, oxuwndSettings,
       {ui}
       uiWidgets, wdguLabel, wdguInputBox, wdguButton, wdguDropDownList, wdguDivisor;
 
@@ -126,7 +128,10 @@ begin
    oxwndSettings.PreAddTabs.Add(@PreAddTabs);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.iAdd('settings', @init);
+   ox.Init.iAdd(initRoutines, 'settings', @init);
 
 END.

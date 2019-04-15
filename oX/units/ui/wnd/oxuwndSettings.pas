@@ -14,7 +14,8 @@ USES
    {app}
    uStd, appuKeys,
    {oX}
-   uOX, oxuTypes, oxuRenderers, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
+   uOX, oxuTypes, oxuRunRoutines,
+   oxuRenderers, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
    oxuAudioBase,
    {ui}
    uiuWindow, uiWidgets, uiuKeyMappings,
@@ -187,7 +188,10 @@ begin
    FreeObject(oxwndSettings);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.Add('ox.settings', @init, @deinit);
+   ox.Init.Add(initRoutines, 'ox.settings', @init, @deinit);
 
 END.

@@ -15,7 +15,7 @@ INTERFACE
       {app}
       appuKeys, appuMouse,
       {ox}
-      oxuTypes, oxuScene, oxuEntity, oxuFont,
+      oxuTypes, oxuScene, oxuEntity, oxuFont, oxuRunRoutines,
       {ui}
       uiuTypes, uiuWindow, uiWidgets, uiuWidgetWindow,
       wdguList, wdguHierarchyList, wdguInputBox, uiuWidget, uiuInputBoxOverlay,
@@ -417,8 +417,11 @@ begin
    oxedScene.Unselect();
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('scene.scenehierarchy', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'scene.scenehierarchy', @init, @deinit);
    oxedMenubar.OnInit.Add(@initMenubar);
 
    oxedSceneManagement.OnNewScene.Add(@OnProjectChange);

@@ -15,7 +15,7 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uLog, StringUtils,
       {ox}
-      uOX, oxuWindowTypes,
+      uOX, oxuWindowTypes, {$IFNDEF OX_LIBRARY}oxuRunRoutines,{$ENDIF}
       {gl}
       oxuglRenderer, oxuOGL, oxuglExtensions;
 
@@ -104,9 +104,14 @@ begin
    oxglRenderer.OnWindowInit.Add(@initWindow);
 end;
 
+{$IFNDEF OX_LIBRARY}
+VAR
+   initRoutines: oxTRunRoutine;
+{$ENDIF}
+
 INITIALIZATION
    {$IFNDEF OX_LIBRARY}
-   ox.PreInit.iAdd('ox.gl.debug_output', @init);
+   ox.PreInit.iAdd(initRoutines, 'ox.gl.debug_output', @init);
    {$ENDIF}
 
 END.

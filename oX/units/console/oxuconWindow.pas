@@ -15,7 +15,7 @@ INTERFACE
    USES
       StringUtils,
       {oX}
-      uOX, oxuWindowTypes, oxuWindows, oxuWindow, oxuConsoleBackend;
+      uOX, oxuRunRoutines, oxuWindowTypes, oxuWindows, oxuWindow, oxuConsoleBackend;
 
 IMPLEMENTATION
 
@@ -170,7 +170,10 @@ begin
    console.Selected^.AddHandler(conHandler, conTCommandNotifyProc(@conCommandNotify), conCommands);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.iAdd('console.window', @Initialize);
+   ox.Init.iAdd(initRoutines, 'console.window', @Initialize);
 
 END.

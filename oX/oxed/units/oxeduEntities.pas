@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd,
       {ox}
-      uOX, oxuEntity, oxuComponent,
+      uOX, oxuEntity, oxuComponent, oxuRunRoutines,
       {oxed}
       oxeduEditRenderers, oxeduEntityTypes;
 
@@ -131,8 +131,11 @@ begin
    entities.OnComponentAdd.Add(@componentAdd);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.Add('oxed.entities', @init, @deinit);
+   ox.Init.Add(initRoutines, 'oxed.entities', @init, @deinit);
 
    oxTEntityCallbacks.Initialize(oxedEntities.OnCreate);
    oxTEntityCallbacks.Initialize(oxedEntities.OnDestroy);

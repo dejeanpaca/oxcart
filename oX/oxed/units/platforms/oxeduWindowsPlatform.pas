@@ -12,6 +12,8 @@ INTERFACE
 
    USES
       uStd,
+      {ox}
+      oxuRunRoutines,
       {oxed}
       uOXED, oxeduPlatform;
 
@@ -40,7 +42,10 @@ begin
    oxedPlatforms.Add(oxedTWindowsPlatform.Create());
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.iAdd('platform.windows', @init);
+   oxed.Init.iAdd(oxedInitRoutines, 'platform.windows', @init);
 
 END.

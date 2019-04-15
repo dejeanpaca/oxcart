@@ -14,6 +14,8 @@ INTERFACE
       sysutils, uStd, StringUtils, uFileUtils,
       {app}
       appuEvents, appuActionEvents,
+      {ox}
+      oxuRunRoutines,
       {ui}
       uiuContextMenu, uiuWidgetWindow,
       wdguFileList, oxuwndFileContextMenu,
@@ -233,8 +235,11 @@ begin
    FreeObject(oxedProjectContextMenu.Menus.Current);
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('project_context_menu', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'project_context_menu', @init, @deinit);
 
 END.
 

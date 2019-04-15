@@ -22,7 +22,8 @@ INTERFACE
       vmVector,
       uFile, uFileHandlers,
       {oX}
-      uOX, oxuTexture, oxuSkins, oxuModel, oxuModelFile, oxuFile, oxuMesh, oxuMaterial;
+      uOX, oxuRunRoutines,
+      oxuTexture, oxuSkins, oxuModel, oxuModelFile, oxuFile, oxuMesh, oxuMaterial;
 
 CONST
    {CHUNK IDs}
@@ -730,7 +731,10 @@ begin
    oxfModel.Readers.RegisterExt(m3DSExt, '.3ds', @m3DSLoader);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.iAdd('model.3ds', @init);
+   ox.Init.iAdd(initRoutines, 'model.3ds', @init);
 
 END.

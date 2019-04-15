@@ -15,7 +15,7 @@ INTERFACE
       {app}
       appuActionEvents,
       {ox}
-      oxuThreadTask, oxuRun,
+      oxuRunRoutines, oxuThreadTask, oxuRun,
       {oxed}
       uOXED, oxeduProject, oxeduProjectManagement, oxeduTasks, oxeduActions;
 
@@ -209,8 +209,11 @@ begin
    oxedProjectScanner.Run();
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('project_scanner', @oxedProjectScanner.Initialize, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'project_scanner', @oxedProjectScanner.Initialize, @deinit);
 
    TProcedures.Initialize(oxedProjectScanner.OnStart);
    TProcedures.Initialize(oxedProjectScanner.OnDone);

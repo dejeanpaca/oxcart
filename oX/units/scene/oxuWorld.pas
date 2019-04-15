@@ -14,7 +14,7 @@ INTERFACE
       uStd, uColors,
       {ox}
       {$IFNDEF OX_LIBRARY}
-      uOX,
+      uOX, oxuRunRoutines,
       {$ENDIF}
       oxuSerialization, oxuGlobalInstances;
 
@@ -61,9 +61,14 @@ begin
    ClearColor := cBlue4f;
 end;
 
+{$IFNDEF OX_LIBRARY}
+VAR
+   initRoutines: oxTRunRoutine;
+{$ENDIF}
+
 INITIALIZATION
    {$IFNDEF OX_LIBRARY}
-   ox.Init.Add('ox.scene', @init, @deinit);
+   ox.Init.Add(initRoutines, 'ox.scene', @init, @deinit);
    {$ENDIF}
 
    serialization := oxTSerialization.Create(oxTWorld, @instance);

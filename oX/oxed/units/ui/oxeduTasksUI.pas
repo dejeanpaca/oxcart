@@ -13,7 +13,9 @@ INTERFACE
    USES
       uStd, StringUtils,
       {ox}
-      uiuWindowTypes, oxuTexture, wdguToolbar,
+      oxuRunRoutines, oxuTexture,
+      {ui}
+      uiuWindowTypes, wdguToolbar,
       {oxed}
       uOXED, oxeduIcons, oxeduTasks, oxuThreadTask,
       oxeduMenubar, oxeduMenuToolbar;
@@ -115,8 +117,11 @@ procedure deinit();
 begin
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.dAdd('oxed.tasks-ui', @deinit);
+   oxed.Init.dAdd(oxedInitRoutines, 'oxed.tasks-ui', @deinit);
    oxedMenubar.OnInit.Add(@initialize);
 
    oxedTasks.OnTaskStart.Add(@toggleAnimate);

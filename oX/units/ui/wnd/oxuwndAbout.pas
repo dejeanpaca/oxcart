@@ -15,7 +15,8 @@ USES
    {app}
    uAppInfo, appuSysInfoBase,
    {oX}
-   uOX, oxuTypes, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF} oxuRenderer,
+   uOX, oxuTypes, oxuRunRoutines,
+   {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF} oxuRenderer,
    oxuWindowTypes, oxuwndBase,
    {ui}
    uiuControl, uiuWindowTypes, uiuWindow, uiWidgets, uiuWidget,
@@ -100,7 +101,10 @@ begin
    FreeObject(oxwndAbout);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.Add('ox.about', @initialize, @deinitialize);
+   ox.Init.Add(initRoutines, 'ox.about', @initialize, @deinitialize);
 
 END.

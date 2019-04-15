@@ -15,7 +15,7 @@ INTERFACE
    USES
       appuKeyMappings,
       {oX}
-      uOX, oxuConsoleBackend;
+      uOX, oxuRunRoutines, oxuConsoleBackend;
 
 IMPLEMENTATION
 
@@ -84,6 +84,10 @@ begin
    console.Selected^.AddHandler(conHandler, conTCommandNotifyProc(@conCommandNotify), conCommands);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.iAdd('console.keymappings', @Initialize);
+   ox.Init.iAdd(initRoutines, 'console.keymappings', @Initialize);
+
 END.

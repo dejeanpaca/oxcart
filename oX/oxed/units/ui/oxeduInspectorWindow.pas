@@ -15,7 +15,7 @@ INTERFACE
       {app}
       appuMouse,
       {ox}
-      oxuTypes,
+      oxuTypes, oxuRunRoutines,
       oxuRender, oxuRenderer, oxuTimer,
       {ui}
       uiuTypes, uiuWindow, uiWidgets, uiuWidget, uiuWindowTypes,
@@ -286,8 +286,11 @@ begin
       oxedTInspectorWindow(oxedInspector.Instance).Close();
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('scene.inspector', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'scene.inspector', @init, @deinit);
    oxedMenubar.OnInit.Add(@initMenubar);
 
    oxedProjectManagement.OnProjectOpen.Add(@OnProjectChange);

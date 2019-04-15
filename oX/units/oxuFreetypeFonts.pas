@@ -17,7 +17,8 @@ INTERFACE
       uStd, uLog, StringUtils, vmMath,
       uImage, imguOperations,
       {ox}
-      uOX, oxuPaths, oxuTexture, oxuTextureGenerate, oxuTypes, oxuFont, oxuFreetype, uSimpleParser;
+      uOX, oxuRunRoutines, oxuPaths,
+      oxuTexture, oxuTextureGenerate, oxuTypes, oxuFont, oxuFreetype, uSimpleParser;
 
 TYPE
    { oxTFreetypeManager }
@@ -476,8 +477,11 @@ begin
    end;
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.Add('ox.freetype', @oxTFreetypeManager.Initialize, @oxTFreetypeManager.Deinitialize);
+   ox.Init.Add(initRoutines, 'ox.freetype', @oxTFreetypeManager.Initialize, @oxTFreetypeManager.Deinitialize);
 
    oxFreetypeManager.Fonts.Initialize(oxFreetypeManager.Fonts);
    oxFreetypeManager.AutoSpaceCharacter := true;

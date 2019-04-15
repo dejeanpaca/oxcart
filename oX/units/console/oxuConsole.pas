@@ -15,7 +15,7 @@ INTERFACE
      {app}
      uAppInfo, appuKeys, appuEvents, appuKeyEvents, appuPaths, appuActionEvents,
      {oX}
-     uOX, oxuTypes, oxuGlobalKeys, oxuFont, oxuWindow, oxuRun,
+     uOX, oxuTypes, oxuGlobalKeys, oxuFont, oxuWindow, oxuRun, oxuRunRoutines,
      oxuConsoleBackend, oxuWindowTypes, oxuWindows, oxuRenderUtilities,
      {ui}
      oxuUI, uiuDraw, uiuTypes, uiuWindowTypes, uiuWindow, uiuControl,
@@ -739,8 +739,11 @@ begin
    oxConsole.Console.AddHistory(currentHistory);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.Add('console', @Initialize, @DeInitialize);
+   ox.Init.Add(initRoutines, 'console', @Initialize, @DeInitialize);
 
    oxConsole.Height        := 0.6;
    oxConsole.IbHeight      := 20;

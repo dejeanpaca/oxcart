@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd,
       {ox}
-      oxuThreadTask,
+      oxuRunRoutines, oxuThreadTask,
       {oxed}
       uOXED;
 
@@ -171,8 +171,11 @@ begin
    oxedTasks.List.Dispose();
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.dAdd('oxed.tasks', @deinit);
+   oxed.Init.dAdd(oxedInitRoutines, 'oxed.tasks', @deinit);
 
    oxedTasks.List.Initialize(oxedTasks.List);
 

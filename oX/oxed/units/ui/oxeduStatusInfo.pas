@@ -69,9 +69,10 @@ end;
 
 VAR
    updateRoutine: oxTRunRoutine;
+   oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxed.PostInit.iAdd('status_info', @initialize);
+   oxed.PostInit.iAdd(oxedInitRoutines, 'status_info', @initialize);
 
    ox.OnRun.Add(updateRoutine, 'oxed.update_status_info', @updateInfo);
 

@@ -15,7 +15,7 @@ INTERFACE
       {app}
       appuMouse, appuActionEvents,
       {ox}
-      oxuGridRender, oxuCamera, oxuRender, oxuRenderUtilities,
+      oxuRunRoutines, oxuGridRender, oxuCamera, oxuRender, oxuRenderUtilities,
       oxuScene, oxuSceneRender, oxuEntity, oxuTypes, oxuTransform, oxumPrimitive, oxuResourcePool,
       {ui}
       oxuUI, uiuWindow, oxuMaterial,
@@ -478,8 +478,11 @@ begin
       oxedSceneEdit.Instance.Select();
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('scene.edit', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'scene.edit', @init, @deinit);
    oxedMenubar.OnInit.Add(@initMenubar);
 
    oxedActions.SCENE_CLEAR := appActionEvents.SetCallback(@clearScene);

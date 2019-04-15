@@ -13,7 +13,7 @@ INTERFACE
    USES
       StringUtils,
       {ox}
-      uOX, oxuALDevices, oxuConsole, oxuConsoleBackend;
+      uOX, oxuRunRoutines, oxuALDevices, oxuConsole, oxuConsoleBackend;
 
 IMPLEMENTATION
 
@@ -128,8 +128,11 @@ begin
    oxConsole.console.AddHandler(conHandler);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.iAdd('console.keymappings', @init);
+   ox.Init.iAdd(initRoutines, 'console.keymappings', @init);
 
 END.
 

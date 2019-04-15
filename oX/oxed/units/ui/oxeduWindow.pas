@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd,
       {oX}
-      oxuTypes,
+      oxuTypes, oxuRunRoutines,
       {ui}
       uiuWindowTypes, uiuWindow, uiuDockableWindow, uiuContextMenu, uiuWidget,
       {oxed}
@@ -216,8 +216,11 @@ begin
    end;
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.dAdd('oxed.window', @deinit);
+   oxed.Init.dAdd(oxedInitRoutines, 'oxed.window', @deinit);
 
    oxedWindows.Initialize(oxedWindows);
 

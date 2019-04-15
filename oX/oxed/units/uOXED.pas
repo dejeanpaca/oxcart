@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uLog, uInit, udvars, uApp, appuPaths, StringUtils,
       {ox}
-      oxuEntity,
+      oxuRunRoutines, oxuEntity,
       {ui}
       uiuDockableWindow, uiuMessageBox, uiuTypes;
 
@@ -66,8 +66,8 @@ TYPE
       OnSceneChange: TProcedures;
 
       {initialization/deinitialization routines for OXED}
-      Init: TInitializationProcs;
-      PostInit: TInitializationProcs;
+      Init,
+      PostInit: oxTRunRoutines;
       {dockable area into which windows are created by default}
       DockableArea: uiTDockableWindow;
 
@@ -116,8 +116,6 @@ begin
 end;
 
 INITIALIZATION
-   oxed.Init.Init('oxed');
-   oxed.PostInit.Init('oxed.post');
    dvar.Add('oxed', dvgOXED);
 
    TProcedures.Initialize(oxed.OnSceneChange);

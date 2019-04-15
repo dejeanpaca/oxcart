@@ -13,7 +13,7 @@ INTERFACE
    USES
       variants, uStd, sysutils, typinfo, uLog, StringUtils,
       {ox}
-      uOX, oxuGlobalInstances;
+      uOX, oxuRunRoutines, oxuGlobalInstances;
 
 TYPE
    TPreallocatedTypeKyndArrayList = specialize TPreallocatedArrayList<TTypeKind>;
@@ -1284,11 +1284,14 @@ function instanceGlobal(): TObject;
 begin
    Result := oxTSerializationManager.Create();
 end;
+
+VAR
+   initRoutines: oxTRunRoutine;
  
 INITIALIZATION
    init();
 
-   ox.Init.iAdd('ox.serialization', @initSerialization);
+   ox.Init.iAdd(initRoutines, 'ox.serialization', @initSerialization);
 
    oxGlobalInstances.Add(oxTSerializationManager, @oxSerialization, @instanceGlobal)^.Allocate := false;
 

@@ -15,7 +15,8 @@ INTERFACE
       {app}
       appuMouse,
       {ox}
-      uOX, oxuPlatform, oxuTexture, oxuTextureGenerate, oxuTypes, oxuTransform, oxuRender,
+      uOX, oxuRunRoutines,
+      oxuPlatform, oxuTexture, oxuTextureGenerate, oxuTypes, oxuTransform, oxuRender,
       oxuRenderUtilities,
       {ui}
       oxuUI, uiuTypes, uiuControl, uiuWindow, uiuWindowTypes;
@@ -157,17 +158,24 @@ end;
 procedure init();
 begin
    uiCursor.SetCursorTypeForced(uiCURSOR_TYPE_DEFAULT);
+
+   uiWindow.OxwPostRender.Add(@renderCursor);
 end;
 
 procedure deinit();
 begin
+   // TODO: Make sure to unload the cursors
 
+   uiCursor.LoadedCursors.Dispose();
+   uiCursor.CustomCursors.Dispose();
 end;
+
+VAR
+   initRoutines: oxTRunRoutine;
 
 INITIALIZATION
    uiCursor.CurrentCursorType := uiCURSOR_TYPE_DEFAULT;
-   ox.Init.Add('ui.cursor', @init, @deinit);
-   uiWindow.OxwPostRender.Add(@renderCursor);
+   ox.Init.Add(initRoutines, 'ui.cursor', @init, @deinit);
 
    uiCursor.LoadedCursors.Initialize(uiCursor.LoadedCursors);
    uiCursor.CustomCursors.Initialize(uiCursor.CustomCursors);

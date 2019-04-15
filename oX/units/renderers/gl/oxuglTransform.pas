@@ -14,7 +14,7 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       vmVector,
       {ox}
-      uOX, oxuTransform, oxuglRenderer;
+      uOX, oxuRunRoutines, oxuTransform, oxuglRenderer;
 
 TYPE
 
@@ -51,7 +51,10 @@ begin
    oxglRenderer.components.RegisterComponent('transform', @componentReturn);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.PreInit.iAdd('ox.gl.transform', @init);
+   ox.PreInit.iAdd(initRoutines, 'ox.gl.transform', @init);
 
 END.

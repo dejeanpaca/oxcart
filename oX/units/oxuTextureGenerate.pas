@@ -14,7 +14,7 @@ INTERFACE
      uStd, uLog, StringUtils, uColors, vmVector, uFile,
      uImage, imguRW, imguOperations,
      {oX}
-     uOX, oxuRenderer, oxuRenderers, oxuTypes, oxuTexture, oxuPaths;
+     uOX, oxuRunRoutines, oxuRenderer, oxuRenderers, oxuTypes, oxuTexture, oxuPaths;
   
 TYPE
    { oxTTextureGenerate }
@@ -417,6 +417,9 @@ begin
    oxTextureGenerate.Dispose();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    oxTextureGenerateSettings.DefaultFilter := oxTEXTURE_FILTER_TRILINEAR;
    oxTextureGenerateSettings.DefaultRepeatType := oxTEXTURE_CLAMP_TO_EDGE;
@@ -431,7 +434,7 @@ INITIALIZATION
 
    oxTTextureGenerate.Init(oxTextureGenerate);
 
-   ox.Init.dAdd('texture.generate', @Finalize);
+   ox.Init.dAdd(initRoutines, 'texture.generate', @Finalize);
    oxRenderers.UseRoutines.Add(@onUse);
 
 END.

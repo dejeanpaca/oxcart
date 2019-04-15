@@ -18,7 +18,7 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uLog, uStd, uColors, StringUtils, uImage, vmVector,
       {ox}
-      uOX, oxuWindowTypes, oxuTypes, oxuRenderer, oxuRenderers, oxuOGL, oxuglExtensions,
+      uOX, oxuRunRoutines, oxuWindowTypes, oxuTypes, oxuRenderer, oxuRenderers, oxuOGL, oxuglExtensions,
       oxuglInfo,
       {platform specific}
       {$IFDEF WINDOWS}windows, oxuglRendererWin, oxuWindowsPlatform, oxuWindowsOS{$ENDIF}
@@ -469,7 +469,10 @@ begin
    FreeObject(oxglRenderer);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.PreInit.Add('ox.gl.renderer', @init, @deinit);
+   ox.PreInit.Add(initRoutines, 'ox.gl.renderer', @init, @deinit);
 
 END.

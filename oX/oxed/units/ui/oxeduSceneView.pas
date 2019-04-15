@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd,
       {ox}
-      oxuSceneRender,
+      oxuRunRoutines, oxuSceneRender,
       {oxed}
       uOXED, oxeduMenubar, oxeduWindow, oxeduSceneWindow;
 
@@ -63,8 +63,11 @@ begin
    SceneRenderer.Scene := Scene;
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('scene.view', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'scene.view', @init, @deinit);
    oxedMenubar.OnInit.Add(@initMenubar);
 
 END.

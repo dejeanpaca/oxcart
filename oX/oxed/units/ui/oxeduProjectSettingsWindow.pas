@@ -14,7 +14,7 @@ INTERFACE
       {app}
       uStd, appuKeys,
       {oX}
-      oxuTypes, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
+      oxuRunRoutines, oxuTypes, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
       {ui}
       uiuWindow, uiWidgets, uiuControl, uiuWidget, uiuKeyMappings,
       {wnd}
@@ -397,7 +397,10 @@ begin
    FreeObject(oxedwndProjectSettings);
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('oxed.project_settings', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'oxed.project_settings', @init, @deinit);
 
 END.

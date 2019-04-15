@@ -14,8 +14,8 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uStd, sysutils, uSimpleParser, StringUtils, uFiles, uLog,
       {ox}
-      uOX, oxuShader, oxuShaderLoader, oxuWindow, oxuFile,
-      oxuglRenderer, oxuglShader, oxuOGL;
+      uOX, oxuRunRoutines, oxuFile, oxuWindow,
+      oxuShader, oxuShaderLoader, oxuglRenderer, oxuglShader, oxuOGL;
 
 TYPE
    { oxglTShaderLoader }
@@ -165,8 +165,11 @@ begin
    Result := false;
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.PreInit.Add('gl.shader_loader', @init, @deinit);
+   ox.PreInit.Add(initRoutines, 'gl.shader_loader', @init, @deinit);
 
 END.
 

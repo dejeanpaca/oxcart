@@ -14,7 +14,7 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uColors, vmVector,
       {oX}
-      uOX, oxuRenderer, oxuRender, oxuTypes,
+      uOX, oxuRenderer, oxuRender, oxuTypes, oxuRunRoutines,
       {ogl}
       oxuglRenderer, oxuOGL;
 
@@ -363,7 +363,10 @@ begin
    oglRender.Free();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.PreInit.Add('ox.gl.render', @init, @deinit);
+   ox.PreInit.Add(initRoutines, 'ox.gl.render', @init, @deinit);
 
 END.
