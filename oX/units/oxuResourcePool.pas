@@ -143,9 +143,9 @@ begin
          Self.Free(oxTResource(res));
       end;
       {$ENDIF}
-
-      oxTResource(res) := nil;
    end;
+
+   oxTResource(res) := nil;
 end;
 
 procedure oxTResourceGlobal.Free(var resource);
