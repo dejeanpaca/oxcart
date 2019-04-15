@@ -620,4 +620,3 @@ INITIALIZATION
 
    wdgToolbar.Height := wdgWORKBAR_HEIGHT;
 END.
-

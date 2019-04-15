@@ -172,4 +172,3 @@ INITIALIZATION
    ox.PreInit.Add(initRoutines, 'gl.shader_loader', @init, @deinit);
 
 END.
-

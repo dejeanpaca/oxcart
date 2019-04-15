@@ -88,4 +88,3 @@ INITIALIZATION
    oxed.OnSceneChange.Add(@sceneChange);
 
 END.
-

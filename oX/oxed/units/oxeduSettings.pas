@@ -108,4 +108,3 @@ INITIALIZATION
    oxedSettings.LineEndings := 'lf';
 
 END.
-

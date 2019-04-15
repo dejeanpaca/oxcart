@@ -264,4 +264,3 @@ INITIALIZATION
 
    appACTION_QUIT := appActionEvents.SetCallback(@quitApp);
 END.
-

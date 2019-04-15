@@ -142,7 +142,7 @@ BEGIN
    writeln('makecodenames v1.0');
    writeln('This program is open source under GNU GPL v3.');
    writeln();
-   
+
    {initialize}
    cnames.Initialize(cnames);
    TParseData.Init(parseData);
@@ -166,4 +166,3 @@ BEGIN
 
    Writeln('Operation completed successfully.');
 END.
-
