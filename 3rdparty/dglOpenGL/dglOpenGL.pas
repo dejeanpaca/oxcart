@@ -16712,7 +16712,7 @@ procedure Read_GL_ARB_sample_locations;
 begin
   glFramebufferSampleLocationsfvARB := dglGetProcAddress('glFramebufferSampleLocationsfvARB');
   glNamedFramebufferSampleLocationsfvARB := dglGetProcAddress('glNamedFramebufferSampleLocationsfvARB');
-  glEvaluateDepthValuesARB := dglGetProcAddress('glEvaluateDepthValuesARB');;
+  glEvaluateDepthValuesARB := dglGetProcAddress('glEvaluateDepthValuesARB');
 end;
 
 procedure Read_GL_ARB_shading_language_include;
@@ -17125,7 +17125,7 @@ end;
 
 procedure Read_GL_ARB_internalformat_query2;
 begin
-  glGetInternalformati64v := dglGetProcAddress('glGetInternalformati64v');;
+  glGetInternalformati64v := dglGetProcAddress('glGetInternalformati64v');
 end;
 
 procedure Read_GL_ARB_invalidate_subdata;

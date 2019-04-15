@@ -1182,7 +1182,7 @@ begin
          {next file/directory}
          result := FindNext(src);
       until (result <> 0);
-   end;;
+   end;
 
    path := ExcludeTrailingPathDelimiter(ExtractFilePath(path));
 
