@@ -14,7 +14,8 @@ INTERFACE
       {$IFDEF UNIX}BaseUnix,{$ENDIF}
       {$IFDEF WINDOWS}uStd, windows,{$ENDIF}
       sysutils, uFileUtils, StringUtils,
-      uAppInfo, uApp;
+      uAppInfo, uApp,
+      oxuRunRoutines;
 
 TYPE
    appTPathType = (
@@ -255,8 +256,11 @@ begin
       appPath.CreateConfiguration();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    appPath.Configuration.UseOrganization := true;
-   app.InitializationProcs.iAdd('configuration', @initialize, 2000);
+   app.InitializationProcs.iAdd(initRoutines, 'configuration', @initialize);
 
 END.

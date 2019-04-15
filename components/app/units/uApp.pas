@@ -11,7 +11,8 @@ UNIT uApp;
 INTERFACE
 
    USES
-      uStd, sysutils, uInit, udvars;
+      uStd, sysutils, udvars,
+      oxuRunRoutines;
 
 TYPE
 
@@ -23,7 +24,7 @@ TYPE
       IdleTime: longint;
       dvGroup: TDvarGroup;
 
-      InitializationProcs: TInitializationProcs;
+      InitializationProcs: oxTRunRoutines;
 
       procedure Initialize();
       procedure DeInitialize();
@@ -88,8 +89,6 @@ end;
 INITIALIZATION
    app.Active     := true;
    app.IdleTime   := 5;
-
-   app.InitializationProcs.Init('app');
 
    dvar.Add('app', app.dvGroup);
    app.dvGroup.Add(dvIdleTime, 'idle_time', dtcLONGINT, @app.IdleTime);

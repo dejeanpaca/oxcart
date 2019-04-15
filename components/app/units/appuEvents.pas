@@ -11,7 +11,7 @@ UNIT appuEvents;
 
 INTERFACE
 
-   USES sysutils, uStd, uApp;
+   USES sysutils, uStd, uApp, oxuRunRoutines;
 
 CONST
    appEVENT_PROP_DISABLED                 = $0001;
@@ -662,11 +662,14 @@ begin
    appEvents.DeInitialize();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    appEvents.Settings.StartCount   := 64;
    appEvents.Settings.IncreaseStep := 128;
 
-   app.InitializationProcs.Add('events', @initialize, @deinitialize);
+   app.InitializationProcs.Add(initRoutines, 'events', @initialize, @deinitialize);
 
    {setup the nil event handler}
    nilHandlerInitialize();

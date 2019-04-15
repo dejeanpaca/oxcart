@@ -12,10 +12,11 @@ INTERFACE
 
    USES
    uLog, StringUtils, ustrList,
-   uApp, appuSysInfoBase
-   {$IFDEF WINDOWS}, appuWinSysInfo{$ENDIF}
-   {$IFDEF UNIX}{$IF not defined(ANDROID) and not defined(DARWIN)}, appuLinuxSysInfo{$ENDIF}{$ENDIF}
-   {$IFDEF ANDROID}, appuAndroidSysInfo{$ENDIF};
+   uApp, appuSysInfoBase,
+   {$IFDEF WINDOWS}appuWinSysInfo,{$ENDIF}
+   {$IFDEF UNIX}{$IF not defined(ANDROID) and not defined(DARWIN)}appuLinuxSysInfo,{$ENDIF}{$ENDIF}
+   {$IFDEF ANDROID}appuAndroidSysInfo,{$ENDIF}
+   oxuRunRoutines;
 
 TYPE
    appTSystemInformation = record
@@ -185,10 +186,13 @@ begin
    end;
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    {set defaults}
    appSI.systemName := 'unknown';
 
-   app.InitializationProcs.iAdd('systeminformation', @Initialize);
+   app.InitializationProcs.iAdd(initRoutines, 'systeminformation', @Initialize);
 
 END.

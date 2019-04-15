@@ -11,7 +11,10 @@ UNIT appudvarConfiguration;
 
 INTERFACE
 
-   USES sysutils, uLog, uApp, appuPaths, udvars, dvaruFile;
+   USES
+     sysutils, uLog, udvars, dvaruFile,
+     uApp, appuPaths,
+     oxuRunRoutines;
 
 TYPE
 
@@ -78,13 +81,15 @@ begin
       appDVarTextConfiguration.Save();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    appDVarTextConfiguration.FileName := 'dvar.cfg';
    appDVarTextConfiguration.AutoLoad := true;
    appDVarTextConfiguration.AutoSave := true;
 
-   app.InitializationProcs.iAdd('dvar.textload', @load, 1800);
-   app.InitializationProcs.dAdd('dvar.textsave', @save, 1800);
+   app.InitializationProcs.Add(initRoutines, 'dvar.textload', @load, @save);
 
 END.
 

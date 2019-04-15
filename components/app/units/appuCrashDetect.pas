@@ -10,8 +10,10 @@ UNIT appuCrashDetect;
 
 INTERFACE
 
-   USES uFileUtils, uLog,
-      uApp, appuPaths;
+   USES
+      uFileUtils, uLog,
+      uApp, appuPaths,
+      oxuRunRoutines;
 
 TYPE
    appTCrashDetect = record
@@ -76,7 +78,10 @@ begin
       appCrashDetect.Run();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   app.InitializationProcs.Add('crashdetect', @Initialize, @DeInitialize);
+   app.InitializationProcs.Add(initRoutines, 'crashdetect', @Initialize, @DeInitialize);
 
 END.
