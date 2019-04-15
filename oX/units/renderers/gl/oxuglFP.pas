@@ -33,6 +33,10 @@ VAR
 
 IMPLEMENTATION
 
+VAR
+   initRoutines,
+   glInitRoutines: oxTRunRoutine;
+
 { oxglTFP }
 
 class procedure oxglTFP.Initialize();
@@ -47,11 +51,8 @@ end;
 
 procedure init();
 begin
-   oxglRenderer.Init.Add('gl.fpshader', @oxglTFP.Initialize, @oxglTFP.DeInitialize);
+   oxglRenderer.Init.Add(glInitRoutines, 'gl.fpshader', @oxglTFP.Initialize, @oxglTFP.DeInitialize);
 end;
-
-VAR
-   initRoutines: oxTRunRoutine;
 
 INITIALIZATION
    oxglFP.Init.Init('ox.gl.fp');

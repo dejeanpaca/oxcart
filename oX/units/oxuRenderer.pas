@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uColors, uLog, uInit, uImage, uComponentProvider, StringUtils, vmVector,
       {oX}
-      oxuTypes, oxuWindowTypes, oxuGlobalInstances, oxuPlatform;
+      oxuTypes, oxuWindowTypes, oxuGlobalInstances, oxuPlatform, oxuRunRoutines;
 
 TYPE
    { oxTRendererProperites }
@@ -57,7 +57,7 @@ TYPE
          Components: TComponentProvider;
          UseRoutines: TProcedures;
          StartRoutines: TProcedures;
-         Init: TInitializationProcs;
+         Init: oxTRunRoutines;
          OnWindowInit: oxTRendererInitRoutines;
 
          Properties: oxTRendererProperties;
@@ -178,7 +178,6 @@ begin
    ContextWindowSettings := oxrContextWindowSettings;
    PlatformInstance := oxTPlatform;
 
-   Init.Init('ox.renderer');
    ComponentProvider.Initialize(Components);
    UseRoutines.Initialize(UseRoutines);
    StartRoutines.Initialize(StartRoutines);
