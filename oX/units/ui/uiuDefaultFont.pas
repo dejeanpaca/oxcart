@@ -53,7 +53,10 @@ end;
 
 procedure uiTDefaultFontManager.Deinitialize();
 begin
-   FreeObject(Font);
+   if(Font <> nil) then begin
+      FreeObject(Font);
+      log.v('ui > Destroyed default font')
+   end;
 end;
 
 procedure initialize();
