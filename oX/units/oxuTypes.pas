@@ -372,7 +372,7 @@ begin
 
    {$IFDEF OX_RESOURCE_DEBUG}
    if(ReferenceCount = -1) then
-      assert(FreeInResourceMethod, 'Permanent resource object freed outside of resource methods (do not free directlly) ' + LineEnding + DebugAllocationPoint)
+      assert(FreeInResourceMethod, 'Permanent resource object freed outside of resource methods (do not free directly) ' + LineEnding + DebugAllocationPoint)
    else
       assert(FreeInResourceMethod, 'Resource object freed outside of resource methods (do not free directly) ' + LineEnding + DebugAllocationPoint);
    {$ENDIF}
