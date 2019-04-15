@@ -20,7 +20,8 @@ TYPE
 
    oxTRunRoutine = record
       Name: string;
-      Exec: TProcedure;
+      Exec,
+      Secondary: TProcedure;
       Next: pointer;
    end;
 
@@ -31,10 +32,18 @@ TYPE
       e:  oxPRunRoutine;
 
       procedure Call();
+      procedure iCall();
+      procedure dCall();
+      procedure CallPrimary();
+      procedure CallSecondary();
       function Find(const routine: oxTRunRoutine): boolean;
       function Find(const exec: TProcedure): oxPRunRoutine;
       procedure Add(var routine: oxTRunRoutine);
+      procedure Add(out routine: oxTRunRoutine; exec: TProcedure);
+      procedure iAdd(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
+      procedure dAdd(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
       procedure Add(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
+      procedure Add(out routine: oxTRunRoutine; const name: string; init, deinit: TProcedure);
    end;
 
 IMPLEMENTATION
@@ -42,6 +51,21 @@ IMPLEMENTATION
 { oxTRunRoutines }
 
 procedure oxTRunRoutines.Call();
+begin
+   CallPrimary();
+end;
+
+procedure oxTRunRoutines.iCall();
+begin
+   CallPrimary();
+end;
+
+procedure oxTRunRoutines.dCall();
+begin
+   CallSecondary();
+end;
+
+procedure oxTRunRoutines.CallPrimary();
 var
    current: oxPRunRoutine;
 
@@ -52,6 +76,22 @@ begin
    if(current <> nil) then repeat
       if(current^.Exec <> nil) then
          current^.Exec();
+
+      current := current^.Next;
+   until (current = nil);
+end;
+
+procedure oxTRunRoutines.CallSecondary();
+var
+   current: oxPRunRoutine;
+
+begin
+   {call all pre-run routines}
+   current := s;
+
+   if(current <> nil) then repeat
+      if(current^.Secondary <> nil) then
+         current^.Secondary();
 
       current := current^.Next;
    until (current = nil);
@@ -111,11 +151,36 @@ begin
    e := @routine;
 end;
 
+procedure oxTRunRoutines.Add(out routine: oxTRunRoutine; exec: TProcedure);
+begin
+   Add(routine, '', exec);
+end;
+
+procedure oxTRunRoutines.iAdd(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
+begin
+   Add(routine, name, exec);
+end;
+
+procedure oxTRunRoutines.dAdd(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
+begin
+   Add(routine, name, nil, exec);
+end;
+
 procedure oxTRunRoutines.Add(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
 begin
    ZeroPtr(@routine, SizeOf(routine));
    routine.Name := name;
    routine.Exec := exec;
+
+   Add(routine);
+end;
+
+procedure oxTRunRoutines.Add(out routine: oxTRunRoutine; const name: string; init, deinit: TProcedure);
+begin
+   ZeroPtr(@routine, SizeOf(routine));
+   routine.Name := name;
+   routine.Exec := init;
+   routine.Secondary := deinit;
 
    Add(routine);
 end;
