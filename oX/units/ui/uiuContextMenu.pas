@@ -306,7 +306,6 @@ end;
 procedure uiTContextMenuItem.Destroy();
 begin
    oxResource.Destroy(Glyph);
-   Glyph := nil;
 
    if(Sub <> nil) and (not Properties.IsSet(uiCONTEXT_MENU_ITEM_EXTERNAL)) then
       FreeObject(Sub);
