@@ -13,7 +13,10 @@ INTERFACE
    USES
       sysutils, classes,
       uStd, uTiming, uLog,
-      appuEvents, oxuRun;
+      appuEvents,
+      {$IFNDEF NO_THREADS}
+      oxuRun
+      {$ENDIF};
 
 CONST
    OX_THREAD_TASK_START = 1;
@@ -442,6 +445,7 @@ end;
 
 INITIALIZATION
    appEvents.AddHandler(oxThreadEvents.Handler, 'ox.thread_events', @processEvents);
+
    oxThreadEvents.LogExceptions := true;
    oxThreadEvents.FinishTasksOnException := true;
 
