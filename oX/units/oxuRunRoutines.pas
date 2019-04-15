@@ -69,11 +69,13 @@ begin
    {call all pre-run routines}
    current := s;
 
-   if(current <> nil) and (current^.Next <> nil) then
-      CallNextReverse(oxPRunRoutine(current^.Next));
+   if(current <> nil) then begin
+      if(current^.Next <> nil) then
+         CallNextReverse(oxPRunRoutine(current^.Next));
 
-   if(current^.Secondary <> nil) then
-      current^.Secondary();
+      if(current^.Secondary <> nil) then
+         current^.Secondary();
+   end;
 end;
 
 class procedure oxTRunRoutines.CallNextReverse(current: oxPRunRoutine);
