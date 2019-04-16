@@ -1173,10 +1173,13 @@ end;
 { WINDOW MANAGEMENT }
 procedure uiTWindowHelper.Move(x, y: longint);
 begin
-   Position.x := x;
-   Position.y := y;
+   if(x <> Position.x) or (y <> Position.y) then begin
+      Position.x := x;
+      Position.y := y;
 
-   UpdatePositions();
+      Notification(uiWINDOW_MOVE);
+      UpdatePositions();
+   end;
 end;
 
 procedure uiTWindowHelper.Move(position: oxTPoint);
@@ -1218,14 +1221,16 @@ begin
          h := 0;
    end;
 
-   PreviousDimensions := Dimensions;
-   Dimensions.w := w;
-   Dimensions.h := h;
+   if(w <> Dimensions.w) or (h <> Dimensions.h) then begin
+      PreviousDimensions := Dimensions;
+      Dimensions.w := w;
+      Dimensions.h := h;
 
-   Notification(uiWINDOW_RESIZE);
-   SizeChanged();
+      Notification(uiWINDOW_RESIZE);
+      SizeChanged();
 
-   UpdateParentSize(false);
+      UpdateParentSize(false);
+   end;
 end;
 
 procedure uiTWindowHelper.Resize(newSize: oxTDimensions; ignoreRestrictions: boolean = false);
