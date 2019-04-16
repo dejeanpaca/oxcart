@@ -53,6 +53,7 @@ TYPE
       ValueIndexes: PPtrInt;
 
       constructor Create; override;
+      destructor Destroy; override;
 
       {assign shader to this material}
       procedure AssignShader(newShader: oxTShader);
@@ -232,6 +233,13 @@ begin
    AlphaTestFunc := oxTEST_FUNCTION_GEQUAL;
    DepthFunc := oxTEST_FUNCTION_GEQUAL;
    BlendFunc := oxBLEND_DEFAULT;
+end;
+
+destructor oxTMaterial.Destroy;
+begin
+   inherited Destroy;
+
+   DisposeValues();
 end;
 
 procedure oxTMaterial.AssignShader(newShader: oxTShader);
