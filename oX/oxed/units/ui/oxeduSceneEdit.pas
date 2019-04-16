@@ -178,7 +178,7 @@ end;
 
 procedure oxedTSceneEditWindow.Initialize;
 begin
-   inherited Initialize;
+   inherited;
 
    Transform := oxTransform.Instance();
    SelectedAxis := -1;
@@ -200,7 +200,7 @@ end;
 
 procedure oxedTSceneEditWindow.DeInitialize;
 begin
-   inherited DeInitialize;
+   inherited;
 
    FreeObject(Transform);
    oxResource.Free(Material);
