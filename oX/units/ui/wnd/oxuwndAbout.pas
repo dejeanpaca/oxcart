@@ -31,7 +31,6 @@ TYPE
       constructor Create(); override;
 
       protected
-      procedure CreateWindow(); override;
       procedure AddWidgets(); override;
    end;
 
@@ -62,10 +61,12 @@ begin
       uiWidget.LastRect.BelowOf(), oxNullDimensions);
 
    {add a cancel button}
-   wdgButton.Add('Ok', oxNullPoint, oxDimensions(80, 20), @Close).
-      SetPosition( wdgPOSITION_HORIZONTAL_RIGHT or wdgPOSITION_VERTICAL_BOTTOM);
-   wdgButton.Add('More Information', oxNullPoint, oxDimensions(200, 20), @showInformation).
-      SetPosition(wdgPOSITION_HORIZONTAL_LEFT or wdgPOSITION_VERTICAL_BOTTOM);
+   wdgButton.Add('Ok', uiWidget.LastRect.BelowOf(), oxDimensions(80, 20), @Close).
+      SetPosition( wdgPOSITION_HORIZONTAL_RIGHT);
+   wdgButton.Add('More Information', uiWidget.LastRect.RightOf(), oxDimensions(200, 20), @showInformation).
+      SetPosition(wdgPOSITION_HORIZONTAL_LEFT);
+
+   Window.ContentAutoSize();
 end;
 
 constructor oxTAboutWindow.Create;
@@ -76,13 +77,6 @@ begin
    Title := 'About';
 
    inherited Create;
-end;
-
-procedure oxTAboutWindow.CreateWindow();
-begin
-   Exclude(uiWindow.Create.Properties, uiwndpRESIZABLE);
-
-   inherited;
 end;
 
 procedure consoleCallback({%H-}con: conPConsole);
