@@ -270,6 +270,7 @@ procedure oxTUI.DeInitialize();
 begin
    InitializationProcs.dCall();
 
+   Font := nil;
    oxResource.Free(Material);
 end;
 
