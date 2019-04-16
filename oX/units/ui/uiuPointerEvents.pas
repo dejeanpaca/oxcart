@@ -107,7 +107,6 @@ begin
       w.Move(w.Position.x + mv.x, w.Position.y);
       w.Resize(w.Dimensions.w - mv.x, w.Dimensions.h - mv.y);
    end else if(oxui.PointerCapture.WindowOperation = uiWINDOW_POINTER_SIZE_BR) then begin
-      w.Move(w.Position.x, w.Position.y);
       w.Resize(w.Dimensions.w + mv.x, w.Dimensions.h - mv.y);
    end;
 end;
