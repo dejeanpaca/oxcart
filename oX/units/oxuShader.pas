@@ -138,6 +138,7 @@ TYPE
    oxTShaderGlobal = record
       ShaderInstance: TSingleComponent;
       Sizes: array[0..oxunfSHADER_MAX] of loopint;
+      GenericDefault,
       Default: oxTShader;
 
       function Instance(): oxTShader;
@@ -151,6 +152,7 @@ TYPE
       {set default value to the given position}
       procedure SetDefaultValue(uniformType: oxTShaderUniformType; where: pointer);
 
+      procedure Destroy(var shader: oxTShader);
       procedure Free(var shader: oxTShader);
    end;
 
@@ -220,8 +222,11 @@ end;
 
 procedure oxTShaderGlobal.SetDefault(shader: oxTShader; force: boolean);
 begin
+   Self.Destroy(Default);
+
    if(force) or (Default = nil) or (Default.ClassName = 'oxTShader') then begin
       log.v('Set shader as default: ' + shader.Name + ' (' + shader.ClassName + ')');
+
       Default := shader;
    end;
 end;
@@ -245,12 +250,20 @@ begin
       ZeroPtr(where, size);
 end;
 
-procedure oxTShaderGlobal.Free(var shader: oxTShader);
+procedure oxTShaderGlobal.Destroy(var shader: oxTShader);
 begin
    if(Default = shader) then
       Default := nil;
 
    oxResource.Destroy(shader);
+end;
+
+procedure oxTShaderGlobal.Free(var shader: oxTShader);
+begin
+   if(Default = shader) then
+      Default := nil;
+
+   oxResource.Free(shader);
 end;
 
 { oxTShader }
@@ -501,24 +514,27 @@ end;
 procedure onUse();
 var
    pShaderInstance: PSingleComponent;
-   shader: oxTShader;
 
 begin
+   oxResource.Free(oxShader.GenericDefault);
+
    pShaderInstance := oxRenderer.FindComponent('shader');
 
    if(pShaderInstance <> nil) then
       oxShader.ShaderInstance := pShaderInstance^;
 
-   shader := oxShader.Instance();
-   shader.MarkPermanent();
+   oxShader.GenericDefault := oxShader.Instance();
+   oxShader.GenericDefault.MarkPermanent();
 
-   oxShader.SetDefault(shader);
+   oxShader.SetDefault(oxShader.GenericDefault);
 end;
 
 procedure deinit();
 begin
    if(oxShader.Default <> nil) and (oxShader.Default.ClassName <> 'oxTShader') then
-         oxResource.Free(oxShader.Default);
+      oxResource.Free(oxShader.Default);
+
+   oxResource.Free(oxShader.GenericDefault);
 end;
 
 procedure InitializeUniformSizes();
