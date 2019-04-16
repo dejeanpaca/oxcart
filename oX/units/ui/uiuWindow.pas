@@ -1210,6 +1210,9 @@ begin
 end;
 
 procedure uiTWindowHelper.Resize(w, h: longint; ignoreRestrictions: boolean);
+var
+   horizontalMove: boolean;
+
 begin
    if(not ignoreRestrictions) then begin
       AdjustSizesWithRestrictions(w, h);
@@ -1221,13 +1224,19 @@ begin
          h := 0;
    end;
 
-   if(w <> Dimensions.w) or (h <> Dimensions.h) then begin
+   horizontalMove := h <> Dimensions.h;
+
+   if(w <> Dimensions.w) or (horizontalMove) then begin
       PreviousDimensions := Dimensions;
       Dimensions.w := w;
       Dimensions.h := h;
 
       Notification(uiWINDOW_RESIZE);
       SizeChanged();
+
+      if(horizontalMove) then
+         {we have to update RPositions and other data}
+         UpdatePositions();
 
       UpdateParentSize(false);
    end;
