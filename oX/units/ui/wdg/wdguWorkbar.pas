@@ -11,7 +11,7 @@ UNIT wdguWorkbar;
 INTERFACE
 
    USES
-      uColors,
+      uStd, uColors,
       {oX}
       oxuTypes,
       {ui}
@@ -128,15 +128,26 @@ begin
 end;
 
 procedure wdgTWorkbar.Render;
+var
+   x2,
+   y2: loopint;
+
 begin
    SetColor(Color);
    uiDraw.Box(RPosition, Dimensions);
 
    if(RenderShadows) then begin
+      x2 := RPosition.x + Dimensions.w - 1;
+      y2 := RPosition.y - Dimensions.h + 1;
+
       SetColor(Color.Lighten(1.4));
-      uiDraw.HLine(RPosition.x, RPosition.y, RPosition.x + Dimensions.w - 1);
+
+      uiDraw.HLine(RPosition.x, RPosition.y, x2);
+      uiDraw.VLine(RPosition.x, RPosition.y - 1, y2 + 1);
+
       SetColor(Color.Darken(40));
-      uiDraw.HLine(RPosition.x, RPosition.y - Dimensions.h + 1, RPosition.x + Dimensions.w - 1);
+      uiDraw.HLine(RPosition.x, y2, RPosition.x + Dimensions.w - 1);
+      uiDraw.VLine(x2, Rposition.y, y2);
    end;
 end;
 
