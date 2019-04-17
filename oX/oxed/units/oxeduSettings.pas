@@ -100,7 +100,7 @@ INITIALIZATION
    dvgOXED.Add(dvBuildOnProjectOpen, 'build_on_project_open', dtcBOOL, @oxedSettings.BuildOnProjectOpen);
    dvgOXED.Add(dvRequireRebuildOnOpen, 'require_rebuild_on_open', dtcBOOL, @oxedSettings.RequireRebuildOnOpen);
    dvgOXED.Add(dvHandleLibraryErrors, 'handle_library_errors', dtcBOOL, @oxedSettings.HandleLibraryErrors);
-   dvgOXED.Add(dvStartWithLastProject, 'start with last open project', dtcBOOL, @oxedSettings.StartWithLastProject);
+   dvgOXED.Add(dvStartWithLastProject, 'start_with_last_open_project', dtcBOOL, @oxedSettings.StartWithLastProject);
 
    dvgOXED.Add('debug', dvgDebug);
    dvgDebug.Add(dvDebugRenderSelectorBBox, 'render_selector_bbox', dtcBOOL, @oxedSettings.Debug.RenderSelectorBBox);
