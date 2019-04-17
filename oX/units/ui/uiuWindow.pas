@@ -1032,10 +1032,10 @@ begin
 
          uiTWindow(Parent).GetMaximizationCoords(p, d);
 
-         SetFrameStyle(uiwFRAME_STYLE_NONE);
-
          Move(p);
          Resize(d);
+
+         SetFrameStyle(uiwFRAME_STYLE_NONE);
 
          Notification(uiWINDOW_MAXIMIZE);
          OnMaximize();
@@ -1073,6 +1073,9 @@ end;
 procedure uiTWindowHelper.SetFrameStyle(frameStyle: uiTWindowFrameStyle);
 begin
    Frame := frameStyle;
+
+   if(not (uiwndpDESTRUCTION_IN_PROGRESS in Properties)) then
+      UpdatePositions();
 end;
 
 function uiTWindowHelper.InFront(): boolean;
