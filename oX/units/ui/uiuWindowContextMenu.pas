@@ -17,36 +17,123 @@ INTERFACE
       {ui}
       oxuUI, uiuWindowTypes, uiuWindow, uiuPointerEvents, uiuContextMenu;
 
-IMPLEMENTATION
+TYPE
+
+   { uiTWindowContextMenuWindow }
+
+   uiTWindowContextMenuWindow = class(uiTContextMenuWindow)
+      procedure DeInitialize(); override;
+   end;
+
+   { uiTWindowContextMenuGlobal }
+
+   uiTWindowContextMenuGlobal = record
+      Menu: uiTContextMenu;
+      TargetWnd: uiTWindow;
+
+      Items: record
+         Minimize,
+         Maximize,
+         Move,
+         Resize,
+         Close: uiPContextMenuItem;
+      end;
+   end;
 
 VAR
-   windowContextMenu: uiTContextMenu;
+   uiWindowContextMenu: uiTWindowContextMenuGlobal;
+
+IMPLEMENTATION
 
 procedure DeInitialize();
 begin
-   FreeObject(windowContextMenu);
+   FreeObject(uiWindowContextMenu.Menu);
+end;
+
+procedure maximize();
+begin
+   if(uiWindowContextMenu.TargetWnd <> nil) then
+      uiWindowContextMenu.TargetWnd.Maximize();
+end;
+
+procedure minimize();
+begin
+   if(uiWindowContextMenu.TargetWnd <> nil) then
+      uiWindowContextMenu.TargetWnd.Minimize();
+end;
+
+procedure move();
+begin
+
+end;
+
+procedure resize();
+begin
+
+end;
+
+procedure close();
+begin
+   if(uiWindowContextMenu.TargetWnd <> nil) then
+      uiWindowContextMenu.TargetWnd.CloseQueue();
 end;
 
 procedure openContextWindow(wnd: uiTWindow);
 begin
-   if(windowContextMenu = nil) then begin
-     windowContextMenu := uiTContextMenu.Create('Window context menu');
+   if(uiWindowContextMenu.Menu = nil) then begin
+      uiWindowContextMenu.Menu := uiTContextMenu.Create('Window context menu');
 
-     windowContextMenu.AddItem('Maximize');
-     windowContextMenu.AddItem('Minimize');
-     windowContextMenu.AddItem('Move');
-     windowContextMenu.AddItem('Resize');
-     windowContextMenu.AddItem('Close');
+      uiWindowContextMenu.Items.Maximize :=
+         uiWindowContextMenu.Menu.AddItem('Maximize', @maximize);
+
+      uiWindowContextMenu.Items.Minimize :=
+         uiWindowContextMenu.Menu.AddItem('Minimize', @minimize);
+
+      uiWindowContextMenu.Items.Move :=
+         uiWindowContextMenu.Menu.AddItem('Move', @move);
+      uiWindowContextMenu.Items.Move^.Disable();
+
+      uiWindowContextMenu.Items.Resize :=
+         uiWindowContextMenu.Menu.AddItem('Resize', @resize);
+      uiWindowContextMenu.Items.Resize^.Disable();
+
+      uiWindowContextMenu.Items.Close :=
+         uiWindowContextMenu.Menu.AddItem('Close', @close);
    end;
 
-   windowContextMenu.Show(wnd);
+   uiContextMenu.Instance := uiTWindowContextMenuWindow;
+   uiWindowContextMenu.TargetWnd := wnd;
+
+   uiWindowContextMenu.Items.Move^.Enable((uiwndpMOVABLE in wnd.Properties) and false {TODO: Implement moving});
+   uiWindowContextMenu.Items.Resize^.Enable((uiwndpRESIZABLE in wnd.Properties) and false {TODO: Implement resizing});
+
+   uiWindowContextMenu.Items.Minimize^.Enable((not (uiwndpMINIMIZED in wnd.Properties)) and (uiwndpRESIZABLE in wnd.Properties));
+   uiWindowContextMenu.Items.Maximize^.Enable((not (uiwndpMAXIMIZED in wnd.Properties)) and (uiwndpRESIZABLE in wnd.Properties));
+
+   uiWindowContextMenu.Menu.Show(wnd);
+end;
+
+procedure windowDestroyed(wnd: uiTWindow);
+begin
+   if(wnd = uiWindowContextMenu.TargetWnd) then
+      uiWindowContextMenu.TargetWnd := nil;
 end;
 
 VAR
    initRoutines: oxTRunRoutine;
 
+{ uiTWindowContextMenuWindow }
+
+procedure uiTWindowContextMenuWindow.DeInitialize();
+begin
+   inherited DeInitialize();
+
+   uiWindowContextMenu.TargetWnd := nil;
+end;
+
 INITIALIZATION
    oxui.InitializationProcs.dAdd(initRoutines, 'ui.window_context_menu', @DeInitialize);
    uiPointerEvents.OpenContextWindow := @openContextWindow;
+   uiWindow.OnDestroy.Add(@windowDestroyed);
 
 END.
