@@ -1,4 +1,4 @@
-3{
+{
    uiuPointerEvents, UI mouse events
    Copyright (C) 2011. Dejan Boras
 
