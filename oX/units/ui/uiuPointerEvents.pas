@@ -1,4 +1,4 @@
-{
+3{
    uiuPointerEvents, UI mouse events
    Copyright (C) 2011. Dejan Boras
 
@@ -23,6 +23,8 @@ TYPE
    { uiTPointerEventsGlobal }
 
    uiTPointerEventsGlobal = record
+      OpenContextWindow: uiTWindowProcedure;
+
       procedure Action(oxui: oxTUI; var event: appTEvent);
    end;
 
@@ -46,6 +48,12 @@ var
    pmWidget: uiTWidget  = nil; {widget over which the mouse previously hovered}
 
    changeSelect: uiTWindow;
+
+{checks if the point is in title}
+function inTitle(wnd: uiTWindow): boolean;
+begin
+   Result := p.y >= wnd.RPosition.y;
+end;
 
 procedure MoveWindow();
 begin
@@ -326,7 +334,7 @@ begin
       {check if window is movable/resizeable}
       if(not (uiwndpMAXIMIZED in wnd.Properties)) and (not ok) then begin
          if(not left) and (not right) and (not top) and (not bottom) then begin
-            if(p.y >= wnd.RPosition.y) then
+            if(inTitle(wnd)) then
                ok := true
             else if(uiwndpMOVE_BY_SURFACE in wnd.Properties) and (uiWindow.MoveOnlyByTitle)  then
                ok := true;
@@ -362,6 +370,25 @@ begin
    end else
       {if window not captured then send events to window}
       NotifyEvent();
+end;
+
+procedure ProcessWindow();
+var
+   wnd: uiTWindow;
+
+begin
+   if(m.Button.IsSet(appmcRIGHT)) then begin
+      if(m.Action.IsSet(appmcRELEASED)) then begin
+         wnd := uiTWindow(oxui.mSelect.GetSelectedWnd());
+
+         if(wnd = nil) or (not inTitle(wnd)) then
+            exit;
+
+         if(OpenContextWindow <> nil) then
+            OpenContextWindow(wnd);
+      end;
+   end else
+      TryCaptureWindow();
 end;
 
 begin
@@ -457,15 +484,15 @@ begin
       {if no widget was selected then we clicked onto a window,
       let's see if we got a window move lock.}
       if(oxui.Select.GetSelectedWdg() = nil) then
-         TryCaptureWindow()
+         ProcessWindow()
       else begin
          if(wdgpSELECTABLE in oxui.Select.GetSelectedWdg().Properties) or (wdgpNON_CLIENT in oxui.Select.GetSelectedWdg().Properties) then
             PointEvent(oxui.Select.GetSelectedWdg())
          else
-            TryCaptureWindow();
+            ProcessWindow();
       end;
    end else
-      TryCaptureWindow();
+      ProcessWindow();
 end;
 
 
