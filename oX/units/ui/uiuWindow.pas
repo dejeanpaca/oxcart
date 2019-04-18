@@ -175,6 +175,9 @@ TYPE
       {auto size to fit all content}
       procedure ContentAutoSize();
 
+      {move widgets by offset}
+      procedure MoveWidgetsOffset(x, y: loopint);
+
       { window rendering }
       procedure RenderSubWindows();
       procedure RenderWindow();
@@ -2428,12 +2431,25 @@ end;
 procedure uiTWindowHelper.ContentAutoSize();
 var
    d: oxTDimensions;
+   offsetY: loopint;
 
 begin
    d := ContentDimensions();
 
+   offsetY := d.h - Dimensions.h;
+
    Resize(d);
-   UpdatePositions();
+   MoveWidgetsOffset(0, offsetY);
+end;
+
+procedure uiTWindowHelper.MoveWidgetsOffset(x, y: loopint);
+var
+   i: loopint;
+
+begin
+   for i := 0 to Widgets.w.n - 1 do begin
+      uiTWidget(Widgets.w[i]).MoveOffset(x, y);
+   end;
 end;
 
 { EVENTS }
