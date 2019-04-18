@@ -86,6 +86,7 @@ INTERFACE
       uiuCursor,
       uiuDockableWindowContextMenu,
       uiuDefaultFont,
+      uiuWindowContextMenu,
       {$ENDIF}
 
       {others}
