@@ -44,6 +44,6 @@ begin
 end;
 
 INITIALIZATION
-   oxTUI.dvg.Add(dvNaturalScroll, 'natural_Scroll', dtcBOOL, @uiSettings.NaturalScroll);
+   oxTUI.dvg.Add(dvNaturalScroll, 'natural_scroll', dtcBOOL, @uiSettings.NaturalScroll);
 
 END.
