@@ -8,7 +8,7 @@ PROGRAM ui;
    USES
       {$INCLUDE oxappuses.inc}, uStd, StringUtils, uLog,
       {oX}
-      oxuWindowTypes,
+      oxuWindowTypes, oxuRunRoutines,
       oxuWindows, oxuWindow, oxumPrimitive, oxuTransform, oxuPaths, oxuTexture, oxuTextureGenerate,
       oxuRender, oxuScreenshot, oxuWindowSettings,
       {UI}
@@ -51,7 +51,7 @@ begin
    uiWidget.SetTarget(srfMain);
 
    {set background for menu}
-   //srfMain.SetBackground(oxPaths.textures + 'main.tga');
+   srfMain.SetBackground(oxPaths.textures + 'main.tga');
 end;
 
 procedure createStandardWidgets();
@@ -209,12 +209,14 @@ begin
    Result:= sf(index) + 'x' + sf(column);
 end;
 
+VAR
+   initRoutine: oxTRunRoutine;
+
 procedure init();
 begin
    oxWindows.onRender.Add(@RenderWnd);
 
-   ox.OnInitialize.Add(@onInitialize);
-   ox.OnDeinitialize.Add(@onDeinitialize);
+   ox.OnInitialize.Add(initRoutine, 'ui', @onInitialize, @onDeinitialize);
 end;
 
 BEGIN
