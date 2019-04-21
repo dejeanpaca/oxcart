@@ -72,7 +72,7 @@ begin
 
    log.Enter('oX > Initializing the program...');
 
-   ox.OnInitialize.Call();
+   ox.OnInitialize.iCall();
 
    log.i('Program initialization done. Elapsed time: ' + ProgramInitStartTime.ElapsedfToString() + 's');
    log.Leave();
