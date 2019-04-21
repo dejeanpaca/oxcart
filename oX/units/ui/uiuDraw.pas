@@ -44,6 +44,9 @@ TYPE
      procedure Point(x1, y1: single);
      procedure Points(var p: array of TVector2f);
 
+     procedure CorrectPoints(p: PVector2f; count: loopint);
+     procedure CorrectPoints(p: PVector3f; count: loopint);
+
      {start drawing}
      procedure Start();
 
@@ -141,8 +144,8 @@ begin
       x2 := t;
    end;
 
-   x2 := x2 + 1.375;
-   y1 := y1 + 0.675;
+   x2 := x2 + 0.375;
+   y1 := y1 + 0.375;
    x1 := x1 + 0.375;
 
    v[0][0] := x1;
@@ -165,9 +168,9 @@ begin
       y2 := t;
    end;
 
-   x1 := x1 + 0.675;
+   x1 := x1 + 0.375;
    y1 := y1 + 0.375;
-   y2 := y2 + 1.375;
+   y2 := y2 + 0.375;
 
    v[0][0] := x1;
    v[0][1] := y1;
@@ -239,6 +242,28 @@ end;
 procedure uiTDraw.Points(var p: array of TVector2f);
 begin
    oxRender.Points(p);
+end;
+
+procedure uiTDraw.CorrectPoints(p: PVector2f; count: loopint);
+var
+   i: loopint;
+
+begin
+   for i := 0 to count - 1 do begin
+     p[i][0] := p[i][0] + 0.375;
+     p[i][1] := p[i][1] + 0.375;
+   end;
+end;
+
+procedure uiTDraw.CorrectPoints(p: PVector3f; count: loopint);
+var
+   i: loopint;
+
+begin
+   for i := 0 to count - 1 do begin
+     p[i][0] := p[i][0] + 0.375;
+     p[i][1] := p[i][1] + 0.375;
+   end;
 end;
 
 procedure uiTDraw.Start();
