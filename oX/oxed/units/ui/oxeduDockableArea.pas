@@ -73,7 +73,7 @@ begin
    oxedInspector.CreateWindow().DockUp(
       oxedProjectBrowser.CreateWindow().DockRight(oxed.DockableArea, 0.2));
 
-   oxedGameView.CreateWindow().DockDown(oxedSceneEdit.Instance);
+   oxedGameView.CreateWindow().TabTo(oxedSceneEdit.Instance);
 
    {select default window}
    oxedWindow.Find(oxedTSceneEditWindow).Select();
