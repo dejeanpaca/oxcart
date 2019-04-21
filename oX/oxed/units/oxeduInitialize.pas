@@ -91,11 +91,9 @@ begin
 end;
 
 VAR
-   initRoutine,
-   deinitRoutine: oxTRunRoutine;
+   initRoutine: oxTRunRoutine;
 
 INITIALIZATION
-   ox.OnInitialize.Add(initRoutine, 'oxed.init', @oxedInitialize);
-   ox.OnDeinitialize.Add(deinitRoutine, 'oxed.deinit', @oxedDeinitialize);
+   ox.OnInitialize.Add(initRoutine, 'oxed.init', @oxedInitialize, @oxedDeInitialize);
 
 END.
