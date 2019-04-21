@@ -52,6 +52,7 @@ TYPE
       class procedure AddHandler(handler: oxTFilePreviewHandler); static;
       class procedure AddHandler(const extension: string; InstanceClass: oxuiTFilePreviewWindowClass); static;
       class function FindHandler(const extension: String): oxTFilePreviewHandler; static;
+      class function Previewable(const fn: String; out handler: oxTFilePreviewHandler): boolean; static;
 
       constructor Create; override;
       procedure CreateWindow; override;
@@ -111,6 +112,23 @@ begin
    ZeroPtr(@Result, SizeOf(Result));
 end;
 
+class function oxTFilePreviewWindow.Previewable(const fn: String; out handler: oxTFilePreviewHandler): boolean;
+var
+   ext: string;
+
+
+begin
+   if(fn <> '') then begin
+      ext := ExtractFileExt(fn);
+      handler := FindHandler(ext);
+
+      if(handler.InstanceClass <> nil) then
+         exit(true);
+   end;
+
+   Result := false;
+end;
+
 constructor oxTFilePreviewWindow.Create;
 begin
    Width := 320;
@@ -142,26 +160,22 @@ var
    d: oxTDimensions;
 
 begin
-   if(fn <> '') then begin
-      handler := FindHandler(ExtractFileExt(fn));
+   if(Previewable(fn, handler)) then begin
+      Instance := handler.InstanceClass;
 
-      if(handler.InstanceClass <> nil) then begin
-         Instance := handler.InstanceClass;
+      CreateWindow();
 
-         CreateWindow();
+      w := oxuiTFilePreviewWindow(Window);
 
-         w := oxuiTFilePreviewWindow(Window);
+      d.w := (w.oxwParent.Dimensions.w div 3) * 2;
+      d.h := (w.oxwParent.Dimensions.h div 3) * 2;
 
-         d.w := (w.oxwParent.Dimensions.w div 3) * 2;
-         d.h := (w.oxwParent.Dimensions.h div 3) * 2;
+      w.Resize(d);
+      w.AutoCenter();
 
-         w.Resize(d);
-         w.AutoCenter();
-
-         w.CurrentFile := fn;
-         w.OnWindowCreated();
-         w.OnCreateWidgets();
-      end;
+      w.CurrentFile := fn;
+      w.OnWindowCreated();
+      w.OnCreateWidgets();
    end;
 end;
 
