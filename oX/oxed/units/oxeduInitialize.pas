@@ -15,7 +15,7 @@ INTERFACE
    USES
       uStd, uLog,
       {ox}
-      uOX, oxuPaths, oxuRunRoutines,
+      uOX, oxuPaths, oxuRunRoutines, oxuRun,
       {oxed}
       uOXED, oxeduSettings, oxeduRecents,
       oxeduWindow, oxeduSplash, oxeduSplashScreen, oxeduSettingsWindow, oxeduIcons,
@@ -61,10 +61,13 @@ begin
    {open a project}
    if(oxedSettings.StartWithLastProject) and (oxedRecents.LastOpen <> '') then begin
       log.v('project > Opening last opened project: ' + oxedRecents.LastOpen);
+
       if(not oxedProjectManagement.Open(oxedRecents.LastOpen)) then
          {failed to open last open project, so clear it}
          oxedRecents.LastOpen := '';
    end;
+
+   oxed.Initialized := true;
 end;
 
 procedure oxedInitialize();
@@ -81,6 +84,8 @@ end;
 
 procedure oxedDeInitialize();
 begin
+   oxed.Deinitializing := true;
+
    oxedProjectRunner.Stop();
 
    oxedProjectManagement.Destroy();
