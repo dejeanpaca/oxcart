@@ -65,7 +65,8 @@ end;
 
 procedure OnProjectClosed();
 begin
-   oxedRecents.LastOpen := '';
+   if(not oxed.Deinitializing) and (oxed.Initialized) then
+      oxedRecents.LastOpen := '';
 end;
 
 { oxedTRecents }
