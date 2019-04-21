@@ -17,7 +17,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont, oxuTexture, oxuRender, oxuRenderUtilities,
       {ui}
-      oxuUI, uiuTypes, uiuWindowTypes, uiuWidget, uiWidgets, uiuWindow,
+      oxuUI, uiuTypes, uiuWindowTypes, uiuWidget, uiWidgets, uiuWindow, uiuDraw,
       wdguList;
 
 CONST
@@ -135,7 +135,9 @@ var
    glyph: wdgTListGlyph;
    width,
    height,
+   triangleOffset,
    padding: loopint;
+   pr: oxTRect;
    px,
    py: single;
    f: oxTFont;
@@ -153,15 +155,26 @@ begin
    triangle[0] := vmvZero3f;
 
    if(Expandable(index)) then begin
+      height := round(ItemHeight * 0.8);
+      triangleOffset := (ItemHeight - height) div 2;
+
+      pr := r;
+      inc(pr.x, triangleOffset);
+      dec(pr.y, triangleOffset);
+      pr.h := height;
+      pr.w := height;
+
       if(not Expanded(index)) then begin
-         triangle[2].Assign(r.x + 1, r.y - 1, 0);
-         triangle[1].Assign(r.x + ItemHeight - 2, r.y - r.h / 2, 0);
-         triangle[0].Assign(r.x + 1, r.y - r.h + 2, 0);
+         triangle[2].Assign(pr.x, pr.y, 0);
+         triangle[1].Assign(pr.x + pr.w, pr.y - (pr.h / 2), 0);
+         triangle[0].Assign(pr.x, pr.y - pr.h, 0);
       end else begin
-         triangle[2].Assign(r.x + 1, r.y - 1, 0);
-         triangle[1].Assign(r.x + ItemHeight - 2, r.y - 1, 0);
-         triangle[0].Assign(r.x + (ItemHeight / 2), r.y - r.h + 3, 0);
+         triangle[2].Assign(pr.x, pr.y, 0);
+         triangle[1].Assign(pr.x + pr.h, pr.y, 0);
+         triangle[0].Assign(pr.x + (pr.h / 2), pr.y - pr.h, 0);
       end;
+
+      uiDraw.CorrectPoints(PVector3f(@triangle[0]), 3);
 
       oxui.Material.ApplyTexture('texture', nil);
       oxui.Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
