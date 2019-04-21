@@ -165,9 +165,12 @@ BEGIN
 
    if(can_build('oxed') or can_build('ox')) then begin
       path := '..' + DirectorySeparator + 'oX' + DirectorySeparator + 'setup' + DirectorySeparator;
+
       log.w('Setting up oX at: ' + path);
 
       if(SetCurrentDir(path)) then begin
+         log.v('At: ' + GetCurrentDir());
+
          build.Laz('setup');
          log.i();
 
