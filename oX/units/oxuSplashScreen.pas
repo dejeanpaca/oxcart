@@ -38,6 +38,7 @@ TYPE
       AssociatedWindow: oxTWindow;
 
       Timer: TTimer;
+      TimeFlow: Single;
 
       constructor Create(); override;
       destructor Destroy(); override;
@@ -184,6 +185,7 @@ end;
 procedure oxTSplashScreen.Run();
 begin
    Update();
+   TimeFlow := Timer.TimeFlow();
    Render();
 end;
 
