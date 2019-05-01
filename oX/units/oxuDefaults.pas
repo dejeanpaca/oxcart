@@ -77,6 +77,7 @@ INTERFACE
       oxuKeyboardControl,
       oxuPointerControl,
       oxuScreenshot,
+      oxuDefaultSplashScreen,
 
       {ui}
       {$IFDEF OX_FEATURE_UI}
