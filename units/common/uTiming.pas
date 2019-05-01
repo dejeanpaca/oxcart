@@ -19,24 +19,24 @@ TYPE
    { TTimer }
 
    TTimer = record
-      startTime,
-      currentTime,
-      elapsedTime: longint;
-      elapsedTimef: single;
+      StartTime,
+      CurrentTime,
+      ElapsedTime: longint;
+      ElapsedTimef: single;
 
-      goalTime,
-      add: longint; {added time}
+      GoalTime,
+      Add: longint; {added time}
 
-      iterations: longint;
-      factor: single;
-      factorint: longint;
+      Iterations: longint;
+      Factor: single;
+      FactorInt: longint;
 
       {pausing}
-      paused: boolean;
-      pausedTime: longint;
+      Paused: boolean;
+      PausedTime: longint;
 
       {a linked timer}
-      timerLink: PTimer;
+      TimerLink: PTimer;
 
       {initialize a timer record}
       class procedure Init(out timer: TTimer); static;
@@ -96,18 +96,18 @@ TYPE
 
 CONST
 	cZeroTimer: TTimer = (
-      startTime:        0;
-      currentTime:      0;
-      elapsedTime:      0;
-      elapsedTimef:     0;
-      goalTime:         0;
-      add:              0;
-      iterations:       0;
-      factor:           1.0;
-      factorint:        1;
-      paused:           false;
-      pausedTime:       0;
-      timerLink:        nil
+      StartTime:        0;
+      CurrentTime:      0;
+      ElapsedTime:      0;
+      ElapsedTimef:     0;
+      GoalTime:         0;
+      Add:              0;
+      Iterations:       0;
+      Factor:           1.0;
+      FactorInt:        1;
+      Paused:           false;
+      PausedTime:       0;
+      TimerLink:        nil
    );
 
 VAR
@@ -126,7 +126,7 @@ begin
    ts := DateTimeToTimestamp(Self).time;
    currentTime := DateTimeToTimestamp(Time).time;
 
-   result := (currentTime - ts);
+   Result := (currentTime - ts);
 end;
 
 function TDateTimeHelper.Elapsedf(): single;
@@ -138,12 +138,12 @@ begin
    ts := DateTimeToTimestamp(Self).time;
    currentTime := DateTimeToTimestamp(Time).time;
 
-   result := (currentTime - ts) / 1000;
+   Result := (currentTime - ts) / 1000;
 end;
 
 function TDateTimeHelper.ElapsedfToString(decimals: longint = 2): string;
 begin
-   result := sf(Elapsedf(), decimals);
+   Result := sf(Elapsedf(), decimals);
 end;
 
 function TDateTimeHelper.MatchingDay(const other: TDateTime): boolean;
@@ -155,7 +155,7 @@ begin
    DecodeDate(Self, y, m, d);
    DecodeDate(other, oy, om, od);
 
-   result := (y = oy) and (m = om) and (d = od);
+   Result := (y = oy) and (m = om) and (d = od);
 end;
 
 class procedure TTimer.Init(out timer: TTimer);
@@ -176,25 +176,25 @@ end;
 
 function TTimer.Cur(): longint;
 begin
-   if(timerLink = nil) then
+   if(TimerLink = nil) then
       Result := DateTimeToTimestamp(Time).time
    else
-      Result := timerLink^.Elapsed();
+      Result := TimerLink^.Elapsed();
 end;
 
 procedure TTimer.Start();
 begin
-   startTime      := Cur();
-   currentTime    := startTime;
-   elapsedTime    := 0;
-   elapsedTimef   := 0.0;
-   add            := 0;
-   paused         := false;
+   StartTime      := Cur();
+   CurrentTime    := StartTime;
+   ElapsedTime    := 0;
+   ElapsedTimef   := 0.0;
+   Add            := 0;
+   Paused         := false;
 end;
 
 procedure TTimer.StartOffset(ofs: longint);
 begin
-   {%H-}system.inc(startTime, ofs);
+   {%H-}system.inc(StartTime, ofs);
 end;
 
 procedure TTimer.StartOffsetf(ofs: single);
@@ -204,38 +204,38 @@ end;
 
 procedure TTimer.Update();
 begin
-   if(not paused) then begin
-      currentTime    := Cur();
-      elapsedTime    := (currentTime - startTime + add) * factorint;
-      elapsedTimef   := ((currentTime - startTime + add) / 1000) * factor;
+   if(not Paused) then begin
+      CurrentTime    := Cur();
+      ElapsedTime    := (CurrentTime - StartTime + Add) * FactorInt;
+      ElapsedTimef   := ((CurrentTime - StartTime + Add) / 1000) * Factor;
    end;
 end;
 
 procedure TTimer.SetGoal(ms: longint);
 begin
-   goalTime := ms;
+   GoalTime := ms;
 end;
 
 procedure TTimer.SetFactor(newFactor: longint);
 begin
-   factor      := newFactor;
-   factorint   := newFactor;
+   Factor      := newFactor;
+   FactorInt   := newFactor;
 end;
 
 procedure TTimer.SetFactor(newFactor: single);
 begin
-   factor      := newFactor;
-   factorint   := round(newFactor);
+   Factor      := newFactor;
+   FactorInt   := round(newFactor);
 end;
 
 function TTimer.Elapsed(): longint;
 begin
-   result := elapsedTime;
+   Result := ElapsedTime;
 end;
 
 function TTimer.Elapsedf(): single;
 begin
-   result := elapsedTimef;
+   Result := ElapsedTimef;
 end;
 
 function TTimer.Goal(): boolean;
@@ -244,52 +244,52 @@ var
 
 begin
    current  := Cur();
-   result   := (current - elapsedTime + add) > goalTime;
+   Result   := (current - ElapsedTime + Add) > GoalTime;
 end;
 
 
 procedure TTimer.Inc();
 begin
-   system.inc(iterations);
+   system.inc(Iterations);
 end;
 
 {return the time flow}
 function TTimer.TimeFlow(): single;
 begin
    Update();
-   result := elapsedTimef * factor;
+   Result := ElapsedTimef * Factor;
    Start();
 end;
 
 
 procedure TTimer.Pause();
 begin
-   if(not paused) then begin
-      paused      := true;
-      pausedTime  := Cur();
+   if(not Paused) then begin
+      Paused      := true;
+      PausedTime  := Cur();
    end;
 end;
 
 procedure TTimer.Resume();
 begin
-   if(paused) then begin
-      add         := add + (pausedTime - startTime);
-      elapsedTime := 0;
-      startTime   := Cur();
-      paused      := false;
+   if(Paused) then begin
+      Add         := Add + (PausedTime - StartTime);
+      ElapsedTime := 0;
+      StartTime   := Cur();
+      Paused      := false;
    end;
 end;
 
 procedure TTimer.Link(var withTimer: TTimer);
 begin
-   withTimer.timerLink := @withTimer;
+   withTimer.TimerLink := @withTimer;
 end;
 
 { GENERAL }
 
 class function TTimer.GetRandomIntervalf(const minTime, maxTime: single): Single;
 begin
-   result := minTime + (random() * (maxTime - minTime));
+   Result := minTime + (random() * (maxTime - minTime));
 end;
 
 class function TTimer.Elapsed(const t1, t2: TDateTime): longint;

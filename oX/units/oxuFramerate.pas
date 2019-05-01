@@ -69,9 +69,9 @@ begin
    favgTimer.Update();
 
    {calculate framerate}
-   if(not fTimer.paused) then begin
+   if(not fTimer.Paused) then begin
       if(fTimer.ElapsedTime >= oxcFramerateUpdateInterval) then begin
-         f        := fCount / (fTimer.elapsedTime / 1000);
+         f        := fCount / (fTimer.ElapsedTime / 1000);
          fCount   := 0;
          fTimer.Start();
       end;
@@ -79,18 +79,18 @@ begin
 
    {calculate average framerate}
    if(not favgTimer.Paused) then begin
-      if(favgTimer.elapsedTime > 0) then begin
-         favg := favgCount / (favgTimer.elapsedTime / 1000);
+      if(favgTimer.ElapsedTime > 0) then begin
+         favg := favgCount / (favgTimer.ElapsedTime / 1000);
       end;
    end;
 end;
 
 procedure oxTFramerate.Increment();
 begin
-   if(not fTimer.paused) then
+   if(not fTimer.Paused) then
       inc(fCount);
 
-   if(not favgTimer.paused) then
+   if(not favgTimer.Paused) then
       inc(favgCount);
 
    Update();
@@ -110,12 +110,12 @@ end;
 
 function oxTFramerate.Get(): string;
 begin
-   result := sf(f, 2);
+   Result := sf(f, 2);
 end;
 
 function oxTFramerate.GetAverage(): string;
 begin
-   result := sf(favg, 2);
+   Result := sf(favg, 2);
 end;
 
 function oxFramerateGet(fps: single; nDecimals: longint): string;
@@ -124,7 +124,7 @@ var
 
 begin
    str(fps:0:nDecimals, xstr);
-   result := xstr;
+   Result := xstr;
 end;
 
 function oxFramerateGetAverage(fps: single; nDecimals: longint): string;
@@ -133,7 +133,7 @@ var
 
 begin
    str(fps:0:nDecimals, xstr);
-   result := xstr;
+   Result := xstr;
 end;
 
 procedure update();
