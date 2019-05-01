@@ -42,7 +42,7 @@ constructor oxTDefaultSplashScreen.Create();
 begin
    inherited Create();
 
-   ClearBits := oxrBUFFER_CLEAR_DEFAULT;
+   ClearBits := oxrBUFFER_CLEAR_COLOR;
 end;
 
 procedure oxTDefaultSplashScreen.Load();
