@@ -140,10 +140,7 @@ end;
 
 procedure oxTResourceInspectorWindow.WindowDestroyed(wnd: oxuiTWindowBase);
 begin
-   wdg.List := nil;
-   wdg.Close := nil;
-   wdg.Divisor := nil;
-   wdg.Filter := nil;
+   ZeroPtr(@wdg, SizeOf(wdg));
 end;
 
 constructor oxTResourceInspectorWindow.Create();
