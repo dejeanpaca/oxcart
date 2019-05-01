@@ -19,6 +19,9 @@ TYPE
 
    { oxTRenderingUtilitiesGlobal }
    oxTRenderingUtilitiesGlobal = record
+      {render a cube primitive}
+      procedure Cube();
+
 		{renders lines for a bounding box}
 		class procedure BBox(var bb: TBoundingBox); static;
       class procedure BBox(const p: TVector3f; var bb: TBoundingBox); static;
@@ -42,6 +45,13 @@ VAR
 	oxRenderingUtilities: oxTRenderingUtilitiesGlobal;
 
 IMPLEMENTATION
+
+procedure oxTRenderingUtilitiesGlobal.Cube();
+begin
+   oxRender.Vertex(CubeVertices[0]);
+
+   oxRender.Primitives(oxPRIMITIVE_TRIANGLES, Length(CubeIndicesus), pword(@CubeIndicesus[0]));
+end;
 
 {renders lines for a bounding box}
 class procedure oxTRenderingUtilitiesGlobal.BBox(var bb: TBoundingBox);
