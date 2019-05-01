@@ -88,12 +88,6 @@ TYPE
       procedure RenderContent; override;
    end;
 
-   { oxTDefaultSplashScreen }
-
-   oxTDefaultSplashScreen = class(oxTBasicSplashScreen)
-      constructor Create; override;
-   end;
-
    oxTSplashScreenClass = class of oxTSplashScreen;
 
    oxTSplashScreenGlobal = record
@@ -184,15 +178,6 @@ begin
 
       oxf.Stop();
    end;
-end;
-
-{ oxTDefaultSplashScreen }
-
-constructor oxTDefaultSplashScreen.Create;
-begin
-   inherited;
-
-   WriteVersion := true;
 end;
 
 { oxTSplashScreen }
@@ -352,8 +337,9 @@ VAR
    startRoutine: oxTRunRoutine;
 
 INITIALIZATION
-   oxSplashScreen.StartupInstance := oxTDefaultSplashScreen;
+   oxSplashScreen.StartupInstance := oxTBasicSplashScreen;
    oxSplashScreen.DefaultDisplayTime := oxSPLASH_SCREEN_DEFAULT_DISPLAY_TIME;
+
    {$IFNDEF NO_THREADS}
    oxSplashScreen.StartupThreaded := true;
    {$ENDIF}
