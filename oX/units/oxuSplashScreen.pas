@@ -37,8 +37,8 @@ TYPE
       {associated window}
       AssociatedWindow: oxTWindow;
 
-      constructor Create; override;
-      destructor Destroy; override;
+      constructor Create(); override;
+      destructor Destroy(); override;
 
       {start rendering in the current thread, renders a single frame}
       procedure StartSplash(wnd: oxTWindow);
@@ -62,8 +62,8 @@ TYPE
       {runs the splash screen task}
       procedure Run(); override;
 
-      procedure TaskStart; override;
-      procedure TaskStop; override;
+      procedure TaskStart(); override;
+      procedure TaskStop(); override;
 
       function GetVersionString(): string; virtual;
    end;
@@ -82,10 +82,10 @@ TYPE
 
       Quad: oxTPrimitiveModel;
 
-      constructor Create; override;
-      procedure Load; override;
-      procedure Unload; override;
-      procedure RenderContent; override;
+      constructor Create(); override;
+      procedure Load(); override;
+      procedure Unload(); override;
+      procedure RenderContent(); override;
    end;
 
    oxTSplashScreenClass = class of oxTSplashScreen;
@@ -187,7 +187,7 @@ end;
 
 { oxTSplashScreen }
 
-constructor oxTSplashScreen.Create;
+constructor oxTSplashScreen.Create();
 begin
    inherited;
 
@@ -196,7 +196,7 @@ begin
    DisplayTime := oxSplashScreen.DefaultDisplayTime;
 end;
 
-destructor oxTSplashScreen.Destroy;
+destructor oxTSplashScreen.Destroy();
 begin
    Unload();
 
@@ -263,12 +263,12 @@ begin
    Render();
 end;
 
-procedure oxTSplashScreen.TaskStart;
+procedure oxTSplashScreen.TaskStart();
 begin
    oxTRenderer(AssociatedWindow.Renderer).StartThread(AssociatedWindow);
 end;
 
-procedure oxTSplashScreen.TaskStop;
+procedure oxTSplashScreen.TaskStop();
 begin
    oxTRenderer(AssociatedWindow.Renderer).StopThread(AssociatedWindow);
 
