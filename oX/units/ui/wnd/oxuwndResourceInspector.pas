@@ -19,7 +19,7 @@ USES
    {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
    oxuwndBase,
    {ui}
-   uiuControl, uiuWindow, uiWidgets, uiuWidget, uiuInputBoxOverlay,
+   uiuControl, uiuWindow, uiWidgets, uiuWidget,
    {widgets}
    wdguButton, wdguDivisor, wdguInputBox, wdguGrid;
 
