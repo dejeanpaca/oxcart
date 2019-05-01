@@ -68,30 +68,42 @@ CONST
 
 VAR
    tvSettings: record
-      ForceUnsupportedOps,{perform operations that are not supported
-         either by the driver or the current conditions }
-      Log,{log certain information}
-      ChangeModes,{determines whether the unit should change modes on request}
+      {perform operations that are not supported either by the driver or the current conditions }
+      ForceUnsupportedOps,
+      {log certain information}
+      Log,
+      {determines whether the unit should change modes on request}
+      ChangeModes,
 
-      Tab: boolean;{consider tab characters as actual tab characters which will
-         be replaced with spaces on the screen}
-      TabSize: byte;{the tab size}
+      {consider tab characters as actual tab characters which will be replaced with spaces on the screen}
+      Tab: boolean;
+      {the tab size}
+      TabSize: byte;
 
       {clip output at screen end, otherwise the output will start at a new line}
       Clip,
-      SpaceTransparent,{do not write spaces}
-      WriteTransparent,{write transparent text}
+      {do not write spaces}
+      SpaceTransparent,
+      {write transparent text}
+      WriteTransparent,
 
-      NewLineAt0,{start new line at screen x coordinate start x = 0}
-      EnterNewLine,{the CRLF, CR, LF will make a new line when writting to the screen}
-      ClearAfterMove,{clear part of the screen left after moving}
-      MoveScreenWhenReachedEnd, {moves the screen when writing reaches it's end}
-      LDCursor: boolean; {if true the cursor respects the limitiation dimensions}
-      WriteDirection,{the direction in which to write}
-      NewLineDirection,{the direction in which to make new lines.
-         For updown or downup writing directions you cannot have updown or downup
-         new line diRections, the same goes for leftright and rightleft diRections}
-      LineSpacing: longint;{how many spaces will be moved for a new line}
+      {start new line at screen x coordinate start x = 0}
+      NewLineAt0,
+      {the CRLF, CR, LF will make a new line when writting to the screen}
+      EnterNewLine,
+      {clear part of the screen left after moving}
+      ClearAfterMove,
+      {moves the screen when writing reaches it's end}
+      MoveScreenWhenReachedEnd,
+      {if true the cursor respects the limitiation dimensions}
+      LDCursor: boolean;
+      {the direction in which to write}
+      WriteDirection,
+      {the direction in which to make new lines. For updown or downup writing directions you cannot have
+      updown or downup new line directions, the same goes for leftright and rightleft diRections}
+      NewLineDirection,
+      {how many spaces will be moved for a new line}
+      LineSpacing: longint;
    end;
 
 TYPE
@@ -172,6 +184,7 @@ TYPE
 
    {first eleven are single line drawing character codes, the second eleven are
     double line drawing character codes, and the last two are ds line}
+
    {the line drawing constants need to be used to get an effect on these}
    tvTLineDrawingCharacterSet = array[0..23] of char;
 
@@ -229,9 +242,10 @@ CONST
    tvcldDUDCenterSLeft               = $17;
 
    {multiple line drawing character sets | all in hex}
-   tvldcS0: tvTLineDrawingCharacterSet = ({singleline}#$DA, #$BF, #$C0, #$D9, #$C4, #$B3, #$C2,
-         #$C1, #$C3, #$B4, #$C5, {double line} #$C9, #$BB, #$C8, #$BC, #$CD, #$BA, #$CB,
-         #$CA, #$CC, #$B9, #$CE, {special LD}#$C7, #$C6);
+   tvldcS0: tvTLineDrawingCharacterSet = (
+      {singleline}  #$DA, #$BF, #$C0, #$D9, #$C4, #$B3, #$C2, #$C1, #$C3, #$B4, #$C5,
+      {double line} #$C9, #$BB, #$C8, #$BC, #$CD, #$BA, #$CB, #$CA, #$CC, #$B9, #$CE,
+      {special LD}  #$C7, #$C6);
 
 TYPE
 
@@ -341,13 +355,21 @@ TYPE
       function MakeCell(ch: char): TVideoCell;
 
       {attribute setting procedures}
-      procedure SetColor(clr: byte);{sets foreground color}
-      procedure SetBkColor(bkclr: byte);{sets background color}
-      procedure SetColors(clr, bkclr: byte);{set foreground and background color}
-      procedure SetBlink(blnk: boolean);{sets blink attribute state}
-      procedure SetUnderline(underline: boolean);{sets underline attribute state}
-      procedure ToggleBlink();{toggles the blink attribute state from true to false and vice versa}
-      procedure ToggleUnderline();{toggles the underline attribute state from true to false and vice versa}
+
+      {sets foreground color}
+      procedure SetColor(clr: byte);
+      {sets background color}
+      procedure SetBkColor(bkclr: byte);
+      {set foreground and background color}
+      procedure SetColors(clr, bkclr: byte);
+      {sets blink attribute state}
+      procedure SetBlink(blnk: boolean);
+      {sets underline attribute state}
+      procedure SetUnderline(underline: boolean);
+      {toggles the blink attribute state from true to false and vice versa}
+      procedure ToggleBlink();
+      {toggles the underline attribute state from true to false and vice versa}
+      procedure ToggleUnderline();
 
       {fill character}
       procedure SetFillChar(fc: char);
@@ -442,7 +464,7 @@ TYPE
       procedure PlotScreen(img: pointer);
       procedure PlotScreenLtd(img: pointer);
 
-      {disposing off an image}
+      {disposing of an image}
       procedure DisposeImage(var img: pointer);
 
       {MOVING}
@@ -631,21 +653,21 @@ end;
 procedure TVideoGlobal.LogAttributes();
 begin
    if(tvSettings.Log) then begin
-      log.i('tv Attributes > Color: ' + sf(tvCurrent.Attr.Color) + ' | Background Color: ' + sf(tvCurrent.Attr.BkColor) +
-                        ' | Blink: ' + sf(tvCurrent.Attr.Blink) +
-                        ' | Underline: ' + sf(tvCurrent.Attr.Underline));
+      log.i('tv Attributes > Color: ' + sf(tvCurrent.Attr.Color) +
+         ' | Background Color: ' + sf(tvCurrent.Attr.BkColor) +
+         ' | Blink: ' + sf(tvCurrent.Attr.Blink) +
+         ' | Underline: ' + sf(tvCurrent.Attr.Underline));
    end;
 end;
 
 {Attributes}
 
-{the following two procedures module colors so that you color shifting can be achieved }
-procedure TVideoWindow.SetColor(clr: byte);{set foreground color}
+procedure TVideoWindow.SetColor(clr: byte);
 begin
    Attr.Color := clr;
 end;
 
-procedure TVideoWindow.SetBkColor(bkclr: byte);{set background color}
+procedure TVideoWindow.SetBkColor(bkclr: byte);
 begin
    Attr.BkColor := bkclr;
 end;
@@ -658,22 +680,22 @@ end;
 
 procedure TVideoWindow.SetBlink(blnk: boolean);
 begin
-   Attr.Blink := blnk;{set blink attribute}
+   Attr.Blink := blnk;
 end;
 
 procedure TVideoWindow.SetUnderline(underline: boolean);
 begin
-   Attr.Underline := underline;{set underline attribute}
+   Attr.Underline := underline;
 end;
 
 procedure TVideoWindow.ToggleBlink();
 begin
-   Attr.Blink := Attr.Blink xor true;{toggle blink attribute}
+   Attr.Blink := Attr.Blink xor true;
 end;
 
 procedure TVideoWindow.ToggleUnderline();
 begin
-   Attr.Underline := Attr.Underline xor true;{toggle underline attribute}
+   Attr.Underline := Attr.Underline xor true;
 end;
 
 {FILL CHARACTER}
@@ -786,7 +808,8 @@ end;
 
 function tvMakeCell(ch: char; clr, bkclr: byte; blink: boolean): TVideoCell;
 var
-   attr: byte;{the color and blink attributes}
+   {the color and blink attributes}
+   attr: byte;
    cell: TVideoCell;
 
 begin
@@ -1611,26 +1634,33 @@ var
 procedure ResetLineStartPos;
 begin
    case tvSettings.WriteDirection of
-      tvcDLEFT_RIGHT:
+      tvcDLEFT_RIGHT: begin
          if(not tvSettings.newlineat0) then
             x := px
          else
             x := ld.x1;
-      tvcdRIGHT_LEFT:
+      end;
+
+      tvcdRIGHT_LEFT: begin
          if(not tvSettings.newlineat0) then
             x := px
          else
             x := ld.x2;
-      tvcDUP_DOWN:
+      end;
+
+      tvcDUP_DOWN: begin
          if(not tvSettings.newlineat0) then
             y := py
          else
             y := ld.y1;
-      tvcDDOWN_UP:
+      end;
+
+      tvcDDOWN_UP: begin
          if(not tvSettings.newlineat0) then
             y := py
          else
             y := ld.y2;
+      end;
    end;
 end;
 
@@ -1647,6 +1677,7 @@ begin
          else
             plotchar := true;
       end;
+
       tvcdRIGHT_LEFT: begin
          dec(x, tvSettings.LineSpacing);
          ResetLineStartPos();
@@ -1656,6 +1687,7 @@ begin
          else
             plotchar := true;
       end;
+
       tvcDUP_DOWN: begin
          inc(y, tvSettings.LineSpacing);
          ResetLineStartPos();
@@ -1665,6 +1697,7 @@ begin
          else
             plotchar := true;
       end;
+
       tvcDDOWN_UP: begin
          dec(y, tvSettings.LineSpacing);
          ResetLineStartPos();
@@ -1692,6 +1725,7 @@ begin
                plotchar := false;
          end;
       end;
+
       tvcDRIGHT_LEFT: begin
          dec(x);
          if(x < ld.x1) then begin
@@ -1701,6 +1735,7 @@ begin
                plotchar := false;
          end;
       end;
+
       tvcDUP_DOWN: begin
          inc(y);
          if(y >  ld.y2) then begin
@@ -1710,6 +1745,7 @@ begin
                plotchar := false;
          end;
       end;
+
       tvcDDOWN_UP: begin
          dec(y);
          if(y < ld.y1) then begin
@@ -2085,7 +2121,6 @@ end;
 
 {BOX}
 
-{draw a filled box}
 procedure TVideoWindow.DrawBox(px1, py1, px2, py2: longint);
 var
   x,
@@ -2145,7 +2180,6 @@ end;
 
 {LINES}
 
-{horizontal line}
 procedure TVideoWindow.HLine(px1, py1, px2: longint; ch: char);
 var
    x,
@@ -2183,7 +2217,6 @@ begin
    end;
 end;
 
-{vertical line}
 procedure TVideoWindow.VLine(px1, py1, py2: longint; ch: char);
 var
    y,
@@ -2228,13 +2261,11 @@ begin
    end;
 end;
 
-{horizontal line - overloaded}
 procedure TVideoWindow.HLine(px1, py1, px2: longint; ldchar: byte);
 begin
    HLine(px1, px2, py1, LDCharSet[ldchar]);
 end;
 
-{vertical line - overloaded}
 procedure TVideoWindow.VLine(px1, py1, py2: longint; ldchar: byte);
 begin
    VLine(px1, py1, py2, LDCharSet[ldchar]);
@@ -2471,7 +2502,6 @@ begin
    PlotImage(px1, py1, 0, 0, img);
 end;
 
-{get the part of the screen indicated by the limitation dimensions}
 procedure TVideoWindow.GetScreenLtd(var img: pointer);
 var
    w,
@@ -2527,7 +2557,6 @@ begin
    end;
 end;
 
-{set the image to the part of the screen indicated by the limitation dimensions}
 procedure TVideoWindow.PlotScreenLtd(img: pointer);
 var
    w,
@@ -2570,7 +2599,6 @@ begin
    end;
 end;
 
-{get the entire screen | naturaly these perform much faster than those above}
 procedure TVideoWindow.GetScreen(var img: pointer);
 var
   w,
@@ -2627,7 +2655,6 @@ begin
    end;
 end;
 
-{disposing off an image}
 procedure TVideoWindow.DisposeImage(var img: pointer);
 begin
    if(img <> nil) then begin
@@ -2638,10 +2665,8 @@ end;
 
 {CLIP}
 
-{clip the image at borders. This will make it smaller. The memory is also
-reallocated assuring smaller memory usage of the image since the image is
-clipped. However once the image is clipped this effect is not reversible
-for obvious reasons(the clipped parts are lost).}
+{Clip the image at borders. This will make it smaller. The memory is also
+reallocated assuring smaller memory usage of the image since the image is clipped.}
 procedure TVideoWindow.ClipImage(wid, hgt: word; var img: pointer);
 var
    w,
@@ -2690,7 +2715,6 @@ begin
    ReAllocMem(img, (wid * hgt * 2 + 4));
 end;
 
-{Does the same thing like with an image, except this clips a buffer and requires a physical dimensions variable}
 procedure TVideoWindow.ClipBuf(wid, hgt: word; var pbuf: PVideoBuf; var pdim: tvTPhysicalDimensions);
 var
    w,
