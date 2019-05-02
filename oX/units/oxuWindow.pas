@@ -22,7 +22,7 @@ TYPE
 
    { oxTWindowGlobal }
 
-   oxTWindowGlobal = class
+   oxTWindowGlobal = record
       {currently selected window}
       Current: oxTWindow;
 
@@ -75,12 +75,13 @@ var
 
 begin
    title             := oxEngineName;
+
    if(appInfo.Title <> '') then
-      title          := appInfo.Title
+      title := appInfo.Title
    else if(appInfo.Name <> '') then
-      title          := appInfo.Name
+      title := appInfo.Name
    else if(appInfo.NameShort <> '') then
-      title          := appInfo.NameShort;
+      title := appInfo.NameShort;
 
    wnd.Renderer := oxRenderer;
    wnd.Platform := oxPlatform;
@@ -446,16 +447,12 @@ end;
 procedure oxTWindowHelper.SetFrame(fs: uiTWindowFrameStyle);
 begin
    Frame := fs;
+
    {TODO: set the frame here for the system}
    if(oxProperties.Created) then;
 end;
 
-function instanceGlobal(): TObject;
-begin
-   Result := oxTWindowGlobal.Create();
-end;
-
 INITIALIZATION
-   oxGlobalInstances.Add(oxTWindowGlobal, @oxWindow, @instanceGlobal);
+   oxGlobalInstances.Add('oxTWindowGlobal', @oxWindow);
 
 END.
