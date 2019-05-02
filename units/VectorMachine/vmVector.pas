@@ -423,6 +423,13 @@ CONST
 
    {view vectors}
    vmvUp: TVector3               = (0.0, 1.0, 0.0);
+   vmvDown: TVector3             = (0.0,-1.0, 0.0);
+
+   vmvLeft: TVector3             = ( 1.0, 0.0, 0.0);
+   vmvRight: TVector3            = (-1.0, 0.0, 0.0);
+
+   vmvForward: TVector3          = (0.0, 0.0, 1.0);
+   vmvBack: TVector3             = (0.0, 0.0,-1.0);
 
    {zero matrices}
    vmmZero2: TMatrix2 = (
