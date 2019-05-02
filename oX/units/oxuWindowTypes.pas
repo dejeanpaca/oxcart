@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uLog,
       {oX}
-      oxuTypes,
+      oxuTypes, oxuProjectionType,
       {ui}
       uiuTypes, uiuWindowTypes;
 
@@ -76,7 +76,7 @@ TYPE
       ThreadRenderingContext: loopint;
 
       {context for this window}
-      Projection: TObject;
+      Projection: oxTProjection;
 
       {error}
       ErrorDescription: TErrorString;

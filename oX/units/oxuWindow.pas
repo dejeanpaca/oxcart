@@ -106,7 +106,7 @@ end;
 
 procedure windowCreateCommon(wnd: oxTWindow);
 begin
-   oxProjection := oxTProjection(wnd.Projection);
+   oxProjection := @wnd.Projection;
    oxUIHooks.Select(wnd);
 
    if(wnd.oxProperties.Fullscreen) then begin
@@ -247,7 +247,6 @@ begin
    if(wnd <> nil) then begin
       log.i('Destroying window: ' + wnd.Title);
 
-      FreeObject(wnd.Projection);
       Include(wnd.Properties, uiwndpDISPOSED);
 
       if(wnd.oxProperties.Created) then begin
@@ -382,16 +381,16 @@ end;
 
 procedure oxTWindowHelper.SetupProjection();
 begin
-   oxTProjection(Projection).SetViewport(Dimensions.w, Dimensions.h);
+   Projection.SetViewport(Dimensions.w, Dimensions.h);
    SetProjectionOffset();
 end;
 
 procedure oxTWindowHelper.SetProjectionOffset();
 begin
    if(ExternalWindow <> nil) then
-      oxTProjection(Projection).SetOffset(ExternalWindow.RPosition.x, ExternalWindow.RPosition.y - (ExternalWindow.Dimensions.h - 1))
+      Projection.SetOffset(ExternalWindow.RPosition.x, ExternalWindow.RPosition.y - (ExternalWindow.Dimensions.h - 1))
    else
-      oxTProjection(Projection).SetOffset(0, 0);
+      Projection.SetOffset(0, 0);
 end;
 
 procedure oxTWindowHelper.Maximize();

@@ -13,7 +13,8 @@ INTERFACE
    USES
       uStd, uColors, vmVector,
       {oX}
-      oxuTypes, oxuRender, oxuPrimitives, oxuTransform, oxuUI, oxuTexture, oxuWindow, oxuProjection;
+      oxuTypes, oxuRender, oxuPrimitives, oxuTransform, oxuUI, oxuTexture, oxuWindow,
+      oxuProjectionType;
 
 CONST
    uiMAX_SCISSOR_STACK = 64;
@@ -294,15 +295,15 @@ end;
 procedure uiTDraw.Scissor(x, y, w, h: single; incrementLevel: boolean);
 var
    previousScissor: uiTScissorStackElement;
-   projection: oxTProjection;
+   projection: oxPProjection;
 
 begin
    if(incrementLevel) then
       ScissorNextLevel();
 
-   projection := oxTProjection(oxWindow.Current.Projection);
-   x := x + projection.Offset.x;
-   y := y + projection.Offset.y;
+   projection := @oxWindow.Current.Projection;
+   x := x + projection^.Offset.x;
+   y := y + projection^.Offset.y;
 
    if(ScissorStackIndex > 0) then begin
       if(ScissorStackIndex > 1) and (incrementLevel) then begin

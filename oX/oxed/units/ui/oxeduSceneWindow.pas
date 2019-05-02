@@ -15,7 +15,7 @@ INTERFACE
       {app}
       appuKeys, appuMouse, appuActionEvents,
       {ox}
-      oxuTypes, oxuScene, oxuCamera, oxuProjection, oxuWindowTypes,
+      oxuTypes, oxuScene, oxuCamera, oxuProjection, oxuProjectionType, oxuWindowTypes,
       oxuRender, oxuRenderer, oxuSceneRender, oxuTimer, oxuEntity,
       {find a camera component}
       oxuCameraComponent,
@@ -115,7 +115,7 @@ constructor oxedTSceneWindow.Create();
 begin
    inherited;
 
-   Projection := oxTProjection.Create();
+   Projection.Initialize();
 
    {use the global scene by default}
    Scene := oxScene;
@@ -134,7 +134,6 @@ begin
    inherited;
 
    FreeObject(Camera);
-   FreeObject(Projection);
 
    if(SceneRenderer <> oxSceneRender.Default) then
       FreeObject(SceneRenderer);
@@ -171,7 +170,7 @@ begin
       exit;
 
    if(not RenderAllCameras) then begin
-      oxTSceneRenderParameters.Init(params, Projection, Camera);
+      oxTSceneRenderParameters.Init(params, @Projection, Camera);
       SceneRenderer.RenderCamera(params);
    end else
       SceneRenderer.Render(Projection);

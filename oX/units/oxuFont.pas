@@ -561,9 +561,9 @@ var
 
 begin
    rect.x := 0;
-   rect.y := oxProjection.dimensions.h - 1;
-   rect.w := oxProjection.dimensions.w;
-   rect.h := oxProjection.dimensions.h;
+   rect.y := oxProjection^.Dimensions.h - 1;
+   rect.w := oxProjection^.Dimensions.w;
+   rect.h := oxProjection^.Dimensions.h;
 
    WriteCentered(s, rect, props);
 end;
@@ -590,9 +590,9 @@ var
 
 begin
    rect.x := 0;
-   rect.y := oxProjection.dimensions.h - 1;
-   rect.w := oxProjection.dimensions.w;
-   rect.h := oxProjection.dimensions.h;
+   rect.y := oxProjection^.Dimensions.h - 1;
+   rect.w := oxProjection^.Dimensions.w;
+   rect.h := oxProjection^.Dimensions.h;
 
    WriteCenteredScaled(s, rect, sx, sy);
    Scale(1.0, 1.0);
