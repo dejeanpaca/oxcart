@@ -266,12 +266,9 @@ var
 begin
    for i := 0 to (Children.n - 1) do begin
       if(Children.List[i] = entity) then begin
-         writeln('Removing: ', entity.Name);
-
          oxEntity.OnRemove.Call(entity);
          FreeObject(Children.List[i]);
          Children.Remove(i);
-         writeln('Done');
          exit;
       end;
    end;
