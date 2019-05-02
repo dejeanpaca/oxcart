@@ -135,10 +135,10 @@ begin
             if(configuration.prefix <> '') then
                name := name + Configuration.Prefix + DirectorySeparator;
 
-            if(Configuration.UseOrganization and (appInfo.orgShort <> '')) then
-               name := name + appInfo.orgShort + DirectorySeparator + appInfo.nameShort
+            if(Configuration.UseOrganization and (appInfo.OrgShort <> '')) then
+               name := name + appInfo.OrgShort + DirectorySeparator + appInfo.NameShort
             else
-               name := name + appInfo.nameShort;
+               name := name + appInfo.NameShort;
          end else
             name := Configuration.Path;
 

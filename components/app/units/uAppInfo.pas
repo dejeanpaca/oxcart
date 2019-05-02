@@ -35,17 +35,17 @@ TYPE
    { appTInfo }
    appPInfo = ^appTInfo;
    appTInfo = record
-      name,
-      nameShort,
-      author,
-      org,
-      orgShort,
-      website,
-      description: string;
-      versionFields: longint;
-      version: array[0..3] of longword;
+      Name,
+      NameShort,
+      Author,
+      Org,
+      OrgShort,
+      Website,
+      Description: string;
+      VersionFields: longint;
+      Version: array[0..3] of longword;
       sVersion: string;
-      title: string;
+      Title: string;
 
       procedure SetName(const s: string);
       procedure SetOrganization(const s: string);
@@ -64,14 +64,14 @@ IMPLEMENTATION
 
 procedure appTInfo.SetName(const s: string);
 begin
-   name := s;
-   nameShort := GetShort(s);
+   Name := s;
+   NameShort := GetShort(s);
 end;
 
 procedure appTInfo.SetOrganization(const s: string);
 begin
-   org := s;
-   orgShort := GetShort(s);
+   Org := s;
+   OrgShort := GetShort(s);
 end;
 
 procedure appTInfo.SetName(const n, o: string);
@@ -82,21 +82,21 @@ end;
 
 procedure appTInfo.SetVersion(major: longword; minor: longint; fix: longint; revision: longint);
 begin
-   version[0] := major;
-   versionFields := 1;
+   Version[0] := major;
+   VersionFields := 1;
 
    if(minor > -1) then begin
-      version[1] := minor;
-      versionFields := 2;
+      Version[1] := minor;
+      VersionFields := 2;
 
       if(fix > -1) then begin
-         version[2] := fix;
-         versionFields := 3;
+         Version[2] := fix;
+         VersionFields := 3;
       end;
 
       if(revision > -1) then begin
-         version[3] := revision;
-         versionFields := 4;
+         Version[3] := revision;
+         VersionFields := 4;
       end;
    end;
 end;
@@ -114,18 +114,18 @@ begin
       if(n > 4) then
          n := 4;
 
-      versionFields := n;
-      version[0] := 0;
-      version[1] := 0;
-      version[2] := 0;
-      version[3] := 0;
+      VersionFields := n;
+      Version[0] := 0;
+      Version[1] := 0;
+      Version[2] := 0;
+      Version[3] := 0;
 
       for i := 0 to (n - 1) do begin
-         Val(vs[i], version[i], code);
+         Val(vs[i], Version[i], code);
 
          if(code <> 0) then begin
-            versionFields := i;
-            version[i] := 0;
+            VersionFields := i;
+            Version[i] := 0;
             break;
          end;
       end;
@@ -141,14 +141,14 @@ var
 
 begin
    if(sVersion = '') then begin
-      if(versionFields > 0) then begin
+      if(VersionFields > 0) then begin
          sver := 'v';
 
-         for i := 0 to (versionFields - 1) do begin
-            if(i < appInfo.versionFields - 1) then
-               sver := sver + sf(version[i]) + '.'
+         for i := 0 to (VersionFields - 1) do begin
+            if(i < appInfo.VersionFields - 1) then
+               sver := sver + sf(Version[i]) + '.'
             else
-               sver := sver + sf(version[i]);
+               sver := sver + sf(Version[i]);
          end;
       end;
    end else
@@ -156,12 +156,12 @@ begin
 
    if(properties and appVERSION_STR_ONLY = 0) then begin
       if(properties and appVERSION_SHORT = 0) then
-         result := name
+         result := Name
       else begin
-         if(nameShort = '') then
-            short := name
+         if(NameShort = '') then
+            short := Name
          else
-            short := nameShort;
+            short := NameShort;
 
          result := short;
       end;
@@ -186,6 +186,6 @@ end;
 INITIALIZATION
    ZeroOut(appInfo, SizeOf(appInfo));
 
-   appInfo.versionFields   := 0;
+   appInfo.VersionFields   := 0;
 
 END.

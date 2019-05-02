@@ -52,8 +52,8 @@ begin
       {setup default log file}
       logFN := 'default';
 
-      if(appInfo.nameShort <> '') then
-         logFN := appInfo.nameShort;
+      if(appInfo.NameShort <> '') then
+         logFN := appInfo.NameShort;
 
       if(not log.settings.UseHandlerFileExtension) then
          logFN := logFN + '.log';
