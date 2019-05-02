@@ -29,7 +29,7 @@ TYPE
       Entity: oxTEntity;
 
       class procedure Init(out p: oxTSceneRenderParameters;
-         setProjection: oxPProjection = nil; setCamera: oxTCamera = nil); static;
+         setProjection: oxPProjection = nil; setCamera: oxPCamera = nil); static;
    end;
 
    { oxTSceneRenderer }
@@ -78,16 +78,18 @@ IMPLEMENTATION
 { oxTSceneRenderParameters }
 
 class procedure oxTSceneRenderParameters.Init(out p: oxTSceneRenderParameters;
-   setProjection: oxPProjection; setCamera: oxTCamera);
+   setProjection: oxPProjection; setCamera: oxPCamera);
 begin
    ZeroOut(p, SizeOf(p));
 
    p.Projection.Initialize();
+   p.Camera.Initialize();
 
    if(setProjection <> nil) then
       p.Projection.From(setProjection^);
 
-   p.Camera := setCamera;
+   if(setCamera <> nil) then
+      p.Camera := setCamera^;
 end;
 
 { oxTSceneRender }

@@ -121,7 +121,7 @@ begin
    Scene := oxScene;
 
    {create our own camera}
-   Camera := oxTCamera.Create();
+   Camera.Initialize();
 
    ResetCamera();
    ControlCamera := true;
@@ -169,7 +169,7 @@ begin
       exit;
 
    if(not RenderAllCameras) then begin
-      oxTSceneRenderParameters.Init(params, @Projection, Camera);
+      oxTSceneRenderParameters.Init(params, @Projection, @Camera);
       SceneRenderer.RenderCamera(params);
    end else
       SceneRenderer.Render(Projection);
