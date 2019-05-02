@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, vmVector,
       {ox}
-      oxuTransform, oxuProjectionType,
+      oxuTransform, oxuProjectionType, oxuProjection,
       oxuCamera, oxuEntity, oxuComponent, oxuComponentDescriptors, oxuSerialization;
 
 TYPE
@@ -24,6 +24,8 @@ TYPE
       public
       Projection: oxTProjection;
       Camera: oxTCamera;
+
+      UseSceneProjection: boolean;
 
       constructor Create(); override;
       destructor Destroy(); override;
@@ -57,6 +59,8 @@ begin
    inherited Create;
 
    Camera := oxTCamera.Create();
+   Projection.Initialize();
+   UseSceneProjection := true;
 end;
 
 destructor oxTCameraComponent.Destroy();
