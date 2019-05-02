@@ -28,7 +28,6 @@ TYPE
       UseSceneProjection: boolean;
 
       constructor Create(); override;
-      destructor Destroy(); override;
 
       procedure OnPositionChanged(); override;
       procedure OnRotationChanged(); override;
@@ -63,13 +62,6 @@ begin
    UseSceneProjection := true;
 end;
 
-destructor oxTCameraComponent.Destroy();
-begin
-   inherited Destroy;
-
-   FreeObject(Camera);
-end;
-
 procedure oxTCameraComponent.OnPositionChanged();
 begin
    Camera.vPos := oxTTransform(Parent).vPosition;
@@ -101,8 +93,8 @@ end;
 
 INITIALIZATION
    serialization := oxTSerialization.Create(oxTCameraComponent, @instance);
-   serialization.AddObjectProperty('Camera', @oxTCameraComponent(nil).Camera, 'oxTCamera');
-   serialization.AddObjectProperty('Projection', @oxTCameraComponent(nil).Camera, 'oxTProjection');
+   serialization.AddRecordProperty('Camera', @oxTCameraComponent(nil).Camera, 'oxTCamera');
+   serialization.AddRecordProperty('Projection', @oxTCameraComponent(nil).Camera, 'oxTProjection');
 
    descriptor.Create('camera', oxTCameraComponent);
    descriptor.Name := 'Camera';
