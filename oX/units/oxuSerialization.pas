@@ -75,9 +75,11 @@ TYPE
    end;
 
    { oxTSerializationProperty }
-
+   oxPSerializationProperty = ^oxTSerializationProperty;
    oxTSerializationProperty = record
       Name: string;
+      {associated serializer}
+      Serializer: TObject;
       {offset into the property, -1 means its a published property}
       Offset: PtrInt;
       {data type associated with the property}
@@ -166,18 +168,22 @@ TYPE
       {add an object property}
       procedure AddObjectProperty(const name: string; offset: PtrInt);
       procedure AddObjectProperty(const name: string; offset: pointer);
+      procedure AddObjectProperty(const name: string; offset: pointer; const objectType: string);
+      procedure AddRecordProperty(const name: string; offset: pointer; const recordType: string);
 
       {dynamic array property}
       procedure AddDynArrayProperty(const name: string; ti: PTypeInfo);
 
       {add a unpublished property}
-      procedure AddProperty(const name: string; offset: PtrInt; const dt: oxTSerializationDataType);
+      function AddProperty(const name: string; offset: PtrInt; const dt: oxTSerialization): oxPSerializationProperty;
       {add a unpublished property}
-      procedure AddProperty(const name: string; offset: PtrInt; const dt: oxTSerializationDataType; newTypeInfo: PTypeInfo);
+      function AddProperty(const name: string; offset: PtrInt; const dt: oxTSerializationDataType): oxPSerializationProperty;
       {add a unpublished property}
-      procedure AddProperty(const name: string; offset: pointer; const dt: oxTSerializationDataType);
+      function AddProperty(const name: string; offset: PtrInt; const dt: oxTSerializationDataType; newTypeInfo: PTypeInfo): oxPSerializationProperty;
       {add a unpublished property}
-      procedure AddProperty(const name: string; offset: pointer; const dt: oxTSerializationDataType; newTypeInfo: PTypeInfo);
+      function AddProperty(const name: string; offset: pointer; const dt: oxTSerializationDataType): oxPSerializationProperty;
+      {add a unpublished property}
+      function AddProperty(const name: string; offset: pointer; const dt: oxTSerializationDataType; newTypeInfo: PTypeInfo): oxPSerializationProperty;
       {finalize adding of serializable properties, and gather information on properties}
       procedure PropertiesDone();
 
@@ -248,6 +254,7 @@ TYPE
          Enum,
          DynamicArray,
          tObject,
+         tRecord,
          Pointer: oxTSerializationDataType;
       end;
 
@@ -261,7 +268,7 @@ TYPE
       function Get(const name: string): oxTSerialization;
       function Get(typeOf: TClass): oxTSerialization;
 
-      procedure CloneAllProperties(source: TObject; target: TObject);
+      procedure CloneAllProperties(source: TObject; target: TObject; serializer: oxTSerialization = nil);
       procedure CloneProperties(serializer: oxTSerialization; source: TObject; target: TObject);
       function Clone(what: TObject): TObject;
 
@@ -321,9 +328,8 @@ begin
    Result := nil;
 end;
 
-procedure oxTSerializationManager.CloneAllProperties(source: TObject; target: TObject);
+procedure oxTSerializationManager.CloneAllProperties(source: TObject; target: TObject; serializer: oxTSerialization);
 var
-   serializer: oxTSerialization;
    cur: TClass;
 
 begin
@@ -337,8 +343,6 @@ begin
    { clone properties }
    repeat
       if(cur <> nil) then begin
-         serializer := oxSerialization.Get(cur.ClassName);
-
          if(serializer <> nil) then
             CloneProperties(serializer, source, target);
       end else
@@ -387,7 +391,7 @@ begin
             end;
 
             if(TObject(targetProp^) = nil) then
-               CloneAllProperties(source, target);
+               CloneAllProperties(source, target, oxTSerialization(prop.Serializer));
          end else if(prop.Dt^.Kind = tkAString) then begin
             if(prop.PropInfo <> nil) then
                SetPropValue(target, prop.PropInfo, GetPropValue(source, prop.PropInfo))
@@ -439,7 +443,7 @@ begin
    end else
       Result := what.ClassType.Create();
 
-   CloneAllProperties(what, Result);
+   CloneAllProperties(what, Result, serializer);
 
    if(serializer <> nil) and (serializer.oxSerializable) then
       oxTSerializable(Result).Deserialized();
@@ -1011,6 +1015,32 @@ begin
    AddProperty(name, poffset, oxSerialization.Types.tObject);
 end;
 
+procedure oxTSerialization.AddObjectProperty(const name: string; offset: pointer; const objectType: string);
+var
+   poffset: PtrInt absolute offset;
+   prop: oxPSerializationProperty;
+
+begin
+   prop := AddProperty(name, poffset, oxSerialization.Types.tObject);
+   prop^.Serializer := oxSerialization.Get(objectType);
+
+   if(prop^.Serializer <> nil) then
+      log.w('Could not find serializer for object type: ' + objectType);
+end;
+
+procedure oxTSerialization.AddRecordProperty(const name: string; offset: pointer; const recordType: string);
+var
+   poffset: PtrInt absolute offset;
+   prop: oxPSerializationProperty;
+
+begin
+   prop := AddProperty(name, poffset, oxSerialization.Types.tRecord);
+   prop^.Serializer := oxSerialization.Get(recordType);
+
+   if(prop^.Serializer <> nil) then
+      log.w('Could not find serializer for record type: ' + recordType);
+end;
+
 procedure oxTSerialization.AddDynArrayProperty(const name: string; ti: PTypeInfo);
 var
    prop: oxTSerializationProperty;
@@ -1022,9 +1052,24 @@ begin
    prop.TypeInfo := ti;
 end;
 
+function oxTSerialization.AddProperty(const name: string; offset: PtrInt; const dt: oxTSerialization): oxPSerializationProperty;
+var
+   prop: oxTSerializationProperty;
+
+begin
+   InitProp(prop);
+
+   prop.Name := name;
+   prop.Serializer := dt;
+   prop.Offset := offset;
+
+   Properties.Add(prop);
+   Result := Properties.GetLast();
+end;
+
 {unpublished properties}
 
-procedure oxTSerialization.AddProperty(const name: string; offset: PtrInt; const dt: oxTSerializationDataType);
+function oxTSerialization.AddProperty(const name: string; offset: PtrInt; const dt: oxTSerializationDataType): oxPSerializationProperty;
 var
    prop: oxTSerializationProperty;
 
@@ -1037,9 +1082,10 @@ begin
    prop.PropInfo := nil;
 
    Properties.Add(prop);
+   Result := Properties.GetLast();
 end;
 
-procedure oxTSerialization.AddProperty(const name: string; offset: PtrInt; const dt: oxTSerializationDataType; newTypeInfo: PTypeInfo);
+function oxTSerialization.AddProperty(const name: string; offset: PtrInt; const dt: oxTSerializationDataType; newTypeInfo: PTypeInfo): oxPSerializationProperty;
 var
    prop: oxTSerializationProperty;
 
@@ -1052,9 +1098,10 @@ begin
    prop.TypeInfo := newTypeInfo;
 
    Properties.Add(prop);
+   Result := Properties.GetLast();
 end;
 
-procedure oxTSerialization.AddProperty(const name: string; offset: pointer; const dt: oxTSerializationDataType);
+function oxTSerialization.AddProperty(const name: string; offset: pointer; const dt: oxTSerializationDataType): oxPSerializationProperty;
 var
    prop: oxTSerializationProperty;
    poffset: PtrInt absolute offset;
@@ -1068,9 +1115,10 @@ begin
    prop.PropInfo := nil;
 
    Properties.Add(prop);
+   Result := Properties.GetLast();
 end;
 
-procedure oxTSerialization.AddProperty(const name: string; offset: pointer; const dt: oxTSerializationDataType; newTypeInfo: PTypeInfo);
+function oxTSerialization.AddProperty(const name: string; offset: pointer; const dt: oxTSerializationDataType; newTypeInfo: PTypeInfo): oxPSerializationProperty;
 var
    prop: oxTSerializationProperty;
    poffset: PtrInt absolute offset;
@@ -1084,6 +1132,7 @@ begin
    prop.TypeInfo := newTypeInfo;
 
    Properties.Add(prop);
+   Result := Properties.GetLast();
 end;
 
 procedure oxTSerialization.PropertiesDone();
@@ -1264,6 +1313,9 @@ begin
 
    oxSerialization.Types.tObject.Init(tkObject);
    oxSerialization.Types.tObject.Name := 'Object';
+
+   oxSerialization.Types.tRecord.Init(tkRecord);
+   oxSerialization.Types.tRecord.Name := 'Record';
 
    oxSerialization.Types.Pointer.Init(tkPointer);
 end;
