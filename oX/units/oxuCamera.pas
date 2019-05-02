@@ -157,7 +157,7 @@ begin
    Rotation := newRotation;
 
    pitch := -newRotation[0] * vmcToRad;
-   yaw := newRotation[1] * vmcToRad;
+   yaw   :=  newRotation[1] * vmcToRad;
 
    vView[0] := sin(yaw) * cos(pitch);
    vView[1] := sin(pitch);
