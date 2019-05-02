@@ -34,12 +34,12 @@ begin
    wnd.Info.Version  := ogl.GetString(GL_VERSION);
 
    {try to figure out the OpenGL version}
-   ogl.GetVersion(wnd.glSettings.Version.Major,
-      wnd.glSettings.Version.Minor,
-      wnd.glSettings.Version.Revision,
-      wnd.glSettings.Version.Profile);
+   ogl.GetVersion(wnd.gl.Version.Major,
+      wnd.gl.Version.Minor,
+      wnd.gl.Version.Revision,
+      wnd.gl.Version.Profile);
 
-   wnd.Info.iVersion := wnd.glSettings.Version.Major * 100 + wnd.glSettings.Version.Minor * 10;
+   wnd.Info.iVersion := wnd.gl.Version.Major * 100 + wnd.gl.Version.Minor * 10;
 
    {get other information}
    glGetIntegerv(GL_MAX_TEXTURE_SIZE,  @wnd.Limits.MaxTextureSize);
@@ -56,7 +56,7 @@ begin
    wnd.Info.GLSL.Compact := 0;
 
    {get shader information}
-   if(wnd.glSettings.Version.Major > 1) then begin
+   if(wnd.gl.Version.Major > 1) then begin
       {$IFNDEF GLES}
       {get GLSL version}
       wnd.Info.GLSL.Version := ogl.GetString(GL_SHADING_LANGUAGE_VERSION);
@@ -74,10 +74,10 @@ begin
       log.i('Renderer: ' + wnd.Info.Renderer);
       log.i('Vendor: ' + wnd.Info.Vendor);
 
-      log.i('Version: ' + wnd.glSettings.GetString() + ' ' + sf(wnd.Info.iVersion) +
+      log.i('Version: ' + wnd.gl.GetString() + ' ' + sf(wnd.Info.iVersion) +
          ' (original: ' + wnd.Info.Version + ')');
 
-      if(wnd.glSettings.Version.Major > 1) then
+      if(wnd.gl.Version.Major > 1) then
          log.i('GLSL Version: ' + sf(wnd.Info.GLSL.Compact) + ' (original: ' + wnd.Info.GLSL.Version + ')');
 
       log.Enter('Capabilities');
@@ -97,14 +97,14 @@ end;
 
 function oglVersionCheck(wnd: oglTWindow): longint;
 begin
-   if(ogl.CompareVersions(wnd.glSettings.Version, wnd.RequiredSettings.Version) < 0) then begin
-      log.e('OpenGL version ' + wnd.glSettings.GetString() + ' is lower than required ' + wnd.RequiredSettings.GetString());
+   if(ogl.CompareVersions(wnd.gl.Version, wnd.glRequired.Version) < 0) then begin
+      log.e('OpenGL version ' + wnd.gl.GetString() + ' is lower than required ' + wnd.glRequired.GetString());
 
       exit(ogleVERSION_UNSUPPORTED);
    end;
 
-   if(ogl.CompareVersions(wnd.glSettings.Version, wnd.DefaultSettings.Version) < 0) then begin
-      log.w('OpenGL version ' + wnd.glSettings.GetString() + ' is lower than targeted ' + wnd.DefaultSettings.GetString());
+   if(ogl.CompareVersions(wnd.gl.Version, wnd.glDefault.Version) < 0) then begin
+      log.w('OpenGL version ' + wnd.gl.GetString() + ' is lower than targeted ' + wnd.glDefault.GetString());
 
       exit(ogleVERSION_LOWER);
    end;

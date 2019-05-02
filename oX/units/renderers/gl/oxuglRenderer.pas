@@ -162,14 +162,14 @@ end;
 procedure oxglTRenderer.SetupData(wnd: oxTWindow);
 begin
    if(not wnd.oxProperties.Context) then begin
-      oglTWindow(wnd).DefaultSettings := oglDefaultSettings;
-      oglTWindow(wnd).RequiredSettings := oglRequiredSettings;
+      oglTWindow(wnd).glDefault := oglDefaultSettings;
+      oglTWindow(wnd).glRequired := oglRequiredSettings;
    end else begin
-      oglTWindow(wnd).DefaultSettings := oglContextSettings;
-      oglTWindow(wnd).RequiredSettings := oglContextSettings;
+      oglTWindow(wnd).glDefault := oglContextSettings;
+      oglTWindow(wnd).glRequired := oglContextSettings;
    end;
 
-   oglTWindow(wnd).glSettings := oglTWindow(wnd).DefaultSettings;
+   oglTWindow(wnd).gl := oglTWindow(wnd).glDefault;
 end;
 
 function oxglTRenderer.SetupWindow(wnd: oxTWindow): boolean;
@@ -196,7 +196,10 @@ begin
 
       {check if versions match}
       if(oglVersionCheck(oglTWindow(wnd)) = ogleVERSION_UNSUPPORTED) then begin
-         wnd.errorDescription := 'Got OpenGL version ' + oglTWindow(wnd).glSettings.GetString() + ' which is unsupported, minimum required ' + oglTWindow(wnd).RequiredSettings.GetString();
+         wnd.errorDescription := 'Got OpenGL version ' +
+            oglTWindow(wnd).gl.GetString() + ' which is unsupported, minimum required ' +
+            oglTWindow(wnd).glRequired.GetString();
+
          errorCode := eUNSUPPORTED;
       end;
    end;
@@ -219,7 +222,7 @@ end;
 
 procedure oxglTRenderer.LogWindow(window: oxTWindow);
 begin
-   log.i('OpenGL Target: ' + oglTWindow(window).glSettings.GetString());
+   log.i('OpenGL Target: ' + oglTWindow(window).gl.GetString());
 end;
 
 function oxglTRenderer.ContextWindowRequired(): boolean;
