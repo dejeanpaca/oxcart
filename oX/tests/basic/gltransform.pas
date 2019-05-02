@@ -17,7 +17,7 @@ VAR
    primitive: oxTPrimitiveModel;
    rotation: TVector3f;
 
-procedure renderScene(projection: oxTProjection);
+procedure renderScene(var projection: oxTProjection);
 var
    f: oxTFont;
 
