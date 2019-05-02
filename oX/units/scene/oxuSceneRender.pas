@@ -37,7 +37,7 @@ TYPE
       Scene: oxTScene;
 
       procedure RenderCamera(var params: oxTSceneRenderParameters);
-      procedure Render(projection: oxTProjection);
+      procedure Render(const projection: oxTProjection);
 
       procedure RenderEntities(const entities: oxTEntities; var params: oxTSceneRenderParameters);
       procedure RenderEntity(var params: oxTSceneRenderParameters); virtual;
@@ -83,8 +83,10 @@ begin
    ZeroOut(p, SizeOf(p));
 
    p.Projection.Initialize();
+
    if(setProjection <> nil) then
       p.Projection.From(setProjection^);
+
    p.Camera := setCamera;
 end;
 
@@ -116,7 +118,7 @@ begin
    CameraEnd(params);
 end;
 
-procedure oxTSceneRenderer.Render(projection: oxTProjection);
+procedure oxTSceneRenderer.Render(const projection: oxTProjection);
 var
    i: longint;
    cameras: oxTComponentsList;
@@ -223,7 +225,7 @@ begin
 
    if(sceneWindow.Scene <> nil) then begin
       renderer.Scene := sceneWindow.Scene;
-      renderer.Render(oxTProjection(wnd.Projection));
+      renderer.Render(wnd.Projection);
    end;
 end;
 

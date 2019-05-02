@@ -36,7 +36,7 @@ begin
    if(f = nil) then
       f := oxFont.Default;
 
-   oxTProjection(wnd.Projection).ClearColor.Assign(0.2, 0.2, 0.5, 1.0);
+   wnd.Projection.ClearColor.Assign(0.2, 0.2, 0.5, 1.0);
 
    charsPerRow := 16;
 

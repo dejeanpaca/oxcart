@@ -58,7 +58,7 @@ end;
 procedure initialize();
 begin
    { disable default context }
-   oxTProjection(oxWindow.Current.Projection).Enabled := false;
+   oxWindow.Current..Enabled := false;
 
    projections[0] := oxTProjection.Create(0, 240, 320, 240);
    projections[0].Name := '0';

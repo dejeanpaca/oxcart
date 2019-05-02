@@ -53,7 +53,7 @@ begin
    cam.Radius  := 1.0;
    cam.Style   := oxCAMERA_STYLE_FPS;
 
-   projection := oxTProjection(oxWindow.Current.Projection);
+   projection := oxWindow.Current.Projection;
    projection.ClearColor.Assign(0.2, 0.2, 0.5, 1.0);
    projection.Perspective(60, 0.5, 2000.0);
 end;

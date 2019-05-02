@@ -75,12 +75,12 @@ var
 
 begin
    title             := oxEngineName;
-   if(appInfo.title <> '') then
-      title          := appInfo.title
-   else if(appInfo.name <> '') then
-      title          := appInfo.name
-   else if(appInfo.nameShort <> '') then
-      title          := appInfo.nameShort;
+   if(appInfo.Title <> '') then
+      title          := appInfo.Title
+   else if(appInfo.Name <> '') then
+      title          := appInfo.Name
+   else if(appInfo.NameShort <> '') then
+      title          := appInfo.NameShort;
 
    wnd.Renderer := oxRenderer;
    wnd.Platform := oxPlatform;

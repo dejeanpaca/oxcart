@@ -21,7 +21,7 @@ VAR
 
 procedure Render(wnd: oxTWindow);
 begin
-   oxTProjection(wnd.Projection).ClearColor.Assign(0.2, 0.2, 0.5, 1.0);
+   wnd.Projection.ClearColor.Assign(0.2, 0.2, 0.5, 1.0);
 
    uiWindow.RenderPrepare(wnd);
 end;
