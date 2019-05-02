@@ -66,7 +66,7 @@ TYPE
       {tells if this entity has the given entity as one of the parents}
       function HasParent(p: oxTEntity): boolean;
       {get the scene (top-most) entity}
-      function GetScene(p: oxTEntity): oxTEntity;
+      function GetScene(): oxTEntity;
 
       {get specified component}
       function GetComponent(componentType: oxTComponentType): oxTComponent;
@@ -355,7 +355,7 @@ begin
    Result := false;
 end;
 
-function oxTEntity.GetScene(p: oxTEntity): oxTEntity;
+function oxTEntity.GetScene(): oxTEntity;
 begin
    Result := Parent;
 
