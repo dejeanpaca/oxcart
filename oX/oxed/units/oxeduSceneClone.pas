@@ -61,7 +61,7 @@ begin
 
       if(sceneRender <> nil) then begin
          sceneRender.Scenes[0].Scene := oxScene;
-         oxedLib.oxWindows.w[0].oxProperties.ApplyDefaultProjection := false;
+         oxedLib.oxWindows^.w[0].oxProperties.ApplyDefaultProjection := false;
       end else
          oxedMessages.e('Could not find ' + oxTSceneRender.ClassName + ' instance in the library');
    end;

@@ -31,7 +31,7 @@ TYPE
          Version: oxTLibraryVersionRoutine;
       end;
 
-      oxWindows: oxTWindows;
+      oxWindows: oxPWindows;
       Settings: oxPLibrarySettings;
 
       function Load(): boolean;
