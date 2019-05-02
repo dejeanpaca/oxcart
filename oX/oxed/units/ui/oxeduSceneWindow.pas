@@ -122,7 +122,6 @@ begin
 
    {create our own camera}
    Camera := oxTCamera.Create();
-   Camera.Style := oxCAMERA_STYLE_FPS;
 
    ResetCamera();
    ControlCamera := true;

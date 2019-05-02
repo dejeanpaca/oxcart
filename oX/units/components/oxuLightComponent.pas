@@ -13,8 +13,8 @@ INTERFACE
    USES
       uStd, vmVector,
       {ox}
-      oxuTransform, oxuProjectionType,
-      oxuLight, oxuEntity, oxuComponent, oxuComponentDescriptors, oxuSerialization;
+      oxuTransform, oxuEntity, oxuComponent, oxuComponentDescriptors,
+      oxuLight, oxuSerialization;
 
 TYPE
 
@@ -24,7 +24,6 @@ TYPE
       public
       UseSceneProjection: boolean;
 
-      Projection: oxTProjection;
       Light: oxTLight;
 
       constructor Create(); override;
@@ -57,7 +56,7 @@ begin
    inherited Create;
 
    UseSceneProjection := true;
-   Light := oxTLight.Create();
+   oxTLight.Initialize(Light);
 end;
 
 destructor oxTLightComponent.Destroy();
