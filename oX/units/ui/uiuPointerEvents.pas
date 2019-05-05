@@ -366,6 +366,7 @@ begin
       oxui.PointerCapture.WindowOperation := operation;
       oxui.PointerCapture.Wnd := wnd;
       oxui.PointerCapture.LockWindow();
+
       Include(wnd.Properties, uiwndpMOVED);
    end else
       {if window not captured then send events to window}
@@ -374,20 +375,25 @@ end;
 
 procedure ProcessWindow();
 var
+   ok: boolean;
    wnd: uiTWindow;
 
 begin
+   ok := false;
+
    if(m.Button.IsSet(appmcRIGHT)) then begin
       if(m.Action.IsSet(appmcRELEASED)) then begin
          wnd := uiTWindow(oxui.mSelect.GetSelectedWnd());
 
-         if(wnd = nil) or (not inTitle(wnd)) then
-            exit;
+         if(wnd <> nil) and (inTitle(wnd)) then
+            ok := true;
 
-         if(OpenContextWindow <> nil) then
+         if(ok) and (OpenContextWindow <> nil) then
             OpenContextWindow(wnd);
       end;
-   end else
+   end;
+
+   if(not ok) then
       TryCaptureWindow();
 end;
 

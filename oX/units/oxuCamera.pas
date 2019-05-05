@@ -94,7 +94,7 @@ TYPE
       {start cursor control}
       procedure Start();
       {cursor control}
-      procedure Control(wnd: uiTWindow; camera: oxTCamera; center: boolean = true);
+      procedure Control(wnd: uiTWindow; var camera: oxTCamera; center: boolean = true);
    end;
 
 VAR
@@ -157,7 +157,7 @@ begin
    Rotation := newRotation;
 
    pitch := -newRotation[0] * vmcToRad;
-   yaw := newRotation[1] * vmcToRad;
+   yaw   :=  newRotation[1] * vmcToRad;
 
    vView[0] := sin(yaw) * cos(pitch);
    vView[1] := sin(pitch);
@@ -306,7 +306,7 @@ begin
    appm.GetPosition(nil, LastPointerPosition[0], LastPointerPosition[1]);
 end;
 
-procedure oxTCameraCursorControl.Control(wnd: uiTWindow; camera: oxTCamera; center: boolean);
+procedure oxTCameraCursorControl.Control(wnd: uiTWindow; var camera: oxTCamera; center: boolean);
 var
    mx, my, ox, oy, nx, ny: single;
 

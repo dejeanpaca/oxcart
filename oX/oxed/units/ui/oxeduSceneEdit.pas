@@ -64,9 +64,9 @@ TYPE
 
       Material: oxTMaterial;
 
-      procedure Initialize; override;
-      procedure DeInitialize; override;
-      procedure SceneRenderEnd; override;
+      procedure Initialize(); override;
+      procedure DeInitialize(); override;
+      procedure SceneRenderEnd(); override;
 
       procedure UpdateAxisBBoxes();
       procedure RenderSelectAxes();
@@ -132,7 +132,7 @@ begin
    if(editorData <> nil) and (editorData.ComponentRenderers.n > 0) then begin
       editRender.Entity := params.Entity;
       editRender.Camera := params.Camera;
-      editRender.Projection := Window.Projection;
+      editRender.Projection := params.Projection;
       editRender.Scene := Scene;
       editRender.Window := Window;
 
@@ -145,7 +145,7 @@ end;
 
 procedure oxedTSceneEditRenderer.CameraEnd(var params: oxTSceneRenderParameters);
 begin
-   params.Camera.Transform.Apply();
+   params.Camera^.Transform.Apply();
 
    { render a base grid }
 
@@ -176,7 +176,7 @@ begin
    m.Mesh.CullFace := oxCULL_FACE_NONE;
 end;
 
-procedure oxedTSceneEditWindow.Initialize;
+procedure oxedTSceneEditWindow.Initialize();
 begin
    inherited;
 
@@ -198,7 +198,7 @@ begin
    oxedTSceneEditRenderer(SceneRenderer).Window := Self;
 end;
 
-procedure oxedTSceneEditWindow.DeInitialize;
+procedure oxedTSceneEditWindow.DeInitialize();
 begin
    inherited;
 
@@ -206,7 +206,7 @@ begin
    oxResource.Free(Material);
 end;
 
-procedure oxedTSceneEditWindow.SceneRenderEnd;
+procedure oxedTSceneEditWindow.SceneRenderEnd();
 var
    componentRenderParams: oxedTEditRenderParameters;
 
@@ -220,8 +220,8 @@ begin
       oxedEditRenderers.InitParams(componentRenderParams);
 
       componentRenderParams.Window := Self;
-      componentRenderParams.Camera := Camera;
-      componentRenderParams.Projection := Projection;
+      componentRenderParams.Camera := @Camera;
+      componentRenderParams.Projection := @Projection;
       componentRenderParams.Scene := Scene;
       componentRenderParams.Entity := oxedScene.SelectedEntity;
 
