@@ -18,8 +18,7 @@ INTERFACE
 CONST
    oxDataPath = 'data' + DirectorySeparator;
    oxTexturesDefaultPath   = oxDataPath + 'textures' + DirectorySeparator;
-   oxUITexturesDefaultPath = oxDataPath + 'textures' + DirectorySeparator +
-      'ui' + DirectorySeparator;
+   oxUIPath = oxDataPath +'ui' + DirectorySeparator;
    oxFontsDefaultPath      = oxDataPath + 'fonts' + DirectorySeparator;
    oxShadersDefaultPath    = oxDataPath + 'shaders' + DirectorySeparator;
 
@@ -45,7 +44,7 @@ TYPE
    oxTPaths = record
       Data,
       Textures,
-      UITextures,
+      UI,
       Fonts,
       Shaders: string;
    end;
@@ -122,7 +121,7 @@ VAR
 INITIALIZATION
    oxPaths.Data         := oxDataPath;
    oxPaths.Textures     := oxTexturesDefaultPath;
-   oxPaths.UITextures   := oxUITexturesDefaultPath;
+   oxPaths.UI           := oxUIPath;
    oxPaths.Fonts        := oxFontsDefaultPath;
    oxPaths.Shaders      := oxShadersDefaultPath;
 
