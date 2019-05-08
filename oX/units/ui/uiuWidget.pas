@@ -13,9 +13,9 @@ INTERFACE
    USES
       uStd, uColors,
       {oX}
-      oxuTypes, oxuRunRoutines,
+      oxuTypes, oxuRunRoutines, oxuFont,
       {ui}
-      uiuControl, uiuControls, uiuTypes, oxuFont, uiuWindowTypes;
+      uiuControl, uiuControls, uiuTypes, uiuWindowTypes, uiuSkinTypes;
 
 CONST
    {widget position properties}
@@ -491,9 +491,9 @@ end;
 function uiTWidget.GetColorset(): uiPSkinColorSet;
 begin
    if(wdgpENABLED in Properties) then
-      Result := @uiTWindow(wnd).Skin.Colors
+      Result := @uiTSkin(uiTWindow(wnd).Skin).Colors
    else
-      Result := @uiTWindow(wnd).Skin.DisabledColors;
+      Result := @uiTSkin(uiTWindow(wnd).Skin).DisabledColors;
 end;
 
 function uiTWidget.SetID(const wdgID: uiTControlID): uiTWidget;
@@ -532,7 +532,7 @@ end;
 
 function uiTWidget.GetSurfaceColor: TColor4ub;
 begin
-   Result := uiTWindow(wnd).Skin.Colors.Surface;
+   Result := uiTSkin(uiTWindow(wnd).Skin).Colors.Surface;
 end;
 
 function uiTWidget.GetRightEdge(): loopint;

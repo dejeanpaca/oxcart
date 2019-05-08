@@ -164,7 +164,7 @@ end;
 
 procedure oxTWindow.RaiseError(code: longint; const description: string);
 begin
-   errorCode        := code;
+   errorCode := code;
 
    ErrorDescription.Add(description);
    log.e(description);

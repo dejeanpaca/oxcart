@@ -17,7 +17,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont,
       {ui}
-      uiuTypes, uiuWindowTypes, uiuWidget, uiWidgets, uiuDraw, uiuWindow,
+      uiuTypes, uiuWindowTypes, uiuSkinTypes,
+      uiuWidget, uiWidgets, uiuDraw, uiuWindow,
       wdguList;
 
 CONST
@@ -255,14 +256,14 @@ begin
    if(HighlightHovered) then begin
       if(Transparent) then begin
          if(index <> HighlightedItem) then
-            SetColorBlended(uiTWindow(wnd).Skin.Colors.Text)
+            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.Text)
          else
-            SetColorBlended(uiTWindow(wnd).Skin.Colors.TextInHighlight);
+            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight);
       end else begin
          if(index <> HighlightedItem) then
-            SetColorBlended(uiTWindow(wnd).Skin.Colors.InputText)
+            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.InputText)
          else
-            SetColorBlended(uiTWindow(wnd).Skin.Colors.TextInHighlight)
+            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight)
       end;
    end;
 end;
@@ -372,12 +373,12 @@ begin
 
    if(ShowHeader) then begin
       {render title}
-      SetColor(uiTWindow(wnd).Skin.Colors.LightSurface);
+      SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.LightSurface);
       uiDraw.Box(RPosition.x + Border, RPosition.y - Border,
          RPosition.x + Dimensions.w - 1 - Border, RPosition.y - ColumnTitleHeight - Border + 1);
 
       {render title separator}
-      SetColor(uiTWindow(wnd).Skin.Colors.Border);
+      SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Border);
       uiDraw.Box(RPosition.x + Border, RPosition.y - ColumnTitleHeight - Border,
          RPosition.x + Dimensions.w - 1 - Border, RPosition.y - Border - HeaderHeight + 1);
 

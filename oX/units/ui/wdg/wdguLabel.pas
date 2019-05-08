@@ -15,7 +15,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont,
       {ui}
-      uiuWindowTypes, uiuWidget, uiWidgets, uiuWindow, uiuDraw;
+      uiuWindowTypes, uiuSkinTypes,
+      uiuWidget, uiWidgets, uiuWindow, uiuDraw;
 
 TYPE
 
@@ -75,7 +76,7 @@ procedure wdgTLabel.Initialize();
 begin
    inherited Initialize();
 
-   Color := uiTWindow(wnd).Skin.Colors.Text;
+   Color := uiTSkin(uiTWindow(wnd).Skin).Colors.Text;
 end;
 
 procedure wdgTLabel.Render(clr: TColor4ub);
@@ -154,7 +155,7 @@ end;
 procedure wdgTLabel.Render();
 begin
    if(not Transparent) then begin
-      SetColor(uiTWindow(wnd).Skin.Colors.Surface);
+      SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Surface);
       uiDraw.Box(RPosition, Dimensions);
    end;
 

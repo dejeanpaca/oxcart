@@ -16,7 +16,8 @@ INTERFACE
    {oX}
    oxuTypes, oxuFont, oxuRender,
    {ui}
-   uiuDraw, uiuWindowTypes, uiuWidget, uiWidgets, uiuWidgetRender;
+   uiuDraw, uiuWindowTypes, uiuSkinTypes,
+   uiuWidget, uiWidgets, uiuWidgetRender;
 
 CONST
    wdgcCHECKBOX_TOGGLE                          = $0001;
@@ -121,9 +122,9 @@ begin
          f.Start();
 
          if(wdgpENABLED in Properties) then
-            SetColorBlended(pwnd.Skin.Colors.Text)
+            SetColorBlended(uiTSkin(pwnd.Skin).Colors.Text)
          else
-            SetColorBlended(pwnd.Skin.Colors.InactiveText);
+            SetColorBlended(uiTSkin(pwnd.Skin).Colors.InactiveText);
 
          f.WriteCentered(Caption, r, [oxfpCenterLeft, oxfpCenterVertical]);
          oxf.Stop();
@@ -155,11 +156,11 @@ begin
 
    if(enabled) then begin
       if(not selected) then
-         uiRenderWidget.Box(x1, y2, x2, y1, pwnd.Skin.Colors.InputSurface, pwnd.Skin.Colors.Border, props, pwnd.Opacity)
+         uiRenderWidget.Box(x1, y2, x2, y1, uiTSkin(pwnd.Skin).Colors.InputSurface, uiTSkin(pwnd.Skin).Colors.Border, props, pwnd.Opacity)
       else
-         uiRenderWidget.Box(x1, y2, x2, y1, pwnd.Skin.Colors.InputSurface, pwnd.Skin.Colors.SelectedBorder, props, pwnd.Opacity);
+         uiRenderWidget.Box(x1, y2, x2, y1, uiTSkin(pwnd.Skin).Colors.InputSurface, uiTSkin(pwnd.Skin).Colors.SelectedBorder, props, pwnd.Opacity);
    end else
-      uiRenderWidget.Box(x1, y2, x2, y1, pwnd.Skin.Colors.InputSurface, pwnd.Skin.DisabledColors.Border, props, pwnd.Opacity)
+      uiRenderWidget.Box(x1, y2, x2, y1, uiTSkin(pwnd.Skin).Colors.InputSurface, uiTSkin(pwnd.Skin).DisabledColors.Border, props, pwnd.Opacity)
 end;
 
 begin
@@ -178,9 +179,9 @@ begin
    {render check if the checkbox is marked}
    if(checked) then begin
       if(enabled) then
-         source.SetColor(pwnd.Skin.Colors.InputText)
+         source.SetColor(uiTSkin(pwnd.Skin).Colors.InputText)
       else
-         source.SetColor(pwnd.Skin.DisabledColors.InputText);
+         source.SetColor(uiTSkin(pwnd.Skin).DisabledColors.InputText);
 
       oxRender.LineWidth(wdgCheckbox.LineWidth);
       {draw a checkmark}

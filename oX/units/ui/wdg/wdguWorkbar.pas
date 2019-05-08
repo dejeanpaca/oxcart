@@ -15,7 +15,8 @@ INTERFACE
       {oX}
       oxuTypes,
       {ui}
-      uiuWindowTypes, uiuWidget, uiWidgets, uiuDraw, uiuWindow, uiuControl;
+      uiuWindowTypes, uiuSkinTypes,
+      uiuWidget, uiWidgets, uiuDraw, uiuWindow, uiuControl;
 
 CONST
    wdgWORKBAR_HEIGHT = 20;
@@ -124,7 +125,7 @@ procedure wdgTWorkbar.Initialize;
 begin
    inherited Initialize;
 
-   Color := uiTWindow(wnd).Skin.Colors.Surface;
+   Color := uiTSkin(uiTWindow(wnd).Skin).Colors.Surface;
 end;
 
 procedure wdgTWorkbar.Render;

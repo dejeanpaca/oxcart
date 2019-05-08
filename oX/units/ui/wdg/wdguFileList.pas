@@ -19,7 +19,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont, oxuFileIcons, oxuRender, oxuTexture, oxuRenderUtilities,
       {ui}
-      uiuTypes, uiuWindowTypes, uiuFiles,
+      uiuTypes, uiuWindowTypes, uiuSkinTypes, uiuFiles,
       uiuWidget, uiWidgets, wdguGrid, wdguList, wdguHierarchyList;
 
 
@@ -622,7 +622,8 @@ begin
          end;
       end;
 
-      SetColorBlendedEnabled(uiTWindow(wnd).Skin.Colors.Text, uiTWindow(wnd).Skin.DisabledColors.Text);
+      SetColorBlendedEnabled(uiTSkin(uiTWindow(wnd).Skin).Colors.Text,
+         uiTSkin(uiTWindow(wnd).Skin).DisabledColors.Text);
 
       f.WriteInRect(GetValue(index, columnIndex), br, [oxfpBreak, oxfpMultiline, oxfpCenterHorizontal]);
    end;

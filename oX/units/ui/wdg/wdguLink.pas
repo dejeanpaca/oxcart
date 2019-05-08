@@ -16,7 +16,8 @@ INTERFACE
       {oX}
       oxuTypes,
       {ui}
-      uiuTypes, uiuWidget, uiWidgets, wdguLabel;
+      uiuTypes, uiuSkinTypes,
+      uiuWidget, uiWidgets, wdguLabel;
 
 CONST
   wdgscLINK_TEXT      = 0;

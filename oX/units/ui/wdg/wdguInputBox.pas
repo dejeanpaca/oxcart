@@ -17,7 +17,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont, oxuPlatform,
       {ui}
-      uiuDraw, uiuWidget, uiuWindowTypes, uiWidgets, uiuWidgetRender, uiuTypes;
+      uiuDraw, uiuWidget, uiuWindowTypes, uiuSkinTypes,
+      uiWidgets, uiuWidgetRender, uiuTypes;
 
 CONST
    {text should not be set as the Original text}

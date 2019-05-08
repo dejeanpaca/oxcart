@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       oxuRunRoutines, oxuTypes, oxuUI, oxuWindows, oxuWindow,
       {ui}
-      uiuTypes, oxuFont, uiuWindowTypes, uiuWidget, uiuControl, uiuSkin, uiuDraw;
+      uiuTypes, oxuFont, uiuWindowTypes, uiuWidget, uiuControl, uiuSkin, uiuSkinTypes, uiuDraw;
 
 CONST
    wdgevDISPOSE = 1;
@@ -69,6 +69,8 @@ TYPE
 
       {gets a skin associated with the widget, if none available returns default}
       function GetSkin(): uiPWidgetSkin;
+      {gets a skin associated with the widget, if none available returns default}
+      function GetSkinObject(): uiTSkin;
       {gets a color with the specified index from the skin}
       function GetColor(clrIdx: longint): TColor4ub;
       {set a color with the specified index}
@@ -1237,22 +1239,30 @@ end;
 
 function uiTWidgetHelper.GetSkin(): uiPWidgetSkin;
 var
-   cID: longint;
+   pSkin: uiTSkin;
 
 begin
+   Result := nil;
+
    if(skin <> nil) then
       Result := Skin
    else begin
-      cID := wdgClass^.cID;
+      pSkin :=  GetSkinObject();
 
-      Result := nil;
-
-      if(uiTWindow(wnd).Skin <> nil) then
-         Result := uiTWindow(wnd).Skin.Get(cID);
-
-      if(Result = nil) then
-         Result := @oxui.DefaultSkin.wdgSkins[cID]
+      if(pSkin <> nil) then
+         Result := pSkin.Get(wdgClass^.cID);
    end;
+end;
+
+function uiTWidgetHelper.GetSkinObject(): uiTSkin;
+begin
+   Result := nil;
+
+   if(uiTWindow(wnd).Skin <> nil) then
+      Result := uiTSkin(uiTWindow(wnd).Skin);
+
+   if(Result = nil) then
+      Result := oxui.DefaultSkin;
 end;
 
 function uiTWidgetHelper.GetColor(clrIdx: longint): TColor4ub;

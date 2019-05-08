@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont, oxuUI,
       {ui}
-      uiuWindowTypes, uiuWindow, uiuWidget, uiWidgets,
+      uiuWindowTypes, uiuWindow, uiuWidget, uiWidgets, uiuSkinTypes,
       uiuWidgetRender;
 
 CONST
@@ -74,8 +74,8 @@ begin
       if(p.y - d.h < 0) then
          p.y := d.h - 1 + HINT_SEPARATION;
 
-      cSurface := uiTWindow(oxw).Skin.Colors.Surface;
-      uiRenderWidget.Box(p, d, cSurface, uiTWindow(oxw).Skin.Colors.Highlight, wdgRENDER_BLOCK_ALL, 0.75);
+      cSurface := uiTSkin(uiTWindow(oxw).Skin).Colors.Surface;
+      uiRenderWidget.Box(p, d, cSurface, uiTSkin(uiTWindow(oxw).Skin).Colors.Highlight, wdgRENDER_BLOCK_ALL, 0.75);
 
       r.Assign(p, d);
 
@@ -85,7 +85,7 @@ begin
       dec(r.h, uiHints.Padding);
 
       f.Start();
-         oxw.SetColorBlended(uiTWindow(oxw).Skin.Colors.Text);
+         oxw.SetColorBlended(uiTSkin(uiTWindow(oxw).Skin).Colors.Text);
          f.WriteInRect(ms.hint, r, false, true);
       oxf.Stop();
    end;

@@ -117,7 +117,7 @@ TYPE
       MaximumSize: oxTDimensions;
 
       {skin}
-      Skin: uiTSkin;
+      Skin: TObject;
 
       {properties}
       Background: uiTWindowBackground;

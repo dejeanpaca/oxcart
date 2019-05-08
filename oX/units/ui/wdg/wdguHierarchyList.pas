@@ -17,7 +17,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont, oxuTexture, oxuRender, oxuRenderUtilities,
       {ui}
-      oxuUI, uiuTypes, uiuWindowTypes, uiuWidget, uiWidgets, uiuWindow, uiuDraw,
+      oxuUI, uiuTypes, uiuWindowTypes, uiuSkinTypes,
+      uiuWidget, uiWidgets, uiuWindow, uiuDraw,
       wdguList;
 
 CONST
@@ -205,7 +206,8 @@ begin
       inc(r.x, (height * 2) + (padding * 2));
    end;
 
-   SetColorBlendedEnabled(uiTWindow(wnd).Skin.Colors.Text, uiTWindow(wnd).Skin.DisabledColors.Text);
+   SetColorBlendedEnabled(uiTSkin(uiTWindow(wnd).Skin).Colors.Text,
+      uiTSkin(uiTWindow(wnd).Skin).DisabledColors.Text);
 
    f.WriteCentered(s, r, [oxfpCenterVertical]);
 end;

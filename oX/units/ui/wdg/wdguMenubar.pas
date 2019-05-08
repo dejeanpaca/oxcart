@@ -17,7 +17,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont,
       {ui}
-      uiuWindowTypes, uiuWindow, uiuWidget, uiWidgets, uiuControl, uiuDraw, uiuTypes,
+      uiuWindowTypes, uiuTypes, uiuSkinTypes,
+      uiuWindow, uiuWidget, uiWidgets, uiuControl, uiuDraw,
       {}
       uiuContextMenu, wdguWorkbar;
 
@@ -237,7 +238,7 @@ begin
          (uiTContextMenu(current^.Sub).Items.n > 0) then
             SetColorBlended(colors^.Text)
          else
-            SetColorBlended(uiTWindow(wnd).Skin.DisabledColors.Text);
+            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).DisabledColors.Text);
 
          f.Write(r.x, r.y - r.h + 1 + PaddingBottom, current^.Caption);
 
