@@ -978,7 +978,7 @@ begin
             writeln(timeString + s);
 
          if(priority <> logcINFO) then
-            console.ResetColor();
+            console.ResetDefault();
       end else
          writeln();
    end;
