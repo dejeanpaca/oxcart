@@ -62,7 +62,7 @@ TYPE
       {$IFDEF WINDOWS}
       hwnd: HWND;
       {are we running in a bash environment under windows}
-      inBash: boolean;
+      ansiSupported: boolean;
       {$ENDIF}
 
       {method prefixed with an n do not write a prefix string}
@@ -273,7 +273,7 @@ begin
       {$ENDIF}
 
       {$IFDEF WINDOWS}
-      if(not inBash) then
+      if(not ansiSupported) then
          SetWindowsColor()
       else
          SetUnixColor();
@@ -290,7 +290,7 @@ begin
       SetUnixColor();
       {$ENDIF}
       {$IFDEF WINDOWS}
-      if(not inBash) then
+      if(not ansiSupported) then
          SetWindowsColor()
       else
          SetUnixColor();
@@ -303,6 +303,11 @@ begin
    {$IFDEF UNIX}
    Write(#27'[1m');
    {$ENDIF}
+
+   {$IFDEF WINDOWS}
+   if(ansiSupported) then
+      write(#27'[1m');
+   {$ENDIF}
 end;
 
 procedure TConsoleGlobal.Italic();
@@ -310,12 +315,22 @@ begin
    {$IFDEF UNIX}
    Write(#27'[3m');
    {$ENDIF}
+
+   {$IFDEF WINDOWS}
+   if(ansiSupported) then
+      write(#27'[3m');
+   {$ENDIF}
 end;
 
 procedure TConsoleGlobal.Underline();
 begin
    {$IFDEF UNIX}
    Write(#27'[4m');
+   {$ENDIF}
+
+   {$IFDEF WINDOWS}
+   if(ansiSupported) then
+      write(#27'[4m');
    {$ENDIF}
 end;
 
@@ -369,7 +384,7 @@ begin
    {$ENDIF}
 
    {$IFDEF WINDOWS}
-   if(inBash) then
+   if(ansiSupported) then
       write(#27'[2J');
    {$ENDIF}
 end;
@@ -383,7 +398,7 @@ var
 
 begin
    if(pos('bash', sysutils.GetEnvironmentVariable('SHELL')) > 0) then begin
-      console.inBash := true;
+      console.ansiSupported := true;
       exit;
    end;
 
@@ -451,6 +466,7 @@ INITIALIZATION
 
    if(console.InitialTextColor <> console.Transparent) then
       console.Colors.Default := console.InitialTextColor;
+
    if(console.InitialBackgroundColor <> console.Transparent) then
       console.Colors.DefaultBackground := console.InitialBackgroundColor;
 
