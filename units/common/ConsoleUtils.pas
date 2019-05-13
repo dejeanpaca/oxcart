@@ -84,7 +84,6 @@ TYPE
       procedure Bold();
       procedure Italic();
       procedure Underline();
-      procedure ResetColor();
       procedure ResetDefault();
 
       {$IFDEF TTY_SUPPORTED}
@@ -320,21 +319,18 @@ begin
    {$ENDIF}
 end;
 
-procedure TConsoleGlobal.ResetColor();
+procedure TConsoleGlobal.ResetDefault();
 begin
    LastTextColor := console.Colors.Default;
    LastBackgroundColor := console.Colors.DefaultBackground;
 
-   TextColor(console.Colors.Default);
-   BackgroundColor(console.Colors.DefaultBackground);
-end;
-
-procedure TConsoleGlobal.ResetDefault();
-begin
    {$IFDEF UNIX}
    Write(#27'[0m');
    {$ENDIF}
    {$IFDEF WINDOWS}
+   TextColor(console.Colors.Default);
+   BackgroundColor(console.Colors.DefaultBackground);
+
    // TODO: Use SetConsoleTextAttribute with the original attributes
    {$ENDIF}
 end;
@@ -458,7 +454,7 @@ INITIALIZATION
    if(console.InitialBackgroundColor <> console.Transparent) then
       console.Colors.DefaultBackground := console.InitialBackgroundColor;
 
-   console.ResetColor();
+   console.ResetDefault();
 
 FINALIZATION
    if(console.InitialTextColor <> console.Transparent) then
