@@ -718,15 +718,15 @@ begin
 
    {prepare skin for input widget}
    uiSkin.SetupWidget(oxui.DefaultSkin, consoleInputSkin, wdgInputSkinDescriptor);
-   consoleInputSkin.setColor(wdgscINPUT_TEXT, oxConsole.Colors.InputText);
-   consoleInputSkin.setColor(wdgscINPUT_CURSOR, oxConsole.Colors.InputCursor);
+   consoleInputSkin.SetColor(wdgscINPUT_TEXT, oxConsole.Colors.InputText);
+   consoleInputSkin.SetColor(wdgscINPUT_CURSOR, oxConsole.Colors.InputCursor);
 
-   dvarf.ReadText(dvgConsoleHistory, appPath.configuration.path + 'console.history');
+   dvarf.ReadText(dvgConsoleHistory, appPath.Configuration.path + 'console.history');
 end;
 
 procedure DeInitialize();
 begin
-   dvarf.WriteText(dvgConsoleHistory, appPath.configuration.path + 'console.history');
+   dvarf.WriteText(dvgConsoleHistory, appPath.Configuration.path + 'console.history');
 
    oxConsole.Console.DeInitialize();
    oxConsole.wdgInput := nil;
