@@ -35,6 +35,8 @@ TYPE
 
       {return a path at which location an asset can be found}
       function Find(const asset: string): string;
+      {return a path at which location of an asset directory can be found}
+      function FindDirectory(const asset: string): string;
       {add an asset path}
       procedure Add(const assetPath: string);
    end;
@@ -73,7 +75,26 @@ begin
          exit(fn);
    end;
 
-   result := asset;
+   Result := asset;
+end;
+
+function oxTAssetPathsGlobal.FindDirectory(const asset: string): string;
+var
+   i: loopint;
+   path: string;
+
+begin
+   if(FileUtils.DirectoryExists(WorkingDirectory + asset)) then
+      exit(WorkingDirectory + asset);
+
+   for i := 0 to (List.n - 1) do begin
+      path := List.List[i] + asset;
+
+      if(DirectoryExists(path)) then
+         exit(path);
+   end;
+
+   Result := asset;
 end;
 
 procedure oxTAssetPathsGlobal.Add(const assetPath: string);
