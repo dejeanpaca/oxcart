@@ -88,6 +88,7 @@ INTERFACE
       uiuDockableWindowContextMenu,
       uiuDefaultFont,
       uiuWindowContextMenu,
+      uiuSkinLoader,
       {$ENDIF}
 
       {others}
