@@ -167,7 +167,7 @@ CONST
 
 procedure initialize();
 begin
-   oxScreenshot.Path := appPath.configuration.path + 'screenshots';
+   oxScreenshot.Path := appPath.Configuration.Path + 'screenshots';
    {create a screenshot directory}
    CreateDir(oxScreenshot.Path);
 

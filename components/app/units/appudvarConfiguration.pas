@@ -42,7 +42,7 @@ IMPLEMENTATION
 function appTDVarTextConfiguration.GetFN(): string;
 begin
    if(Path = '') then
-      result := appPath.configuration.path + Filename
+      result := appPath.Configuration.Path + Filename
    else
       result := Path + Filename;
 end;
