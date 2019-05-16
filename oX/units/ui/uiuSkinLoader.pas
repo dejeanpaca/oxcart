@@ -11,9 +11,9 @@ UNIT uiuSkinLoader;
 INTERFACE
 
    USES
-      uLog,
+      uLog, StringUtils, uFile, uFileUtils,
       {ox}
-      oxuPaths,
+      oxuPaths, oxuTexture, oxuTextureGenerate,
       {ui}
       uiuSkin, uiuSkinTypes;
 
@@ -22,6 +22,7 @@ TYPE
 
    uiTSkinLoader = record
       class procedure Load(skin: uiTSkin); static;
+      class procedure LoadTexture(const fn: string; out tex: oxTTexture); static;
    end;
 
 IMPLEMENTATION
@@ -29,10 +30,31 @@ IMPLEMENTATION
 { uiTSkinLoader }
 
 class procedure uiTSkinLoader.Load(skin: uiTSkin);
+var
+  windowPath: string;
+
 begin
-   skin.ResourcePath := oxAssetPaths.FindDirectory(oxPaths.UI + skin.Name);
+   skin.ResourcePath := IncludeTrailingPathDelimiterNonEmpty(oxAssetPaths.FindDirectory(oxPaths.UI + skin.Name));
 
    log.v('Skin(' + skin.Name + ') resource path set to: ' + skin.ResourcePath);
+
+   windowPath := skin.ResourcePath + 'window' + DirectorySeparator;
+
+   LoadTexture(windowPath + 'background.png', skin.Window.Textures.Background);
+end;
+
+class procedure uiTSkinLoader.LoadTexture(const fn: string; out tex: oxTTexture);
+begin
+   tex := nil;
+   if(FileUtils.Exists(fn) > 0) then begin
+      oxTextureGenerate.Generate(fn, tex);
+
+      if(tex <> nil) then begin
+         log.d('Loaded: ' + fn);
+         tex.MarkPermanent();
+      end;
+   end else
+      log.d('Not found: ' + fn);
 end;
 
 INITIALIZATION
