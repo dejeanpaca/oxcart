@@ -245,6 +245,7 @@ TYPE
       oxBLEND_NONE,
       oxBLEND_ALPHA,
       oxBLEND_ADD,
+      oxBLEND_SUBTRACT,
       oxBLEND_FILTER
    );
 
@@ -256,6 +257,8 @@ TYPE
    );
 
 CONST
+   oxBLEND_MAX = oxBLEND_FILTER;
+
    oxrBUFFER_CLEAR_COLOR               = $1;
    oxrBUFFER_CLEAR_DEPTH               = $2;
    oxrBUFFER_CLEAR_STENCIL             = $4;
