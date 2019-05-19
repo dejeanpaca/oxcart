@@ -192,7 +192,7 @@ CONST
    oglRequiredSettings: oglTSettings = (
       Version: (
          Major:         {$IFNDEF GLES}1{$ELSE}1{$ENDIF};
-         Minor:         {$IFNDEF GLES}1{$ELSE}1{$ENDIF};
+         Minor:         {$IFNDEF GLES}2{$ELSE}1{$ENDIF};
          Revision:      0; {revision is not checked as requirement}
          Profile:       oglPROFILE_COMPATIBILITY;
       );
@@ -201,7 +201,7 @@ CONST
    oglContextSettings: oglTSettings = (
       Version: (
          Major:         1;
-         Minor:         1;
+         Minor:         2;
          Revision:      0;
          Profile:       oglPROFILE_COMPATIBILITY;
       );
