@@ -218,8 +218,8 @@ INITIALIZATION
    TProcedures.Initialize(oxedProjectScanner.OnDone);
    oxedTProjectScannerFileProcedures.Initialize(oxedProjectScanner.OnFile);
 
-   oxedProjectManagement.OnProjectOpen.Add(@projectOpen);
-   oxedProjectManagement.OnProjectClosed.Add(@projectClosed);
+   oxedProjectManagement.OnOpen.Add(@projectOpen);
+   oxedProjectManagement.OnClosed.Add(@projectClosed);
 
    oxedActions.RESCAN := appActionEvents.SetCallback(@oxedProjectScanner.RunTask);
 

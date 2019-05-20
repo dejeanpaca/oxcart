@@ -26,15 +26,15 @@ TYPE
       Current: oxedTProject;
 
       {called when a new project is created}
-      OnNewProject,
+      OnNew,
       {called when the project is open}
-      OnProjectOpen,
+      OnOpen,
       {called when the project is closed}
-      OnProjectClosed,
+      OnClosed,
       {called when the project is saved}
-      OnProjectSaved,
+      OnSaved,
       {called when a project is overwritten (after save)}
-      OnProjectOverwritten: TProcedures;
+      OnOverwritten: TProcedures;
 
       {destroy current project}
       procedure Destroy();
@@ -58,7 +58,7 @@ begin
    if(oxedProject <> nil) then begin
       FreeObject(oxedProject);
 
-      OnProjectClosed.Call();
+      OnClosed.Call();
       SetCurrentDir(appPath.GetExecutablePath());
 
       log.i('project > Destroyed current project');
@@ -72,7 +72,7 @@ begin
    oxedProject := oxedTProject.Create();
    oxedProjectManagement.Current := oxedProject;
 
-   oxedProjectManagement.OnNewProject.Call();
+   oxedProjectManagement.OnNew.Call();
 
    if(ox.Started) then
       oxedMessages.i('project > New');
@@ -94,7 +94,7 @@ begin
 
    oxedProjectSettings.Save();
    oxedProjectSession.Save();
-   oxedProjectManagement.OnProjectSaved.Call();
+   oxedProjectManagement.OnSaved.Call();
 
    oxedProject.MarkModified(false);
 
@@ -132,7 +132,7 @@ begin
          oxedProjectSession.Load();
          oxedProject.RecreateTempDirectory();
 
-         OnProjectOpen.Call();
+         OnOpen.Call();
          oxedMessages.i('project > Loaded: ' + oxedProject.Name + ' (' + oxedProject.Identifier + ')');
 
          if(oxedSettings.BuildOnProjectOpen) then
@@ -148,10 +148,10 @@ begin
 end;
 
 INITIALIZATION
-   TProcedures.Initialize(oxedProjectManagement.OnNewProject);
-   TProcedures.Initialize(oxedProjectManagement.OnProjectOpen);
-   TProcedures.Initialize(oxedProjectManagement.OnProjectSaved);
-   TProcedures.Initialize(oxedProjectManagement.OnProjectClosed);
-   TProcedures.Initialize(oxedProjectManagement.OnProjectOverwritten);
+   TProcedures.Initialize(oxedProjectManagement.OnNew);
+   TProcedures.Initialize(oxedProjectManagement.OnOpen);
+   TProcedures.Initialize(oxedProjectManagement.OnSaved);
+   TProcedures.Initialize(oxedProjectManagement.OnClosed);
+   TProcedures.Initialize(oxedProjectManagement.OnOverwritten);
 
 END.

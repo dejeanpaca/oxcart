@@ -98,9 +98,9 @@ end;
 INITIALIZATION
    oxedMenubar.OnInit.Add(@initialize);
 
-   oxedProjectManagement.OnProjectOpen.Add(@OnProjectChange);
-   oxedProjectManagement.OnProjectClosed.Add(@OnProjectChange);
-   oxedProjectManagement.OnProjectSaved.Add(@OnProjectChange);
+   oxedProjectManagement.OnOpen.Add(@OnProjectChange);
+   oxedProjectManagement.OnClosed.Add(@OnProjectChange);
+   oxedProjectManagement.OnSaved.Add(@OnProjectChange);
 
    oxedProjectRunner.OnStart.Add(@OnProjectStart);
    oxedProjectRunner.OnStop.Add(@OnProjectStop);

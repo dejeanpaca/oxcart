@@ -122,9 +122,9 @@ INITIALIZATION
 
    dvarf.OnSave.Add(@dvgRecents, @dvSaveHandler);
 
-   oxedProjectManagement.OnProjectOpen.Add(@OnProjectOpen);
-   oxedProjectManagement.OnProjectSaved.Add(@OnProjectOpen);
-   oxedProjectManagement.OnProjectClosed.Add(@OnProjectClosed);
-   oxedProjectManagement.OnNewProject.Add(@OnProjectClosed);
+   oxedProjectManagement.OnOpen.Add(@OnProjectOpen);
+   oxedProjectManagement.OnSaved.Add(@OnProjectOpen);
+   oxedProjectManagement.OnClosed.Add(@OnProjectClosed);
+   oxedProjectManagement.OnNew.Add(@OnProjectClosed);
 
 END.

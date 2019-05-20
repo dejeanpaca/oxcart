@@ -94,7 +94,7 @@ begin
    oxedProjectManagement.Save();
 
    if(overwrite) then
-      oxedProjectManagement.OnProjectOverwritten.Call();
+      oxedProjectManagement.OnOverwritten.Call();
 end;
 
 procedure saveSceneTo(const path: string);

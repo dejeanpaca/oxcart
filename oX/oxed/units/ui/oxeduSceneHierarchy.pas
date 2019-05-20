@@ -426,9 +426,9 @@ INITIALIZATION
 
    oxedSceneManagement.OnNewScene.Add(@OnProjectChange);
 
-   oxedProjectManagement.OnProjectOpen.Add(@OnProjectChange);
-   oxedProjectManagement.OnNewProject.Add(@OnProjectChange);
-   oxedProjectManagement.OnProjectClosed.Add(@OnProjectChange);
+   oxedProjectManagement.OnOpen.Add(@OnProjectChange);
+   oxedProjectManagement.OnNew.Add(@OnProjectChange);
+   oxedProjectManagement.OnClosed.Add(@OnProjectChange);
 
    oxedProjectRunner.OnStart.Add(@OnStart);
    oxedProjectRunner.OnStop.Add(@OnStop);

@@ -368,9 +368,9 @@ INITIALIZATION
    oxed.Init.Add(oxedInitRoutines, 'scene.projectbrowser', @init, @deinit);
    oxedMenubar.OnInit.Add(@initMenubar);
 
-   oxedProjectManagement.OnProjectOpen.Add(@projectOpen);
-   oxedProjectManagement.OnNewProject.Add(@projectClose);
-   oxedProjectManagement.OnProjectClosed.Add(@projectClose);
-   oxedProjectManagement.OnProjectSaved.Add(@projectOpen);
+   oxedProjectManagement.OnOpen.Add(@projectOpen);
+   oxedProjectManagement.OnNew.Add(@projectClose);
+   oxedProjectManagement.OnClosed.Add(@projectClose);
+   oxedProjectManagement.OnSaved.Add(@projectOpen);
 
 END.

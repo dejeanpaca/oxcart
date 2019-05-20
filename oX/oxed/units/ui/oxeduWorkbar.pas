@@ -77,8 +77,8 @@ begin
 end;
 
 INITIALIZATION
-   oxedProjectManagement.OnNewProject.Add(@projectChange);
-   oxedProjectManagement.OnProjectClosed.Add(@projectChange);
-   oxedProjectManagement.OnProjectOpen.Add(@projectChange);
+   oxedProjectManagement.OnNew.Add(@projectChange);
+   oxedProjectManagement.OnClosed.Add(@projectChange);
+   oxedProjectManagement.OnOpen.Add(@projectChange);
 
 END.

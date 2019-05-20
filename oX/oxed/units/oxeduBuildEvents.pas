@@ -26,6 +26,6 @@ end;
 
 
 INITIALIZATION
-   oxedProjectManagement.OnProjectOverwritten.Add(@overwriteCleanup);
+   oxedProjectManagement.OnOverwritten.Add(@overwriteCleanup);
 
 END.
