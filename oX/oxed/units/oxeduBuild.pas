@@ -11,7 +11,7 @@ UNIT oxeduBuild;
 INTERFACE
 
    USES
-      sysutils, process, uStd, uLog, uBuild, uLPI, uFileUtils, StringUtils, uTiming, uFile, uFiles,
+      sysutils, uStd, uLog, uBuild, uLPI, uFileUtils, StringUtils, uTiming, uFile, uFiles,
       uApp, appuActionEvents,
       {ox}
       oxuRunRoutines, oxuThreadTask, oxuFeatures, oxuRenderer,
@@ -86,6 +86,8 @@ TYPE
       {tells whether the project is currently buildable}
       function Buildable(ignoreRunning: boolean = false): boolean;
 
+      {recreate project files}
+      class function Recreate(): boolean; static;
       {rebuild the entire project}
       class procedure Rebuild(); static;
       {build the part of project that changed}
@@ -111,8 +113,6 @@ TYPE
 
       {run a task of the specified type}
       procedure StartTask(taskType: oxedTBuildTaskType);
-      {open lazarus ide for this project}
-      class procedure OpenLazarus(); static;
       {open project directory}
       class procedure OpenProjectDirectory(); static;
    end;
@@ -573,7 +573,7 @@ begin
    Result := (FileUtils.Exists(oxedProject.TempPath + fn) <= 0) or (oxedBuild.BuildType = OXED_BUILD_TASK_REBUILD);
 end;
 
-function Recreate(): boolean;
+class function oxedTBuildGlobal.Recreate(): boolean;
 begin
    oxedProject.RecreateTempDirectory();
 
@@ -653,7 +653,7 @@ begin
 
    oxedMessages.i(modeString + ' started (' + targetString + ')');
 
-   if(not Recreate()) then begin
+   if(not oxedBuild.Recreate()) then begin
       oxedMessages.e('Failed to recreate project files');
       exit;
    end;
@@ -709,7 +709,7 @@ begin
 
    oxedMessages.i(modeString + ' started (' + targetString + ')');
 
-   if(not Recreate()) then begin
+   if(not oxedBuild.Recreate()) then begin
       oxedMessages.e('Failed to recreate project files');
       exit;
    end;
@@ -839,71 +839,6 @@ begin
    Task.Start();
 end;
 
-VAR
-   laz: TProcess;
-   openLazarusFlag: boolean = false;
-
-procedure runLazarus();
-begin
-   try
-      laz.Options := laz.Options - [poWaitOnExit];
-      laz.Execute();
-   except
-      on e : Exception  do begin
-         oxedMessages.e('Failed to run Lazarus ' + e.ToString());
-      end;
-   end;
-end;
-
-procedure openLazarusRecreate(recreateProject: boolean);
-begin
-   if(openLazarusFlag) then begin
-      openLazarusFlag := false;
-
-      if(recreateProject) then begin
-         if(not Recreate()) then
-            exit;
-      end;
-
-      runLazarus();
-   end;
-end;
-
-procedure openLazarusAfterRecreate();
-begin
-   openLazarusRecreate(true);
-end;
-
-class procedure oxedTBuildGlobal.OpenLazarus();
-begin
-   if(oxedProjectValid()) then begin
-      if(laz = nil) then begin
-         laz := TProcess.Create(nil);
-         laz.Executable := build.GetLazarusStartExecutable();
-      end;
-
-      if(not laz.Running) then begin
-         laz.Parameters.Clear();
-         laz.Parameters.Add('--no-splash-screen');
-         laz.Parameters.Add('--force-new-instance');
-         laz.Parameters.Add(oxedProject.TempPath + oxPROJECT_LIB_LPI);
-      end else begin
-         log.v('Lazarus already running');
-         exit;
-      end;
-
-      if(oxedProject.Running) then begin
-         runLazarus();
-         exit;
-      end;
-
-      {first recreate files}
-      RecreateTask();
-      openLazarusFlag := true;
-   end else
-      log.v('Cannot open lazarus. No valid project');
-end;
-
 class procedure oxedTBuildGlobal.OpenProjectDirectory();
 begin
    app.OpenFileManager(oxedProject.Path);
@@ -943,14 +878,12 @@ INITIALIZATION
    TProcedures.Initialize(oxedBuild.OnDone);
 
    oxedBuild.BuildTarget := OXED_BUILD_LIB;
-   oxedBuild.OnDone.Add(@openLazarusAfterRecreate);
 
    oxedActions.BUILD := appActionEvents.SetCallback(@oxedBuild.RebuildTask);
    oxedActions.RECODE := appActionEvents.SetCallback(@oxedBuild.RecodeTask);
    oxedActions.CLEANUP := appActionEvents.SetCallback(@oxedBuild.CleanupTask);
    oxedActions.REBUILD_THIRD_PARTY := appActionEvents.SetCallback(@oxedBuild.RebuildThirdPartyTask);
 
-   oxedActions.OPEN_LAZARUS := appActionEvents.SetCallback(@oxedBuild.OpenLazarus);
    oxedActions.OPEN_PROJECT_DIRECTORY := appActionEvents.SetCallback(@oxedBuild.OpenProjectDirectory);
 
    oxedProjectScanner.OnDone.Add(@onScanDone);
