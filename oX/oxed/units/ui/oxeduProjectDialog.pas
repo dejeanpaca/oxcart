@@ -82,6 +82,7 @@ begin
    dlgOpen.SetTitle('Open Project');
    dlgOpen.Callback := @openCallback;
    dlgOpen.OnPathChange := @openOnPathChange;
+   dlgSave.ShowDirectoriesOnly := true;
    dlgOpen.Open();
 end;
 
@@ -176,6 +177,7 @@ begin
          dlgSave := oxFileDialog.Save();
          dlgSave.Callback := @saveCallback;
          dlgSave.SetTitle('Save Project');
+         dlgSave.ShowDirectoriesOnly := true;
          dlgSave.ShowFilenameInput := false;
       end;
 
