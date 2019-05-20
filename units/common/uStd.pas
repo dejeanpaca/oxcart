@@ -116,6 +116,8 @@ TYPE
 
       {initialize}
       class procedure Initialize(out what: specialize TPreallocatedArrayList<T>; setIncrement: loopint = -1); static;
+      {initialize}
+      class procedure InitializeEmpty(out what: specialize TPreallocatedArrayList<T>); static;
       {initialize with proper values, without zeroing out the list (if it is contained within something that is zeroed out beforehand)}
       class procedure InitializeValues(out what: specialize TPreallocatedArrayList<T>; setIncrement: loopint = -1); static;
    end;
@@ -870,11 +872,19 @@ begin
    if(setIncrement = -1) then
       setIncrement := DefaultPreallocatedArrayAllocationIncrement;
 
-   assert(setIncrement <> 0, 'Invalid value provided for preallocated list increment');
+   assert(setIncrement > 0, 'Invalid value provided for preallocated list increment');
 
    ZeroPtr(@what, SizeOf(what));
 
    what.Increment := setIncrement;
+   what.InitializeMemory := true;
+end;
+
+class procedure TPreallocatedArrayList.InitializeEmpty(out what: specialize TPreallocatedArrayList<T>);
+begin
+   ZeroPtr(@what, SizeOf(what));
+
+   what.Increment :=  DefaultPreallocatedArrayAllocationIncrement;
    what.InitializeMemory := true;
 end;
 
@@ -883,7 +893,7 @@ begin
    if(setIncrement = -1) then
       setIncrement := DefaultPreallocatedArrayAllocationIncrement;
 
-   assert(setIncrement <> 0, 'Invalid value provided for preallocated list increment');
+   assert(setIncrement > 0, 'Invalid value provided for preallocated list increment');
 
    what.Increment := setIncrement;
    what.InitializeMemory := True;
@@ -1246,8 +1256,9 @@ var
 
 begin
    report := '';
+
    if (e <> nil) then begin
-      Report := Report + 'Exception ' + E.ClassName + ' ' + E.Message + LineEnding;
+      Report := Report + 'Exception ' + E.ClassName + ' ' + E.Message + ' (unit: ' + e.UnitName + ')' + LineEnding;
    end;
 
    Report := Report + BackTraceStrFunc(ExceptAddr);
