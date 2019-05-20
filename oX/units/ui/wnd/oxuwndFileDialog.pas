@@ -20,6 +20,7 @@ USES
    oxuTypes, oxuUI, oxuWindowTypes, oxuWindows,
    {ui}
    uiuControl, uiuTypes, uiuWindow, uiuWindowTypes, uiuWidget, uiWidgets, uiuMessageBox,
+   uiuFiles,
    uiuWidgetWindow, oxuwndFileContextMenu, uiuContextMenu,
    {widgets}
    wdguInputBox, wdguButton, wdguGroup, wdguList, wdguFileList, wdguDivisor;
@@ -65,6 +66,8 @@ TYPE
          DoneCalled,
          {can be set by the callback to prevent closing after call}
          PreventClose,
+         {only show directories}
+         ShowDirectoriesOnly,
          {show hidden files}
          ShowHiddenFiles,
          {show filename input (should be false when saving into a directory instead of file)}
@@ -335,6 +338,7 @@ begin
 
    Canceled := true;
    ShowFilenameInput := true;
+   ShowHiddenFiles := uiFiles.ShowHiddenFiles;
 
    if(DialogType = oxFILE_DLG_OPEN) then begin
       Title := 'Open File';
@@ -364,7 +368,7 @@ begin
       if(what = wdghINPUTBOX_CONFIRM) then begin
          if(DirectoryExists(dlg.wdg.Path.GetText())) then
             dlg.wdg.Files.FindAll(dlg.wdg.Path.GetText());
-      end;
+         end;
    end else if(wdg = uiWidget.IDs.CANCEL) then
       dlg.Done(true)
    else if(wdg = uiWidget.IDs.OK) then
@@ -550,6 +554,7 @@ begin
          { files }
          uiWidget.Create.Instance := wdgTFileDialogFileList;
          wdg.Files := wdgTFileDialogFileList(wdgFileList.Add(oxNullPoint, oxNullDimensions));
+         wdg.Files.DirectoriesOnly := ShowDirectoriesOnly;
          wdg.Files.Dialog := Self;
          wdg.Files.IncludeParentDirectoryLink := false;
 
