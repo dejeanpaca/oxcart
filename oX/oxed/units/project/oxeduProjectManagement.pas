@@ -32,7 +32,9 @@ TYPE
       {called when the project is closed}
       OnProjectClosed,
       {called when the project is saved}
-      OnProjectSaved: TProcedures;
+      OnProjectSaved,
+      {called when a project is overwritten (after save)}
+      OnProjectOverwritten: TProcedures;
 
       {destroy current project}
       procedure Destroy();
@@ -150,5 +152,6 @@ INITIALIZATION
    TProcedures.Initialize(oxedProjectManagement.OnProjectOpen);
    TProcedures.Initialize(oxedProjectManagement.OnProjectSaved);
    TProcedures.Initialize(oxedProjectManagement.OnProjectClosed);
+   TProcedures.Initialize(oxedProjectManagement.OnProjectOverwritten);
 
 END.

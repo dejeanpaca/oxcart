@@ -86,12 +86,15 @@ begin
    dlgOpen.Open();
 end;
 
-procedure saveTo(const path: string);
+procedure saveTo(const path: string; overwrite: boolean = false);
 begin
    log.i('project > Saving to: ' + path);
 
    oxedProject.SetPath(path);
    oxedProjectManagement.Save();
+
+   if(overwrite) then
+      oxedProjectManagement.OnProjectOverwritten.Call();
 end;
 
 procedure saveSceneTo(const path: string);
@@ -110,7 +113,7 @@ begin
    dialog := oxTFileDialog(uiTMessageBoxWindow(data.Window).External);
 
    if(data.Button = uimbcOK) then begin
-      saveTo(dialog.SelectedFile);
+      saveTo(dialog.SelectedFile, true);
       dialog.Close();
    end;
 end;
