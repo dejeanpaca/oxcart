@@ -60,9 +60,9 @@ TYPE
 
    oxedTBuildGlobal = record
       {called before build starts, to prepare everything}
-      OnPreBuild: TProcedures;
+      OnPrepare: TProcedures;
       {called when build is done}
-      OnBuildDone: TProcedures;
+      OnDone: TProcedures;
 
       BuildType: oxedTBuildTaskType;
       BuildTarget: oxedTBuildTarget;
@@ -201,14 +201,14 @@ procedure oxedTBuildTask.ThreadStart();
 begin
    inherited;
 
-   oxedBuild.OnPreBuild.Call();
+   oxedBuild.OnPrepare.Call();
 end;
 
 procedure oxedTBuildTask.ThreadDone();
 begin
    inherited;
 
-   oxedBuild.OnBuildDone.Call();
+   oxedBuild.OnDone.Call();
 end;
 
 procedure buildInitialize();
@@ -939,11 +939,11 @@ VAR
 INITIALIZATION
    oxed.Init.Add(oxedInitRoutines, 'build', @oxedTBuildGlobal.Initialize, @oxedTBuildGlobal.Deinitialize);
 
-   TProcedures.Initialize(oxedBuild.OnPreBuild);
-   TProcedures.Initialize(oxedBuild.OnBuildDone);
+   TProcedures.Initialize(oxedBuild.OnPrepare);
+   TProcedures.Initialize(oxedBuild.OnDone);
 
    oxedBuild.BuildTarget := OXED_BUILD_LIB;
-   oxedBuild.OnBuildDone.Add(@openLazarusAfterRecreate);
+   oxedBuild.OnDone.Add(@openLazarusAfterRecreate);
 
    oxedActions.BUILD := appActionEvents.SetCallback(@oxedBuild.RebuildTask);
    oxedActions.RECODE := appActionEvents.SetCallback(@oxedBuild.RecodeTask);

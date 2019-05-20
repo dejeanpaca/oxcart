@@ -261,6 +261,6 @@ INITIALIZATION
    oxedProjectRunner.OnStart.Add(@onStart);
    oxedProjectRunner.OnStop.Add(@onStop);
 
-   oxedBuild.OnBuildDone.Add(@onBuildDone);
+   oxedBuild.OnDone.Add(@onBuildDone);
 
 END.
