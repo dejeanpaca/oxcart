@@ -85,7 +85,7 @@ begin
       x2 := x + Dimensions.w - (PaddingRight + PaddingLeft + 1);
 
       if(Caption = '') then begin
-         SetColor(cSurface.Lighten(1.8));
+         SetColor(cSurface.Lighten(1.3));
          uiDraw.HLine(x, y, x2);
 
          SetColor(cSurface.Darken(0.8));
@@ -100,7 +100,7 @@ begin
 
          w := CachedFont.GetLength(Caption);
 
-         SetColor(cSurface.Lighten(1.8));
+         SetColor(cSurface.Lighten(1.3));
          uiDraw.HLine(x, y, x + 5);
          uiDraw.HLine(x + 5 + CachedFont.GetWidth() * 2 + w, y, x2);
 
@@ -114,10 +114,11 @@ begin
       y2 := y - Dimensions.h + (PaddingTop + PaddingBottom + 1);
 
       if(Caption = '') then begin
-         SetColor(cSurface.Darken(0.5));
-         uiDraw.VLine(x, y, y2);
-         SetColor(cSurface.Lighten(1.5));
+         SetColor(cSurface.Lighten(1.3));
          uiDraw.VLine(x + 1, y, y2);
+
+         SetColor(cSurface.Darken(0.8));
+         uiDraw.VLine(x, y, y2);
       end;
    end;
 end;
