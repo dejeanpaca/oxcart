@@ -106,7 +106,7 @@ TYPE
          EnableConsole: boolean;
       end;
 
-      constructor Create;
+      constructor Create();
 
       procedure SetPath(const newPath: string);
       procedure SetIdentifier(const newIdentifier: string);
@@ -161,7 +161,7 @@ end;
 
 { oxedTProject }
 
-constructor oxedTProject.Create;
+constructor oxedTProject.Create();
 begin
    Name := 'Project';
    SetIdentifier(Name);

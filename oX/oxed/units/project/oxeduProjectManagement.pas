@@ -93,10 +93,14 @@ begin
    SetCurrentDir(oxedProject.Path);
 
    oxedProjectSettings.Save();
+   log.v('project > Saved settings: ' + oxedProject.Name);
    oxedProjectSession.Save();
+   log.v('project > Saved session: ' + oxedProject.Name);
    oxedProjectManagement.OnSaved.Call();
+   log.v('project > On saved called: ' + oxedProject.Name);
 
    oxedProject.MarkModified(false);
+   log.v('project > On modified called: ' + oxedProject.Name);
 
    oxedMessages.i('project > Saved: ' + oxedProject.Path);
 end;
@@ -129,7 +133,9 @@ begin
 
          {TODO: Check if project settings loaded properly}
          oxedProjectSettings.Load();
+         log.v('project > Loaded settings: ' + oxedProject.Name);
          oxedProjectSession.Load();
+         log.v('project > Loaded session: ' + oxedProject.Name);
          oxedProject.RecreateTempDirectory();
 
          OnOpen.Call();
@@ -150,8 +156,8 @@ end;
 INITIALIZATION
    TProcedures.Initialize(oxedProjectManagement.OnNew);
    TProcedures.Initialize(oxedProjectManagement.OnOpen);
-   TProcedures.Initialize(oxedProjectManagement.OnSaved);
    TProcedures.Initialize(oxedProjectManagement.OnClosed);
+   TProcedures.Initialize(oxedProjectManagement.OnSaved);
    TProcedures.Initialize(oxedProjectManagement.OnOverwritten);
 
 END.

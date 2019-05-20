@@ -59,14 +59,14 @@ begin
    dvEnableConsole.Variable := @oxedProject.Session.EnableConsole;
 end;
 
-procedure oxedTProjectSession.Load;
+procedure oxedTProjectSession.Load();
 begin
    UpdateVars();
 
    dvarf.ReadText(dvGroup, GetFn());
 end;
 
-procedure oxedTProjectSession.Save;
+procedure oxedTProjectSession.Save();
 begin
    UpdateVars();
    oxedProject.RecreateTempDirectory();

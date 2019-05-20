@@ -59,9 +59,9 @@ TYPE
          FilePath: wdgTLabel;
       end;
 
-      procedure Initialize; override;
-      procedure SizeChanged; override;
-      procedure ParentSizeChange; override;
+      procedure Initialize(); override;
+      procedure SizeChanged(); override;
+      procedure ParentSizeChange(); override;
       procedure SetupWidgets();
    end;
 
@@ -255,7 +255,7 @@ end;
 
 { oxedTProjectBrowserWindow }
 
-procedure oxedTProjectBrowserWindow.Initialize;
+procedure oxedTProjectBrowserWindow.Initialize();
 begin
    inherited;
 
@@ -296,21 +296,21 @@ begin
    wdg.Search.SetPlaceholder('Search');
 end;
 
-procedure oxedTProjectBrowserWindow.SizeChanged;
+procedure oxedTProjectBrowserWindow.SizeChanged();
 begin
    inherited SizeChanged;
 
    SetupWidgets();
 end;
 
-procedure oxedTProjectBrowserWindow.ParentSizeChange;
+procedure oxedTProjectBrowserWindow.ParentSizeChange();
 begin
    inherited ParentSizeChange;
 
    SetupWidgets();
 end;
 
-procedure oxedTProjectBrowserWindow.SetupWidgets;
+procedure oxedTProjectBrowserWindow.SetupWidgets();
 begin
    {place to the left}
    wdg.Workbar.AutoPosition();

@@ -61,10 +61,12 @@ end;
 
 procedure OnProjectOpen();
 begin
-   oxedRecents.LastOpen := oxedProject.Path;
-   oxedRecents.Add(oxedProject.Path);
+   if(oxedProject.Path <> '') then begin
+      oxedRecents.LastOpen := oxedProject.Path;
+      oxedRecents.Add(oxedProject.Path);
 
-   oxedRecents.OnUpdate.Call();
+      oxedRecents.OnUpdate.Call();
+   end;
 end;
 
 procedure OnProjectClosed();
