@@ -11,7 +11,7 @@ UNIT oxeduLib;
 INTERFACE
 
    USES
-      dynlibs, uStd, uLog, uAppInfo, uFileUtils,
+      sysutils, dynlibs, uStd, uLog, uAppInfo, uFileUtils, uTiming,
       {ox}
       oxuDynlib, oxulibSettings, oxuGlobalInstances, oxuWindows,
       {oxed}
@@ -94,8 +94,10 @@ function oxedTLibraryGlobal.LoadLib: string;
 var
    path: string;
    size: loopint;
+   startTime: TDateTime;
 
 begin
+   startTime := Time();
    path := oxedProject.GetLibraryPath();
 
    size := FileUtils.Exists(path);
@@ -130,7 +132,7 @@ begin
       exit('Library loaded, but did not return a proper object');
 
    oxLib.GlobalInstances := oxGlobalInstances;
-   log.i('Library ' + path + ' loaded successfully: '  + oxLib.Name);
+   log.i('Library ' + path + ' loaded successfully: '  + oxLib.Name + ' (Elapsed: ' + startTime.ElapsedfToString() + 's)');
 
    appInfo := oxLib.GetAppInfo();
    {force organization to preset while running inside OXED}

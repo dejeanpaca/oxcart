@@ -95,7 +95,7 @@ var
    startTime: TDateTime;
 
 begin
-   startTime := Time();
+   startTime := Now();
    log.Enter('oX > Loading...');
    ox.OnLoad.Call();
    log.i('Loaded (Elapsed: ' + startTime.ElapsedfToString() + 's)');
@@ -104,7 +104,10 @@ begin
    log.Enter('oX > Running...');
 
    ox.Started := true;
+
+   startTime := Now();
    ox.OnStart.Call();
+   log.v('OnStart (Elapsed: ' + startTime.ElapsedfToString() + 's)');
 end;
 
 procedure oxTRunGlobal.Done();
