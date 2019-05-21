@@ -115,7 +115,9 @@ begin
 
    ClearColor := cBlack4f;
    ClearBits := oxrBUFFER_CLEAR_NOTHING;
+   {$IFNDEF OX_LIBRARY}
    DisplayTime := oxSplashScreen.DefaultDisplayTime;
+   {$ENDIF}
 
    TTimer.Init(timer);
    timer.Start();
