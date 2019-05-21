@@ -28,11 +28,16 @@ TYPE
       ExcludedPlatforms: TStringArray;
       {platforms on which this feature is only included}
       IncludedPlatforms: TStringArray;
+      {platforms on which this feature is disabled by default (but can be enabled)}
+      DisabledPlatforms: TStringArray;
 
       function SetExcludedPlatforms(const excluded: array of string): oxPFeatureDescriptor;
       function SetIncludedPlatforms(const included: array of string): oxPFeatureDescriptor;
+      {sets platforms for which this feature is disabled by default (but can be enabled)}
+      function SetDisabledPlatforms(const disabled: array of string): oxPFeatureDescriptor;
       function IsExcluded(const platform: string): boolean;
       function IsIncluded(const platform: string): boolean;
+      function IsEnabled(const platform: string): boolean;
    end;
 
    oxTFeatureList = specialize TPreallocatedArrayList<oxTFeatureDescriptor>;
@@ -87,6 +92,20 @@ begin
    Result := @Self;
 end;
 
+function oxTFeatureDescriptor.SetDisabledPlatforms(const disabled: array of string): oxPFeatureDescriptor;
+var
+   i: loopint;
+
+begin
+   SetLength(DisabledPlatforms, Length(disabled));
+
+   for i := 0 to High(disabled) do begin
+      DisabledPlatforms[i] := disabled[i];
+   end;
+
+   Result := @Self;
+end;
+
 function oxTFeatureDescriptor.IsExcluded(const platform: string): boolean;
 var
    i: loopint;
@@ -117,6 +136,21 @@ begin
    for i := 0 to High(ExcludedPlatforms) do begin
       if(ExcludedPlatforms[i] = platform) then
          exit(false);
+   end;
+
+   Result := true;
+end;
+
+function oxTFeatureDescriptor.IsEnabled(const platform: string): boolean;
+var
+   i: loopint;
+
+begin
+   if(Length(DisabledPlatforms) > 0) then begin
+      for i := 0 to High(DisabledPlatforms) do begin
+         if(DisabledPlatforms[i] = platform) then
+            exit(false);
+      end;
    end;
 
    Result := true;
@@ -206,14 +240,18 @@ INITIALIZATION
       SetExcludedPlatforms(['android']);
    oxFeatures.Add('renderer.vulkan', 'Vulkan renderer', 'OX_RENDERER_VULKAN');
    oxFeatures.Add('feature.controllers', 'Controller support', 'OX_FEATURE_CONTROLLERS');
-   oxFeatures.Add('feature.html_log', 'html log support', 'OX_FEATURE_HTML_LOG');
+   oxFeatures.Add('feature.html_log', 'html log support', 'OX_FEATURE_HTML_LOG')^.
+      SetDisabledPlatforms(['android']);
    oxFeatures.Add('feature.audio', 'Audio support', 'OX_FEATURE_AUDIO');
    oxFeatures.Add('feature.audio.al', 'OpenAL audio support', 'OX_FEATURE_AL_AUDIO');
    oxFeatures.Add('feature.ui', 'UI support', 'OX_FEATURE_UI');
    oxFeatures.Add('feature.freetype', 'Freetype font loading support', 'OX_FEATURE_FREETYPE');
-   oxFeatures.Add('feature.console', 'in-engine console', 'OX_FEATURE_CONSOLE');
-   oxFeatures.Add('feature.wnd.about', 'About window', 'OX_FEATURE_WND_ABOUT');
-   oxFeatures.Add('feature.wnd.settings', 'Settings window', 'OX_FEATURE_WND_SETTINGS');
+   oxFeatures.Add('feature.console', 'in-engine console', 'OX_FEATURE_CONSOLE')^.
+      SetDisabledPlatforms(['android']);
+   oxFeatures.Add('feature.wnd.about', 'About window', 'OX_FEATURE_WND_ABOUT')^.
+      SetDisabledPlatforms(['library', 'android']);
+   oxFeatures.Add('feature.wnd.settings', 'Settings window', 'OX_FEATURE_WND_SETTINGS')^.
+      SetDisabledPlatforms(['library', 'android']);
    oxFeatures.Add('feature.scene', 'Scene support', 'OX_FEATURE_SCENE');
    oxFeatures.Add('feature.models', 'Model support', 'OX_FEATURE_MODELS');
 
