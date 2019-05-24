@@ -16,19 +16,11 @@ TYPE
    { oxTBuild }
 
    oxTBuild = record
-      function GetLibrarySource(): string;
    end;
 
 VAR
    oxBuild: oxTBuild;
 
 IMPLEMENTATION
-
-{ oxTBuild }
-
-function oxTBuild.GetLibrarySource: string;
-begin
-   Result := 'libraries' + DirectorySeparator;
-end;
 
 END.
