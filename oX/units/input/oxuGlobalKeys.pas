@@ -20,7 +20,7 @@ UNIT oxuGlobalKeys;
 INTERFACE
 
    USES
-      uStd, uLog, appukcNames, appuKeys,
+      uStd, uLog, appuKeys,
       {oX}
       uOX, oxuRunRoutines, oxuWindowTypes;
 
@@ -60,6 +60,8 @@ TYPE
       function Find(keyCode: TKeyCode; keyState: TKeyState): longint;
       {find a global key with that matches}
       function Find(const k: appTKey): longint;
+      {find a global key handler by reference}
+      function Find(const h: oxTGlobalKeyHandler): longint;
 
       {hooks a specified key handler, returns false if key already hooked to a handler}
       function Hook(const h: oxTGlobalKeyHandler): boolean;
@@ -134,6 +136,22 @@ begin
    Result := -1
 end;
 
+function oxTGlobalKeysGlobal.Find(const h: oxTGlobalKeyHandler): longint;
+var
+   i: longint;
+
+begin
+   {look for a key}
+   if(nKeys > 0) then begin
+      for i := 0 to (nKeys - 1) do begin
+         if(List[i].h = @h) then
+            exit(i);
+      end;
+   end;
+
+   Result := -1;
+end;
+
 function oxTGlobalKeysGlobal.FindEmpty(): longint;
 var
    i: longint;
@@ -160,9 +178,14 @@ end;
 
 begin
    Result := false;
+   writeln('Hooking: ', h.Key.ToString());
+
+   {first let's see if there is any handler already hooked to the key}
+   assert(Find(h) = -1, 'Global key handler added twice: ' + h.Name);
 
    {first let's see if there is any handler already hooked to the key}
    i := Find(h.Key.Code, h.Key.State);
+
    if(i = -1) then begin
       {if not then we'll find an empty spot}
       i := FindEmpty();
@@ -180,9 +203,9 @@ begin
    end else begin
       {key already hooked to another handler}
       if(List[i].h = @h) then
-         log.i('Global key handler ' + List[i].h^.Name + ' already has global key (' + appkNames.GetCode(h.Key.Code) + ') hooked.')
+         log.i('Global key handler ' + List[i].h^.Name + ' already has global key (' + h.Key.ToString() + ') hooked.')
       else
-         log.i('Global key(' + appkNames.GetCode(h.Key.Code) + ') already used by ' + List[i].h^.Name);
+         log.w('Global key (' + h.Key.ToString() + ') already used by ' + List[i].h^.Name);
    end;
 end;
 
