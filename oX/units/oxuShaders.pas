@@ -17,12 +17,25 @@ INTERFACE
       oxuResourcePool;
 
 TYPE
+
+   { oxTShaderPool }
+
    oxTShaderPool = class(oxTResourcePool)
+      constructor Create(); override;
    end;
 
 VAR
    oxShaderPool: oxTShaderPool;
 
 IMPLEMENTATION
+
+{ oxTShaderPool }
+
+constructor oxTShaderPool.Create();
+begin
+   inherited;
+
+   Name := 'shader';
+end;
 
 END.

@@ -131,8 +131,11 @@ end;
 class procedure oxTGlyphs.Init(out glyphs: oxTGlyphs);
 begin
    ZeroOut(glyphs, SizeOf(glyphs));
+
    glyphs.DefaultSize := 64;
    glyphs.GlyphPool := oxTTexturePool.Create();
+   glyphs.GlyphPool.Name := 'glyphs';
+
    glyphs.AlwaysReturnTexture := true;
 end;
 
