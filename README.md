@@ -18,11 +18,6 @@ The units folder contains the extended run-time library.
 
 Contains the source for third party libraries used by the project.
 
-## Naming
-
-The engine went through several names in its history, and originally it was called `orcinus-x`, evolved into `orcinusX`, and remained shorthand as `oX` and the original repo was called `oxcart`. As in the `OXCART` project which produced the A-12 and SR-71 spy planes.
-
-
 ## License
 
    Licensed under a modified LGPL license. Similar to how `Free Pascal` is licensed. See the `COPYING.modifiedLGPL.txt` file for more information.
