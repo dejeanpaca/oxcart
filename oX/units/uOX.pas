@@ -108,7 +108,7 @@ begin
    if(errcode > $FF) then begin
    end;
 
-   exit(uStd.eGetCodeName(errcode));
+   exit(uStd.GetErrorCodeName(errcode));
 end;
 
 INITIALIZATION

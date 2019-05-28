@@ -230,7 +230,7 @@ begin
          Result := data.Error;
 
          if(data.Error <> 0) and (f.Error = 0) then
-            log.e('Image handler (' + fd.Handler^.Name + ') returned error ' + eGetCodeName(data.Error) + ' for: ' + image.FileName);
+            log.e('Image handler (' + fd.Handler^.Name + ') returned error ' + GetErrorCodeName(data.Error) + ' for: ' + image.FileName);
       end else begin
          props.error.f := imgeLOADER_NOT_FOUND;
          exit(imgeLOADER_NOT_FOUND);

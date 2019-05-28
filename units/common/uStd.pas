@@ -265,7 +265,7 @@ procedure eAddErrorProc(var newerrorproc: TErrorProc;
                         var olderrorproc: TErrorProc);
 
 {get the name of an error code}
-function eGetCodeName(code: longint): string;
+function GetErrorCodeName(code: longint): string;
 
 {open file for reading}
 function FileReset(const fn: string; out f: file): longint;
@@ -1049,7 +1049,7 @@ begin
       ioE := eNIL;
 end;
 
-function eGetCodeName(code: longint): string;
+function GetErrorCodeName(code: longint): string;
 var
    number: string;
 

@@ -176,10 +176,10 @@ begin
       s := s + 'error(';
 
       if(imgProps.error.e <> 0) then
-         addError('image: [' + sf(imgProps.error.e) + '] ' + eGetCodeName(imgProps.error.e));
+         addError('image: ' + GetErrorCodeName(imgProps.Error.e));
 
       if(imgProps.error.f <> 0) then
-         addError('file: ' + fFile.GetErrorString(imgProps.error.f, imgProps.error.io));
+         addError('file: ' + fFile.GetErrorString(imgProps.Error.f, imgProps.Error.io));
 
       if(imgProps.error.description <> '') then
          addError(imgProps.error.description);
@@ -233,7 +233,8 @@ begin
    if(Result = 0) then
       OnLoad()
    else begin
-      log.e('Failed to load image: ' + image.FileName + ' (' + eGetCodeName(Result) + ', ' + eGetCodeName(Image.error) + ', ' + f.GetErrorString() + ')');
+      log.e('Failed to load image: ' + image.FileName + ' (' + GetErrorCodeName(Result) + ', ' +
+         GetErrorCodeName(Image.error) + ', ' + f.GetErrorString() + ')');
       image.Dispose();
       Result := oxeIMAGE;
    end;
