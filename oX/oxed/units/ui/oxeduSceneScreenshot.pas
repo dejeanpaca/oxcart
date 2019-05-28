@@ -31,7 +31,7 @@ VAR
 
 IMPLEMENTATION
 
-procedure gkHandler(wnd: oxTWindow);
+procedure gkHandler({%H-}wnd: oxTWindow);
 var
    name,
    path: string;
