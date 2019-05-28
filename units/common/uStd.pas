@@ -265,6 +265,8 @@ procedure eAddErrorProc(var newerrorproc: TErrorProc;
                         var olderrorproc: TErrorProc);
 
 {get the name of an error code}
+function GetErrorCodeString(code: longint): string;
+{get the name of an error code}
 function GetErrorCodeName(code: longint): string;
 
 {open file for reading}
@@ -1049,10 +1051,21 @@ begin
       ioE := eNIL;
 end;
 
-function GetErrorCodeName(code: longint): string;
+function GetErrorCodeString(code: longint): string;
 var
    number: string;
 
+begin
+   Result := GetErrorCodeName(code);
+   str(code, number);
+
+   if(Result <> '') then
+      Result := '[' + number + '] ' + Result
+   else
+      Result := '[' + number + ']';
+end;
+
+function GetErrorCodeName(code: longint): string;
 begin
    case code of
       eNONE:                  Result := esNONE;
@@ -1089,12 +1102,6 @@ begin
       else
          Result := '';
    end;
-
-   str(code, number);
-   if(Result <> '') then
-      Result := '[' + number + '] ' + Result
-   else
-      Result := '[' + number + ']';
 end;
 
 function FileReset(const fn: string; out f: file): longint;

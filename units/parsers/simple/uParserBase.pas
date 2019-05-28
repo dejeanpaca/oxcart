@@ -142,9 +142,9 @@ begin
 
       if(ErrorCode <> 0) then begin
          if(ErrorDescription <> '') then
-            additional := ' (' + GetErrorCodeName(ErrorCode) + ') ' + ErrorDescription
+            additional := ' (' + GetErrorCodeString(ErrorCode) + ') ' + ErrorDescription
          else
-            additional := ' ' + GetErrorCodeName(ErrorCode);
+            additional := ' ' + GetErrorCodeString(ErrorCode);
       end;
 
       if(f.Error <> 0) then
