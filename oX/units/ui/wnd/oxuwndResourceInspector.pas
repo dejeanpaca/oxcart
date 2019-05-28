@@ -11,11 +11,11 @@ UNIT oxuwndResourceInspector;
 INTERFACE
 
 USES
-   uStd,
+   uStd, StringUtils,
    {app}
    appuMouse,
    {oX}
-   uOX, oxuTypes, oxuRunRoutines,
+   uOX, oxuTypes, oxuRunRoutines, oxuResourcePool,
    {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
    oxuwndBase,
    {ui}
@@ -77,12 +77,15 @@ end;
 
 function oxwdgTResourceInspectorGrid.GetValue(index, column: loopint): string;
 begin
-   Result := '';
+   if(column = 0) then
+      Result := oxResource.Pools.List[index].Name
+   else
+      Result := sf(oxResource.Pools.List[index].n);
 end;
 
 function oxwdgTResourceInspectorGrid.GetItemCount(): loopint;
 begin
-   Result := 0;
+   Result := oxResource.Pools.n;
 end;
 
 procedure oxwdgTResourceInspectorGrid.ItemClicked(index: loopint;  button: TBitSet);
@@ -117,7 +120,7 @@ begin
    uiWidget.Create.Instance := oxwdgTResourceInspectorGrid;
    wdg.List := oxwdgTResourceInspectorGrid(wdgGrid.Add(oxNullPoint, oxNullDimensions));
    wdg.List.AddColumn('Name')^.Ratio := 0.3;
-   wdg.List.AddColumn('Value');
+   wdg.List.AddColumn('Count');
    wdg.List.Selectable := true;
 
    Resized();
