@@ -220,6 +220,7 @@ TYPE
       {stores the output of a build process into the output structure}
       procedure StoreOutput(p: TProcess);
       procedure ResetOutput();
+      procedure Wait(p: TProcess);
 
       {copy a library with the given name from source to target (set in Libraries)}
       function CopyLibrary(const name: string; const newName: string = ''): boolean;
@@ -810,8 +811,7 @@ begin
       end;
    end;
 
-   repeat
-   until (not p.Running);
+   Wait(p);
 
    StoreOutput(p);
 
@@ -925,9 +925,7 @@ begin
      end;
    end;
 
-(*   repeat
-   until (not p.Running);*)
-
+   Wait(p);
    StoreOutput(p);
 
    if((p.ExitStatus = 0) and (p.ExitCode = 0)) then begin
@@ -1171,6 +1169,13 @@ begin
    output.Success := false;
    output.ExecutableName := '';
    output.ErrorDecription := '';
+end;
+
+procedure TBuildSystem.Wait(p: TProcess);
+begin
+   repeat
+      Sleep(1);
+   until (not p.Running);
 end;
 
 function TBuildSystem.CopyLibrary(const name: string; const newName: string = ''): boolean;
