@@ -285,10 +285,16 @@ begin
 
       if(oxFeatures.IsSupportedFeature(feature^, platform, isLibrary)) then begin
          if(isLibrary) then begin
+            {skip renderer features as we'll include only a single renderer}
             if(pos('renderer.', feature^.Name) = 1) then
                continue;
 
+            {skip if the feature cannot work in library mode}
             if(not feature^.IsEnabled('library')) then
+               continue;
+
+            {console needs to be enabled}
+            if(feature^.Name = 'feature.console') and (not oxedProject.Session.EnableConsole) then
                continue;
          end;
 
@@ -296,13 +302,8 @@ begin
       end;
    end;
 
-   if(oxedProject.Session.EnableConsole) then begin
-      feature := oxFeatures.Find('feature.console');
-      assert(feature <> nil, 'feature.console not found amongst default ox features');
-      Result.Add(feature);
-   end;
-
    if(isLibrary) then begin
+      {only include renderer we need}
       feature := oxFeatures.Find(oxRenderer.Id);
       assert(feature <> nil, 'Renderer ' + oxRenderer.Id +  ' feature must never be nil');
       Result.Add(feature);
