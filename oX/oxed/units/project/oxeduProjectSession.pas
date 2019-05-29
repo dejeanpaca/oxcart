@@ -53,10 +53,10 @@ end;
 
 procedure UpdateVars();
 begin
-   dvLastScene.Variable := @oxedProject.LastScene;
-   dvIncludeThirdPartyUnits.Variable := @oxedProject.Session.IncludeThirdPartyUnits;
-   dvDebugResources.Variable := @oxedProject.Session.DebugResources;
-   dvEnableConsole.Variable := @oxedProject.Session.EnableConsole;
+   dvLastScene.Update(oxedProject.LastScene);
+   dvIncludeThirdPartyUnits.Update(oxedProject.Session.IncludeThirdPartyUnits);
+   dvDebugResources.Update(oxedProject.Session.DebugResources);
+   dvEnableConsole.Update(oxedProject.Session.EnableConsole);
 end;
 
 procedure oxedTProjectSession.Load();
