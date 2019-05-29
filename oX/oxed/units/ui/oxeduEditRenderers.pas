@@ -139,9 +139,11 @@ var
    i: loopint;
 
 begin
-   for i := 0 to (oxedComponents.List.n - 1) do begin
-      if(oxedComponents.List[i].Component = componentType) then
-         exit(oxedTEditRenderer(oxedComponents.List[i].EditRenderer));
+   if(componentType <> nil) then begin
+      for i := 0 to (oxedComponents.List.n - 1) do begin
+         if (oxedComponents.List[i].Component.ClassName = componentType.ClassName) then
+            exit(oxedTEditRenderer(oxedComponents.List[i].EditRenderer));
+      end;
    end;
 
    Result := nil;
@@ -156,7 +158,7 @@ begin
    Result.Initialize(Result);
 
    for i := 0 to (entity.Components.n - 1) do begin
-      if(entity.Components.List[i] <> exclude) then begin
+      if(exclude = nil) or (entity.Components.List[i].ClassName <> exclude.ClassName) then begin
          pair.ComponentObject := entity.Components.List[i];
          pair.Component := oxedComponents.Find(oxTComponentType(pair.ComponentObject.ClassType));
          pair.Renderer := Find(oxTComponentType(pair.ComponentObject.ClassType));
