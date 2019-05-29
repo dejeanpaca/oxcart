@@ -112,6 +112,8 @@ TYPE
 
       {initialize dvar}
       procedure Init(dt: longint; v: pointer; const newName: string = '');
+
+      procedure Update(var newVariable);
    end;
 
    {a quick dvar representation}
@@ -720,6 +722,11 @@ begin
    Self.Variable := v;
    if(newName <> '') then
       Self.Name := newName;
+end;
+
+procedure TDVar.Update(var newVariable);
+begin
+   Variable := @newVariable;
 end;
 
 INITIALIZATION
