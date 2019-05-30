@@ -168,20 +168,38 @@ var
 
 begin
    lpi.Initialize(context);
+
    Result := BuildFromPas(source, context);
 end;
 
 function TLPIBuild.BuildFromPas(const source: string; var context: TLPIContext): boolean;
+var
+   fn: string;
+
 begin
-   lpi.Create(source, @context);
+   if(not lpi.Initialized) then
+      exit(false);
 
-   if(lpi.Error = 0) then begin
-      build.Laz(lpi.OutFileName);
-
-      exit(build.Output.Success);
+   if(FileUtils.Exists(source) > 0) then
+      fn := source
+   else if(FileUtils.Exists(source + '.pas') > 0) then
+      fn := source + '.pas'
+   else if(FileUtils.Exists(source + '.pp') > 0) then
+      fn := source + '.pp'
+   else if(FileUtils.Exists(source + '.lpr') > 0) then
+      fn := source + '.lpr'
+   else begin
+      log.w('Cannot build from source because no files found for: ' + source);
+      build.Output.Success := false;
+      exit(false);
    end;
 
-   Result := False;
+   lpi.Create(fn, @context);
+
+   if(lpi.Error = 0) then
+      build.Laz(lpi.OutFileName);
+
+   Result := build.Output.Success;
 end;
 
 { TLPIFile }
@@ -427,7 +445,8 @@ begin
       Template.Setup();
 
       Initialized := true;
-   end;
+   end else
+      log.e('Cannot initialize lpi build, due to base build system not being initialized');
 end;
 
 function TLPIGlobal.IsInitialized(): boolean;
