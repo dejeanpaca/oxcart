@@ -34,12 +34,18 @@ TYPE
       constructor Create(const newId: string; componentType: TClass);
    end;
 
+   { oxTUnknownComponentDescriptor }
+
+   oxTUnknownComponentDescriptor = object(oxTComponentDescriptor)
+      constructor CreateUnknown();
+   end;
+
    oxTComponentDescriptorList = specialize TPreallocatedArrayList<oxPComponentDescriptor>;
 
    { oxTComponentDescriptors }
 
    oxTComponentDescriptors = record
-      Unknown: oxTComponentDescriptor;
+      Unknown: oxTUnknownComponentDescriptor;
 
       List: oxTComponentDescriptorList;
 
@@ -79,8 +85,22 @@ begin
    oxComponentDescriptors.Add(@Self);
 end;
 
+{ oxTUnknownComponentDescriptor }
+
+constructor oxTUnknownComponentDescriptor.CreateUnknown();
+begin
+   Id := 'unknown';
+   Name := Id;
+   Component := nil;
+
+   {$IFDEF OX_LIBRARY}
+   InLibrary := true;
+   {$ENDIF}
+end;
+
+
 INITIALIZATION
    oxTComponentDescriptorList.Initialize(oxComponentDescriptors.List, 1024);
-   oxComponentDescriptors.Unknown.Create('unknown', nil);
+   oxComponentDescriptors.Unknown.CreateUnknown();
 
 END.

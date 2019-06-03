@@ -36,6 +36,8 @@ var
    oxc: oxedPComponent;
 
 begin
+   assert(component <> nil, 'Trying to add a nil component type: ' + name);
+
    oxc := oxedComponents.Find(component);
 
    if(oxc <> nil) then begin
