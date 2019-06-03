@@ -166,6 +166,8 @@ TYPE
 
       {initialize the build system}
       procedure Initialize();
+      {reinitialize the build system (e.g. after config path change)}
+      procedure ReInitialize();
       {load configuration}
       procedure LoadConfiguration();
       {save location configuration}
@@ -601,6 +603,27 @@ begin
 end;
 
 { TBuildSystem }
+
+procedure TBuildSystem.ReInitialize();
+begin
+   CurrentLazarus := nil;
+   CurrentPlatform := nil;
+
+   Units.Dispose();
+   Includes.Dispose();
+   Symbols.Dispose();
+
+   Platforms.Dispose();
+   LazarusInstalls.Dispose();
+
+   OptimizationLevels.Dispose();
+   Tools.Build := '';
+   Tools.Path := '';
+
+   Initialized := false;
+
+   Initialize();
+end;
 
 procedure TBuildSystem.Initialize();
 var
