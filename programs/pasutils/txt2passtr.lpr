@@ -46,9 +46,8 @@ end;
 BEGIN
    ProcessParameters();
 
-   ParseInit(parseData);
-   parseData.StripComments    := nil;
-   parseData.ReadMethod       := TParseExtMethod(@readFile);
+   TParseData.Init(parseData);
+   parseData.ReadMethod       := TParseMethod(@readFile);
    parseData.readEmptyLines   := true;
    parseData.stripWhitespace  := false;
 

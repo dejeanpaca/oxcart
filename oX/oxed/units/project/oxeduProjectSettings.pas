@@ -57,12 +57,12 @@ end;
 
 procedure UpdateVars();
 begin
-   dvName.Variable := @oxedProject.Name;
-   dvShortName.Variable := @oxedProject.ShortName;
-   dvIdentifier.Variable := @oxedProject.Identifier;
-   dvOrganization.Variable := @oxedProject.Organization;
-   dvOrganizationShort.Variable := @oxedProject.OrganizationShort;
-   dvMainUnit.Variable := @oxedProject.MainUnit;
+   dvName.Update(oxedProject.Name);
+   dvShortName.Update(oxedProject.ShortName);
+   dvIdentifier.Update(oxedProject.Identifier);
+   dvOrganization.Update(oxedProject.Organization);
+   dvOrganizationShort.Update(oxedProject.OrganizationShort);
+   dvMainUnit.Update(oxedProject.MainUnit);
 end;
 
 procedure oxedTProjectSettings.Load;

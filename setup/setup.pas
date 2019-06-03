@@ -34,6 +34,7 @@ VAR
    build_count: longint = 0;
    fail_count: longint = 0;
    symbolParameters: array of string;
+   quitOnFail: boolean = true;
 
 function can_build(const specific: string): boolean;
 begin
@@ -46,19 +47,16 @@ end;
 
 procedure build_tool(var tool: TTool; pas: boolean);
 begin
+   build.ResetOutput();
+
    if can_build(tool.Name) then begin
       if pas then
          build.PasTool(tool.Path)
       else begin
-         if(FileUtils.Exists(tool.Path + '.lpi') > 0) then
-            build.LazTool(tool.Path)
-         else begin
-            if(FileUtils.Exists(tool.Path + '.pas') > 0) then
-               lpibuild.BuildFromPas(tool.Path + '.pas')
-            else if(FileUtils.Exists(tool.Path + '.pp') > 0) then
-               lpibuild.BuildFromPas(tool.Path + '.pp')
-            else if(FileUtils.Exists(tool.Path + '.pp') > 0) then
-               log.w('Not found an appropriate file for: ' + tool.Path);
+         if(FileUtils.Exists(tool.Path + '.lpi') > 0) then begin
+            build.LazTool(tool.Path);
+         end else begin
+            lpibuild.BuildFromPas(tool.Path);
          end;
       end;
 
@@ -83,11 +81,19 @@ begin
    log.v('Lazarus: ' + build.CurrentLazarus^.Path);
    log.v('');
 
-   for i := 0 to length(laz_tools) - 1 do
+   for i := 0 to length(laz_tools) - 1 do begin
       build_tool(laz_tools[i], false);
 
-   for i := 0 to length(pas_tools) - 1 do
+      if(quitOnFail) and (fail_count > 0) then
+         exit;
+   end;
+
+   for i := 0 to length(pas_tools) - 1 do begin
       build_tool(pas_tools[i], true);
+
+      if(quitOnFail) and (fail_count > 0) then
+         exit;
+   end;
 end;
 
 procedure buildSymbolParameters();
@@ -120,7 +126,11 @@ begin
       {ignore symbol defines}
       if(cur = '-d') then
          parameters.Next()
-      else begin
+         {ignore symbol defines}
+      else if(cur = '-no-quit') then begin
+         log.w('Quit on failure is disabled');
+         quitOnFail := false;
+      end else begin
          {whatever is left is our target}
          if(build_what = '') and (cur <> 'setup.pas') then begin
             build_what := cur;
@@ -152,14 +162,23 @@ BEGIN
    end;
 
    lpi.Initialize();
+   if(not lpi.Initialized) then begin
+      log.e('Failed to initialize lpi build system');
+   end;
 
    processParameters();
 
    build_tools();
+
    log.i();
 
    if (build_count > 0) or (fail_count > 0) then
       log.i(sf(build_count) + ' succeeded, ' + sf(fail_count) + ' failed');
+
+   if(quitOnFail) and (fail_count > 0) then begin
+      log.e('Quitting due to one or more failures');
+      exit;
+   end;
 
    buildSymbolParameters();
 
