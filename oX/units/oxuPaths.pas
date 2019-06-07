@@ -11,9 +11,11 @@ UNIT oxuPaths;
 INTERFACE
 
    USES
-     sysutils, uStd, uFileUtils, uLog, appuPaths, oxuRunRoutines,
+     sysutils, uStd, uFileUtils, uLog, StringUtils,
+     {app}
+     appuPaths,
      {ox}
-     uOX;
+     uOX, oxuRunRoutines;
 
 CONST
    oxDataPath = 'data' + DirectorySeparator;
@@ -103,11 +105,38 @@ begin
       List.Add(IncludeTrailingPathDelimiter(assetPath));
 
       if(DirectoryExists(assetPath)) then
-         Log.v('ox > added asset path: ' + assetPath)
+         Log.v('ox > Added asset path: ' + assetPath)
       else
-        Log.e('ox > invalid asset path: ' + assetPath)
+        Log.e('ox > Invalid asset path: ' + assetPath)
    end;
 end;
+
+function tryDetermineAssetPath(startPath: string): string;
+var
+   path: String;
+
+begin
+   path := IncludeTrailingPathDelimiter(startPath);
+
+   repeat
+      if(FileUtils.Exists(path + 'here.oxsource') > 0) then begin
+         break;
+      end else begin
+         if(path = IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(path))) or (path = '') then begin
+            path := '';
+            break;
+         end;
+
+         path := IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(path));
+      end;
+   until (path = '');
+
+   if(path <> '') then
+      path := path + 'oX' + DirectorySeparator;
+
+   Result := path;
+end;
+
 
 
 procedure init();
@@ -123,10 +152,15 @@ begin
       oxAssetPaths.WorkingDirectory := IncludeTrailingPathDelimiter(oxAssetPaths.WorkingDirectory);
 
    if(oxAssetPaths.WorkingDirectory <> '') then
-      log.v('Asset base path: ' + oxAssetPaths.WorkingDirectory);
+      log.v('ox > Asset base path: ' + oxAssetPaths.WorkingDirectory);
 
    {$IFDEF OX_DEBUG}
    assetPath := GetEnvironmentVariable(OX_ASSET_PATH_ENV);
+
+   {we'll try to determine asset path ourselves}
+   if(assetPath = '') then
+      assetPath := tryDetermineAssetPath(GetCurrentDir());
+
    oxAssetPaths.Add(assetPath);
    {$ENDIF}
 end;
