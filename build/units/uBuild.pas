@@ -680,15 +680,15 @@ begin
       dvarf.ReadText(dvgLocation, fn);
 
       {if can't find the specified location, restore default}
-      if (build.ConfigPath <> 'default') then begin
-         FileUtils.NormalizePathEx(build.ConfigPath);
-         build.ConfigPath := IncludeTrailingPathDelimiter(build.ConfigPath);
+      if (ConfigPath <> 'default') then begin
+         FileUtils.NormalizePathEx(ConfigPath);
+         ConfigPath := IncludeTrailingPathDelimiter(ConfigPath);
 
-         if not(FileUtils.DirectoryExists(build.ConfigPath)) then begin
-            log.w('build > Could not find configuration directory: ' + build.ConfigPath);
+         if not(FileUtils.DirectoryExists(ConfigPath)) then begin
+            log.w('build > Could not find configuration directory: ' + ConfigPath);
             log.i('build > Will revert location configuration to default');
 
-            build.ConfigPath := 'default';
+            ConfigPath := 'default';
          end;
       end;
    end;
@@ -756,18 +756,14 @@ end;
 
 function tryDetermineConfigPath(startPath: string): boolean;
 var
-   path,
-   tryPath: String;
+   path: String;
 
 begin
    build.ConfigPath := IncludeTrailingPathDelimiter(startPath);
    path := build.ConfigPath;
 
-   {TODO: Make this more robust}
    repeat
-      tryPath := path + 'build' + DirectorySeparator + 'here.build';
-
-      if(FileUtils.Exists(tryPath) > 0) then begin
+      if(FileUtils.Exists(path + 'build' + DirectorySeparator + 'here.build') > 0) then begin
          build.ConfigPath := path + 'build' + DirectorySeparator;
          break;
       end else begin
@@ -778,10 +774,13 @@ begin
 
          path := IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(path));
       end;
-
    until (path = '');
 
-   build.ConfigPath := path;
+   if(path <> '') then
+      build.ConfigPath := IncludeTrailingPathDelimiter(path) + 'build' + DirectorySeparator
+   else
+      build.ConfigPath := 'default';
+
    Result := path <> '';
 end;
 
@@ -790,7 +789,7 @@ begin
    if(not tryDetermineConfigPath(GetParentDirectory(appPath.GetExecutablePath()))) then
       tryDetermineConfigPath(GetCurrentDir());
 
-   log.w('build > Auto determined config path: ' + build.ConfigPath);
+   log.w('build > Auto determined config path: ' + ConfigPath);
    AutoDeterminedConfigPath := true;
 end;
 
@@ -1508,63 +1507,63 @@ procedure TBuildSystem.SetDefaultSymbols();
 begin
    {$IFDEF UNIX}
    {if we don't have anything defined, we'll use X11 by default}
-   if(build.Symbols.FindLowercase('x11') < 0) or (build.Symbols.FindLowercase('wayland') < 0) then
-      build.Symbols.Add('X11');
+   if(Symbols.FindLowercase('x11') < 0) or (Symbols.FindLowercase('wayland') < 0) then
+      Symbols.Add('X11');
    {$ENDIF}
 end;
 
 procedure TBuildSystem.SetupDefaults();
 begin
-   if(build.DefaultPlatform^.Path = '') then begin
-      log.v(build.ConfigPath);
+   if(DefaultPlatform^.Path = '') then begin
+      log.v('Build config path: ' + ConfigPath);
 
       {$IF DEFINED(LINUX)}
       log.v('build > auto fpc defaults for linux');
-      build.DefaultPlatform^.Path := '/usr/bin/';
-      build.Tools.Path := '~/bin/';
-
-      if(build.ConfigPath <> 'default') then
-         build.Tools.Build :=  build.ConfigPath;
-
-      FileUtils.NormalizePathEx(build.Tools.Path);
-      FileUtils.NormalizePathEx(build.Tools.Build);
+      DefaultPlatform^.Path := '/usr/bin/';
+      Tools.Path := '~/bin/';
       {$ELSEIF DEFINED(DARWIN)}
       log.v('build > auto fpc defaults for darwin');
-      build.DefaultPlatform^.Path := '/usr/local/bin/'
-      build.Tools.Path := '~/bin/';
-
-      if(build.ConfigPath <> 'default') then
-         build.Tools.Build :=  build.ConfigPath;
+      DefaultPlatform^.Path := '/usr/local/bin/'
+      Tools.Path := '~/bin/';
       {$ELSEIF DEFINED(WINDOWS)}
       {TODO: Determine default fpc path for windows}
       log.v('build > auto fpc defaults for windows');
-      if(build.ConfigPath <> 'default') then begin
-         build.Tools.Path :=  ExpandFileName(IncludeTrailingPathDelimiterNonEmpty(build.ConfigPath) + '\..\tools');
-         build.Tools.Build := build.ConfigPath;
+      if(ConfigPath <> 'default') then begin
+         Tools.Path :=  ExpandFileName(IncludeTrailingPathDelimiterNonEmpty(ConfigPath) + '\..\tools');
+         Tools.Build := ConfigPath;
       end;
       {$ENDIF}
 
-      {$IF DEFINED(CPUX86_64) OR DEFINED(CPUX86_32)}
-      build.DefaultPlatform^.OptimizationLevels.Add('sse');
-      build.DefaultPlatform^.OptimizationLevels.Add('sse2');
-      build.DefaultPlatform^.OptimizationLevels.Add('sse3');
+      if(ConfigPath <> 'default') then
+         Tools.Build := ConfigPath;
+
+      FileUtils.NormalizePathEx(Tools.Path);
+      FileUtils.NormalizePathEx(Tools.Build);
+
+      log.v('Auto build path: ' + Tools.Build);
+      log.v('Auto tools path: ' + Tools.Path);
+
+      {$IF DEFINED(CPUX86_64) OR DEFINEDCPUX86_32)}
+      DefaultPlatform^.OptimizationLevels.Add('sse');
+      DefaultPlatform^.OptimizationLevels.Add('sse2');
+      DefaultPlatform^.OptimizationLevels.Add('sse3');
       {$ENDIF}
 
-      log.v('build > using auto defaults for fpc platform');
+      log.v('build > using auto defaults fo fpc platform');
    end;
 
-   if(build.DefaultLazarus^.Path = '') then begin
+   if(DefaultLazarus^.Path = '') then begin
       {$IF DEFINED(LINUX)}
       log.v('build > auto lazarus defaults for linux');
-      build.DefaultLazarus^.Path := '/usr/bin/';
+      DefaultLazarus^.Path := '/usr/bin/'
       {$ELSEIF DEFINED(DARWIN)}
       log.v('build > auto lazarus defaults for darwin');
-      build.DefaultLazarus^.Path := '/Developer/lazarus';
+      DefaultLazarus^.Path := '/Develope/lazarus';
       {$ELSEIF DEFINED(WINDOW)}
-      build.DefaultLazarus^.Path := 'C:\lazarus\';
+      DefaultLazarus^.Path := 'C:\lazarus\';
       {$ENDIF}
 
-      log.v('build > using auto defaults for lazarus install');
+      log.v('build > using auto defaults forlazarus install');
    end;
 
 end;
