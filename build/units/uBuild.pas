@@ -1,10 +1,8 @@
 {
-   uTest
-   Copyright (C) 2011. Dejan Boras
+   uBuild
+   Copyright (C) 2015. Dejan Boras
 
    Started On:    08.02.2015.
-
-   TODO: Load lazarus (GetLazarusPath) and fpc paths from config or try to find them.
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
@@ -13,8 +11,8 @@ UNIT uBuild;
 INTERFACE
 
    USES
-      process, sysutils, strutils, pipes, uProcessHelpers,
-      uStd, uLog, uFileUtils, StringUtils, ConsoleUtils, uSimpleParser, ParamUtils, uTiming,
+      process, sysutils, strutils, pipes, uProcessHelpers, ParamUtils,
+      uStd, uLog, uFileUtils, StringUtils, ConsoleUtils, uSimpleParser, uTiming,
       udvars, dvaruFile,
       appuPaths
       {$IFDEF UNIX}, BaseUnix{$ENDIF};
@@ -101,7 +99,7 @@ TYPE
 
    TBuildSystem = record
       public
-      WriteLog,
+      VerboseLog,
       Initialized,
       {have we automagically determined where our config is located at}
       AutoDeterminedConfigPath: boolean;
@@ -1621,7 +1619,8 @@ begin
    if(build.Units.FindString(path) < 0) then begin
       build.Units.Add(path);
 
-      log.v('Auto find unit path: ' + path);
+      if(build.VerboseLog) then
+         log.v('Auto find unit path: ' + path);
    end;
 end;
 
@@ -1637,7 +1636,8 @@ begin
    if(build.Includes.FindString(path) < 0) then begin
       build.Includes.Add(path);
 
-      log.v('Auto find include path: ' + ExtractFilePath(fn));
+      if(build.VerboseLog) then
+         log.v('Auto find include path: ' + ExtractFilePath(fn));
    end;
 end;
 
@@ -1798,10 +1798,19 @@ begin
 end;
 {$pop}
 
+VAR
+   paramHandler: TParameterHandler;
+
+function processParam(const paramKey: string; {%H-}var params: array of string; n: longint): boolean;
+begin
+   if(paramKey = '--build-verbose') then
+      build.VerboseLog := True;
+end;
+
+
 INITIALIZATION
    TFileTraverse.Initialize(Walker);
 
-   build.WriteLog := true;
    build.ConfigPath := 'default';
 
    build.dvgLocation := dvar.RootGroup;
@@ -1874,11 +1883,12 @@ INITIALIZATION
      {$ENDIF}
    {$ENDIF}
 
-
    build.dvgUnits.Add(dvUnitsUnit, 'unit', dtcSTRING, @currentValue);
    dvUnitsUnit.pNotify := @dvUnitNotify;
    build.dvgUnits.Add(dvUnitsInclude, 'include', dtcSTRING, @currentValue);
    dvUnitsInclude.pNotify := @dvIncludeNotify;
 
    CreateDefaultPlatform();
+
+   parameters.AddHandler(paramHandler, 'build', '--build-verbose', @processParam);
 END.
