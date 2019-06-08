@@ -194,12 +194,12 @@ begin
       lname := LowerCase(name);
 
       for i := 0 to (n - 1) do begin
-         if(lowercase(List[i].Name) = lname) then
+         if(LowerCase(List[i].Name) = lname) then
             exit(List[i]);
       end;
    end;
 
-   result := nil;
+   Result := nil;
 end;
 
 function oxTRenderers.CurrentIndex(renderer: oxTRenderer): longint;
@@ -245,7 +245,6 @@ begin
    end else
       log.e('Did not specify ' + paramHandler.ParamKey + ' parameter value');
 end;
-
 
 INITIALIZATION
    oxRenderers.init.Init('Renderers');
