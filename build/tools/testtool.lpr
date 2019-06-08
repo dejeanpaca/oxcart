@@ -1,7 +1,8 @@
 {$MODE OBJFPC}{$H+}
 PROGRAM testtool;
 
-   USES uLog, ParamUtils, uFileUtils,
+   USES
+      uLog, ParamUtils, uFileUtils,
       uBuild, uTest, uTestRunner;
 
 function processParams(const {%H-}pstr: string; const lstr: string): boolean;

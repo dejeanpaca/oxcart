@@ -10,8 +10,10 @@ UNIT uLPI;
 
 INTERFACE
 
-   USES sysutils, uStd, uLog, uBuild, uFileUtils, StringUtils,
-     Laz2_DOM, laz2_XMLRead, laz2_XMLWrite;
+   USES
+      sysutils, uStd, uLog, uBuild, uFileUtils, StringUtils,
+      {LazUtils}
+      Laz2_DOM, laz2_XMLRead, laz2_XMLWrite;
 
 CONST
    eLPI_NONE                        = 0;
@@ -218,8 +220,10 @@ begin
             project.general.title := project.general.root.FindNode('Title');
 
          project.units.root := project.root.FindNode('Units');
+
          if(project.units.root <> nil) then begin
             project.units.unit0 := project.units.root.FindNode('Unit0');
+
             if(project.units.unit0 <> nil) then
                project.units.unit0Filename := project.units.unit0.FindNode('Filename');
          end;
@@ -231,6 +235,7 @@ begin
 
       if(compiler.root <> nil) then begin
          compiler.target := compiler.root.FindNode('Target');
+
          if(compiler.target <> nil) then begin
             compiler.targetFilename := compiler.target.FindNode('Filename');
 
@@ -252,6 +257,7 @@ begin
          end;
 
          compiler.codeGeneration.root := compiler.root.FindNode('CodeGeneration');
+
          if(compiler.codeGeneration.root <> nil) then begin
             compiler.codeGeneration.checks.root := compiler.codeGeneration.root.FindNode('Checks');
 
@@ -264,6 +270,7 @@ begin
          end;
 
          compiler.Linking.root := compiler.root.FindNode('Linking');
+
          if(compiler.Linking.root <> nil) then begin
             compiler.Linking.Debugging.root := compiler.Linking.root.FindNode('Debugging');
 
@@ -272,6 +279,7 @@ begin
          end;
 
          compiler.other.root := compiler.root.FindNode('Other');
+
          if(compiler.other.root <> nil) then begin
             compiler.other.customOptions := compiler.other.root.FindNode('CustomOptions');
          end else
@@ -454,7 +462,7 @@ begin
    if(not Initialized) then
       log.e('LPI functionality not initialized');
 
-   result := Initialized;
+   Result := Initialized;
 end;
 
 procedure TLPIGlobal.Create(const source: string; context: PLPIContext);
