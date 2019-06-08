@@ -30,3 +30,4 @@ oxprojectdefines.inc
 *.lpi
 *.log
 *.dbg
+build/user.config
