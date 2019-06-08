@@ -1801,10 +1801,15 @@ end;
 VAR
    paramHandler: TParameterHandler;
 
-function processParam(const paramKey: string; {%H-}var params: array of string; n: longint): boolean;
+function processParam(const paramKey: string; var {%H-}params: array of string; {%H-}n: longint): boolean;
 begin
-   if(paramKey = '--build-verbose') then
+   Result := false;
+
+   if(paramKey = '--build-verbose') then begin
       build.VerboseLog := True;
+
+      Result := true;
+   end;
 end;
 
 
