@@ -35,6 +35,9 @@ begin
    Name := 'Windows';
    id := 'windows';
    GlyphName := 'brands:61818';
+
+   AddArchitecture('x86', 'x86');
+   AddArchitecture('x64', 'x86_x64');
 end;
 
 procedure init();

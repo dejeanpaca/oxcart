@@ -35,6 +35,9 @@ begin
    Name := 'Linux';
    id := 'linux';
    GlyphName := 'brands:61820';
+
+   AddArchitecture('x86', 'x86');
+   AddArchitecture('x64', 'x86_x64');
 end;
 
 procedure init();

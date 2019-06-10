@@ -382,8 +382,10 @@ end;
 
 procedure oxedTMenubarGlobal.SetupBuildOptions();
 var
-   i: loopint;
+   i,
+   archIndex: loopint;
    platform: oxedTPlatform;
+   arch: oxedTPlatformArchitecture;
    item: uiPContextMenuItem;
 
 begin
@@ -392,14 +394,13 @@ begin
    for i := 0 to (oxedPlatforms.List.n - 1) do begin
       platform := oxedPlatforms.List.list[i];
 
-      if(platform.Supports32) then begin
-         item := build.AddItem(platform.Name);
-         if(platform.GlyphCode <> 0) then
-            oxedIcons.Create(item, oxedPlatform.GlyphCode, oxedPlatform.GlyphName);
-      end;
+      for archIndex := 0 to platform.Architectures.n - 1 do begin
+         arch := platform.Architectures.List[i];
 
-      if(platform.Supports64) then begin
-         item := build.AddItem(platform.Name + ' (x64)');
+         if(arch.Architecture <> '') then
+            item := build.AddItem(platform.Name + ' (' + arch.Name + ')')
+         else
+            item := build.AddItem(platform.Name);
 
          if(platform.GlyphCode <> 0) then
             oxedIcons.Create(item, oxedPlatform.GlyphCode, oxedPlatform.GlyphName);

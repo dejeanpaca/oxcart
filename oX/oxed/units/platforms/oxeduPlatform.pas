@@ -18,15 +18,21 @@ INTERFACE
       uOXED;
 
 TYPE
+   oxedTPlatformArchitecture = record
+      Name,
+      Architecture: string;
+   end;
+
+   oxedTPlatformArchitectureList = specialize TPreallocatedArrayList<oxedTPlatformArchitecture>;
+
    { oxedTPlatform }
    oxedTPlatform = class
       {platform name}
       Name,
       {platform id, should match the fpc compiler define for the platform (windows, linux, android, darwin)}
       Id: string;
-      {does it support a 64-bit cpu}
-      Supports32,
-      Supports64: boolean;
+
+      Architectures: oxedTPlatformArchitectureList;
 
       GlyphName: string;
       GlyphCode: longword;
@@ -34,7 +40,9 @@ TYPE
       {compiler symbols to use when building}
       CompilerSymbols: TPreallocatedStringArrayList;
 
-      constructor Create; virtual;
+      constructor Create(); virtual;
+
+      procedure AddArchitecture(archName, arch: string);
    end;
 
    oxedTPlatformsList = specialize TPreallocatedArrayList<oxedTPlatform>;
@@ -62,12 +70,23 @@ IMPLEMENTATION
 
 { oxedTPlatform }
 
-constructor oxedTPlatform.Create;
+constructor oxedTPlatform.Create();
 begin
    Name := 'Unknown';
    id := 'unknown';
-   Supports32 := true;
-   Supports64 := true;
+
+   Architectures.InitializeValues(Architectures);
+end;
+
+procedure oxedTPlatform.AddArchitecture(archName, arch: string);
+var
+   a: oxedTPlatformArchitecture;
+
+begin
+   a.Name := archName;
+   a.Architecture := arch;
+
+   Architectures.Add(a);
 end;
 
 { oxedTPlatforms }
