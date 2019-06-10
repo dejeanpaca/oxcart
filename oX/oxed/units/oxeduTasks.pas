@@ -52,7 +52,7 @@ TYPE
       procedure TaskDone(task: oxedTTask);
 
       {are any tasks of the specified type running}
-      function Running(taskType: TClass; exceptType: TClass = nil): loopint;
+      function Running(taskType: TClass; exceptType: TClass = nil; foregroundOnly: boolean = true): loopint;
       {how many tasks are running (and whether foreground only are couned)}
       function RunningCount(foregroundOnly: boolean = true): loopint;
    end;
@@ -144,7 +144,7 @@ begin
    end;
 end;
 
-function oxedTTasks.Running(taskType: TClass; exceptType: TClass): loopint;
+function oxedTTasks.Running(taskType: TClass; exceptType: TClass; foregroundOnly: boolean): loopint;
  var
     i: loopint;
 
@@ -152,6 +152,9 @@ begin
    Result := 0;
 
    for i := 0 to List.n - 1 do begin
+      if(foregroundOnly and List.List[i].Background) then
+         continue;
+
       if((List.List[i].TaskType = taskType) or (taskType = nil)) and
          (exceptType <> List.List[i].TaskType) and (oxTThreadTask.IsRunning(List.List[i])) then begin
             inc(Result);
@@ -167,7 +170,10 @@ begin
    Result := 0;
 
    for i := 0 to List.n - 1 do begin
-      if List.List[i].IsRunning() and ((not List.List[i].Background) and foregroundOnly) then
+      if(foregroundOnly and List.List[i].Background) then
+         continue;
+
+      if List.List[i].IsRunning() then
          inc(Result);
    end;
 end;
