@@ -26,8 +26,6 @@ TYPE
       constructor Create(); override;
       procedure Run(); override;
 
-      procedure TaskStart(); override;
-
       procedure ThreadStart(); override;
       procedure ThreadDone(); override;
    end;
@@ -53,15 +51,16 @@ IMPLEMENTATION
 
 class procedure oxedTPreviewGeneratorGlobal.Initialize();
 begin
+   {$IFNDEF NO_THREADS}
    with oxedPreviewGenerator do begin
       Task := oxedTPreviewGeneratorTask.Create();
       Task.SetAsContinuous();
       Task.EmitAllEvents();
-      {$IFNDEF NO_THREADS}
-      {NOTE: We can't generate previews with no thread support}
-      Task.Start();
-      {$ENDIF}
    end;
+   {$ELSE}
+   {NOTE: We can't generate previews with no thread support}
+   exit;
+   {$ENDIF}
 end;
 
 { TBuildTask }
@@ -75,9 +74,7 @@ end;
 
 procedure oxedTPreviewGeneratorTask.Run();
 begin
-   inherited Run;
-
-   log.v('Preview generator started ...');
+   inherited;
 
    try
       // TODO: Implement
@@ -87,11 +84,6 @@ begin
          log.e(DumpExceptionCallStack(e));
       end;
    end;
-end;
-
-procedure oxedTPreviewGeneratorTask.TaskStart();
-begin
-   inherited;
 end;
 
 procedure oxedTPreviewGeneratorTask.ThreadStart();
@@ -110,20 +102,22 @@ end;
 
 procedure deinit();
 begin
-   FreeObject(oxedPreviewGenerator.Task);
+   if(oxedPreviewGenerator.Task <> nil) then begin
+      oxedPreviewGenerator.Task.StopWait();
+      FreeObject(oxedPreviewGenerator.Task);
+   end;
 end;
 
 procedure projectClosed();
 begin
-   if(oxedPreviewGenerator.Task <> nil) then
-      oxedPreviewGenerator.Task.StopWait();
+   if(oxedPreviewGenerator.Task <> nil) and (oxedPreviewGenerator.Task.IsRunning()) then
+      oxedPreviewGenerator.Task.Stop();
 end;
 
 procedure projectOpen();
 begin
-   projectClosed();
-
-   oxedPreviewGenerator.Task.Run();
+   if(oxedPreviewGenerator.Task <> nil) and (not oxedPreviewGenerator.Task.IsRunning()) then
+      oxedPreviewGenerator.Task.Start();
 end;
 
 VAR
