@@ -173,6 +173,7 @@ begin
 
    {finish renderer initialization}
    oxRenderers.Use(oxRenderer);
+   oxRenderer.AfterInitialize();
 
    {$IFNDEF OX_LIBRARY}
    if(oxContextWindow.Require) then begin
@@ -185,8 +186,7 @@ begin
 
    elapsedTime := Time();
 
-   oxRenderers.StartRoutines.Call();
-   oxRenderer.StartRoutines.Call();
+   oxRenderers.Startup();
 
    {call base initialization routines}
    ox.BaseInit.iCall();
@@ -306,6 +306,9 @@ begin
 
    ox.BaseInit.dCall();
    log.i('Called de-initialization routines');
+
+   {done with renderer}
+   oxRenderer.AfterDeinitialize();
 
    {destroy the remaining primary window}
    oxWindows.Dispose();
