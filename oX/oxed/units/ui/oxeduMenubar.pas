@@ -430,7 +430,6 @@ INITIALIZATION
    oxedProjectRunner.OnStart.Add(@OnProjectChange);
    oxedProjectRunner.OnStop.Add(@OnProjectChange);
 
-
    oxedTasks.OnTaskStart.Add(@OnProjectChange);
    oxedTasks.OnTaskDone.Add(@OnProjectChange);
 

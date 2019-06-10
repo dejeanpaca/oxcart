@@ -364,12 +364,12 @@ end;
 
 function oxTThreadTask.IsFinished(): boolean;
 begin
-   result := Finished;
+   Result := Finished;
 end;
 
 function oxTThreadTask.IsRunning(): boolean;
 begin
-   result := Started and (not IsFinished());
+   Result := Started and (not IsFinished());
 end;
 
 procedure oxTThreadTask.Run();
