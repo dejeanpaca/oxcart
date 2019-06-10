@@ -70,6 +70,7 @@ begin
    inherited;
 
    Name := 'Preview Generator';
+   Background := true;
 end;
 
 procedure oxedTPreviewGeneratorTask.Run();

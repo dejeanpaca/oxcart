@@ -51,7 +51,7 @@ var
    tasksRunning: loopint;
    tasksString: string;
    i: loopint;
-   task: oxTThreadTask;
+   task: oxedTTask;
 
 begin
    if(oxedMenuToolbar.Toolbar = nil) then
@@ -63,7 +63,7 @@ begin
    for i := 0 to oxedTasks.List.n - 1 do begin
       task := oxedTasks.List.List[i];
 
-      if(task.IsRunning()) then begin
+      if(task.IsRunning() and (not task.Background)) then begin
          inc(tasksRunning);
 
          tasksString := tasksString + #13;
@@ -86,7 +86,7 @@ begin
    end else begin
       oxedTasksUI.Wdg.Tasks^.Glyph := oxedTasksUI.Icons.Tasks;
       oxedTasksUI.Wdg.Tasks^.SetSpin(false);
-      oxedTasksUI.Wdg.Tasks^.Hint := 'No tasks running';
+      oxedTasksUI.Wdg.Tasks^.Hint := 'No tasks are running';
    end;
 
    oxedMenuToolbar.Toolbar.UpdateHint();
