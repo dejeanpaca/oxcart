@@ -1563,7 +1563,7 @@ begin
    if(DefaultLazarus^.Path = '') then begin
       {$IF DEFINED(LINUX)}
       log.v('build > auto lazarus defaults for linux');
-      DefaultLazarus^.Path := '/usr/bin/'
+      DefaultLazarus^.Path := '/usr/bin/';
       {$ELSEIF DEFINED(DARWIN)}
       log.v('build > auto lazarus defaults for darwin');
       DefaultLazarus^.Path := '/Develope/lazarus';
