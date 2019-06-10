@@ -128,8 +128,8 @@ end;
 INITIALIZATION
    oxedRecents.Max := 10;
    oxedRecents.Directories := true;
-   oxedTRecentsList.Initialize(oxedRecents.List);
-   TProcedures.Initialize(oxedRecents.OnUpdate);
+   oxedTRecentsList.InitializeValues(oxedRecents.List);
+   TProcedures.InitializeValues(oxedRecents.OnUpdate);
 
    dvgOXED.Add('recent', dvgRecents);
 

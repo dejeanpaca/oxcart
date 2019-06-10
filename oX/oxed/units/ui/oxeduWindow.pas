@@ -222,7 +222,7 @@ VAR
 INITIALIZATION
    oxed.Init.dAdd(oxedInitRoutines, 'oxed.window', @deinit);
 
-   oxedWindows.Initialize(oxedWindows);
+   oxedWindows.InitializeValues(oxedWindows);
 
 END.
 

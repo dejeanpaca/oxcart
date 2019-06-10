@@ -120,6 +120,6 @@ end;
 INITIALIZATION
    dvar.Add('oxed', dvgOXED);
 
-   TProcedures.Initialize(oxed.OnSceneChange);
+   TProcedures.InitializeValues(oxed.OnSceneChange);
 
 END.

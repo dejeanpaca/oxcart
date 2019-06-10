@@ -880,8 +880,8 @@ VAR
 INITIALIZATION
    oxed.Init.Add(oxedInitRoutines, 'build', @oxedTBuildGlobal.Initialize, @oxedTBuildGlobal.Deinitialize);
 
-   TProcedures.Initialize(oxedBuild.OnPrepare);
-   TProcedures.Initialize(oxedBuild.OnDone);
+   TProcedures.InitializeValues(oxedBuild.OnPrepare);
+   TProcedures.InitializeValues(oxedBuild.OnDone);
 
    oxedBuild.BuildTarget := OXED_BUILD_LIB;
 
