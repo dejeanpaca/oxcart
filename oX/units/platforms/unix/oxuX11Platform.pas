@@ -26,8 +26,6 @@ TYPE
    PXAttrInt      = ^XAttrInt;
    XAttrInt       = longint;
 
-
-TYPE
    x11TWindow = class(oxTWindow)
       wd: record
          LastError: longint;
@@ -38,7 +36,6 @@ TYPE
       end;
    end;
 
-TYPE
    TX11PointerDriver = class(appTPointerDriver)
       constructor Create();
 
@@ -126,7 +123,7 @@ begin
             exit(oxWindows.w[i]);
       end;
 
-   result := nil;
+   Result := nil;
 end;
 
 
@@ -147,7 +144,7 @@ end;
 
 function x11OpenDisplay(): boolean;
 begin
-   result := false;
+   Result := false;
 
    if(x11.DisplayOpened = false) then begin
       x11.DPY := XOpenDisplay(nil);
@@ -161,18 +158,17 @@ begin
       end;
    end;
 
-   result := x11.DisplayOpened;
+   Result := x11.DisplayOpened;
 end;
 
 { x11TGlobal }
 
 function oxTX11Platform.GetError(doDumpCallStack: boolean): longint;
 begin
-   result := LastError.error_code;
+   Result := LastError.error_code;
 
-   if(doDumpCallStack) and (Result <> 0) then begin
+   if(doDumpCallStack) and (Result <> 0) then
       DumpCallStack(1);
-   end;
 
    LastError.error_code := 0;
 end;
@@ -533,7 +529,7 @@ var
    left, top: longint;
 
 begin
-   result      := false;
+   Result := false;
 
    {create window data}
    wnd := x11TWindow(window);
@@ -628,7 +624,7 @@ begin
          xSetSizeHint(wnd);
 
       {window successfully created}
-      result := true;
+      Result := true;
    end;
 end;
 
@@ -662,7 +658,7 @@ begin
    end;
 
    {finished}
-   result := true;
+   Result := true;
 end;
 
 { SWAP BUFFERS }
@@ -823,10 +819,10 @@ begin
 
    {open the display for X11}
    if(x11OpenDisplay()) then
-      result := true
+      Result := true
    else begin
       log.f('X11 > Fatal: Failed to open display.');
-      result := false;
+      Result := false;
    end;
 end;
 
