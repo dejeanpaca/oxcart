@@ -36,7 +36,7 @@ INTERFACE
       {initialize keys last}
       oxeduKeys,
       {ui}
-      oxeduWindowTitle, oxuStandardFilePreviewers, oxeduSceneScreenshot,
+      oxeduWindowTitle, oxuStandardFilePreviewers, oxeduSceneScreenshot, oxeduPreviewGenerator,
       {plugins}
       oxeduPluginsUI
       {$INCLUDE ../plugins/oxed_plugins.inc};
