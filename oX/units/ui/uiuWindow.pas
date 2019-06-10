@@ -177,6 +177,7 @@ TYPE
 
       {move widgets by offset}
       procedure MoveWidgetsOffset(x, y: loopint);
+      procedure MoveNonClientWidgetsOffset(x, y: loopint);
 
       { window rendering }
       procedure RenderSubWindows();
@@ -2456,7 +2457,19 @@ var
 
 begin
    for i := 0 to Widgets.w.n - 1 do begin
-      uiTWidget(Widgets.w[i]).MoveOffset(x, y);
+      if(not (wdgpNON_CLIENT in uiTWidget(Widgets.w[i]).Properties)) then
+         uiTWidget(Widgets.w[i]).MoveOffset(x, y);
+   end;
+end;
+
+procedure uiTWindowHelper.MoveNonClientWidgetsOffset(x, y: loopint);
+var
+   i: loopint;
+
+begin
+   for i := 0 to Widgets.w.n - 1 do begin
+      if(wdgpNON_CLIENT in uiTWidget(Widgets.w[i]).Properties) then
+         uiTWidget(Widgets.w[i]).MoveOffset(x, y);
    end;
 end;
 
