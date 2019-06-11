@@ -217,9 +217,9 @@ end;
 class function TFileUtilsGlobal.ValidHandle(handle: THandle): boolean;
 begin
    {$IFDEF CPU64}
-   Result := int64(handle) = -1;
+   Result := handle <> -1;
    {$ELSE}
-   Result := int32(handle) = -1;
+   Result := handle <> -1;
    {$ENDIF}
 end;
 
@@ -611,7 +611,6 @@ end;
 
 begin
    Result := 0;
-   countRead := 0;
    data := '';
 
    f := FileOpen(fn, fmShareDenyNone);
@@ -619,9 +618,12 @@ begin
       exit(-1);
 
    totalSize := 0;
+   countRead := 0;
    size := hFileSize(f);
+
    if(size > 0) then begin
       totalSize := size;
+
       {we managed to get a size, so we read more}
       Result := size;
 
@@ -633,6 +635,7 @@ begin
       end;
 
       countRead := FileRead(f, data[1], size);
+
       if (countRead <> size) then begin
          cleanup();
          exit(-1);
@@ -647,6 +650,7 @@ begin
       repeat
          {read }
          countRead := FileRead(f, buffer[0], Length(buffer));
+
          if(countRead <= 0) then begin
             {return error if nothing read}
             if(totalSize = 0) then
@@ -658,11 +662,11 @@ begin
          inc(totalSize, countRead);
 
          {increase our size}
-         SetLength(data, Length(data) + countRead);
+         SetLength(data, totalSize);
          move(buffer[0], data[dataPosition], countRead);
 
          {move to next position}
-         dataPosition := dataPosition + countRead;
+         inc(dataPosition, countRead);
       until countRead <= 0;
    end;
 
@@ -1248,4 +1252,3 @@ INITIALIZATION
    {$ENDIF}
 
 END.
-
