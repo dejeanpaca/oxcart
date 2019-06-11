@@ -48,7 +48,6 @@ TYPE
       KernelVersion: string;
 
       nProcessors: longint;
-      {TODO: This needs refactoring}
 	   Processors: array of appTProcessorInformation;
 
       Memory: record
