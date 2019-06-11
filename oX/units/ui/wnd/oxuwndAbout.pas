@@ -13,13 +13,14 @@ INTERFACE
 USES
    uStd,
    {app}
-   uAppInfo, appuSysInfoBase,
+   uAppInfo, appuSysInfoBase, appuActionEvents,
    {oX}
    uOX, oxuTypes, oxuRunRoutines,
    {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF} oxuRenderer,
    oxuWindowTypes, oxuwndBase,
    {ui}
    uiuControl, uiuWindow, uiWidgets, uiuWidget,
+   oxuwndSystemInformation,
    {widgets}
    wdguLabel, wdguButton, wdguDivisor;
 
@@ -41,6 +42,8 @@ IMPLEMENTATION
 
 procedure showInformation();
 begin
+   oxwndAbout.Close();
+   appActionEvents.Queue(oxwndSystemInformation.OpenWindowAction);
 end;
 
 procedure oxTAboutWindow.AddWidgets();
@@ -64,14 +67,13 @@ begin
       uiWidget.LastRect.BelowOf(), oxNullDimensions);
 
    {add a cancel button}
-   btnMI := wdgButton.Add('Ok', uiWidget.LastRect.BelowOf(), oxDimensions(80, 20), @Close);
-
-   btnOk := wdgButton.Add('More Information', uiWidget.LastRect.RightOf(), oxDimensions(200, 20), @showInformation);
+   btnOk := wdgButton.Add('Ok', uiWidget.LastRect.BelowOf(), oxDimensions(80, 20), @Close);
+   btnMI := wdgButton.Add('More Information', uiWidget.LastRect.RightOf(), oxDimensions(200, 20), @showInformation);
 
    Window.ContentAutoSize();
 
-   btnMI.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT);
-   btnOk.SetPosition(wdgPOSITION_HORIZONTAL_LEFT);
+   btnOk.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT);
+   btnMI.SetPosition(wdgPOSITION_HORIZONTAL_LEFT);
 end;
 
 constructor oxTAboutWindow.Create;
