@@ -57,9 +57,9 @@ begin
 
       timer.Update();
       if(ok) then
-         log.i('Loaded scene (lib, elapsed: ' + sf(timer.Elapsedf(), 3) + '): ' + oxScene.Name)
+         log.i('Loaded scene (lib, elapsed: ' + timer.ElapsedfToString(3) + '): ' + oxScene.Name)
       else
-         log.i('Failed to load scene (lib, elapsed: ' + sf(timer.Elapsedf(), 3) + '): ' + oxScene.Name)
+         log.i('Failed to load scene (lib, elapsed: ' + ElapsedfToString(3) + '): ' + oxScene.Name)
    end;
 end;
 
