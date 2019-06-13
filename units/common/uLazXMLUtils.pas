@@ -11,6 +11,7 @@ UNIT uLazXMLUtils;
 INTERFACE
 
    USES
+      sysutils,
       {LazUtils}
       Laz2_DOM;
 
@@ -27,6 +28,7 @@ TYPE
       function GetAttributeValue(const name: string; out exists: boolean): string;
       function GetAttributeValue(const name: string; const defaultValue: string): string;
       function GetAttributeBool(const name: string; defaultValue: Boolean): Boolean;
+      function GetAttributeInt(const name: string; defaultValue: Int32 = 0): Int32;
 
       function AttributeExists(const name: string): Boolean;
 
@@ -122,6 +124,21 @@ begin
       Result := defaultValue;
 end;
 
+function TLazXMLDOMHelper.GetAttributeInt(const name: string; defaultValue: Int32): Int32;
+var
+   value: string;
+   attr: TDOMNode;
+
+begin
+   attr := Attributes.GetNamedItem(name);
+
+   if(attr <> nil) then begin
+      value := attr.NodeValue;
+      longint.TryParse(value, Result);
+   end else
+      Result := defaultValue;
+end;
+
 function TLazXMLDOMHelper.AttributeExists(const name: string): Boolean;
 begin
    Result := Attributes.GetNamedItem(name) <> nil;
@@ -130,7 +147,8 @@ end;
 function TLazXMLDOMHelper.CreateChild(const name: string): TDOMNode;
 begin
    {add new item}
-   Result := OwnerDocument.CreateElement(name);
+   Result := Self.OwnerDocument.CreateElement(name);
+
    Self.AppendChild(Result);
 end;
 
