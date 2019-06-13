@@ -85,6 +85,9 @@ TYPE
    { TDateTimeHelper }
 
    TDateTimeHelper = type helper for TDateTime
+      function ModuleTime(base: longint): longint;
+      function ModuleTimef(base: single): single;
+
       function Elapsed(): longint;
       function Elapsedf(): single;
       function ElapsedfToString(decimals: longint = 2): string;
@@ -116,6 +119,16 @@ VAR
 IMPLEMENTATION
 
 { TDateTimeHelper }
+
+function TDateTimeHelper.ModuleTime(base: longint): longint;
+begin
+   Result := (DateTimeToTimestamp(Self).Time mod base);
+end;
+
+function TDateTimeHelper.ModuleTimef(base: single): single;
+begin
+   Result := (DateTimeToTimestamp(Self).Time mod round(base * 1000)) / 1000;
+end;
 
 function TDateTimeHelper.Elapsed(): longint;
 var
