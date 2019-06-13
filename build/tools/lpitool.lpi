@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <Flags>
+        <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+      </Flags>
+      <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="0"/>
+      <Title Value="lpitool"/>
+      <UseAppBundle Value="False"/>
+      <ResourceType Value="res"/>
+    </General>
+    <i18n>
+      <EnableI18N LFM="False"/>
+    </i18n>
+    <BuildModes Count="1">
+      <Item1 Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <RequiredPackages Count="1">
+      <Item1>
+        <PackageName Value="LazUtils"/>
+      </Item1>
+    </RequiredPackages>
+    <Units Count="1">
+      <Unit0>
+        <Filename Value="lpitool.lpr"/>
+        <IsPartOfProject Value="True"/>
+      </Unit0>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="lpitool"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="../../3rdparty/openal;../../android/tools/androidbuild;../../components/app/tests;../../components/app/tools/keys;../../components/app/units/keys;../../components/dimg/units;../../oX/oxed;../../oX/oxed/plugins;../../oX/units;../../oX/units/q3;../../oX/units/render;../../oX/units/renderers/gl/gles;../../oX/units/renderers/gl;../../oX/units/resources;../../units/common;../../units/common/log;../../units/parsers/q3;../../units/udVars;../../units/VectorMachine/operators"/>
+      <OtherUnitFiles Value="../../units/3rdparty;../../3rdparty/dglOpenGL;../../3rdparty/openal;../../android/units;../units;../../components/app/units/android;../../components/app/units;../../components/app/units/controllers;../../components/app/units/keys;../../components/app/units/linux;../../components/app/units/mouse;../../components/app/units/win;../../components/dimg/tests;../../components/dimg/tools;../../components/dimg/units;../../oX/oxed/plugins/tests;../../oX/oxed/units/components;../../oX/oxed/units;../../oX/oxed/units/platforms;../../oX/oxed/units/project;../../oX/oxed/units/tasks;../../oX/oxed/units/ui;../../oX/setup;../../oX/tests/basic;../../oX/tests/units;../../oX/tools/fonts/oxFontEd;../../oX/tools/fonts/tfdedit;../../oX/units/components;../../oX/units/console;../../oX/units/input;../../oX/units/lib;../../oX/units/mdl;../../oX/units/media/al;../../oX/units/media;../../oX/units;../../oX/units/platforms/android;../../oX/units/platforms/osx;../../oX/units/platforms/oxed;../../oX/units/platforms/unix;../../oX/units/platforms/win;../../oX/units/q3;../../oX/units/render;../../oX/units/renderers/console;../../oX/units/renderers/dx;../../oX/units/renderers/gl;../../oX/units/renderers/vulkan;../../oX/units/scene;../../oX/units/templates;../../oX/units/ui;../../oX/units/ui/wdg;../../oX/units/ui/wnd;../../programs/file2code/test;../../programs/file2code;../../setup;../../units/common;../../units/common/log;../../units/common/tests;../../units/common/tests/console;../../units/common/tests/uTiming;../../units/dTVideo/tools;../../units/dTVideo;../../units/linux;../../units/parsers/ini;../../units/parsers/json;../../units/parsers/q3;../../units/parsers/scopes;../../units/parsers/simple;../../units/udVars;../../units/uFile/Tests;../../units/uFile;../../units/uFile/yPak;../../units/VectorMachine/tests;../../units/VectorMachine;../../units/win/tests;../../units/win"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <CodeGeneration>
+      <Checks>
+        <IOChecks Value="True"/>
+        <RangeChecks Value="True"/>
+        <OverflowChecks Value="True"/>
+      </Checks>
+    </CodeGeneration>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>
