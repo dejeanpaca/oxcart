@@ -554,7 +554,7 @@ begin
          { files }
          uiWidget.Create.Instance := wdgTFileDialogFileList;
          wdg.Files := wdgTFileDialogFileList(wdgFileList.Add(oxNullPoint, oxNullDimensions));
-         wdg.Files.DirectoriesOnly := ShowDirectoriesOnly;
+         wdg.Files.SetDirectoriesOnly(ShowDirectoriesOnly);
          wdg.Files.Dialog := Self;
          wdg.Files.IncludeParentDirectoryLink := false;
 
