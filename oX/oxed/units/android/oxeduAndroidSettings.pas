@@ -1,8 +1,8 @@
 {
-   oxeduSettings, oxed settings
-   Copyright (C) 2017. Dejan Boras
+   oxeduAndroidSettings, oxed android settings
+   Copyright (C) 2019. Dejan Boras
 
-   Started On:    23.01.2017.
+   Started On:    17.06.2019.
 }
 
 {$INCLUDE oxdefines.inc}
@@ -19,6 +19,8 @@ TYPE
    { oxedTAndroidSettingss }
 
    oxedTAndroidSettings = record
+      dvg: TDVarGroup;
+
       {android package name}
       PackageName: string;
 
@@ -33,8 +35,6 @@ IMPLEMENTATION
 VAR
    dvPackageName: TDVar;
 
-   dvgAndroid: TDVarGroup;
-
 { oxedTAndroidSettings }
 
 class procedure oxedTAndroidSettings.Reset();
@@ -46,10 +46,11 @@ end;
 
 
 INITIALIZATION
-   oxedAndroidSettings.PackageName := '';
+   oxedTAndroidSettings.Reset();
 
-   dvgOXED.Add('android', dvgAndroid);
-   dvgAndroid.Add(dvPackageName, 'package_name', dtcSINGLE, @oxedAndroidSettings.PackageName);
+   dvar.Init(oxedAndroidSettings.dvg, 'android');
+
+   oxedAndroidSettings.dvg.Add(dvPackageName, 'package_name', dtcSTRING, @oxedAndroidSettings.PackageName);
 
    oxedProjectManagement.OnNew.Add(@oxedAndroidSettings.Reset);
    oxedProjectManagement.OnClosed.Add(@oxedAndroidSettings.Reset);
