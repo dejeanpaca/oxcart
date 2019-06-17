@@ -40,6 +40,7 @@ TYPE
       Title: string;
       Width: loopint;
       Ratio: single;
+      Show: boolean; {should the column be shown or not}
       HorizontalJustify: uiTHorizontalJustify;
       VerticalJustify: uiTVerticalJustify;
    end;
@@ -70,16 +71,18 @@ TYPE
       {minimum item dimensions, if set to lower, grid mode is disabled}
       MinimumItemDimensions: oxTDimensions;
 
-      constructor Create; override;
+      constructor Create(); override;
 
       {add a new column}
       function AddColumn(const columnTitle: string): wdgPGridColumn;
       {call when done adding columns}
       procedure ColumnAddDone();
+      {show or hide a column}
+      procedure ShowColumn(which: loopint; show: boolean);
 
       procedure RenderItem(index: loopint; r: oxTRect); override;
 
-      procedure Render; override;
+      procedure Render(); override;
 
       function GetMaxWidth(): loopint; override;
       function GetItemHeight(index: loopint): loopint; override;
@@ -164,10 +167,10 @@ TYPE
 
       procedure SetFontColor(index: longint);
 
-      procedure UpdateItemHeight; override;
+      procedure UpdateItemHeight(); override;
 
       protected
-         procedure FontChanged; override;
+         procedure FontChanged(); override;
    end;
 
    { wdgTGridGlobal }
@@ -268,7 +271,7 @@ begin
    end;
 end;
 
-procedure wdgTStringGrid.UpdateItemHeight;
+procedure wdgTStringGrid.UpdateItemHeight();
 var
    h: loopint;
 
@@ -281,7 +284,7 @@ begin
    SetItemHeight(h + round(h * VerticalSeparation));
 end;
 
-procedure wdgTStringGrid.FontChanged;
+procedure wdgTStringGrid.FontChanged();
 begin
    inherited FontChanged;
 
@@ -290,7 +293,7 @@ end;
 
 { wdgTGrid }
 
-constructor wdgTGrid.Create;
+constructor wdgTGrid.Create();
 begin
    TitlePadding := wdgGRID_COLUMN_TITLE_PADDING;
    SeparatorWidth := wdgGRID_SEPARATOR_WIDTH;
@@ -319,6 +322,7 @@ begin
    g.Ratio := 0;
    g.HorizontalJustify := uiJUSTIFY_HORIZONTAL_LEFT;
    g.VerticalJustify := uiJUSTIFY_VERTICAL_CENTER;
+   g.Show := true;
 
    Columns.Add(g);
 
@@ -328,6 +332,16 @@ end;
 procedure wdgTGrid.ColumnAddDone();
 begin
    OnColumnCountChange();
+end;
+
+procedure wdgTGrid.ShowColumn(which: loopint; show: boolean);
+begin
+   if(which >= 0) and (which < Columns.n) then begin
+      if(Columns.List[which].Show <> show) then begin
+         Columns.List[which].Show := show;
+         ComputeColumns();
+      end;
+   end;
 end;
 
 procedure wdgTGrid.RenderItem(index: loopint; r: oxTRect);
@@ -342,11 +356,13 @@ begin
 
    if(not GridMode) then begin
       for i := 0 to (Columns.n - 1) do begin
-         subR.w := Columns.List[i].Width;
+         if(Columns.List[i].Show) then begin
+            subR.w := Columns.List[i].Width;
 
-         RenderColumn(index, i, subR);
+            RenderColumn(index, i, subR);
 
-         inc(subR.x, subR.w);
+            inc(subR.x, subR.w);
+         end;
       end;
    end else begin
       c := ItemsPerRow();
@@ -361,7 +377,7 @@ begin
    end;
 end;
 
-procedure wdgTGrid.Render;
+procedure wdgTGrid.Render();
 var
    i: loopint;
    r,
@@ -392,10 +408,12 @@ begin
 
          {render column separators in title}
          for i := 1 to (Columns.n - 1) do begin
-            inc(r.x, Columns.List[i - 1].Width);
+            if(Columns.List[i - 1].Show) then begin
+               inc(r.x, Columns.List[i - 1].Width);
 
-            if(r.x < RPosition.x + Dimensions.w) then
-               uiDraw.Box(r);
+               if(r.x < RPosition.x + Dimensions.w) then
+                  uiDraw.Box(r);
+            end;
          end;
 
          SetTextColor();
@@ -406,10 +424,12 @@ begin
          f.Start();
 
          for i := 0 to (Columns.n - 1) do begin
-            r.w := Columns.List[i].Width;
+            if(Columns.List[i].Show) then begin
+               r.w := Columns.List[i].Width;
 
-            f.WriteCentered(Columns.List[i].Title, r, oxfpCenterHV);
-            inc(r.x, r.w);
+               f.WriteCentered(Columns.List[i].Title, r, oxfpCenterHV);
+               inc(r.x, r.w);
+            end;
          end;
 
          oxf.Stop();
@@ -577,13 +597,16 @@ begin
       totalWidth := Dimensions.w - UnusableWidth;
 
       for i := 0 to (Columns.n - 1) do begin
-         if(Columns.List[i].Ratio > 0) then
-            Columns.List[i].Width := round(totalWidth * Columns.List[i].Ratio);
+         if(Columns.List[i].Show) then begin
+            if(Columns.List[i].Ratio > 0) then
+               Columns.List[i].Width := round(totalWidth * Columns.List[i].Ratio);
+         end else
+            Columns.List[i].Width := 0;
       end;
 
       {set any columns below minimum width to proper width, if they don't have a ratio}
       for i := 0 to (Columns.n - 1) do begin
-         if(Columns.List[i].Ratio = 0) then begin
+         if(Columns.List[i].Ratio = 0) and (Columns.List[i].Show) then begin
             if(Columns.List[i].Width < ColumnMinimumWidth) then
                Columns.List[i].Width := ColumnMinimumWidth;
          end;
