@@ -65,7 +65,7 @@ begin
    dvMainUnit.Update(oxedProject.MainUnit);
 end;
 
-procedure oxedTProjectSettings.Load;
+procedure oxedTProjectSettings.Load();
 begin
    UpdateVars();
 
@@ -92,7 +92,7 @@ begin
       oxedProject.LineEndings := oxedSettings.LineEndings;
 end;
 
-procedure oxedTProjectSettings.Save;
+procedure oxedTProjectSettings.Save();
 begin
    UpdateVars();
 
