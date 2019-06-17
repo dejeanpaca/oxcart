@@ -651,12 +651,14 @@ begin
    end;
 
    if(column = 0) then begin
+      {name}
       if(Files.List[index].Name <> '..') then
          Result := Files.List[index].Name
       else
          Result := '..';
    end else if(column = 1) then begin
-      if(not Files.List[index].Isfile()) then begin
+      {type}
+      if(Files.List[index].IsFile()) then begin
          if(Files.List[index].Name <> '..') then
             Result := ExtractFileExtNoDot(Files.List[index].Name)
          else
@@ -664,8 +666,10 @@ begin
       end else
          Result := 'DIR';
    end else if(column = 2) then
+      {size}
       Result := getiecByteSizeHumanReadableSI(Files.List[index].Size, 1, ' ')
    else if(column = 3) then begin
+      {time}
       Result := GetModifiedTime(Files.List[index].Time);
    end else
       Result := '';
