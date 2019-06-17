@@ -24,14 +24,11 @@ TYPE
    { oxedTProjectSettings }
 
    oxedTProjectSettings = record
-      function GetFn(): string;
+      class function GetFn(): string; static;
 
-      procedure Load();
-      procedure Save();
+      class procedure Load(); static;
+      class procedure Save(); static;
    end;
-
-VAR
-   oxedProjectSettings: oxedTProjectSettings;
 
 IMPLEMENTATION
 
@@ -50,9 +47,9 @@ VAR
 
 { oxedTProjectSettings }
 
-function oxedTProjectSettings.GetFn(): string;
+class function oxedTProjectSettings.GetFn(): string;
 begin
-   result := oxedProject.ConfigPath + OXED_PROJECT_SETTINGS_FILE;
+   Result := oxedProject.GetConfigFilePath(OXED_PROJECT_SETTINGS_FILE);
 end;
 
 procedure UpdateVars();
@@ -65,7 +62,7 @@ begin
    dvMainUnit.Update(oxedProject.MainUnit);
 end;
 
-procedure oxedTProjectSettings.Load();
+class procedure oxedTProjectSettings.Load();
 begin
    UpdateVars();
 
@@ -92,7 +89,7 @@ begin
       oxedProject.LineEndings := oxedSettings.LineEndings;
 end;
 
-procedure oxedTProjectSettings.Save();
+class procedure oxedTProjectSettings.Save();
 begin
    UpdateVars();
 

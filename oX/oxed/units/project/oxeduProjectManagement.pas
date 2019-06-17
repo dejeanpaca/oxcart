@@ -98,9 +98,9 @@ begin
 
    log.v('project > Saving: ' + oxedProject.Name);
 
-   oxedProjectSettings.Save();
+   oxedTProjectSettings.Save();
    log.v('project > Saved settings');
-   oxedProjectSession.Save();
+   oxedTProjectSession.Save();
    log.v('project > Saved session');
 
    {save other project data}
@@ -143,10 +143,10 @@ begin
          SetCurrentDir(fn);
 
          {TODO: Check if project settings loaded properly}
-         oxedProjectSettings.Load();
+         oxedTProjectSettings.Load();
          log.v('project > Loading project: ' + oxedProject.Name);
          log.v('project > Loaded settings');
-         oxedProjectSession.Load();
+         oxedTProjectSession.Load();
          log.v('project > Loaded session');
          oxedProject.RecreateTempDirectory();
 
