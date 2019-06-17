@@ -46,10 +46,10 @@ TYPE
          PathChange: TProcedure;
       end;
 
-      constructor Create; override;
-      destructor Destroy; override;
+      constructor Create(); override;
+      destructor Destroy(); override;
 
-      procedure RenderStart; override;
+      procedure RenderStart(); override;
       procedure RenderColumn(index, columnIndex: loopint; var r: oxTRect); override;
 
       function GetValue(index, column: loopint): string; override;
@@ -68,6 +68,8 @@ TYPE
 
       {open directory with the specified file index (if not a directory it does nothing)}
       procedure OpenDirectory(index: loopint);
+      {set into directories only mode}
+      procedure SetDirectoriesOnly(enabled: boolean = true);
 
       function GetItemCount(): loopint; override;
       function GetGridItemCount(): loopint; override;
@@ -77,7 +79,7 @@ TYPE
       {go to the parent directory}
       procedure GoUp();
 
-      procedure RemoveAll; override;
+      procedure RemoveAll(); override;
 
       protected
          procedure FileClicked(index: loopint; button: TBitSet = appmcLEFT); virtual;
@@ -503,7 +505,7 @@ end;
 
 { wdgTFileList }
 
-constructor wdgTFileList.Create;
+constructor wdgTFileList.Create();
 var
    column: wdgPGridColumn;
 
@@ -546,14 +548,14 @@ begin
    column^.HorizontalJustify := uiJUSTIFY_HORIZONTAL_LEFT;
 end;
 
-destructor wdgTFileList.Destroy;
+destructor wdgTFileList.Destroy();
 begin
    inherited Destroy;
 
    Files.Dispose();
 end;
 
-procedure wdgTFileList.RenderStart;
+procedure wdgTFileList.RenderStart();
 begin
    inherited RenderStart;
 
@@ -643,9 +645,8 @@ begin
    end;
 
    if(ShowFileIcons) then begin
-      if(column = 0) then begin
+      if(column = 0) then
          exit('');
-      end;
 
       column := column - 1;
    end;
@@ -785,6 +786,12 @@ begin
    end;
 end;
 
+procedure wdgTFileList.SetDirectoriesOnly(enabled: boolean);
+begin
+   ShowColumn(2, not enabled);
+   DirectoriesOnly := enabled;
+end;
+
 function wdgTFileList.GetItemCount(): loopint;
 begin
    if(not GridMode) then
@@ -826,7 +833,7 @@ begin
    FindAll(CurrentPath);
 end;
 
-procedure wdgTFileList.RemoveAll;
+procedure wdgTFileList.RemoveAll();
 begin
    Files.Dispose();
 
