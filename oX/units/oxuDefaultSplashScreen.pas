@@ -43,6 +43,9 @@ begin
    inherited Create();
 
    ClearBits := oxrBUFFER_CLEAR_COLOR;
+   {$IFDEF DEBUG}
+   DisplayTime := 0;
+   {$ENDIF}
 end;
 
 procedure oxTDefaultSplashScreen.Load();
