@@ -177,8 +177,8 @@ TYPE
 
    TDVarGlobal = record
       {used to initialize a dvar or group}
-      default: TDVar;
-      defaultGroup: TDVarGroup;
+      Default: TDVar;
+      DefaultGroup: TDVarGroup;
 
       {list of global dvars (this is the root)}
       dvars: TDVarGroup;
@@ -187,8 +187,10 @@ TYPE
 
       { initialize various variables }
       procedure Init(out a: TDVar);
-      procedure Init(out g: TDVarGroup);
       procedure Init(out dv: TDVar; const n: string; dt: longint; v: pointer);
+
+      procedure Init(out g: TDVarGroup);
+      procedure Init(out g: TDVarGroup; const name: string);
 
       {find a dvar}
       function Get(const name: string): PDVar;
@@ -234,19 +236,14 @@ end;
 
 procedure TDVarGroup.Add(const newName: string; out g: TDVarGroup);
 begin
-   g := dvar.defaultGroup;
+   g := dvar.DefaultGroup;
    g.Name := newName;
    Add(g);
 end;
 
 procedure TDVarGlobal.Init(out a: TDVar);
 begin
-   a := dvar.default;
-end;
-
-procedure TDVarGlobal.Init(out g: TDVarGroup);
-begin
-   g := dvar.defaultGroup;
+   a := dvar.Default;
 end;
 
 procedure TDVarGlobal.Init(out dv: TDVar; const n: string; dt: longint; v: pointer);
@@ -257,6 +254,16 @@ begin
    dv.Variable := v;
 end;
 
+procedure TDVarGlobal.Init(out g: TDVarGroup);
+begin
+   g := dvar.DefaultGroup;
+end;
+
+procedure TDVarGlobal.Init(out g: TDVarGroup; const name: string);
+begin
+   g := dvar.DefaultGroup;
+   g.Name := name;
+end;
 
 function TDVarGlobal.Get(const name: string): PDVar;
 begin
@@ -731,14 +738,14 @@ end;
 
 INITIALIZATION
    {create default dvar}
-   dvar.default.name := '';
-   dvar.default.DataType := -1;
+   dvar.Default.name := '';
+   dvar.Default.DataType := -1;
 
    {create default group}
-   ZeroOut(dvar.defaultGroup, SizeOf(dvar.defaultGroup));
+   ZeroOut(dvar.DefaultGroup, SizeOf(dvar.DefaultGroup));
 
    {prepare root group}
-   dvar.RootGroup := dvar.defaultGroup;
+   dvar.RootGroup := dvar.DefaultGroup;
    dvar.RootGroup.Name := '.';
    dvar.dvars := dvar.RootGroup;
 
