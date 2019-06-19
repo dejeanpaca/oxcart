@@ -32,7 +32,7 @@ INTERFACE
             { platforms }
             {%H-}oxuPlatform,
             {$IF defined(WINDOWS)}
-               {%H-}oxuWindowsPlatform,
+               {%H-}oxuPlatformWindows,
             {$ELSEIF defined(ANDROID)}
             {%H-}oxuAndroidPlatform,
             {$ELSEIF defined(X11)}
