@@ -11,6 +11,8 @@ UNIT oxuPlatform;
 INTERFACE
 
    USES
+      uLog, uComponentProvider,
+      {app}
       appuMouse, appuKeys,
       {ox}
       oxuWindowTypes, oxuGlobalInstances,
@@ -25,6 +27,8 @@ TYPE
          Name: string;
          {pointer driver used by the platform}
          PointerDriver: appTPointerDriver;
+         {platforms have components}
+         Components: TComponentProvider;
 
       constructor Create(); virtual;
 
@@ -67,6 +71,13 @@ TYPE
 
       {translate key into character}
       function TranslateKey(k: appTKeyEvent): char; virtual;
+
+      { COMPONENTS }
+
+      {get a component from the renderer}
+      function GetComponent(const componentName: string): TObject;
+      {find component}
+      function FindComponent(const componentName: string): PSingleComponent;
    end;
 
    oxTPlatformClass = class of oxTPlatform;
@@ -222,6 +233,26 @@ begin
    Result := appk.Translate(k.Key);
 end;
 
+function oxTPlatform.GetComponent(const componentName: string): TObject;
+var
+   p: PSingleComponent;
+
+begin
+   p := FindComponent(componentName);
+
+   if(p <> nil) then
+      result := p^.return()
+   else
+      result := nil;
+end;
+
+function oxTPlatform.FindComponent(const componentName: string): PSingleComponent;
+begin
+   Result := Components.FindComponent(componentName);
+
+   if(Result = nil) then
+      log.w('Requested component <' + componentName + '> not found for platform ' + Name);
+end;
 VAR
    grPlatform: oxPGlobalInstance;
 
