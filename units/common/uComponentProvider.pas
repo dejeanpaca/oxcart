@@ -55,7 +55,8 @@ IMPLEMENTATION
 procedure TComponentProviderGlobal.Initialize(var cp: TComponentProvider);
 begin
    ZeroOut(cp, SizeOf(cp));
-   cp.Components.Initialize(cp.Components, AllocationStep);
+
+   cp.Components.InitializeValues(cp.Components, AllocationStep);
 end;
 
 { TComponentProvider }
@@ -79,12 +80,12 @@ var
    i: longint;
 
 begin
-   for i := 0 to (components.n - 1) do begin
-      if(components.List[i].Name = componentName) then
-         exit(@components.List[i]);
+   for i := 0 to (Components.n - 1) do begin
+      if(Components.List[i].Name = componentName) then
+         exit(@Components.List[i]);
    end;
 
-   result := nil;
+   Result := nil;
 end;
 
 function TComponentProvider.GetComponent(const componentName: string): TObject;
@@ -96,7 +97,7 @@ begin
    if(p <> nil) then
       exit(p^.return());
 
-   result := nil;
+   Result := nil;
 end;
 
 INITIALIZATION
