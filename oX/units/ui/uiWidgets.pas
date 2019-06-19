@@ -5,7 +5,7 @@
    Started On:    01.06.2007.
 }
 
-{$INCLUDE oxdefines.inc}{$GOTO ON}
+{$INCLUDE oxdefines.inc}
 UNIT uiWidgets;
 
 INTERFACE
