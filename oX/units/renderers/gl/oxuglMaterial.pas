@@ -37,6 +37,6 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ox.PreInit.iAdd(initRoutines, 'ox.gl.materia', @init);
+   ox.PreInit.iAdd(initRoutines, 'ox.gl.material', @init);
 
 END.
