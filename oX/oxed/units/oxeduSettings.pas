@@ -77,7 +77,7 @@ begin
       LineEndings := 'lf';
 
    LineEndings := lowercase(LineEndings);
-   fFile.LineEndings := GetLineEndingTypeFromName(LineEndings);
+   fFile.LineEndings := TLineEndingType.GetFromName(LineEndings);
 end;
 
 INITIALIZATION
