@@ -75,7 +75,7 @@ TYPE
       {checks if the platform supports a file trash/recycle mechanism}
       function FileTrashCapability(): boolean; virtual;
       {send a file or directory into trash (if not available, will remove file/directory)}
-      procedure TrashFile(const {%H-}path: UnicodeString); virtual;
+      procedure TrashFile(const {%H-}path: UTF8String); virtual;
 
       { COMPONENTS }
 
@@ -244,7 +244,7 @@ begin
    Result := false;
 end;
 
-procedure oxTPlatform.TrashFile(const path: UnicodeString);
+procedure oxTPlatform.TrashFile(const path: UTF8String);
 var
    pathType: TFilePathType;
 
