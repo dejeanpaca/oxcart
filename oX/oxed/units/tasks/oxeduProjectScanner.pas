@@ -34,7 +34,7 @@ TYPE
 
    oxedTScannerFile = record
       FileName,
-      Extension: string;
+      Extension: StdString;
    end;
 
    oxedTProjectScannerFileProcedure = procedure(var f: oxedTScannerFile);

@@ -18,12 +18,12 @@ TYPE
    { TTestRunner }
 
    TTestRunner = record
-     {run a a test with a specific filename}
-     FileName: string;
      {should tests only run in the current directory}
      CurrentDirectory: boolean;
+     {run a a test with a specific filename}
+     FileName,
      {directory to run within (if empty, assume current)}
-     Directory: string;
+     Directory: StdString;
 
      procedure RunDirectory(recursive: boolean = false);
      procedure RunRecursive();
@@ -96,8 +96,9 @@ end;
 
 procedure TTestRunner.WriteResults();
 var
-   passCount, failCount: longint;
-   what: string;
+   passCount,
+   failCount: longint;
+   what: StdString;
 
 begin
    failCount := UnitTests.Pool.FailCount();

@@ -1608,12 +1608,12 @@ begin
    {$ENDIF}
 end;
 
-function doesIncludeAll(const path:  string): boolean;
+function doesIncludeAll(const path: StdString): boolean;
 begin
    Result := strutils.AnsiEndsStr('*', path);
 end;
 
-function isRelativePath(const path:  string): boolean;
+function isRelativePath(const path: StdString): boolean;
 begin
    Result := strutils.AnsiContainsStr(path, '..');
 end;
@@ -1710,7 +1710,7 @@ end;
 
 procedure dvNotifyBasePath({%H-}p: PDVar; {%H-}what: longword);
 begin
-   FileUtils.NormalizePathEx(string(p^.Variable^));
+   FileUtils.NormalizePathEx(StdString(p^.Variable^));
 end;
 
 procedure dvFPCNotify({%H-}p: PDVar; {%H-}what: longword);
