@@ -11,7 +11,7 @@ UNIT oxuDynlib;
 INTERFACE
 
    USES
-      sysutils, uLog, uStd, ParamUtils,
+      sysutils, uLog, uStd, ParamUtils, StringUtils,
       {app}
       uAppInfo, uApp,
       {ox}
@@ -42,7 +42,7 @@ TYPE
       {get application info}
       function IsAppActive(): boolean; virtual;
       {set custom run parameters}
-      procedure SetParameters(var params: TStringArray); virtual;
+      procedure SetParameters(var params: StringUtils.TStringArray); virtual;
 
       procedure Run(); virtual;
 
@@ -149,7 +149,7 @@ begin
    Result := app.Active;
 end;
 
-procedure oxTLibrary.SetParameters(var params: TStringArray);
+procedure oxTLibrary.SetParameters(var params: StringUtils.TStringArray);
 begin
    parameters.SetParameters(params);
 end;

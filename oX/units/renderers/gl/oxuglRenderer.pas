@@ -440,7 +440,7 @@ end;
 
 function oxglTRenderer.GetSummary(wnd: oxTWindow): TStringArray;
 var
-   list: array[0..3] of string;
+   list: array[0..3] of StdString;
 
 begin
    list[0] := 'Vendor: ' + oglTWindow(wnd).Info.Vendor;

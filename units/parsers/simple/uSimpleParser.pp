@@ -33,7 +33,7 @@ TYPE
       {current key if in key/value mode}
       Key,
       {current value if in key/value mode}
-      Value: string;
+      Value: StdString;
 
       {callbacks}
       ReadMethod,

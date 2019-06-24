@@ -83,7 +83,7 @@ TYPE
    { TFile }
 
    TFile = record
-      fn: string;
+      fn: StdString;
       fMode,
       fType,
       fNew: longword;
@@ -123,8 +123,8 @@ TYPE
       function GetErrorString(): string;
 
       {set defaults for a file}
-      procedure SetDefaults(const fileName: string);
-      procedure SetDefaults(new: boolean; mode: longint; const fileName: string);
+      procedure SetDefaults(const fileName: StdString);
+      procedure SetDefaults(new: boolean; mode: longint; const fileName: StdString);
       {return the size of the file}
       function GetSize(): fileint;
 
@@ -168,15 +168,15 @@ TYPE
       {flushes contents of buffer to the file if there is anything to write}
       procedure Flush();
       {a kludge used to read a line from a file, even a binary one}
-      procedure Readln(out s: string);
+      procedure Readln(out s: StdString);
       {a kludge used to read a shortstring line from a file, even a binary one}
       procedure Readln(out s: shortstring);
       {a kludge used to write a line to a file, even a binary one}
-      procedure Writeln(const s: string);
+      procedure Writeln(const s: StdString);
       {a kludge used to write a shortstring line to a file, even a binary one}
       procedure Writeln(const s: shortstring);
       {write a string}
-      procedure Write(const s: string);
+      procedure Write(const s: StdString);
       {get the entire file as a string}
       function GetString(): string;
       {seeks to a position in the file}
@@ -286,7 +286,7 @@ TYPE
       procedure fsInit(var fs: TVFileSystem);
       procedure fsAdd(var fs: TVFileSystem);
       function fsExists(const fn: string): fileint;
-      function fsOpen(var f: TFile; const fn: string): boolean;
+      function fsOpen(var f: TFile; const fn: StdString): boolean;
       {$ENDIF}
    end;
 
@@ -359,7 +359,7 @@ end;
 
 {GENERAL FILE OPERATIONS}
 
-procedure TFile.SetDefaults(const fileName: string);
+procedure TFile.SetDefaults(const fileName: StdString);
 begin
    fPosition      := 0;
    bPosition      := 0;
@@ -369,7 +369,7 @@ begin
    fn             := fileName;
 end;
 
-procedure TFile.SetDefaults(new: boolean; mode: longint; const fileName: string);
+procedure TFile.SetDefaults(new: boolean; mode: longint; const fileName: StdString);
 
 begin
    if(new) then
@@ -596,7 +596,7 @@ begin
       pHandler^.flush(Self);
 end;
 
-procedure TFile.Readln(out s: string);
+procedure TFile.Readln(out s: StdString);
 var
    c: char = #0;
    chars: longint = 0;
@@ -650,7 +650,7 @@ begin
    until (c = #10);
 end;
 
-procedure TFile.Writeln(const s: string);
+procedure TFile.Writeln(const s: StdString);
 var
    len: fileint;
 
@@ -680,7 +680,7 @@ begin
    Write(LineEndingChars[1], Length(LineEndingChars));
 end;
 
-procedure TFile.Write(const s: string);
+procedure TFile.Write(const s: StdString);
 var
    len: fileint;
 
@@ -742,7 +742,7 @@ end;
 function TFile.ReadStrings(out strings: TStringArray): fileint;
 var
    list: TPreallocatedStringArrayList;
-   currentLine: string = '';
+   currentLine: StdString = '';
    i: loopint;
 
 begin
@@ -1018,7 +1018,7 @@ begin
    Result := -1;
 end;
 
-function TFileGlobal.fsOpen(var f: TFile; const fn: string): boolean;
+function TFileGlobal.fsOpen(var f: TFile; const fn: StdString): boolean;
 var
    cur: PVFileSystem;
 

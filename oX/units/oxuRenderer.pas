@@ -410,7 +410,7 @@ end;
 
 function oxTRenderer.GetSummary(wnd: oxTWindow): TStringArray;
 var
-   list: array[0..0] of string;
+   list: array[0..0] of StdString;
 
 begin
    list[0] := 'Renderer: ' + Name;
