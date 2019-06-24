@@ -232,16 +232,16 @@ procedure TFileDescriptor.From(const s: TSearchRec);
 begin
    Self.Name := s.Name;
    Self.Time := s.Time;
-   Self.Size := Size;
-   Self.Attr := Attr;
+   Self.Size := s.Size;
+   Self.Attr := s.Attr;
 end;
 
 procedure TFileDescriptor.From(const s: TUnicodeSearchRec);
 begin
    Self.Name := UTF8String(s.Name);
    Self.Time := s.Time;
-   Self.Size := Size;
-   Self.Attr := Attr;
+   Self.Size := s.Size;
+   Self.Attr := s.Attr;
 end;
 
 class procedure TFileDescriptor.From(out f: TFileDescriptor; const s: TSearchRec);
