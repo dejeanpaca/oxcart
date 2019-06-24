@@ -1532,17 +1532,20 @@ end;
 procedure TBuildSystem.SetupDefaults();
 begin
    if(DefaultPlatform^.Path = '') then begin
-      log.v('Build config path: ' + ConfigPath);
+      if(VerboseLog) then
+         log.v('Build config path: ' + ConfigPath);
 
       {$IF DEFINED(LINUX)}
-      log.v('build > auto fpc defaults for linux');
+      if(VerboseLog) then
+         log.v('build > auto fpc defaults for linux');
 
       DefaultPlatform^.Path := '/usr/bin/';
 
       if(Tools.Path = '') then
          Tools.Path := '~/bin/';
       {$ELSEIF DEFINED(DARWIN)}
-      log.v('build > auto fpc defaults for darwin');
+      if(VerboseLog) then
+         log.v('build > auto fpc defaults for darwin');
 
       DefaultPlatform^.Path := '/usr/local/bin/'
 
@@ -1550,7 +1553,8 @@ begin
          Tools.Path := '~/bin/';
       {$ELSEIF DEFINED(WINDOWS)}
       {TODO: Determine default fpc path for windows}
-      log.v('build > auto fpc defaults for windows');
+      if(VerboseLog) then
+         log.v('build > auto fpc defaults for windows');
 
       if(Tools.Path = '') then
          Tools.Path :=  ExpandFileName(IncludeTrailingPathDelimiterNonEmpty(ConfigPath) + '..\tools');
@@ -1562,8 +1566,10 @@ begin
       FileUtils.NormalizePathEx(Tools.Path);
       FileUtils.NormalizePathEx(Tools.Build);
 
-      log.v('Auto build path: ' + Tools.Build);
-      log.v('Auto tools path: ' + Tools.Path);
+      if(VerboseLog) then begin
+         log.v('Auto build path: ' + Tools.Build);
+         log.v('Auto tools path: ' + Tools.Path);
+      end;
 
       {$IF DEFINED(CPUX86_64) OR DEFINEDCPUX86_32)}
       DefaultPlatform^.OptimizationLevels.Add('sse');
@@ -1571,21 +1577,27 @@ begin
       DefaultPlatform^.OptimizationLevels.Add('sse3');
       {$ENDIF}
 
-      log.v('build > using auto defaults fo fpc platform');
+      if(VerboseLog) then
+         log.v('build > using auto defaults for fpc platform');
    end;
 
    if(DefaultLazarus^.Path = '') then begin
       {$IF DEFINED(LINUX)}
-      log.v('build > auto lazarus defaults for linux');
+      if(VerboseLog) then
+         log.v('build > auto lazarus defaults for linux');
+
       DefaultLazarus^.Path := '/usr/bin/';
       {$ELSEIF DEFINED(DARWIN)}
-      log.v('build > auto lazarus defaults for darwin');
+      if(VerboseLog) then
+         log.v('build > auto lazarus defaults for darwin');
+
       DefaultLazarus^.Path := '/Develope/lazarus';
       {$ELSEIF DEFINED(WINDOW)}
       DefaultLazarus^.Path := 'C:\lazarus\';
       {$ENDIF}
 
-      log.v('build > using auto defaults for lazarus install');
+      if(VerboseLog) then
+         log.v('build > using auto defaults for lazarus install');
    end;
 
 end;
