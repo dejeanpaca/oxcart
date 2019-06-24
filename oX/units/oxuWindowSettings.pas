@@ -106,7 +106,7 @@ begin
    adjustVariables();
 end;
 
-procedure dvSaveHandler(var df: dvarTFileData; const parent: string);
+procedure dvSaveHandler(var df: dvarTFileData; const parent: StdString);
 var
    i: longint;
 

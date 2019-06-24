@@ -65,7 +65,7 @@ TYPE
       Recursive: boolean;
 
       {called when a file is found with matching extension (if any), if returns false traversal is stopped}
-      OnFile: function(const fn: string): boolean;
+      OnFile: function(const fn: StdString): boolean;
 
       procedure Initialize();
       class procedure Initialize(out traverse: TFileTraverse); static;
@@ -163,6 +163,11 @@ TYPE
       class procedure NormalizePath(var s: string); static;
       {do everything NormalizePath() does and also include trailing delimiter}
       class procedure NormalizePathEx(var s: string); static;
+
+      {normalize path, correct directory separators and replace special characters}
+      class procedure NormalizePath(var s: StdString); static;
+      {do everything NormalizePath() does and also include trailing delimiter}
+      class procedure NormalizePathEx(var s: StdString); static;
 
       {load a file as a string}
       class function LoadString(const fn: string; out data: string): fileint; static;
@@ -538,6 +543,22 @@ begin
 end;
 
 class procedure TFileUtilsGlobal.NormalizePathEx(var s: string);
+begin
+   NormalizePath(s);
+
+   if(s <> '') then
+      s := IncludeTrailingPathDelimiter(s);
+end;
+
+class procedure TFileUtilsGlobal.NormalizePath(var s: StdString);
+begin
+   ReplaceDirSeparators(s);
+
+   if(pos('~', s) <> 0) then
+      s := StringReplace(s, '~', homePath, []);
+end;
+
+class procedure TFileUtilsGlobal.NormalizePathEx(var s: StdString);
 begin
    NormalizePath(s);
 

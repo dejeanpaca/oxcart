@@ -231,7 +231,7 @@ end;
 VAR
    paramHandler: TParameterHandler;
 
-function processParam(const {%H-}paramKey: string; var params: array of string; n: longint): boolean;
+function processParam(const {%H-}paramKey: StdString; var params: array of StdString; n: longint): boolean;
 var
    name: string;
    renderer: oxTRenderer;

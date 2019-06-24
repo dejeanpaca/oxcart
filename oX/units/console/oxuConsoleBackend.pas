@@ -31,7 +31,7 @@ TYPE
    conTLine = record
       Time: TTime;
       Typ: word;
-      Txt: string;
+      Txt: StdString;
       Color: TColor4ub;
    end;
 
@@ -68,7 +68,7 @@ TYPE
    conTSimpleComandCallback = procedure(con: conPConsole);
 
    conTSimpleComand = record
-      sID: string;
+      sID: StdString;
       Callback: conTSimpleComandCallback;
    end;
 
@@ -78,8 +78,8 @@ TYPE
    {command}
    conPCommand = ^conTCommand;
    conTCommand = record
-      sID: string;
-      sHelp: string;
+      sID: StdString;
+      sHelp: StdString;
       nID: word;
    end;
 
@@ -109,7 +109,7 @@ TYPE
 
    conTConsole = record
       {name of the console}
-      Name: string;
+      Name: StdString;
 
       {is the console initialized}
       Initialized,
@@ -126,7 +126,7 @@ TYPE
       Error: longint;
 
       {current entry}
-      Entry: string;
+      Entry: StdString;
 
       {output to a log handler}
       LogOutput: PLog;
@@ -197,9 +197,9 @@ TYPE
 
       {processes a console entry}
       procedure ProcessEntry();
-      procedure ProcessEntry(const newEntry: string);
+      procedure ProcessEntry(const newEntry: StdString);
       {executes console commands from a file}
-      procedure Exec(const fn: string);
+      procedure Exec(const fn: StdString);
 
       {send an action signal to the console handler}
       function Action(a: longint): longint;
@@ -213,7 +213,7 @@ TYPE
       {clear the history}
       procedure ClearHistory();
       {add the entry to the history}
-      procedure AddHistory(const st: string);
+      procedure AddHistory(const st: StdString);
       {dispose of the console history}
       procedure DisposeHistory();
 
@@ -236,44 +236,44 @@ TYPE
       procedure DisposeHandlers();
 
       {COMMAND HANDLERS}
-      procedure AddCommand(const command: string; callback: conTSimpleComandCallback);
-      function FindCallback(const command: string): conTSimpleComandCallback;
+      procedure AddCommand(const command: StdString; callback: conTSimpleComandCallback);
+      function FindCallback(const command: StdString): conTSimpleComandCallback;
 
       {adds a command handler}
       procedure AddHandler(var handler: conTHandler);
       procedure AddHandler(out handler: conTHandler; notify: conTCommandNotifyProc; var cmds: array of conTCommand);
       {finds a command}
-      function FindCommand(var cmd: string; out c: conPCommand): conPHandler;
+      function FindCommand(var cmd: StdString; out c: conPCommand): conPHandler;
       {disposes all command handlers}
       procedure DisposeCHandlers();
 
       {WRITTING TO THE CONSOLE}
       {write to the console directly, bypassing any other output (skip log files)}
-      procedure RawWriteln(const s: string; const clr: conTColor);
+      procedure RawWriteln(const s: StdString; const clr: conTColor);
       {write with a custom color}
-      procedure Writeln(const s: string; const clr: conTColor);
+      procedure Writeln(const s: StdString; const clr: conTColor);
       {normal write (informative)}
-      procedure i(const s: string);
+      procedure i(const s: StdString);
       procedure i();
 
       {error writing}
-      procedure e(const s: string);
+      procedure e(const s: StdString);
       {warning writing}
-      procedure w(const s: string);
+      procedure w(const s: StdString);
       {debug writing}
-      procedure d(const s: string);
+      procedure d(const s: StdString);
       {verbose writing}
-      procedure v(const s: string);
+      procedure v(const s: StdString);
       {fatal writing}
-      procedure f(const s: string);
+      procedure f(const s: StdString);
       {ok writing}
-      procedure k(const s: string);
+      procedure k(const s: StdString);
 
       {writing commands}
       procedure cmdWriteln();
 
       {writing statements}
-      procedure s(const st: string);
+      procedure s(const st: StdString);
    end;
 
 TYPE
@@ -295,19 +295,19 @@ TYPE
       procedure Dispose(var con: conPConsole);
 
       {WRITTING TO THE CONSOLE}
-      procedure i(const s: string);
+      procedure i(const s: StdString);
       procedure i();
 
       {error writing}
-      procedure e(const s: string);
+      procedure e(const s: StdString);
       {warning writing}
-      procedure w(const s: string);
+      procedure w(const s: StdString);
       {debug writing}
-      procedure d(const s: string);
+      procedure d(const s: StdString);
       {verbose writing}
-      procedure v(const s: string);
+      procedure v(const s: StdString);
       {fatal writing}
-      procedure f(const s: string);
+      procedure f(const s: StdString);
 
       {SETTING COLORS}
       {sets 3 colors rgb for the text, opaque}
@@ -483,7 +483,8 @@ end;
 
 function conProcessArguments(var con: conTConsole): boolean;
 var
-   arg, Entry: string;
+   arg,
+   entry: StdString;
 
 begin
    {initialize}
@@ -493,18 +494,18 @@ begin
       con.Arguments.n := 0;
 
       if(length(con.Entry) > 0) then begin
-         Entry := con.Entry;
+         entry := con.Entry;
 
          repeat
-            StripLeadingWhiteSpace(Entry);
+            StripLeadingWhiteSpace(entry);
 
-            arg := CopyToDel(Entry);
-            if(arg = '') and (length(Entry) <> 0) then
+            arg := CopyToDel(entry);
+            if(arg = '') and (length(entry) <> 0) then
                continue;
 
             con.Arguments.List[con.Arguments.n] := arg;
             inc(con.Arguments.n);
-         until (length(Entry) = 0) or (con.Arguments.n = con.Arguments.a);
+         until (length(entry) = 0) or (con.Arguments.n = con.Arguments.a);
 
          if(con.Arguments.n > 0) then
             Result := true;
@@ -573,7 +574,7 @@ procedure conTConsole.ProcessEntry();
 var
    Result: boolean;
    ni: longint;
-   sArg: string;
+   sArg: StdString;
 
 label endit;
 
@@ -679,16 +680,16 @@ endit:
    end;
 end;
 
-procedure conTConsole.ProcessEntry(const newEntry: string);
+procedure conTConsole.ProcessEntry(const newEntry: StdString);
 begin
    Entry := newEntry;
    ProcessEntry();
 end;
 
-procedure conTConsole.Exec(const fn: string);
+procedure conTConsole.Exec(const fn: StdString);
 var
    fl: text;
-   ln: string;
+   ln: StdString;
 
 begin
    {initialize}
@@ -788,11 +789,11 @@ begin
    History.Entries.n := 0;
 end;
 
-procedure conTConsole.AddHistory(const st: string);
+procedure conTConsole.AddHistory(const st: StdString);
 var
    ni,
    j: longint;
-   temp: string = '';
+   temp: StdString = '';
 
 begin
    {initialize}
@@ -897,7 +898,7 @@ begin
    EntryHandlers.Dispose();
 end;
 
-procedure conTConsole.AddCommand(const command: string; callback: conTSimpleComandCallback);
+procedure conTConsole.AddCommand(const command: StdString; callback: conTSimpleComandCallback);
 var
    cmd: conTSimpleComand;
 
@@ -907,10 +908,10 @@ begin
    Commands.Add(cmd);
 end;
 
-function conTConsole.FindCallback(const command: string): conTSimpleComandCallback;
+function conTConsole.FindCallback(const command: StdString): conTSimpleComandCallback;
 var
    ni: longint;
-   sID: string;
+   sID: StdString;
 
 begin
    if(Commands.n > 0) then begin
@@ -951,7 +952,7 @@ begin
    AddHandler(handler);
 end;
 
-function conTConsole.FindCommand(var cmd: string; out c: conPCommand): conPHandler;
+function conTConsole.FindCommand(var cmd: StdString; out c: conPCommand): conPHandler;
 var
    cur: conPHandler;
    ni: longint;
@@ -992,7 +993,7 @@ begin
    CommandHandlers.n := 0;
 end;
 
-procedure conTConsole.RawWriteln(const s: string; const clr: conTColor);
+procedure conTConsole.RawWriteln(const s: StdString; const clr: conTColor);
 var
    n: longint;
 
@@ -1024,7 +1025,7 @@ begin
       conInitLine(Contents.List[n]);
 end;
 
-procedure conTConsole.Writeln(const s: string; const clr: conTColor);
+procedure conTConsole.Writeln(const s: StdString; const clr: conTColor);
 begin
    RawWriteln(s, clr);
 
@@ -1032,7 +1033,7 @@ begin
       LogOutput^.i(s);
 end;
 
-procedure conTConsole.i(const s: string);
+procedure conTConsole.i(const s: StdString);
 begin
    RawWriteln(s, Colors.Statement);
 
@@ -1047,7 +1048,7 @@ begin
       LogOutput^.i();
 end;
 
-procedure conTConsole.e(const s: string);
+procedure conTConsole.e(const s: StdString);
 begin
    RawWriteln(s, Colors.Error);
 
@@ -1055,35 +1056,35 @@ begin
       LogOutput^.e(s);
 end;
 
-procedure conTConsole.w(const s: string);
+procedure conTConsole.w(const s: StdString);
 begin
    RawWriteln(s, Colors.Warning);
    if(LogOutput <> nil) then
       LogOutput^.w(s);
 end;
 
-procedure conTConsole.d(const s: string);
+procedure conTConsole.d(const s: StdString);
 begin
    RawWriteln(s, Colors.Debug);
    if(LogOutput <> nil) then
       LogOutput^.d(s);
 end;
 
-procedure conTConsole.v(const s: string);
+procedure conTConsole.v(const s: StdString);
 begin
    RawWriteln(s, Colors.Verbose);
    if(LogOutput <> nil) then
       LogOutput^.v(s);
 end;
 
-procedure conTConsole.f(const s: string);
+procedure conTConsole.f(const s: StdString);
 begin
    RawWriteln(s, Colors.Fatal);
    if(LogOutput <> nil) then
       LogOutput^.f(s);
 end;
 
-procedure conTConsole.k(const s: string);
+procedure conTConsole.k(const s: StdString);
 begin
    RawWriteln(s, Colors.Ok);
    if(LogOutput <> nil) then
@@ -1092,7 +1093,7 @@ end;
 
 procedure conTConsole.cmdWriteln();
 var
-   cmd: string;
+   cmd: StdString;
 
 begin
    cmd := '>' + Entry;
@@ -1102,7 +1103,7 @@ begin
       LogOutput^.i(cmd);
 end;
 
-procedure conTConsole.s(const st: string);
+procedure conTConsole.s(const st: StdString);
 begin
    Writeln(st, Colors.Statement);
 
@@ -1160,7 +1161,7 @@ begin
    end;
 end;
 
-procedure conTConsoleGlobal.i(const s: string);
+procedure conTConsoleGlobal.i(const s: StdString);
 begin
    if(Selected <> nil) then
       Selected^.i(s);
@@ -1172,31 +1173,31 @@ begin
       Selected^.i('');
 end;
 
-procedure conTConsoleGlobal.e(const s: string);
+procedure conTConsoleGlobal.e(const s: StdString);
 begin
    if(Selected <> nil) then
       Selected^.e(s);
 end;
 
-procedure conTConsoleGlobal.w(const s: string);
+procedure conTConsoleGlobal.w(const s: StdString);
 begin
    if(Selected <> nil) then
       Selected^.w(s);
 end;
 
-procedure conTConsoleGlobal.d(const s: string);
+procedure conTConsoleGlobal.d(const s: StdString);
 begin
    if(Selected <> nil) then
       Selected^.d(s);
 end;
 
-procedure conTConsoleGlobal.v(const s: string);
+procedure conTConsoleGlobal.v(const s: StdString);
 begin
    if(Selected <> nil) then
       Selected^.v(s);
 end;
 
-procedure conTConsoleGlobal.f(const s: string);
+procedure conTConsoleGlobal.f(const s: StdString);
 begin
    if(Selected <> nil) then
       Selected^.f(s);

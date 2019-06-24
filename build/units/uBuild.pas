@@ -39,11 +39,11 @@ TYPE
       Path,
       ConfigPath,
       {fpc version}
-      Version: string;
+      Version: StdString;
       OptimizationLevels: TPreallocatedStringArrayList;
 
       class procedure Initialize(out p: TBuildPlatform); static;
-      function GetName(): string;
+      function GetName(): StdString;
    end;
 
    TBuildPlatforms = specialize TPreallocatedArrayList<TBuildPlatform>;
@@ -51,8 +51,8 @@ TYPE
    { TBuildPlatformsHelper }
 
    TBuildPlatformsHelper = record helper for TBuildPlatforms
-      function FindIndexByName(const name: string): loopint;
-      function FindByName(const name: string): PBuildPlatform;
+      function FindIndexByName(const name: StdString): loopint;
+      function FindByName(const name: StdString): PBuildPlatform;
    end;
 
 
@@ -68,7 +68,7 @@ TYPE
       Name,
       Path,
       ConfigPath,
-      UseFpc: string;
+      UseFpc: StdString;
 
       FPC: PBuildPlatform;
 
@@ -80,8 +80,8 @@ TYPE
    { TLazarusInstallsHelper }
 
    TLazarusInstallsHelper = record helper for TBuildLazarusInstalls
-      function FindIndexByName(const name: string): loopint;
-      function FindByName(const name: string): PBuildLazarusInstall;
+      function FindIndexByName(const name: StdString): loopint;
+      function FindByName(const name: StdString): PBuildLazarusInstall;
    end;
 
 
@@ -89,10 +89,10 @@ TYPE
 
    TBuildSystemTools = record
       Path,
-      Build: string;
+      Build: StdString;
 
-      procedure SetPath(const s: string);
-      procedure SetBuildPath(const s: string);
+      procedure SetPath(const s: StdString);
+      procedure SetBuildPath(const s: StdString);
    end;
 
    { TBuildSystem }
@@ -117,7 +117,7 @@ TYPE
       {build configuration path}
       ConfigPath,
       {build mode}
-      BuildMode: string;
+      BuildMode: StdString;
 
       {Configurations for various platforms (first one is default one for the current system), for cross-compiling}
       Platforms: TBuildPlatforms;
@@ -131,11 +131,11 @@ TYPE
          ExitCode,
          ExitStatus: longint;
          ExecutableName,
-         ErrorDecription: string;
+         ErrorDecription: StdString;
       end;
 
       FPCOptions: record
-         UnitOutputPath: string;
+         UnitOutputPath: StdString;
       end;
 
       Options: record
@@ -151,7 +151,7 @@ TYPE
 
       Libraries: record
          Source,
-         Target: string;
+         Target: StdString;
          OptimizationLevel: longint;
       end;
 
@@ -174,41 +174,41 @@ TYPE
       procedure LoadUnits();
 
       {load the specified config file}
-      procedure LoadConfigFile(const fn: string);
+      procedure LoadConfigFile(const fn: StdString);
 
       {automatically determine config path}
       procedure AutoDetermineConfigPath();
 
       {get lazarus project filename for the given path (which may already include project filename)}
-      function GetLPIFilename(const path: string): string;
+      function GetLPIFilename(const path: StdString): StdString;
       {get tool process}
       function GetToolProcess(): TProcess;
 
       {build a lazarus project}
-      procedure Laz(const originalPath: string);
+      procedure Laz(const originalPath: StdString);
       {retrieves the executable name from a lazarus project}
-      function GetExecutableNameFromLPI(const path: string): string;
+      function GetExecutableNameFromLPI(const path: StdString): StdString;
       {build an fpc program}
-      procedure Pas(const originalPath: string);
+      procedure Pas(const originalPath: StdString);
       {used to report building failed for a process (laz or fpc)}
       procedure BuildingFailed(const p: TProcess);
 
       {copies a tool into the tool directory}
-      procedure CopyTool(const path: string);
+      procedure CopyTool(const path: StdString);
 
       {build a tools (lazarus project) and copies it to the tools directory}
-      procedure LazTool(const path: string);
+      procedure LazTool(const path: StdString);
       {build a tools (fpc source) and copies it to the tools directory}
-      procedure PasTool(const path: string);
+      procedure PasTool(const path: StdString);
 
       {writes out output of a process}
       procedure LogOutput(const p: TProcess);
 
       {run a command (abstraction over process.RunCommand)}
-      procedure RunCommand(const exename:string; const commands: array of string);
-      procedure RunCommandCurrentDir(const exename:string; const commands: array of string);
+      procedure RunCommand(const exename: StdString; const commands: array of StdString);
+      procedure RunCommandCurrentDir(const exename: StdString; const commands: array of StdString);
       {get the name of an executable}
-      function GetExecutableName(const name: string; isLibrary: boolean = false): string;
+      function GetExecutableName(const name: StdString; isLibrary: boolean = false): StdString;
 
       {checks if lazarus is in environment path}
       function LazarusInPathEnv(): boolean;
@@ -216,9 +216,9 @@ TYPE
       function FPCINPathEnv(): boolean;
 
       {get the semicolon separated includes path from a list of strings relative the base path}
-      function GetIncludesPath(const basePath: string; const paths: TPreallocatedStringArrayList): string;
+      function GetIncludesPath(const basePath: StdString; const paths: TPreallocatedStringArrayList): StdString;
       {get the semicolon separated includes path from a list of strings relative the base path, including the existing items}
-      function GetIncludesPath(const basePath: string; const paths: TPreallocatedStringArrayList; const existing: string): string;
+      function GetIncludesPath(const basePath: StdString; const paths: TPreallocatedStringArrayList; const existing: StdString): StdString;
 
       {stores the output of a build process into the output structure}
       procedure StoreOutput(p: TProcess);
@@ -226,29 +226,29 @@ TYPE
       procedure Wait(p: TProcess);
 
       {copy a library with the given name from source to target (set in Libraries)}
-      function CopyLibrary(const name: string; const newName: string = ''): boolean;
+      function CopyLibrary(const name: StdString; const newName: StdString = ''): boolean;
       {get an optimization level name}
-      function GetOptimizationLevelName(optimizationLevel: longint): string;
+      function GetOptimizationLevelName(optimizationLevel: longint): StdString;
       {get a human readable optimization level name}
-      function GetOptimizationLevelNameHuman(optimizationLevel: longint): string;
+      function GetOptimizationLevelNameHuman(optimizationLevel: longint): StdString;
       {get lazarus executable}
-      function GetLazarusExecutable(): string;
-      function GetLazarusStartExecutable(): string;
+      function GetLazarusExecutable(): StdString;
+      function GetLazarusStartExecutable(): StdString;
 
       {get current platform}
       function GetPlatform(): PBuildPlatform;
       {get current lazarus install}
       function GetLazarus(): PBuildLazarusInstall;
       {set current platform by its name}
-      function SetPlatform(const name: string): Boolean;
+      function SetPlatform(const name: StdString): Boolean;
       {set lazarus by name}
-      function SetLazarusInstall(const name: string): Boolean;
+      function SetLazarusInstall(const name: StdString): Boolean;
       {find platform by name, returns nil if nothing found}
-      function FindPlatform(const name: string): PBuildPlatform;
+      function FindPlatform(const name: StdString): PBuildPlatform;
       {find lazarus install by name, returns nil if nothing found}
-      function FindLazarusInstall(const name: string): PBuildLazarusInstall;
+      function FindLazarusInstall(const name: StdString): PBuildLazarusInstall;
       {get the platform we're compiled with}
-      function GetCurrentPlatform(): string;
+      function GetCurrentPlatform(): StdString;
 
       {test all platforms}
       procedure TestPlatforms();
@@ -258,7 +258,7 @@ TYPE
       procedure SetupAvailableLazarus();
 
       {get current platform and settings as an fpc command line string}
-      function GetFPCCommandLine(): string;
+      function GetFPCCommandLine(): StdString;
 
       {get all commmand line defined symbol parameters}
       procedure GetSymbolParameters();
@@ -304,9 +304,9 @@ VAR
    dvUnitsBaseLinux,
    dvUnitsBaseDarwin: TDVar;
 
-   currentMode: string = 'fpc';
+   currentMode: StdString = 'fpc';
    currentConfigFilePath,
-   currentValue: string;
+   currentValue: StdString;
 
    dvFPC,
    dvLazarus,
@@ -323,7 +323,7 @@ VAR
    {current base path read from units.config}
    winBasePath,
    unixBasePath,
-   darwinBasePath: string;
+   darwinBasePath: StdString;
 
    currentPlatform: PBuildPlatform;
    currentLazarus: PBuildLazarusInstall;
@@ -380,7 +380,7 @@ end;
 
 { TLazarusInstallsHelper }
 
-function TLazarusInstallsHelper.FindIndexByName(const name: string): loopint;
+function TLazarusInstallsHelper.FindIndexByName(const name: StdString): loopint;
 var
    i: loopint;
 
@@ -393,7 +393,7 @@ begin
    Result := -1;
 end;
 
-function TLazarusInstallsHelper.FindByName(const name: string): PBuildLazarusInstall;
+function TLazarusInstallsHelper.FindByName(const name: StdString): PBuildLazarusInstall;
 var
    index: loopint;
 
@@ -408,7 +408,7 @@ end;
 
 { TBuildPlatformsHelper }
 
-function TBuildPlatformsHelper.FindIndexByName(const name: string): loopint;
+function TBuildPlatformsHelper.FindIndexByName(const name: StdString): loopint;
 var
    i: loopint;
 
@@ -421,7 +421,7 @@ begin
    Result := -1;
 end;
 
-function TBuildPlatformsHelper.FindByName(const name: string): PBuildPlatform;
+function TBuildPlatformsHelper.FindByName(const name: StdString): PBuildPlatform;
 var
    index: loopint;
 
@@ -450,7 +450,7 @@ begin
    p.OptimizationLevels.InitializeValues(p.OptimizationLevels);
 end;
 
-function TBuildPlatform.GetName(): string;
+function TBuildPlatform.GetName(): StdString;
 begin
    Result := Name;
 
@@ -592,13 +592,13 @@ end;
 
 { TBuildSystemTools }
 
-procedure TBuildSystemTools.SetPath(const s: string);
+procedure TBuildSystemTools.SetPath(const s: StdString);
 begin
    path := s;
    FileUtils.NormalizePathEx(path);
 end;
 
-procedure TBuildSystemTools.SetBuildPath(const s: string);
+procedure TBuildSystemTools.SetBuildPath(const s: StdString);
 begin
    build := s;
    FileUtils.NormalizePathEx(build);
@@ -669,7 +669,7 @@ var
    tempConfigPath,
    fn,
    platform,
-   mode: string;
+   mode: StdString;
 
 begin
    AutoDeterminedConfigPath := false;
@@ -739,7 +739,7 @@ end;
 
 procedure TBuildSystem.SaveLocationConfiguration();
 var
-   fn: string;
+   fn: StdString;
 
 begin
    fn := appPath.HomeConfigurationDir('.' + SYSTEM_NAME) + 'location.config';
@@ -750,7 +750,7 @@ end;
 
 procedure TBuildSystem.LoadUnits();
 var
-   fn: string;
+   fn: StdString;
 
 begin
    fn := ConfigPath + 'units.config';
@@ -758,7 +758,7 @@ begin
    LoadConfigFile(fn);
 end;
 
-procedure TBuildSystem.LoadConfigFile(const fn: string);
+procedure TBuildSystem.LoadConfigFile(const fn: StdString);
 begin
    if(FileUtils.Exists(fn) > 0) then begin
       currentConfigFilePath := ExtractFilePath(fn);
@@ -768,9 +768,9 @@ begin
    end;
 end;
 
-function tryDetermineConfigPath(startPath: string): boolean;
+function tryDetermineConfigPath(startPath: StdString): boolean;
 var
-   path: String;
+   path: StdString;
 
 begin
    build.ConfigPath := IncludeTrailingPathDelimiter(startPath);
@@ -808,7 +808,7 @@ begin
 end;
 
 
-function TBuildSystem.GetLPIFilename(const path: string): string;
+function TBuildSystem.GetLPIFilename(const path: StdString): StdString;
 begin
    if(ExtractFileExt(path) = '.lpi') then
       result := path
@@ -822,11 +822,11 @@ begin
    Result.Options := Result.Options + [poWaitOnExit];
 end;
 
-procedure TBuildSystem.Laz(const originalPath: string);
+procedure TBuildSystem.Laz(const originalPath: StdString);
 var
    p: TProcess;
-   executableName: string;
-   path: string;
+   executableName: StdString;
+   path: StdString;
 
 begin
    path := originalPath;
@@ -881,7 +881,7 @@ end;
 
 VAR
    executableNameNext: boolean;
-   executableName: string;
+   executableName: StdString;
 
 function readf(var parseData: TParseData): boolean;
 begin
@@ -902,7 +902,7 @@ begin
    end;
 end;
 
-function TBuildSystem.GetExecutableNameFromLPI(const path: string): string;
+function TBuildSystem.GetExecutableNameFromLPI(const path: StdString): StdString;
 var
    p: TParseData;
 
@@ -917,10 +917,10 @@ begin
    result := executableName;
 end;
 
-procedure TBuildSystem.Pas(const originalPath: string);
+procedure TBuildSystem.Pas(const originalPath: StdString);
 var
    p: TProcess;
-   path: string;
+   path: StdString;
    i: loopint;
 
 begin
@@ -1002,9 +1002,9 @@ begin
    LogOutput(p);
 end;
 
-procedure TBuildSystem.CopyTool(const path: string);
+procedure TBuildSystem.CopyTool(const path: StdString);
 var
-   fullPath, target: string;
+   fullPath, target: StdString;
    error: fileint;
 
 begin
@@ -1042,7 +1042,7 @@ begin
    output.Success := true;
 end;
 
-procedure TBuildSystem.LazTool(const path: string);
+procedure TBuildSystem.LazTool(const path: StdString);
 begin
    Laz(path);
 
@@ -1050,7 +1050,7 @@ begin
       CopyTool(output.executableName);
 end;
 
-procedure TBuildSystem.PasTool(const path: string);
+procedure TBuildSystem.PasTool(const path: StdString);
 begin
    Pas(path);
 
@@ -1074,24 +1074,27 @@ begin
    end;
 end;
 
-procedure TBuildSystem.RunCommand(const exename: string; const commands: array of string);
+procedure TBuildSystem.RunCommand(const exename: StdString; const commands: array of StdString);
 var
    outputString: string = '';
+   ansiCommands: array of String;
 
 begin
-   if(not process.RunCommand(exename, commands, outputString)) then
+   ansiCommands := StringUtils.GetAnsiStrings(commands);
+
+   if(not process.RunCommand(exename, ansiCommands, outputString)) then
       log.e('Failed to run process: ' + exename);
 
    if(outputString <> '') then
       console.i(outputString);
 end;
 
-procedure TBuildSystem.RunCommandCurrentDir(const exename: string; const commands: array of string);
+procedure TBuildSystem.RunCommandCurrentDir(const exename: StdString; const commands: array of StdString);
 begin
    RunCommand(IncludeTrailingPathDelimiterNonEmpty(GetCurrentDir()) + exename, commands);
 end;
 
-function TBuildSystem.GetExecutableName(const name: string; isLibrary: boolean): string;
+function TBuildSystem.GetExecutableName(const name: StdString; isLibrary: boolean): StdString;
 begin
    {$IFDEF WINDOWS}
    if(not isLibrary) then
@@ -1108,7 +1111,7 @@ end;
 
 function TBuildSystem.LazarusInPathEnv(): boolean;
 var
-   path: string;
+   path: StdString;
 
 begin
    path := GetEnvironmentVariable('PATH');
@@ -1117,16 +1120,16 @@ end;
 
 function TBuildSystem.FPCINPathEnv(): boolean;
 var
-   path: string;
+   path: StdString;
 
 begin
    path := GetEnvironmentVariable('PATH');
    exit(Pos(DirectorySeparator + 'fpc', path) <> 0)
 end;
 
-function TBuildSystem.GetIncludesPath(const basePath: string; const paths: TPreallocatedStringArrayList): string;
+function TBuildSystem.GetIncludesPath(const basePath: StdString; const paths: TPreallocatedStringArrayList): StdString;
 var
-   p, relative: string;
+   p, relative: StdString;
    i: longint;
 
 begin
@@ -1146,9 +1149,9 @@ begin
    result := p;
 end;
 
-function TBuildSystem.GetIncludesPath(const basePath: string; const paths: TPreallocatedStringArrayList; const existing: string): string;
+function TBuildSystem.GetIncludesPath(const basePath: StdString; const paths: TPreallocatedStringArrayList; const existing: StdString): StdString;
 var
-   p, relative: string;
+   p, relative: StdString;
    existingItems: TAnsiStringArray;
    i, j: longint;
    exists: boolean;
@@ -1223,13 +1226,13 @@ begin
    until (not p.Running);
 end;
 
-function TBuildSystem.CopyLibrary(const name: string; const newName: string = ''): boolean;
+function TBuildSystem.CopyLibrary(const name: StdString; const newName: StdString = ''): boolean;
 var
    optimizationSource,
-   usedSource: string;
+   usedSource: StdString;
    optimizationLevel: longint;
 
-function getNewName(): string;
+function getNewName(): StdString;
 begin
    if(newName <> '') then
       Result := newName
@@ -1237,7 +1240,7 @@ begin
       Result := name;
 end;
 
-function getPath(): string;
+function getPath(): StdString;
 begin
    Result := Libraries.Source + IncludeTrailingPathDelimiterNonEmpty(CurrentPlatform^.GetName());
 end;
@@ -1306,7 +1309,7 @@ begin
       log.e('Failed to copy library from ' + usedSource + ' to ' + Libraries.Target + getNewName());
 end;
 
-function TBuildSystem.GetOptimizationLevelName(optimizationLevel: longint): string;
+function TBuildSystem.GetOptimizationLevelName(optimizationLevel: longint): StdString;
 begin
    if(optimizationLevel > 0) and (optimizationLevel <= CurrentPlatform^.OptimizationLevels.n) then
       Result := CurrentPlatform^.OptimizationLevels.List[optimizationLevel - 1]
@@ -1314,19 +1317,19 @@ begin
       Result := '';
 end;
 
-function TBuildSystem.GetOptimizationLevelNameHuman(optimizationLevel: longint): string;
+function TBuildSystem.GetOptimizationLevelNameHuman(optimizationLevel: longint): StdString;
 begin
    Result := GetOptimizationLevelName(optimizationLevel);
    if(Result = '') then
       Result := 'none';
 end;
 
-function TBuildSystem.GetLazarusExecutable(): string;
+function TBuildSystem.GetLazarusExecutable(): StdString;
 begin
    Result := GetLazarus()^.Path + GetExecutableName('lazarus');
 end;
 
-function TBuildSystem.GetLazarusStartExecutable(): string;
+function TBuildSystem.GetLazarusStartExecutable(): StdString;
 begin
    Result := GetLazarus()^.Path + GetExecutableName('startlazarus');
 end;
@@ -1347,7 +1350,7 @@ begin
       Result := @LazarusInstalls.List[0];
 end;
 
-function TBuildSystem.SetPlatform(const name: string): Boolean;
+function TBuildSystem.SetPlatform(const name: StdString): Boolean;
 var
    p: PBuildPlatform;
 
@@ -1363,7 +1366,7 @@ begin
    Result := false;
 end;
 
-function TBuildSystem.SetLazarusInstall(const name: string): Boolean;
+function TBuildSystem.SetLazarusInstall(const name: StdString): Boolean;
 var
    p: PBuildLazarusInstall;
 
@@ -1379,17 +1382,17 @@ begin
    Result := false;
 end;
 
-function TBuildSystem.FindPlatform(const name: string): PBuildPlatform;
+function TBuildSystem.FindPlatform(const name: StdString): PBuildPlatform;
 begin
    Result := Platforms.FindByName(name);
 end;
 
-function TBuildSystem.FindLazarusInstall(const name: string): PBuildLazarusInstall;
+function TBuildSystem.FindLazarusInstall(const name: StdString): PBuildLazarusInstall;
 begin
    Result := LazarusInstalls.FindByName(name);
 end;
 
-function TBuildSystem.GetCurrentPlatform(): string;
+function TBuildSystem.GetCurrentPlatform(): StdString;
 begin
    Result := LowerCase({$I %FPCTARGETOS%});
 end;
@@ -1473,7 +1476,7 @@ begin
    end;
 end;
 
-function TBuildSystem.GetFPCCommandLine(): string;
+function TBuildSystem.GetFPCCommandLine(): StdString;
 var
    i: loopint;
    c: TAppendableString;
@@ -1499,7 +1502,7 @@ end;
 procedure TBuildSystem.GetSymbolParameters();
 var
    cur,
-   symbol: string;
+   symbol: StdString;
 
 begin
    parameters.Reset();
@@ -1587,7 +1590,7 @@ begin
 
 end;
 
-function getBasePath(): string;
+function getBasePath(): StdString;
 begin
    {$IFDEF UNIX}
    {$IFDEF DARWIN}
@@ -1618,9 +1621,9 @@ end;
 VAR
    Walker: TFileTraverse;
 
-function onUnit(const fn: string): boolean;
+function onUnit(const fn: StdString): boolean;
 var
-   path: string;
+   path: StdString;
 
 begin
    Result := true;
@@ -1635,9 +1638,9 @@ begin
    end;
 end;
 
-function onInclude(const fn: string): boolean;
+function onInclude(const fn: StdString): boolean;
 var
-   path: string;
+   path: StdString;
 
 begin
    Result := true;
@@ -1652,7 +1655,7 @@ begin
    end;
 end;
 
-procedure scanUnits(const startPath: string);
+procedure scanUnits(const startPath: StdString);
 begin
    log.v('build > Will scan path for units: ' + startPath);
 
@@ -1660,11 +1663,11 @@ begin
 
    Walker.AddExtension('.pas');
 
-   Walker.onFile := @onUnit;
+   Walker.OnFile := @onUnit;
    Walker.Run(startPath);
 end;
 
-procedure scanIncludes(const startPath: string);
+procedure scanIncludes(const startPath: StdString);
 begin
    log.v('build > Will scan path for includes: ' + startPath);
 
@@ -1676,7 +1679,7 @@ begin
    Walker.Run(startPath);
 end;
 
-function processPath(var path: string): boolean;
+function processPath(var path: StdString): boolean;
 begin
    Result := False;
    ReplaceDirSeparators(path);
@@ -1808,7 +1811,7 @@ end;
 VAR
    paramHandler: TParameterHandler;
 
-function processParam(const paramKey: string; var {%H-}params: array of string; {%H-}n: longint): boolean;
+function processParam(const paramKey: StdString; var {%H-}params: array of StdString; {%H-}n: longint): boolean;
 begin
    Result := false;
 

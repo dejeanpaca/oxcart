@@ -35,15 +35,15 @@ CONST
    PARAM_HANDLER_CALLED                      = 0004;
 
 TYPE
-   TProcessParametersRoutine = function(const pstr: string; const lstr: string): boolean;
+   TProcessParametersRoutine = function(const pstr: StdString; const lstr: StdString): boolean;
 
    {a parameter handler}
-   TParameterHandlerRoutine = function(const paramKey: string; var params: array of string; n: longint): boolean;
+   TParameterHandlerRoutine = function(const paramKey: StdString; var params: array of StdString; n: longint): boolean;
 
    PParameterHandler = ^TParameterHandler;
    TParameterHandler = record
-      Name: string;
-      ParamKey: string;
+      Name: StdString;
+      ParamKey: StdString;
       Properties: longword;
       nArguments: longint;
       Process: TParameterHandlerRoutine;
@@ -70,14 +70,14 @@ TYPE
       CustomParameters: TStringArray;
 
       {get the next parameter}
-      function Next(): string;
+      function Next(): StdString;
       {get the next parameter as lowercase}
-      function NextLowercase(): string;
+      function NextLowercase(): StdString;
       {get the next parameter as integer, and return true if successful}
       function Next(var i: longint): longint;
       function Next(var i: int64): longint;
       {get the current parameter}
-      function Current(): string;
+      function Current(): StdString;
       {get the current parameter as integer, and return true if successful}
       function Current(var i: longint): longint;
       function Current(var i: int64): longint;
@@ -94,17 +94,17 @@ TYPE
 
       { FINDING }
       {find a flag}
-      function FindFlag(const flagName: string): boolean;
-      function FindFlagLowercase(const flagName: string): boolean;
+      function FindFlag(const flagName: StdString): boolean;
+      function FindFlagLowercase(const flagName: StdString): boolean;
 
       {get custom parameter if they're used, if not use regular parameters}
-      function GetCustom(parameter: loopint): string;
+      function GetCustom(parameter: loopint): StdString;
       {get a parameter and mark it as handled}
-      function GetParameter(parameter: loopint): string;
+      function GetParameter(parameter: loopint): StdString;
 
       { HANDLERS }
       {finds a parameter handler for the specified paramKey, returns nil if none found}
-      function FindHandler(const paramKey: string): PParameterHandler;
+      function FindHandler(const paramKey: StdString): PParameterHandler;
       {marks all handlers as not called}
       procedure SetHandlersUncalled();
       {checks if a parameter handler has the PARAM_HANDLER_CALLED property set}
@@ -112,7 +112,7 @@ TYPE
       {adds a parameter handler to the parameterHandlers list}
       procedure AddHandler(var handler: TParameterHandler);
       {adds a parameter handler to the parameterHandlers list}
-      procedure AddHandler(out handler: TParameterHandler; const name, key: string;
+      procedure AddHandler(out handler: TParameterHandler; const name, key: StdString;
          process: TParameterHandlerRoutine = nil; nArguments: loopint = 1);
 
       { PROCESSING }
@@ -122,7 +122,7 @@ TYPE
       function Process(): boolean;
 
       {build all parameters as string}
-      function ToString(): string;
+      function ToString(): StdString;
       {use custom parameters string to replace the one provided by the system}
       procedure SetParameters(var params: TStringArray);
 
@@ -135,14 +135,14 @@ VAR
 
 IMPLEMENTATION
 
-function TParameterGlobal.Next(): string;
+function TParameterGlobal.Next(): StdString;
 begin
 	inc(CurParameter);
 
    Result := GetCustom(CurParameter);
 end;
 
-function TParameterGlobal.NextLowercase(): string;
+function TParameterGlobal.NextLowercase(): StdString;
 begin
    inc(CurParameter);
 
@@ -152,7 +152,7 @@ end;
 function TParameterGlobal.Next(var i: longint): longint;
 var
 	code: longint;
-	s: string;
+	s: StdString;
 
 begin
 	s := Next();
@@ -171,7 +171,7 @@ end;
 function TParameterGlobal.Next(var i: int64): longint;
 var
 	code: longint;
-	s: string;
+	s: StdString;
 
 begin
 	s := Next();
@@ -187,7 +187,7 @@ begin
       Result := ePARAMETER_UNSPECIFIED;
 end;
 
-function TParameterGlobal.Current(): string;
+function TParameterGlobal.Current(): StdString;
 begin
    Result := GetCustom(CurParameter);
 end;
@@ -195,7 +195,7 @@ end;
 function TParameterGlobal.Current(var i: longint): longint;
 var
 	code: longint;
-	s: string;
+	s: StdString;
 
 begin
 	s := Current();
@@ -214,7 +214,7 @@ end;
 function TParameterGlobal.Current(var i: int64): longint;
 var
 	code: longint;
-	s: string;
+	s: StdString;
 
 begin
 	s := Current();
@@ -251,7 +251,7 @@ begin
       HandledParameters[parameter - 1] := true;
 end;
 
-function TParameterGlobal.FindFlag(const flagName: string): boolean;
+function TParameterGlobal.FindFlag(const flagName: StdString): boolean;
 var
    i: longint;
 
@@ -266,10 +266,10 @@ begin
    Result := false;
 end;
 
-function TParameterGlobal.FindFlagLowercase(const flagName: string): boolean;
+function TParameterGlobal.FindFlagLowercase(const flagName: StdString): boolean;
 var
    i: longint;
-   flagNameLC: string;
+   flagNameLC: StdString;
 
 begin
    flagNameLC := lowercase(flagName);
@@ -284,7 +284,7 @@ begin
    Result := false;
 end;
 
-function TParameterGlobal.GetCustom(parameter: loopint): string;
+function TParameterGlobal.GetCustom(parameter: loopint): StdString;
 begin
    if(not UseCustomParameters) or (parameter = 0) then
       Result := ParamStr(parameter)
@@ -292,7 +292,7 @@ begin
       Result := CustomParameters[parameter - 1];
 end;
 
-function TParameterGlobal.GetParameter(parameter: loopint): string;
+function TParameterGlobal.GetParameter(parameter: loopint): StdString;
 begin
    if(parameter >= 0) and (parameter <= ParameterCount) then begin
       Result := GetCustom(parameter);
@@ -303,7 +303,7 @@ end;
 
 { HANDLERS }
 
-function TParameterGlobal.FindHandler(const paramKey: string): PParameterHandler;
+function TParameterGlobal.FindHandler(const paramKey: StdString): PParameterHandler;
 var
    cur: PParameterHandler;
 
@@ -351,7 +351,7 @@ begin
    handlers.e := @handler;
 end;
 
-procedure TParameterGlobal.AddHandler(out handler: TParameterHandler; const name, key: string;
+procedure TParameterGlobal.AddHandler(out handler: TParameterHandler; const name, key: StdString;
    process: TParameterHandlerRoutine; nArguments: loopint);
 begin
    ZeroOut(handler, SizeOf(handler));
@@ -368,7 +368,7 @@ end;
 
 procedure TParameterGlobal.Process(callback: TProcessParametersRoutine);
 var
-   s: string;
+   s: StdString;
 
 begin
    Reset();
@@ -386,14 +386,14 @@ end;
 
 function TParameterGlobal.Process(): boolean;
 var
-   cur: string;
+   cur: StdString;
    curHandler: PParameterHandler;
 
    nArguments,
    gotnArguments,
    i: loopint;
    ok: boolean;
-   arguments: array[0..MAX_PARAMETER_ARGUMENTS-1] of string;
+   arguments: array[0..MAX_PARAMETER_ARGUMENTS-1] of StdString;
 
    omittedRequiredParameters: boolean;
 
@@ -495,7 +495,7 @@ begin
    Result := true;
 end;
 
-function TParameterGlobal.ToString(): string;
+function TParameterGlobal.ToString(): StdString;
 var
    i: loopint;
 

@@ -66,7 +66,7 @@ VAR
 
 IMPLEMENTATION
 
-function scanFile(const fn: string): boolean; forward;
+function scanFile(const fn: StdString): boolean; forward;
 
 { oxedTScannerOnFileProceduresHelper }
 
@@ -99,7 +99,7 @@ begin
       Walker.AddExtension('.pas');
       Walker.AddExtension('.inc');
 
-      Walker.onFile := @scanFile;
+      Walker.OnFile := @scanFile;
 
       Task := oxedTProjectScannerTask.Create();
       Task.EmitAllEvents();
@@ -161,9 +161,9 @@ begin
    oxedProjectScanner.OnDone.Call();
 end;
 
-function scanFile(const fn: string): boolean;
+function scanFile(const fn: StdString): boolean;
 var
-   ext: string;
+   ext: StdString;
    f: oxedTScannerFile;
 
 begin

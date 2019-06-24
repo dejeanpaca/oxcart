@@ -10,7 +10,10 @@ UNIT oxuConsoleLog;
 
 INTERFACE
 
-   USES sysutils, uLog, appuLog,
+   USES
+      sysutils, uStd, uLog,
+      appuLog,
+      {ox}
       uOX, oxuConsoleBackend, oxuConsole;
 
 VAR
@@ -38,7 +41,7 @@ begin
       oldLogCallback();
 end;
 
-procedure hwriteln({%H-}logf: PLog; priority: longint; const s: string);
+procedure hwriteln({%H-}logf: PLog; priority: longint; const s: StdString);
 begin
    {if log file is closing we probably already have no buffer}
    if(oxConsole.Console.Contents.a > 0) and (not logf^.Flags.Closing) then begin
@@ -60,7 +63,7 @@ begin
 end;
 
 {output nothing to the console until oX is initialized, then use the actual handler method}
-procedure hwritelnPreInit(logf: PLog; priority: longint; const s: string);
+procedure hwritelnPreInit(logf: PLog; priority: longint; const s: StdString);
 begin
    if(ox.Initialized) then begin
       loghOXConsole.writeln := @hwriteln;

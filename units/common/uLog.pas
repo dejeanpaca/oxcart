@@ -50,7 +50,7 @@ TYPE
 
    TLogSettings = record
       Tag, {tag used in the log file, if supported}
-      Path: string; {path to where log files should be created}
+      Path: StdString; {path to where log files should be created}
 
       {logging settings}
 
@@ -76,7 +76,7 @@ TYPE
    {a log handler}
    TLogHandler = record
       Name,
-      FileExtension: string;
+      FileExtension: StdString;
       NeedOpen,
       NoHeader: boolean;
 
@@ -86,9 +86,9 @@ TYPE
       start: procedure(log: PLog);
       close: procedure(log: PLog);
       flush: procedure(log: PLog);
-      writeln: procedure(log: PLog; priority: longint; const s: string);
-      writelnraw: procedure(log: PLog; const s: string);
-      enterSection: procedure(log: PLog; const s: string; collapsed: boolean);
+      writeln: procedure(log: PLog; priority: longint; const s: StdString);
+      writelnraw: procedure(log: PLog; const s: StdString);
+      enterSection: procedure(log: PLog; const s: StdString; collapsed: boolean);
       leaveSection: procedure(log: PLog);
       del: procedure(log: PLog);
    end;
@@ -100,7 +100,7 @@ TYPE
    TLog = record
       FileName,
       LogHeader,
-      tag: string;
+      tag: StdString;
       FileMode: longint;
       fl: ^text;
 
@@ -135,7 +135,7 @@ TYPE
       ChainLog: PLog;
 
       {initializes the log file, the second one reserves memory}
-      function Initialize(const {%H-}fn, {%H-}logh: string; {%H-}mode: longint): boolean;
+      function Initialize(const {%H-}fn, {%H-}logh: StdString; {%H-}mode: longint): boolean;
       {disposes a TLog record}
       procedure Dispose();
       {opens the log file}
@@ -154,40 +154,40 @@ TYPE
       procedure SetErrorState();
       procedure SetErrorState({%H-}errorCode: longint);
       {quickly initialize and open a log file}
-      procedure QuickOpen(const {%H-}fn, {%H-}logh: string; {%H-}mode: longint; var {%H-}newHandler: TLogHandler);
+      procedure QuickOpen(const {%H-}fn, {%H-}logh: StdString; {%H-}mode: longint; var {%H-}newHandler: TLogHandler);
 
       {log string with specified priority}
-      procedure s({%H-}priority: longint; const {%H-}logString: string);
+      procedure s({%H-}priority: longint; const {%H-}logString: StdString);
       {flush log file}
       procedure Flush();
 
       {log information}
-      procedure i(const {%H-}logString: string);
+      procedure i(const {%H-}logString: StdString);
       procedure i();
       {log error}
-      procedure e(const {%H-}logString: string);
+      procedure e(const {%H-}logString: StdString);
       {log warning}
-      procedure w(const {%H-}logString: string);
+      procedure w(const {%H-}logString: StdString);
       {log debug}
-      procedure d(const {%H-}logString: string);
+      procedure d(const {%H-}logString: StdString);
       {log verbose}
-      procedure v(const {%H-}logString: string);
+      procedure v(const {%H-}logString: StdString);
       {log fatal}
-      procedure f(const {%H-}logString: string);
+      procedure f(const {%H-}logString: StdString);
       {log ok}
-      procedure k(const {%H-}logString: string);
+      procedure k(const {%H-}logString: StdString);
 
       {enter section}
-      procedure Enter(const {%H-}title: string; {%H-}collapsed: boolean);
-      procedure Enter(const title: string);
+      procedure Enter(const {%H-}title: StdString; {%H-}collapsed: boolean);
+      procedure Enter(const title: StdString);
       {enter a section, but set it collapsed by default}
-      procedure Collapsed(const title: string);
+      procedure Collapsed(const title: StdString);
       {exit section}
       procedure Leave();
 
       {handler writing}
-      procedure HandlerWriteln({%H-}priority: longint; const {%H-}logString: string; {%H-}nochainlog: boolean);
-      procedure HandlerWritelnRaw(const {%H-}logString: string);
+      procedure HandlerWriteln({%H-}priority: longint; const {%H-}logString: StdString; {%H-}nochainlog: boolean);
+      procedure HandlerWritelnRaw(const {%H-}logString: StdString);
    end;
 
 
@@ -219,23 +219,23 @@ TYPE
       {same as above, only it works with the standard logs}
       function Ok(): boolean; inline;
       {Quickly initializes and de-initializes the standard log with the given filename}
-      procedure InitStd(const fn, logh: string; mode: longint);
+      procedure InitStd(const fn, logh: StdString; mode: longint);
       {deinitializes the standard log file}
       procedure DeInitStd();
 
-      procedure s(priority: longint; const logString: string); inline;
-      procedure i(const logString: string); inline;
+      procedure s(priority: longint; const logString: StdString); inline;
+      procedure i(const logString: StdString); inline;
       procedure i(); inline;
-      procedure e(const logString: string); inline;
-      procedure w(const logString: string); inline;
-      procedure d(const logString: string); inline;
-      procedure v(const logString: string); inline;
-      procedure f(const logString: string); inline;
-      procedure k(const logString: string); inline;
+      procedure e(const logString: StdString); inline;
+      procedure w(const logString: StdString); inline;
+      procedure d(const logString: StdString); inline;
+      procedure v(const logString: StdString); inline;
+      procedure f(const logString: StdString); inline;
+      procedure k(const logString: StdString); inline;
       procedure Flush(); inline;
 
-      procedure Enter(const title: string); inline;
-      procedure Collapsed(const title: string); inline;
+      procedure Enter(const title: StdString); inline;
+      procedure Collapsed(const title: StdString); inline;
       procedure Leave(); inline;
    end;
 
@@ -296,7 +296,7 @@ begin
    result := stdlog.Ok();
 end;
 
-procedure TLogUtils.InitStd(const fn, logh: string; mode: longint);
+procedure TLogUtils.InitStd(const fn, logh: StdString; mode: longint);
 begin
    if(log.Settings.HandleLogs) and (not stdlog.Flags.Initialized) then begin
       {initialize the standard log file}
@@ -332,12 +332,12 @@ begin
    end;
 end;
 
-procedure TLogUtils.s(priority: longint; const logString: string); inline;
+procedure TLogUtils.s(priority: longint; const logString: StdString); inline;
 begin
    stdlog.s(priority, logString);
 end;
 
-procedure TLogUtils.i(const logString: string); inline;
+procedure TLogUtils.i(const logString: StdString); inline;
 begin
    stdlog.i(logString);
 end;
@@ -347,32 +347,32 @@ begin
    stdlog.i('');
 end;
 
-procedure TLogUtils.e(const logString: string); inline;
+procedure TLogUtils.e(const logString: StdString); inline;
 begin
    stdlog.e(logString);
 end;
 
-procedure TLogUtils.w(const logString: string); inline;
+procedure TLogUtils.w(const logString: StdString); inline;
 begin
    stdlog.w(logString);
 end;
 
-procedure TLogUtils.d(const logString: string); inline;
+procedure TLogUtils.d(const logString: StdString); inline;
 begin
    stdlog.d(logString);
 end;
 
-procedure TLogUtils.v(const logString: string); inline;
+procedure TLogUtils.v(const logString: StdString); inline;
 begin
    stdlog.v(logString);
 end;
 
-procedure TLogUtils.f(const logString: string); inline;
+procedure TLogUtils.f(const logString: StdString); inline;
 begin
    stdlog.f(logString);
 end;
 
-procedure TLogUtils.k(const logString: string);
+procedure TLogUtils.k(const logString: StdString);
 begin
    stdlog.k(logString);
 end;
@@ -382,12 +382,12 @@ begin
    stdlog.Flush();
 end;
 
-procedure TLogUtils.Enter(const title: string);
+procedure TLogUtils.Enter(const title: StdString);
 begin
    stdlog.Enter(title);
 end;
 
-procedure TLogUtils.Collapsed(const title: string);
+procedure TLogUtils.Collapsed(const title: StdString);
 begin
    stdlog.Collapsed(title);
 end;
@@ -397,7 +397,7 @@ begin
    stdlog.Leave();
 end;
 
-function TLog.Initialize(const fn, logh: string; mode: longint): boolean;
+function TLog.Initialize(const fn, logh: StdString; mode: longint): boolean;
 begin
    result := false;
 
@@ -620,7 +620,7 @@ begin
    {$ENDIF}
 end;
 
-procedure TLog.QuickOpen(const fn, logh: string; mode: longint; var newHandler: TLogHandler);
+procedure TLog.QuickOpen(const fn, logh: StdString; mode: longint; var newHandler: TLogHandler);
 begin
    {$IFNDEF NOLOG}
    log.Init(self);
@@ -630,7 +630,7 @@ begin
    {$ENDIF}
 end;
 
-procedure TLog.s(priority: longint; const logString: string);
+procedure TLog.s(priority: longint; const logString: StdString);
 begin
    {$IFNDEF NOLOG}
    HandlerWriteln(priority, logString, false);
@@ -644,7 +644,7 @@ begin
    {$ENDIF}
 end;
 
-procedure TLog.i(const logString: string);
+procedure TLog.i(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
    HandlerWriteln(logcINFO, logString, false);
@@ -658,28 +658,28 @@ begin
    {$ENDIF}
 end;
 
-procedure TLog.e(const logString: string);
+procedure TLog.e(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
    HandlerWriteln(logcERROR, logString, false);
    {$ENDIF}
 end;
 
-procedure TLog.w(const logString: string);
+procedure TLog.w(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
    HandlerWriteln(logcWARNING, logString, false);
    {$ENDIF}
 end;
 
-procedure TLog.d(const logString: string);
+procedure TLog.d(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
    HandlerWriteln(logcDEBUG, logString, false);
    {$ENDIF}
 end;
 
-procedure TLog.v(const logString: string);
+procedure TLog.v(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
    if(verboseEnabled) then
@@ -687,21 +687,21 @@ begin
    {$ENDIF}
 end;
 
-procedure TLog.f(const logString: string);
+procedure TLog.f(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
    HandlerWriteln(logcFATAL, logString, false);
    {$ENDIF}
 end;
 
-procedure TLog.k(const logString: string);
+procedure TLog.k(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
    HandlerWriteln(logcOK, logString, false);
    {$ENDIF}
 end;
 
-procedure TLog.Enter(const title: string; collapsed: boolean);
+procedure TLog.Enter(const title: StdString; collapsed: boolean);
 begin
    {$IFNDEF NOLOG}
    if(Flags.Initialized) then begin
@@ -715,12 +715,12 @@ begin
    {$ENDIF}
 end;
 
-procedure TLog.Enter(const title: string);
+procedure TLog.Enter(const title: StdString);
 begin
    Enter(title, false);
 end;
 
-procedure TLog.Collapsed(const title: string);
+procedure TLog.Collapsed(const title: StdString);
 begin
    Enter(title, true);
 end;
@@ -740,7 +740,7 @@ end;
 
 { HANDLER }
 
-procedure TLog.HandlerWriteln(priority: longint; const logString: string; nochainlog: boolean);
+procedure TLog.HandlerWriteln(priority: longint; const logString: StdString; nochainlog: boolean);
 begin
    {$IFNDEF NOLOG}
    if(Flags.Ok) then begin
@@ -755,7 +755,7 @@ begin
    {$ENDIF}
 end;
 
-procedure TLog.HandlerWritelnRaw(const logString: string);
+procedure TLog.HandlerWritelnRaw(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
    if(Flags.Ok) then begin
@@ -774,15 +774,15 @@ begin
    if(log <> nil) then;
 end;
 
-procedure dummystringproc(log: PLog; const s: string);
+procedure dummystringproc(log: PLog; const s: StdString);
 begin
 end;
 
-procedure dummywriteln(log: PLog; priority: longint; const s: string);
+procedure dummywriteln(log: PLog; priority: longint; const s: StdString);
 begin
 end;
 
-procedure dummyEnter(log: PLog; const s: string; collapsed: boolean);
+procedure dummyEnter(log: PLog; const s: StdString; collapsed: boolean);
 begin
 end;
 
@@ -860,12 +860,12 @@ begin
 end;
 
 VAR
-   tabstr: string = #9#9#9#9#9 + #9#9#9#9#9 + #9#9#9#9#9 + #9#9#9#9#9;
-   spacestr: string = '                                 ';
+   tabstr: StdString = #9#9#9#9#9 + #9#9#9#9#9 + #9#9#9#9#9 + #9#9#9#9#9;
+   spacestr: StdString = '                                 ';
 
-procedure stdwriteln(logFile: PLog; priority: longint; const s: string);
+procedure stdwriteln(logFile: PLog; priority: longint; const s: StdString);
 var
-   timeString: string = '';
+   timeString: StdString = '';
 
 begin
    {$IFDEF LOG_THREAD_SAFE}
@@ -899,7 +899,7 @@ begin
    {$ENDIF}
 end;
 
-procedure stdwritelnraw(log: PLog; const s: string);
+procedure stdwritelnraw(log: PLog; const s: StdString);
 begin
    {$IFDEF LOG_THREAD_SAFE}
    EnterCriticalSection(log^.LogCS);
@@ -948,9 +948,9 @@ VAR
       console.LightGreen {logcOK}
    );
 
-procedure consoleWriteln(logFile: PLog; priority: longint; const s: string);
+procedure consoleWriteln(logFile: PLog; priority: longint; const s: StdString);
 var
-   timeString: string = '';
+   timeString: StdString = '';
 
 begin
    {$IFDEF LOG_THREAD_SAFE}
@@ -988,7 +988,7 @@ begin
    {$ENDIF}
 end;
 
-procedure consoleWritelnRaw(log: PLog; const s: string);
+procedure consoleWritelnRaw(log: PLog; const s: StdString);
 begin
    {$IFDEF LOG_THREAD_SAFE}
    EnterCriticalSection(log^.LogCS);
@@ -1003,12 +1003,12 @@ begin
 end;
 
 
-procedure stdEnter(log: PLog; const s: string; {%H-}collapsed: boolean);
+procedure stdEnter(log: PLog; const s: StdString; {%H-}collapsed: boolean);
 begin
    log^.HandlerWriteln(logcINFO, s, true);
 end;
 
-procedure consoleEnter(log: PLog; const s: string; {%H-}collapsed: boolean);
+procedure consoleEnter(log: PLog; const s: StdString; {%H-}collapsed: boolean);
 begin
    log^.HandlerWriteln(logcINFO, s, true);
 end;

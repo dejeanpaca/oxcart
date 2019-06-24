@@ -101,7 +101,7 @@ begin
    oxedProject.RunParameters.Add(runParameter);
 end;
 
-procedure dvSaveHandler(var df: dvarTFileData; const parent: string);
+procedure dvSaveHandler(var df: dvarTFileData; const parent: StdString);
 begin
    df.Write(parent, dvName, oxedProject.Name);
    df.Write(parent, dvShortName, oxedProject.ShortName);

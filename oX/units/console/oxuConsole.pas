@@ -739,7 +739,7 @@ end;
 
 { DVAR HANDLER }
 
-procedure dvSaveHandler(var df: dvarTFileData; const parent: string);
+procedure dvSaveHandler(var df: dvarTFileData; const parent: StdString);
 begin
    df.Write(parent, dvHistory, oxConsole.Console.History.Entries.List, oxConsole.Console.History.Entries.n);
 end;
