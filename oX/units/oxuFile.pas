@@ -22,7 +22,7 @@ TYPE
    { oxTFileRWData }
    oxPFileRWData = ^oxTFileRWData;
    oxTFileRWData = record
-      FileName: string;
+      FileName: StdString;
       f: uFile.PFile;
       Handler: fhPHandler;
 
@@ -32,7 +32,7 @@ TYPE
       HandlerData: Pointer;
 
       Error: loopint;
-      ErrorDescription: string;
+      ErrorDescription: StdString;
 
       Result: TObject;
 
@@ -40,9 +40,9 @@ TYPE
       External: Pointer;
 
       {set an error code and description}
-      procedure SetError(errorCode: loopint; const description: string = '');
+      procedure SetError(errorCode: loopint; const description: StdString = '');
       {set an error code and description}
-      procedure SetError(const description: string = '');
+      procedure SetError(const description: StdString = '');
       {get the error code}
       function GetError(): loopint;
 
@@ -62,12 +62,12 @@ TYPE
       constructor Create; virtual;
 
       function Read(var f: TFile; var handler: fhTHandler; options: pointer; pdata: oxPFileRWData = nil): loopint;
-      function Read(var f: TFile; const fn: string; options: pointer; pdata: oxPFileRWData = nil): loopint;
-      function Read(const fn: string; options: pointer = nil; pdata: oxPFileRWData = nil): loopint;
+      function Read(var f: TFile; const fn: StdString; options: pointer; pdata: oxPFileRWData = nil): loopint;
+      function Read(const fn: StdString; options: pointer = nil; pdata: oxPFileRWData = nil): loopint;
 
       function Write(var f: TFile; var handler: fhTHandler; options: pointer; pdata: oxPFileRWData = nil): loopint;
-      function Write(var f: TFile; const fn: string; options: pointer; pdata: oxPFileRWData = nil): loopint;
-      function Write(const fn: string; options: pointer = nil; pdata: oxPFileRWData = nil): loopint;
+      function Write(var f: TFile; const fn: StdString; options: pointer; pdata: oxPFileRWData = nil): loopint;
+      function Write(const fn: StdString; options: pointer = nil; pdata: oxPFileRWData = nil): loopint;
 
       function OnRead(var {%H-}data: oxTFileRWData): loopint; virtual;
       function OnWrite(var {%H-}data: oxTFileRWData): loopint; virtual;
@@ -77,7 +77,7 @@ IMPLEMENTATION
 
 { oxTFileRWData }
 
-procedure oxTFileRWData.SetError(errorCode: loopint; const description: string);
+procedure oxTFileRWData.SetError(errorCode: loopint; const description: StdString);
 begin
    if(Error = 0) then begin
       Error := errorCode;
@@ -85,7 +85,7 @@ begin
    end;
 end;
 
-procedure oxTFileRWData.SetError(const description: string);
+procedure oxTFileRWData.SetError(const description: StdString);
 begin
    SetError(eFAIL, description);
 end;
@@ -112,7 +112,7 @@ constructor oxTFileRW.Create;
 begin
 end;
 
-procedure logIo(var f: TFile; const what: string = 'unknown');
+procedure logIo(var f: TFile; const what: StdString = 'unknown');
 begin
    log.e('File IO error: ' + f.fn);
 
@@ -163,7 +163,7 @@ begin
       f.Close();
 end;
 
-function oxTFileRW.Read(var f: TFile; const fn: string; options: pointer; pdata: oxPFileRWData = nil): loopint;
+function oxTFileRW.Read(var f: TFile; const fn: StdString; options: pointer; pdata: oxPFileRWData = nil): loopint;
 var
    fd: fhTFindData;
 
@@ -185,11 +185,11 @@ begin
    Result := eINVALID_ARG;
 end;
 
-function oxTFileRW.Read(const fn: string; options: pointer = nil; pdata: oxPFileRWData = nil): loopint;
+function oxTFileRW.Read(const fn: StdString; options: pointer = nil; pdata: oxPFileRWData = nil): loopint;
 var
    f: TFile;
    fd: fhTFindData;
-   path: string;
+   path: StdString;
 
 begin
    if(fn <> '') then begin
@@ -257,7 +257,7 @@ begin
       f.Close();
 end;
 
-function oxTFileRW.Write(var f: TFile; const fn: string; options: pointer; pdata: oxPFileRWData): loopint;
+function oxTFileRW.Write(var f: TFile; const fn: StdString; options: pointer; pdata: oxPFileRWData): loopint;
 var
    fd: fhTFindData;
 
@@ -279,11 +279,11 @@ begin
    Result := eINVALID_ARG;
 end;
 
-function oxTFileRW.Write(const fn: string; options: pointer; pdata: oxPFileRWData): loopint;
+function oxTFileRW.Write(const fn: StdString; options: pointer; pdata: oxPFileRWData): loopint;
 var
    f: TFile;
    fd: fhTFindData;
-   path: string;
+   path: StdString;
 
 begin
    if(fn <> '') then begin
