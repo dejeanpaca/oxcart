@@ -320,6 +320,7 @@ function DumpExceptionCallStack(e: Exception): string;
 function GetUTF8EnvironmentVariable(const v: UTF8String): UTF8String;
 
 procedure UTF8Assign(var f: text; const fn: UTF8String);
+procedure UTF8Assign(var f: file; const fn: UTF8String);
 function UTF8Lower(const s: UTF8String): UTF8String;
 
 IMPLEMENTATION
@@ -1324,9 +1325,9 @@ begin
    Assign(f, UTF8Decode(fn));
 end;
 
-function UTF88Lower(const s: UTF8String): UTF8String;
+procedure UTF8Assign(var f: file; const fn: UTF8String);
 begin
-
+   Assign(f, UTF8Decode(fn));
 end;
 
 function UTF8Lower(const s: UTF8String): UTF8String;
