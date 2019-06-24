@@ -1308,7 +1308,7 @@ end;
 
 function GetUTF8EnvironmentVariable(const v: UTF8String): UTF8String;
 begin
-   Result := UTF8Encode(GetEnvironmentVariable(UnicodeString(v)))
+   Result := UTF8Encode(GetEnvironmentVariable(UnicodeString(v)));
 end;
 
 function TLineEndingTypeHelper.GetChars(): string;

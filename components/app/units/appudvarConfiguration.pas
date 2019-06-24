@@ -12,7 +12,7 @@ UNIT appudvarConfiguration;
 INTERFACE
 
    USES
-     sysutils, uLog, udvars, dvaruFile,
+     sysutils, uStd, uLog, udvars, dvaruFile,
      uApp, appuPaths,
      oxuRunRoutines;
 
@@ -22,12 +22,12 @@ TYPE
 
    appTDVarTextConfiguration = record
      FileName,
-     Path: string;
+     Path: StdString;
 
      AutoLoad,
      AutoSave: boolean;
 
-     function GetFN(): string;
+     function GetFN(): StdString;
      class procedure Load(); static;
      class procedure Save(); static;
    end;
@@ -39,7 +39,7 @@ IMPLEMENTATION
 
 { appTDVarTextConfiguration }
 
-function appTDVarTextConfiguration.GetFN(): string;
+function appTDVarTextConfiguration.GetFN(): StdString;
 begin
    if(Path = '') then
       result := appPath.Configuration.Path + Filename
@@ -49,7 +49,7 @@ end;
 
 class procedure appTDVarTextConfiguration.Load();
 var
-   fn: string;
+   fn: StdString;
 
 begin
    fn := appDVarTextConfiguration.GetFN();
@@ -60,7 +60,7 @@ end;
 
 class procedure appTDVarTextConfiguration.Save();
 var
-   fn: string;
+   fn: StdString;
 
 begin
    fn := appDVarTextConfiguration.GetFN();

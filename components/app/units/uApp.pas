@@ -30,9 +30,9 @@ TYPE
       procedure DeInitialize();
 
       {open link in browser}
-      function OpenLink(const link: string): boolean;
+      function OpenLink(const link: StdString): boolean;
       {open file manager}
-      function OpenFileManager(const target: string): boolean;
+      function OpenFileManager(const target: StdString): boolean;
    end;
 
 VAR
@@ -61,7 +61,7 @@ begin
    end;
 end;
 
-function TApplication.OpenLink(const link: string): boolean;
+function TApplication.OpenLink(const link: StdString): boolean;
 begin
    try
       {$IFDEF WINDOWS}
@@ -81,7 +81,7 @@ begin
    Result := false;
 end;
 
-function TApplication.OpenFileManager(const target: string): boolean;
+function TApplication.OpenFileManager(const target: StdString): boolean;
 begin
    Result := OpenLink(target);
 end;

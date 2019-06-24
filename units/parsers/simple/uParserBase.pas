@@ -20,26 +20,26 @@ TYPE
 
    TParserBase = object
       ErrorCode: loopint;
-      ErrorDescription: string;
+      ErrorDescription: StdString;
       f: TFile;
 
       constructor Create();
 
-      procedure SetError(code: loopint; const description: string = '');
+      procedure SetError(code: loopint; const description: StdString = '');
 
       function Read(var setF: TFile): boolean;
-      function Read(const fn: string): boolean;
+      function Read(const fn: StdString): boolean;
       function Read(): boolean;
 
       function Write(var setF: TFile): boolean;
       function Write(): boolean;
-      function Write(const fn: string): boolean;
+      function Write(const fn: StdString): boolean;
 
       function OnWrite(): boolean; virtual;
       function OnRead(): boolean; virtual;
 
-      function GetErrorString(const prefix: string = ''): string;
-      procedure LogError(const start: string);
+      function GetErrorString(const prefix: StdString = ''): StdString;
+      procedure LogError(const start: StdString);
    end;
 
 IMPLEMENTATION
@@ -53,7 +53,7 @@ begin
    ZeroOut(f, SizeOf(f));
 end;
 
-procedure TParserBase.SetError(code: loopint; const description: string);
+procedure TParserBase.SetError(code: loopint; const description: StdString);
 begin
    if(ErrorCode = 0) then begin
       ErrorCode := code;
@@ -72,7 +72,7 @@ begin
       setF := f;
 end;
 
-function TParserBase.Read(const fn: string): boolean;
+function TParserBase.Read(const fn: StdString): boolean;
 begin
    fFile.Init(f);
 
@@ -110,7 +110,7 @@ begin
    logError('Failed writing file: ');
 end;
 
-function TParserBase.Write(const fn: string): boolean;
+function TParserBase.Write(const fn: StdString): boolean;
 begin
    fFile.Init(f);
 
@@ -133,9 +133,9 @@ begin
    Result := true;
 end;
 
-function TParserBase.GetErrorString(const prefix: string): string;
+function TParserBase.GetErrorString(const prefix: StdString): StdString;
 var
-   additional: string;
+   additional: StdString;
 
 begin
    if(f.Error <> 0) or (ErrorCode <> 0) then begin
@@ -155,7 +155,7 @@ begin
    end;
 end;
 
-procedure TParserBase.LogError(const start: string);
+procedure TParserBase.LogError(const start: StdString);
 begin
    if(f.Error <> 0) or (ErrorCode <> 0) then begin
       log.e(GetErrorString(start));
