@@ -18,15 +18,6 @@ TYPE
    { TStringListGlobal }
 
    TStringListGlobal = record
-      { compact pchar string arrays }
-      {move the string pointer to the next string in the list}
-      function NextString(var s: pchar): boolean;
-      {convert a compact pchar string list into a array of pshortstrings}
-      function Convert(s: pchar; var list: TpShortStringArray; var n: longint): longint;
-      procedure Convert(s: pcchar; var list: TpShortStringArray; var n: longint);
-      {convert a compact pchar string list to a compact shortstring list}
-      function Convert(s: pchar; var p: pointer; var list: TpShortStringArray; var n: longint): longint;
-      function Convert(s: pcchar; var p: pointer; var list: TpShortStringArray; var n: longint): longint;
       {convert a space separated pchar string list to compact shortstring list}
       function ConvertSpaceSeparated(s: pchar; var p: pointer;
          var list: TpShortStringArray; var n: longint): longint;
@@ -44,134 +35,12 @@ TYPE
 
       {converts a list to a space separated string}
       function ConvertToSpaceSeparated(var list: TAnsiStringArray; out s: string): longint;
-
-      {disposing of string lists}
-      procedure Dispose(var l: TpShortStringArray);
-      procedure Dispose(var l: TShortStringArray);
-      procedure Dispose(var l: TpCharDynArray);
-
-      {disposing of compact lists}
-      procedure Dispose(var p: pointer; var list: TpShortStringArray);
    end;
 
 VAR
    strList: TStringListGlobal;
 
 IMPLEMENTATION
-
-{ compact pchar string arrays }
-function TStringListGlobal.NextString(var s: pchar): boolean;
-begin
-   if(s^ <> #0) then begin
-      s := s + (length(s) + 1);
-
-      exit(true);
-   end else 
-      exit(false);
-end;
-
-function TStringListGlobal.Convert(s: pchar; var list: TpShortStringArray; var n: longint): longint;
-var
-   ps: pchar;
-   i: longint = 0;
-
-begin
-   result := eNONE;
-
-   {first we need to figure out how many strings we got}
-   ps := pchar(s);
-   repeat
-      if(ps^ <> #0) then 
-         inc(n);
-   until (NextString(ps) = false);
-
-   {next, allocate memory for the string list}
-   SetLength(list, n);
-   if(Length(list) <> n) then
-      exit(eNO_MEMORY);
-
-   {next we will put each string into the list}
-   ps := pchar(s);
-   repeat
-      if(ps^ <> #0) then begin
-         {put the string into the list}
-         list[i] := MakepShortString(ps);
-         inc(i);
-      end;
-   until (NextString(ps) = false);
-end;
-
-procedure TStringListGlobal.Convert(s: pcchar; var list: TpShortStringArray; var n: longint);
-begin
-   Convert(pchar(s), list, n);
-end;
-
-function TStringListGlobal.Convert(s: pchar; var p: pointer; var list: TpShortStringArray; var n: longint): longint;
-var
-   ps: pchar; {points to a current pchar string}
-   totalsize: longint   = 0; {the total number of bytes required for the compact list}
-   i: longint           = 0;
-   pp: pshortstring; {points to the current shortstring in the compact list}
-
-{clean up if failed to perform(error happened)}
-procedure cleanup();
-begin
-   if(list <> nil) then 
-      SetLength(list, 0);
-
-   XFreeMem(p);
-   n := 0;
-end;
-
-begin
-   n := 0;
-
-   {first we need to figure out how many strings we got}
-   ps := pchar(s);
-   repeat
-      if(ps^ <> #0) then begin
-         inc(totalsize, length(ps)+1); 
-         inc(n);
-      end;
-   until (NextString(ps) = false);
-
-   {next, allocate memory for the string list}
-   SetLength(list, n);
-   if(Length(list) <> n) then begin
-      cleanup();
-      exit(eNO_MEMORY);
-   end;
-
-   {allocate memory for the compact list}
-   {BUG: Without the extra memory allocated corruptions occur. Overwriting?}
-   GetMem(p, totalsize+36);
-
-   if(p = nil) then begin
-      cleanup();
-      exit(eNO_MEMORY);
-   end;
-
-   pp := p;
-
-   {next we will put each string into the compact list}
-   ps := pchar(s);
-   repeat
-      if(ps^ <> #0) then begin
-         {put the string into the compact list}
-         pp^ := pCharToShortString(ps);
-         list[i] := pp;
-         inc(pp, Length(pp^)+1);
-         inc(i);
-      end;
-   until (NextString(ps) = false);
-
-   result := eNONE;
-end;
-
-function TStringListGlobal.Convert(s: pcchar; var p: pointer; var list: TpShortStringArray; var n: longint): longint;
-begin
-   result := Convert(pchar(s), p, list, n);
-end;
 
 {convert a space separated pchar string list to compact shortstring list}
 function TStringListGlobal.ConvertSpaceSeparated(s: pchar; var p: pointer;
@@ -581,64 +450,6 @@ begin
          end;
 
       end;
-   end;
-end;
-
-procedure TStringListGlobal.Dispose(var l: TpShortStringArray);
-var
-   i, 
-   n: longint;
-
-begin
-   n := Length(l);
-
-   if(n > 0) then begin
-      for i := 0 to (n-1) do
-         XFreeMem(l[i]);
-
-      SetLength(l, 0);
-      l := nil;
-   end;
-end;
-
-procedure TStringListGlobal.Dispose(var l: TShortStringArray);
-var
-   n: longint;
-
-begin
-   n := Length(l);
-
-   if(n > 0) then begin
-      SetLength(l, 0);
-      l := nil;
-   end;
-end;
-
-procedure TStringListGlobal.Dispose(var l: TpCharDynArray);
-var
-   i,
-   n: longint;
-
-begin
-   n := Length(l);
-
-   if(n > 0) then begin
-      for i := 0 to (n-1) do
-         XFreeMem(l[i]);
-
-      SetLength(l, 0);
-      l := nil;
-   end;
-end;
-
-{disposing of compact lists}
-procedure TStringListGlobal.Dispose(var p: pointer; var list: TpShortStringArray);
-begin
-   XFreeMem(p);
-
-   if(list <> nil) then begin
-      SetLength(list, 0);
-      list := nil;
    end;
 end;
 
