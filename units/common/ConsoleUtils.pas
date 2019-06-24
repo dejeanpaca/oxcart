@@ -68,16 +68,16 @@ TYPE
       {method prefixed with an n do not write a prefix string}
 
       {write an error string}
-      procedure e(const say: string); inline;
+      procedure e(const say: StdString); inline;
       {write a warning string}
-      procedure w(const say: string); inline;
+      procedure w(const say: StdString); inline;
       {write a verbose string}
-      procedure v(const say: string); inline;
+      procedure v(const say: StdString); inline;
       {outputs text to the console}
-      procedure i(const say: string);
+      procedure i(const say: StdString);
       procedure i();
       {constructs a string out of all parameter strings}
-      procedure GetParamsString(out s: string);
+      procedure GetParamsString(out s: StdString);
 
       procedure TextColor(color: longint);
       procedure BackgroundColor(bkgColor: longint);
@@ -123,7 +123,7 @@ VAR
    46	Cyan
    47	White*)
 
-   fguColorEscapeSequences: array[0..15] of string = (
+   fguColorEscapeSequences: array[0..15] of StdString = (
       '30', {Black}
       '34', {Blue}
       '32', {Green}
@@ -142,7 +142,7 @@ VAR
       '97;' {White}
    );
 
-   bguColorEscapeSequences: array[0..15] of string = (
+   bguColorEscapeSequences: array[0..15] of StdString = (
       '40', {Black}
       '44', {Blue}
       '42', {Green}
@@ -203,7 +203,7 @@ VAR
    );
 {$ENDIF}
 
-procedure TConsoleGlobal.e(const say: string);
+procedure TConsoleGlobal.e(const say: StdString);
 begin
    {$IFDEF WINDOWS}if(isConsole = true) then{$ENDIF}
    begin
@@ -213,7 +213,7 @@ begin
    end;
 end;
 
-procedure TConsoleGlobal.w(const say: string);
+procedure TConsoleGlobal.w(const say: StdString);
 begin
    {$IFDEF WINDOWS}if(isConsole = true) then{$ENDIF}
    begin
@@ -223,7 +223,7 @@ begin
    end;
 end;
 
-procedure TConsoleGlobal.v(const say: string);
+procedure TConsoleGlobal.v(const say: StdString);
 begin
    {$IFDEF WINDOWS}if(isConsole = true) then{$ENDIF}
    begin
@@ -233,7 +233,7 @@ begin
    end;
 end;
 
-procedure TConsoleGlobal.i(const say: string);
+procedure TConsoleGlobal.i(const say: StdString);
 begin
    {$IFDEF WINDOWS}if(isConsole = true) then{$ENDIF}
       writeln(say);
@@ -245,7 +245,7 @@ begin
       writeln('');
 end;
 
-procedure TConsoleGlobal.GetParamsString(out s: string);
+procedure TConsoleGlobal.GetParamsString(out s: StdString);
 var
    nParams,
    z: longint;
