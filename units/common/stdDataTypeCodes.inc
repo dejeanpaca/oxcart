@@ -45,90 +45,91 @@
    dtcSHORTSTRING     = $0E;
    dtcANSISTRING      = $0F;
    dtcWIDESTRING      = $10;
-   dtcXPSTRING        = $11;
-   dtcXPUSTRING       = $12;
-   dtcXSTRING         = $13;
-   dtcSTRING          = dtcANSISTRING;
+   dtcUTF8STRING      = $11;
+   dtcXPSTRING        = $12;
+   dtcXPUSTRING       = $13;
+   dtcXSTRING         = $14;
+   dtcSTRING          = dtcUTF8STRING;
 
-   dtcPOINTER32       = $14; 
+   dtcPOINTER32       = $15;
    dtcPTR32 = dtcPOINTER32;
-   dtcPOINTER64       = $15; 
+   dtcPOINTER64       = $16;
    dtcPTR64 = dtcPOINTER64;
 
-   dtcARRAY           = $16;
-   dtcRECORD          = $17;
-   dtcSINGLE          = $18;
-   dtcDOUBLE          = $19;
-   dtcEXTENDED        = $1A;
-   dtcCOMP            = $1B;
-   dtcCURRENCY        = $1C;
-   dtcSET             = $1D;
-   dtcFILE            = $1E;
-   dtcDATE            = $1F;
-   dtcTIME            = $20;
-   dtcDATETIME        = $21;
-   dtcXDATA           = $22;
-   dtcPTR             = $23;
+   dtcARRAY           = $17;
+   dtcRECORD          = $18;
+   dtcSINGLE          = $19;
+   dtcDOUBLE          = $1A;
+   dtcEXTENDED        = $1B;
+   dtcCOMP            = $1C;
+   dtcCURRENCY        = $1D;
+   dtcSET             = $1E;
+   dtcFILE            = $1F;
+   dtcDATE            = $20;
+   dtcTIME            = $21;
+   dtcDATETIME        = $22;
+   dtcXDATA           = $23;
+   dtcPTR             = $24;
    
    {vector types}
-   dtcVECTOR2UB       = $24;
-   dtcVECTOR3UB       = $25;
-   dtcVECTOR4UB       = $26;
-   dtcVECTOR2B        = $27;
-   dtcVECTOR3B        = $28;
-   dtcVECTOR4B        = $29;
+   dtcVECTOR2UB       = $25;
+   dtcVECTOR3UB       = $26;
+   dtcVECTOR4UB       = $27;
+   dtcVECTOR2B        = $28;
+   dtcVECTOR3B        = $29;
+   dtcVECTOR4B        = $2A;
 
-   dtcVECTOR2US       = $2A;
-   dtcVECTOR3US       = $2B;
-   dtcVECTOR4US       = $2C;
-   dtcVECTOR2S        = $2D;
-   dtcVECTOR3S        = $2E;
-   dtcVECTOR4S        = $2F;
+   dtcVECTOR2US       = $2B;
+   dtcVECTOR3US       = $2C;
+   dtcVECTOR4US       = $2D;
+   dtcVECTOR2S        = $2E;
+   dtcVECTOR3S        = $2F;
+   dtcVECTOR4S        = $30;
 
-   dtcVECTOR2UI       = $30;
-   dtcVECTOR3UI       = $31;
-   dtcVECTOR4UI       = $32;
-   dtcVECTOR2I        = $33;
-   dtcVECTOR3I        = $34;
-   dtcVECTOR4I        = $35;
+   dtcVECTOR2UI       = $31;
+   dtcVECTOR3UI       = $32;
+   dtcVECTOR4UI       = $33;
+   dtcVECTOR2I        = $34;
+   dtcVECTOR3I        = $35;
+   dtcVECTOR4I        = $36;
 
-   dtcVECTOR2F        = $36;
-   dtcVECTOR3F        = $37;
-   dtcVECTOR4F        = $38;
-   dtcVECTOR2D        = $39;
-   dtcVECTOR3D        = $3A;
-   dtcVECTOR4D        = $3B;
+   dtcVECTOR2F        = $37;
+   dtcVECTOR3F        = $38;
+   dtcVECTOR4F        = $39;
+   dtcVECTOR2D        = $3A;
+   dtcVECTOR3D        = $3B;
+   dtcVECTOR4D        = $3C;
    
    {matrix types}
-   dtcMATRIX2UB       = $3C;
-   dtcMATRIX3UB       = $3D;
-   dtcMATRIX4UB       = $3E;
-   dtcMATRIX2B        = $3F;
-   dtcMATRIX3B        = $40;
-   dtcMATRIX4B        = $41;
+   dtcMATRIX2UB       = $3D;
+   dtcMATRIX3UB       = $3E;
+   dtcMATRIX4UB       = $3F;
+   dtcMATRIX2B        = $40;
+   dtcMATRIX3B        = $41;
+   dtcMATRIX4B        = $42;
 
-   dtcMATRIX2US       = $42;
-   dtcMATRIX3US       = $43;
-   dtcMATRIX4US       = $44;
-   dtcMATRIX2S        = $45;
-   dtcMATRIX3S        = $46;
-   dtcMATRIX4S        = $47;
+   dtcMATRIX2US       = $43;
+   dtcMATRIX3US       = $44;
+   dtcMATRIX4US       = $45;
+   dtcMATRIX2S        = $46;
+   dtcMATRIX3S        = $47;
+   dtcMATRIX4S        = $48;
 
-   dtcMATRIX2UI       = $48;
-   dtcMATRIX3UI       = $49;
-   dtcMATRIX4UI       = $4A;
-   dtcMATRIX2I        = $4B;
-   dtcMATRIX3I        = $4C;
-   dtcMATRIX4I        = $4D;
+   dtcMATRIX2UI       = $49;
+   dtcMATRIX3UI       = $4A;
+   dtcMATRIX4UI       = $4B;
+   dtcMATRIX2I        = $4C;
+   dtcMATRIX3I        = $4D;
+   dtcMATRIX4I        = $4E;
 
-   dtcMATRIX2F        = $4E;
-   dtcMATRIX3F        = $4F;
-   dtcMATRIX4F        = $50;
-   dtcMATRIX2D        = $51;
-   dtcMATRIX3D        = $52;
-   dtcMATRIX4D        = $53;
+   dtcMATRIX2F        = $4F;
+   dtcMATRIX3F        = $50;
+   dtcMATRIX4F        = $51;
+   dtcMATRIX2D        = $52;
+   dtcMATRIX3D        = $53;
+   dtcMATRIX4D        = $54;
 
-   dtcMAX_DTIV        = $53;
+   dtcMAX_DTIV        = $54;
 
 
    dtcSizes: array[0..dtcMAX_DTIV] of longint =
@@ -151,6 +152,7 @@
    0, {dtcSHORTSTRING}
    0, {dtcANSISTRING}
    0, {dtcWIDESTRING}
+   0, {dtcUTF8STRING}
    0, {dtcXPSTRING}
    0, {dtcXPUSTRING}
    0, {dtcXSTRING}
