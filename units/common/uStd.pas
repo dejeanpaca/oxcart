@@ -51,7 +51,7 @@ TYPE
    TBoolFunction = function(): boolean;
    TPointerFunction  = function(): pointer;
    TObjectProcedure = procedure of object;
-   TAppendableString = type string;
+   TAppendableString = type StdString;
    TErrorString = TAppendableString;
 
    { arrays }
@@ -211,9 +211,9 @@ TYPE
    { TAppendableStringHelper }
 
    TAppendableStringHelper = type helper for TAppendableString
-      procedure Add(const s: string);
-      procedure Add(const s, separator: string);
-      procedure AddSpaced(const s: string);
+      procedure Add(const s: StdString);
+      procedure Add(const s, separator: StdString);
+      procedure AddSpaced(const s: StdString);
    end;
 
    { line ending type }
@@ -316,6 +316,8 @@ function GetBit(Value: word; Index: Byte): Boolean;
 {return a string for the current call stack}
 function DumpCallStack(skip: longint = 0): string;
 function DumpExceptionCallStack(e: Exception): string;
+
+function GetUTF8EnvironmentVariable(const v: UTF8String): UTF8String;
 
 IMPLEMENTATION
 
@@ -542,7 +544,7 @@ end;
 
 { TAppendableStringHelper }
 
-procedure TAppendableStringHelper.Add(const s: string);
+procedure TAppendableStringHelper.Add(const s: StdString);
 begin
    if(Self <> '') then
       Self := Self + LineEnding + s
@@ -550,7 +552,7 @@ begin
       Self := s;
 end;
 
-procedure TAppendableStringHelper.Add(const s, separator: string);
+procedure TAppendableStringHelper.Add(const s, separator: StdString);
 begin
    if(Self <> '') then
       Self := Self + separator + s
@@ -558,7 +560,7 @@ begin
       Self := s;
 end;
 
-procedure TAppendableStringHelper.AddSpaced(const s: string);
+procedure TAppendableStringHelper.AddSpaced(const s: StdString);
 begin
    if(Self <> '') then
       Self := Self + ' ' + s
@@ -1302,6 +1304,11 @@ begin
       Report := Report + LineEnding + BackTraceStrFunc(Frames[I]);
 
    Result := report;
+end;
+
+function GetUTF8EnvironmentVariable(const v: UTF8String): UTF8String;
+begin
+   Result := UTF8Encode(GetEnvironmentVariable(UnicodeString(v)))
 end;
 
 function TLineEndingTypeHelper.GetChars(): string;
