@@ -47,7 +47,7 @@ TYPE
    { TDVar }
 
    TDVar = record
-      Name: string;
+      Name: StdString;
       DataType: longint; {data type of the variable}
       Variable: pointer; {pointer to the variable}
       pDefault: pointer; {default variable value}
@@ -78,9 +78,10 @@ TYPE
       procedure Assign(const s: shortstring);
       procedure Assign(const s: ansistring);
       procedure Assign(const s: widestring);
+      procedure Assign(const s: StdString);
 
       {will try to convert a string to a suitable data type for }
-      function AssignFromString(const s: string): boolean;
+      function AssignFromString(const s: StdString): boolean;
 
       { GET VARIABLES }
 
@@ -565,6 +566,9 @@ procedure TDVar.Assign(const s: ansistring);
 procedure TDVar.Assign(const s: widestring);
 {$INCLUDE dvarsetstring.inc}
 
+procedure TDVar.Assign(const s: StdString);
+{$INCLUDE dvarsetstring.inc}
+
 { GET VARIABLES }
 
 { signed integers }
@@ -626,7 +630,7 @@ TYPE
 {$INCLUDE dvargetstring.inc}
 
 {will try to convert a string to a suitable data type for }
-function TDVar.AssignFromString(const s: string): boolean;
+function TDVar.AssignFromString(const s: StdString): boolean;
 var
    ls: string = '';
    code: longint;
