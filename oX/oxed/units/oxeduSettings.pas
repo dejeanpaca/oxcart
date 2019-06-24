@@ -39,7 +39,7 @@ TYPE
       StartWithLastProject: boolean;
 
       {line ending type}
-      LineEndings: string;
+      LineEndings: StdString;
 
       Debug: record
          RenderSelectorBBox: boolean;

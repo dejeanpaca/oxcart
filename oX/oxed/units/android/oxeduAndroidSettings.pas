@@ -22,7 +22,7 @@ TYPE
       dvg: TDVarGroup;
 
       {android package name}
-      PackageName: string;
+      PackageName: StdString;
       {should you manage android files yourself}
       ManualFileManagement: boolean;
 

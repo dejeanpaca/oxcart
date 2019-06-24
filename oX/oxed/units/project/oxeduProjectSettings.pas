@@ -24,7 +24,7 @@ TYPE
    { oxedTProjectSettings }
 
    oxedTProjectSettings = record
-      class function GetFn(): string; static;
+      class function GetFn(): StdString; static;
 
       class procedure Load(); static;
       class procedure Save(); static;
@@ -43,11 +43,11 @@ VAR
    dvRunParameter,
    dvLineEndings: TDVar;
 
-   runParameter: string;
+   runParameter: StdString;
 
 { oxedTProjectSettings }
 
-class function oxedTProjectSettings.GetFn(): string;
+class function oxedTProjectSettings.GetFn(): StdString;
 begin
    Result := oxedProject.GetConfigFilePath(OXED_PROJECT_SETTINGS_FILE);
 end;

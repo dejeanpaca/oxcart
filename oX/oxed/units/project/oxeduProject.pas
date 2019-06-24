@@ -23,7 +23,7 @@ TYPE
       {name of the unit/include file}
       Name,
       {path to the file}
-      Path: string;
+      Path: StdString;
    end;
 
    oxedTProjectUnitList = specialize TPreallocatedArrayList<oxedTProjectUnit>;
@@ -31,14 +31,14 @@ TYPE
    { oxedTProjectUnitListHelper }
 
    oxedTProjectUnitListHelper = record helper for oxedTProjectUnitList
-      function Find(const name: string): oxedPProjectUnit;
+      function Find(const name: StdString): oxedPProjectUnit;
    end;
 
    oxedTProjectSymbols = TPreallocatedStringArrayList;
 
    oxedPProjectBuildMode = ^oxedTProjectBuildMode;
    oxedTProjectBuildMode = record
-      Name: string;
+      Name: StdString;
       Symbols: oxedTProjectSymbols;
    end;
 
@@ -71,7 +71,7 @@ TYPE
       Organization,
       OrganizationShort,
       {line ending type}
-      LineEndings: string;
+      LineEndings: StdString;
 
       {has the project been modified}
       Modified: boolean;
@@ -86,7 +86,7 @@ TYPE
       RunParameters: TPreallocatedStringArrayList;
 
       {main unit uses, if specified will be the only unit included by default in project}
-      MainUnit: string;
+      MainUnit: StdString;
 
       {called when the project is modified}
       OnProjectModified: TProcedures; static;
@@ -108,17 +108,17 @@ TYPE
 
       constructor Create();
 
-      procedure SetPath(const newPath: string);
-      procedure SetIdentifier(const newIdentifier: string);
-      class function NormalizedIdentifier(const unnormalized: string): string; static;
+      procedure SetPath(const newPath: StdString);
+      procedure SetIdentifier(const newIdentifier: StdString);
+      class function NormalizedIdentifier(const unnormalized: StdString): StdString; static;
 
       function HasPath(): boolean;
-      function GetLibraryPath(includePath: boolean = true): string;
+      function GetLibraryPath(includePath: boolean = true): StdString;
 
       procedure RecreateTempDirectory();
 
       {set the last scene path}
-      procedure SetLastScene(const newPath: string);
+      procedure SetLastScene(const newPath: StdString);
 
       {mark the project as modified}
       procedure MarkModified(newModified: boolean = true);
@@ -126,8 +126,8 @@ TYPE
       {is the project valid}
       function Valid(): boolean;
 
-      function GetConfigFilePath(const fn: string): string;
-      function GetTempFilePath(const fn: string): string;
+      function GetConfigFilePath(const fn: StdString): StdString;
+      function GetTempFilePath(const fn: StdString): StdString;
    end;
 
 VAR
@@ -144,10 +144,10 @@ end;
 
 { oxedTProjectUnitListHelper }
 
-function oxedTProjectUnitListHelper.Find(const name: string): oxedPProjectUnit;
+function oxedTProjectUnitListHelper.Find(const name: StdString): oxedPProjectUnit;
 var
    i: loopint;
-   lName: string;
+   lName: StdString;
 
 begin
    if(n > 0) then begin
@@ -179,7 +179,7 @@ begin
    Symbols.Initialize(Symbols);
 end;
 
-procedure oxedTProject.SetPath(const newPath: string);
+procedure oxedTProject.SetPath(const newPath: StdString);
 begin
    Path := IncludeTrailingPathDelimiter(newPath);
    log.v('Project path set to: ' + Path);
@@ -187,13 +187,13 @@ begin
    TempPath := IncludeTrailingPathDelimiter(Path + oxPROJECT_TEMP_DIRECTORY);
 end;
 
-procedure oxedTProject.SetIdentifier(const newIdentifier: string);
+procedure oxedTProject.SetIdentifier(const newIdentifier: StdString);
 begin
    Identifier := NormalizedIdentifier(newIdentifier);
    MarkModified();
 end;
 
-class function oxedTProject.NormalizedIdentifier(const unnormalized: string): string;
+class function oxedTProject.NormalizedIdentifier(const unnormalized: StdString): StdString;
 begin
    Result := unnormalized;
    EliminateWhiteSpace(Result);
@@ -204,7 +204,7 @@ begin
    Result := Path <> '';
 end;
 
-function oxedTProject.GetLibraryPath(includePath: boolean): string;
+function oxedTProject.GetLibraryPath(includePath: boolean): StdString;
 begin
    if(includePath) then
       Result := TempPath
@@ -220,7 +220,7 @@ begin
      CreateDir(oxedProject.TempPath);
 end;
 
-procedure oxedTProject.SetLastScene(const newPath: string);
+procedure oxedTProject.SetLastScene(const newPath: StdString);
 begin
    if(LastScene <> newPath) then
       MarkModified();
@@ -240,12 +240,12 @@ begin
    Result := (Name <> '') and (Identifier <> '');
 end;
 
-function oxedTProject.GetConfigFilePath(const fn: string): string;
+function oxedTProject.GetConfigFilePath(const fn: StdString): StdString;
 begin
    Result := ConfigPath + fn;
 end;
 
-function oxedTProject.GetTempFilePath(const fn: string): string;
+function oxedTProject.GetTempFilePath(const fn: StdString): StdString;
 begin
    Result := oxedProject.TempPath + fn;
 end;

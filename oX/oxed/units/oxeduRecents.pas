@@ -25,15 +25,15 @@ TYPE
       Directories: boolean;
 
       List: oxedTRecentsList;
-      LastOpen: string;
+      LastOpen: StdString;
 
       OnUpdate: TProcedures;
 
-      function FindRecent(const path: string): boolean;
+      function FindRecent(const path: StdString): boolean;
       {validates given path (checks if exists)}
-      function Validate(const path: string): boolean;
+      function Validate(const path: StdString): boolean;
 
-      procedure Add(const path: string);
+      procedure Add(const path: StdString);
    end;
 
 VAR
@@ -77,11 +77,11 @@ end;
 
 { oxedTRecents }
 
-function oxedTRecents.FindRecent(const path: string): boolean;
+function oxedTRecents.FindRecent(const path: StdString): boolean;
 var
    i: loopint;
    {$IFDEF WINDOWS}
-   lpath: string;
+   lpath: StdString;
    {$ENDIF}
 
 begin
@@ -102,7 +102,7 @@ begin
    Result := false;
 end;
 
-function oxedTRecents.Validate(const path: string): boolean;
+function oxedTRecents.Validate(const path: StdString): boolean;
 begin
    if(not Directories) then begin
      Result := FileUtils.Exists(path) > 0;
@@ -111,9 +111,9 @@ begin
    end;
 end;
 
-procedure oxedTRecents.Add(const path: string);
+procedure oxedTRecents.Add(const path: StdString);
 var
-   correctPath: string;
+   correctPath: StdString;
 
 begin
    correctPath := ExcludeTrailingPathDelimiter(path);
