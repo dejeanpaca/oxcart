@@ -1,4 +1,4 @@
-//procedure TDVar.Set(const s: widestring);
+{procedure TDVar.Set(const s: stringtypeofsomesort);}
 begin
    if(variable <> nil) then begin
       case DataType of
