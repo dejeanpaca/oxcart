@@ -27,7 +27,7 @@ TYPE
    TpShortStringArray = array of pshortstring;
    TpCharDynArray = array of pchar;
    TAnsiStringArray = array of ansistring;
-   TStringArray = array of string;
+   TStringArray = array of StdString;
 
    { TPackedStrings }
 
@@ -96,15 +96,13 @@ function sf(value: comp): string; inline;
 {$ENDIF}
 function sf(value: boolean): string; inline;
 
-{compares 2 strings}
-function CompareStrings(const str1, str2: string): longint;
-{compares 2 strings up to the length of the smallest string}
-function CompareStringz(const str1, str2: string): longint;
-
 {WHITESPACE STRIPPING}
 procedure StripLeadingWhitespace(var st: string);
 procedure StripTrailingWhitespace(var st: string);
 procedure StripWhitespace(var st: string);
+procedure StripLeadingWhitespace(var st: StdString);
+procedure StripTrailingWhitespace(var st: StdString);
+procedure StripWhitespace(var st: StdString);
 function IsWhitespace(const st: string): boolean;
 procedure StripEndLine(var st: string);
 
@@ -166,6 +164,10 @@ function CopyTo(const s: string; c: char): string;
 function CopyToDel(var s: string): string;
 {copy until the specified character is found and delete from string}
 function CopyToDel(var s: string; c: char): string;
+{copy until white space and delete from string}
+function CopyToDel(var s: StdString): string;
+{copy until the specified character is found and delete from string}
+function CopyToDel(var s: StdString; c: char): string;
 
 {copy everything after the first whitespace}
 function CopyAfter(const s: string): string;
@@ -176,6 +178,10 @@ function CopyAfter(const s: string; c: char): string;
 function CopyAfterDel(var s: string): string;
 {copy everything after the first occurence of the specified character, and delete it from string (including the character)}
 function CopyAfterDel(var s: string; c: char): string;
+{copy everything after the first whitespace, and delete it from string (including whitespace)}
+function CopyAfterDel(var s: StdString): string;
+{copy everything after the first occurence of the specified character, and delete it from string (including the character)}
+function CopyAfterDel(var s: StdString; c: char): string;
 
 {add the specified leading character to make the string have length n}
 procedure AddLeadingPadding(var s: shortstring; c: char; n: longint);
@@ -184,24 +190,13 @@ procedure AddLeadingPadding(var s: string; c: char; n: longint);
 procedure AddTrailingPadding(var s: shortstring; c: char; n: longint);
 procedure AddTrailingPadding(var s: string; c: char; n: longint);
 
-{add the specified leading character to the start of the string the specified amount of times}
-procedure AddLeadingChars(var s: string; c: char; n: longint);
-{add the specified leading character to the end of the string the specified amount of times}
-procedure AddTrailingChars(var s: string; c: char; n: longint);
-
 { SHORTSTRINGS }
 {creates a pshortstring from a regular shortstring or a pchar}
 function MakepShortString(const s: string): pShortString;
 function MakepShortString(pcs: pChar): pShortString;
 
-{converts a shortstring into pchar; the memory allocated by this function
-must be freed afterwards}
-function ShortStringToPChar(const s: ShortString): pChar;
 {'converts' a pchar to a shortstring}
 function PCharToShortString(pcs: pChar): ShortString;
-
-{convert a string to a pchar with memory allocation}
-function StringTopChar(const s: string): pChar;
 
 { EXPLODING }
 function strExplode(const s: ansistring; delimiter: char): TAnsiStringArray;
@@ -209,9 +204,12 @@ procedure strExplode(const s: ansistring; delimiter: char; var a: array of Short
 
 {creates a string from bytes}
 procedure StringFromBytes(out s: ansistring; size: loopint; const bytes);
+procedure StringFromBytes(out s: StdString; size: loopint; const bytes);
 
 {get key value from a string}
 function GetKeyValue(const s: string; out key, value: string; const separator: char = '='): boolean;
+{get key value from a string}
+function GetKeyValue(const s: StdString; out key, value: StdString; const separator: char = '='): boolean;
 
 IMPLEMENTATION
 
@@ -321,72 +319,18 @@ end;
 function sf(value: boolean): string; inline;
 begin
    case value of
-      true:  
+      true:
          Result := 'true';
-      false: 
+      false:
          Result := 'false';
    end;
-end;
-
-function CompareStrings(const str1, str2: string): longint;
-var
-   i, 
-   l1, 
-   l2: longint;
-
-begin
-   l1 := Length(str1);
-   l2 := Length(str2);
-   if(l1 = l2) then begin
-      if(l1 <> 0) or (l2 <> 0) then begin
-         for i := 1 to l1 do begin
-            if(str1[i] < str2[i]) then
-               exit(-i)
-            else if(str1[i] > str2[i]) then
-               exit(i);
-         end;
-      end;
-
-      Result := 0;
-   end else
-      Result := -1;
-end;
-
-function CompareStringz(const str1, str2: string): longint;
-var
-   i, 
-   l1, 
-   l2, 
-   sl: longint;
-
-begin
-   l1 := Length(str1);
-   l2 := Length(str2);
-   if(l1 = l2) then begin
-      if(l1 <> 0) or (l2 <> 0) then begin
-         if(l1 > l2) then
-            sl := l1
-         else
-            sl := l2;
-
-         for i := 1 to sl do begin
-            if(str1[i] < str2[i]) then
-               exit(-i)
-            else if(str1[i] > str2[i]) then
-               exit(i);
-         end;
-      end;
-
-      Result := 0;
-   end else
-      Result := -1;
 end;
 
 {WHITESPACE STRIPPING}
 procedure StripLeadingWhitespace(var st: string);
 var
-   i, 
-   l, 
+   i,
+   l,
    strippos: longint;
 
 begin
@@ -410,8 +354,8 @@ end;
 
 procedure StripTrailingWhitespace(var st: string);
 var
-   i, 
-   l, 
+   i,
+   l,
    strippos: longint;
 
 begin
@@ -434,6 +378,62 @@ begin
 end;
 
 procedure StripWhitespace(var st: string);
+begin
+   StripLeadingWhitespace(st);
+   StripTrailingWhitespace(st);
+end;
+
+procedure StripLeadingWhitespace(var st: StdString);
+var
+   i,
+   l,
+   strippos: longint;
+
+begin
+   l := Length(st);
+   if(l > 0) then begin
+      {strip leading white space}
+      {find white space}
+      strippos := 0;
+      for i := 1 to l do begin
+         if(st[i] in strWhitespace) then
+            inc(strippos)
+         else
+            break;
+      end;
+
+      {delete white space from the string}
+      if(strippos <> 0) then
+         delete(st, 1, strippos);
+   end;
+end;
+
+procedure StripTrailingWhitespace(var st: StdString);
+var
+   i,
+   l,
+   strippos: longint;
+
+begin
+   l := length(st);
+   if(l > 0) then begin
+      {strip trailing white space}
+      {find white space}
+      strippos := 0;
+      for i := l downto 1 do begin
+         if(st[i] in strWhitespace) then
+            inc(strippos)
+         else
+            break;
+      end;
+
+      {delete white space from the string}
+      if(strippos > 0) then
+         delete(st, l-(strippos-1), strippos);
+   end;
+end;
+
+procedure StripWhitespace(var st: StdString);
 begin
    StripLeadingWhitespace(st);
    StripTrailingWhitespace(st);
@@ -481,8 +481,8 @@ end;
 
 procedure EliminateWhiteSpace(var st: string);
 var
-   i, 
-   l, 
+   i,
+   l,
    newlen,
    count: longint;
 
@@ -508,9 +508,9 @@ end;
 
 procedure RemoveChar(var st: string; c: char);
 var
-   i, 
-   l, 
-   newlen, 
+   i,
+   l,
+   newlen,
    count: longint;
 
 begin
@@ -608,7 +608,7 @@ end;
 
    http://stackoverflow.com/questions/3310865/is-there-a-boyer-moore-string-search-and-fast-search-and-replace-function-and-fas
 }
-function StringCount(const st, sub: String) : loopint;
+function StringCount(const st, sub: string): loopint;
 var
    foundPos: Integer;
    fromPos: Integer;
@@ -767,7 +767,7 @@ end;
 
    http://stackoverflow.com/questions/3310865/is-there-a-boyer-moore-string-search-and-fast-search-and-replace-function-and-fas
 }
-function StringCountInsensitive(const st, sub: String) : loopint;
+function StringCountInsensitive(const st, sub: string): loopint;
 var
    foundPos: Integer;
    fromPos: Integer;
@@ -870,9 +870,9 @@ end;
 
 function ExtractFileNameNoExt(const st: string): string;
 var
-   i, 
-   l, 
-   e, 
+   i,
+   l,
+   e,
    dotpos: longint;
 
 begin
@@ -889,22 +889,22 @@ begin
          we need to find where the end is(without the extension)}
          dotpos := StringPos(st, ExtensionSeparator, i);
 
-         if(dotpos > 0) then 
-            e := dotpos 
-         else 
+         if(dotpos > 0) then
+            e := dotpos
+         else
             e := l;
 
          {now just copy the filename}
          Result := copy(st, i + 1, e - i - 1);
-      end else 
+      end else
          Result := st;
-   end else 
+   end else
       Result := st;
 end;
 
 function ExtractAllNoExt(const st: string): string;
 var
-   i, 
+   i,
    l: longint;
 
 begin
@@ -932,7 +932,7 @@ end;
 
 function ExtractFileDir(const st: string): string;
 var
-   i, 
+   i,
    l: longint;
 
 begin
@@ -948,13 +948,13 @@ begin
          Result := copy(st, 1, i - 1)
       else
          Result := '';
-   end else 
+   end else
       Result := '';
 end;
 
 function ExtractFileExt(const st: string): string;
 var
-   i, 
+   i,
    l: longint;
 
 begin
@@ -968,9 +968,9 @@ begin
       if(i > 0) then begin
          {extract the extension and return it}
          Result := copy(st, i, 255);
-      end else 
+      end else
          Result := '';
-   end else 
+   end else
       Result := '';
 end;
 
@@ -1029,7 +1029,7 @@ end;
 
 function ExtractFilePath(const st: string): string;
 var
-   i, 
+   i,
    l: longint;
 
 begin
@@ -1045,13 +1045,13 @@ begin
          Result := copy(st, 1, i)
       else
          Result := '';
-   end else 
+   end else
       Result := '';
 end;
 
 function ExtractFileDrive(const st: string): string;
 var
-   i, 
+   i,
    l: longint;
 
 begin
@@ -1074,7 +1074,7 @@ begin
          Result := copy(st, 1, i);
       end else
          Result := '';
-   end else 
+   end else
       Result := '';
 end;
 
@@ -1090,7 +1090,7 @@ begin
    {$IFDEF DARWIN}rds := '\';{$ENDIF}
 
    for i := 1 to Length(st) do begin
-      if(st[i] = rds) then 
+      if(st[i] = rds) then
          st[i] := DirectorySeparator;
    end;
 end;
@@ -1121,9 +1121,9 @@ begin
    if(l > 0) then begin
       if(idx <= l) then begin
          Result := copy(st, idx, (l - idx) + 1);
-      end else 
+      end else
          Result := '';
-   end else 
+   end else
       Result := '';
 end;
 
@@ -1135,12 +1135,12 @@ begin
    {check values}
    l := Length(st);
    if(l > 0) then begin
-      if(l < idx) then 
+      if(l < idx) then
          idx := l;
 
       {return required string}
       Result := copy(st, 1, idx);
-   end else 
+   end else
       Result := '';
 end;
 
@@ -1182,7 +1182,7 @@ end;
 
 function CopyToDel(var s: string): string;
 var
-   i, 
+   i,
    slen: longint;
 
 begin
@@ -1195,13 +1195,13 @@ begin
 
       Result := copy(s, 1, i - 1);
       delete(s, 1, i);
-   end else 
+   end else
       Result := '';
 end;
 
 function CopyToDel(var s: string; c: char): string;
 var
-   i, 
+   i,
    slen: longint;
 
 begin
@@ -1214,7 +1214,45 @@ begin
 
       Result := copy(s, 1, i - 1);
       delete(s, 1, i);
-   end else 
+   end else
+      Result := '';
+end;
+
+function CopyToDel(var s: StdString): string;
+var
+   i,
+   slen: longint;
+
+begin
+   slen := length(s);
+   if(slen > 0) then begin
+      i := 1;
+
+      while (i <= slen) and (not (s[i] in strWhiteSpace)) do
+         inc(i);
+
+      Result := copy(s, 1, i - 1);
+      delete(s, 1, i);
+   end else
+      Result := '';
+end;
+
+function CopyToDel(var s: StdString; c: char): string;
+var
+   i,
+   slen: longint;
+
+begin
+   slen := length(s);
+   if(slen > 0) then begin
+      i := 1;
+
+      while (i <= slen) and (s[i] <> c) do
+         inc(i);
+
+      Result := copy(s, 1, i - 1);
+      delete(s, 1, i);
+   end else
       Result := '';
 end;
 
@@ -1292,6 +1330,44 @@ begin
       Result := '';
 end;
 
+function CopyAfterDel(var s: StdString): string;
+var
+   i,
+   slen: longint;
+
+begin
+   slen := length(s);
+   if(slen > 0) then begin
+      i := 1;
+
+      while (i <= slen) and (not (s[i] in strWhitespace)) do
+         inc(i);
+
+      Result := copy(s, i + 1, Length(s));
+      delete(s, i, Length(s));
+   end else
+      Result := '';
+end;
+
+function CopyAfterDel(var s: StdString; c: char): string;
+var
+   i,
+   slen: longint;
+
+begin
+   slen := length(s);
+   if(slen > 0) then begin
+      i := 1;
+
+      while (i <= slen) and (s[i] <> c) do
+         inc(i);
+
+      Result := copy(s, i + 1, Length(s));
+      delete(s, i, Length(s));
+   end else
+      Result := '';
+end;
+
 procedure AddLeadingPadding(var s: shortstring; c: char; n: longint);
 var
    i,
@@ -1316,8 +1392,8 @@ end;
 
 procedure AddLeadingPadding(var s: string; c: char; n: longint);
 var
-   i, 
-   l, 
+   i,
+   l,
    m: longint;
 
 begin
@@ -1331,7 +1407,7 @@ begin
       Move(s[1], s[1 + m], l);
 
       {add leading padding}
-      for i := 1 to m do 
+      for i := 1 to m do
          s[i] := c;
    end;
 end;
@@ -1356,8 +1432,8 @@ end;
 
 procedure AddTrailingPadding(var s: string; c: char; n: longint);
 var
-   i, 
-   l, 
+   i,
+   l,
    m: longint;
 
 begin
@@ -1367,49 +1443,9 @@ begin
       {set the new length}
       SetLength(s, n);
       {add trailing padding}
-      for i := m + 1 to n do 
+      for i := m + 1 to n do
          s[i] := c;
    end;
-end;
-
-procedure AddLeadingChars(var s: string; c: char; n: longint);
-var
-   i,
-   l,
-   m: loopint;
-
-begin
-   l := Length(s);
-   n := n + l;
-
-   m := n - l;
-   {set the new length}
-   SetLength(s, n);
-   {move characters}
-   move(s[1], s[1 + m], l);
-
-   {add leading padding}
-   for i := 1 to m do
-      s[i] := c;
-end;
-
-procedure AddTrailingChars(var s: string; c: char; n: longint);
-var
-   i,
-   l,
-   m: loopint;
-
-begin
-   l := Length(s);
-   n := n + l;
-
-   m := n - (n - l);
-
-   {set the new length}
-   SetLength(s, n);
-   {add trailing padding}
-   for i := m + 1 to n do
-      s[i] := c;
 end;
 
 { SHORTSTRING }
@@ -1438,8 +1474,8 @@ begin
 
       repeat
          if(pc^ <> #0) then begin
-            inc(pc); 
-            inc(len); 
+            inc(pc);
+            inc(len);
          end;
       until (pc^ = #0) or (len = 255);
 
@@ -1448,7 +1484,7 @@ begin
 
       if(ss <> nil) then begin
          {copy the string}
-         if(len > 0) then 
+         if(len > 0) then
             move(pcs^, ss^[1], len);
 
          ss^[0] := char(len); {set string length}
@@ -1456,25 +1492,6 @@ begin
    end;
 
    Result := ss;{return Result}
-end;
-
-function ShortStringToPChar(const s: ShortString): pChar;
-var
-   pcs: pChar = nil;
-   stlen: longint;
-
-begin
-   stlen := Length(s);
-   GetMem(pcs, stlen + 1);
-
-   if(pcs <> nil) then begin
-      if(stlen > 0) then 
-         move(s[1], pointer(pcs)^, stlen);
-
-      char(pointer(pcs + stlen)^) := #0;
-   end;
-
-   Result := pcs;
 end;
 
 function PCharToShortString(pcs: pChar): ShortString;
@@ -1489,8 +1506,8 @@ begin
 
    repeat
       if(pc^ <> #0) then begin
-         inc(len); 
-         ss[len] := pc^; 
+         inc(len);
+         ss[len] := pc^;
          inc(pc);
       end;
    until (pc^ = #0) or (len = 255);
@@ -1501,34 +1518,16 @@ begin
    Result := ss;
 end;
 
-function StringTopChar(const s: string): pChar;
-var
-   pcs: pChar = nil;
-   stlen: longint;
-
-begin
-   stlen := Length(s);
-   GetMem(pcs, stlen + 1);
-
-   if(pcs <> nil) then begin
-      if(stlen > 0) then 
-         move(s[1], pointer(pcs)^, stlen);
-
-      char(pointer(pcs + stlen)^) := #0;
-   end;
-
-   Result := pcs;
-end;
 
 { EXPLODING }
 
-function strExplode(const s: ansistring; delimiter: Char): TAnsiStringArray;
+function strExplode(const s: ansistring; delimiter: char): TAnsiStringArray;
 var
-   i, 
-   len, 
-   p, 
-   prevp, 
-   n, 
+   i,
+   len,
+   p,
+   prevp,
+   n,
    charcount: longint; {i, string length, position, previous position, string count}
    str: ansistring;
    stringarray: TAnsiStringArray = nil;
@@ -1537,23 +1536,23 @@ begin
    if(s <> '') then begin
       len := Length(s);
 
-      p := -1; 
+      p := -1;
       n := 0;
                                                                  ;
       {figure out how many strings will be required}
       for i := 1 to len do begin
          if(s[i] = delimiter) then begin
-            inc(n); 
+            inc(n);
             p := i;
          end;
       end;
 
       {if there are characters behind the last delimiter we have one more string}
-      if(p <= len) then 
+      if(p <= len) then
          inc(n);
 
       {if there are no delimiters we have only one string to explode}
-      if(p = -1) then 
+      if(p = -1) then
          n := 1;
 
       {allocate memory for string array}
@@ -1639,7 +1638,41 @@ begin
       s := '';
 end;
 
+procedure StringFromBytes(out s: StdString; size: loopint; const bytes);
+begin
+   if(Size > 0) then begin
+      s := '';
+      SetLength(s, size);
+      Move(bytes, s[1], size);
+   end else
+      s := '';
+end;
+
 function GetKeyValue(const s: string; out key, value: string; const separator: char): boolean;
+var
+   p: loopint;
+
+begin
+   if(s <> '') then begin
+      p := pos(separator, s);
+
+      if(p > 0) then begin
+         key := Copy(s, 0, p - 1);
+         StringUtils.StripWhitespace(key);
+
+         value := Copy(s, p + 1, Length(s) - p);
+         StringUtils.StripWhitespace(value);
+
+         exit(key <> '');
+      end;
+   end;
+
+   key := '';
+   value := '';
+   Result := false;
+end;
+
+function GetKeyValue(const s: StdString; out key, value: StdString; const separator: char): boolean;
 var
    p: loopint;
 
