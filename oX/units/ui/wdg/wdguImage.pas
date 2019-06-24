@@ -11,7 +11,7 @@ UNIT wdguImage;
 INTERFACE
 
    USES
-      vmVector, uFile, uLog,
+      uStd, vmVector, uFile, uLog,
       {oX}
       oxuTypes, oxuRender, oxuTransform, oxuTexture, oxuTextureGenerate, oxumPrimitive, oxuPaths, oxuPrimitives,
       oxuResourcePool, oxuUI,
@@ -29,7 +29,7 @@ TYPE
       Texture: oxTTexture;
 
       {set and load a file for the image}
-      function SetImage(const fn: string): boolean;
+      function SetImage(const fn: StdString): boolean;
       {set an existing texture as the image}
       function SetImage(newTexture: oxTTexture): boolean;
 
@@ -46,7 +46,7 @@ TYPE
       constructor Create(); override;
 
       {set and load a file for the image}
-      procedure SetImage(const fn: string);
+      procedure SetImage(const fn: StdString);
       {set an existing texture as the image}
       procedure SetImage(newTexture: oxTTexture);
 
@@ -67,7 +67,7 @@ TYPE
 
    uiTWidgetImageGlobal = record
       {adds a image to a window}
-      function Add(const fn: string;
+      function Add(const fn: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions): wdgTImage;
    end;
 
@@ -81,7 +81,7 @@ VAR
 
 { wdgTImageTexture }
 
-function wdgTImageTexture.SetImage(const fn: string): boolean;
+function wdgTImageTexture.SetImage(const fn: StdString): boolean;
 var
    path: String;
 
@@ -126,7 +126,7 @@ begin
    oxmPrimitive.Init(Quad);
 end;
 
-procedure wdgTImage.SetImage(const fn: string);
+procedure wdgTImage.SetImage(const fn: StdString);
 begin
    if(Texture.SetImage(fn)) then
       CalculateQuad();
@@ -188,7 +188,7 @@ begin
    internal.Done();
 end;
 
-function uiTWidgetImageGlobal.Add(const fn: string;
+function uiTWidgetImageGlobal.Add(const fn: StdString;
       const Pos: oxTPoint; const Dim: oxTDimensions): wdgTImage;
 
 begin

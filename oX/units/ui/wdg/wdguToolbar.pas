@@ -83,7 +83,7 @@ TYPE
    wdgTToolbarItem = record
       Name,
       Hint,
-      Caption: string;
+      Caption: StdString;
 
       Action: TEventID;
       Callback: uiTWidgetCallback;
@@ -134,7 +134,7 @@ TYPE
       function AddButton(glyph: oxTTexture; newAction: TEventID; callback: TObjectProcedure): wdgPToolbarItem;
       function AddButton(glyph: oxTTexture; newAction: TEventID; callback: uiTWidgetCallbackRoutine): wdgPToolbarItem;
       function AddButton(glyph: oxTTexture; newAction: TEventID; callback: uiTWidgetObjectCallbackRoutine): wdgPToolbarItem;
-      function AddCaption(const newCaption: string; newAction: TEventID = 0; callback: TProcedure = nil): wdgPToolbarItem;
+      function AddCaption(const newCaption: StdString; newAction: TEventID = 0; callback: TProcedure = nil): wdgPToolbarItem;
 
       procedure GetComputedDimensions(out d: oxTDimensions); override;
 
@@ -459,7 +459,7 @@ begin
    Result^.Callback.Use(callback);
 end;
 
-function wdgTToolbar.AddCaption(const newCaption: string; newAction: TEventID; callback: TProcedure = nil): wdgPToolbarItem;
+function wdgTToolbar.AddCaption(const newCaption: StdString; newAction: TEventID; callback: TProcedure = nil): wdgPToolbarItem;
 begin
    result := AddItem();
    result^.Typ := WDG_TOOLBAR_ITEM_CAPTION;

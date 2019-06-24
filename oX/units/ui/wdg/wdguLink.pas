@@ -68,14 +68,14 @@ TYPE
       {is the link used}
       Used: boolean;
       {the actual link}
-      Link: string;
+      Link: StdString;
       Callback: uiTWidgetCallback;
 
       procedure Render(); override;
       procedure Point(var e: appTMouseEvent; {%H-}x, {%H-}y: longint); override;
 
       procedure UseLink();
-      procedure SetLink(const newLink: string);
+      procedure SetLink(const newLink: StdString);
    end;
 
    { wdgTLinkGlobal }
@@ -83,7 +83,7 @@ TYPE
    wdgTLinkGlobal = record
       DefaultColor: TColor4ub;
 
-      function Add(const Caption: string; const Link: string;
+      function Add(const Caption: StdString; const Link: StdString;
                  const Pos: oxTPoint; const Dim: oxTDimensions): wdgTLink;
    end;
 
@@ -137,12 +137,12 @@ begin
    Callback.Call();
 end;
 
-procedure wdgTLink.SetLink(const newLink: string);
+procedure wdgTLink.SetLink(const newLink: StdString);
 begin
    Link := newLink;
 end;
 
-function wdgTLinkGlobal.Add(const Caption: string; const Link: string;
+function wdgTLinkGlobal.Add(const Caption: StdString; const Link: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions): wdgTLink;
 begin
    result := wdgTLink(uiWidget.Add(internal, Pos, Dim));

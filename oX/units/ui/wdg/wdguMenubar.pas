@@ -38,7 +38,7 @@ TYPE
       procedure Initialize; override;
       destructor Destroy; override;
 
-      function Add(const menuCaption: string): uiTContextMenu;
+      function Add(const menuCaption: StdString): uiTContextMenu;
 
       procedure Render(); override;
       procedure Point(var e: appTMouseEvent; x, y: longint); override;
@@ -132,7 +132,7 @@ begin
    FreeObject(Menus);
 end;
 
-function wdgTMenubar.Add(const menuCaption: string): uiTContextMenu;
+function wdgTMenubar.Add(const menuCaption: StdString): uiTContextMenu;
 begin
    Result := Menus.AddSub(menuCaption);
 end;

@@ -10,14 +10,15 @@ UNIT wdguCheckbox;
 
 INTERFACE
 
-   USES uColors,
-   {app}
-   appuKeys, appuMouse,
-   {oX}
-   oxuTypes, oxuFont, oxuRender,
-   {ui}
-   uiuDraw, uiuWindowTypes, uiuSkinTypes,
-   uiuWidget, uiWidgets, uiuWidgetRender;
+   USES
+      uStd, uColors,
+      {app}
+      appuKeys, appuMouse,
+      {oX}
+      oxuTypes, oxuFont, oxuRender,
+      {ui}
+      uiuDraw, uiuWindowTypes, uiuSkinTypes,
+      uiuWidget, uiWidgets, uiuWidgetRender;
 
 CONST
    wdgcCHECKBOX_TOGGLE                          = $0001;
@@ -61,7 +62,7 @@ TYPE
 
       ColorDisabled: TColor4ub;
 
-      function Add(const Caption: string;
+      function Add(const Caption: StdString;
                   const Pos: oxTPoint;
                   value: boolean = false): wdgTCheckbox;
    end;
@@ -209,7 +210,7 @@ begin
    internal.Done();
 end;
 
-function uiTWidgetCheckboxGlobal.Add(const Caption: string;
+function uiTWidgetCheckboxGlobal.Add(const Caption: StdString;
          const Pos: oxTPoint;
          value: boolean = false): wdgTCheckbox;
 begin

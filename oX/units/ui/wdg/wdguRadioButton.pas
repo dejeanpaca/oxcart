@@ -45,7 +45,7 @@ TYPE
 
       procedure SetSize(w, h: longint);
 
-      function Add(const Caption: string;
+      function Add(const Caption: StdString;
                   const Pos: oxTPoint;
                   value: boolean = false): wdgTRadioButton;
    end;
@@ -149,7 +149,7 @@ begin
    Outer.InitCircle(Diameter / 2, 32);
 end;
 
-function wdgTRadioButtonGlobal.Add(const Caption: string;
+function wdgTRadioButtonGlobal.Add(const Caption: StdString;
          const Pos: oxTPoint;
          value: boolean = false): wdgTRadioButton;
 

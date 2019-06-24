@@ -46,7 +46,7 @@ TYPE
 
    uiTContextMenuItem = record
       {caption for the item}
-      Caption: string;
+      Caption: StdString;
       {type of item}
       ItemType: uiTContextMenuItemType;
       {action to be executed when this item is activated}
@@ -106,7 +106,7 @@ TYPE
 
    { uiTContextMenu }
    uiTContextMenu = class
-      Name: string;
+      Name: StdString;
 
       Items: uiTContextMenuItems;
 
@@ -120,7 +120,7 @@ TYPE
 
       Parent: uiTContextMenu;
 
-      constructor Create(const newName: string);
+      constructor Create(const newName: StdString);
       destructor Destroy; override;
 
       {insert item at a specific place}
@@ -130,19 +130,19 @@ TYPE
       {add an existing item to this menu}
       function AddItem(const existing: uiTContextMenuItem): uiPContextMenuItem;
       {add item to menu}
-      function AddItem(const caption: string; action: longword = 0; callback: uiTContextMenuCallback = nil): uiPContextMenuItem;
-      function AddItem(const caption: string; simpleCallback: TProcedure): uiPContextMenuItem;
-      function AddItem(const caption: string; simpleCallback: TObjectProcedure): uiPContextMenuItem;
-      function AddItem(const caption: string; simpleCallback: uiTWidgetCallbackRoutine): uiPContextMenuItem;
-      function AddItem(const caption: string; simpleCallback: uiTWidgetObjectCallbackRoutine): uiPContextMenuItem;
+      function AddItem(const caption: StdString; action: longword = 0; callback: uiTContextMenuCallback = nil): uiPContextMenuItem;
+      function AddItem(const caption: StdString; simpleCallback: TProcedure): uiPContextMenuItem;
+      function AddItem(const caption: StdString; simpleCallback: TObjectProcedure): uiPContextMenuItem;
+      function AddItem(const caption: StdString; simpleCallback: uiTWidgetCallbackRoutine): uiPContextMenuItem;
+      function AddItem(const caption: StdString; simpleCallback: uiTWidgetObjectCallbackRoutine): uiPContextMenuItem;
       {add checkbox to the menu}
-      function AddCheckbox(const caption: string; checked: boolean = false): uiPContextMenuItem;
+      function AddCheckbox(const caption: StdString; checked: boolean = false): uiPContextMenuItem;
       {add separator to menu}
       function AddSeparator(): uiPContextMenuItem;
       {add a sub menu}
-      function AddSub(const caption: string): uiTContextMenu;
+      function AddSub(const caption: StdString): uiTContextMenu;
       {add an existign context menu}
-      function AddSub(const caption: string; existing: uiTContextMenu): uiPContextMenuItem;
+      function AddSub(const caption: StdString; existing: uiTContextMenu): uiPContextMenuItem;
 
       {add everything from an existing menu}
       procedure AddFrom(menu: uiTContextMenu);
@@ -172,7 +172,7 @@ TYPE
       procedure Disable();
 
       private
-         function Add(const caption: string): uiPContextMenuItem;
+         function Add(const caption: StdString): uiPContextMenuItem;
    end;
 
    { uiTContextMenuGlobal }
@@ -469,7 +469,7 @@ var
    f: oxTFont;
    ir: oxTRect;
    clr: TColor4ub;
-   keyMapping: string;
+   keyMapping: StdString;
    size: longint;
    enabled: boolean;
    pSkin: uiTSkin;
@@ -692,7 +692,7 @@ end;
 
 { uiTContextMenu }
 
-constructor uiTContextMenu.Create(const newName: string);
+constructor uiTContextMenu.Create(const newName: StdString);
 begin
    Name := newName;
 
@@ -754,38 +754,38 @@ begin
       Result^.Properties.Prop(uiCONTEXT_MENU_ITEM_EXTERNAL);
 end;
 
-function uiTContextMenu.AddItem(const caption: string; action: longword; callback: uiTContextMenuCallback): uiPContextMenuItem;
+function uiTContextMenu.AddItem(const caption: StdString; action: longword; callback: uiTContextMenuCallback): uiPContextMenuItem;
 begin
    Result := Add(caption);
    Result^.SetAction(action);
    Result^.Callback := callback;
 end;
 
-function uiTContextMenu.AddItem(const caption: string; simpleCallback: TProcedure): uiPContextMenuItem;
+function uiTContextMenu.AddItem(const caption: StdString; simpleCallback: TProcedure): uiPContextMenuItem;
 begin
    Result := AddItem(caption, 0, nil);
    Result^.Callbacks.Use(simpleCallback);
 end;
 
-function uiTContextMenu.AddItem(const caption: string; simpleCallback: TObjectProcedure): uiPContextMenuItem;
+function uiTContextMenu.AddItem(const caption: StdString; simpleCallback: TObjectProcedure): uiPContextMenuItem;
 begin
    Result := AddItem(caption, 0, nil);
    Result^.Callbacks.Use(simpleCallback);
 end;
 
-function uiTContextMenu.AddItem(const caption: string; simpleCallback: uiTWidgetCallbackRoutine): uiPContextMenuItem;
+function uiTContextMenu.AddItem(const caption: StdString; simpleCallback: uiTWidgetCallbackRoutine): uiPContextMenuItem;
 begin
    Result := AddItem(caption, 0, nil);
    Result^.Callbacks.Use(simpleCallback);
 end;
 
-function uiTContextMenu.AddItem(const caption: string; simpleCallback: uiTWidgetObjectCallbackRoutine): uiPContextMenuItem;
+function uiTContextMenu.AddItem(const caption: StdString; simpleCallback: uiTWidgetObjectCallbackRoutine): uiPContextMenuItem;
 begin
    Result := AddItem(caption, 0, nil);
    Result^.Callbacks.Use(simpleCallback);
 end;
 
-function uiTContextMenu.AddCheckbox(const caption: string; checked: boolean): uiPContextMenuItem;
+function uiTContextMenu.AddCheckbox(const caption: StdString; checked: boolean): uiPContextMenuItem;
 var
    item: uiPContextMenuItem;
 
@@ -808,7 +808,7 @@ begin
    Result := item;
 end;
 
-function uiTContextMenu.AddSub(const caption: string): uiTContextMenu;
+function uiTContextMenu.AddSub(const caption: StdString): uiTContextMenu;
 var
    item: uiPContextMenuItem;
 
@@ -821,7 +821,7 @@ begin
    Result := uiTContextMenu(item^.Sub);
 end;
 
-function uiTContextMenu.AddSub(const caption: string; existing: uiTContextMenu): uiPContextMenuItem;
+function uiTContextMenu.AddSub(const caption: StdString; existing: uiTContextMenu): uiPContextMenuItem;
 var
    item: uiPContextMenuItem;
 
@@ -989,7 +989,7 @@ begin
    end;
 end;
 
-function uiTContextMenu.Add(const caption: string): uiPContextMenuItem;
+function uiTContextMenu.Add(const caption: StdString): uiPContextMenuItem;
 var
    item: uiTContextMenuItem;
 

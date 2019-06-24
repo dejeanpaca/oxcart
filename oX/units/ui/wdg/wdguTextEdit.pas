@@ -34,7 +34,7 @@ TYPE
          CursorPastEndOfLine: boolean;
 
          {current line}
-         CurrentLine: string;
+         CurrentLine: StdString;
 
          ib: record
             CursorPos,
@@ -341,7 +341,7 @@ var
    renderProperties: TBitSet;
    surfaceColor,
    borderColor: TColor4ub;
-   s: string;
+   s: StdString;
 
 begin
    {render input-box block}
