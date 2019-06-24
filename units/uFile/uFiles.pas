@@ -17,10 +17,10 @@ INTERFACE
 TYPE
    TFileOperationsHelper = record helper for TFile
      {standard file}
-     procedure Open(var h: TFileStdHandler; const fName: string);
-     procedure Open(const fName: string);
-     procedure New(var h: TFileStdHandler; const fName: string);
-     procedure New(const fName: string);
+     procedure Open(var h: TFileStdHandler; const fName: StdString);
+     procedure Open(const fName: StdString);
+     procedure New(var h: TFileStdHandler; const fName: StdString);
+     procedure New(const fName: StdString);
 
      {memory file}
      procedure Open(var h: TFileMemHandler; mem: pointer; size: fileint);
@@ -35,11 +35,11 @@ TYPE
      procedure New(var parent: TFile; pos, size: fileint);
    end;
 
-function fGetString(const fn: string): String;
+function fGetString(const fn: StdString): StdString;
 
 IMPLEMENTATION
 
-function fGetString(const fn: string): String;
+function fGetString(const fn: StdString): StdString;
 var
    f: TFile;
 
@@ -57,7 +57,7 @@ end;
 
 { STANDARD FILE }
 
-procedure TFileOperationsHelper.Open(var h: TFileStdHandler; const fName: string);
+procedure TFileOperationsHelper.Open(var h: TFileStdHandler; const fName: StdString);
 begin
    Assert(@h <> nil, 'Fatal: An nil standard file handler was specified');
 
@@ -80,14 +80,14 @@ begin
    end;
 end;
 
-procedure TFileOperationsHelper.Open(const fName: string);
+procedure TFileOperationsHelper.Open(const fName: StdString);
 begin
    Assert(fFile.Handlers.Std <> nil, 'Fatal: fStdFileHandler is nil');
 
    Open(fFile.Handlers.Std^, fName);
 end;
 
-procedure TFileOperationsHelper.New(var h: TFileStdHandler; const fName: string);
+procedure TFileOperationsHelper.New(var h: TFileStdHandler; const fName: StdString);
 begin
    Assert(@h <> nil, 'Fatal: An nil standard file handler was specified');
 
@@ -100,7 +100,7 @@ begin
       pHandler^.new(self);
 end;
 
-procedure TFileOperationsHelper.New(const fName: string);
+procedure TFileOperationsHelper.New(const fName: StdString);
 begin
    Assert(fFile.Handlers.Std <> nil, 'Fatal: fStdFileHandler is nil');
 
