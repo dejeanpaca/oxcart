@@ -46,9 +46,6 @@
    dtcANSISTRING      = $0F;
    dtcWIDESTRING      = $10;
    dtcUTF8STRING      = $11;
-   dtcXPSTRING        = $12;
-   dtcXPUSTRING       = $13;
-   dtcXSTRING         = $14;
    dtcSTRING          = dtcUTF8STRING;
 
    dtcPOINTER32       = $15;
@@ -68,7 +65,7 @@
    dtcDATE            = $20;
    dtcTIME            = $21;
    dtcDATETIME        = $22;
-   dtcXDATA           = $23;
+
    dtcPTR             = $24;
    
    {vector types}
@@ -96,6 +93,7 @@
    dtcVECTOR2F        = $37;
    dtcVECTOR3F        = $38;
    dtcVECTOR4F        = $39;
+
    dtcVECTOR2D        = $3A;
    dtcVECTOR3D        = $3B;
    dtcVECTOR4D        = $3C;
@@ -125,6 +123,7 @@
    dtcMATRIX2F        = $4F;
    dtcMATRIX3F        = $50;
    dtcMATRIX4F        = $51;
+
    dtcMATRIX2D        = $52;
    dtcMATRIX3D        = $53;
    dtcMATRIX4D        = $54;
