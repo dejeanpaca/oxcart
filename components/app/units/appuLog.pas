@@ -43,9 +43,9 @@ begin
    {quit if already initialized}
    if(not stdlog.Flags.Initialized) then begin
       {create directory for logs}
-      log.Settings.path := appPath.Configuration.Path + 'logs' + DirectorySeparator;
+      log.Settings.Path := appPath.Configuration.Path + 'logs' + DirectorySeparator;
 
-      if(not FileUtils.CreateDirectory(log.Settings.path)) then
+      if(not FileUtils.CreateDirectory(log.Settings.Path)) then
          log.Settings.Path := appPath.Configuration.Path;
 
       {$IFNDEF NOLOG}

@@ -100,9 +100,9 @@ TYPE
    TLog = record
       FileName,
       LogHeader,
-      tag: StdString;
+      Tag: StdString;
       FileMode: longint;
-      fl: ^text;
+      Fl: ^text;
 
       Flags: record
          Initialized,
@@ -257,7 +257,7 @@ begin
    logFile.Handler       := log.Handler.pDefault;
    logFile.h             := @log.Handler.Dummy;
    logFile.flushOnWrite  := log.Settings.FlushOnWrite;
-   logFile.tag           := log.Settings.tag;
+   logFile.Tag           := log.Settings.Tag;
 
    logFile.VerboseEnabled := log.Settings.VerboseEnabled;
    logFile.LogEndTimeDate := log.Settings.EndTimeDate;
@@ -399,7 +399,7 @@ end;
 
 function TLog.Initialize(const fn, logh: StdString; mode: longint): boolean;
 begin
-   result := false;
+   Result := false;
 
    {$IFNDEF NOLOG}
    {no filename provided, exit}
@@ -425,7 +425,7 @@ begin
 
       if(Error = 0) then begin
          Flags.Initialized := true;
-         result := true;
+         Result := true;
       end;
    end;
    {$ELSE}
@@ -815,7 +815,7 @@ repeatopen:
    {open the file in the correct mode.
    If the file cannot be appended try rewriting it}
    if(log^.FileMode = logcAPPEND)then begin
-      append(log^.fl^);
+      append(log^.Fl^);
 
       if(stderror(log^) <> 0) then begin
          log^.Flags.AppendFailed := true;
@@ -823,7 +823,7 @@ repeatopen:
          goto repeatopen;
       end;
    end else if(log^.FileMode = logcREWRITE)then begin
-      rewrite(log^.fl^);
+      rewrite(log^.Fl^);
 
       if(stderror(log^) <> 0) then
          log^.SetErrorState(logeIO);
@@ -836,26 +836,26 @@ end;
 procedure stdinit(log: PLog);
 begin
    {get memory for the file}
-   new(log^.fl);
+   new(log^.Fl);
 
-   if(log^.fl <> nil) then
+   if(log^.Fl <> nil) then begin
       {assign the filename to the file}
-      Assign(log^.fl^, log^.FileName)
-   else
+      UTF8Assign(log^.Fl^, log^.FileName);
+   end else
       log^.Error := logeNO_MEMORY;
 end;
 
 procedure stddispose(log: PLog);
 begin
-   if(log^.fl <> nil) then
-      dispose(log^.fl);
+   if(log^.Fl <> nil) then
+      dispose(log^.Fl);
 
-   log^.fl := nil;
+   log^.Fl := nil;
 end;
 
 procedure stdclose(log: PLog);
 begin
-   close(log^.fl^);
+   close(log^.Fl^);
    IOResult();
 end;
 
@@ -876,7 +876,7 @@ begin
       if(s <> '') then begin
          {construct a time string}
          if(log.Settings.LogTime) then begin
-            timeString := TimeToStr(Now());
+            timeString := utf8string(TimeToStr(Now()));
          end;
 
          if(priority >= 0) and (priority <= logcPRIORITY_MAX) then
@@ -884,12 +884,12 @@ begin
 
          {add tabs to signify a section}
          if(logFile^.SectionLevel > 0) then
-            writeln(logFile^.fl^, timeString + copy(tabstr, 1, logFile^.SectionLevel) + s)
+            writeln(logFile^.Fl^, timeString + copy(tabstr, 1, logFile^.SectionLevel) + s)
          else
          {level 0 section needs no tabs}
-            writeln(logFile^.fl^, timeString + s);
+            writeln(logFile^.Fl^, timeString + s);
       end else
-         writeln(logFile^.fl^);
+         writeln(logFile^.Fl^);
 
       {check for errors}
       stderror(logFile^);
@@ -906,7 +906,7 @@ begin
    {$ENDIF}
 
    if(log^.Ok()) then begin
-      writeln(log^.fl^, s);
+      writeln(log^.Fl^, s);
       stderror(log^);
    end;
 
@@ -922,7 +922,7 @@ begin
    {$ENDIF}
 
    if(log^.Ok()) then begin
-      flush(log^.fl^);
+      flush(log^.Fl^);
       stderror(log^);
    end;
 
@@ -933,7 +933,7 @@ end;
 
 procedure stddel(log: PLog);
 begin
-   erase(log^.fl^);
+   erase(log^.Fl^);
    stderror(log^);
 end;
 
