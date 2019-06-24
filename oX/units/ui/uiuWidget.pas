@@ -91,7 +91,7 @@ TYPE
       {widget caption}
       Caption,
       {hint for the widget}
-      Hint: string;
+      Hint: StdString;
 
       ID: uiTControlID;
 
@@ -137,7 +137,7 @@ TYPE
       { modification }
 
       {set the caption of a widget}
-      procedure SetCaption(const newCaption: string);
+      procedure SetCaption(const newCaption: StdString);
 
       { actions }
       {notify the widget controller of something}
@@ -170,7 +170,7 @@ TYPE
       function SetGroup(g: longint): uiTWidget; virtual;
 
       {set a new hint}
-      function SetHint(const newHint: string): uiTWidget;
+      function SetHint(const newHint: StdString): uiTWidget;
       {update hint when you changed it}
       procedure UpdateHint();
 
@@ -235,7 +235,7 @@ TYPE
    {widget class, not a real class,
     only stuff common to a specific type of widget}
    uiTWidgetClass = record
-      sName: string; {name}
+      sName: StdString; {name}
       cID: longword; {ID}
 
       {settings}
@@ -397,7 +397,7 @@ end;
 
 { MODIFICATION }
 
-procedure uiTWidget.SetCaption(const newCaption: string);
+procedure uiTWidget.SetCaption(const newCaption: StdString);
 begin
    Caption := newCaption;
 
@@ -509,7 +509,7 @@ begin
    Result := Self;
 end;
 
-function uiTWidget.SetHint(const newHint: string): uiTWidget;
+function uiTWidget.SetHint(const newHint: StdString): uiTWidget;
 begin
    Hint := newHint;
    UpdateHint();

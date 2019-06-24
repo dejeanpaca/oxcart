@@ -29,7 +29,7 @@ TYPE
    wdgTOXEDMessages = class(wdgTStringList)
       constructor Create; override;
 
-      function GetValue(index: loopint): string; override;
+      function GetValue(index: loopint): StdString; override;
       function GetItemCount: loopint; override;
 
       procedure RenderItem(index: loopint; r: oxTRect); override;
@@ -58,7 +58,7 @@ TYPE
    { oxedTMessagesClass }
 
    oxedTMessagesClass = class(oxedTWindowClass)
-      constructor Create(const sName: string; InstanceType: oxedTUIWindowClass); override;
+      constructor Create(const sName: StdString; InstanceType: oxedTUIWindowClass); override;
 
       procedure Update();
    end;
@@ -111,7 +111,7 @@ begin
    Selectable := true;
 end;
 
-function wdgTOXEDMessages.GetValue(index: loopint): string;
+function wdgTOXEDMessages.GetValue(index: loopint): StdString;
 begin
    result := TimeToStr(oxedMessages.con.contents.list[index].Time) + ' ' + oxedMessages.con.contents.list[index].Txt;
 end;
@@ -148,7 +148,7 @@ end;
 
 { oxedTMessagesClass }
 
-constructor oxedTMessagesClass.Create(const sName: string; InstanceType: oxedTUIWindowClass);
+constructor oxedTMessagesClass.Create(const sName: StdString; InstanceType: oxedTUIWindowClass);
 begin
    inherited Create(sName, InstanceType);
 

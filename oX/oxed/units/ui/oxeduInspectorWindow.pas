@@ -60,7 +60,7 @@ TYPE
 
       procedure Initialize; override;
 
-      function AddGroup(const caption: string): oxedTInspectorWindowGroup;
+      function AddGroup(const caption: StdString): oxedTInspectorWindowGroup;
       procedure SizeGroups();
       procedure SetGroupWidths();
 
@@ -76,7 +76,7 @@ TYPE
    { oxedTInspectorEdit }
 
    oxedTInspectorEdit = class(oxedTWindowClass)
-      constructor Create(const sName: string; InstanceType: oxedTUIWindowClass); override;
+      constructor Create(const sName: StdString; InstanceType: oxedTUIWindowClass); override;
       {return the current inspector if there is a window and the class matches the given one}
       function GetInspector(inspectorType: oxedTInspectorClass): oxedTInspector;
       {close any active inspector}
@@ -134,7 +134,7 @@ begin
    wdg.Groups.Initialize(wdg.Groups);
 end;
 
-function oxedTInspectorWindow.AddGroup(const caption: string): oxedTInspectorWindowGroup;
+function oxedTInspectorWindow.AddGroup(const caption: StdString): oxedTInspectorWindowGroup;
 var
    y: longint;
    lastGroup: wdgTGroup;
@@ -252,7 +252,7 @@ end;
 
 { oxedTInspectorEdit }
 
-constructor oxedTInspectorEdit.Create(const sName: string; InstanceType: oxedTUIWindowClass);
+constructor oxedTInspectorEdit.Create(const sName: StdString; InstanceType: oxedTUIWindowClass);
 begin
    inherited Create(sName, InstanceType);
 

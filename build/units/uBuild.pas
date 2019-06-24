@@ -1152,7 +1152,7 @@ end;
 function TBuildSystem.GetIncludesPath(const basePath: StdString; const paths: TPreallocatedStringArrayList; const existing: StdString): StdString;
 var
    p, relative: StdString;
-   existingItems: TAnsiStringArray;
+   existingItems: TStringArray;
    i, j: longint;
    exists: boolean;
    newPaths: TPreallocatedStringArrayList;
@@ -1807,7 +1807,7 @@ end;
 procedure libOptimizationLevelsNotify({%H-}p: PDVar; {%H-}what: longword);
 var
    i: loopint;
-   optimizationLevels: TAnsiStringArray;
+   optimizationLevels: TStringArray;
 
 begin
    optimizationLevels := strExplode(currentValue, ',');

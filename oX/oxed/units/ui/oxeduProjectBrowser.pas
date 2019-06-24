@@ -68,7 +68,7 @@ TYPE
    { oxedTProjectBrowserClass }
 
    oxedTProjectBrowserClass = class(oxedTWindowClass)
-      constructor Create(const sName: string; InstanceType: oxedTUIWindowClass); override;
+      constructor Create(const sName: StdString; InstanceType: oxedTUIWindowClass); override;
       procedure WindowCreated({%H-}wnd: oxedTWindow); override;
    end;
 
@@ -143,7 +143,7 @@ end;
 
 procedure wdgTOXEDProjectBrowserNavigate.ItemNavigated(index: loopint);
 var
-   givenPath: string;
+   givenPath: StdString;
 
 begin
    if(FileBrowser <> nil) and (index > -1) then begin
@@ -241,7 +241,7 @@ end;
 
 { oxedTProjectBrowserClass }
 
-constructor oxedTProjectBrowserClass.Create(const sName: string; InstanceType: oxedTUIWindowClass);
+constructor oxedTProjectBrowserClass.Create(const sName: StdString; InstanceType: oxedTUIWindowClass);
 begin
    inherited Create(sName, InstanceType);
 

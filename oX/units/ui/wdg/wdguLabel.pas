@@ -43,11 +43,11 @@ TYPE
    { wdgTLabelGlobal }
 
    wdgTLabelGlobal = record
-      function Add(const Caption: string;
+      function Add(const Caption: StdString;
                  const Pos: oxTPoint; const Dim: oxTDimensions;
                  inrect: boolean = false): wdgTLabel;
 
-      function Add(const Caption: string;
+      function Add(const Caption: StdString;
                  inrect: boolean = false): wdgTLabel;
 
       function Add(const List: TStringArray;
@@ -87,7 +87,7 @@ var
    h,
    y: loopint;
    current,
-   copiedCaption: string;
+   copiedCaption: StdString;
    rprops: oxTFontPropertiesSet;
 
 begin
@@ -202,7 +202,7 @@ begin
    internal.Done();
 end;
 
-function wdgTLabelGlobal.Add(const Caption: string;
+function wdgTLabelGlobal.Add(const Caption: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions;
             inrect: boolean = false): wdgTLabel;
 begin
@@ -216,7 +216,7 @@ begin
    end;
 end;
 
-function wdgTLabelGlobal.Add(const Caption: string; inrect: boolean): wdgTLabel;
+function wdgTLabelGlobal.Add(const Caption: StdString; inrect: boolean): wdgTLabel;
 begin
    result := Add(Caption, uiWidget.LastRect.BelowOf(), oxNullDimensions, inrect);
 end;

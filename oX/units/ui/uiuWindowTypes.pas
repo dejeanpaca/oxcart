@@ -78,7 +78,7 @@ TYPE
 
    uiTWindowPropertiesHelper = type helper for uiTWindowProperties
       procedure Immovable();
-      function ToString(): string;
+      function ToString(): StdString;
    end;
 
    uiPWindow = ^uiTWindows;
@@ -88,7 +88,7 @@ TYPE
    { uiTWindow }
 
    uiTWindow = class(uiTControl)
-      Title: string;
+      Title: StdString;
 
       {properties, internal properties and windows owner properties}
       Properties: uiTWindowProperties;
@@ -141,7 +141,7 @@ TYPE
       procedure Action({%H-}action: uiTWindowEvents); virtual;
 
       {set the window ID}
-      function SetTitle(const newTitle: string): uiTWindow; virtual;
+      function SetTitle(const newTitle: StdString): uiTWindow; virtual;
 
       {set the window ID}
       function SetID(const wID: uiTControlID): uiTWindow;
@@ -183,7 +183,7 @@ begin
    Self := Self - [uiwndpMOVE_BY_SURFACE, uiwndpMOVABLE];
 end;
 
-function uiTWindowPropertiesHelper.ToString: string;
+function uiTWindowPropertiesHelper.ToString: StdString;
 begin
    Result := GetSetValues(TypeInfo(Self));
 end;
@@ -209,7 +209,7 @@ begin
 
 end;
 
-function uiTWindow.SetTitle(const newTitle: string): uiTWindow;
+function uiTWindow.SetTitle(const newTitle: StdString): uiTWindow;
 begin
    Title := newTitle;
 

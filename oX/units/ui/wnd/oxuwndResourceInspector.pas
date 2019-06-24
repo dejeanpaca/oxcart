@@ -29,7 +29,7 @@ TYPE
    oxwdgTResourceInspectorGrid = class(wdgTStringGrid)
       constructor Create; override;
 
-      function GetValue(index, column: loopint): string; override;
+      function GetValue(index, column: loopint): StdString; override;
       function GetItemCount(): loopint; override;
 
       procedure ItemClicked(index: loopint; button: TBitSet = appmcLEFT); override;
@@ -75,7 +75,7 @@ begin
    inherited Create;
 end;
 
-function oxwdgTResourceInspectorGrid.GetValue(index, column: loopint): string;
+function oxwdgTResourceInspectorGrid.GetValue(index, column: loopint): StdString;
 begin
    if(column = 0) then
       Result := oxResource.Pools.List[index].Name

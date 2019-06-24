@@ -35,7 +35,7 @@ TYPE
    { wdgTGroupGlobal }
 
    wdgTGroupGlobal = record
-      function Add(const Caption: string;
+      function Add(const Caption: StdString;
                  const Pos: oxTPoint; const Dim: oxTDimensions): wdgTGroup;
    end;
 
@@ -99,7 +99,7 @@ begin
    internal.Done();
 end;
 
-function wdgTGroupGlobal.Add(const Caption: string;
+function wdgTGroupGlobal.Add(const Caption: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions): wdgTGroup;
 begin
    result := wdgTGroup(uiWidget.Add(internal, Pos, Dim));

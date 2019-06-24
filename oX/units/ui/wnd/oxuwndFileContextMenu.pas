@@ -32,7 +32,7 @@ TYPE
 
    uiTFileContextMenuParameters = record
       Target: uiTFileContextMenuTarget;
-      TargetPath: string;
+      TargetPath: StdString;
       IsDirectory,
       {allow the create directory options in any case}
       AllowCreateDirectory: boolean;
@@ -71,7 +71,7 @@ TYPE
       Parameters: uiTFileContextMenuParameters;
       LastAction: TEventID;
 
-      procedure Prepare(const pTargetPath: string = ''; pTarget: uiTFileContextMenuTarget = uiFILE_CONTEXT_MENU_TARGET_SPECIFIC);
+      procedure Prepare(const pTargetPath: StdString = ''; pTarget: uiTFileContextMenuTarget = uiFILE_CONTEXT_MENU_TARGET_SPECIFIC);
 
       function Open(const from: uiTWidgetWindowOrigin; Instance: uiTFileContextMenuWindowClass = nil): uiTFileContextMenuWindow;
       procedure SetupItems(m: uiTContextMenu);
@@ -113,7 +113,7 @@ end;
 
 { oxwndTFileContextMenu }
 
-procedure oxwndTFileContextMenu.Prepare(const pTargetPath: string; pTarget: uiTFileContextMenuTarget);
+procedure oxwndTFileContextMenu.Prepare(const pTargetPath: StdString; pTarget: uiTFileContextMenuTarget);
 begin
    Parameters.Target := pTarget;
    Parameters.TargetPath := pTargetPath;
@@ -178,7 +178,7 @@ end;
 procedure showInFileManager(wdg: uiTWidget; menu{%H-}: TObject; item{%H-}: uiPContextMenuItem);
 var
    wnd: uiTFileContextMenuWindow;
-   path: string;
+   path: StdString;
 
 begin
    wnd := getWindow(wdg);
@@ -212,7 +212,7 @@ end;
 
 procedure mbRenameNotify(var mb: uiTMessageBoxData);
 var
-   path: string;
+   path: StdString;
    wnd: uiTFileContextMenuMessageBoxWindow;
 
 begin
@@ -239,7 +239,7 @@ procedure renameFile(wdg: uiTWidget; menu{%H-}: TObject; item{%H-}: uiPContextMe
 var
    wnd: uiTFileContextMenuWindow;
    mbWindow: uiTMessageBoxWindow;
-   fn: string;
+   fn: StdString;
 
 begin
    wnd := getWindow(wdg);
@@ -247,7 +247,7 @@ begin
    if(not wnd.Parameters.IsDirectory) then
       fn := ExtractFileName(wnd.Parameters.TargetPath)
    else
-      fn := ExtractFileName(ExcludeTrailingPathDelimiter(wnd.Parameters.TargetPath));
+      fn := ExtractFileName(StdString(ExcludeTrailingPathDelimiter(wnd.Parameters.TargetPath)));
 
    if(fn <> '') then begin
       uiMessageBox.WindowType := uiTFileContextMenuMessageBoxWindow;
@@ -279,7 +279,7 @@ end;
 
 procedure mbCreateDirectoryNotify(var mb: uiTMessageBoxData);
 var
-   path: string;
+   path: StdString;
    wnd: uiTFileContextMenuMessageBoxWindow;
 
 begin

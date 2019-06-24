@@ -83,9 +83,9 @@ TYPE
 
       constructor Create(); override;
 
-      procedure RaiseError(code: longint; const description: string);
-      procedure CreateFail(const description: string);
-      procedure DestroyFail(const description: string);
+      procedure RaiseError(code: longint; const description: StdString);
+      procedure CreateFail(const description: StdString);
+      procedure DestroyFail(const description: StdString);
    end;
 
    oxTWindowClass = class of oxTWindow;
@@ -162,7 +162,7 @@ begin
    Dimensions.Assign(640, 480);
 end;
 
-procedure oxTWindow.RaiseError(code: longint; const description: string);
+procedure oxTWindow.RaiseError(code: longint; const description: StdString);
 begin
    errorCode := code;
 
@@ -170,12 +170,12 @@ begin
    log.e(description);
 end;
 
-procedure oxTWindow.CreateFail(const description: string);
+procedure oxTWindow.CreateFail(const description: StdString);
 begin
    RaiseError(eFAIL, description);
 end;
 
-procedure oxTWindow.DestroyFail(const description: string);
+procedure oxTWindow.DestroyFail(const description: StdString);
 begin
    RaiseError(eFAIL, description);
 end;

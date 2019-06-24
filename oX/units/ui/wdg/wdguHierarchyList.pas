@@ -53,7 +53,7 @@ TYPE
       procedure Load(); virtual;
 
       {value of the item with the given index}
-      function GetValue({%H-}index: loopint): string; virtual;
+      function GetValue({%H-}index: loopint): StdString; virtual;
       {determines if the item with the given index is expandable}
       function Expandable({%H-}index: loopint): boolean; virtual;
       {check if the given item is expanded}
@@ -132,7 +132,7 @@ end;
 
 procedure wdgTHierarchyList.RenderItem(index: loopint; r: oxTRect);
 var
-   s: string;
+   s: StdString;
    glyph: wdgTListGlyph;
    width,
    height,
@@ -234,7 +234,7 @@ begin
    items.Dispose();
 end;
 
-function wdgTHierarchyList.GetValue(index: loopint): string;
+function wdgTHierarchyList.GetValue(index: loopint): StdString;
 begin
    result := '';
 end;
@@ -286,7 +286,7 @@ end;
 
 function wdgTHierarchyList.GetItemWidth(index: loopint): loopint;
 var
-   s: string;
+   s: StdString;
    l: loopint;
    f:oxTFont;
 

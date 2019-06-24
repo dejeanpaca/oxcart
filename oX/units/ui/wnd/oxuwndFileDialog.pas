@@ -59,7 +59,7 @@ TYPE
    oxTFileDialog = class
       public
          Title,
-         SelectedFile: String;
+         SelectedFile: StdString;
 
          Canceled,
          {prevent deactivating the window cause a dialog cancelation}
@@ -115,12 +115,12 @@ TYPE
          {close the dialog}
          procedure Close();
          {set the tile of the dialog}
-         procedure SetTitle(const t: string);
+         procedure SetTitle(const t: StdString);
 
-         procedure SetPath(const path: string);
+         procedure SetPath(const path: StdString);
 
          {get the selected file}
-         function GetSelectedFile(): string;
+         function GetSelectedFile(): StdString;
 
          {called when the dialog is finished}
          procedure Done(isCanceled: boolean);
@@ -424,7 +424,7 @@ end;
 procedure mbNotify(var mb: uiTMessageBoxData);
 var
    dialog: oxTFileDialog;
-   path: string;
+   path: StdString;
 
 begin
    dialog := oxTFileDialog(uiTMessageBoxWindow(mb.Window).External);
@@ -467,7 +467,7 @@ end;
 
 procedure oxTFileDialog.Open();
 var
-   caption: string = '?';
+   caption: StdString = '?';
    parent: uiTWindow;
    dialogWidth,
    dialogHeight: loopint;
@@ -626,7 +626,7 @@ begin
    uiWindow.DisposeQueue(wnd);
 end;
 
-procedure oxTFileDialog.SetTitle(const t: string);
+procedure oxTFileDialog.SetTitle(const t: StdString);
 begin
    Title := t;
 
@@ -634,7 +634,7 @@ begin
       wnd.SetTitle(t);
 end;
 
-procedure oxTFileDialog.SetPath(const path: string);
+procedure oxTFileDialog.SetPath(const path: StdString);
 begin
    if(wdg.Path <> nil) then
       wdg.Path.SetText(path);
@@ -645,7 +645,7 @@ begin
    end;
 end;
 
-function oxTFileDialog.GetSelectedFile(): string;
+function oxTFileDialog.GetSelectedFile(): StdString;
 begin
    if(ShowFilenameInput) and (wdg.Filename <> nil) then begin
       Result := IncludeTrailingPathDelimiterNonEmpty(wdg.Files.CurrentPath) + wdg.Filename.GetText();

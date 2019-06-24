@@ -133,10 +133,10 @@ TYPE
       procedure GetComputedDimensions(out d: oxTDimensions); override;
 
       {sets the input-box text}
-      procedure SetText(const txt: string; setProperties: longword = 0);
-      procedure SetPlaceholder(const newPlaceholder: string);
+      procedure SetText(const txt: StdString; setProperties: longword = 0);
+      procedure SetPlaceholder(const newPlaceholder: StdString);
       {get the input-box text}
-      function GetText(): string;
+      function GetText(): StdString;
       {clears a text box}
       procedure Clear();
       {sets input home position}
@@ -153,8 +153,8 @@ TYPE
 
       protected
          Original,
-         Placeholder: string;
-         Content: string;
+         Placeholder: StdString;
+         Content: StdString;
 
          ib: record
             CursorPos,
@@ -175,7 +175,7 @@ TYPE
 
    uiTWidgetInputBoxGlobal = record
       {adds a input-box to a window}
-      function Add(const Initial: string;
+      function Add(const Initial: StdString;
                   const Pos: oxTPoint; const Dim: oxTDimensions): wdgTInputBox;
 
       {checks if a char is allowed for floating point numbers}
@@ -194,7 +194,7 @@ procedure wdgTInputBox.Render();
 var
    r: oxTRect;
    f: oxTFont;
-   s: string;
+   s: StdString;
    cursorWidth: longint;
 
    renderProperties: longword;
@@ -557,7 +557,7 @@ begin
    internal.Done();
 end;
 
-function uiTWidgetInputBoxGlobal.Add(const Initial: string;
+function uiTWidgetInputBoxGlobal.Add(const Initial: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions): wdgTInputBox;
 
 begin
@@ -577,7 +577,7 @@ begin
    Result := (FormatSettings.DecimalSeparator = c) or (c in appFLOAT_CHARS);
 end;
 
-procedure wdgTInputBox.SetText(const txt: string; setProperties: longword);
+procedure wdgTInputBox.SetText(const txt: StdString; setProperties: longword);
 var
    changed: boolean;
 
@@ -601,12 +601,12 @@ begin
       CallTextChanged();
 end;
 
-procedure wdgTInputBox.SetPlaceholder(const newPlaceholder: string);
+procedure wdgTInputBox.SetPlaceholder(const newPlaceholder: StdString);
 begin
    Placeholder := newPlaceholder;
 end;
 
-function wdgTInputBox.GetText(): string;
+function wdgTInputBox.GetText(): StdString;
 begin
    Result := Content;
 end;

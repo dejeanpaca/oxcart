@@ -93,24 +93,24 @@ TYPE
    uiTWidgetButtonGlobal = record
       Internal: uiTWidgetClass;
 
-      function Add(const Caption: string;
+      function Add(const Caption: StdString;
                   const Pos: oxTPoint; const Dim: oxTDimensions;
                   ActionEvent: TEventID = 0): wdgTButton;
 
-      function Add(const Caption: string;
+      function Add(const Caption: StdString;
                   const Pos: oxTPoint; const Dim: oxTDimensions;
                   callback: TProcedure = nil): wdgTButton;
-      function Add(const Caption: string;
+      function Add(const Caption: StdString;
                   const Pos: oxTPoint; const Dim: oxTDimensions;
                   callback: TObjectProcedure): wdgTButton;
-      function Add(const Caption: string;
+      function Add(const Caption: StdString;
                   const Pos: oxTPoint; const Dim: oxTDimensions;
                   callback: uiTWidgetCallbackRoutine): wdgTButton;
-      function Add(const Caption: string;
+      function Add(const Caption: StdString;
                   const Pos: oxTPoint; const Dim: oxTDimensions;
                   callback: uiTWidgetObjectCallbackRoutine): wdgTButton;
 
-      function Add(const Caption: string;
+      function Add(const Caption: StdString;
                   ActionEvent: TEventID = 0): wdgTButton;
    end;
 
@@ -262,7 +262,7 @@ begin
    wdgButton.Internal.Done();
 end;
 
-function uiTWidgetButtonGlobal.Add(const Caption: string;
+function uiTWidgetButtonGlobal.Add(const Caption: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions;
             ActionEvent: TEventID = 0): wdgTButton;
 begin
@@ -276,7 +276,7 @@ begin
    end;
 end;
 
-function uiTWidgetButtonGlobal.Add(const Caption: string;
+function uiTWidgetButtonGlobal.Add(const Caption: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions;
             callback: TProcedure = nil): wdgTButton;
 begin
@@ -286,7 +286,8 @@ begin
       Result.Callback.Use(callback);
 end;
 
-function uiTWidgetButtonGlobal.Add(const Caption: string; const Pos: oxTPoint; const Dim: oxTDimensions; callback: TObjectProcedure): wdgTButton;
+function uiTWidgetButtonGlobal.Add(const Caption: StdString; const Pos: oxTPoint; const Dim: oxTDimensions;
+            callback: TObjectProcedure): wdgTButton;
 begin
    Result := Add(Caption, Pos, Dim, 0);
 
@@ -294,7 +295,8 @@ begin
       Result.Callback.Use(callback);
 end;
 
-function uiTWidgetButtonGlobal.Add(const Caption: string; const Pos: oxTPoint; const Dim: oxTDimensions; callback: uiTWidgetCallbackRoutine): wdgTButton;
+function uiTWidgetButtonGlobal.Add(const Caption: StdString; const Pos: oxTPoint; const Dim: oxTDimensions;
+            callback: uiTWidgetCallbackRoutine): wdgTButton;
 begin
    Result := Add(Caption, Pos, Dim, 0);
 
@@ -302,7 +304,7 @@ begin
       Result.Callback.Use(callback);
 end;
 
-function uiTWidgetButtonGlobal.Add(const Caption: string; const Pos: oxTPoint; const Dim: oxTDimensions;
+function uiTWidgetButtonGlobal.Add(const Caption: StdString; const Pos: oxTPoint; const Dim: oxTDimensions;
    callback: uiTWidgetObjectCallbackRoutine): wdgTButton;
 
 begin
@@ -312,7 +314,7 @@ begin
       Result.Callback.Use(callback);
 end;
 
-function uiTWidgetButtonGlobal.Add(const Caption: string; ActionEvent: TEventID): wdgTButton;
+function uiTWidgetButtonGlobal.Add(const Caption: StdString; ActionEvent: TEventID): wdgTButton;
 begin
    Result := Add(Caption, uiWidget.LastRect.BelowOf(), oxNullDimensions, ActionEvent);
 end;
