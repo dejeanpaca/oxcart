@@ -15,9 +15,9 @@ PROGRAM lpitool;
 
 VAR
    mode: TLPIMode = lpiMODE_NONE;
-   source: string;
+   source: StdString;
 
-function parameterProcess(const p: string; const lp: string): boolean;
+function parameterProcess(const p: StdString; const lp: StdString): boolean;
 begin
    result := true;
 

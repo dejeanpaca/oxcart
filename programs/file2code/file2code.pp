@@ -32,8 +32,8 @@ TYPE
          FSize,
          Count: fileint;
 
-      procedure Writeln(const s: string);
-      procedure Write(const s: string);
+      procedure Writeln(const s: StdString);
+      procedure Write(const s: StdString);
       procedure Start(); virtual;
       procedure WriteChar({%H-}ch: char); virtual;
       procedure Done(); virtual;
@@ -62,7 +62,7 @@ VAR
      {names}
      sourceFN,
      outFN,
-     dataName: string;
+     dataName: StdString;
 
      {buffers}
      inBuf,
@@ -81,14 +81,14 @@ VAR
      Writer: TFileWriter;
    end;
 
-procedure endProgramE(const msg: string);
+procedure endProgramE(const msg: StdString);
 begin
-   writeln('Error: '+msg); 
+   writeln('Error: ' + msg); 
    halt(1);
 end;
 
 {writes out an IO error string and halts the program}
-procedure Error(etext: string);
+procedure Error(etext: StdString);
 begin
    ioerror();
 
@@ -100,7 +100,7 @@ begin
 end;
 
 {writes out a warning string}
-procedure Warning(wtext: string);
+procedure Warning(wtext: StdString);
 begin
    ioerror();
 
@@ -179,9 +179,9 @@ begin
       endProgramE('Target already set.');
 end;
 
-function ProcessParams(const pstr: string; const lstr: string): boolean;
+function ProcessParams(const pstr: StdString; const lstr: StdString): boolean;
 begin
-   result := true;
+   Result := true;
 
    (*if (lstr = '-masm') then
       SetTarget(TARGET_MASM)
@@ -206,10 +206,11 @@ end;
 
 procedure ParseParameters();
 var
-   pStr: string;
+   pStr: StdString;
 
 begin
    pStr := ParamStr(1);
+
    {Check parameters}
    if(pStr = '?') or (pStr = '-?') or (pStr = '/?') or (pStr = '-help') or (pStr = '--help') then begin
       writeln(
@@ -297,7 +298,7 @@ end;
 
 { TFileWriter }
 
-procedure TFileWriter.Writeln(const s: string);
+procedure TFileWriter.Writeln(const s: StdString);
 begin
    if(env.LineEndings = PLATFORM_LINE_ENDINGS) then
       system.WriteLn(env.fOut, s)
@@ -309,7 +310,7 @@ begin
    ioerror();
 end;
 
-procedure TFileWriter.Write(const s: string);
+procedure TFileWriter.Write(const s: StdString);
 begin
    system.write(env.fOut, s);
    ioerror();
