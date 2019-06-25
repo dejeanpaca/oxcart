@@ -14,9 +14,10 @@ UNIT dvaruFile;
 
 INTERFACE
 
-   USES  uStd, uLog, StringUtils, udvars,
+   USES
+      uStd, uLog, StringUtils, udvars,
       stdDataTypeCodeNames,
-      uFile, {%H-}uFiles, uSimpleParser;
+      uSimpleParser;
 
 TYPE
    dvarPFileData = ^dvarTFileData;
