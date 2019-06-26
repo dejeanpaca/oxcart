@@ -189,7 +189,7 @@ begin
      proc_pidpath(FpGetpid(), @path[0], length(path));
      Result := ExtractFilePath(pchar(path));
      {$ELSE}
-     Result := ExtractFilePath(fpReadLink('/proc/self/exe'));
+     Result := ExtractFilePath(UTF8String(fpReadLink('/proc/self/exe')));
      {$ENDIF}
    {$ELSE}
       {$IFDEF WINDOWS}
