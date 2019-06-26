@@ -28,6 +28,14 @@ TYPE
 
    oglTExtensionList = array of oglTExtensionDescriptor;
 
+CONST
+  {$IFNDEF GLES}
+     {$INCLUDE oxglextdscr.inc}
+  {$ELSE}
+     {$INCLUDE gles/oxglextdscr.inc}
+  {$ENDIF}
+
+TYPE
    oglPExtensions = ^oglTExtensions;
    { oglTExtensions }
 
@@ -36,10 +44,9 @@ TYPE
       PlatformSpecific: oglPExtensionDescriptor;
       nPlatformSpecific: loopint;
 
-      pExtensions: oglPExtensionDescriptor;
-
       {$IFDEF OX_LIBRARY_SUPPORT}
       pExternal: oglPExtensions;
+      pExtensions: oglPExtensionDescriptor;
       {$ENDIF}
 
       procedure Get({%H-}wnd: oxTWindow);
@@ -53,13 +60,6 @@ TYPE
       procedure DeInitialize();
    end;
 
-CONST
-  {$IFNDEF GLES}
-     {$INCLUDE oxglextdscr.inc}
-  {$ELSE}
-     {$INCLUDE gles/oxglextdscr.inc}
-  {$ENDIF}
-
 VAR
    oglExtensions: oglTExtensions;
 
@@ -71,6 +71,7 @@ var
 
 begin
    id := oglExtensions.FindDescriptor(ext);
+
    if(id > -1) then
       oglcExtensionDescriptors[id].Present := true;
 
@@ -84,6 +85,8 @@ var
 {$ENDIF}
 
 begin
+   pExtensions := @oglcExtensionDescriptors;
+
    {$IFNDEF OX_LIBRARY}
    log.Collapsed('OpenGL Extensions');
 
@@ -96,8 +99,8 @@ begin
 
    log.Leave();
    {$ELSE}
-   oglcExtensionDescriptors := oglTExtensionDescriptors(pExternal^.pExtensions);
-   platformSpecific := oglTExtensionDescriptors(pExternal^.PlatformSpecific);
+   pExtensions := pExternal^.pExtensions;
+   platformSpecific := pExternal^.PlatformSpecific;
    nPlatformSpecific := pExternal^.nPlatformSpecific;
    {$ENDIF}
 end;
@@ -113,7 +116,7 @@ end;
 function oglTExtensions.Supported(i: loopint): boolean;
 begin
   if(i >= 0) and (i < oglnExtensionDescriptors) then begin
-     Result := oglcExtensionDescriptors[i].Present;
+     Result := pExtensions[i].Present;
   end else
      Result := false;
 end;
@@ -144,29 +147,29 @@ var
 begin
    count := 0;
 
-   for i := 0 to high(oglcExtensionDescriptors) do begin
-      if(oglcExtensionDescriptors[i].Present) then
+   for i := 0 to oglnExtensionDescriptors - 1 do begin
+      if(pExtensions[i].Present) then
          inc(count);
    end;
 
-   for i := 0 to (oglExtensions.nPlatformSpecific - 1) do begin
-      if(oglExtensions.PlatformSpecific[i].Present) then
+   for i := 0 to oglExtensions.nPlatformSpecific - 1 do begin
+      if(PlatformSpecific[i].Present) then
          inc(count);
    end;
 
    SetLength(list, count);
    count := 0;
 
-   for i := 0 to high(oglcExtensionDescriptors) do begin
-      if(oglcExtensionDescriptors[i].Present) then begin
-         list[count] := oglcExtensionDescriptors[i].Name;
+   for i := 0 to oglnExtensionDescriptors - 1 do begin
+      if(pExtensions[i].Present) then begin
+         list[count] := pExtensions[i].Name;
          inc(count);
       end;
    end;
 
-   for i := 0 to (oglExtensions.nPlatformSpecific - 1) do begin
-      if(oglExtensions.PlatformSpecific[i].Present) then begin
-         list[count] := oglExtensions.PlatformSpecific[i].Name;
+   for i := 0 to nPlatformSpecific - 1 do begin
+      if(PlatformSpecific[i].Present) then begin
+         list[count] := PlatformSpecific[i].Name;
          inc(count);
       end;
    end;
@@ -187,8 +190,5 @@ begin
      oglExtensions.PlatformSpecific[i].Present := false;
   end;
 end;
-
-INITIALIZATION
-   oglExtensions.pExtensions := @oglcExtensionDescriptors;
 
 END.
