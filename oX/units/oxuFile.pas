@@ -197,7 +197,7 @@ begin
       Readers.FindHandler(fn, fd);
 
       if(fd.Handler <> nil) then begin
-         path := oxAssetPaths.Find(fn);
+         path := oxPaths.Find(fn);
 
          if(not fd.Handler^.DoNotOpenFile) then
             f.Open(path);
@@ -291,7 +291,7 @@ begin
       Writers.FindHandler(fn, fd);
 
       if(fd.Handler <> nil) then begin
-         path := oxAssetPaths.Find(fn);
+         path := oxPaths.Find(fn);
 
          if(not fd.Handler^.DoNotOpenFile) then
             f.New(path);

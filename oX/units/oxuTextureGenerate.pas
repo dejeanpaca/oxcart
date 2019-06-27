@@ -199,7 +199,7 @@ begin
    if(oxTextureGenerateSettings.logNameAlways) then
       logFile(false);
 
-   fn := oxAssetPaths.Find(fileName);
+   fn := oxPaths.Find(fileName);
 
    {load the image}
    imgFile.Init(imgProps);

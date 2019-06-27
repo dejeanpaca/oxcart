@@ -15,7 +15,7 @@ INTERFACE
      {app}
      appuPaths,
      {ox}
-     uOX, oxuRunRoutines;
+     uOX, oxuRunRoutines, oxuGlobalInstances;
 
 CONST
    oxDataPath = 'data' + DirectorySeparator;
@@ -27,9 +27,18 @@ CONST
    OX_ASSET_PATH_ENV = 'OX_ASSET_PATH';
 
 TYPE
-   { oxTAssetPathsGlobal }
+   oxPPaths = ^oxTPaths;
 
-   oxTAssetPathsGlobal = record
+   { oxTPaths }
+   oxTPaths = record
+      Data,
+      Textures,
+      UI,
+      Fonts,
+      Shaders: string;
+
+      {base oX asset paths (should equal WorkingDirectory in standalone mode)}
+      BasePath,
       {working directory used as base}
       WorkingDirectory: string;
       {list of asset paths}
@@ -43,25 +52,14 @@ TYPE
       procedure Add(const assetPath: string);
    end;
 
-
-   { oxTPaths }
-   oxTPaths = record
-      Data,
-      Textures,
-      UI,
-      Fonts,
-      Shaders: string;
-   end;
-
 VAR
    oxPaths: oxTPaths;
-   oxAssetPaths: oxTAssetPathsGlobal;
 
 IMPLEMENTATION
 
-{ oxTAssetPathsGlobal }
+{ oxTPaths }
 
-function oxTAssetPathsGlobal.Find(const asset: string): string;
+function oxTPaths.Find(const asset: string): string;
 var
    i: loopint;
    fn: string;
@@ -80,7 +78,7 @@ begin
    Result := asset;
 end;
 
-function oxTAssetPathsGlobal.FindDirectory(const asset: string): string;
+function oxTPaths.FindDirectory(const asset: string): string;
 var
    i: loopint;
    path: string;
@@ -99,7 +97,7 @@ begin
    Result := asset;
 end;
 
-procedure oxTAssetPathsGlobal.Add(const assetPath: string);
+procedure oxTPaths.Add(const assetPath: string);
 begin
    if(assetPath <> '') then begin
       List.Add(IncludeTrailingPathDelimiter(assetPath));
@@ -137,8 +135,31 @@ begin
    Result := path;
 end;
 
+{$IFDEF OX_LIBRARY}
+procedure initLibrary();
+var
+   i: loopint;
+   ext: oxPPaths;
 
+begin
+   ext := oxGlobalInstances.FindInstancePtr('oxTPaths');
 
+   oxPaths.Data         := ext^.Data;
+   oxPaths.Textures     := ext^.Textures;
+   oxPaths.UI           := ext^.UI;
+   oxPaths.Fonts        := ext^.Fonts;
+   oxPaths.Shaders      := ext^.Shaders;
+
+   oxPaths.BasePath := ext^.BasePath;
+   oxPaths.WorkingDirectory := ext^.WorkingDirectory;
+
+   for i := 0 to ext^.List.n - 1 do begin
+      oxPaths.List.Add(ext^.List[i]);
+   end;
+end;
+{$ENDIF}
+
+{$IFNDEF OX_LIBRARY}
 procedure init();
 {$IFDEF OX_DEBUG}
 var
@@ -146,13 +167,13 @@ var
 {$ENDIF}
 
 begin
-   oxAssetPaths.WorkingDirectory := appPath.GetExecutablePath();
+   oxPaths.WorkingDirectory := appPath.GetExecutablePath();
 
-   if(oxAssetPaths.WorkingDirectory <> '') then
-      oxAssetPaths.WorkingDirectory := IncludeTrailingPathDelimiter(oxAssetPaths.WorkingDirectory);
+   if(oxPaths.WorkingDirectory <> '') then
+      oxPaths.WorkingDirectory := IncludeTrailingPathDelimiter(oxPaths.WorkingDirectory);
 
-   if(oxAssetPaths.WorkingDirectory <> '') then
-      log.v('ox > Asset base path: ' + oxAssetPaths.WorkingDirectory);
+   if(oxPaths.WorkingDirectory <> '') then
+      log.v('ox > Asset base path: ' + oxPaths.WorkingDirectory);
 
    {$IFDEF OX_DEBUG}
    assetPath := GetEnvironmentVariable(OX_ASSET_PATH_ENV);
@@ -163,14 +184,16 @@ begin
 
    if(assetPath <> '') then begin
       log.v('ox > Auto determined asset path: ' + assetPath);
-      oxAssetPaths.Add(assetPath);
+      oxPaths.BasePath := assetPath;
+      oxPaths.Add(assetPath);
    end;
    {$ENDIF}
 end;
+{$ENDIF}
 
 procedure deinit();
 begin
-   oxAssetPaths.List.Dispose();
+   oxPaths.List.Dispose();
 end;
 
 VAR
@@ -183,8 +206,13 @@ INITIALIZATION
    oxPaths.Fonts        := oxFontsDefaultPath;
    oxPaths.Shaders      := oxShadersDefaultPath;
 
-   oxAssetPaths.List.Initialize(oxAssetPaths.List);
-   ox.PreInit.Add(initRoutines, 'ox.assetpaths', @init, @deinit);
+   oxPaths.List.Initialize(oxPaths.List);
+   {$IFNDEF OX_LIBRARY}
+   ox.PreInit.Add(initRoutines, 'ox.paths', @init, @deinit);
+   {$ELSE}
+   ox.PreInit.Add(initRoutines, 'ox.paths', @initLibrary, @deinit);
+   {$ENDIF}
+
+   oxGlobalInstances.Add('oxTPaths', @oxPaths);
 
 END.
-

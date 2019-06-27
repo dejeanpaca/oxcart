@@ -61,7 +61,7 @@ begin
    oxedToolbar.Initialize();
    oxedDockableArea.Initialize();
 
-   if(oxAssetPaths.List.n = 0) then
+   if(oxPaths.List.n = 0) then
       oxedMessages.w('oX asset path doesn''t seem set (set ' + OX_ASSET_PATH_ENV + ' environment variable or config)');
 
    {open a project}

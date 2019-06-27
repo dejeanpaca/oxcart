@@ -34,7 +34,7 @@ var
   windowPath: string;
 
 begin
-   skin.ResourcePath := IncludeTrailingPathDelimiterNonEmpty(oxAssetPaths.FindDirectory(oxPaths.UI + skin.Name));
+   skin.ResourcePath := IncludeTrailingPathDelimiterNonEmpty(oxPaths.FindDirectory(oxPaths.UI + skin.Name));
 
    log.v('Skin(' + skin.Name + ') resource path set to: ' + skin.ResourcePath);
 
