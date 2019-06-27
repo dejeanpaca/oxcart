@@ -13,11 +13,16 @@ UNIT oxuDefaultTexture;
 INTERFACE
 
    USES
-      sysutils, uStd, uLog, uFile, uFiles, uTiming,
+      uLog,
+      {$IFNDEF OX_LIBRARY}
+      sysutils, uStd, uFile, uFiles, uTiming,
+      {$ENDIF}
       {oX}
-      uOX, oxuRunRoutines, oxuTexture, oxuTextureGenerate, oxuResourcePool;
+      uOX, oxuRunRoutines, oxuGlobalInstances,
+      oxuTexture, oxuTextureGenerate, oxuResourcePool;
 
 TYPE
+   oxPDefaultTextureGlobal = ^oxTDefaultTextureGlobal;
    oxTDefaultTextureGlobal = record
       Load: boolean;
       Texture: oxTTexture;
@@ -28,9 +33,27 @@ VAR
 
 IMPLEMENTATION
 
+{$IFNDEF OX_LIBRARY}
 CONST
    {$INCLUDE resources/default_texture.inc}
+{$ENDIF}
 
+{$IFDEF OX_LIBRARY}
+procedure loadLibrary();
+var
+   instance: oxPDefaultTextureGlobal;
+
+begin
+   instance := oxExternalGlobalInstances.FindInstancePtr('oxTDefaultTextureGlobal');
+
+   if(instance <> nil) then
+      oxDefaultTexture.Texture := instance^.Texture
+   else
+      log.w('Missing oxTDefaultTextureGlobal external instance');
+end;
+{$ENDIF}
+
+{$IFNDEF OX_LIBRARY}
 procedure load();
 var
    errorCode: loopint = 0;
@@ -67,13 +90,20 @@ procedure dispose();
 begin
    oxResource.Free(oxDefaultTexture.Texture);
 end;
+{$ENDIF}
 
 VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
    oxDefaultTexture.Load := true;
+
+   oxGlobalInstances.Add('oxTDefaultTextureGlobal', @oxDefaultTexture);
+
+   {$IFNDEF OX_LIBRARY}
    ox.BaseInit.Add(initRoutines, 'default_texture', @load, @dispose);
+   {$ELSE}
+   ox.BaseInit.Add(initRoutines, 'default_texture', @loadLibrary);
+   {$ENDIF}
 
 END.
-

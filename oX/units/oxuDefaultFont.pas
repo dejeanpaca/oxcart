@@ -11,12 +11,16 @@ UNIT oxuDefaultFont;
 INTERFACE
 
    USES
-      sysutils, uStd, uLog, uFile, uFiles, uTiming,
+      uLog,
+      {$IFNDEF OX_LIBRARY}
+      sysutils, uStd, uFile, uFiles, uTiming,
+      {$ENDIF}
       {oX}
-      uOX, oxuRunRoutines,
+      uOX, oxuRunRoutines, oxuGlobalInstances,
       oxuTFD, oxuFont, oxuResourcePool;
 
 TYPE
+   oxPDefaultFontGlobal = ^oxTDefaultFontGlobal;
    oxTDefaultFontGlobal = record
       Load: boolean;
       Font: oxTFont;
@@ -27,11 +31,33 @@ VAR
 
 IMPLEMENTATION
 
+{$IFNDEF OX_LIBRARY}
 CONST
    {$INCLUDE resources/default_font.inc}
 VAR
    tfd: oxTTFD;
+{$ENDIF}
 
+{$IFDEF OX_LIBRARY}
+procedure loadLibrary();
+var
+   instance: oxPDefaultFontGlobal;
+
+begin
+   instance := oxExternalGlobalInstances.FindInstancePtr('oxTDefaultFontGlobal');
+
+   if(instance <> nil) then begin
+      oxDefaultFont.Font := instance^.Font;
+
+      {set as default font in any case}
+      if(oxf.Default = nil) then
+         oxf.SetDefault(oxDefaultFont.Font);
+   end else
+      log.w('Missing oxTDefaultFontGlobal external instance');
+end;
+{$ENDIF}
+
+{$IFNDEF OX_LIBRARY}
 procedure load();
 var
    errcode: longint;
@@ -74,12 +100,17 @@ begin
    oxResource.Free(oxDefaultFont.Font.Texture);
    FreeObject(oxDefaultFont.Font);
 end;
+{$ENDIF}
 
 VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
    oxDefaultFont.Load := true;
+
+   oxGlobalInstances.Add('oxTDefaultFontGlobal', @oxDefaultFont);
+
+   {$IFNDEF OX_LIBRARY}
    ox.BaseInit.Add(initRoutines, 'default_font', @load, @dispose);
 
    oxTFD.Init(tfd);
@@ -93,6 +124,8 @@ INITIALIZATION
    tfd.Lines := 16;
    {we only need the extension to load with the proper loader}
    tfd.TextureName := 'default_font.tga';
+   {$ELSE}
+   ox.BaseInit.Add(initRoutines, 'default_font', @loadLibrary);
+   {$ENDIF}
 
 END.
-
