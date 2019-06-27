@@ -9,4 +9,9 @@
 {app}
 {%H-}uAppInfo,
 {ox}
-{%H-}uOX, {%H-}oxuDefaults, {%H-}oxuRun, {%H-}oxuTypes
+{%H-}uOX,
+{%H-}oxuDefaults
+{$IFNDEF OX_LIBRARY}
+{%H-}, oxuRun,
+{%H-}oxuTypes
+{$ENDIF}
