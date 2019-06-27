@@ -17,13 +17,14 @@ INTERFACE
       uStd, uLog, StringUtils, vmMath,
       uImage, imguOperations,
       {ox}
-      uOX, oxuRunRoutines, oxuPaths,
-      oxuTexture, oxuTextureGenerate, oxuTypes, oxuFont, oxuFreetype, uSimpleParser;
+      uOX, oxuPaths, oxuGlobalInstances,
+      oxuTexture, oxuTextureGenerate, oxuTypes, oxuFont, oxuFreetype, uSimpleParser
+      {$IFNDEF OX_LIBRARY}, oxuRunRoutines{$ENDIF};
 
 TYPE
    { oxTFreetypeManager }
 
-   oxTFreetypeManager = record
+   oxTFreetypeManager = class
       Lib: PFT_Library;
       Fonts: oxTFreetypeFonts;
       Enabled: Boolean;
@@ -35,6 +36,8 @@ TYPE
       AutoSpaceCharacterRatio: single;
 
       AlphaType: oxTFreetypeAlphaType;
+
+      constructor Create();
 
       function Load(const name, path: string; faceIndex: longint = 0; size: longint = 0; keep: boolean = true): oxTFreetypeFont;
       procedure Dispose(var bitmaps: oxTFreetypeBitmaps);
@@ -56,6 +59,15 @@ VAR
 IMPLEMENTATION
 
 { oxTFreetypeManager }
+
+constructor oxTFreetypeManager.Create();
+begin
+   Fonts.Initialize(Fonts);
+
+   AutoSpaceCharacter := true;
+   AutoSpaceCharacterRatio := 0.5;
+   AlphaType := oxFREETYPE_ALPHA_AVERAGE;
+end;
 
 function oxTFreetypeManager.Load(const name, path: string; faceIndex: longint; size: longint; keep: boolean): oxTFreetypeFont;
 var
@@ -477,16 +489,32 @@ begin
    end;
 end;
 
+function instance(): TObject;
+begin
+   Result := oxTFreetypeManager.Create();
+end;
+
+{$IFNDEF OX_LIBRARY}
+procedure initialize();
+begin
+   oxTFreetypeManager.Initialize();
+end;
+
+procedure deinitialize();
+begin
+   oxTFreetypeManager.Deinitialize();
+end;
+
 VAR
    initRoutines: oxTRunRoutine;
+{$ENDIF}
 
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'ox.freetype', @oxTFreetypeManager.Initialize, @oxTFreetypeManager.Deinitialize);
+   oxGlobalInstances.Add(oxTFreetypeManager, @oxFreetypeManager, @instance)^.
+      CopyOverReference := true;
 
-   oxFreetypeManager.Fonts.Initialize(oxFreetypeManager.Fonts);
-   oxFreetypeManager.AutoSpaceCharacter := true;
-   oxFreetypeManager.AutoSpaceCharacterRatio := 0.5;
-   oxFreetypeManager.AlphaType := oxFREETYPE_ALPHA_AVERAGE;
-
+   {$IFNDEF OX_LIBRARY}
+   ox.Init.Add(initRoutines, 'ox.freetype', @initialize, @deinitialize);
+   {$ENDIF}
 
 END.
