@@ -15,12 +15,14 @@ INTERFACE
       ufhStandard,
       { app }
       appuKeyStateUpdater,
+      {$IFNDEF OX_LIBRARY}
       appuCtrlBreak,
+      appuCrashDetect,
+      {$ENDIF}
       appuPaths,
       appuLog,
       {$IFNDEF NODVAR}appudvarConfiguration,{$ENDIF}
-      appuSysInfo,
-      appuCrashDetect,
+      oxuSysInfo,
 
       {image loaders}
       {$INCLUDE ../../components/dimg/units/imgIncludeAllLoaders.inc},
@@ -77,7 +79,9 @@ INTERFACE
       oxuKeyboardControl,
       oxuPointerControl,
       oxuScreenshot,
+      {$IFNDEF OX_LIBRARY}
       oxuDefaultSplashScreen,
+      {$ENDIF}
 
       {ui}
       {$IFDEF OX_FEATURE_UI}
