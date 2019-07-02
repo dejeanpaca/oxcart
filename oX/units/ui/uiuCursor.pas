@@ -43,7 +43,7 @@ TYPE
       {default cursor size}
       DefaultCursorSize: oxTDimensions;
 
-      function LoadCursor(const fn: string): longword;
+      function LoadCursor(const fn: StdString): longword;
 
       procedure SetCustomCursor(cursor: LongWord);
       procedure SetCursorTypeForced(cursorType: uiTCursorType);
@@ -58,7 +58,7 @@ IMPLEMENTATION
 
 { uiTCursorGlobal }
 
-function uiTCursorGlobal.LoadCursor(const fn: string): longword;
+function uiTCursorGlobal.LoadCursor(const fn: StdString): longword;
 var
    t: oxTTexture = nil;
    error: loopint;

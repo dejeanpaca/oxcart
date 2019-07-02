@@ -757,6 +757,7 @@ end;
 function uiTContextMenu.AddItem(const caption: StdString; action: longword; callback: uiTContextMenuCallback): uiPContextMenuItem;
 begin
    Result := Add(caption);
+
    Result^.SetAction(action);
    Result^.Callback := callback;
 end;
@@ -994,7 +995,8 @@ var
    item: uiTContextMenuItem;
 
 begin
-   ZeroOut(item, SizeOf(item));
+   ZeroPtr(@item, SizeOf(item));
+
    item.Caption := caption;
    item.Properties := uiCONTEXT_MENU_ITEM_ENABLED;
 

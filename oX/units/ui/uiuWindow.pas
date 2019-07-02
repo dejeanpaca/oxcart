@@ -204,7 +204,7 @@ TYPE
       { background }
       procedure SetBackgroundType(t: uiTWindowBackgroundType);
       procedure SetBackgroundColor(const clr: TColor4ub);
-      function SetBackground(const fn: string): longint;
+      function SetBackground(const fn: StdString): longint;
 
       {background texture type}
       procedure SetBackgroundFit(fit: uiTWindowBackgroundFit);
@@ -379,14 +379,14 @@ TYPE
       {setup a created window}
       procedure SetupCreatedWindow(wnd: uiTWindow; var createData: uiTWindowCreateData);
       {creates a window}
-      function Make(var createData: uiTWindowCreateData; out wnd: uiTWindow; const title: string;
+      function Make(var createData: uiTWindowCreateData; out wnd: uiTWindow; const title: StdString;
                position: oxTPoint; dimensions: oxTDimensions; wHandler: uiTWindowListener = nil): longint;
-      function Make(wnd: uiTWindow; const title: string;
+      function Make(wnd: uiTWindow; const title: StdString;
                position: oxTPoint; dimensions: oxTDimensions; wHandler: uiTWindowListener = nil): longint;
       {creates a child window whose parent is wnd}
-      function MakeChild(var createData: uiTWindowCreateData; wnd: uiTWindow; const title: string;
+      function MakeChild(var createData: uiTWindowCreateData; wnd: uiTWindow; const title: StdString;
                const position: oxTPoint; const dimensions: oxTDimensions; wHandler: uiTWindowListener = nil): uiTWindow;
-      function MakeChild(wnd: uiTWindow; const title: string;
+      function MakeChild(wnd: uiTWindow; const title: StdString;
                const position: oxTPoint; const dimensions: oxTDimensions; wHandler: uiTWindowListener = nil): uiTWindow;
 
       {disposes of a window}
@@ -712,7 +712,7 @@ begin
    uiWindow.RestoreCreateDefaults();
 end;
 
-function uiTWindowGlobal.Make(var createData: uiTWindowCreateData; out wnd: uiTWindow; const title: string;
+function uiTWindowGlobal.Make(var createData: uiTWindowCreateData; out wnd: uiTWindow; const title: StdString;
       position: oxTPoint; dimensions: oxTDimensions; wHandler: uiTWindowListener): longint;
 
 begin
@@ -747,13 +747,13 @@ begin
       exit(eNO_MEMORY);
 end;
 
-function uiTWindowGlobal.Make(wnd: uiTWindow; const title: string;
+function uiTWindowGlobal.Make(wnd: uiTWindow; const title: StdString;
       position: oxTPoint; dimensions: oxTDimensions; wHandler: uiTWindowListener): longint;
 begin
    Result := Make(Create, wnd, title, position, dimensions, wHandler);
 end;
 
-function uiTWindowGlobal.MakeChild(var createData: uiTWindowCreateData; wnd: uiTWindow; const title: string;
+function uiTWindowGlobal.MakeChild(var createData: uiTWindowCreateData; wnd: uiTWindow; const title: StdString;
          const position: oxTPoint; const dimensions: oxTDimensions; wHandler: uiTWindowListener): uiTWindow;
 var
    errcode: longint;
@@ -777,7 +777,7 @@ begin
    Result := child;
 end;
 
-function uiTWindowGlobal.MakeChild(wnd: uiTWindow; const title: string;
+function uiTWindowGlobal.MakeChild(wnd: uiTWindow; const title: StdString;
          const position: oxTPoint; const dimensions: oxTDimensions; wHandler: uiTWindowListener): uiTWindow;
 begin
    Result := MakeChild(Create, wnd, title, position, dimensions, wHandler);
@@ -1335,19 +1335,14 @@ begin
    Background.Color := clr;
 end;
 
-function uiTWindowHelper.SetBackground(const fn: string): longint;
-var
-   errcode: longint;
-
+function uiTWindowHelper.SetBackground(const fn: StdString): longint;
 begin
-   errcode  := oxTextureGenerate.Generate(fn, oxTTexture(Background.Texture));
+   Result := oxTextureGenerate.Generate(fn, oxTTexture(Background.Texture));
 
-   if(errcode = 0) then begin
+   if(Result = 0) then begin
       Background.Typ := uiwBACKGROUND_TEX;
       Background.Color := cWhite4ub;
    end;
-
-   Result := errcode;
 end;
 
 procedure uiTWindowHelper.SetBackgroundFit(fit: uiTWindowBackgroundFit);
@@ -1358,6 +1353,7 @@ end;
 procedure uiTWindowHelper.SetBackgroundTexture(tex: oxTTexture; fit: uiTWindowBackgroundFit);
 begin
    Background.Texture := tex;
+
    if(tex <> nil) then begin
       tex.MarkUsed();
       Background.Fit := fit;

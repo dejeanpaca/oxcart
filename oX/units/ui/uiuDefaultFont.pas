@@ -22,7 +22,7 @@ TYPE
    { uiTDefaultFontManager }
 
    uiTDefaultFontManager = record
-      Path: string;
+      Path: StdString;
       Size: loopint;
       Font: oxTFont;
 
@@ -39,7 +39,7 @@ IMPLEMENTATION
 
 procedure uiTDefaultFontManager.Initialize();
 var
-   assetPath: String;
+   assetPath: StdString;
 
 begin
    assetPath := oxPaths.Find(Path);

@@ -303,7 +303,7 @@ end;
 procedure oxedTSceneWindow.UpdateStateWidget();
 var
    cam: oxTCameraComponent;
-   state: string;
+   state: StdString;
 
 begin
    state := '';

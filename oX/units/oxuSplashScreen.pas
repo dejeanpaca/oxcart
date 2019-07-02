@@ -268,6 +268,7 @@ begin
 
    oxui.Material.Apply();
    f := oxf.GetDefault();
+
    if(f.Valid()) then begin
       f.Start();
 

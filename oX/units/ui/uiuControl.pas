@@ -37,10 +37,10 @@ TYPE
 
    uiPControlID = ^uiTControlID;
    uiTControlID = record
-      Name: string;
+      Name: StdString;
       ID: loopint;
 
-      function ToString(): string;
+      function ToString(): StdString;
    end;
 
 
@@ -198,7 +198,7 @@ TYPE
       idCount: loopint;
 
       function GetID(): longword;
-      function GetID(const Name: string): uiTControlID;
+      function GetID(const Name: StdString): uiTControlID;
       function GetPlainID(): uiTControlID;
       function GetIDs(count: longint): longint;
    end;
@@ -218,7 +218,7 @@ end;
 
 { uiTControlID }
 
-function uiTControlID.ToString(): string;
+function uiTControlID.ToString(): StdString;
 begin
   if(Name <> '') then
      Result := Name + ', ' + sf(ID)
@@ -233,7 +233,7 @@ begin
    Result := idCount;
 end;
 
-function uiTControlGlobal.GetID(const Name: string): uiTControlID;
+function uiTControlGlobal.GetID(const Name: StdString): uiTControlID;
 begin
    Result.Name := Name;
    Result.ID   := GetID();

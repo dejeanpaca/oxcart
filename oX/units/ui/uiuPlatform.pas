@@ -21,7 +21,7 @@ TYPE
       Returns 0 for no, 1 for yes, and -1 if unknown}
       function IsSystemDarkTheme(): loopint; virtual;
       {get the name of the system theme}
-      function GetSystemTheme(): string; virtual;
+      function GetSystemTheme(): StdString; virtual;
    end;
 
 IMPLEMENTATION
@@ -33,7 +33,7 @@ begin
    Result := -1;
 end;
 
-function uiTPlatformComponent.GetSystemTheme(): string;
+function uiTPlatformComponent.GetSystemTheme(): StdString;
 begin
    Result := 'unknown';
 end;

@@ -185,6 +185,7 @@ begin
    idx := oxedWindows.Find(Self);
    if(idx > -1) then begin
       oxedWindows.Remove(idx);
+
       RebuildWindowsList();
    end;
 
