@@ -133,16 +133,16 @@ TYPE
       {extract information from source (like required packages)}
       procedure ParseSource();
 
-      procedure AddCustomOption(const option: string);
-      procedure AddUnitPath(const newPath: string);
-      procedure AddIncludePath(const newPath: string);
-      procedure SetTitle(const newTitle: string);
-      procedure AddRequiredPackage(const packageName: string);
-      procedure AddSymbol(const symbol: string);
+      procedure AddCustomOption(const option: StdString);
+      procedure AddUnitPath(const newPath: StdString);
+      procedure AddIncludePath(const newPath: StdString);
+      procedure SetTitle(const newTitle: StdString);
+      procedure AddRequiredPackage(const packageName: StdString);
+      procedure AddSymbol(const symbol: StdString);
       procedure CreatePackagesSection();
 
-      class procedure SetValue(node: TDOMNode; const value: string); static;
-      class function GetValue(node: TDOMNode): string; static;
+      class procedure SetValue(node: TDOMNode; const value: StdString); static;
+      class function GetValue(node: TDOMNode): StdString; static;
 
       procedure Destroy();
 
@@ -152,7 +152,7 @@ TYPE
    { TLPIContext }
 
    TLPIContext = record
-      Target: string;
+      Target: StdString;
       Loaded: procedure(var f: TLPIFile);
    end;
 
@@ -167,7 +167,7 @@ TYPE
       Error: longint;
 
       {output filename}
-      OutFileName: string;
+      OutFileName: StdString;
 
       {template information}
       Template: TLPITemplate;
@@ -175,10 +175,10 @@ TYPE
       procedure Initialize();
       function IsInitialized(): boolean;
 
-      procedure Create(const source: string; context: PLPIContext = nil; testMode: boolean = false);
-      procedure Update(const lpiFile: string; context: PLPIContext = nil);
+      procedure Create(const source: StdString; context: PLPIContext = nil; testMode: boolean = false);
+      procedure Update(const lpiFile: StdString; context: PLPIContext = nil);
       {runs Create() in test mode}
-      procedure Test(const source: string; context: PLPIContext = nil);
+      procedure Test(const source: StdString; context: PLPIContext = nil);
 
       procedure Initialize(out f: TLPIFile);
       procedure Initialize(out context: TLPIContext);
@@ -187,8 +187,8 @@ TYPE
    { TLPIBuild }
 
    TLPIBuild = record
-      function BuildFromPas(const source: string): boolean;
-      function BuildFromPas(const source: string; var context: TLPIContext): boolean;
+      function BuildFromPas(const source: StdString): boolean;
+      function BuildFromPas(const source: StdString; var context: TLPIContext): boolean;
    end;
 
 VAR
@@ -199,7 +199,7 @@ IMPLEMENTATION
 
 { TLPIBuild }
 
-function TLPIBuild.BuildFromPas(const source: string): boolean;
+function TLPIBuild.BuildFromPas(const source: StdString): boolean;
 var
    context: TLPIContext;
 
@@ -209,9 +209,9 @@ begin
    Result := BuildFromPas(source, context);
 end;
 
-function TLPIBuild.BuildFromPas(const source: string; var context: TLPIContext): boolean;
+function TLPIBuild.BuildFromPas(const source: StdString; var context: TLPIContext): boolean;
 var
-   fn: string;
+   fn: StdString;
 
 begin
    if(not lpi.Initialized) then
@@ -465,10 +465,10 @@ begin
 end;
 
 
-procedure TLPIFile.AddCustomOption(const option: string);
+procedure TLPIFile.AddCustomOption(const option: StdString);
 var
    s,
-   nodeValue: string;
+   nodeValue: StdString;
 
 begin
    if(compiler.other.root = nil) then
@@ -487,9 +487,9 @@ begin
       SetValue(compiler.other.customOptions, s);
 end;
 
-procedure TLPIFile.AddUnitPath(const newPath: string);
+procedure TLPIFile.AddUnitPath(const newPath: StdString);
 var
-   units: string;
+   units: StdString;
 
 begin
    if(compiler.searchPaths.otherUnits = nil) then
@@ -505,9 +505,9 @@ begin
    SetValue(compiler.searchPaths.otherUnits, units);
 end;
 
-procedure TLPIFile.AddIncludePath(const newPath: string);
+procedure TLPIFile.AddIncludePath(const newPath: StdString);
 var
-   includes: string;
+   includes: StdString;
 
 begin
    if(compiler.searchPaths.includeFiles = nil) then
@@ -523,12 +523,12 @@ begin
    SetValue(compiler.searchPaths.includeFiles, includes);
 end;
 
-procedure TLPIFile.SetTitle(const newTitle: string);
+procedure TLPIFile.SetTitle(const newTitle: StdString);
 begin
    SetValue(project.general.title, newTitle);
 end;
 
-procedure TLPIFile.AddRequiredPackage(const packageName: string);
+procedure TLPIFile.AddRequiredPackage(const packageName: StdString);
 var
    count: loopint;
    item,
@@ -556,7 +556,7 @@ begin
    end;
 end;
 
-procedure TLPIFile.AddSymbol(const symbol: string);
+procedure TLPIFile.AddSymbol(const symbol: StdString);
 begin
    AddCustomOption('-d' + symbol);
 end;
@@ -569,13 +569,13 @@ begin
    end;
 end;
 
-class procedure TLPIFile.SetValue(node: TDOMNode; const value: string);
+class procedure TLPIFile.SetValue(node: TDOMNode; const value: StdString);
 begin
    if(node <> nil) then
       node.SetAttributeValue('Value', value);
 end;
 
-class function TLPIFile.GetValue(node: TDOMNode): string;
+class function TLPIFile.GetValue(node: TDOMNode): StdString;
 var
    valueNode: TDOMNode;
 
@@ -622,7 +622,7 @@ begin
    Result := Initialized;
 end;
 
-procedure TLPIGlobal.Create(const source: string; context: PLPIContext; testMode: boolean);
+procedure TLPIGlobal.Create(const source: StdString; context: PLPIContext; testMode: boolean);
 var
    target,
    targetPath,
@@ -630,7 +630,7 @@ var
    destination,
    absoluteDestination,
    units,
-   includes: string;
+   includes: StdString;
 
    f: TLPIFile;
 
@@ -706,11 +706,11 @@ begin
   f.Destroy();
 end;
 
-procedure TLPIGlobal.Update(const lpiFile: string; context: PLPIContext = nil);
+procedure TLPIGlobal.Update(const lpiFile: StdString; context: PLPIContext = nil);
 var
    units,
    includes,
-   absoluteDestination: string;
+   absoluteDestination: StdString;
 
    i: loopint;
    f: TLPIFile;
@@ -783,7 +783,7 @@ begin
    end;
 end;
 
-procedure TLPIGlobal.Test(const source: string; context: PLPIContext);
+procedure TLPIGlobal.Test(const source: StdString; context: PLPIContext);
 begin
    Create(source, context, true);
 end;

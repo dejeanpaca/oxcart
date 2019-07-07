@@ -25,10 +25,10 @@ TYPE
       Group: PUnitTestResultsPool;
 
       {description of any error occured}
-      ErrorDescription: string;
+      ErrorDescription: StdString;
 
       {filename of the test program}
-      FileName: string;
+      FileName: StdString;
       {has the test program successfully been run (nothing to do with any tests succeeding)}
       Success,
       {is the program a lazarus project}
@@ -37,12 +37,12 @@ TYPE
       Results: TUnitTestResults;
 
       {set the test program lazarus project or source code file}
-      procedure SetFile(const fn: string);
+      procedure SetFile(const fn: StdString);
       {analyzes the test program to find all the available tests}
       procedure Analyze();
       {executes the test program}
       procedure Execute();
-      procedure Execute(const fn: string);
+      procedure Execute(const fn: StdString);
 
       function LoadResults(): boolean;
       procedure DeleteResults();
@@ -51,7 +51,7 @@ TYPE
    { TUnitTestProgramGlobal }
 
    TUnitTestProgramGlobal = record
-      function RunProgram(const fileName: string): boolean;
+      function RunProgram(const fileName: StdString): boolean;
    end;
 
 VAR
@@ -61,7 +61,7 @@ IMPLEMENTATION
 
 { TUnitTestProgramGlobal }
 
-function TUnitTestProgramGlobal.RunProgram(const fileName: string): boolean;
+function TUnitTestProgramGlobal.RunProgram(const fileName: StdString): boolean;
 var
    tp: TUnitTestProgram;
    i: longint;
@@ -113,7 +113,7 @@ end;
 
 { TUnitTestProgram }
 
-procedure TUnitTestProgram.SetFile(const fn: string);
+procedure TUnitTestProgram.SetFile(const fn: StdString);
 begin
    fileName := fn;
    laz := LowerCase(ExtractFileExt(fileName)) = '.lpi';
@@ -125,7 +125,7 @@ var
    idx: longint;
    name,
    description,
-   currentLine: string;
+   currentLine: StdString;
 
 procedure getNameAndDescription();
 begin
@@ -181,7 +181,7 @@ end;
 procedure TUnitTestProgram.Analyze();
 var
    p: TParseData;
-   fn: string;
+   fn: StdString;
 
 begin
    log.i('Analyzing: ' + fileName);
@@ -251,7 +251,7 @@ begin
    p.Free();
 end;
 
-procedure TUnitTestProgram.Execute(const fn: string);
+procedure TUnitTestProgram.Execute(const fn: StdString);
 begin
    SetFile(fn);
    Execute();
