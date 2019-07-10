@@ -89,11 +89,13 @@ begin
    if(wnd <> nil) then begin
       entity := oxedScene.SelectedEntity;
 
-      {set camera target}
-      wnd.Camera.vTarget := entity.vPosition;
+      if(entity <> nil) then begin
+         {set camera target}
+         wnd.Camera.vTarget := entity.vPosition;
 
-      {set camera position}
-      wnd.Camera.vPos := wnd.Camera.vTarget - (wnd.Camera.vView * 10.0);
+         {set camera position}
+         wnd.Camera.vPos := wnd.Camera.vTarget - (wnd.Camera.vView * 10.0);
+      end;
    end;
 end;
 
