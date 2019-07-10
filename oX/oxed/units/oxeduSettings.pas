@@ -22,7 +22,9 @@ TYPE
       {camera speed, units per second}
       CameraSpeed,
       {camera angle speed, degrees per pixel}
-      CameraAngleSpeed: single;
+      CameraAngleSpeed,
+      {camera scroll speed}
+      CameraScrollSpeed: single;
       {enable centering the pointer when moving the pointer}
       PointerCenterEnable,
       {clear messages on project start}
@@ -56,6 +58,7 @@ IMPLEMENTATION
 VAR
    dvCameraSpeed,
    dvCameraAngleSpeed,
+   dvCameraScrollSpeed,
    dvPointerCenterEnable,
    dvClearMessagesOnStart,
    dvFocusGameViewOnStart,
@@ -83,6 +86,7 @@ end;
 INITIALIZATION
    oxedSettings.CameraSpeed := 5;
    oxedSettings.CameraAngleSpeed := 5;
+   oxedSettings.CameraScrollSpeed := 0.5;
    oxedSettings.StartWithLastProject := true;
    oxedSettings.PointerCenterEnable := true;
    oxedSettings.ClearMessagesOnStart := true;
@@ -93,6 +97,7 @@ INITIALIZATION
 
    dvgOXED.Add(dvCameraSpeed, 'camera_speed', dtcSINGLE, @oxedSettings.CameraSpeed);
    dvgOXED.Add(dvCameraAngleSpeed, 'camera_angle_speed', dtcSINGLE, @oxedSettings.CameraAngleSpeed);
+   dvgOXED.Add(dvCameraScrollSpeed, 'camera_scroll_speed', dtcSINGLE, @oxedSettings.CameraScrollSpeed);
    dvgOXED.Add(dvPointerCenterEnable, 'pointer_center_enable', dtcBOOL, @oxedSettings.PointerCenterEnable);
    dvgOXED.Add(dvClearMessagesOnStart, 'clear_messages_on_start', dtcBOOL, @oxedSettings.ClearMessagesOnStart);
    dvgOXED.Add(dvFocusGameViewOnStart, 'focus_game_view_on_start', dtcBOOL, @oxedSettings.FocusGameViewOnStart);
