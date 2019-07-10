@@ -268,6 +268,7 @@ begin
 
    {set button state}
    SetMouseButtonState(event.xmotion.state);
+   m.bState := m.bState or m.Button;
 
    {process the event}
    PushMouseEvent();
