@@ -11,12 +11,15 @@ UNIT oxeduSceneEditTools;
 INTERFACE
 
    USES
+      uStd, vmVector,
       {app}
       appuActionEvents,
+      {ox}
+      oxuScene, oxuEntity,
       {widgets}
       wdguToolbar,
       {oxed}
-      oxeduToolbar, oxeduActions, oxeduSceneEdit;
+      uOXED, oxeduToolbar, oxeduActions, oxeduSceneEdit, oxeduEntities, oxeduDefaultScene, oxeduScene;
 
 
 IMPLEMENTATION
@@ -63,7 +66,42 @@ begin
    selectButton(oxedToolbar.Buttons.Scale);
 end;
 
+procedure clearScene();
+begin
+   oxScene.Empty();
+   oxed.OnSceneChange.Call();
+end;
+
+procedure defaultScene();
+begin
+   oxedDefaultScene.Create();
+   oxed.OnSceneChange.Call();
+end;
+
+procedure focusSelected();
+var
+   wnd: oxedTSceneEditWindow;
+   entity: oxTEntity;
+
+begin
+   wnd := oxedTSceneEditWindow(oxedSceneEdit.LastSelected);
+
+   if(wnd <> nil) then begin
+      entity := oxedScene.SelectedEntity;
+
+      {set camera target}
+      wnd.Camera.vTarget := entity.vPosition;
+
+      {set camera position}
+      wnd.Camera.vPos := wnd.Camera.vTarget - (wnd.Camera.vView * 10.0);
+   end;
+end;
+
 INITIALIZATION
+   oxedActions.SCENE_CLEAR := appActionEvents.SetCallback(@clearScene);
+   oxedActions.SCENE_DEFAULT := appActionEvents.SetCallback(@defaultScene);
+   oxedActions.FOCUS_SELECTED := appActionEvents.SetCallback(@focusSelected);
+
    oxedActions.TOOL_TRANSLATE := appActionEvents.SetCallback(@selectTranslate);
    oxedActions.TOOL_ROTATE := appActionEvents.SetCallback(@selectRotate);
    oxedActions.TOOL_SCALE := appActionEvents.SetCallback(@selectScale);

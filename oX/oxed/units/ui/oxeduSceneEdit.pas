@@ -21,7 +21,7 @@ INTERFACE
       oxuUI, uiuWindow, oxuMaterial,
       {oxed}
       uOXED, oxeduMenubar, oxeduWindow, oxeduSceneWindow, oxeduScene, oxeduComponent, oxeduEditRenderers, oxeduEntityTypes,
-      oxeduSettings, oxeduActions, oxeduDefaultScene, oxeduProjectRunner, oxeduComponentGlyph;
+      oxeduSettings, oxeduProjectRunner, oxeduComponentGlyph, oxeduActions;
 
 CONST
    OXED_DISTANCE_SCALE: single = 1 / 6.0;
@@ -82,6 +82,7 @@ TYPE
       {camera rotation control}
       function OrbitControl(var e: appTMouseEvent): boolean;
       procedure Point(var e: appTMouseEvent; x, y: longint); override;
+      function Key(var k: appTKeyEvent): boolean; override;
       {called when the current tool changes}
       procedure ToolChanged();
    end;
@@ -504,21 +505,19 @@ begin
    end;
 end;
 
+function oxedTSceneEditWindow.Key(var k: appTKeyEvent): boolean;
+begin
+   if(k.Key.Equal(kcF)) then begin
+      appActionEvents.Queue(oxedActions.FOCUS_SELECTED);
+      exit;
+   end;
+
+   Result := inherited Key(k);
+end;
+
 procedure oxedTSceneEditWindow.ToolChanged();
 begin
 
-end;
-
-procedure clearScene();
-begin
-   oxScene.Empty();
-   oxed.OnSceneChange.Call();
-end;
-
-procedure defaultScene();
-begin
-   oxedDefaultScene.Create();
-   oxed.OnSceneChange.Call();
 end;
 
 procedure projectStop();
@@ -533,9 +532,6 @@ VAR
 INITIALIZATION
    oxed.Init.Add(oxedInitRoutines, 'scene.edit', @init, @deinit);
    oxedMenubar.OnInit.Add(@initMenubar);
-
-   oxedActions.SCENE_CLEAR := appActionEvents.SetCallback(@clearScene);
-   oxedActions.SCENE_DEFAULT := appActionEvents.SetCallback(@defaultScene);
 
    oxedProjectRunner.OnStop.Add(@projectStop);
 

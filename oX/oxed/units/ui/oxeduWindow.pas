@@ -34,10 +34,10 @@ TYPE
       procedure ListWindow();
       procedure RebuildWindowsList();
 
-      procedure Initialize; override;
-      procedure DeInitialize; override;
+      procedure Initialize(); override;
+      procedure DeInitialize(); override;
 
-      procedure OnActivate; override;
+      procedure OnActivate(); override;
    end;
 
    oxedTUIWindowClass = class of oxedTWindow;
@@ -51,6 +51,8 @@ TYPE
       {should there only be one instance of this window}
       SingleInstance: boolean;
       WindowType: oxedTUIWindowClass;
+      {last selected window of this type}
+      LastSelected,
       {last (or only) instance of this window}
       Instance: oxedTWindow;
 
@@ -168,11 +170,14 @@ begin
   end;
 end;
 
-procedure oxedTWindow.Initialize;
+procedure oxedTWindow.Initialize();
 begin
    inherited Initialize;
 
    ListWindow();
+
+  if(WindowClass <> nil) then
+     oxedTWindowClass(WindowClass).LastSelected := Self;
 end;
 
 procedure oxedTWindow.DeInitialize();
@@ -189,15 +194,26 @@ begin
       RebuildWindowsList();
    end;
 
-   if(WindowClass <> nil) and (oxedTWindowClass(WindowClass).Instance = Self) then
-      oxedTWindowClass(WindowClass).Instance := nil;
+   if(oxedWindow.LastSelectedWindow = Self) then
+      oxedWindow.LastSelectedWindow := nil;
+
+   if(WindowClass <> nil) then begin
+      if(oxedTWindowClass(WindowClass).Instance = Self) then
+         oxedTWindowClass(WindowClass).LastSelected := nil;
+
+      if(oxedTWindowClass(WindowClass).Instance = Self) then
+         oxedTWindowClass(WindowClass).Instance := nil;
+   end;
 end;
 
-procedure oxedTWindow.OnActivate;
+procedure oxedTWindow.OnActivate();
 begin
    inherited OnActivate;
 
    oxedWindow.LastSelectedWindow := Self;
+
+   if(WindowClass <> nil) then
+      oxedTWindowClass(WindowClass).LastSelected := Self;
 end;
 
 procedure deinit();

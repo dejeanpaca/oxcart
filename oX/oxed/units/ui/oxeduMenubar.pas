@@ -186,7 +186,7 @@ begin
    context.AddItem('Plane');
 
    ObjectMenu := Bar.Add('Object');
-   ObjectMenu.AddItem('Focus');
+   ObjectMenu.AddItem('Focus', oxedActions.FOCUS_SELECTED);
    ObjectMenu.AddSeparator();
    item := ObjectMenu.AddItem('Reset Camera', oxedActions.RESET_CAMERA);
    oxedIcons.Create(item, $f03d);
