@@ -23,7 +23,7 @@ TYPE
       Returns 0 for no, 1 for yes, and -1 if unknown}
       function IsSystemDarkTheme(): loopint; override;
       {get the name of the system theme}
-      function GetSystemTheme(): string; override;
+      function GetSystemTheme(): StdString; override;
    end;
 
 VAR
@@ -38,7 +38,7 @@ begin
    Result := -1;
 end;
 
-function uiTWindowsPlatformComponent.GetSystemTheme(): string;
+function uiTWindowsPlatformComponent.GetSystemTheme(): StdString;
 begin
    Result := 'unknown';
 end;
