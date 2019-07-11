@@ -156,20 +156,20 @@ begin
 
    if(properties and appVERSION_STR_ONLY = 0) then begin
       if(properties and appVERSION_SHORT = 0) then
-         result := Name
+         Result := Name
       else begin
          if(NameShort = '') then
             short := Name
          else
             short := NameShort;
 
-         result := short;
+         Result := short;
       end;
 
       if(sver <> '') then
-         result := result + ' ' + sver;
+         Result := Result + ' ' + sver;
    end else
-      result := sver
+      Result := sver
 end;
 
 class function appTInfo.GetShort(const s: StdString): StdString;
@@ -177,10 +177,10 @@ var
    short: StdString;
 
 begin
-   short := utf8string(lowerCase(s));
+   short := StdString(lowerCase(s));
    EliminateWhiteSpace(short);
 
-   result := short;
+   Result := short;
 end;
 
 INITIALIZATION
