@@ -46,6 +46,9 @@ TYPE
       procedure Initialize();
       procedure Dispose();
 
+      {reset camer to default values}
+      procedure Reset();
+
       {move the camera's position in a specified direction}
       procedure Move(const Direction: TVector3);
       {move the camera's position in a specified direction and speed}
@@ -62,7 +65,7 @@ TYPE
       {reset pitch yaw from the existing angles}
       procedure PitchYaw();
       {set forward (view) from rotation (in degrees)}
-      procedure SetForward(const newRotation: TVector3f);
+      procedure ForwardFromRotation(const newRotation: TVector3f);
       {increase camera angles by pitch and yaw (assuming standard up vector)}
       procedure IncPitchYaw(pitch, yaw: single);
 
@@ -71,9 +74,15 @@ TYPE
 
       {setup angles from the view and up vectors}
       procedure SetupRotation();
+      {get pitch, yaw and roll}
+      procedure GetRotationAngles(out v: TVector3f);
 
       {set up OpenGL to look the way the camera indicates}
       procedure LookAt(apply: boolean = true);
+      {apply camera matrix}
+      procedure Apply(const m: TMatrix4f);
+      {apply camera matrix}
+      procedure Apply();
 
       {get ray from camera with a starting and ending point}
       procedure GetRay(length: single; out vS, vE: TVector3f);
@@ -126,7 +135,7 @@ end;
 
 procedure oxTCamera.Strafe(speed: single);
 begin
-   vPos := vPos + (vView.Cross(vUp) * speed);
+   vPos := vPos + (vRight * speed);
 end;
 
 procedure oxTCamera.MoveVertical(speed: single);
@@ -143,15 +152,15 @@ begin
    vRot[1] := yaw;
    vRot[2] := 0;
 
-   SetForward(vRot);
+   ForwardFromRotation(vRot);
 end;
 
 procedure oxTCamera.PitchYaw();
 begin
-   SetForward(Rotation);
+   ForwardFromRotation(Rotation);
 end;
 
-procedure oxTCamera.SetForward(const newRotation: TVector3f);
+procedure oxTCamera.ForwardFromRotation(const newRotation: TVector3f);
 var
    pitch,
    yaw: single;
@@ -159,12 +168,12 @@ var
 begin
    Rotation := newRotation;
 
-   pitch := -newRotation[0] * vmcToRad;
-   yaw   :=  newRotation[1] * vmcToRad;
+   pitch := newRotation[0] * vmcToRad;
+   yaw   := newRotation[1] * vmcToRad;
 
-   vView[0] := sin(yaw) * cos(pitch);
+   vView[0] := cos(pitch) * cos(yaw);
    vView[1] := sin(pitch);
-   vView[2] := cos(yaw) * cos(pitch);
+   vView[2] := cos(pitch) * sin(yaw);
 
    vView.Normalize();
 
@@ -191,11 +200,19 @@ end;
 
 procedure oxTCamera.UpFromView();
 begin
-   vUp := vView.Cross(vView.Cross(oxvCameraUp)) * -1;
-   vUp.Normalize();
+   vUp := oxvCameraUp;
+
+   vRight := vUp.Cross(vView).Normalized();
+
+   vUp := vView.Cross(vRight).Normalized();
 end;
 
 procedure oxTCamera.SetupRotation();
+begin
+   GetRotationAngles(Rotation);
+end;
+
+procedure oxTCamera.GetRotationAngles(out v: TVector3f);
 var
    d: TVector3f;
    pitch,
@@ -203,48 +220,35 @@ var
 
 begin
    d := vView;
-   d.Normalize();
 
    pitch := arcsin(d[1]);
-   yaw := arctan2(d[0], d[2]);
+   yaw := arctan2(d[2], d[0]);
 
    Rotation[0] := pitch * vmcToDeg;
    Rotation[1] := yaw * vmcToDeg;
    Rotation[2] := 0;
-
-   UpFromView();
 end;
 
 procedure oxTCamera.LookAt(apply: boolean);
 var
-   target,
-   direction,
-   side,
-   cameraUp: TVector3f;
+   direction: TVector3f;
 
    m,
    mpos: TMatrix4f;
 
 begin
-   target := vPos + vView;
-   direction := vPos - target;
+   direction := vView * -1;
    direction.Normalize();
-
-   side := vUp.Cross(direction);
-   side.Normalize();
-
-   cameraUp := direction.Cross(side);
-   cameraUp.Normalize();
 
    m := vmmUnit4;
 
-   m[0][0] := side[0];
-   m[0][1] := side[1];
-   m[0][2] := side[2];
+   m[0][0] := vRight[0];
+   m[0][1] := vRight[1];
+   m[0][2] := vRight[2];
 
-   m[1][0] := cameraUp[0];
-   m[1][1] := cameraUp[1];
-   m[1][2] := cameraUp[2];
+   m[1][0] := vUp[0];
+   m[1][1] := vUp[1];
+   m[1][2] := vUp[2];
 
    m[2][0] := direction[0];
    m[2][1] := direction[1];
@@ -260,6 +264,16 @@ begin
       Transform.Apply(m * mpos)
    else
       Transform.Matrix := m * mpos;
+end;
+
+procedure oxTCamera.Apply(const m: TMatrix4f);
+begin
+   oxTransform.Apply(m);
+end;
+
+procedure oxTCamera.Apply();
+begin
+   oxTransform.Apply();
 end;
 
 procedure oxTCamera.GetRay(length: single; out vS, vE: TVector3f);
@@ -288,6 +302,16 @@ end;
 
 procedure oxTCamera.Initialize();
 begin
+   Reset();
+end;
+
+procedure oxTCamera.Dispose();
+begin
+   FreeObject(Transform);
+end;
+
+procedure oxTCamera.Reset();
+begin
    vPos   := oxvCameraPosition;
    vView  := oxvCameraView;
    vUp    := oxvCameraUp;
@@ -297,12 +321,6 @@ begin
 
    Transform := oxTTransform.Instance();
 end;
-
-procedure oxTCamera.Dispose();
-begin
-   FreeObject(Transform);
-end;
-
 
 procedure oxTCameraCursorControl.Start();
 begin
@@ -345,7 +363,7 @@ begin
       LastPointerPosition[0] := nx;
       LastPointerPosition[1] := ny;
 
-      Camera.IncPitchYaw(-my / CursorAngleSpeed, mx / CursorAngleSpeed);
+      Camera.IncPitchYaw(my / CursorAngleSpeed, mx / CursorAngleSpeed);
    end;
 end;
 
@@ -386,12 +404,18 @@ begin
       LastPointerPosition[1] := ny;
 
       vmRotateAroundPoint(mx / CursorAngleSpeed / 3.14, 0, 1, 0, vmvZero3f, Camera.vPos);
-      vmRotateAroundPoint(-my / CursorAngleSpeed / 3.14, 1, 0, 0, vmvZero3f, Camera.vPos);
+      vmRotateAroundPoint(my / CursorAngleSpeed / 3.14, 1, 0, 0, vmvZero3f, Camera.vPos);
 
-      Camera.vView :=  (Camera.vPos - vmvZero3f) * -1.0;
+      vmRotateAroundPoint(mx / CursorAngleSpeed / 3.14, 0, 1, 0, vmvZero3f, Camera.vUp);
+      vmRotateAroundPoint(my / CursorAngleSpeed / 3.14, 1, 0, 0, vmvZero3f, Camera.vUp);
+      Camera.vUp.Normalize();
+
+      Camera.vView := (vmvZero3f - Camera.vPos);
       Camera.vView.Normalize();
 
-      Camera.UpFromView();
+      Camera.vRight := Camera.vView.Cross(Camera.vUp);
+
+      camera.SetupRotation();
    end;
 end;
 
