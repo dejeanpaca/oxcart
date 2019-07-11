@@ -33,6 +33,8 @@ begin
       wnd.Camera.vView.Normalize();
 
       wnd.Camera.SetupRotation();
+      wnd.Camera.UpFromView();
+
       {NOTE: This hack allows for proper rendering when using an UP or DOWN camera view}
       wnd.Camera.PitchYaw();
    end;
