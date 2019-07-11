@@ -224,9 +224,9 @@ begin
    pitch := arcsin(d[1]);
    yaw := arctan2(d[2], d[0]);
 
-   Rotation[0] := pitch * vmcToDeg;
-   Rotation[1] := yaw * vmcToDeg;
-   Rotation[2] := 0;
+   v[0] := pitch * vmcToDeg;
+   v[1] := yaw * vmcToDeg;
+   v[2] := 0;
 end;
 
 procedure oxTCamera.LookAt(apply: boolean);
