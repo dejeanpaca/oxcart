@@ -44,7 +44,8 @@ TYPE
       DockedProperties: record
          Frame: uiTWindowFrameStyle;
          Resizable,
-         DropShadow: boolean;
+         DropShadow,
+         NoEscapeKey: boolean;
       end;
 
       {frame style before the wndow was tabbed}
@@ -917,7 +918,10 @@ begin
    if(not Docked) then begin
       DockedProperties.Resizable := uiwndpRESIZABLE in Properties;
       DockedProperties.DropShadow := uiwndpDROP_SHADOW in Properties;
+      DockedProperties.NoEscapeKey := uiwndpNO_ESCAPE_KEY in Properties;
+
       Properties := Properties - [uiwndpRESIZABLE, uiwndpDROP_SHADOW];
+      Properties := Properties + [uiwndpNO_ESCAPE_KEY];
    end;
 
    Docked := true;
@@ -938,6 +942,11 @@ begin
          Include(Properties, uiwndpDROP_SHADOW)
       else
          Exclude(Properties, uiwndpDROP_SHADOW);
+
+      if(DockedProperties.NoEscapeKey) then
+         Include(Properties, uiwndpDROP_SHADOW)
+      else
+         Exclude(Properties, uiwndpNO_ESCAPE_KEY);
    end;
 end;
 
