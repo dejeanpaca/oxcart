@@ -115,6 +115,8 @@ TYPE
       procedure StartTask(taskType: oxedTBuildTaskType);
       {open project directory}
       class procedure OpenProjectDirectory(); static;
+      {open project configuration directory}
+      class procedure OpenProjectConfiguration(); static;
    end;
 
 VAR
@@ -854,6 +856,11 @@ begin
    app.OpenFileManager(oxedProject.Path);
 end;
 
+class procedure oxedTBuildGlobal.OpenProjectConfiguration();
+begin
+
+end;
+
 procedure CreateSourceFile(const fn: string);
 var
    p: TAppendableString;
@@ -895,6 +902,7 @@ INITIALIZATION
    oxedActions.REBUILD_THIRD_PARTY := appActionEvents.SetCallback(@oxedBuild.RebuildThirdPartyTask);
 
    oxedActions.OPEN_PROJECT_DIRECTORY := appActionEvents.SetCallback(@oxedBuild.OpenProjectDirectory);
+   oxedActions.OPEN_PROJECT_CONFIGURATION := appActionEvents.SetCallback(@oxedBuild.OpenProjectConfiguration);
 
    oxedProjectScanner.OnDone.Add(@onScanDone);
 

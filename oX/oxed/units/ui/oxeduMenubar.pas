@@ -229,6 +229,8 @@ begin
    oxedIcons.Create(item, $f1b0);
    item := Project.AddItem('Open Project Directory', oxedActions.OPEN_PROJECT_DIRECTORY);
    oxedIcons.Create(item, $f07b);
+   item := Project.AddItem('Open Project Configuration', oxedActions.OPEN_PROJECT_CONFIGURATION);
+   oxedIcons.Create(item, $f07b);
 
    { WINDOWS }
 
