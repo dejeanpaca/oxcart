@@ -4,8 +4,8 @@ INTERFACE
 
    USES
       uColors, appuKeys,
-      uOX, oxuScene, oxuWindowTypes, oxuWindow, oxuWindows, oxuProjection,
-      oxuTypes, oxuRender, oxuRenderer, oxuMaterial, oxuTransform,
+      uOX, oxuScene, oxuWindowTypes, oxuWindow, oxuWindows, oxuProjectionType, oxuProjection,
+      oxuTypes, oxuRender, oxuRenderer, oxuMaterial, oxuTransform, oxuRunRoutines,
       oxuFont, oxumPrimitive, oxuKeyboardControl,
       {$INCLUDE usesgl.inc},
       vmVector;
@@ -96,13 +96,13 @@ begin
 
    wnd := oxWindow.Current;
 
-   projections[0] := oxTProjection.Create(wnd.Projection);
+   projections[0].Initialize(projections[0]);
    projections[0].Name := 'ox';
    projections[0].ClearColor.Assign(0.2, 0.2, 1.0, 1.0);
    projections[0].SetViewport(0, 0, wnd.Dimensions.w div 2, wnd.Dimensions.h);
    projections[0].Perspective(60, 0.5, 1000.0);
 
-   projections[1] := oxTProjection.Create(wnd.Projection);
+   projections[1].Initialize(projections[1]);
    projections[1].Name := 'gl';
    projections[1].ClearColor.Assign(1.0, 0.2, 0.2, 1.0);
    projections[1].SetViewport(wnd.Dimensions.w div 2, 0, wnd.Dimensions.w div 2, wnd.Dimensions.h);
@@ -118,9 +118,11 @@ begin
    primitive.Dispose();
 end;
 
+var
+   initRoutine: oxTRunRoutine;
+
 INITIALIZATION
-   ox.OnInitialize.Add(@init);
-   ox.OnDeinitialize.Add(@deinit);
+   ox.OnInitialize.Add(initRoutine, 'init', @init, @deinit);
 
    oxSceneManagement.Enabled := false;
 
