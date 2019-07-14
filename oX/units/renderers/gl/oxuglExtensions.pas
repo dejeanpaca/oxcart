@@ -44,9 +44,10 @@ TYPE
       PlatformSpecific: oglPExtensionDescriptor;
       nPlatformSpecific: loopint;
 
+      pExtensions: oglPExtensionDescriptor;
+
       {$IFDEF OX_LIBRARY_SUPPORT}
       pExternal: oglPExtensions;
-      pExtensions: oglPExtensionDescriptor;
       {$ENDIF}
 
       procedure Get({%H-}wnd: oxTWindow);

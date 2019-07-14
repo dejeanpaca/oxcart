@@ -12,7 +12,7 @@ INTERFACE
 
    USES uLog,
      appuKeys, appuActionEvents,
-     uOX, oxuTypes, oxuWindowTypes, oxuTexture, oxuTextureGenerate,
+     uOX, oxuTypes, oxuWindowTypes, oxuTexture, oxuTextureGenerate, oxuRunRoutines,
      oxuKeyboardControl, oxuTimer, vmVector, oxuTransform;
 
 CONST
@@ -83,7 +83,10 @@ begin
    oxKey.UpRoutine := @TTestTools.DefaultKeyUp;
 end;
 
+VAR
+   initRoutine: oxTRunRoutine;
+
 INITIALIZATION
-   ox.OnInitialize.Add(@init);
+   ox.OnInitialize.Add(initRoutine, 'test_tools', @init);
 
 END.
