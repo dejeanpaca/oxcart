@@ -256,9 +256,9 @@ end;
 
 function oxTTransform.GetForward(): TVector3f;
 begin
-   Result[0] := Matrix[0][2];
-   Result[1] := Matrix[1][2];
-   Result[2] := Matrix[2][2];
+   Result[0] := -Matrix[0][2];
+   Result[1] := -Matrix[1][2];
+   Result[2] := -Matrix[2][2];
 end;
 
 function oxTTransform.GetUp(): TVector3f;
@@ -290,9 +290,9 @@ begin
       x := 0;
       z := 0;
    end else begin
-      x := arctan2(-Matrix[2][0], Matrix[0][0]);
+      x := arctan2(Matrix[2][0], Matrix[0][0]);
       y := arcsin(Matrix[1][0]);
-      z := arctan2(-Matrix[1][2], Matrix[1][1]);
+      z := arctan2(Matrix[1][2], Matrix[1][1]);
    end;
 end;
 
