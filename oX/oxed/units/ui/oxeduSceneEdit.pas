@@ -429,9 +429,9 @@ end;
 function oxedTSceneEditWindow.OrbitControl(var e: appTMouseEvent): boolean;
 begin
    {middle button}
-   if(e.Button.IsSet(appmcMIDDLE) and e.IsPressed()) or
+   if(e.bState.IsSet(appmcMIDDLE) and e.IsButtonAction()) or
       {shift + right button}
-      (e.bState.IsSet(appmcRIGHT) and (e.IsPressed() or e.IsMoved()) and appk.Shift()) then begin
+      (e.bState.IsSet(appmcRIGHT) and e.IsButtonAction() and appk.Alt()) then begin
       if(not CameraOrbitMode) then begin
          LockPointer();
 
