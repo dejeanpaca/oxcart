@@ -11,14 +11,17 @@ PROGRAM viewports;
       {oX}
       {$INCLUDE oxappuses.inc}, uColors,
       {ox}
-      oxuProjection, oxuWindowTypes, oxuWindow, oxuWindows, oxuFont,
-      oxumPrimitive, oxuTexture, oxuTransform, oxuRender, oxuRenderer, oxuMaterial,
+      oxuProjectionType, oxuProjection, oxuWindowTypes, oxuWindow, oxuWindows, oxuFont,
+      oxumPrimitive, oxuTexture, oxuTransform, oxuRender, oxuRenderer, oxuMaterial, oxuRunRoutines,
       {test}
       uTestTools;
 
 VAR
    primitive: oxTPrimitiveModel;
    projections: array[0..3] of oxTProjection;
+
+   initRoutines,
+   runRoutine: oxTRunRoutine;
 
 procedure RenderScene(var projection: oxTProjection);
 var
@@ -57,25 +60,31 @@ end;
 
 procedure initialize();
 begin
-   { disable default context }
-   oxWindow.Current..Enabled := false;
+   oxWindows.OnRender.Add(@Render);
 
-   projections[0] := oxTProjection.Create(0, 240, 320, 240);
+   { disable default context }
+   oxWindow.Current.Projection.Enabled := false;
+
+   oxTProjection.Create(projections[0]);
+   projections[0].Initialize(0, 240, 320, 240);
    projections[0].Name := '0';
    projections[0].ClearColor.Assign(0.2, 0.2, 1.0, 1.0);
    projections[0].Perspective(60, 0.5, 1000.0);
 
-   projections[1] := oxTProjection.Create(320, 240, 320, 240);
+   oxTProjection.Create(projections[1]);
+   projections[1].Initialize(320, 240, 320, 240);
    projections[1].Name := '1';
    projections[1].ClearColor.Assign(0.2, 1.0, 0.2, 1.0);
    projections[1].Ortho(2.5, 2.5, 0.5, 1000.0);
 
-   projections[2] := oxTProjection.Create(0, 0, 640, 240);
+   oxTProjection.Create(projections[2]);
+   projections[2].Initialize(0, 0, 640, 240);
    projections[2].Name := '1';
    projections[2].ClearColor.Assign(1.0, 0.2, 0.2, 1.0);
    projections[2].Perspective(60, 0.5, 1000.0);
 
-   projections[3] := oxTProjection.Create(560, 20, 64, 64);
+   oxTProjection.Create(projections[3]);
+   projections[3].Initialize(560, 20, 64, 64);
    projections[3].Name := '2';
    projections[3].ClearColor.Assign(0.2, 0.2, 0.2, 1.0);
    projections[3].Ortho(2.5, 2.5, 0.5, 1000.0);
@@ -93,18 +102,11 @@ begin
    primitive.Dispose();
 end;
 
-procedure InitializeTest();
-begin
-   ox.OnInitialize.Add(@initialize);
-   ox.OnRun.Add(@run);
-   ox.OnDeinitialize.Add(@deinitialize);
-
-   oxWindows.OnRender.Add(@Render);
-end;
-
 BEGIN
    appInfo.setName('Viewports');
-   ox.AppProcs.iAdd('app', @InitializeTest);
+
+   ox.OnInitialize.Add(initRoutines, 'init', @initialize, @deinitialize);
+   ox.OnRun.Add(runRoutine, 'run', @run);
 
    oxRun.Go();
 END.
