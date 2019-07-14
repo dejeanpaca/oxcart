@@ -494,114 +494,114 @@ end;
 
 function TPascalSourceBuilder.BuildUnit(): TAppendableString;
 begin
-   result := '';
+   Result := '';
 
    if(Header <> '') then
-      result.Add(Header);
+      Result.Add(Header);
 
-   result.Add('UNIT ' + Name + ';');
-   result.Add('');
+   Result.Add('UNIT ' + Name + ';');
+   Result.Add('');
 
-   result.Add('INTERFACE');
+   Result.Add('INTERFACE');
 
-   AddUses(result);
+   AddUses(Result);
 
    if(sInterface <> '') then begin
-      result.Add('');
-      result.Add(sInterface);
+      Result.Add('');
+      Result.Add(sInterface);
    end;
 
-   result.Add('');
+   Result.Add('');
 
-   result.Add('IMPLEMENTATION');
-   result.Add('');
+   Result.Add('IMPLEMENTATION');
+   Result.Add('');
 
    if(sImplementation <> '') then begin
-      result.Add(sImplementation);
-      result.Add('');
+      Result.Add(sImplementation);
+      Result.Add('');
    end;
 
    if(sInitialization <> '') then begin
-      result.Add('INITIALIZATION');
-      result.Add(sInitialization);
-      result.Add('');
+      Result.Add('INITIALIZATION');
+      Result.Add(sInitialization);
+      Result.Add('');
    end;
 
-   result.Add('END.');
+   Result.Add('END.');
 end;
 
 function TPascalSourceBuilder.BuildProgram: TAppendableString;
 begin
-   result := '';
+   Result := '';
 
    if(Header <> '') then
-      result.Add(Header);
+      Result.Add(Header);
 
-   result.Add('PROGRAM ' + Name + ';');
+   Result.Add('PROGRAM ' + Name + ';');
 
    if(sUses <> '') then
-      AddUses(result)
+      AddUses(Result)
    else
-      result.Add('');
+      Result.Add('');
 
-   result.Add('BEGIN');
+   Result.Add('BEGIN');
 
    if(sMain <> '') then begin
-      result.Add('');
-      result.Add(sMain);
+      Result.Add('');
+      Result.Add(sMain);
    end;
 
-   result.Add('');
-   result.Add('END.');
+   Result.Add('');
+   Result.Add('END.');
 end;
 
 function TPascalSourceBuilder.BuildLibrary: TAppendableString;
 begin
-   result := '';
+   Result := '';
 
    if(Header<> '') then
-      result.Add(Header);
+      Result.Add(Header);
 
-   result.Add('LIBRARY ' + Name + ';');
-   result.Add('');
+   Result.Add('LIBRARY ' + Name + ';');
+   Result.Add('');
 
    if(sUses <> '') then
-      AddUses(result)
+      AddUses(Result)
    else
-      result.Add('');
+      Result.Add('');
 
    if(sInterface <> '') then begin
-      result.Add('');
-      result.Add(sInterface);
+      Result.Add('');
+      Result.Add(sInterface);
    end;
 
    if(sExports <> '') then begin
-      result.Add('EXPORTS');
-      result.Add(sExports + ';');
-      result.Add('');
+      Result3.Add('EXPORTS');
+      Result.Add(sExports + ';');
+      Result.Add('');
    end;
 
    if(sInitialization <> '') then begin
-      result.Add('INITIALIZATION');
-      result.Add(sInitialization);
-      result.Add('');
+      Result.Add('INITIALIZATION');
+      Result.Add(sInitialization);
+      Result.Add('');
    end;
 
-   result.Add('END.');
+   Result.Add('END.');
 end;
 
 { TBuildSystemTools }
 
 procedure TBuildSystemTools.SetPath(const s: StdString);
 begin
-   path := s;
-   FileUtils.NormalizePathEx(path);
+   Path := s;
+   FileUtils.NormalizePathEx(Path);
 end;
 
 procedure TBuildSystemTools.SetBuildPath(const s: StdString);
 begin
-   build := s;
-   FileUtils.NormalizePathEx(build);
+   Build := s;
+   FileUtils.NormalizePathEx(Build);
 end;
 
 { TBuildSystem }
@@ -653,7 +653,7 @@ begin
 
    Libraries.Source := Tools.Build + 'libraries' + DirectorySeparator;
 
-   {go through platforms and find an available platform}
+   {go through Platforms and find an available platform}
    SetupAvailablePlatform();
    SetupAvailableLazarus();
 
@@ -721,8 +721,8 @@ begin
 
    {read per platform mode configuration}
    mode := '';
-   if(buildMode <> '') then
-      mode := '.' + buildMode;
+   if(BuildMode <> '') then
+      mode := '.' + BuildMode;
 
    fn := ConfigPath + 'build.' + platform + mode + '.config';
    if(FileUtils.Exists(fn) > 0) then
@@ -733,8 +733,8 @@ begin
    if(FileUtils.Exists(fn) > 0) then
       dvarf.ReadText(dvgConfig, fn);
 
-   FileUtils.NormalizePathEx(tools.build);
-   FileUtils.NormalizePathEx(tools.path);
+   FileUtils.NormalizePathEx(Tools.Build);
+   FileUtils.NormalizePathEx(Tools.Path);
 end;
 
 procedure TBuildSystem.SaveLocationConfiguration();
@@ -763,7 +763,7 @@ begin
    if(FileUtils.Exists(fn) > 0) then begin
       currentConfigFilePath := ExtractFilePath(fn);
 
-      {read units from unit configuration}
+      {read Units from unit configuration}
       dvarf.ReadText(dvgUnits, fn);
    end;
 end;
@@ -811,9 +811,9 @@ end;
 function TBuildSystem.GetLPIFilename(const path: StdString): StdString;
 begin
    if(ExtractFileExt(path) = '.lpi') then
-      result := path
+      Result := path
    else
-      result := path + '.lpi';
+      Result := path + '.lpi';
 end;
 
 function TBuildSystem.GetToolProcess(): TProcess;
@@ -864,13 +864,13 @@ begin
       executableName := GetExecutableNameFromLPI(path);
 
       if(executableName <> '') then
-         output.executableName := ExtractFilePath(path) + executableName
+         Output.ExecutableName := ExtractFilePath(path) + executableName
       else
-         output.executableName := ExtractAllNoExt(path);
+         Output.ExecutableName := ExtractAllNoExt(path);
 
-      output.ExecutableName := GetExecutableName(output.executableName, Options.IsLibrary);
+      Output.ExecutableName := GetExecutableName(Output.ExecutableName, Options.IsLibrary);
 
-      output.success := true;
+      Output.Success := true;
       log.k('build > Building successful');
    end else begin
       BuildingFailed(p);
@@ -885,7 +885,7 @@ VAR
 
 function readf(var parseData: TParseData): boolean;
 begin
-   result := true;
+   Result := true;
 
    if(parseData.currentLine = '<Target>') then begin
       executableNameNext := true;
@@ -914,7 +914,7 @@ begin
    p.stripWhitespace := true;
    p.Read(GetLPIFilename(path), TParseMethod(@readf));
 
-   result := executableName;
+   Result := executableName;
 end;
 
 procedure TBuildSystem.Pas(const originalPath: StdString);
@@ -927,7 +927,7 @@ begin
    path := originalPath;
    ReplaceDirSeparators(path);
 
-   output.success := false;
+   Output.Success := false;
 
    log.i('build > Building: ' + path);
 
@@ -974,8 +974,8 @@ begin
    StoreOutput(p);
 
    if((p.ExitStatus = 0) and (p.ExitCode = 0)) then begin
-      output.ExecutableName := GetExecutableName(ExtractFilePath(path) + ExtractFileNameNoExt(path), Options.IsLibrary);
-      output.Success := true;
+      Output.ExecutableName := GetExecutableName(ExtractFilePath(path) + ExtractFileNameNoExt(path), Options.IsLibrary);
+      Output.Success := true;
       log.k('build > Building successful');
    end else begin
       BuildingFailed(p);
@@ -986,18 +986,18 @@ end;
 
 procedure TBuildSystem.BuildingFailed(const p: TProcess);
 begin
-   output.ErrorDecription := '';
-   output.Success := false;
+   Output.ErrorDecription := '';
+   Output.Success := false;
 
    if(not FileExists(p.Executable)) then
-      output.ErrorDecription := 'tool not found: ' + p.Executable;
+      Output.ErrorDecription := 'tool not found: ' + p.Executable;
 
    if(p.ExitCode <> 0) then
-      output.ErrorDecription := 'tool returned exit code: ' + sf(p.ExitCode);
+      Output.ErrorDecription := 'tool returned exit code: ' + sf(p.ExitCode);
    if(p.ExitStatus <> 0) then
-      output.ErrorDecription := 'tool exited with status: ' + sf(p.ExitStatus);
+      Output.ErrorDecription := 'tool exited with status: ' + sf(p.ExitStatus);
 
-   log.e('build > ' + output.ErrorDecription);
+   log.e('build > ' + Output.ErrorDecription);
 
    LogOutput(p);
 end;
@@ -1008,7 +1008,7 @@ var
    error: fileint;
 
 begin
-   output.success := false;
+   Output.Success := false;
 
    if(path = '') then begin
       log.e('build > CopyTool given empty parameter.');
@@ -1018,7 +1018,7 @@ begin
    fullPath := path;
    ReplaceDirSeparators(fullPath);
 
-   target := tools.path + ExtractFileName(fullPath);
+   target := Tools.Path + ExtractFileName(fullPath);
 
    if(FileUtils.Exists(fullPath) < 0) then begin
       log.e('build > Tool: ' + fullPath + ' could not be found');
@@ -1039,23 +1039,23 @@ begin
    end;
    {$ENDIF}
 
-   output.Success := true;
+   Output.Success := true;
 end;
 
 procedure TBuildSystem.LazTool(const path: StdString);
 begin
    Laz(path);
 
-   if(output.success) then
-      CopyTool(output.executableName);
+   if(Output.Success) then
+      CopyTool(Output.ExecutableName);
 end;
 
 procedure TBuildSystem.PasTool(const path: StdString);
 begin
    Pas(path);
 
-   if(output.success) then
-      CopyTool(output.executableName);
+   if(Output.Success) then
+      CopyTool(Output.ExecutableName);
 end;
 
 procedure TBuildSystem.LogOutput(const p: TProcess);
@@ -1146,7 +1146,7 @@ begin
       end;
    end;
 
-   result := p;
+   Result := p;
 end;
 
 function TBuildSystem.GetIncludesPath(const basePath: StdString; const paths: TPreallocatedStringArrayList; const existing: StdString): StdString;
@@ -1199,24 +1199,24 @@ begin
       end;
    end;
 
-   result := p;
+   Result := p;
 end;
 
 procedure TBuildSystem.StoreOutput(p: TProcess);
 begin
-   output.ExitCode := p.ExitCode;
+   Output.ExitCode := p.ExitCode;
 
    if(poUsePipes in p.Options) then begin
       if(p.Stderr.NumBytesAvailable > 0) then
-         output.ErrorDecription := p.Stderr.ReadAnsiString();
+         Output.ErrorDecription := p.Stderr.ReadAnsiString();
    end;
 end;
 
 procedure TBuildSystem.ResetOutput();
 begin
-   output.Success := false;
-   output.ExecutableName := '';
-   output.ErrorDecription := '';
+   Output.Success := false;
+   Output.ExecutableName := '';
+   Output.ErrorDecription := '';
 end;
 
 procedure TBuildSystem.Wait(p: TProcess);
