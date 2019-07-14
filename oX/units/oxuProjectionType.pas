@@ -19,10 +19,10 @@ TYPE
    {projection properties}
    oxPProjectionSettings = ^oxTProjectionSettings;
    oxTProjectionSettings = record
-      isOrtho: boolean; {is the projection orthographic?}
-      fovY,
-      zNear,
-      zFar,
+      IsOrtographic: boolean; {is the projection orthographic?}
+      FovY,
+      ZNear,
+      ZFar,
       l,
       r,
       b,
@@ -36,6 +36,8 @@ TYPE
    oxTProjection = record
       Name: string;
 
+      {is the projection ortographic}
+      IsOrtographic,
       {is the projection enabled}
       Enabled,
       {update from source (window) when source is resized}
@@ -64,11 +66,22 @@ TYPE
    end;
 
 CONST
-   oxDefaultProjection: oxTProjectionSettings = (
-      isOrtho:    false;
-      fovY:       45;
-      zNear:      0.5;
-      zFar:       1000.0;
+   oxDefaultPerspective: oxTProjectionSettings = (
+      IsOrtographic: false;
+      FovY:       60;
+      ZNear:      0.5;
+      ZFar:       1000.0;
+      l:          -50;
+      r:          50;
+      b:          -50;
+      t:          50
+   );
+
+   oxDefaultOrthographic: oxTProjectionSettings = (
+      IsOrtographic: true;
+      FovY:       60;
+      ZNear:      -1.0;
+      ZFar:       1.0;
       l:          -50;
       r:          50;
       b:          -50;
