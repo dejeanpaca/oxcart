@@ -29,8 +29,8 @@ TYPE
       {this task runs in the background and does not block other operations}
       Background: boolean;
 
-      constructor Create; override;
-      destructor Destroy; override;
+      constructor Create(); override;
+      destructor Destroy(); override;
 
       procedure ThreadStart(); override;
       procedure ThreadDone(); override;
@@ -64,7 +64,7 @@ IMPLEMENTATION
 
 { oxedTTask }
 
-constructor oxedTTask.Create;
+constructor oxedTTask.Create();
 begin
    inherited Create;
 
@@ -72,10 +72,12 @@ begin
    Background := false;
    TaskType := oxedTBaseTask;
 
+   SleepTime := 5;
+
    oxedTasks.Add(Self);
 end;
 
-destructor oxedTTask.Destroy;
+destructor oxedTTask.Destroy();
 begin
    inherited Destroy;
 
