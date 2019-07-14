@@ -20,6 +20,8 @@ TYPE
    { oxTProjectionHelper }
 
    oxTProjectionHelper = record helper for oxTProjection
+      class procedure Create(out projection: oxTProjection); static;
+
       procedure Initialize();
       procedure Initialize(x, y, w, h: longint);
 
@@ -89,6 +91,13 @@ VAR
    oxProjection: oxPProjection;
 
 IMPLEMENTATION
+
+class procedure oxTProjectionHelper.Create(out projection: oxTProjection);
+begin
+   ZeroPtr(@projection, SizeOf(projection));
+
+   projection.Initialize();
+end;
 
 procedure oxTProjectionHelper.Initialize();
 begin
