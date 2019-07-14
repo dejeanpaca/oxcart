@@ -11,7 +11,7 @@ UNIT oxeduStatusInfo;
 INTERFACE
 
    USES
-      uStd, uBinarySize,
+      uStd, uBinarySize, uTiming,
       {ox}
       uOX, oxuRunRoutines,
       {widgets}
@@ -50,20 +50,30 @@ begin
    SetupInfo();
 end;
 
+VAR
+   timer: TTimer;
+
 procedure updateInfo();
 var
+   status: StdString;
    heapStatus: THeapStatus;
 
 begin
-   if(oxedStatusInfo.Wdg.Info <> nil) then begin
+   timer.Update();
+
+   if(oxedStatusInfo.Wdg.Info <> nil) and (timer.Elapsed() >= 1000)  then begin
+      timer.Start();
       heapStatus := GetHeapStatus;
 
-      oxedStatusInfo.Wdg.Info^.Caption := getiecByteSizeHumanReadableSI(heapStatus.TotalFree) + '/' +
+      status := getiecByteSizeHumanReadableSI(heapStatus.TotalFree) + '/' +
          getiecByteSizeHumanReadableSI(heapStatus.TotalAllocated) + '/' +
          getiecByteSizeHumanReadableSI(heapStatus.Unused) + '/' +
          getiecByteSizeHumanReadableSI(heapStatus.TotalAddrSpace);
 
-      oxedStatusbar.Status.ItemChanged();
+      if(oxedStatusInfo.Wdg.Info^.Caption <> status) then begin
+         oxedStatusInfo.Wdg.Info^.Caption := status;
+         oxedStatusbar.Status.ItemChanged();
+      end;
    end;
 end;
 
@@ -72,6 +82,9 @@ VAR
    oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
+   TTimer.Init(timer);
+   timer.Start();
+
    oxed.PostInit.iAdd(oxedInitRoutines, 'status_info', @initialize);
 
    ox.OnRun.Add(updateRoutine, 'oxed.update_status_info', @updateInfo);
