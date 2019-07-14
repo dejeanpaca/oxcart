@@ -30,7 +30,8 @@ TYPE
       procedure RotateXYZ();
       procedure dtRotateXYZ();
       function LoadTexture(const name: string; var t: oxTTextureID): boolean;
-      class function DefaultKeyUp(var key: appTKeyEvent; wnd: oxTWindow): boolean; static;
+
+      class function DefaultKeyUp(var key: appTKeyEvent; {%H-}wnd: oxTWindow): boolean; static;
    end;
 
 VAR
