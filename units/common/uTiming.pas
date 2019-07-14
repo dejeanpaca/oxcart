@@ -3,6 +3,8 @@
    Copyright (C) 2011. Dejan Boras
 
    Started On:    28.01.2011.
+
+   TODO: Implement interval logic
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}{$MODESWITCH TYPEHELPERS}
@@ -10,7 +12,7 @@ UNIT uTiming;
 
 INTERFACE
 
-   USES SysUtils, StringUtils;
+   USES SysUtils, StringUtils, uStd;
 
 TYPE
    {contains the start of timing, elapsed time, and the goal time}
@@ -95,6 +97,17 @@ TYPE
       function ElapsedfToString(decimals: longint = 2): string;
 
       function MatchingDay(const other: TDateTime): boolean;
+   end;
+
+   { TTimerInterval }
+
+   TTimerInterval = record
+      Interval: longint;
+      Timer: TTimer;
+
+      class procedure Initialize(out t: TTimerInterval; setInterval: longint = 1000); static;
+      procedure Start(setInterval: longint = 1000);
+      function Elapsed(): boolean;
    end;
 
    {note: goal and elapsed time is relative of start time}
@@ -322,6 +335,47 @@ begin
    Result := (DateTimeToTimestamp(t2).Time - DateTimeToTimestamp(t1).Time) / 1000;
 end;
 
+{ TTimerInterval }
+
+class procedure TTimerInterval.Initialize(out t: TTimerInterval; setInterval: longint);
+begin
+   ZeroPtr(@t, SizeOf(t));
+
+   t.Timer.Init();
+
+   t.Start(setInterval);
+end;
+
+procedure TTimerInterval.Start(setInterval: longint);
+begin
+   Timer.Start();
+
+   Interval := setInterval;
+end;
+
+function TTimerInterval.Elapsed(): boolean;
+var
+   elapsedTime,
+   intervalOffset: longint;
+
+begin
+   Timer.Update();
+
+   elapsedTime := Timer.Elapsed();
+
+   if(elapsedTime >= Interval) then begin
+      intervalOffset := elapsedTime - Interval;
+
+      Timer.Start();
+
+      if(intervalOffset > 0) then
+         Timer.StartOffset(-intervalOffset);
+
+      exit(true);
+   end;
+
+   Result := false;
+end;
 
 INITIALIZATION
    {setup the default timer}
