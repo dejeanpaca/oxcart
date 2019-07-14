@@ -179,6 +179,10 @@ function oxglTRenderer.SetupWindow(wnd: oxTWindow): boolean;
 begin
    errorCode := 0;
 
+   {$IFDEF OX_LIBRARY_SUPPORT}
+   oglExtensions.pExternal := pExtensions;
+   {$ENDIF}
+
    if(ox.LibraryMode) then begin
       {in library mode, we haven't done any of this as the window was not created}
       ogl.InitializePre();
