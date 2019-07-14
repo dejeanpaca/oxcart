@@ -13,10 +13,10 @@ INTERFACE
    USES
       {$IFNDEF OX_LIBRARY}
       appuSysInfo
-      {$IFDEF OX_LIBRARY_SUPPORT}, appuSysInfoBase, oxuGlobalInstances;{$ENDIF}
+      {$IFDEF OX_LIBRARY_SUPPORT}, appuSysInfoBase, oxuGlobalInstances{$ENDIF}
       {$ELSE}
       uApp, appuSysInfoBase, oxuGlobalInstances,
-      uOX, oxuRunRoutines;
+      uOX, oxuRunRoutines
       {$ENDIF};
 
 IMPLEMENTATION
