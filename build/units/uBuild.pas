@@ -576,7 +576,7 @@ begin
    end;
 
    if(sExports <> '') then begin
-      Result3.Add('EXPORTS');
+      Result.Add('EXPORTS');
       Result.Add(sExports + ';');
       Result.Add('');
    end;

@@ -236,7 +236,7 @@ begin
          repeat
          until (not p.Running);
 
-         log.i('Executed: ' + build.Output.executableName);
+         log.i('Executed: ' + build.Output.ExecutableName);
 
          if(p.ExitStatus = 0) then
             Success := true

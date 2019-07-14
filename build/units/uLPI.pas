@@ -805,7 +805,7 @@ procedure TLPITemplate.Setup;
 begin
    {TODO: Should read this from a configuration file}
 
-   Path := build.tools.build + 'tools\lpi_templates\';
+   Path := build.Tools.Build + 'tools\lpi_templates\';
    FileUtils.NormalizePath(Path);
    Path := IncludeTrailingPathDelimiter(Path);
 
