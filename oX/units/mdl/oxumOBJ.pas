@@ -178,7 +178,7 @@ begin
                   if(previousFacePointCount <> 0) and (facePointCount <> previousFacePointCount) then begin
                      if(not ld.InconsistentFaces) then begin
                         ld.InconsistentFaces := true;
-                        log.w('Faces have incosnistent number of points ' + m^.Name);
+                        log.w('Faces have inconsistent number of points ' + m^.Name);
                         Break;
                      end;
                   end;
@@ -509,8 +509,10 @@ begin
    scan(pData^, loaderData);
 
    { we can't load this }
-   if(loaderData.InconsistentFaces) then
+   if(loaderData.InconsistentFaces) then begin
+      options^.Model.Validate();
       exit;
+   end;
 
    { actually load the model }
    load(pData^, loaderData);
