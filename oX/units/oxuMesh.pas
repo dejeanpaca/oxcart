@@ -118,6 +118,8 @@ TYPE
       function IsQuad(): boolean;
       {convert quads to triangles}
       procedure QuadsToTriangles();
+
+      procedure Validate();
    end;
 
    oxTMeshes = specialize TPreallocatedArrayList<oxTMesh>;
@@ -543,6 +545,13 @@ begin
       Self := trim;
    end else begin
       {TODO: Convert quad arrays to triangle arrays}
+   end;
+end;
+
+procedure oxTMesh.Validate();
+begin
+   if(Length(Materials.List) <> Materials.n) then begin
+      Materials.n := Length(Materials.List);
    end;
 end;
 
