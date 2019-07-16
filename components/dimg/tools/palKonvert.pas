@@ -9,7 +9,8 @@
 {$MODE OBJFPC}{$H+}{$I-}
 PROGRAM palKonvert;
 
-   USES uStd, dError, Colors, dImage, ConsoleUtils, StringUtils;
+   USES
+      uStd, dError, Colors, dImage, ConsoleUtils, StringUtils;
 
 CONST
    dcProgramName           = 'palKonvert';
@@ -128,13 +129,15 @@ end;
 
 begin
    {open the file}
-   Assign(f, sourceFN);
-   Reset(f, 1);
-   if(_ioerror <> 0) then exit;
+   FileReset(f, sourceFN);
+   if(_ioerror <> 0) then
+      exit;
 
    {figure out what kind of a palette file it is}
    fSize := FileSize(f);
-   if(_ioerror <> 0) then exit;
+   if(_ioerror <> 0) then
+      exit;
+
    case fSize of
       16*3: begin
          Elements := 16;
@@ -211,9 +214,9 @@ end;
 
 begin
    {Open the file}
-   Assign(f, sourceFN);
-   Reset(f);
-   if(_ioerror <> 0) then exit;
+   FileReset(f, sourceFN);
+   if(_ioerror <> 0) then
+      exit;
 
    {a small buffer to speed up things}
    SetTextBuf(f, fileBuf, cFileBufSize);
@@ -349,8 +352,7 @@ begin
 end;
 
 begin
-   Assign(f, sourceFN);
-   Reset(f, 1);
+   FileReset(f, sourceFN);
    if(_ioerror() <> 0) then
       exit;
 
@@ -431,8 +433,7 @@ var
    repx: uint32;
 
 begin
-   Assign(f, destinationFN);
-   Rewrite(f, 1);
+   FileRewrite(f, destinationFN);
    if(_ioerror <> 0) then
       exit;
 
@@ -454,8 +455,7 @@ var
    repx: uint32;
 
 begin
-   Assign(f, destinationFN);
-   Rewrite(f);
+   FileRewrite(f, destinationFN);
    if(_ioerror <> 0) then
       exit;
 
@@ -540,9 +540,9 @@ end;
 
 begin
    {open the file}
-   Assign(f, destinationFN);
-   Rewrite(f, 1);
-   if(_ioerror <> 0) then exit;
+   FileRewrite(f, destinationFN);
+   if(_ioerror <> 0) then
+      exit;
 
    {write the header}
    hdr.ID         := xdpcID;
@@ -805,7 +805,7 @@ end;
 
 procedure WriteVersion();
 begin
-   writeln(dcProgramName+' v', hi(dcProgramVersion), '.', lo(dcProgramVersion));
+   writeln(dcProgramName + ' v', hi(dcProgramVersion), '.', lo(dcProgramVersion));
    writeln(dcProgramDescription);
    writeln();
    writeln('Copyright (c) '+dcProgramAuthor+' 2008.');
