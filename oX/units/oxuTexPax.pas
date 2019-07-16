@@ -548,8 +548,7 @@ begin
 end;
 
 begin
-   assign(f, fn);
-   rewrite(f);
+   FileRewrite(f, fn);
    errorCode := ioerror();
    if(errorCode = 0) then begin
       n := length(textures);

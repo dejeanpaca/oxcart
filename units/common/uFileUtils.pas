@@ -272,20 +272,18 @@ var
 begin
    if(fn <> '') then begin
       {first try regular files}
-      Assign(f, fn);
-      Reset(f, 1);
-      if(ioerror() = 0) then begin
-         result := FileSize(f);
+      if(FileReset(f, fn) = 0) then begin
+         Result := FileSize(f);
          ioerror();
 
          Close(f);
          ioerror();
       end else begin
-         result := -1;
+         Result := -1;
          ioE := eNONE;
       end;
    end else
-      result := -1;
+      Result := -1;
 end;
 
 class function TFileUtilsGlobal.hFileSize(const f: THandle): fileint;
@@ -431,9 +429,7 @@ begin
    ioE := eNONE;
 
    {first try regular files}
-   Assign(f, fn);
-   Rewrite(f, 1);
-   if(ioerror() = 0) then begin
+   if(FileRewrite(f, fn) = 0) then begin
       Close(f);
       ioerror();
       exit(true);
@@ -467,14 +463,10 @@ begin
    ZeroOut(sf, SizeOf(sF));
    ZeroOut(df, SizeOf(dF));
 
-   Assign(sF, source);
-   Reset(sF, 1);
-   if(ioerror() <> 0) then
+   if(FileReset(sF, source) <> 0) then
       exit(eFILE_COPY_OPEN_SOURCE);
 
-   Assign(dF, destination);
-   Rewrite(dF, 1);
-   if(ioerror() <> 0) then begin
+   if(FileRewrite(dF, destination) <> 0) then begin
       Close(sF);
       Close(dF);
       ioErrorIgn();
@@ -547,10 +539,8 @@ begin
    Result := 0;
    countRead := 0;
    data := '';
-   Assign(f, fn);
 
-   Reset(f, 1);
-   error := ioerror();
+   error := FileReset(f, fn);
    if(error <> 0) then
       exit(-error);
 
@@ -607,10 +597,8 @@ end;
 
 begin
    countRead := 0;
-   Assign(f, fn);
 
-   Reset(f, 1);
-   error := ioerror();
+   error := FileReset(f, fn);
    if(error <> 0) then
       exit(-error);
 
@@ -741,10 +729,7 @@ begin
 end;
 
 begin
-   Assign(f, fn);
-
-   Rewrite(f, 1);
-   error := ioerror();
+   error := FileRewrite(f, fn);
    if(error <> 0) then
       exit(-error);
 
@@ -771,10 +756,8 @@ end;
 
 begin
    countWritten := 0;
-   Assign(f, fn);
 
-   Rewrite(f, 1);
-   error := ioerror();
+   error := FileRewrite(f, fn);
    if(error <> 0) then
       exit(-error);
 
@@ -820,9 +803,7 @@ begin
    result := -1;
 
    {open the file}
-   Assign(f, fn);
-   Rewrite(f, 1);
-   error := ioerror();
+   error := FileRewrite(f, fn);
    if(error <> 0) then
       exit(-error);
 
@@ -861,9 +842,7 @@ begin
    result := -1;
 
    {open the file}
-   Assign(f, fn);
-   Reset(f, 1);
-   error := ioerror();
+   error := FileReset(f, fn);
    if(error <> 0) then
       exit(-error);
 
@@ -912,9 +891,7 @@ begin
    result := -1;
 
    {open the file}
-   Assign(f, fn);
-   Reset(f, 1);
-   error := ioerror();
+   error := FileReset(f, fn);
    if(error <> 0) then
       exit(-error);
 
