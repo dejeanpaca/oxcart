@@ -248,7 +248,7 @@ VAR
 procedure Pass();
 
 {convert an address to a string}
-function addr2str(address: pointer): string;
+function addr2str(address: pointer): StdString;
 
 {fill a buffer quickly with zero's}
 procedure Zero(var buf; size: int64);
@@ -275,8 +275,8 @@ procedure FreeObject(var obj);
 function dtGetSize(dti: longint): longint;
 function dtValid(dti: longint): boolean;
 
-function getRunTimeErrorDescription(errorCode: longint): string;
-function getRunTimeErrorString(errorCode: longint; includeCode: boolean = true): string;
+function getRunTimeErrorDescription(errorCode: longint): StdString;
+function getRunTimeErrorString(errorCode: longint; includeCode: boolean = true): StdString;
 
 { ERROR HANDLING }
 {store and return result of IOResult}
@@ -289,14 +289,18 @@ procedure eAddErrorProc(var newerrorproc: TErrorProc;
                         var olderrorproc: TErrorProc);
 
 {get the name of an error code}
-function GetErrorCodeString(code: longint): string;
+function GetErrorCodeString(code: longint): StdString;
 {get the name of an error code}
-function GetErrorCodeName(code: longint): string;
+function GetErrorCodeName(code: longint): StdString;
 
 {open file for reading}
-function FileReset(const fn: string; out f: file): longint;
+function FileReset(out f: text; const fn: StdString): longint;
 {open file for reading}
-function FileRewrite(const fn: string; out f: file): longint;
+function FileReset(out f: file; const fn: StdString): longint;
+{open file for reading}
+function FileRewrite(out f: text; const fn: StdString): longint;
+{open file for reading}
+function FileRewrite(out f: file; const fn: StdString): longint;
 
 procedure ClearBit(var Value: QWord; Index: Byte);
 procedure SetBit(var Value: QWord; Index: Byte);
@@ -314,8 +318,8 @@ procedure PutBit(var Value: word; Index: Byte; State: Boolean);
 function GetBit(Value: word; Index: Byte): Boolean;
 
 {return a string for the current call stack}
-function DumpCallStack(skip: longint = 0): string;
-function DumpExceptionCallStack(e: Exception): string;
+function DumpCallStack(skip: longint = 0): StdString;
+function DumpExceptionCallStack(e: Exception): StdString;
 
 function GetUTF8EnvironmentVariable(const v: UTF8String): UTF8String;
 
@@ -333,7 +337,7 @@ begin
 
 end;
 
-function addr2str(address: pointer): string;
+function addr2str(address: pointer): StdString;
 var
    addressWord: SizeInt absolute address;
 
@@ -960,9 +964,9 @@ begin
       Result := false;
 end;
 
-function getRunTimeErrorDescription(errorCode: longint): string;
+function getRunTimeErrorDescription(errorCode: longint): StdString;
 var
-   s: string;
+   s: StdString;
 
 begin
    s := 'unknown';
@@ -1019,7 +1023,7 @@ begin
    Result := s;
 end;
 
-function getRunTimeErrorString(errorCode: longint; includeCode: boolean): string;
+function getRunTimeErrorString(errorCode: longint; includeCode: boolean): StdString;
 var
    codeString: ShortString;
 
@@ -1034,7 +1038,7 @@ end;
 
 procedure RunTimeErrorDisplay(addr: pointer);
 var
-   s: string;
+   s: StdString;
 
 begin
    {display the error message}
@@ -1060,7 +1064,7 @@ begin
    writeln(stdout, '(╯°□°)╯︵ ┻━┻');
    writeln(stdout, 'Unhandled exception @ $',  addr2str(Addr), ' :');
 
-   if(Obj is exception) then begin
+   if(Obj is Exception) then begin
       writeln(stdout, DumpExceptionCallStack(Exception(Obj)));
    end else
       writeLn(stdout, 'Exception object ', Obj.ClassName, ' is not of class Exception.');
@@ -1107,9 +1111,9 @@ begin
       ioE := eNIL;
 end;
 
-function GetErrorCodeString(code: longint): string;
+function GetErrorCodeString(code: longint): StdString;
 var
-   number: string;
+   number: StdString;
 
 begin
    Result := GetErrorCodeName(code);
@@ -1121,7 +1125,7 @@ begin
       Result := '[' + number + ']';
 end;
 
-function GetErrorCodeName(code: longint): string;
+function GetErrorCodeName(code: longint): StdString;
 begin
    case code of
       eNONE:                  Result := esNONE;
@@ -1160,7 +1164,15 @@ begin
    end;
 end;
 
-function FileReset(const fn: string; out f: file): longint;
+function FileReset(out f: text; const fn: StdString): longint;
+begin
+   Assign(f, fn);
+   Reset(f);
+
+   Result := ioerror();
+end;
+
+function FileReset(out f: file; const fn: StdString): longint;
 begin
    Assign(f, fn);
    Reset(f, 1);
@@ -1168,7 +1180,15 @@ begin
    Result := ioerror();
 end;
 
-function FileRewrite(const fn: string; out f: file): longint;
+function FileRewrite(out f: text; const fn: StdString): longint;
+begin
+   Assign(f, fn);
+   Reset(f);
+
+   Result := ioerror();
+end;
+
+function FileRewrite(out f: file; const fn: StdString): longint;
 begin
    Assign(f, fn);
    Rewrite(f, 1);
@@ -1242,14 +1262,14 @@ begin
    Result := ((Value shr Index) and 1) = 1;
 end;
 
-function DumpCallStack(skip: longint): string;
+function DumpCallStack(skip: longint): StdString;
 var
   i: Longint;
   prevbp: Pointer;
   CallerFrame,
   CallerAddress,
   bp: Pointer;
-  Report: string;
+  Report: StdString;
 
 const
   MaxDepth = 20;
@@ -1288,11 +1308,11 @@ begin
    Result := Report;
 end;
 
-function DumpExceptionCallStack(e: Exception): string;
+function DumpExceptionCallStack(e: Exception): StdString;
 var
    i: loopint;
    Frames: PPointer;
-   Report: string;
+   Report: StdString;
 
 begin
    report := '';
