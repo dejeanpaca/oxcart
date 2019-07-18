@@ -21,7 +21,7 @@ INTERFACE
       uiuTypes, uiuWindow, uiWidgets, uiuWidget, uiuWindowTypes,
       wdguLabel, wdguWorkbar, wdguCheckbox, wdguInputBox, wdguGroup, wdguDivisor,
       {oxed}
-      uOXED, oxeduSettings, oxeduWindow, oxeduMenubar, oxeduProjectManagement;
+      uOXED, oxeduSettings, oxeduWindow, oxeduMenubar, oxeduProjectManagement, oxeduProjectRunner;
 
 TYPE
    oxedTInspectorWindowTransformWidgets = record
@@ -282,8 +282,14 @@ end;
 
 procedure OnProjectChange();
 begin
-   if(oxedInspector <> nil) and (oxedInspector.Instance <> nil) then
+   if(oxedInspector <> nil) and (oxedInspector.Instance <> nil) then begin
       oxedTInspectorWindow(oxedInspector.Instance).Close();
+   end;
+end;
+
+procedure beforeProjectStop();
+begin
+   OnProjectChange();
 end;
 
 VAR
@@ -296,5 +302,6 @@ INITIALIZATION
    oxedProjectManagement.OnOpen.Add(@OnProjectChange);
    oxedProjectManagement.OnClosed.Add(@OnProjectChange);
 
-END.
+   oxedProjectRunner.OnBeforeStop.Add(@beforeProjectStop);
 
+END.
