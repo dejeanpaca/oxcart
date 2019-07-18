@@ -32,12 +32,11 @@ label
 
 begin
    if(handler <> nil) then begin
-      FileReset(f);
-      if(IOResult() = 0) then begin
+      if(FileReset(f, fn) = 0) then begin
          repeat
             readln(f, s);
 
-            if(IOResult() = 0) then begin
+            if(ioerror() = 0) then begin
                key := LowerCase(CopyToDel(s, ':'));
                StripWhiteSpace(key);
                value := s;
@@ -53,7 +52,7 @@ begin
 process_end:
 
       close(f);
-      IOResult();
+      ioerror();
    end;
 end;
 
