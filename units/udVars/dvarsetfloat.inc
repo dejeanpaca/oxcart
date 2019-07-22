@@ -14,6 +14,6 @@ begin
          dtcDOUBLE:  double(variable^) := i;
       end;
 
-      {$INCLUDE dvarnotify.inc}
+      Notify(DVAR_NOTIFICATION_MODIFIED);
    end;
 end;

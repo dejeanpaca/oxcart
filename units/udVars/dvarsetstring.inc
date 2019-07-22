@@ -8,7 +8,7 @@ begin
          dtcUTF8STRING:    UTF8String(variable^) := UTF8String(s);
       end;
 
-      {$INCLUDE dvarnotify.inc}
+      Notify(DVAR_NOTIFICATION_MODIFIED);
    end;
 end;
 

@@ -23,6 +23,8 @@ CONST
    { notification routine specifiers }
    DVAR_NOTIFICATION_MODIFIED		   = $0001;
    DVAR_NOTIFICATION_UPDATE			= $0002;
+   DVAR_NOTIFICATION_WRITE          = $0003;
+   DVAR_NOTIFICATION_READ           = $0004;
 
 TYPE
    { dvar properties }
@@ -39,8 +41,18 @@ TYPE
    PDVar       = ^TDVar;
    PDVarGroup  = ^TDVarGroup;
 
+   { TDVarNotificationContext }
+
+   TDVarNotificationContext = record
+      p: PDVar;
+      f: pointer;
+      What: longword;
+
+      procedure Initialize(out c: TDVarNotificationContext);
+   end;
+
    {a type of routine which is notified when something is done on a dvar}
-   TDVarNotifyRoutine = procedure(p: PDVar; what: longword);
+   TDVarNotifyRoutine = procedure(var context: TDVarNotificationContext);
 
    {a dvar}
 
@@ -115,6 +127,8 @@ TYPE
       procedure Init(dt: longint; v: pointer; const newName: StdString = '');
 
       procedure Update(var newVariable);
+
+      procedure Notify(what: LongWord);
    end;
 
    {a quick dvar representation}
@@ -219,6 +233,13 @@ VAR
 operator := (a: TDVarQuick): TDVar;
 
 IMPLEMENTATION
+
+{ TDVarNotificationContext }
+
+procedure TDVarNotificationContext.Initialize(out c: TDVarNotificationContext);
+begin
+   ZeroPtr(@c, SizeOf(c));
+end;
 
 { TDVarQuick }
 
@@ -504,7 +525,7 @@ begin
    if(DataType = dtcBOOL) and (variable <> nil) then begin
       boolean(variable^) := b;
 
-      {$INCLUDE dvarnotify.inc}
+      Notify(DVAR_NOTIFICATION_MODIFIED);
    end;
 end;
 
@@ -742,9 +763,23 @@ begin
    Variable := @newVariable;
 end;
 
+procedure TDVar.Notify(what: LongWord);
+var
+   context: TDVarNotificationContext;
+
+begin
+   if(pNotify <> nil) then begin
+      TDVarNotificationContext.Initialize(context);
+      context.p := @self;
+      context.What := what;
+
+      pNotify(context);
+   end;
+end;
+
 INITIALIZATION
    {create default dvar}
-   dvar.Default.name := '';
+   dvar.Default.Name := '';
    dvar.Default.DataType := -1;
 
    {create default group}
