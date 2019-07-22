@@ -24,18 +24,21 @@ IMPLEMENTATION
 VAR
    wdg: record
       PackageName: wdgTInputBox;
+      Enabled,
       ManualFileManagement: wdgTCheckbox;
    end;
 
 procedure saveCallback();
 begin
    oxedAndroidSettings.PackageName := wdg.PackageName.GetText();
+   oxedAndroidSettings.Enabled := wdg.Enabled.Checked();
    oxedAndroidSettings.ManualFileManagement := wdg.ManualFileManagement.Checked();
 end;
 
 procedure revertCallback();
 begin
    wdg.PackageName.SetText(oxedAndroidSettings.PackageName);
+   wdg.Enabled.Check(oxedAndroidSettings.Enabled);
    wdg.ManualFileManagement.Check(oxedAndroidSettings.ManualFileManagement);
 end;
 
@@ -49,14 +52,17 @@ procedure PreAddTabs();
 begin
    oxedwndProjectSettings.Tabs.AddTab('Android', 'android');
 
-   wdgDivisor.Add('Android settings', oxPoint(wdgDEFAULT_SPACING, oxedwndProjectSettings.Tabs.GetHeight() - wdgDEFAULT_SPACING));
+   wdg.Enabled := wdgCheckbox.Add('Enabled', uiWidget.LastRect.BelowOf(), oxedAndroidSettings.Enabled);
+
+   wdgDivisor.Add('Android settings', uiWidget.LastRect.BelowOf());
 
    wdgLabel.Add('Package name');
    wdg.PackageName := wdgInputBox.Add('', uiWidget.LastRect.BelowOf(), oxNullDimensions);
 
    uiWidget.LastRect.GoBelow();
 
-   wdg.ManualFileManagement := wdgCheckbox.Add('Manual file management (aka do it yourself)', uiWidget.LastRect.BelowOf(), oxedAndroidSettings.ManualFileManagement);
+   wdg.ManualFileManagement := wdgCheckbox.Add('Manual file management (aka do it yourself)',
+      uiWidget.LastRect.BelowOf(), oxedAndroidSettings.ManualFileManagement);
 end;
 
 procedure init();
