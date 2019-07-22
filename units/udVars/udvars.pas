@@ -772,7 +772,7 @@ begin
          dtcSHORTSTRING: Result  := StdString(shortstring(variable^));
          dtcANSISTRING: Result   := StdString(ansistring(variable^));
          dtcWIDESTRING: Result   := StdString(UTF8Encode(widestring(variable^)));
-         dtcUTF8STRING: Result := StdString(variable^);
+         dtcUTF8STRING: Result   := StdString(variable^);
          else
             Result := '';
       end;
