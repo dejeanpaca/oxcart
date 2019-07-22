@@ -47,9 +47,14 @@ TYPE
 
    TDVarNotificationContext = record
       DVar: PDVar;
+      {parent group name}
+      Parent: string;
+      {current group}
       Group: PDVarGroup;
       f: pointer;
       What: longword;
+
+      Result: loopint;
 
       procedure Initialize(out c: TDVarNotificationContext);
    end;
