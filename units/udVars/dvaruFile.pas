@@ -7,6 +7,8 @@
    Reads and writes dvars into a file, as:
       key = value
    per line.
+
+   TODO: Add methods that operate Write() directly on the context (and store result there)
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
@@ -42,7 +44,10 @@ TYPE
       {Options}
       Options: dvarTFileOptions;
 
+      procedure GetContext(out context: TDVarNotificationContext; group: PDVarGroup; parent: string = '');
+
       function Write(const parent: StdString; var g: TDVarGroup): boolean;
+      function Write(const parent: StdString; var g: TDVarGroup; var v: TDVar): boolean;
       function Write(const parent: StdString; var v: TDVar): boolean;
       function Write(const parent: StdString; var v: TDVar; const what: StdString): boolean;
       function Write(const parent: StdString; var v: TDVar; const items: array of StdString; count: longint = 0): boolean;
@@ -152,6 +157,17 @@ end;
 
 { WRITE TEXT FILE }
 
+procedure dvarTFileData.GetContext(out context: TDVarNotificationContext; group: PDVarGroup; parent: string);
+begin
+   TDVarNotificationContext.Initialize(context);
+
+   context.f := @Self;
+   context.Group := group;
+   context.Parent := parent + group^.Name + '.';
+   context.What := DVAR_NOTIFICATION_WRITE;
+   context.Result := -1;
+end;
+
 {write a group into a text file}
 function dvarTFileData.Write(const parent: StdString; var g: TDVarGroup): boolean;
 var
@@ -166,7 +182,7 @@ begin
    curVar := g.vs;
 
    if(curVar <> nil) then repeat
-      Write(parent,  curVar^);
+      Write(parent, g, curVar^);
       curVar := curVar^.Next;
    until (curVar = nil);
 
@@ -176,13 +192,7 @@ begin
    if(curGroup <> nil) then begin
       repeat
          if(curGroup^.pNotify <> nil) then begin
-            TDVarNotificationContext.Initialize(context);
-            context.f := @Self;
-            context.Group := curGroup;
-            context.Parent := parent;
-            context.What := DVAR_NOTIFICATION_WRITE;
-            context.Result := -1;
-
+            GetContext(context, curGroup, parent);
             curGroup^.pNotify(context);
 
             if(context.Result = -1) then
@@ -195,14 +205,35 @@ begin
    end;
 end;
 
-function dvarTFileData.Write(const parent: StdString; var v: TDVar): boolean;
+function dvarTFileData.Write(const parent: StdString; var g: TDVarGroup; var v: TDVar): boolean;
+var
+   context: TDVarNotificationContext;
+
 begin
    if(not (dvarDO_NOT_SAVE in v.Properties)) then begin
-      Parser.WriteLine(parent + v.Name + ' = ' + v.GetAsString());
+      if(dvarNOTIFY_WRITE in v.Properties) then begin
+         GetContext(context, @g, parent);
+         context.DVar := @v;
 
-      if(dvarNOTIFY_WRITE in v.Properties) then
-         dvarf.Notify(@v, @self, DVAR_NOTIFICATION_WRITE);
+         if(v.pNotify <> nil) then
+            v.pNotify(context);
+
+         if(context.Result = 0) then
+            exit(True)
+         else if(context.Result > 0) then
+            exit(False);
+      end;
+
+      Parser.WriteLine(parent + v.Name + ' = ' + v.GetAsString());
    end;
+
+   Result := true;
+end;
+
+function dvarTFileData.Write(const parent: StdString; var v: TDVar): boolean;
+begin
+   if(not (dvarDO_NOT_SAVE in v.Properties)) then
+      Parser.WriteLine(parent + v.Name + ' = ' + v.GetAsString());
 
    Result := true;
 end;
@@ -211,9 +242,6 @@ function dvarTFileData.Write(const parent: StdString; var v: TDVar; const what: 
 begin
    if(not (dvarDO_NOT_SAVE in v.Properties)) then begin
       Parser.WriteLine(parent + v.Name + ' = ' + what);
-
-      if(dvarNOTIFY_WRITE in v.Properties) then
-         dvarf.Notify(@v, @self, DVAR_NOTIFICATION_WRITE);
    end;
 
    Result := true;
