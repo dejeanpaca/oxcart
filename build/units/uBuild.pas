@@ -887,16 +887,16 @@ function readf(var parseData: TParseData): boolean;
 begin
    Result := true;
 
-   if(parseData.currentLine = '<Target>') then begin
+   if(parseData.CurrentLine = '<Target>') then begin
       executableNameNext := true;
    end else begin
       if(executableNameNext) then begin
          executableNameNext := false;
 
-         if(pos('Filename', parseData.currentLine) > 0) then begin
-            parseData.currentLine := CopyAfterDel(parseData.currentLine, '"');
-            parseData.currentLine := CopyToDel(parseData.currentLine, '"');
-            executableName := parseData.currentLine;
+         if(pos('Filename', parseData.CurrentLine) > 0) then begin
+            parseData.CurrentLine := CopyAfterDel(parseData.CurrentLine, '"');
+            parseData.CurrentLine := CopyToDel(parseData.CurrentLine, '"');
+            executableName := parseData.CurrentLine;
          end;
       end;
    end;
@@ -911,7 +911,7 @@ begin
    executableNameNext := true;
 
    TParseData.Init(p);
-   p.stripWhitespace := true;
+   p.StripWhitespace := true;
    p.Read(GetLPIFilename(path), TParseMethod(@readf));
 
    Result := executableName;
