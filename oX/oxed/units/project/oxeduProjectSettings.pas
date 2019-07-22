@@ -61,6 +61,7 @@ begin
    dvOrganization.Update(oxedProject.Organization);
    dvOrganizationShort.Update(oxedProject.OrganizationShort);
    dvMainUnit.Update(oxedProject.MainUnit);
+   dvLineEndings.Update(oxedProject.LineEndings);
 end;
 
 class procedure oxedTProjectSettings.Load();
@@ -97,28 +98,25 @@ begin
    dvarf.WriteText(dvGroup, GetFn());
 end;
 
-procedure dvRunParameterNotify(var {%H-}context: TDVarNotificationContext);
+procedure dvRunParameterNotify(var context: TDVarNotificationContext);
 begin
-   oxedProject.RunParameters.Add(runParameter);
+   if(context.What = DVAR_NOTIFICATION_READ) then
+      oxedProject.RunParameters.Add(runParameter)
+   else if(context.What = DVAR_NOTIFICATION_WRITE) then begin
+      context.Result := 0;
+
+      dvarPFileData(context.f)^.Write(context.Parent, dvRunParameter, oxedProject.RunParameters.List, oxedProject.RunParameters.n);
+   end;
 end;
 
-procedure dvSaveHandler(var context: TDVarNotificationContext);
+procedure dvMainUnitNotify(var context: TDVarNotificationContext);
 begin
-   if(context.What <> DVAR_NOTIFICATION_WRITE) then
-      exit;
+   if(context.What = DVAR_NOTIFICATION_WRITE) then begin
+      context.Result := 0;
 
-   context.Result := 0;
-
-   dvarPFileData(context.f)^.Write(context.Parent, dvName, oxedProject.Name);
-   dvarPFileData(context.f)^.Write(context.Parent, dvShortName, oxedProject.ShortName);
-   dvarPFileData(context.f)^.Write(context.Parent, dvIdentifier, oxedProject.Identifier);
-   dvarPFileData(context.f)^.Write(context.Parent, dvOrganization, oxedProject.Organization);
-   dvarPFileData(context.f)^.Write(context.Parent, dvOrganizationShort, oxedProject.OrganizationShort);
-
-   if(oxedProject.MainUnit <> '') then
-      dvarPFileData(context.f)^.Write(context.Parent, dvMainUnit, oxedProject.MainUnit);
-
-   dvarPFileData(context.f)^.Write(context.Parent, dvRunParameter, oxedProject.RunParameters.List, oxedProject.RunParameters.n);
+      if(oxedProject.MainUnit <> '') then
+         dvarPFileData(context.f)^.Write(context.Parent, context.DVar^, oxedProject.MainUnit);
+   end;
 end;
 
 INITIALIZATION
@@ -130,12 +128,12 @@ INITIALIZATION
    dvGroup.Add(dvIdentifier, 'identifier', dtcSTRING, @oxedProject.Identifier);
    dvGroup.Add(dvOrganization, 'organization', dtcSTRING, @oxedProject.Organization);
    dvGroup.Add(dvOrganizationShort, 'organization_short', dtcSTRING, @oxedProject.OrganizationShort);
-   dvGroup.Add(dvMainUnit, 'main_unit', dtcSTRING, @oxedProject.MainUnit);
    dvGroup.Add(dvLineEndings, 'line_endings', dtcSTRING, @oxedProject.LineEndings);
 
-   dvGroup.Add(dvRunParameter, 'run_parameter', dtcSTRING, @runParameter);
-   dvRunParameter.pNotify := @dvRunParameterNotify;
+   dvGroup.Add(dvMainUnit, 'main_unit', dtcSTRING, @oxedProject.MainUnit, [dvarNOTIFY_WRITE]);
+   dvMainUnit.pNotify := @dvMainUnitNotify;
 
-   dvGroup.pNotify := @dvSaveHandler;
+   dvGroup.Add(dvRunParameter, 'run_parameter', dtcSTRING, @runParameter, [dvarNOTIFY_WRITE]);
+   dvRunParameter.pNotify := @dvRunParameterNotify;
 
 END.
