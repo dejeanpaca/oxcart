@@ -14,7 +14,7 @@ INTERFACE
       {ox}
       oxuTypes, oxuRunRoutines,
       {widgets}
-      uiuWidget, uiWidgets,
+      uiWidgets,
       wdguCheckbox, wdguDivisor, wdguInputBox, wdguLabel,
       {oxed}
       uOXED, oxeduAndroidSettings, oxeduProjectSettingsWindow;

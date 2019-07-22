@@ -34,6 +34,7 @@ IMPLEMENTATION
 
 VAR
    dvGroup: TDVarGroup;
+
    dvName,
    dvShortName,
    dvIdentifier,
@@ -96,7 +97,7 @@ begin
    dvarf.WriteText(dvGroup, GetFn());
 end;
 
-procedure dvRunParameterNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure dvRunParameterNotify(var {%H-}context: TDVarNotificationContext);
 begin
    oxedProject.RunParameters.Add(runParameter);
 end;
@@ -108,6 +109,7 @@ begin
    df.Write(parent, dvIdentifier, oxedProject.Identifier);
    df.Write(parent, dvOrganization, oxedProject.Organization);
    df.Write(parent, dvOrganizationShort, oxedProject.OrganizationShort);
+
    if(oxedProject.MainUnit <> '') then
       df.Write(parent, dvMainUnit, oxedProject.MainUnit);
 

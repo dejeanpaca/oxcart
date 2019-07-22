@@ -1704,7 +1704,7 @@ begin
 end;
 
 {$push}{$warn 5024 off}
-procedure dvUnitNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure dvUnitNotify(var {%H-}context: TDVarNotificationContext);
 begin
    if(processPath(currentValue)) then
       scanUnits(ExtractFilePath(currentValue))
@@ -1712,7 +1712,7 @@ begin
       build.Units.Add(getBasePath() + currentValue);
 end;
 
-procedure dvIncludeNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure dvIncludeNotify(var {%H-}context: TDVarNotificationContext);
 begin
    if(processPath(currentValue)) then
       scanIncludes(ExtractFilePath(currentValue))
@@ -1720,12 +1720,12 @@ begin
       build.Includes.Add(getBasePath() + currentValue);
 end;
 
-procedure dvNotifyBasePath({%H-}p: PDVar; {%H-}what: longword);
+procedure dvNotifyBasePath(var context: TDVarNotificationContext);
 begin
-   FileUtils.NormalizePathEx(StdString(p^.Variable^));
+   FileUtils.NormalizePathEx(StdString(context.p^.Variable^));
 end;
 
-procedure dvFPCNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure dvFPCNotify(var {%H-}context: TDVarNotificationContext);
 var
    platform: TBuildPlatform;
 
@@ -1739,7 +1739,7 @@ begin
    currentPlatform := getdvCurrentPlatform();
 end;
 
-procedure dvLazarusNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure dvLazarusNotify(var {%H-}context: TDVarNotificationContext);
 var
    laz: TBuildLazarusInstall;
 
@@ -1753,7 +1753,7 @@ begin
    currentLazarus := getdvCurrentLazInstall();
 end;
 
-procedure dvCPUNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure dvCPUNotify(var {%H-}context: TDVarNotificationContext);
 begin
    if(currentMode = 'fpc') and (currentPlatform <> nil) then begin
       if(currentValue = '64') then
@@ -1761,13 +1761,13 @@ begin
    end;
 end;
 
-procedure dvPlatformNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure dvPlatformNotify(var {%H-}context: TDVarNotificationContext);
 begin
    if(currentMode = 'fpc') and (currentPlatform <> nil) then
       currentPlatform^.Platform := currentValue;
 end;
 
-procedure dvPathNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure dvPathNotify(var {%H-}context: TDVarNotificationContext);
 begin
    FileUtils.NormalizePathEx(currentValue);
 
@@ -1777,7 +1777,7 @@ begin
       currentLazarus^.Path := currentValue;
 end;
 
-procedure dvConfigPathNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure dvConfigPathNotify(var {%H-}context: TDVarNotificationContext);
 begin
    FileUtils.NormalizePathEx(currentValue);
 
@@ -1787,7 +1787,7 @@ begin
       currentLazarus^.ConfigPath := currentValue;
 end;
 
-procedure dvUseFPCNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure dvUseFPCNotify(var {%H-}context: TDVarNotificationContext);
 var
    platform: PBuildPlatform;
 
@@ -1804,7 +1804,7 @@ begin
    end;
 end;
 
-procedure libOptimizationLevelsNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure libOptimizationLevelsNotify(var {%H-}context: TDVarNotificationContext);
 var
    i: loopint;
    optimizationLevels: TStringArray;

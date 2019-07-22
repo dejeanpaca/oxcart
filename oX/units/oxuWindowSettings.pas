@@ -101,7 +101,7 @@ begin
    end;
 end;
 
-procedure dvIndexNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure dvIndexNotify(var {%H-}context: TDVarNotificationContext);
 begin
    adjustVariables();
 end;
