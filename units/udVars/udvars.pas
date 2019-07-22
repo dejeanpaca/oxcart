@@ -166,7 +166,7 @@ TYPE
       ve: PDVar;
 
       {subgroups}
-      sub: TDVarGroups;
+      Sub: TDVarGroups;
 
       Next: PDVarGroup;
 
@@ -256,7 +256,7 @@ end;
 
 procedure TDVarGroup.Add(var g: TDVarGroup);
 begin
-   sub.Add(@g);
+   Sub.Add(@g);
 end;
 
 procedure TDVarGroup.Add(const newName: StdString; out g: TDVarGroup);
@@ -367,7 +367,7 @@ begin
          exit(cur^.GetGroup(leftOver));
    {otherwise search if any of the subgroups match}
    end else begin
-      cur := sub.s;
+      cur := Sub.s;
       if(cur <> nil) then repeat
          if(cur^.Name = section) then
             exit(cur);
@@ -421,7 +421,7 @@ end;
 
 procedure TDVarGlobal.Add(var g: TDVarGroup);
 begin
-   dvars.sub.Add(@g);
+   dvars.Sub.Add(@g);
 end;
 
 procedure TDVarGlobal.Add(const newName: StdString; out g: TDVarGroup);
@@ -457,7 +457,8 @@ var
    n: longint = 0;
 
 begin
-   cur := sub.s;
+   cur := Sub.s;
+
    if(cur <> nil) then repeat
       inc(n);
       cur := cur^.Next;
@@ -473,7 +474,8 @@ var
 begin
    Result := GetGroupCount();
 
-   cur := sub.s;
+   cur := Sub.s;
+
    if(cur <> nil) then repeat
       Inc(Result, cur^.GetGroupCountRecursive());
 
@@ -504,7 +506,8 @@ var
 begin
    Result := GetVariableCount();
 
-   cur := sub.s;
+   cur := Sub.s;
+
    if(cur <> nil) then repeat
       Inc(Result, cur^.GetVariableCountRecursive());
 
