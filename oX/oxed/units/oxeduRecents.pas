@@ -48,10 +48,14 @@ VAR
    currentListFile: StdString;
    dvFile: TDVar;
 
-procedure dvSaveHandler(var df: dvarTFileData; const parent: StdString);
+procedure dvSaveHandler(var context: TDVarNotificationContext);
 begin
-   df.Write(parent, dvLastOpen, oxedRecents.LastOpen);
-   df.Write(parent, dvFile, oxedRecents.List.List, oxedRecents.List.n);
+   if(context.What = DVAR_NOTIFICATION_WRITE) then begin
+      context.Result := 0;
+
+      dvarPFileData(context.f)^.Write(context.Parent, dvLastOpen, oxedRecents.LastOpen);
+      dvarPFileData(context.f)^.Write(context.Parent, dvFile, oxedRecents.List.List, oxedRecents.List.n);
+   end;
 end;
 
 procedure dvListFileNotify(var {%H-}context: TDVarNotificationContext);
@@ -138,7 +142,7 @@ INITIALIZATION
    Include(dvFile.Properties, dvarINVISIBLE);
    dvFile.pNotify := @dvListFileNotify;
 
-   dvarf.OnSave.Add(@dvgRecents, @dvSaveHandler);
+   dvgRecents.pNotify := @dvSaveHandler;
 
    oxedProjectManagement.OnOpen.Add(@OnProjectOpen);
    oxedProjectManagement.OnSaved.Add(@OnProjectOpen);
