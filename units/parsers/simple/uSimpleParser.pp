@@ -89,7 +89,7 @@ var
    minimumLength: longint = 0;
 
 begin
-   if (readEmptyLines) then
+   if (ReadEmptyLines) then
       minimumLength := -1;
 
    repeat
