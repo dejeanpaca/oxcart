@@ -98,7 +98,7 @@ begin
       if(LowerCase(List[i]) = lpath) then
          exit(true);
       {$ELSE}
-      if(LowerCase(List[i]) = path) then
+      if(List[i] = path) then
          exit(true);
       {$ENDIF}
    end;
