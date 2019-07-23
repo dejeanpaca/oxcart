@@ -35,7 +35,9 @@ end;
 procedure render({%H-}wnd: oxTWindow);
 begin
    oxRender.CullFace(oxCULL_FACE_NONE);
-   oxCurrentMaterial.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
+   oxCurrentMaterial.ApplyColor('color', 0.9, 0.9, 1.0, 1.0);
+
+   { OX TRANSFORM }
 
    projections[0].Apply();
 
@@ -54,7 +56,12 @@ begin
 
    renderScene(projections[0]);
 
+   { OPENGL }
+
+   oxCurrentMaterial.ApplyColor('color', 1.0, 0.9, 0.9, 1.0);
+
    projections[1].Apply();
+
    glLoadIdentity();
    glTranslatef(0, 0, -5.0);
 
@@ -98,14 +105,14 @@ begin
 
    oxTProjection.CreateFromWindow(projections[0], oxWindow.Current);
    projections[0].Name := 'ox';
-   projections[0].ClearColor.Assign(0.2, 0.2, 1.0, 1.0);
+   projections[0].ClearColor.Assign(0.1, 0.1, 0.25, 1.0);
    projections[0].SetViewport(0, 0, wnd.Dimensions.w div 2, wnd.Dimensions.h);
 //   projections[0].SetViewportf(0, 0, 0.5, 1.0);
    projections[0].DefaultPerspective();
 
    oxTProjection.CreateFromWindow(projections[1], oxWindow.Current);
    projections[1].Name := 'gl';
-   projections[1].ClearColor.Assign(1.0, 0.2, 0.2, 1.0);
+   projections[1].ClearColor.Assign(0.25, 0.1, 0.1, 1.0);
    projections[1].SetViewport(wnd.Dimensions.w div 2, 0, wnd.Dimensions.w div 2, wnd.Dimensions.h);
    //projections[1].SetViewportf(0.5, 0, 0.5, wnd.Dimensions.h);
    projections[1].DefaultPerspective();
