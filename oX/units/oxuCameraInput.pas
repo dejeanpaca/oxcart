@@ -76,7 +76,7 @@ begin
          mx := ox - nx;
          my := ny - oy;
       end else begin
-         mx := ox - nx;
+         mx := nx - ox;
          my := oy - ny;
       end;
 
