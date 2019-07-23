@@ -11,7 +11,7 @@ UNIT appuKeyMappings;
 INTERFACE
 
    USES
-      uStd, dvaruFile, uLog,
+      uStd, uLog,
       appuEvents, appuKeys, appuActionEvents;
 
 TYPE
