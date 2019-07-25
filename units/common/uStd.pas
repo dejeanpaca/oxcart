@@ -1084,6 +1084,7 @@ var
 
 begin
    err := IOResult();
+
    if(err <> 0) then begin
       ioE := err;
       {$IFDEF UNIX}
@@ -1268,15 +1269,15 @@ end;
 
 function DumpCallStack(skip: longint): StdString;
 var
-  i: Longint;
-  prevbp: Pointer;
-  CallerFrame,
-  CallerAddress,
-  bp: Pointer;
-  Report: StdString;
+   i: Longint;
+   prevbp: Pointer;
+   CallerFrame,
+   CallerAddress,
+   bp: Pointer;
+   Report: StdString;
 
 const
-  MaxDepth = 20;
+   MaxDepth = 20;
 
 begin
    Report := '';
@@ -1306,7 +1307,7 @@ begin
          bp := CallerFrame;
      end;
    except
-     { prevent endless dump if an exception occured }
+      { prevent endless dump if an exception occured }
    end;
 
    Result := Report;
