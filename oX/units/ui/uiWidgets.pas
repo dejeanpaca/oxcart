@@ -443,8 +443,8 @@ begin
    if(nWidgetTypes <= oxui.nWidgetTypes) then begin
       n := nWidgetTypes - 1;
 
-      oxui.widgetClasses[n] := @wc;
-      oxui.widgetClasses[n]^.cID := n;
+      oxui.WidgetClasses[n] := @wc;
+      oxui.WidgetClasses[n]^.cID := n;
 
       if(oxui.WidgetClasses[n]^.SkinDescriptor <> nil) then
          uiSkin.SetupWidget(oxui.DefaultSkin, oxui.DefaultSkin.wdgSkins[n], oxui.WidgetClasses[n]^.SkinDescriptor^);
@@ -1167,7 +1167,7 @@ end;
 procedure DeInitWidgets();
 begin
    {dispose of widget class and renderer pointer memory}
-   SetLength(oxui.widgetClasses, 0);
+   SetLength(oxui.WidgetClasses, 0);
    oxui.WidgetClasses := nil;
 
    nWidgetTypes := 0;
