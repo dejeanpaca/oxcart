@@ -20,19 +20,21 @@ INTERFACE
 
 
 TYPE
-
-   { wdgTLink }
-
    { wdgTDivisor }
 
    wdgTDivisor = class(uiTWidget)
+      DoOverrideColor,
       NoAutomaticSizing: boolean;
+
+      OverrideColor: TColor4ub;
 
       constructor Create(); override;
       procedure Render(); override;
 
       procedure CorrectPosition();
       procedure GetComputedDimensions(out d: oxTDimensions); override;
+
+      procedure SetOverrideColor(newColor: TColor4ub);
 
       procedure ParentSizeChange(); override;
    end;
@@ -78,6 +80,8 @@ var
 
 begin
    cSurface := Parent.GetSurfaceColor();
+   if(DoOverrideColor) then
+      cSurface := OverrideColor;
 
    if(not (wdgpTRUE in Properties)) then begin
       x := RPosition.x + PaddingLeft;
@@ -167,6 +171,12 @@ begin
       if(Caption <> '') then
         d.w := d.w + f.GetHeight();
    end;
+end;
+
+procedure wdgTDivisor.SetOverrideColor(newColor: TColor4ub);
+begin
+   OverrideColor := newColor;
+   DoOverrideColor := true;
 end;
 
 procedure wdgTDivisor.ParentSizeChange();
