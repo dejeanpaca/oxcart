@@ -13,7 +13,7 @@ INTERFACE
    USES
      sysutils, uStd, uLog, uTiming, ParamUtils,
      {app}
-     uAppInfo, uApp, appudvarConfiguration,
+     uAppInfo, uApp, appuLog, appudvarConfiguration,
      {oX}
      uOX, oxuPlatform, oxuWindows, oxuUIHooks, oxuUI, oxuGlobalInstances, oxuPlatforms,
      oxuRenderer, oxuRenderers
