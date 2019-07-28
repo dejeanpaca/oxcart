@@ -3,6 +3,8 @@
    Copyright (C) 2011. Dejan Boras
 
    Started On:    21.04.2011.
+
+   TODO: Make the toast go away on click
 }
 
 {$INCLUDE oxdefines.inc}
@@ -14,10 +16,12 @@ INTERFACE
       uStd, uImage, uColors, uTiming,
       {oX}
       uOX, oxuTypes, oxuRunRoutines,
-      oxuWindows, oxuProjection, oxuFont, oxuPaths, oxuWindow,
+      oxuWindows, oxuFont, oxuPaths, oxuWindow,
       oxuTexture, oxuTextureGenerate,
       {ui}
-      uiuControl, uiuWindowTypes, uiuWindow, uiuTypes, uiuWidget, uiWidgets, wdguLabel, oxuwndBase;
+      uiuControl, uiuWindowTypes, uiuWindow, uiuTypes, uiuWidget, uiWidgets, oxuUI,
+      oxuwndBase,
+      wdguLabel, wdguDivisor;
 
 CONST
    oxcTOAST_DURATION_INDEFINITE        = 0;
@@ -44,9 +48,9 @@ TYPE
 
       Status: string;
 
-      constructor Create; override;
-      procedure CreateWindow; override;
-      procedure AddWidgets; override;
+      constructor Create(); override;
+      procedure CreateWindow(); override;
+      procedure AddWidgets(); override;
 
       {opens a toast message box window}
       procedure Show(const setTitle, setStatus: string; duration: longint);
@@ -65,7 +69,7 @@ VAR
    toastStartTime,
    toastDuration: longword;
 
-constructor oxTToastWindow.Create;
+constructor oxTToastWindow.Create();
 begin
    Width := 320;
    Height := 70;
@@ -84,20 +88,26 @@ begin
    inherited Create;
 end;
 
-procedure oxTToastWindow.CreateWindow;
+procedure oxTToastWindow.CreateWindow();
 var
    x,
    y: loopint;
+   parent: uiTWindow;
 
 begin
+   parent := oxWindow.Current;
+
    {create the window}
    uiWindow.Create.Frame := uiwFRAME_STYLE_NONE;
    Include(uiWindow.Create.Properties, uiwndpNO_ESCAPE_KEY);
    uiWindow.Create.Properties := uiWindow.Create.Properties - [uiwndpSELECTABLE, uiwndpMOVE_BY_SURFACE, uiwndpMOVABLE];
 
+   Width := parent.Dimensions.w - 8;
+   Height := 70;
+
    {position the window}
-   x := (oxProjection.Dimensions.w - Width) div 2;
-   y := round(Height * 1.5);
+   x := (parent.Dimensions.w - Width) div 2;
+   y := Height + 4;
 
    inherited CreateWindow;
 
@@ -110,9 +120,8 @@ begin
    end;
 end;
 
-procedure oxTToastWindow.AddWidgets;
+procedure oxTToastWindow.AddWidgets();
 var
-   hasTitle: boolean = false;
    f: oxTFont = nil;
    y: loopint;
    labelWidget: wdgTLabel;
@@ -120,38 +129,41 @@ var
 
 begin
    {setup fonts}
-   oxf.GetNilDefault(TitleFont);
-   oxf.GetNilDefault(Font);
+   if(TitleFont = nil) then
+      TitleFont := oxui.GetDefaultFont();
 
-   if(title <> '') then
-      hasTitle := true;
+   if(Font = nil) then
+      Font := oxui.GetDefaultFont();
 
    {add title if any}
-   if(hasTitle) then begin
+   if(Title <> '') then begin
       f := titleFont;
 
       if(f <> nil) then begin
-         labelWidget := wdgTLabel(wdgLabel.Add(title, oxPoint(edgeDistance, Height - EdgeDistance),
+         labelWidget := wdgTLabel(wdgLabel.Add(Title, oxPoint(edgeDistance, Height - EdgeDistance),
             oxDimensions(Width - edgeDistance * 2, f.GetHeight()), true).
             SetID(wdgidTITLE).
-            SetFont(f));
+            SetFont(TitleFont));
 
          labelWidget.IsCentered := true;
       end;
    end;
 
+   wdgDivisor.Add('', uiWidget.LastRect.BelowOf()).SetColor(cWhite4ub);
+
    {calculate status label position}
    y := Height - EdgeDistance;
 
-   if(hasTitle) and (f <> nil) then
+   if(Title <> '') and (f <> nil) then
       y := y - round(f.GetHeight() * 1.5) - TitleSeparation;
 
    {add status label}
    if(font <> nil) then begin
       wdg := wdgLabel.Add(Status,
-         oxPoint(EdgeDistance, y), oxDimensions(Width - EdgeDistance * 2, y), true).
+         oxPoint(EdgeDistance, uiWidget.LastRect.BelowOf().y),
+         oxDimensions(Width - EdgeDistance * 2, y), true).
          SetId(wdgidLABEL).
-         SetFont(font);
+         SetFont(Font);
 
       Exclude(wdg.Properties, wdgpSELECTABLE);
    end;
@@ -186,7 +198,7 @@ procedure initToast();
 begin
    oxToast := oxTToastWindow.Create();
 
-   oxTextureGenerate.Generate(oxPaths.UITextures + 'toast.png', oxToast.BackgroundTexture);
+   oxTextureGenerate.Generate(oxPaths.UI + 'textures' + DirectorySeparator + 'toast.png', oxToast.BackgroundTexture);
 end;
 
 procedure deInitToast();
