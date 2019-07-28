@@ -190,8 +190,8 @@ begin
       end;
 
       {if the key event specifies no window then find the currently selected one (top parent)}
-      if(d.wnd = nil) and(oxui.select.l > -1) then begin
-         event.wnd   := oxui.select.s[0];
+      if(d.wnd = nil) and(oxui.Select.l > -1) then begin
+         event.wnd   := oxui.Select.s[0];
          d.wnd       := uiTWindow(event.wnd);
          oxwnd       := oxTWindow(d.wnd.oxwParent);
       end;
@@ -199,7 +199,7 @@ begin
       {if there is a window selected then}
       if(d.wnd <> nil) then begin
          {use the top window if the current window matches the selected one}
-         if(oxui.select.l > -1) and (oxui.select.s[0] = oxwnd) then begin
+         if(oxui.Select.l > -1) and (oxui.Select.s[0] = oxwnd) then begin
             event.wnd   := oxui.Select.GetSelectedWnd();
             d.wnd       := uiTWindow(event.wnd);
          end else begin
