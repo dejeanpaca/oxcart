@@ -3,8 +3,6 @@
    Copyright (C) 2011. Dejan Boras
 
    Started On:    21.04.2011.
-
-   TODO: Make the toast go away on click
 }
 
 {$INCLUDE oxdefines.inc}
@@ -14,6 +12,8 @@ INTERFACE
 
    USES
       uStd, uImage, uColors, uTiming,
+      {app}
+      appuMouse,
       {oX}
       uOX, oxuTypes, oxuRunRoutines,
       oxuWindows, oxuFont, oxuPaths, oxuWindow,
@@ -31,6 +31,14 @@ CONST
    oxcTOAST_DURATION_MAX               = 3;
 
 TYPE
+
+   { oxuiTToastWindow }
+
+   oxuiTToastWindow = class(oxuiTWindowBase)
+      procedure Point(var e: appTMouseEvent; x, y: longint); override;
+
+      procedure OnDeactivate(); override;
+   end;
 
    { oxTToastWindow }
 
@@ -69,11 +77,32 @@ VAR
    toastStartTime,
    toastDuration: longword;
 
+{ oxuiTToastWindow }
+
+procedure oxuiTToastWindow.Point(var e: appTMouseEvent; x, y: longint);
+begin
+   if(e.IsReleased()) then begin
+      CloseQueue();
+      exit;
+   end;
+
+   inherited Point(e, x, y);
+end;
+
+procedure oxuiTToastWindow.OnDeactivate();
+begin
+   inherited OnDeactivate();
+
+   CloseQueue();
+end;
+
 constructor oxTToastWindow.Create();
 begin
    Width := 320;
    Height := 70;
    ID  := uiControl.GetID('toast');
+
+   Instance := oxuiTToastWindow;
 
    EdgeDistance := 10;
    TitleSeparation := 10;
@@ -83,7 +112,7 @@ begin
    Durations[2] := 6000;
    Durations[3] := 10000;
 
-   Color.Assign(0, 0, 0, 255);
+   Color.Assign(8, 8, 8, 212);
 
    inherited Create;
 end;
@@ -98,6 +127,7 @@ begin
    parent := oxWindow.Current;
 
    {create the window}
+
    uiWindow.Create.Frame := uiwFRAME_STYLE_NONE;
    Include(uiWindow.Create.Properties, uiwndpNO_ESCAPE_KEY);
    uiWindow.Create.Properties := uiWindow.Create.Properties - [uiwndpSELECTABLE, uiwndpMOVE_BY_SURFACE, uiwndpMOVABLE];
@@ -124,7 +154,6 @@ procedure oxTToastWindow.AddWidgets();
 var
    f: oxTFont = nil;
    y: loopint;
-   labelWidget: wdgTLabel;
    wdg: uiTWidget;
 
 begin
@@ -140,12 +169,13 @@ begin
       f := titleFont;
 
       if(f <> nil) then begin
-         labelWidget := wdgTLabel(wdgLabel.Add(Title, oxPoint(edgeDistance, Height - EdgeDistance),
+         wdg := wdgLabel.Add(Title, oxPoint(edgeDistance, Height - EdgeDistance),
             oxDimensions(Width - edgeDistance * 2, f.GetHeight()), true).
             SetID(wdgidTITLE).
-            SetFont(TitleFont));
+            SetFont(TitleFont);
 
-         labelWidget.IsCentered := true;
+         wdgTLabel(wdg).IsCentered := true;
+         Exclude(wdg.Properties, wdgpSELECTABLE);
       end;
    end;
 
