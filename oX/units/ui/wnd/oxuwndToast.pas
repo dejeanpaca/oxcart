@@ -35,9 +35,14 @@ TYPE
    { oxuiTToastWindow }
 
    oxuiTToastWindow = class(oxuiTWindowBase)
+      StartTime,
+      Duration: longword;
+
       procedure Point(var e: appTMouseEvent; x, y: longint); override;
 
       procedure OnDeactivate(); override;
+
+      procedure Update(); override;
    end;
 
    { oxTToastWindow }
@@ -74,9 +79,6 @@ VAR
    wdgidTITLE,
    wdgidLABEL: uiTControlID;
 
-   toastStartTime,
-   toastDuration: longword;
-
 { oxuiTToastWindow }
 
 procedure oxuiTToastWindow.Point(var e: appTMouseEvent; x, y: longint);
@@ -94,6 +96,14 @@ begin
    inherited OnDeactivate();
 
    CloseQueue();
+end;
+
+procedure oxuiTToastWindow.Update();
+begin
+   inherited Update();
+
+   if(Duration > 0) and (timer.Cur() - StartTime > Duration) then
+      CloseQueue();
 end;
 
 constructor oxTToastWindow.Create();
@@ -214,8 +224,8 @@ begin
       if(duration < 0) or (duration > oxcTOAST_DURATION_MAX) then
          duration    := oxcTOAST_DURATION_NORMAL;
 
-      toastDuration  := Durations[duration];
-      toastStartTime := timer.Cur();
+      oxuiTToastWindow(Window).Duration := Durations[duration];
+      oxuiTToastWindow(Window).StartTime := timer.Cur();
    end;
 end;
 
@@ -238,21 +248,12 @@ begin
    FreeObject(oxToast);
 end;
 
-{controls the toast window}
-procedure toastControl();
-begin
-   if(toastDuration > 0) and (timer.Cur() - toastStartTime > toastDuration) then
-      oxToast.Close();
-end;
-
 VAR
-   initRoutines,
-   runRoutine: oxTRunRoutine;
+   initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   wdgidLABEL     := uiControl.GetID('toast.label');
-   wdgidTITLE     := uiControl.GetID('toast.label');
+   wdgidLABEL := uiControl.GetID('toast.label');
+   wdgidTITLE := uiControl.GetID('toast.label');
 
-   ox.OnRun.Add(runRoutine, @toastControl);
    ox.Init.Add(initRoutines, 'toast', @initToast, @deInitToast);
 END.
