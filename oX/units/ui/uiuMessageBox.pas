@@ -18,7 +18,7 @@ INTERFACE
       {ui}
       oxuUI, uiuWindowTypes, uiuWindow, uiuTypes, uiuSurface, uiuWidget, uiuControl, uiuDraw,
       {widgets}
-      uiWidgets, wdguButton, wdguCheckbox, wdguLabel, wdguEmpty, wdguInputBox;
+      uiWidgets, wdguButton, wdguCheckbox, wdguLabel, wdguEmpty, wdguInputBox, wdguDivisor;
 
 TYPE
 
@@ -88,6 +88,9 @@ TYPE
       SurfaceZ,
       BoxZ: loopint;
 
+      {does the message box have a title bar}
+      TitleBar: boolean;
+
       {window class used as the message box window}
       WindowType: uiTWindowClass;
 
@@ -153,9 +156,9 @@ TYPE
    wdgTMessageBoxIcon = class(uiTWidget)
       Style: uiTMessageBoxStyle;
 
-      constructor Create; override;
+      constructor Create(); override;
 
-      procedure Render; override;
+      procedure Render(); override;
    end;
 
 
@@ -262,35 +265,40 @@ begin
    x := wdgDEFAULT_SPACING;
 end;
 
-procedure  AddButton();
+procedure AddButton(which, curButton: loopint);
+var
+   wdg: wdgTButton;
+
 begin
+   wdg := wdgTButton(wdgButton.Add(ButtonDescriptors[which].sCaption,
+     oxPoint(x, y), oxDimensions(w, BTN_HEIGHT), 0).SetID(ButtonDescriptors[which].wdgID^));
+
+  wnd.msgBox.wdg.Buttons[curButton] := wdg;
+  if(nButtons > 0) then begin
+     if(curButton = 0) then
+        wdg.SetButtonPosition([uiCONTROL_GRID_LEFT])
+     else if(curButton = nButtons - 1) then
+        wdg.SetButtonPosition([uiCONTROL_GRID_RIGHT])
+     else
+        wdg.SetButtonPosition([uiCONTROL_GRID_MIDDLE]);
+  end;
+
+  inc(x, w);
+  inc(curButton);
 end;
 
 procedure addButtons();
 var
    i,
    curButton: loopint;
-   wdg: wdgTButton;
 
 begin
    curButton := 0;
 
    for i := 0 to (uimbcNBUTTONS - 1) do begin
       if(buttons and (longword(1) shl i) > 0) then begin
-          wdg := wdgTButton(wdgButton.Add(ButtonDescriptors[i].sCaption,
-            oxPoint(x, y), oxDimensions(w, BTN_HEIGHT), 0).SetID(ButtonDescriptors[i].wdgID^));
+         AddButton(i, curButton);
 
-         wnd.msgBox.wdg.Buttons[curButton] := wdg;
-         if(nButtons > 0) then begin
-            if(curButton = 0) then
-               wdg.SetButtonPosition([uiCONTROL_GRID_LEFT])
-            else if(curButton = nButtons - 1) then
-               wdg.SetButtonPosition([uiCONTROL_GRID_RIGHT])
-            else
-               wdg.SetButtonPosition([uiCONTROL_GRID_MIDDLE]);
-         end;
-
-         inc(x, w);
          inc(curButton);
       end;
    end;
@@ -315,10 +323,10 @@ var
    x, h: loopint;
 
 begin
-   x := 5;
+   x := wdgDEFAULT_SPACING;
 
    if(style <> uimbsNONE) then
-      inc(x, ICON_WIDTH + wdgDEFAULT_SPACING * 2);
+      inc(x, ICON_WIDTH + (ICON_WIDTH div 4 * 2));
 
    h := wnd.Dimensions.h - BTN_HEIGHT - wdgDEFAULT_SPACING * 3;
 
@@ -362,11 +370,12 @@ var
 begin
    uiWidget.Create.Instance := wdgTMessageBoxIcon;
 
-   y := labelWidget.Position.y - (labelWidget.Dimensions.h div 2 - ICON_HEIGHT div 2);
+   y := wnd.Dimensions.h div 2 + (ICON_HEIGHT div 2);
+
    if(properties and uimbpINPUT > 0) then
       y := y + INPUT_HEIGHT;
 
-   icon := wdgTMessageBoxIcon(wdgEmpty.Add(oxPoint(wdgDEFAULT_SPACING, y),
+   icon := wdgTMessageBoxIcon(wdgEmpty.Add(oxPoint(wdgDEFAULT_SPACING + ICON_WIDTH div 4, y),
       oxDimensions(ICON_WIDTH, ICON_HEIGHT)));
 
    icon.Style := style;
@@ -384,6 +393,11 @@ begin
    end;
 
    DetermineDimensions();
+
+   if(not uiMessageBox.TitleBar) then begin
+      wdgLabel.Add(wnd.Title, uiWidget.LastRect.BelowOf(), oxNullDimensions);
+      wdgDivisor.Add('', uiWidget.LastRect.BelowOf());
+   end;
 
    {add the buttons}
    addButtons();
@@ -430,7 +444,11 @@ begin
    wParent := oxWindow.Current;
 
    {create the window}
-   uiWindow.Create.Frame := uiwFRAME_STYLE_DIALOG;
+   if(uiMessageBox.TitleBar) then
+      uiWindow.Create.Frame := uiwFRAME_STYLE_DIALOG
+   else
+      uiWindow.Create.Frame := uiwFRAME_STYLE_NONE;
+
    uiWindow.Create.ZIndex := uiMessageBox.BoxZ;
    uiWindow.Create.Buttons := uiwbCLOSE;
    uiWindow.Create.Instance := uiMessageBox.WindowType;
@@ -472,12 +490,12 @@ end;
 
 { wdgTMessageBoxIcon }
 
-constructor wdgTMessageBoxIcon.Create;
+constructor wdgTMessageBoxIcon.Create();
 begin
    inherited Create;
 end;
 
-procedure wdgTMessageBoxIcon.Render;
+procedure wdgTMessageBoxIcon.Render();
 var
    f: oxTFont;
    scale: Single;
@@ -587,7 +605,7 @@ begin
 
             uiWindow.Create.Instance := uiTMessageBoxSurfaceWindow;
             surface := uiTMessageBoxSurfaceWindow(uiSurface.Create('MsgBoxSurface'));
-            surface.Background.Color.Assign(0, 0, 0, 127);
+            surface.Background.Color.Assign(0, 0, 0, 191);
             surface.msgBox := wnd;
             wnd.msgBox.SurfaceWnd := surface;
          end;
@@ -629,6 +647,7 @@ INITIALIZATION
    uiMessageBox.SurfaceZ := 1000;
    uiMessageBox.BoxZ := 1001;
    uiMessageBox.WindowType := uiTMessageBoxWindow;
+   uiMessageBox.TitleBar := false;
 
    WDGID_TEXT           := uiControl.GetID('TEXT');
    WDGID_INPUT          := uiControl.GetID('INPUT');
