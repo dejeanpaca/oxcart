@@ -11,50 +11,53 @@ UNIT wdguTemplate;
 INTERFACE
 
    USES
+      uStd,
       {oX}
       oxuTypes,
       {ui}
-      uiuWindowTypes, uiuWidget, uiWidgets;
+      uiuWidget, uiWidgets, wdguBase;
 
 TYPE
    wdgTTemplate = class(uiTWidget)
       {override any callbacks here, and expand the class}
    end;
 
-   uiTWidgetTemplateGlobal = record
+   wdgTTemplateGlobal = class(specialize wdgTBase<wdgTTemplate>)
      {adds a template widget to a window}
-     function Add(var wnd: uiTWindow; const Caption: StdString;
+     function Add(const Caption: StdString;
                  const Pos: oxTPoint; const Dim: oxTDimensions): wdgTTemplate;
    end;
 
 
 VAR
-   wdgTemplate: uiTWidgetTemplateGlobal;
+   wdgTemplate: wdgTTemplateGlobal;
 
 IMPLEMENTATION
 
 VAR
-   internal: uiTWidgetInternal;
+   internal: uiTWidgetClass;
 
 procedure InitWidget();
 begin
-   internal.wdgClass.Instance := wdgTTemplate;
+   internal.Instance := wdgTTemplate;
    internal.Done();
+
+   wdgTemplate := wdgTTemplateGlobal.Create(internal);
 end;
 
-function uiTWidgetTemplateGlobal.Add(var wnd: uiTWindow; const Caption: StdString;
+function wdgTTemplateGlobal.Add(const Caption: StdString;
       const Pos: oxTPoint; const Dim: oxTDimensions): wdgTTemplate;
 
 begin
-   result := wdgTTemplate(uiWidget.Add(wnd, internal.wdgClass, Pos, Dim));
-   if(result <> nil) then begin
-      {setup the caption}
-      result.SetCaption(Caption);
+   Result := inherited Add(Pos, Dim);
 
-      {auto set dimensions if the widget supports it}
-      result.AutoSize();
+  if(Result <> nil) then begin
+      {setup the caption}
+      Result.SetCaption(Caption);
 
       {NOTE: Perform extra initialization here}
+
+      inherited AddDone(Result);
    end;
 end;
 
