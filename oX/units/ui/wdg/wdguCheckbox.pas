@@ -18,7 +18,7 @@ INTERFACE
       oxuTypes, oxuFont, oxuRender,
       {ui}
       uiuDraw, uiuWindowTypes, uiuSkinTypes,
-      uiuWidget, uiWidgets, uiuWidgetRender;
+      uiuWidget, uiWidgets, uiuWidgetRender, wdguBase;
 
 CONST
    wdgcCHECKBOX_TOGGLE                          = $0001;
@@ -55,12 +55,13 @@ TYPE
          procedure FontChanged(); override;
    end;
 
-   uiTWidgetCheckboxGlobal = record
+   wdgTCheckboxGlobal = class(specialize wdgTBase<wdgTCheckbox>)
+      Internal: uiTWidgetClass; static;
       Width,
-      Height: longint;
-      LineWidth: single;
+      Height: longint; static;
+      LineWidth: single; static;
 
-      ColorDisabled: TColor4ub;
+      ColorDisabled: TColor4ub; static;
 
       function Add(const Caption: StdString;
                   const Pos: oxTPoint;
@@ -68,12 +69,9 @@ TYPE
    end;
 
 VAR
-   wdgCheckbox: uiTWidgetCheckboxGlobal;
+   wdgCheckbox: wdgTCheckboxGlobal;
 
 IMPLEMENTATION
-
-VAR
-   internal: uiTWidgetClass;
 
 constructor wdgTCheckbox.Create();
 begin
@@ -204,26 +202,6 @@ begin
    end;
 end;
 
-procedure InitWidget();
-begin
-   internal.Instance := wdgTCheckbox;
-   internal.Done();
-end;
-
-function uiTWidgetCheckboxGlobal.Add(const Caption: StdString;
-         const Pos: oxTPoint;
-         value: boolean = false): wdgTCheckbox;
-begin
-   Result := wdgTCheckbox(uiWidget.Add(internal, Pos, oxNullDimensions));
-
-   if(Result <> nil) then begin
-      Result.SetCaption(Caption);
-      Result.Check(value);
-
-      Result.AutoSize();
-   end;
-end;
-
 function wdgTCheckbox.Checked(): boolean;
 begin
    Result := wdgpTRUE in Properties;
@@ -284,13 +262,35 @@ begin
    SetSpacing();
 end;
 
+procedure initWidget();
+begin
+   wdgCheckbox.Internal.Instance := wdgTCheckbox;
+   wdgCheckbox.Internal.Done();
+
+   wdgCheckbox := wdgTCheckboxGlobal.Create(wdgCheckbox.Internal);
+end;
+
+function wdgTCheckboxGlobal.Add(const Caption: StdString;
+         const Pos: oxTPoint;
+         value: boolean = false): wdgTCheckbox;
+begin
+   Result := inherited AddInternal(Pos, oxNullDimensions);
+
+   if(Result <> nil) then begin
+      Result.SetCaption(Caption);
+      Result.Check(value);
+
+      AddDone(Result);
+   end;
+end;
+
 INITIALIZATION
    wdgCheckbox.Width := 18;
    wdgCheckbox.Height := 18;
    wdgCheckbox.LineWidth := 2.0;
 
    wdgCheckbox.ColorDisabled.Assign(96, 96, 96, 255);
-   internal.Register('widget.checkbox', @InitWidget);
+   wdgCheckbox.Internal.Register('widget.checkbox', @initWidget);
 
 END.
 

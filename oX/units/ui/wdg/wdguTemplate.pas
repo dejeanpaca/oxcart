@@ -49,7 +49,7 @@ function wdgTTemplateGlobal.Add(const Caption: StdString;
       const Pos: oxTPoint; const Dim: oxTDimensions): wdgTTemplate;
 
 begin
-   Result := inherited Add(Pos, Dim);
+   Result := inherited AddInternal(Pos, Dim);
 
   if(Result <> nil) then begin
       {setup the caption}
