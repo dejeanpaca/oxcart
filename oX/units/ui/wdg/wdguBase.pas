@@ -29,9 +29,12 @@ TYPE
 
       function Add(const Pos: oxTPoint; const Dim: oxTDimensions): T;
       function Add(const Pos: oxTPoint): T;
-      function Add(): T;
 
       protected
+      function AddInternal(const Pos: oxTPoint; const Dim: oxTDimensions): T;
+      function AddInternal(const Pos: oxTPoint): T;
+      function AddInternal(): T;
+
       {called when adding is done}
       function AddDone(wdg: uiTWidget): T;
    end;
@@ -47,17 +50,33 @@ end;
 
 function wdgTBase.Add(const Pos: oxTPoint; const Dim: oxTDimensions): T;
 begin
-  Result := T(uiWidget.Add(pInternal^, Pos, Dim));
+   Result := AddInternal(Pos, Dim);
+
+   if(Result <> nil) then
+      AddDone(Result);
 end;
 
 function wdgTBase.Add(const Pos: oxTPoint): T;
 begin
+   Result := AddInternal(Pos, oxNullDimensions);
+
+   if(Result <> nil) then
+      AddDone(Result);
+end;
+
+function wdgTBase.AddInternal(const Pos: oxTPoint; const Dim: oxTDimensions): T;
+begin
+  Result := T(uiWidget.Add(pInternal^, Pos, Dim));
+end;
+
+function wdgTBase.AddInternal(const Pos: oxTPoint): T;
+begin
    Result := T(uiWidget.Add(pInternal^, Pos, oxNullDimensions))
 end;
 
-function wdgTBase.Add(): T;
+function wdgTBase.AddInternal(): T;
 begin
-  Result := Add(uiWidget.LastRect.BelowOf(), oxNullDimensions);
+  Result := AddInternal(uiWidget.LastRect.BelowOf(), oxNullDimensions);
 end;
 
 function wdgTBase.AddDone(wdg: uiTWidget): T;
