@@ -14,7 +14,8 @@ INTERFACE
    {oX}
    oxuTypes,
    {ui}
-   uiuWidget, uiWidgets, uiuDraw;
+   uiuWidget, uiWidgets, uiuDraw,
+   wdguBase;
 
 
 TYPE
@@ -22,12 +23,11 @@ TYPE
       procedure Render(); override;
    end;
 
-   uiTWidgetBlockGlobal = record
-     function Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTBlock;
+   wdgTBlockGlobal = class(specialize wdgTBase<wdgTBlock>)
    end;
 
 VAR
-   wdgBlock: uiTWidgetBlockGlobal;
+   wdgBlock: wdgTBlockGlobal;
 
 IMPLEMENTATION
 
@@ -38,6 +38,8 @@ procedure initializeWidget();
 begin
    internal.Instance := wdgTBlock;
    internal.Done();
+
+   wdgBlock := wdgTBlockGlobal.Create(internal);
 end;
 
 procedure wdgTBlock.Render();
@@ -46,11 +48,6 @@ begin
    SetColor(Color);
 
    uiDraw.Box(RPosition, Dimensions);
-end;
-
-function uiTWidgetBlockGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTBlock;
-begin
-   result := wdgTBlock(uiWidget.Add(internal, Pos, Dim));
 end;
 
 INITIALIZATION

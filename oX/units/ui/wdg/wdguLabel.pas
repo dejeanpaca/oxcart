@@ -16,7 +16,7 @@ INTERFACE
       oxuTypes, oxuFont,
       {ui}
       uiuWindowTypes, uiuSkinTypes,
-      uiuWidget, uiWidgets, uiuWindow, uiuDraw;
+      uiuWidget, uiWidgets, uiuWindow, uiuDraw, wdguBase;
 
 TYPE
 
@@ -42,7 +42,9 @@ TYPE
 
    { wdgTLabelGlobal }
 
-   wdgTLabelGlobal = record
+   wdgTLabelGlobal = class(specialize wdgTBase<wdgTLabel>)
+      public
+
       function Add(const Caption: StdString;
                  const Pos: oxTPoint; const Dim: oxTDimensions;
                  inrect: boolean = false): wdgTLabel;
@@ -200,41 +202,44 @@ begin
    internal.NonSelectable := true;
    internal.Instance := wdgTLabel;
    internal.Done();
+
+   wdgLabel := wdgTLabelGlobal.Create(internal);
 end;
 
 function wdgTLabelGlobal.Add(const Caption: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions;
             inrect: boolean = false): wdgTLabel;
 begin
-   result := wdgTLabel(uiWidget.Add(internal, Pos, Dim));
+   Result := inherited Add(Pos, Dim);
 
-   if(result <> nil) then begin
-      result.InRectangle := inrect;
-      result.SetCaption(Caption);
+   if(Result <> nil) then begin
+      Result.InRectangle := inrect;
+      Result.SetCaption(Caption);
 
-      result.AutoSize();
+      AddDone(Result);
    end;
 end;
 
 function wdgTLabelGlobal.Add(const Caption: StdString; inrect: boolean): wdgTLabel;
 begin
-   result := Add(Caption, uiWidget.LastRect.BelowOf(), oxNullDimensions, inrect);
+   Result := Add(Caption, uiWidget.LastRect.BelowOf(), oxNullDimensions, inrect);
 end;
 
 function wdgTLabelGlobal.Add(const List: TStringArray;
             const Pos: oxTPoint; const Dim: oxTDimensions;
             inrect: boolean = false): wdgTLabel;
 begin
-   result := wdgTLabel(uiWidget.Add(internal, Pos, Dim));
+   Result := inherited Add(Pos, Dim);
 
-   if(result <> nil) then begin
-      result.InRectangle := inrect;
-      result.List := List;
+   if(Result <> nil) then begin
+      Result.InRectangle := inrect;
+      Result.List := List;
 
-      result.AutoSize();
+      AddDone(Result);
    end;
 end;
 
 INITIALIZATION
    internal.Register('widget.label', @InitWidget);
+
 END.
