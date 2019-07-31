@@ -337,7 +337,9 @@ begin
    TabWidget := wdgTDockableTabs(wdgTabs.Add(oxPoint(0, Dimensions.h - 1), oxDimensions(Dimensions.w, TAB_HEIGHT)));
    TabWidget.Done();
 
-   BlockWidget := wdgBlock.Add(oxPoint(0, TabWidget.BelowOf(0)), oxDimensions(Dimensions.w, TAB_SEPARATION));
+   BlockWidget :=
+      wdgTBlock(wdgBlock.Add(oxPoint(0, TabWidget.BelowOf(0)), oxDimensions(Dimensions.w, TAB_SEPARATION)));
+
    BlockWidget.Color.Assign(0, 0, 0, 255);
 end;
 
