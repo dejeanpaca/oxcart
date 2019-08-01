@@ -69,11 +69,11 @@ begin
 
    uiWidget.LastRect.GoLeft();
 
-   wdgDivisor.Add('', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('');
 
    uiWidget.LastRect.GoLeft();
 
-   wdgLabel.Add('Resolution / Refresh rate / Color depth (bits)', uiWidget.LastRect.BelowOf(), oxNullDimensions);
+   wdgLabel.Add('Resolution / Refresh rate / Color depth (bits)');
    list := wdgDropDownList.Add(uiWidget.LastRect.BelowOf(), oxDimensions(120, 20));
 
    list.Add('Custom (!)');
@@ -106,7 +106,7 @@ var
    list: wdgTDropDownList;
 
 begin
-   wdgCheckbox.Add('Enabled', uiWidget.LastRect.BelowOf(), oxAudio.Enabled);
+   wdgCheckbox.Add('Enabled').Check(oxAudio.Enabled);
 
    wdgLabel.Add('Backend', uiWidget.LastRect.BelowOf(0, -4), oxNullDimensions);
    list := wdgDropDownList.Add(uiWidget.LastRect.RightOf(0, 4), oxDimensions(90, 20));
@@ -114,7 +114,7 @@ begin
    list.Add('Default');
    list.Add('nil');
 
-   wdgDivisor.Add('', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('');
 end;
 
 procedure openDVarEditor();

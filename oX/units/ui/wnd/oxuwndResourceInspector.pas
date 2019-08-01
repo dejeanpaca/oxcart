@@ -112,13 +112,13 @@ procedure oxTResourceInspectorWindow.AddWidgets();
 begin
    wdg.Close := wdgButton.Add('Close', oxNullPoint, oxDimensions(80, 20), @Close);
 
-   wdg.Divisor := wdgDivisor.Add('', oxNullPoint);
+   wdg.Divisor := wdgDivisor.Add('');
 
-   wdg.Filter := wdgInputBox.Add('', oxNullPoint, oxNullDimensions);
+   wdg.Filter := wdgInputBox.Add('');
    wdg.Filter.SetPlaceholder('Filter');
 
    uiWidget.Create.Instance := oxwdgTResourceInspectorGrid;
-   wdg.List := oxwdgTResourceInspectorGrid(wdgGrid.Add(oxNullPoint, oxNullDimensions));
+   wdg.List := oxwdgTResourceInspectorGrid(wdgGrid.Add());
    wdg.List.AddColumn('Name')^.Ratio := 0.3;
    wdg.List.AddColumn('Count');
    wdg.List.Selectable := true;

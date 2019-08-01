@@ -250,13 +250,13 @@ procedure oxTDVarEditorWindow.AddWidgets();
 begin
    wdg.Close := wdgButton.Add('Close', oxNullPoint, oxDimensions(80, 20), @Close);
 
-   wdg.Divisor := wdgDivisor.Add('', oxNullPoint);
+   wdg.Divisor := wdgDivisor.Add('');
 
-   wdg.Filter := wdgInputBox.Add('', oxNullPoint, oxNullDimensions);
+   wdg.Filter := wdgInputBox.Add('');
    wdg.Filter.SetPlaceholder('Filter');
 
    uiWidget.Create.Instance := oxwdgTDVarEditorGrid;
-   wdg.Vars := oxwdgTDVarEditorGrid(wdgGrid.Add(oxNullPoint, oxNullDimensions));
+   wdg.Vars := oxwdgTDVarEditorGrid(wdgGrid.Add());
    wdg.Vars.AddColumn('Name')^.Ratio := 0.3;
    wdg.Vars.AddColumn('Value');
    wdg.Vars.Selectable := true;

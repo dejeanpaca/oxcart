@@ -201,26 +201,26 @@ begin
    else
       uiWidget.LastRect.SetDefault(220);
 
-   wdgLabel.Add('R: ', uiWidget.LastRect.BelowOf(), oxNullDimensions);
+   wdgLabel.Add('R: ');
    wdg.ibR := wdgInputBox.Add(sf(SelectedColor[0]), uiWidget.LastRect.RightOf(), oxDimensions(60, 20));
    wdg.ibR.SetControlMethod(@colorValueControl);
    wdg.ibR.SetID(wdgidR);
 
    uiWidget.LastRect.GoLeft();
-   wdgLabel.Add('G: ', uiWidget.LastRect.BelowOf(), oxNullDimensions);
+   wdgLabel.Add('G: ');
    wdg.ibG := wdgInputBox.Add(sf(SelectedColor[1]), uiWidget.LastRect.RightOf(), oxDimensions(60, 20));
    wdg.ibG.SetControlMethod(@colorValueControl);
    wdg.ibG.SetID(wdgidG);
 
    uiWidget.LastRect.GoLeft();
-   wdgLabel.Add('B: ', uiWidget.LastRect.BelowOf(), oxNullDimensions);
+   wdgLabel.Add('B: ');
    wdg.ibB := wdgInputBox.Add(sf(SelectedColor[2]), uiWidget.LastRect.RightOf(), oxDimensions(60, 20));
    wdg.ibB.SetControlMethod(@colorValueControl);
    wdg.ibB.SetID(wdgidB);
 
    if(HasAlpha) then begin
       uiWidget.LastRect.GoLeft();
-      wdgLabel.Add('A: ', uiWidget.LastRect.BelowOf(), oxNullDimensions);
+      wdgLabel.Add('A: ');
       wdg.ibA := wdgInputBox.Add(sf(SelectedColor[3]), uiWidget.LastRect.RightOf(), oxDimensions(60, 20));
       wdg.ibA.SetControlMethod(@colorValueControl);
       wdg.ibA.SetID(wdgidA);
@@ -236,7 +236,7 @@ begin
 
    wdg.Color.Color := SelectedColor;
 
-   wdgDivisor.Add('', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('');
 
    uiWidget.LastRect.GoLeft();
    uiWidget.LastRect.GoBelow();
@@ -249,14 +249,14 @@ begin
       uiWidget.LastRect.GoBelow();
    end;
 
-   wdgDivisor.Add('', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('');
 
    uiWidget.LastRect.GoLeft();
    wdgLabel.Add('Hex Color: ');
    wdg.ibHexColor := wdgInputBox.Add('', uiWidget.LastRect.RightOf(), oxDimensions(100, 20));
    wdg.ibHexColor.ReadOnly := true;
 
-   wdgDivisor.Add('', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('');
 
    wdg.Ok := wdgButton.Add('Ok', uiWidget.LastRect.BelowOf(), oxDimensions(DefaultButtonWidth, 0), 0);
    wdg.Ok.ResizeHeight(wdg.Ok.GetComputedHeight());

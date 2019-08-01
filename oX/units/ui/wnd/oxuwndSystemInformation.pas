@@ -44,7 +44,7 @@ var
    btnClose: wdgTButton;
 
 begin
-   wdgDivisor.Add('OS Information', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('OS Information');
    wdgLabel.Add('OS: ' + appSI.SystemName);
 
    if(appSI.SystemDeviceName <> '') then
@@ -53,7 +53,7 @@ begin
    if(appSI.KernelVersion <> '') then
       wdgLabel.Add('Kernel: ' + appSI.KernelVersion);
 
-   wdgDivisor.Add('Hardware Information', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('Hardware Information');
 
    if(appSI.HasProcessorInfo) then begin
       wdgLabel.Add('CPU: ' + appSI.GetProcessorName());
@@ -65,7 +65,7 @@ begin
       wdgLabel.Add('Memory: ' + appSI.GetMemorySize());
    end;
 
-   wdgDivisor.Add('Renderer Information', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('Renderer Information');
    wdgLabel.Add(oxRenderer.GetSummary(oxTWindow(Window.oxwParent)),
       uiWidget.LastRect.BelowOf(), oxNullDimensions);
 
