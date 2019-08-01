@@ -44,8 +44,7 @@ IMPLEMENTATION
 
 procedure initializeWidget();
 begin
-   wdgColorPick.Internal.Instance := wdgTColorPick;
-   wdgColorPick.Internal.Done();
+   wdgColorPick.Internal.Done(wdgTColorPick);
 
    wdgColorPick := wdgTColorPickGlobal.Create(wdgColorPick.Internal);
 end;

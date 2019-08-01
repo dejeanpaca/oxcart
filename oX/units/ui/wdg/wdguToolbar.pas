@@ -174,9 +174,8 @@ IMPLEMENTATION
 
 procedure initializeWidget();
 begin
-   wdgToolbar.Internal.Instance := wdgTToolbar;
    wdgToolbar.Internal.SkinDescriptor := @wdgToolbarSkinDescriptor;
-   wdgToolbar.Internal.Done();
+   wdgToolbar.Internal.Done(wdgTToolbar);
 
    wdgToolbar := wdgTToolbarGlobal.Create(wdgToolbar.Internal);
 end;

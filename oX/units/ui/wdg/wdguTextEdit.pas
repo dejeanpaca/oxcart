@@ -114,9 +114,8 @@ IMPLEMENTATION
 
 procedure InitWidget();
 begin
-   wdgTextEdit.Internal.Instance := wdgTTextEdit;
    wdgTextEdit.Internal.SkinDescriptor := @wdgInputSkinDescriptor;
-   wdgTextEdit.Internal.Done();
+   wdgTextEdit.Internal.Done(wdgTTextEdit);
 
    wdgTextEdit :=  wdgTTextEditGlobal.Create(wdgTextEdit.Internal);
 end;

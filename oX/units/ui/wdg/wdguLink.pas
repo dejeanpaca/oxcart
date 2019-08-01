@@ -96,9 +96,8 @@ IMPLEMENTATION
 
 procedure InitWidget();
 begin
-   wdgLink.Internal.Instance := wdgTLink;
    wdgLink.Internal.skinDescriptor := @wdgLinkSkinDescriptor;
-   wdgLink.Internal.Done();
+   wdgLink.Internal.Done(wdgTLink);
 
    wdgLink := wdgTLinkGlobal.Create(wdgLink.Internal);
 end;

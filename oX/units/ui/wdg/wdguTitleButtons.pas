@@ -332,9 +332,8 @@ procedure initWidget();
 begin
    wdgTitleButtons.Internal.SelectOnAdd := false;
    wdgTitleButtons.Internal.NonSelectable := true;
-   wdgTitleButtons.Internal.Instance := wdgTTitleButtons;
 
-   wdgTitleButtons.Internal.Done();
+   wdgTitleButtons.Internal.Done(wdgTTitleButtons);
 
    wdgTitleButtons := wdgTTitleButtonsGlobal.Create(wdgTitleButtons.Internal);
 

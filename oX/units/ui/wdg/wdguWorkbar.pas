@@ -71,8 +71,7 @@ IMPLEMENTATION
 
 procedure initializeWidget();
 begin
-   wdgWorkbar.Internal.Instance := wdgTWorkbar;
-   wdgWorkbar.Internal.Done();
+   wdgWorkbar.Internal.Done(wdgTWorkbar);
 
    wdgWorkbar := wdgTWorkbarGlobal.Create(wdgWorkbar.Internal);
 end;

@@ -502,8 +502,7 @@ end;
 
 procedure InitWidget();
 begin
-   wdgTabs.Internal.Instance := wdgTTabs;
-   wdgTabs.Internal.Done();
+   wdgTabs.Internal.Done(wdgTTabs);
 
    wdgTabs := wdgTTabsGlobal.Create(wdgTabs.Internal);
 end;

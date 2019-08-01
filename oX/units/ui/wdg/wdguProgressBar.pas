@@ -193,9 +193,8 @@ end;
 
 procedure InitWidget();
 begin
-   wdgProgressBar.Internal.Instance := wdgTProgressBar;
    wdgProgressBar.Internal.SkinDescriptor := @wdgProgressBarSkinDescriptor;
-   wdgProgressBar.Internal.Done();
+   wdgProgressBar.Internal.Done(wdgTProgressBar);
 
    wdgProgressBar := wdgTProgressBarGlobal.Create(wdgProgressBar.Internal);
 end;

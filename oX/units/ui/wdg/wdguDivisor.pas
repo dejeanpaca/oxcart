@@ -56,9 +56,8 @@ IMPLEMENTATION
 
 procedure InitWidget();
 begin
-   wdgDivisor.Internal.Instance := wdgTDivisor;
    wdgDivisor.Internal.NonSelectable := true;
-   wdgDivisor.Internal.Done();
+   wdgDivisor.Internal.Done(wdgTDivisor);
 
    wdgDivisor := wdgTDivisorGlobal.Create(wdgDivisor.Internal);
 end;

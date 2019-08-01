@@ -51,8 +51,7 @@ IMPLEMENTATION
 
 procedure initializeWidget();
 begin
-   wdgStatusbar.Internal.Instance := wdgTStatusbar;
-   wdgStatusbar.Internal.Done();
+   wdgStatusbar.Internal.Done(wdgTStatusbar);
 
    wdgStatusbar := wdgTStatusbarGlobal.Create(wdgStatusbar.Internal);
 end;

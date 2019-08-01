@@ -264,8 +264,7 @@ end;
 
 procedure initWidget();
 begin
-   wdgCheckbox.Internal.Instance := wdgTCheckbox;
-   wdgCheckbox.Internal.Done();
+   wdgCheckbox.Internal.Done(wdgTCheckbox);
 
    wdgCheckbox := wdgTCheckboxGlobal.Create(wdgCheckbox.Internal);
 end;

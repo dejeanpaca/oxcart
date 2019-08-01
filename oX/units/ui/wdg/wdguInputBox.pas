@@ -552,9 +552,8 @@ end;
 
 procedure InitWidget();
 begin
-   wdgInputBox.Internal.Instance := wdgTInputBox;
    wdgInputBox.Internal.SkinDescriptor := @wdgInputSkinDescriptor;
-   wdgInputBox.Internal.Done();
+   wdgInputBox.Internal.Done(wdgTInputBox);
 
    wdgInputBox := wdgTInputBoxGlobal.Create(wdgInputBox.Internal);
 end;

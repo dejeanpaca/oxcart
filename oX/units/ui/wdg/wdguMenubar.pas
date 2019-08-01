@@ -98,8 +98,7 @@ TYPE
 
 procedure initializeWidget();
 begin
-   wdgMenubar.Internal.Instance := wdgTMenubar;
-   wdgMenubar.Internal.Done();
+   wdgMenubar.Internal.Done(wdgTMenubar);
 
    wdgMenubar := wdgTMenubarGlobal.Create(wdgMenubar.Internal);
 end;

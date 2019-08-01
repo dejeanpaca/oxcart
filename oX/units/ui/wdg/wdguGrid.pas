@@ -779,16 +779,14 @@ end;
 
 procedure InitWidget();
 begin
-   wdgGrid.Internal.Instance := wdgTGrid;
-   wdgGrid.Internal.Done();
+   wdgGrid.Internal.Done(wdgTGrid);
 
    wdgGrid := wdgTGridGlobal.Create(wdgGrid.Internal);
 end;
 
 procedure InitStringWidget();
 begin
-   wdgStringGrid.Internal.Instance := wdgTStringGrid;
-   wdgStringGrid.Internal.Done();
+   wdgStringGrid.Internal.Done(wdgTStringGrid);
 
    wdgStringGrid := wdgTStringGridGlobal.Create(wdgStringGrid.Internal);
 end;

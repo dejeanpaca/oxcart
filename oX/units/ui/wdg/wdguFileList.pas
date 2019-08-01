@@ -901,24 +901,21 @@ end;
 
 procedure InitWidget();
 begin
-   wdgFileList.Internal.Instance := wdgTFileList;
-   wdgFileList.Internal.Done();
+   wdgFileList.Internal.Done(wdgTFileList);
 
    wdgFileList := wdgTFileListGlobal.Create(wdgFileList.Internal);
 end;
 
 procedure InitGridWidget();
 begin
-   wdgFileGrid.Internal.Instance := wdgTFileGrid;
-   wdgFileGrid.Internal.Done();
+   wdgFileGrid.Internal.Done(wdgTFileGrid);
 
    wdgFileGrid := wdgTFileGridGlobal.Create(wdgFileGrid.Internal);
 end;
 
 procedure InitHierarchicalWidget();
 begin
-   wdgHierarchicalFileList.Internal.Instance := wdgTHierarchicalFileList;
-   wdgHierarchicalFileList.Internal.Done();
+   wdgHierarchicalFileList.Internal.Done(wdgTHierarchicalFileList);
 
    wdgHierarchicalFileList := wdgTHierarchicalFileListGlobal.Create(wdgHierarchicalFileList.Internal);
 end;

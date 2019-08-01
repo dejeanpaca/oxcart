@@ -28,8 +28,7 @@ IMPLEMENTATION
 
 procedure initializeWidget();
 begin
-   wdgEmpty.Internal.Instance := uiTWidget;
-   wdgEmpty.Internal.Done();
+   wdgEmpty.Internal.Done(uiTWidget);
 
    wdgEmpty := wdgTEmptyGlobal.Create(wdgEmpty.Internal);
 end;
