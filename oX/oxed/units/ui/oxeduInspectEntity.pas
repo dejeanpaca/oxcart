@@ -189,8 +189,8 @@ begin
    uiWidget.PushTarget();
    inspector.wdg.Header.SetTarget();
 
-   wdg.Enable := wdgCheckbox.Add('', oxNullPoint, True);
-   wdg.Name := wdgInputBox.Add('', oxNullPoint, oxNullDimensions);
+   wdg.Enable := wdgCheckbox.Add('');
+   wdg.Name := wdgInputBox.Add('');
 
    uiWidget.PopTarget();
 
@@ -282,23 +282,23 @@ end;
 
 procedure oxedTInspectEntity.CreateVector(const caption: string; var v: oxedTInspectorWindowTransformWidgets; onChange: wdgTInputBoxOnChangeMethod);
 begin
-   v.Lbl := wdgLabel.Add(caption, oxPoint(0, 0), oxNullDimensions);
+   v.Lbl := wdgLabel.Add(caption);
 
-   v.XLabel := wdgLabel.Add('X', oxPoint(0, 0), oxNullDimensions);
-   v.YLabel := wdgLabel.Add('Y', oxPoint(0, 0), oxNullDimensions);
-   v.ZLabel := wdgLabel.Add('Z', oxPoint(0, 0), oxNullDimensions);
+   v.XLabel := wdgLabel.Add('X');
+   v.YLabel := wdgLabel.Add('Y');
+   v.ZLabel := wdgLabel.Add('Z');
 
-   V.Reset := wdgButton.Add('R', oxPoint(0, 0), oxNullDimensions, 0);
+   V.Reset := wdgButton.Add('R');
 
-   v.X := wdgInputBox.Add('0', oxPoint(0, 0), oxNullDimensions);
+   v.X := wdgInputBox.Add('0');
    v.X.InputType := wdgINPUT_BOX_TYPE_FLOAT;
    v.X.OnTextChanged := onChange;
 
-   v.Y := wdgInputBox.Add('0', oxPoint(0, 0), oxNullDimensions);
+   v.Y := wdgInputBox.Add('0');
    v.Y.InputType := wdgINPUT_BOX_TYPE_FLOAT;
    v.Y.OnTextChanged := onChange;
 
-   v.Z := wdgInputBox.Add('0', oxPoint(0, 0), oxNullDimensions);
+   v.Z := wdgInputBox.Add('0');
    v.Z.InputType := wdgINPUT_BOX_TYPE_FLOAT;
    v.Z.OnTextChanged := onChange;
 end;

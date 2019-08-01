@@ -52,17 +52,18 @@ procedure PreAddTabs();
 begin
    oxedwndProjectSettings.Tabs.AddTab('Android', 'android');
 
-   wdg.Enabled := wdgCheckbox.Add('Enabled', uiWidget.LastRect.BelowOf(), oxedAndroidSettings.Enabled);
+   wdg.Enabled := wdgCheckbox.Add('Enabled').
+      Check(oxedAndroidSettings.Enabled);
 
-   wdgDivisor.Add('Android settings', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('Android settings');
 
    wdgLabel.Add('Package name');
-   wdg.PackageName := wdgInputBox.Add('', uiWidget.LastRect.BelowOf(), oxNullDimensions);
+   wdg.PackageName := wdgInputBox.Add('');
 
    uiWidget.LastRect.GoBelow();
 
-   wdg.ManualFileManagement := wdgCheckbox.Add('Manual file management (aka do it yourself)',
-      uiWidget.LastRect.BelowOf(), oxedAndroidSettings.ManualFileManagement);
+   wdg.ManualFileManagement := wdgCheckbox.Add('Manual file management (aka do it yourself)').
+      Check(oxedAndroidSettings.ManualFileManagement);
 end;
 
 procedure init();
