@@ -40,6 +40,7 @@ TYPE
 
       function Add(const Caption: StdString;
                  const Pos: oxTPoint; const Dim: oxTDimensions): wdgTGroup;
+      function Add(const Caption: StdString): wdgTGroup;
    end;
 
 VAR
@@ -107,8 +108,14 @@ begin
 
    if(Result <> nil) then begin
       Result.SetCaption(Caption);
+
       AddDone(Result);
    end;
+end;
+
+function wdgTGroupGlobal.Add(const Caption: StdString): wdgTGroup;
+begin
+   Result := Add(Caption, oxNullPoint, oxNullDimensions);
 end;
 
 INITIALIZATION

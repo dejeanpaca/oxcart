@@ -43,7 +43,7 @@ TYPE
       {see if a check-box is checked}
       function Checked(): boolean;
       {set the check-box state}
-      procedure Check(isChecked: boolean);
+      function Check(isChecked: boolean): wdgTCheckbox;
 
       procedure GetComputedDimensions(out d: oxTDimensions); override;
 
@@ -54,6 +54,8 @@ TYPE
          procedure SizeChanged(); override;
          procedure FontChanged(); override;
    end;
+
+   { wdgTCheckboxGlobal }
 
    wdgTCheckboxGlobal = class(specialize wdgTBase<wdgTCheckbox>)
       Internal: uiTWidgetClass; static;
@@ -66,6 +68,7 @@ TYPE
       function Add(const Caption: StdString;
                   const Pos: oxTPoint;
                   value: boolean = false): wdgTCheckbox;
+      function Add(const Caption: StdString): wdgTCheckbox;
    end;
 
 VAR
@@ -207,12 +210,14 @@ begin
    Result := wdgpTRUE in Properties;
 end;
 
-procedure wdgTCheckbox.Check(isChecked: boolean);
+function wdgTCheckbox.Check(isChecked: boolean): wdgTCheckbox;
 begin
    if(isChecked) then
       Include(Properties, wdgpTRUE)
    else
       Exclude(Properties, wdgpTRUE);
+
+   Result := Self;
 end;
 
 procedure wdgTCheckbox.GetComputedDimensions(out d: oxTDimensions);
@@ -281,6 +286,11 @@ begin
 
       AddDone(Result);
    end;
+end;
+
+function wdgTCheckboxGlobal.Add(const Caption: StdString): wdgTCheckbox;
+begin
+   Result := Add(Caption, uiWidget.LastRect.BelowOf());
 end;
 
 INITIALIZATION

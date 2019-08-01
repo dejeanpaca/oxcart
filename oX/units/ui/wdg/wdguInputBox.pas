@@ -180,9 +180,13 @@ TYPE
       {adds a input-box to a window}
       function Add(const Initial: StdString;
                   const Pos: oxTPoint; const Dim: oxTDimensions): wdgTInputBox;
+      {adds a input-box to a window}
+      function Add(const Initial: StdString): wdgTInputBox;
 
       {checks if a char is allowed for floating point numbers}
       class function IsFloat(c: char): boolean; static;
+
+      procedure OnAdd(wdg: wdgTInputBox); override;
    end;
 
 VAR
@@ -562,20 +566,36 @@ function wdgTInputBoxGlobal.Add(const Initial: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions): wdgTInputBox;
 
 begin
-   Result := wdgTInputBox(uiWidget.Add(internal, Pos, Dim));
+   Result := AddInternal(Pos, Dim);
 
    if(Result <> nil) then begin
       {setup the text}
       Result.SetText(Initial, 0);
-      Result.AutoSize();
 
-      Result.ibUpdate();
+      AddDone(Result);
+   end;
+end;
+
+function wdgTInputBoxGlobal.Add(const Initial: StdString): wdgTInputBox;
+begin
+   Result := AddInternal();
+
+   if(Result <> nil) then begin
+      {setup the text}
+      Result.SetText(Initial, 0);
+
+      AddDone(Result);
    end;
 end;
 
 class function wdgTInputBoxGlobal.IsFloat(c: char): boolean;
 begin
    Result := (FormatSettings.DecimalSeparator = c) or (c in appFLOAT_CHARS);
+end;
+
+procedure wdgTInputBoxGlobal.OnAdd(wdg: wdgTInputBox);
+begin
+   wdg.ibUpdate();
 end;
 
 procedure wdgTInputBox.SetText(const txt: StdString; setProperties: longword);
