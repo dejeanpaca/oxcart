@@ -24,6 +24,7 @@ TYPE
    generic wdgTBase<T> = class
       public
       pInternal: uiPWidgetClass;
+      WidgetType: uiTWidgetClassType;
 
       constructor Create(var selfInternal: uiTWidgetClass);
 
@@ -48,6 +49,9 @@ IMPLEMENTATION
 
 constructor wdgTBase.Create(var selfInternal: uiTWidgetClass);
 begin
+   WidgetType := T;
+   assert(selfInternal.Instance = WidgetType, 'Widget type not matching for ' + uiTWidgetClassType(T).ClassName);
+
    pInternal := @selfInternal;
 end;
 

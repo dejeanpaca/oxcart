@@ -298,6 +298,7 @@ TYPE
 
    uiTWidgetInternal = record helper for uiTWidgetClass
       procedure Register(const name: string; initProc: TProcedure);
+      procedure Done(widgetClass: uiTWidgetClassType);
       procedure Done();
    end;
 
@@ -1515,6 +1516,12 @@ begin
    end;
 
    inc(oxui.nWidgetTypes);
+end;
+
+procedure uiTWidgetInternal.Done(widgetClass: uiTWidgetClassType);
+begin
+   Self.Instance := widgetClass;
+   Done();
 end;
 
 procedure uiTWidgetInternal.Done();
