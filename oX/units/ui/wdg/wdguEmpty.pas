@@ -14,34 +14,27 @@ INTERFACE
    {oX}
    oxuTypes,
    {ui}
-   uiuWidget, uiWidgets;
-
+   uiuWidget, uiWidgets, wdguBase;
 
 TYPE
-   uiTWidgetEmptyGlobal = record
-      function Add(const Pos: oxTPoint; const Dim: oxTDimensions): uiTWidget;
+   wdgTEmptyGlobal = class(specialize wdgTBase<uiTWidget>)
+      Internal: uiTWidgetClass; static;
    end;
 
 VAR
-   wdgEmpty: uiTWidgetEmptyGlobal;
+   wdgEmpty: wdgTEmptyGlobal;
 
 IMPLEMENTATION
 
-VAR
-   internal: uiTWidgetClass;
-
 procedure initializeWidget();
 begin
-   internal.Instance := uiTWidget;
-   internal.Done();
-end;
+   wdgEmpty.Internal.Instance := uiTWidget;
+   wdgEmpty.Internal.Done();
 
-function uiTWidgetEmptyGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions): uiTWidget;
-begin
-   Result := uiWidget.Add(internal, Pos, Dim);
+   wdgEmpty := wdgTEmptyGlobal.Create(wdgEmpty.Internal);
 end;
 
 INITIALIZATION
-   internal.Register('widget.empty', @initializeWidget);
+   wdgEmpty.Internal.Register('widget.empty', @initializeWidget);
 
 END.

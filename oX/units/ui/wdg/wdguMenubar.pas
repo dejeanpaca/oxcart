@@ -20,7 +20,8 @@ INTERFACE
       uiuWindowTypes, uiuTypes, uiuSkinTypes,
       uiuWindow, uiuWidget, uiWidgets, uiuControl, uiuDraw,
       {}
-      uiuContextMenu, wdguWorkbar;
+      uiuContextMenu,
+      wdguBase, wdguWorkbar;
 
 TYPE
    { wdgTMenubar }
@@ -56,8 +57,9 @@ TYPE
 
    { wdgTMenubarGlobal }
 
-   wdgTMenubarGlobal = record
-      Color: TColor4ub;
+   wdgTMenubarGlobal = class(specialize wdgTBase<wdgTMenubar>)
+      Internal: uiTWidgetClass; static;
+      Color: TColor4ub; static;
 
       {default height}
       Height,
@@ -66,10 +68,12 @@ TYPE
       {horizontal padding}
       Padding,
       {bottom padding}
-      BottomPadding: loopint;
+      BottomPadding: loopint; static;
 
-      class function Add(wnd: uiTWindow): wdgTMenubar; static;
-      class function Add(): wdgTMenubar; static;
+      function Add(wnd: uiTWindow): wdgTMenubar;
+
+      protected
+         procedure OnAdd(wdg: wdgTMenubar); override;
    end;
 
 VAR
@@ -92,13 +96,12 @@ TYPE
       Menubar: wdgTMenubar;
    end;
 
-VAR
-   internal: uiTWidgetClass;
-
 procedure initializeWidget();
 begin
-   internal.Instance := wdgTMenubar;
-   internal.Done();
+   wdgMenubar.Internal.Instance := wdgTMenubar;
+   wdgMenubar.Internal.Done();
+
+   wdgMenubar := wdgTMenubarGlobal.Create(wdgMenubar.Internal);
 end;
 
 { wdgTMenubar }
@@ -410,21 +413,20 @@ end;
 
 { wdgTMenubarGlobal }
 
-class function wdgTMenubarGlobal.Add(wnd: uiTWindow): wdgTMenubar;
+function wdgTMenubarGlobal.Add(wnd: uiTWindow): wdgTMenubar;
 begin
    uiWidget.SetTarget(wnd);
-   Result := Add();
+
+   Result := inherited Add();
 end;
 
-class function wdgTMenubarGlobal.Add(): wdgTMenubar;
+procedure wdgTMenubarGlobal.OnAdd(wdg: wdgTMenubar);
 begin
-   Result := wdgTMenubar(uiWidget.Add(internal, oxNullPoint, oxNullDimensions));
-
-   Result.AutoPosition();
+   wdg.AutoPosition();
 end;
 
 INITIALIZATION
-   internal.Register('widget.menubar', @initializeWidget);
+   wdgMenubar.Internal.Register('widget.menubar', @initializeWidget);
 
    wdgMenubar.Color.Assign(24, 24, 32, 255);
    wdgMenubar.Height := MENUBAR_HEIGHT;

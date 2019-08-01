@@ -17,7 +17,7 @@ INTERFACE
       {ui}
       uiuTypes, uiuWindowTypes, uiuSkinTypes,
       uiuWidget, uiWidgets, uiuDraw,
-      wdguWorkbar;
+      wdguBase, wdguWorkbar;
 
 CONST
    wdgscTOOLBAR_REGULAR = 0;
@@ -158,12 +158,13 @@ TYPE
 
    { wdgTToolbarGlobal }
 
-   wdgTToolbarGlobal = record
+   wdgTToolbarGlobal = class(specialize wdgTBase<wdgTToolbar>)
+      Internal: uiTWidgetClass; static;
       {default height}
-      Height: longint;
+      Height: longint; static;
 
-      class function Add(wnd: uiTWindow; vertical: boolean = false): wdgTToolbar; static;
-      class function Add(vertical: boolean = false): wdgTToolbar; static;
+      function Add(wnd: uiTWindow; vertical: boolean = false): wdgTToolbar;
+      function Add(vertical: boolean = false): wdgTToolbar;
    end;
 
 VAR
@@ -171,14 +172,13 @@ VAR
 
 IMPLEMENTATION
 
-VAR
-   internal: uiTWidgetClass;
-
 procedure initializeWidget();
 begin
-   internal.Instance := wdgTToolbar;
-   internal.SkinDescriptor := @wdgToolbarSkinDescriptor;
-   internal.Done();
+   wdgToolbar.Internal.Instance := wdgTToolbar;
+   wdgToolbar.Internal.SkinDescriptor := @wdgToolbarSkinDescriptor;
+   wdgToolbar.Internal.Done();
+
+   wdgToolbar := wdgTToolbarGlobal.Create(wdgToolbar.Internal);
 end;
 
 { wdgTToolbarItem }
@@ -604,23 +604,24 @@ end;
 
 { wdgTToolbarGlobal }
 
-class function wdgTToolbarGlobal.Add(wnd: uiTWindow; vertical: boolean = false): wdgTToolbar;
+function wdgTToolbarGlobal.Add(wnd: uiTWindow; vertical: boolean = false): wdgTToolbar;
 begin
    uiWidget.SetTarget(wnd);
-   result := Add(vertical);
+   Result := Add(vertical);
 end;
 
-class function wdgTToolbarGlobal.Add(vertical: boolean = false): wdgTToolbar;
+function wdgTToolbarGlobal.Add(vertical: boolean = false): wdgTToolbar;
 begin
-   result := wdgTToolbar(uiWidget.Add(internal, oxNullPoint, oxNullDimensions));
-   result.Vertical := vertical;
-   result.AutoPositionTarget := wdgWORKBAR_POSITION_TOP;
-   result.AutoPosition();
-   result.Recalculate();
+   Result := inherited Add(oxNullPoint, oxNullDimensions);
+
+   Result.Vertical := vertical;
+   Result.AutoPositionTarget := wdgWORKBAR_POSITION_TOP;
+   Result.AutoPosition();
+   Result.Recalculate();
 end;
 
 INITIALIZATION
-   internal.Register('widget.Toolbar', @initializeWidget);
-
+   wdgToolbar.Internal.Register('widget.Toolbar', @initializeWidget);
    wdgToolbar.Height := wdgWORKBAR_HEIGHT;
+
 END.

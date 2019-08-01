@@ -18,7 +18,8 @@ INTERFACE
       uOX, oxuTypes, oxuRender,
       {ui}
       uiuTypes, oxuUI, uiuWindowTypes, uiuSkinTypes,
-      uiuWidget, uiWidgets, uiuDraw, uiuWidgetRender;
+      uiuWidget, uiWidgets, uiuDraw, uiuWidgetRender,
+      wdguBase;
 
 CONST
    {scrollbar actions}
@@ -105,32 +106,32 @@ TYPE
       procedure RPositionChanged(); override;
    end;
 
-   { uiTWidgetScrollbarGlobal }
+   { wdgTScrollbarGlobal }
 
-   uiTWidgetScrollbarGlobal = record
+   wdgTScrollbarGlobal = class(specialize wdgTBase<wdgTScrollbar>)
+      Internal: uiTWidgetClass; static;
+
       {minimum handle size}
       MinHandleSize,
       {default width}
       Width,
       {width in light mode}
-      LightWidth: longint;
+      LightWidth,
       {opacity for light mode surface}
-      LightOpacity: longint;
+      LightOpacity: longint; static;
 
       {adds a ScrollBar to a window, with the specified dimensions}
       function Add(Total, Visible: longint;
             const Pos: oxTPoint; const Dim: oxTDimensions; Horizontal: boolean = false): wdgTScrollbar;
+
       {adds a ScrollBar to a window, but do not specify position immediately}
       function Add(Total, Visible: longint): wdgTScrollbar;
    end;
 
 VAR
-   wdgScrollbar: uiTWidgetScrollbarGlobal;
+   wdgScrollbar: wdgTScrollbarGlobal;
 
 IMPLEMENTATION
-
-VAR
-   internal: uiTWidgetClass;
 
 procedure wdgTScrollbar.CalcHandleRect();
 begin
@@ -643,11 +644,13 @@ end;
 
 procedure InitWidget();
 begin
-   internal.Instance := wdgTScrollbar;
-   internal.Done();
+   wdgScrollbar.Internal.Instance := wdgTScrollbar;
+   wdgScrollbar.Internal.Done();
+
+   wdgScrollbar := wdgTScrollbarGlobal.Create(wdgScrollbar.Internal);
 end;
 
-function uiTWidgetScrollbarGlobal.Add(Total, Visible: longint;
+function wdgTScrollbarGlobal.Add(Total, Visible: longint;
       const Pos: oxTPoint; const Dim: oxTDimensions; horizontal: boolean): wdgTScrollbar;
 
 begin
@@ -660,7 +663,7 @@ begin
    end;
 end;
 
-function uiTWidgetScrollbarGlobal.Add(Total, Visible: longint): wdgTScrollbar;
+function wdgTScrollbarGlobal.Add(Total, Visible: longint): wdgTScrollbar;
 begin
    Result := Add(Total, Visible, oxNullPoint, oxNullDimensions);
 end;
@@ -672,5 +675,6 @@ INITIALIZATION
    wdgScrollbar.LightWidth := 10;
    wdgScrollbar.LightOpacity := 127;
 
-   internal.Register('widget.scrollbar', @InitWidget);
+   wdgScrollbar.Internal.Register('widget.scrollbar', @InitWidget);
+
 END.

@@ -20,8 +20,8 @@ INTERFACE
       oxuTypes, oxuFont, oxuFileIcons, oxuRender, oxuTexture, oxuRenderUtilities,
       {ui}
       uiuTypes, uiuWindowTypes, uiuSkinTypes, uiuFiles,
-      uiuWidget, uiWidgets, wdguGrid, wdguList, wdguHierarchyList;
-
+      uiuWidget, uiWidgets,
+      wdguBase, wdguGrid, wdguList, wdguHierarchyList;
 
 TYPE
    { wdgTFileList }
@@ -164,27 +164,28 @@ TYPE
 
    { wdgTFileListGlobal }
 
-   wdgTFileListGlobal = record
-      DirectoryColor: TColor4ub;
-
-      function Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTFileList;
+   wdgTFileListGlobal = class(specialize wdgTBase<wdgTFileList>)
+      Internal: uiTWidgetClass; static;
+      DirectoryColor: TColor4ub; static;
 
       {get the file icon for a given file descriptor}
-      function GetFileIcon(const f: TFileDescriptor): wdgTListGlyph;
+      class function GetFileIcon(const f: TFileDescriptor): wdgTListGlyph; static;
    end;
 
    { wdgTFileGridGlobal }
 
-   wdgTFileGridGlobal = record
-      FileNameLines: loopint;
+   wdgTFileGridGlobal = class(specialize wdgTBase<wdgTFileGrid>)
+      Internal: uiTWidgetClass; static;
+      FileNameLines: loopint; static;
 
-      function Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTFileGrid;
+      protected
+         procedure OnAdd(wdg: wdgTFileGrid); override;
    end;
 
    { wdgTHierarchicalFileListGlobal }
 
-   wdgTHierarchicalFileListGlobal = record
-      function Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTHierarchicalFileList;
+   wdgTHierarchicalFileListGlobal = class(specialize wdgTBase<wdgTHierarchicalFileList>)
+      Internal: uiTWidgetClass; static;
    end;
 
 VAR
@@ -193,11 +194,6 @@ VAR
    wdgHierarchicalFileList: wdgTHierarchicalFileListGlobal;
 
 IMPLEMENTATION
-
-VAR
-   internal,
-   internalGrid,
-   internalHierarchical: uiTWidgetClass;
 
 { wdgTFileGrid }
 
@@ -882,13 +878,7 @@ begin
 end;
 
 { wdgTFileListGlobal }
-
-function wdgTFileListGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTFileList;
-begin
-   Result := wdgTFileList(uiWidget.Add(internal, Pos, Dim));
-end;
-
-function wdgTFileListGlobal.GetFileIcon(const f: TFileDescriptor): wdgTListGlyph;
+class function wdgTFileListGlobal.GetFileIcon(const f: TFileDescriptor): wdgTListGlyph;
 begin
    if(f.IsFile()) then begin
       Result.Glyph := oxFileIcons.Get(ExtractFileExtNoDot(f.Name));
@@ -904,40 +894,39 @@ end;
 
 { wdgTFileGridGlobal }
 
-function wdgTFileGridGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTFileGrid;
+procedure wdgTFileGridGlobal.OnAdd(wdg: wdgTFileGrid);
 begin
-   Result := wdgTFileGrid(uiWidget.Add(internalGrid, Pos, Dim));
-   Result.EnableGridMode();
-end;
-
-{ wdgTHierarchicalFileListGlobal }
-function wdgTHierarchicalFileListGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTHierarchicalFileList;
-begin
-   Result := wdgTHierarchicalFileList(uiWidget.Add(internalHierarchical, Pos, Dim));
+   wdg.EnableGridMode();
 end;
 
 procedure InitWidget();
 begin
-   internal.Instance := wdgTFileList;
-   internal.Done();
+   wdgFileList.Internal.Instance := wdgTFileList;
+   wdgFileList.Internal.Done();
+
+   wdgFileList := wdgTFileListGlobal.Create(wdgFileList.Internal);
 end;
 
 procedure InitGridWidget();
 begin
-   internalGrid.Instance := wdgTFileGrid;
-   internalGrid.Done();
+   wdgFileGrid.Internal.Instance := wdgTFileGrid;
+   wdgFileGrid.Internal.Done();
+
+   wdgFileGrid := wdgTFileGridGlobal.Create(wdgFileGrid.Internal);
 end;
 
 procedure InitHierarchicalWidget();
 begin
-   internalHierarchical.Instance := wdgTHierarchicalFileList;
-   internalHierarchical.Done();
+   wdgHierarchicalFileList.Internal.Instance := wdgTHierarchicalFileList;
+   wdgHierarchicalFileList.Internal.Done();
+
+   wdgHierarchicalFileList := wdgTHierarchicalFileListGlobal.Create(wdgHierarchicalFileList.Internal);
 end;
 
 INITIALIZATION
-   internal.Register('widget.filelist', @InitWidget);
-   internal.Register('widget.filegrid', @InitGridWidget);
-   internal.Register('widget.hierarchicalfilelist', @InitHierarchicalWidget);
+   wdgFileList.Internal.Register('widget.filelist', @InitWidget);
+   wdgFileGrid.Internal.Register('widget.filegrid', @InitGridWidget);
+   wdgHierarchicalFileList.Internal.Register('widget.hierarchicalfilelist', @InitHierarchicalWidget);
 
    wdgFileGrid.FileNameLines := 2;
 

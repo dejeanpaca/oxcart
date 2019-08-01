@@ -18,7 +18,8 @@ INTERFACE
       oxuTypes, oxuFont, oxuPlatform,
       {ui}
       uiuDraw, uiuWidget, uiuWindowTypes, uiuSkinTypes,
-      uiWidgets, uiuWidgetRender, uiuTypes;
+      uiWidgets, uiuWidgetRender, uiuTypes,
+      wdguBase;
 
 CONST
    {text should not be set as the Original text}
@@ -171,9 +172,11 @@ TYPE
 
    wdgTInputBoxOnChangeMethod = procedure(wdg: wdgTInputBox);
 
-   { uiTWidgetInputBoxGlobal }
+   { wdgTInputBoxGlobal }
 
-   uiTWidgetInputBoxGlobal = record
+   wdgTInputBoxGlobal = class(specialize wdgTBase<wdgTInputBox>)
+      Internal: uiTWidgetClass; static;
+
       {adds a input-box to a window}
       function Add(const Initial: StdString;
                   const Pos: oxTPoint; const Dim: oxTDimensions): wdgTInputBox;
@@ -183,12 +186,9 @@ TYPE
    end;
 
 VAR
-   wdgInputBox: uiTWidgetInputBoxGlobal;
+   wdgInputBox: wdgTInputBoxGlobal;
 
 IMPLEMENTATION
-
-VAR
-   internal: uiTWidgetClass;
 
 procedure wdgTInputBox.Render();
 var
@@ -552,12 +552,14 @@ end;
 
 procedure InitWidget();
 begin
-   internal.Instance := wdgTInputBox;
-   internal.SkinDescriptor := @wdgInputSkinDescriptor;
-   internal.Done();
+   wdgInputBox.Internal.Instance := wdgTInputBox;
+   wdgInputBox.Internal.SkinDescriptor := @wdgInputSkinDescriptor;
+   wdgInputBox.Internal.Done();
+
+   wdgInputBox := wdgTInputBoxGlobal.Create(wdgInputBox.Internal);
 end;
 
-function uiTWidgetInputBoxGlobal.Add(const Initial: StdString;
+function wdgTInputBoxGlobal.Add(const Initial: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions): wdgTInputBox;
 
 begin
@@ -572,7 +574,7 @@ begin
    end;
 end;
 
-class function uiTWidgetInputBoxGlobal.IsFloat(c: char): boolean;
+class function wdgTInputBoxGlobal.IsFloat(c: char): boolean;
 begin
    Result := (FormatSettings.DecimalSeparator = c) or (c in appFLOAT_CHARS);
 end;
@@ -663,6 +665,7 @@ begin
 end;
 
 INITIALIZATION
-   internal.Register('widget.inputbox', @InitWidget);
+   wdgInputBox.Internal.Register('widget.inputbox', @InitWidget);
    wdgInputSkinDescriptor.Setup := @setupSkin;
+
 END.

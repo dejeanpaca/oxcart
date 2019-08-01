@@ -16,7 +16,8 @@ INTERFACE
       oxuTypes, oxuFont,
       {ui}
       uiuWindowTypes, uiuSkinTypes,
-      uiuWidget, uiuWindow, uiWidgets, uiuWidgetRender, uiuDraw;
+      uiuWidget, uiuWindow, uiWidgets, uiuWidgetRender, uiuDraw,
+      wdguBase;
 
 TYPE
 
@@ -34,7 +35,9 @@ TYPE
 
    { wdgTGroupGlobal }
 
-   wdgTGroupGlobal = record
+   wdgTGroupGlobal = class(specialize wdgTBase<wdgTGroup>)
+      Internal: uiTWidgetClass; static;
+
       function Add(const Caption: StdString;
                  const Pos: oxTPoint; const Dim: oxTDimensions): wdgTGroup;
    end;
@@ -43,9 +46,6 @@ VAR
    wdgGroup: wdgTGroupGlobal;
 
 IMPLEMENTATION
-
-VAR
-   internal: uiTWidgetClass;
 
 constructor wdgTGroup.Create();
 begin
@@ -94,22 +94,25 @@ end;
 
 procedure InitWidget();
 begin
-   internal.NonSelectable := true;
-   internal.Instance := wdgTGroup;
-   internal.Done();
+   wdgGroup.Internal.NonSelectable := true;
+   wdgGroup.Internal.Instance := wdgTGroup;
+   wdgGroup.Internal.Done();
+
+   wdgGroup := wdgTGroupGlobal.Create(wdgGroup.Internal);
 end;
 
 function wdgTGroupGlobal.Add(const Caption: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions): wdgTGroup;
 begin
-   result := wdgTGroup(uiWidget.Add(internal, Pos, Dim));
+   Result := inherited AddInternal(Pos, Dim);
 
-   if(result <> nil) then begin
-      result.SetCaption(Caption);
+   if(Result <> nil) then begin
+      Result.SetCaption(Caption);
+      AddDone(Result);
    end;
 end;
 
 INITIALIZATION
-   internal.Register('widget.group', @InitWidget);
+   wdgGroup.Internal.Register('widget.group', @InitWidget);
 
 END.

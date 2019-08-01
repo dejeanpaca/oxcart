@@ -19,7 +19,7 @@ INTERFACE
       {ui}
       uiuTypes, uiuWindowTypes, uiuSkinTypes,
       uiuWidget, uiWidgets, uiuDraw, uiuWindow,
-      wdguList;
+      wdguBase, wdguList;
 
 CONST
    {column title padding}
@@ -155,13 +155,13 @@ TYPE
          {vertical separation ratio}
          VerticalSeparation: single;
 
-      constructor Create; override;
+      constructor Create(); override;
 
       {get the value for the current column, intended to be overriden to get a string from a source}
       function GetValue({%H-}index, {%H-}column: loopint): StdString; virtual;
 
-      procedure RenderStart; override;
-      procedure RenderDone; override;
+      procedure RenderStart(); override;
+      procedure RenderDone(); override;
 
       procedure RenderColumn(index, columnIndex: loopint; var r: oxTRect); override;
 
@@ -175,14 +175,14 @@ TYPE
 
    { wdgTGridGlobal }
 
-   wdgTGridGlobal = record
-      function Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTGrid;
+   wdgTGridGlobal = class(specialize wdgTBase<wdgTGrid>)
+      Internal: uiTWidgetClass; static;
    end;
 
    { wdgTStringGridGlobal }
 
-   wdgTStringGridGlobal = record
-      function Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTStringGrid;
+   wdgTStringGridGlobal = class(specialize wdgTBase<wdgTStringGrid>)
+      Internal: uiTWidgetClass; static;
    end;
 
 VAR
@@ -191,13 +191,9 @@ VAR
 
 IMPLEMENTATION
 
-VAR
-   internal,
-   internalString: uiTWidgetClass;
-
 { wdgTStringGrid }
 
-constructor wdgTStringGrid.Create;
+constructor wdgTStringGrid.Create();
 begin
    inherited Create;
 
@@ -209,7 +205,7 @@ begin
    Result := '';
 end;
 
-procedure wdgTStringGrid.RenderStart;
+procedure wdgTStringGrid.RenderStart();
 begin
    CachedFont.Start();
    SetTextColor();
@@ -217,7 +213,7 @@ begin
    uiDraw.Scissor(RPosition, Dimensions);
 end;
 
-procedure wdgTStringGrid.RenderDone;
+procedure wdgTStringGrid.RenderDone();
 begin
    oxf.Stop();
 
@@ -781,33 +777,24 @@ begin
    SelectedGridItem := -1;
 end;
 
-{ wdgTGridGlobal }
-
-function wdgTGridGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTGrid;
-begin
-   Result := wdgTGrid(uiWidget.Add(internal, Pos, Dim));
-end;
-
-{ wdgTStringGridGlobal }
-
-function wdgTStringGridGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTStringGrid;
-begin
-   Result := wdgTStringGrid(uiWidget.Add(internal, Pos, Dim));
-end;
-
 procedure InitWidget();
 begin
-   internal.Instance := wdgTGrid;
-   internal.Done();
+   wdgGrid.Internal.Instance := wdgTGrid;
+   wdgGrid.Internal.Done();
+
+   wdgGrid := wdgTGridGlobal.Create(wdgGrid.Internal);
 end;
 
 procedure InitStringWidget();
 begin
-   internalString.Instance := wdgTStringGrid;
-   internalString.Done();
+   wdgStringGrid.Internal.Instance := wdgTStringGrid;
+   wdgStringGrid.Internal.Done();
+
+   wdgStringGrid := wdgTStringGridGlobal.Create(wdgStringGrid.Internal);
 end;
 
 INITIALIZATION
-   internal.Register('widget.grid', @InitWidget);
-   internal.Register('widget.stringgrid', @InitStringWidget);
+   wdgGrid.Internal.Register('widget.grid', @InitWidget);
+   wdgStringGrid.Internal.Register('widget.stringgrid', @InitStringWidget);
+
 END.

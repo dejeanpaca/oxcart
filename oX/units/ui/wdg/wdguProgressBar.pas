@@ -15,7 +15,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont,
       {ui}
-      uiuTypes, uiuWindowTypes, uiuWidget, uiWidgets, uiuDraw, uiuWidgetRender;
+      uiuTypes, uiuWidget, uiWidgets, uiuDraw, uiuWidgetRender, uiuSkinTypes,
+      wdguBase;
 
 CONST
    wdgscPROGRESS_BAR_SURFACE = 0;
@@ -71,7 +72,9 @@ TYPE
       function Undefined(): wdgTProgressBar;
    end;
 
-   wdgTProgressBarGlobal = record
+   wdgTProgressBarGlobal = class(specialize wdgTBase<wdgTProgressBar>)
+      Internal: uiTWidgetClass; static;
+
       {adds a ProgressBar to a window}
       function Add(const Pos: oxTPoint; const Dim: oxTDimensions;
                   max: longint = 100): wdgTProgressBar;
@@ -81,9 +84,6 @@ VAR
    wdgProgressBar: wdgTProgressBarGlobal;
 
 IMPLEMENTATION
-
-VAR
-   internal: uiTWidgetClass;
 
 constructor wdgTProgressBar.Create;
 begin
@@ -95,6 +95,7 @@ end;
 
 procedure wdgTProgressBar.Render();
 var
+   pSkin: uiTSkin;
    r: oxTRect;
    cur,
    undefinedPos, {at what position the undefined bar is at}
@@ -108,8 +109,10 @@ begin
    if(Dimensions.w = 0) or (Dimensions.h = 0) then
       exit;
 
-   uiRenderWidget.Box(uiTWidget(self), GetColor(wdgscPROGRESS_BAR_SURFACE), uiTWindow(wnd).Skin.Colors.Border,
-      wdgRENDER_BLOCK_ALL or wdgRENDER_BLOCK_SIMPLE);
+   pSkin := GetSkinObject();
+
+   uiRenderWidget.Box(uiTWidget(self), GetColor(wdgscPROGRESS_BAR_SURFACE),
+      pSkin.Colors.Border, wdgRENDER_BLOCK_ALL or wdgRENDER_BLOCK_SIMPLE);
 
    maxw := Dimensions.w - 2;
 
@@ -182,7 +185,7 @@ begin
       r.Assign(RPosition, Dimensions);
 
       f.Start();
-      SetColorBlendedEnabled(uiTWindow(wnd).Skin.Colors.InputText, uiTWindow(wnd).Skin.DisabledColors.InputText);
+      SetColorBlendedEnabled(pSkin.Colors.InputText, pSkin.DisabledColors.InputText);
       f.WriteCentered(s, r);
       oxf.Stop();
    end;
@@ -190,10 +193,11 @@ end;
 
 procedure InitWidget();
 begin
-   internal.Instance := wdgTProgressBar;
-   internal.SkinDescriptor := @wdgProgressBarSkinDescriptor;
-   {class}
-   internal.Done();
+   wdgProgressBar.Internal.Instance := wdgTProgressBar;
+   wdgProgressBar.Internal.SkinDescriptor := @wdgProgressBarSkinDescriptor;
+   wdgProgressBar.Internal.Done();
+
+   wdgProgressBar := wdgTProgressBarGlobal.Create(wdgProgressBar.Internal);
 end;
 
 function wdgTProgressBarGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions;
@@ -249,6 +253,6 @@ end;
 
 
 INITIALIZATION
-   internal.Register('widget.progressbar', @InitWidget);
+   wdgProgressBar.Internal.Register('widget.progressbar', @InitWidget);
 
 END.

@@ -16,7 +16,7 @@ INTERFACE
       oxuTypes, oxuFont,
       {ui}
       uiuWindowTypes, uiuWidget, uiWidgets,
-      wdguWorkbar;
+      wdguBase, wdguWorkbar;
 
 TYPE
 
@@ -31,13 +31,17 @@ TYPE
 
    { wdgTStatusbarGlobal }
 
-   wdgTStatusbarGlobal = record
-      {default height}
-      Height: longint;
-      Color: TColor4ub;
+   wdgTStatusbarGlobal = class(specialize wdgTBase<wdgTStatusbar>)
+      Internal: uiTWidgetClass; static;
 
-      class function Add(wnd: uiTWindow): wdgTStatusbar; static;
-      class function Add(): wdgTStatusbar; static;
+      {default height}
+      Height: longint; static;
+      Color: TColor4ub; static;
+
+      function Add(wnd: uiTWindow): wdgTStatusbar;
+
+      protected
+         procedure OnAdd(wdg: wdgTStatusbar); override;
    end;
 
 VAR
@@ -45,13 +49,12 @@ VAR
 
 IMPLEMENTATION
 
-VAR
-   internal: uiTWidgetClass;
-
 procedure initializeWidget();
 begin
-   internal.Instance := wdgTStatusbar;
-   internal.Done();
+   wdgStatusbar.Internal.Instance := wdgTStatusbar;
+   wdgStatusbar.Internal.Done();
+
+   wdgStatusbar := wdgTStatusbarGlobal.Create(wdgStatusbar.Internal);
 end;
 
 { wdgTStatusbar }
@@ -90,23 +93,22 @@ end;
 
 { wdgTStatusbarGlobal }
 
-class function wdgTStatusbarGlobal.Add(wnd: uiTWindow): wdgTStatusbar;
+function wdgTStatusbarGlobal.Add(wnd: uiTWindow): wdgTStatusbar;
 begin
    uiWidget.SetTarget(wnd);
-   result := Add();
+   Result := inherited Add();
 end;
 
-class function wdgTStatusbarGlobal.Add(): wdgTStatusbar;
+procedure wdgTStatusbarGlobal.OnAdd(wdg: wdgTStatusbar);
 begin
-   result := wdgTStatusbar(uiWidget.Add(internal, oxNullPoint, oxNullDimensions));
-   result.AutoPositionTarget := wdgWORKBAR_POSITION_BOTTOM;
-   result.AutoPosition();
+   wdg.AutoPositionTarget := wdgWORKBAR_POSITION_BOTTOM;
+   wdg.AutoPosition();
 end;
 
 INITIALIZATION
-   internal.Register('widget.statusbar', @initializeWidget);
+   wdgStatusbar.Internal.Register('widget.statusbar', @initializeWidget);
 
    wdgStatusbar.Height := wdgWORKBAR_HEIGHT;
    wdgStatusbar.Color.Assign(255, 127, 0, 255);
-END.
 
+END.

@@ -18,10 +18,11 @@ INTERFACE
       oxuTypes, oxuFont,
       {ui}
       uiuWindow, uiuWindowTypes, uiuTypes, uiuSkinTypes,
-      uiuWidget, uiWidgets;
+      uiuWidget, uiWidgets, wdguBase;
 
 TYPE
-   {a button}
+   { wdgTTitleButton }
+
    wdgTTitleTButton = record
       x, {x offset}
       w,  {specific width}
@@ -60,19 +61,20 @@ TYPE
       procedure UnHighlight();
    end;
 
-   uiTWidgetTitleButtonsGlobal = record
+   { wdgTTitleButtonsGlobal }
+
+   wdgTTitleButtonsGlobal = class(specialize wdgTBase<wdgTTitleButtons>)
+      Internal: uiTWidgetClass; static;
+
       {title button size ratio, button size:title height,
       used for both button height and width [square]}
-      ButtonSizeRatio: single;
+      ButtonSizeRatio: single; static;
    end;
 
 VAR
-   wdgTitleButtons: uiTWidgetTitleButtonsGlobal;
+   wdgTitleButtons: wdgTTitleButtonsGlobal;
 
 IMPLEMENTATION
-
-VAR
-   internal: uiTWidgetClass;
 
 {NOTE: the specific width is currently the same for any button}
 
@@ -111,7 +113,7 @@ var
 
 begin
    if (wnd.Parent <> nil) then begin
-      pWdg := wdgTTitleButtons(uiWidget.Add(internal,
+      pWdg := wdgTTitleButtons(uiWidget.Add(wdgTitleButtons.Internal,
          oxPoint(0, 0), oxDimensions(0, 0)).
          SetID(uiWidget.IDs.TITLE_BUTTONS));
 
@@ -328,17 +330,19 @@ end;
 
 procedure initWidget();
 begin
-   internal.SelectOnAdd := false;
-   internal.NonSelectable := true;
-   internal.Instance := wdgTTitleButtons;
+   wdgTitleButtons.Internal.SelectOnAdd := false;
+   wdgTitleButtons.Internal.NonSelectable := true;
+   wdgTitleButtons.Internal.Instance := wdgTTitleButtons;
 
-   internal.Done();
+   wdgTitleButtons.Internal.Done();
+
+   wdgTitleButtons := wdgTTitleButtonsGlobal.Create(wdgTitleButtons.Internal);
 
    uiWindow.OnCreate.Add(@wdgAdd);
 end;
 
 INITIALIZATION
    wdgTitleButtons.ButtonSizeRatio := 0;
-   internal.Register('widget.title_buttons', @InitWidget);
+   wdgTitleButtons.Internal.Register('widget.title_buttons', @InitWidget);
 
 END.
