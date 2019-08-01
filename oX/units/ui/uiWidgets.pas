@@ -150,6 +150,7 @@ TYPE
       procedure Assign(const anotherR: oxTRect);
       procedure Assign(const p: oxTPoint; const d: oxTDimensions);
       procedure Assign(wnd: uiTWindow);
+      procedure Assign(wdg: uiTControl);
       procedure SetDefault(height: longint);
 
       procedure GoLeft();
@@ -332,6 +333,14 @@ procedure uiTWidgetLastRect.Assign(wnd: uiTWindow);
 begin
    r.x := wdgDEFAULT_SPACING;
    r.y := wnd.Dimensions.h - 1;
+   r.w := 0;
+   r.h := 0;
+end;
+
+procedure uiTWidgetLastRect.Assign(wdg: uiTControl);
+begin
+   r.x := wdgDEFAULT_SPACING;
+   r.y := wdg.Dimensions.h - 1;
    r.w := 0;
    r.h := 0;
 end;
@@ -1247,8 +1256,10 @@ begin
    uiWidget.ClearTarget();
 
    uiWidget.Target.Window := uiTWindow(Self.wnd);
-   uiWidget.Target.Widget := self;
+   uiWidget.Target.Widget := Self;
    uiWidget.Target.ControlProcedure := cp;
+
+   uiWidget.LastRect.Assign(Self);
 end;
 
 
@@ -1486,7 +1497,6 @@ begin
    Move(0, wnd.Dimensions.h - 1);
    Resize(wnd.Dimensions.w, wnd.Dimensions.h);
 end;
-
 
 procedure uiTWidgetGlobal.Created(wdg: uiTWidget);
 begin
