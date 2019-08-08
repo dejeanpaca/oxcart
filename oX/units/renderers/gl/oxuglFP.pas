@@ -11,7 +11,6 @@ UNIT oxuglFP;
 INTERFACE
 
    USES
-      uInit,
       {ox}
       uOX, oxuRunRoutines,
       {ox.gl}
