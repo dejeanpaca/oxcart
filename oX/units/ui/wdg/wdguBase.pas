@@ -40,6 +40,8 @@ TYPE
       {called when adding is done}
       function AddDone(wdg: T): T;
 
+      {called after a a widget is created}
+      procedure OnCreate({%H-}wdg: T); virtual;
       procedure OnAdd({%H-}wdg: T); virtual;
    end;
 
@@ -82,26 +84,39 @@ end;
 function wdgTBase.AddInternal(const Pos: oxTPoint; const Dim: oxTDimensions): T;
 begin
   Result := T(uiWidget.Add(pInternal^, Pos, Dim));
+
+  if(Result <> nil) then
+     OnCreate(Result);
 end;
 
 function wdgTBase.AddInternal(const Pos: oxTPoint): T;
 begin
-   Result := T(uiWidget.Add(pInternal^, Pos, oxNullDimensions))
+   Result := T(uiWidget.Add(pInternal^, Pos, oxNullDimensions));
+
+   if(Result <> nil) then
+      OnCreate(Result);
 end;
 
 function wdgTBase.AddInternal(): T;
 begin
   Result := AddInternal(uiWidget.LastRect.BelowOf(), oxNullDimensions);
+
+  if(Result <> nil) then
+     OnCreate(Result);
 end;
 
 function wdgTBase.AddDone(wdg: T): T;
 begin
-   OnAdd(wdg);
-
    if(wdg <> nil) then
       uiTWidget(wdg).AutoSize();
 
-   Result := T(wdg);
+   OnAdd(wdg);
+
+   Result := wdg;
+end;
+
+procedure wdgTBase.OnCreate(wdg: T);
+begin
 end;
 
 procedure wdgTBase.OnAdd(wdg: T);
