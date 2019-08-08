@@ -357,7 +357,7 @@ begin
       oxDimensions(wnd.Dimensions.w - wdgDEFAULT_SPACING * 2, h)).
       SetID(WDGID_TEXT));
 
-   wnd.MessageBox.wdg.Input.AutoSetDimensions(True);
+   wnd.MessageBox.wdg.Input.AutoSetWidgetDimensions(True);
 
    wnd.MessageBox.wdg.Input.SetPlaceholder('');
 end;
