@@ -76,7 +76,7 @@ TYPE
       Glyphs3D: boolean;
 
       {renderer initialization routines}
-      Init: TInitializationProcs;
+      Init: oxTRunRoutines;
 
       function Find(componentType: oxTComponentType): oxedTEditRenderer;
       function FindForEntity(entity: oxTEntity; exclude: oxTComponent = nil): oxedTEditRendererComponentPairs;
@@ -238,7 +238,7 @@ VAR
    oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxedEditRenderers.Init.Init('oxed.edit_renderers');
+   oxTRunRoutines.Initialize(oxedEditRenderers.Init);
    oxedEditRenderers.Glyphs3D := true;
 
    oxed.Init.Add(oxedInitRoutines, 'oxed.edit_renderers', @init, @deinit);

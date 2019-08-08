@@ -13,6 +13,7 @@ INTERFACE
    USES
       uStd,
       {ox}
+      oxuRunRoutines,
       oxuCameraComponent, oxeduEditRenderers, oxeduComponent, oxeduComponentGlyph, oxeduComponentGlyphs;
 
 TYPE
@@ -46,7 +47,10 @@ begin
    FreeObject(oxedCameraEditRenderer);
 end;
 
+VAR
+   initRoutine: oxTRunRoutine;
+
 INITIALIZATION
-   oxedEditRenderers.Init.Add('camera', @init, @deinit);
+   oxedEditRenderers.Init.Add(initRoutine, 'camera', @init, @deinit);
 
 END.
