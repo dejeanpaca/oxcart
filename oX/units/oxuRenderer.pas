@@ -11,7 +11,7 @@ UNIT oxuRenderer;
 INTERFACE
 
    USES
-      uStd, uColors, uLog, uInit, uImage, uComponentProvider, StringUtils, vmVector,
+      uStd, uColors, uLog, uImage, uComponentProvider, StringUtils, vmVector,
       {oX}
       oxuTypes, oxuWindowTypes, oxuGlobalInstances, oxuPlatform, oxuRunRoutines;
 

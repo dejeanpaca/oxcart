@@ -11,7 +11,7 @@ UNIT uiuCursor;
 INTERFACE
 
    USES
-      uStd, uInit,
+      uStd,
       {app}
       appuMouse,
       {ox}

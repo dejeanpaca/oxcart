@@ -11,7 +11,7 @@ UNIT uiuKeyMappings;
 INTERFACE
 
    USES
-      uStd, uInit, uAppInfo, udvars, appuKeyMappings;
+      uStd, uAppInfo, udvars, appuKeyMappings;
 
 VAR
    oxKeyMappings: appTKeyMappingGroup;

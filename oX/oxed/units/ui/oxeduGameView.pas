@@ -11,7 +11,7 @@ UNIT oxeduGameView;
 INTERFACE
 
    USES
-      uStd, uInit, uLog,
+      uStd, uLog,
       {app}
       appuKeys, appuMouse,
       {ox}

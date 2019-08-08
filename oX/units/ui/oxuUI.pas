@@ -11,7 +11,7 @@ UNIT oxuUI;
 INTERFACE
 
    USES
-      uStd, uInit, uLog, uTiming, udvars,
+      uStd, uLog, uTiming, udvars,
       {app}
       appuMouse,
       {oX}
