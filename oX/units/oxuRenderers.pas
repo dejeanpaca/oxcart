@@ -13,7 +13,7 @@ INTERFACE
    USES
       StringUtils, uLog, uInit, uStd, udvars, ParamUtils,
       {ox}
-      uOX, oxuRenderer;
+      uOX, oxuRunRoutines, oxuRenderer;
 
 CONST
    oxcMAX_RENDERERS  = 8;
@@ -31,7 +31,7 @@ TYPE
       OverrideRenderer: oxTRenderer;
 
       n: longint;
-      Init: TInitializationProcs;
+      Init: oxTRunRoutines;
       List: array[0..oxcMAX_RENDERER] of oxTRenderer;
 
       {routines called when the renderer is used}
@@ -255,7 +255,7 @@ begin
 end;
 
 INITIALIZATION
-   oxRenderers.init.Init('Renderers');
+   oxTRunRoutines.Initialize(oxRenderers.Init);
 
    TProcedures.Initialize(oxRenderers.UseRoutines);
    TProcedures.Initialize(oxRenderers.PostUseRoutines);
