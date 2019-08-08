@@ -1457,9 +1457,6 @@ begin
 
       SizeChanged();
       UpdateParentSize(false);
-
-      if(Parent <> nil) then
-         PositionUpdate();
    end;
 
    uiWidget.LastRect.Assign(Position, Dimensions);
