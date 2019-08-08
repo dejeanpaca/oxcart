@@ -133,6 +133,7 @@ end;
 
 procedure TPreallocatedArrayListClass.InsertRange(index, count: loopint);
 var
+   pn,
    i: loopint;
 
 begin
@@ -140,14 +141,16 @@ begin
    if(a < n + count) then
       AllocateInc(n + count - a);
 
+   pn := n;
    inc(n, count);
 
    {move existing items out of way if required}
-   if(index < n) then begin
-      for i := (n - 1) downto index do begin
+   if(index < pn) then begin
+      for i := pn - 1 downto index do begin
          List[i + count] := List[i];
       end;
    end;
+
 end;
 
 function TPreallocatedArrayListClass.AddTo(var p: T): boolean;
