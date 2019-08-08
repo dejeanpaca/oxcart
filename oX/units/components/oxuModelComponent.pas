@@ -22,7 +22,7 @@ TYPE
    oxTModelComponent = class(oxTRenderComponent)
       public
       Model: oxTModel;
-      Path: string;
+      Path: StdString;
 
       constructor Create(); override;
 
@@ -88,7 +88,7 @@ INITIALIZATION
    descriptor.Name := 'Model Render';
 
    serializer := oxTSerialization.Create(oxTModelComponent, @instance);
-   serializer.AddProperty('Path', @oxTModelComponent(nil).Path, oxSerialization.Types.AnsiString);
+   serializer.AddProperty('Path', @oxTModelComponent(nil).Path, oxSerialization.Types.tString);
 
 FINALIZATION
    FreeObject(serializer);

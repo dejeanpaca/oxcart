@@ -27,7 +27,7 @@ TYPE
       Parent: oxTEntity;
 
       {name of the entity}
-      Name: string;
+      Name: StdString;
       {is the entity enabled}
       Enabled,
       {is the entity static}
@@ -59,9 +59,9 @@ TYPE
       {find the specified entity in children, if nothing found return -1}
       function Find(entity: oxTEntity): loopint;
       {used by Find(path), searches entity children named as the part of path at the specified path position, then proceeds further}
-      function Find(current: oxTEntity; const path: string; pathPos: loopint): oxTEntity;
+      function Find(current: oxTEntity; const path: StdString; pathPos: loopint): oxTEntity;
       {find the specified entity by path, if nothing found return -1}
-      function Find(const path: string): oxTEntity;
+      function Find(const path: StdString): oxTEntity;
 
       {tells if this entity has the given entity as one of the parents}
       function HasParent(p: oxTEntity): boolean;
@@ -70,16 +70,16 @@ TYPE
 
       {get specified component}
       function GetComponent(componentType: oxTComponentType): oxTComponent;
-      function GetComponent(const componentType: string): oxTComponent;
+      function GetComponent(const componentType: StdString): oxTComponent;
       {get first instance of specified component in children}
       function GetComponentInChildren(componentType: oxTComponentType): oxTComponent;
-      function GetComponentInChildren(const componentType: string): oxTComponent;
+      function GetComponentInChildren(const componentType: StdString): oxTComponent;
       {get all components of the specified type}
       procedure GetComponents(componentType: oxTComponentType; var list: oxTComponentsList);
-      procedure GetComponents(const componentType: string; var list: oxTComponentsList);
+      procedure GetComponents(const componentType: StdString; var list: oxTComponentsList);
       {get all components of the specified type}
       procedure GetComponentsInChildren(componentType: oxTComponentType; var list: oxTComponentsList);
-      procedure GetComponentsInChildren(const componentType: string; var list: oxTComponentsList);
+      procedure GetComponentsInChildren(const componentType: StdString; var list: oxTComponentsList);
 
       {set position}
       procedure SetPosition(x, y, z: single);
@@ -145,7 +145,7 @@ TYPE
 
    oxTEntitiesHelper = record helper for oxTEntities
       {find an entity in the list}
-      function Find(const name: string): oxTEntity;
+      function Find(const name: StdString): oxTEntity;
       {destroy entities}
       procedure Destroy();
    end;
@@ -183,7 +183,7 @@ TYPE
       Serialization: oxTSerialization; static;
 
       {create a new empty entity}
-      function New(const name: string = ''; component: oxTComponent = nil): oxTEntity; virtual;
+      function New(const name: StdString = ''; component: oxTComponent = nil): oxTEntity; virtual;
 
       constructor Create;
    end;
@@ -296,13 +296,13 @@ begin
    Result := -1;
 end;
 
-function oxTEntity.Find(current: oxTEntity; const path: string; pathPos: loopint): oxTEntity;
+function oxTEntity.Find(current: oxTEntity; const path: StdString; pathPos: loopint): oxTEntity;
 var
    len,
    endPos,
    i: loopint;
 
-   subPath: string;
+   subPath: StdString;
 
 begin
    len := Length(path);
@@ -334,7 +334,7 @@ begin
    Exit(nil);
 end;
 
-function oxTEntity.Find(const path: string): oxTEntity;
+function oxTEntity.Find(const path: StdString): oxTEntity;
 begin
    Result := Find(Self, path, 1);
 end;
@@ -379,7 +379,7 @@ begin
    Result := nil;
 end;
 
-function oxTEntity.GetComponent(const componentType: string): oxTComponent;
+function oxTEntity.GetComponent(const componentType: StdString): oxTComponent;
 var
    i: longint;
 
@@ -412,7 +412,7 @@ begin
    Result := nil;
 end;
 
-function oxTEntity.GetComponentInChildren(const componentType: string): oxTComponent;
+function oxTEntity.GetComponentInChildren(const componentType: StdString): oxTComponent;
 var
    i: loopint;
 
@@ -443,7 +443,7 @@ begin
    end;
 end;
 
-procedure oxTEntity.GetComponents(const componentType: string; var list: oxTComponentsList);
+procedure oxTEntity.GetComponents(const componentType: StdString; var list: oxTComponentsList);
 var
    i: longint;
 
@@ -465,7 +465,7 @@ begin
       oxTEntity(Children.List[i]).GetComponentsInChildren(componentType, list);
 end;
 
-procedure oxTEntity.GetComponentsInChildren(const componentType: string; var list: oxTComponentsList);
+procedure oxTEntity.GetComponentsInChildren(const componentType: StdString; var list: oxTComponentsList);
 var
    i: longint;
 
@@ -836,7 +836,7 @@ end;
 
 { oxTEntitiesGlobal }
 
-function oxTEntityGlobal.New(const name: string; component: oxTComponent): oxTEntity;
+function oxTEntityGlobal.New(const name: StdString; component: oxTComponent): oxTEntity;
 begin
    Result := oxTEntity.Create();
    Result.Name := name;
@@ -859,7 +859,7 @@ end;
 
 { oxTEntitiesHelper }
 
-function oxTEntitiesHelper.Find(const name: string): oxTEntity;
+function oxTEntitiesHelper.Find(const name: StdString): oxTEntity;
 var
   i: longint;
 
