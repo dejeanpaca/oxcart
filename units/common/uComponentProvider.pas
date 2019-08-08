@@ -24,7 +24,7 @@ TYPE
    end;
 
    { TComponentProvider }
-   TComponentProviderList = specialize TPreallocatedArrayList<TSingleComponent>;
+   TComponentProviderList = specialize TSimpleList<TSingleComponent>;
 
    TComponentProvider = record
       Components: TComponentProviderList;

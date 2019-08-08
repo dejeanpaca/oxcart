@@ -33,7 +33,7 @@ TYPE
       function SuccessString(): StdString;
    end;
 
-   TUnitTestDescriptors = specialize TPreallocatedArrayList<TUnitTestDescriptor>;
+   TUnitTestDescriptors = specialize TSimpleList<TUnitTestDescriptor>;
 
    {results of unit tests}
 

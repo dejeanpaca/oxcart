@@ -51,7 +51,7 @@ TYPE
 
    oxTComponentType = class of oxTComponent;
 
-   oxTComponentsList = specialize TPreallocatedArrayList<oxTComponent>;
+   oxTComponentsList = specialize TSimpleList<oxTComponent>;
 
    { oxTComponentsListHelper }
 

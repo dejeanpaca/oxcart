@@ -58,10 +58,10 @@ TYPE
    TSingleArray = array of single;
    TDoubleArray = array of double;
 
-   { TPreallocatedArrayList }
+   { TSimpleList }
 
    {helps to maintain a list of elements in an array}
-   generic TPreallocatedArrayList<T> = record
+   generic TSimpleList<T> = record
       {step to increment the list size by}
       Increment: loopint;
 
@@ -115,20 +115,20 @@ TYPE
       function GetLast(): pointer;
 
       {initialize}
-      class procedure Initialize(out what: specialize TPreallocatedArrayList<T>; setIncrement: loopint = -1); static;
+      class procedure Initialize(out what: specialize TSimpleList<T>; setIncrement: loopint = -1); static;
       {initialize}
-      class procedure InitializeEmpty(out what: specialize TPreallocatedArrayList<T>); static;
+      class procedure InitializeEmpty(out what: specialize TSimpleList<T>); static;
       {initialize with proper values, without zeroing out the list (if it is contained within something that is zeroed out beforehand)}
-      class procedure InitializeValues(out what: specialize TPreallocatedArrayList<T>; setIncrement: loopint = -1); static;
+      class procedure InitializeValues(out what: specialize TSimpleList<T>; setIncrement: loopint = -1); static;
    end;
 
-   TPreallocatedLongintArrayList = specialize TPreallocatedArrayList<longint>;
-   TPreallocatedInt64ArrayList = specialize TPreallocatedArrayList<int64>;
-   TPreallocatedDWordArrayList = specialize TPreallocatedArrayList<dword>;
-   TPreallocatedQWordArrayList = specialize TPreallocatedArrayList<QWord>;
+   TPreallocatedLongintArrayList = specialize TSimpleList<longint>;
+   TPreallocatedInt64ArrayList = specialize TSimpleList<int64>;
+   TPreallocatedDWordArrayList = specialize TSimpleList<dword>;
+   TPreallocatedQWordArrayList = specialize TSimpleList<QWord>;
 
-   TPreallocatedStringArrayList = specialize TPreallocatedArrayList<StdString>;
-   TPreallocatedAnsiStringArrayList = specialize TPreallocatedArrayList<ansistring>;
+   TPreallocatedStringArrayList = specialize TSimpleList<StdString>;
+   TPreallocatedAnsiStringArrayList = specialize TSimpleList<ansistring>;
 
    { TPreallocatedStringArrayListHelper }
 
@@ -144,10 +144,10 @@ TYPE
       function FindLowercase(const s: string): loopint;
    end;
 
-   TPreallocatedPointerArrayList = specialize TPreallocatedArrayList<pointer>;
+   TPreallocatedPointerArrayList = specialize TSimpleList<pointer>;
 
-   TProcedures = specialize TPreallocatedArrayList<TProcedure>;
-   TBoolFunctions = specialize TPreallocatedArrayList<TBoolFunction>;
+   TProcedures = specialize TSimpleList<TProcedure>;
+   TBoolFunctions = specialize TSimpleList<TBoolFunction>;
 
    { TProceduresHelper }
 
@@ -732,9 +732,9 @@ begin
    Result := ((Self shr Index) and 1) = 1;
 end;
 
-{ TPreallocatedArrayList }
+{ TSimpleList }
 
-procedure TPreallocatedArrayList.Allocate(count: loopint);
+procedure TSimpleList.Allocate(count: loopint);
 begin
    assert(Increment <> 0, 'Increment is zero for preallocated list');
    assert(count <> 0, 'Tried to allocate 0 elements');
@@ -747,7 +747,7 @@ begin
    SetLength(List, a);
 end;
 
-procedure TPreallocatedArrayList.AllocateInc(count: loopint);
+procedure TSimpleList.AllocateInc(count: loopint);
 var
    remainder: loopint;
 
@@ -769,13 +769,13 @@ begin
    assert((a = Length(List)) and (a <> 0), 'Preallocated list has invalid length');
 end;
 
-procedure TPreallocatedArrayList.RequireAllocate(count: loopint);
+procedure TSimpleList.RequireAllocate(count: loopint);
 begin
    if(count > a) then
       Allocate(count);
 end;
 
-procedure TPreallocatedArrayList.InsertRange(index, count: loopint);
+procedure TSimpleList.InsertRange(index, count: loopint);
 var
    pn,
    i: loopint;
@@ -796,7 +796,7 @@ begin
    end;
 end;
 
-function TPreallocatedArrayList.AddTo(var p: T): boolean;
+function TSimpleList.AddTo(var p: T): boolean;
 begin
    assert(Increment <> 0, 'Increment is zero for preallocated list');
 
@@ -809,7 +809,7 @@ begin
    Result := true;
 end;
 
-function TPreallocatedArrayList.Add(p: T): boolean;
+function TSimpleList.Add(p: T): boolean;
 begin
    inc(n);
 
@@ -820,7 +820,7 @@ begin
    Result := true;
 end;
 
-function TPreallocatedArrayList.AddTo(var p, z: T): boolean;
+function TSimpleList.AddTo(var p, z: T): boolean;
 begin
    Result := AddTo(p);
 
@@ -828,7 +828,7 @@ begin
       Result := AddTo(z);
 end;
 
-function TPreallocatedArrayList.Add(p, z: T): boolean;
+function TSimpleList.Add(p, z: T): boolean;
 begin
    Result := Add(p);
 
@@ -836,14 +836,14 @@ begin
       Result := Add(z);
 end;
 
-procedure TPreallocatedArrayList.Dispose();
+procedure TSimpleList.Dispose();
 begin
    SetLength(List, 0);
    a := 0;
    n := 0;
 end;
 
-procedure TPreallocatedArrayList.Remove(index: loopint);
+procedure TSimpleList.Remove(index: loopint);
 var
    i: loopint;
 
@@ -859,7 +859,7 @@ begin
    end;
 end;
 
-procedure TPreallocatedArrayList.RemoveRange(index, count: loopint);
+procedure TSimpleList.RemoveRange(index, count: loopint);
 var
    i: loopint;
 
@@ -877,7 +877,7 @@ begin
    end;
 end;
 
-function TPreallocatedArrayList.Find(const what: T): loopint;
+function TSimpleList.Find(const what: T): loopint;
 var
    i: loopint;
 
@@ -890,12 +890,12 @@ begin
    Result := -1;
 end;
 
-function TPreallocatedArrayList.Exists(const what: T): boolean;
+function TSimpleList.Exists(const what: T): boolean;
 begin
    Result := Find(what) > -1;
 end;
 
-procedure TPreallocatedArrayList.SetSize(size: longint);
+procedure TSimpleList.SetSize(size: longint);
 begin
    assert(size >= 0, 'Allocation cannot be set to negative value');
 
@@ -905,7 +905,7 @@ begin
    SetLength(List, n);
 end;
 
-function TPreallocatedArrayList.GetLast(): pointer;
+function TSimpleList.GetLast(): pointer;
 begin
    if(n > 0) then
       Result := @List[n - 1]
@@ -913,7 +913,7 @@ begin
       Result := nil;
 end;
 
-class procedure TPreallocatedArrayList.Initialize(out what: specialize TPreallocatedArrayList<T>; setIncrement: loopint);
+class procedure TSimpleList.Initialize(out what: specialize TSimpleList<T>; setIncrement: loopint);
 begin
    if(setIncrement = -1) then
       setIncrement := DefaultPreallocatedArrayAllocationIncrement;
@@ -925,14 +925,14 @@ begin
    what.Increment := setIncrement;
 end;
 
-class procedure TPreallocatedArrayList.InitializeEmpty(out what: specialize TPreallocatedArrayList<T>);
+class procedure TSimpleList.InitializeEmpty(out what: specialize TSimpleList<T>);
 begin
    ZeroPtr(@what, SizeOf(what));
 
    what.Increment :=  DefaultPreallocatedArrayAllocationIncrement;
 end;
 
-class procedure TPreallocatedArrayList.InitializeValues(out what: specialize TPreallocatedArrayList<T>; setIncrement: loopint);
+class procedure TSimpleList.InitializeValues(out what: specialize TSimpleList<T>; setIncrement: loopint);
 begin
    if(setIncrement = -1) then
       setIncrement := DefaultPreallocatedArrayAllocationIncrement;
@@ -942,12 +942,12 @@ begin
    what.Increment := setIncrement;
 end;
 
-function TPreallocatedArrayList.GetElement(i: loopint): T;
+function TSimpleList.GetElement(i: loopint): T;
 begin
    Result := List[i];
 end;
 
-procedure TPreallocatedArrayList.SetElement(i: loopint; element: T);
+procedure TSimpleList.SetElement(i: loopint; element: T);
 begin
    List[i] := element;
 end;

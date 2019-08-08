@@ -39,7 +39,7 @@ TYPE
       function Exists(what: uiTControl): loopint;
    end;
 
-   uiTPreallocatedControlList = specialize TPreallocatedArrayList<uiTControl>;
+   uiTPreallocatedControlList = specialize TSimpleList<uiTControl>;
 
 IMPLEMENTATION
 

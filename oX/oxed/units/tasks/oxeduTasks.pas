@@ -36,7 +36,7 @@ TYPE
       procedure ThreadDone(); override;
    end;
 
-   oxedTThreadTasksList = specialize TPreallocatedArrayList<oxedTTask>;
+   oxedTThreadTasksList = specialize TSimpleList<oxedTTask>;
 
    { oxedTTasks }
 

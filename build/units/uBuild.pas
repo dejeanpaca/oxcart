@@ -46,7 +46,7 @@ TYPE
       function GetName(): StdString;
    end;
 
-   TBuildPlatforms = specialize TPreallocatedArrayList<TBuildPlatform>;
+   TBuildPlatforms = specialize TSimpleList<TBuildPlatform>;
 
    { TBuildPlatformsHelper }
 
@@ -75,7 +75,7 @@ TYPE
       class procedure Initialize(out install: TBuildLazarusInstall); static;
    end;
 
-   TBuildLazarusInstalls = specialize TPreallocatedArrayList<TBuildLazarusInstall>;
+   TBuildLazarusInstalls = specialize TSimpleList<TBuildLazarusInstall>;
 
    { TLazarusInstallsHelper }
 

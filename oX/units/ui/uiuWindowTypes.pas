@@ -41,7 +41,7 @@ TYPE
    {the window handler procedure}
    uiTWindowListener = function(wnd: uiTControl; const event: appTEvent): longint;
 
-   uiTWindowListeners = specialize TPreallocatedArrayList<uiTWindowListener>;
+   uiTWindowListeners = specialize TSimpleList<uiTWindowListener>;
 
    {a window}
 
@@ -166,7 +166,7 @@ TYPE
          procedure OnStopDrag(); virtual;
    end;
 
-   uiTPreallocatedWindowListArray = specialize TPreallocatedArrayList<uiTWindow>;
+   uiTPreallocatedWindowListArray = specialize TSimpleList<uiTWindow>;
 
    { WINDOW HANDLERS }
    uiTWindowKeyHandler  = function(var key: appTKeyEvent; wnd: uiTWindow): boolean;

@@ -11,7 +11,7 @@ UNIT oxeduComponent;
 INTERFACE
 
    USES
-      uStd, uInit,
+      uStd,
       {ox}
       uOX, oxuComponent, oxuComponentDescriptors, oxuRunRoutines,
       {oxed}
@@ -32,7 +32,7 @@ TYPE
       class procedure Initialize(out c: oxedTComponent); static;
    end;
 
-   oxedTComponentList = specialize TPreallocatedArrayList<oxedTComponent>;
+   oxedTComponentList = specialize TSimpleList<oxedTComponent>;
 
    { oxedTComponents }
 

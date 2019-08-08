@@ -85,7 +85,7 @@ TYPE
       procedure Destroy();
    end;
 
-   uiTContextMenuItems = specialize TPreallocatedArrayList<uiTContextMenuItem>;
+   uiTContextMenuItems = specialize TSimpleList<uiTContextMenuItem>;
 
    { uiTContextMenuWindow }
 

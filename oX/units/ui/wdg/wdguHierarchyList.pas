@@ -30,7 +30,7 @@ TYPE
       Level: longint;
    end;
 
-   wdgTPreallocatedHierarchyListItems = specialize TPreallocatedArrayList<wdgTHierarchyListItem>;
+   wdgTPreallocatedHierarchyListItems = specialize TSimpleList<wdgTHierarchyListItem>;
 
    { wdgTHierarchyList }
 

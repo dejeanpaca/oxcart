@@ -17,7 +17,7 @@ CONST
    uiwzcDefaultZIndex: longint   = 0;
 
 TYPE
-   uiTZOrderEntries = specialize TPreallocatedArrayList<uiTControl>;
+   uiTZOrderEntries = specialize TSimpleList<uiTControl>;
 
    { uiTZOrder }
 

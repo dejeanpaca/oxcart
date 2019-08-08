@@ -107,7 +107,7 @@ TYPE
       procedure SetHighlightable(highligtable: boolean = true);
    end;
 
-   wdgTToolbarItems = specialize TPreallocatedArrayList<wdgTToolbarItem>;
+   wdgTToolbarItems = specialize TSimpleList<wdgTToolbarItem>;
 
    { wdgTToolbar }
 

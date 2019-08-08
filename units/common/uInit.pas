@@ -33,7 +33,7 @@ TYPE
 
    { TInitializationProcsList }
 
-   TInitializationProcsList = specialize TPreallocatedArrayList<TInitializationproc>;
+   TInitializationProcsList = specialize TSimpleList<TInitializationproc>;
 
    PInitializationProcs = ^TInitializationProcs;
    TInitializationProcs = record

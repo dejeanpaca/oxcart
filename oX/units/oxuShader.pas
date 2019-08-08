@@ -74,7 +74,7 @@ TYPE
       class procedure Init(out uniform: oxTShaderUniform); static;
    end;
 
-   oxTShaderUniforms = specialize TPreallocatedArrayList<oxTShaderUniform>;
+   oxTShaderUniforms = specialize TSimpleList<oxTShaderUniform>;
 
    { oxTShaderUniformsHelper }
 

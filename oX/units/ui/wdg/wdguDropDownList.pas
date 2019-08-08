@@ -23,7 +23,7 @@ INTERFACE
       wdguList, wdguBase;
 
 TYPE
-   wdgTDropDownListItems = specialize TPreallocatedArrayList<string>;
+   wdgTDropDownListItems = specialize TSimpleList<string>;
 
    { wdgTDropDownList }
    {the drop down anchor}

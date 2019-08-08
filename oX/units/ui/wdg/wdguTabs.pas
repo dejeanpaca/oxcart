@@ -57,7 +57,7 @@ TYPE
       Widgets: uiTWidgets;
    end;
 
-   wdgTTabsPreallocatedArrayList = specialize TPreallocatedArrayList<wdgTTabEntry>;
+   wdgTTabsPreallocatedArrayList = specialize TSimpleList<wdgTTabEntry>;
 
    { wdgTTabs }
 

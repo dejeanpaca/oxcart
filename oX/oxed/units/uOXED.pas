@@ -54,7 +54,7 @@ TYPE
    {routine called when an entity is added or removed}
    oxedTEntityAddRemoveRoutine = procedure(parent, entity: oxTEntity);
    {list of routines to be called when an entity is added or removed}
-   oxedTEntityAddRemoveList = specialize TPreallocatedArrayList<oxedTEntityAddRemoveRoutine>;
+   oxedTEntityAddRemoveList = specialize TSimpleList<oxedTEntityAddRemoveRoutine>;
 
    { oxedTEntityAddRemoveListHelper }
 

@@ -42,7 +42,7 @@ TYPE
 
    oxedTUIWindowClass = class of oxedTWindow;
 
-   oxedTWindows = specialize TPreallocatedArrayList<uiTWindow>;
+   oxedTWindows = specialize TSimpleList<uiTWindow>;
 
    { oxedTWindowClass }
 

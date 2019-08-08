@@ -40,7 +40,7 @@ TYPE
       constructor CreateUnknown();
    end;
 
-   oxTComponentDescriptorList = specialize TPreallocatedArrayList<oxPComponentDescriptor>;
+   oxTComponentDescriptorList = specialize TSimpleList<oxPComponentDescriptor>;
 
    { oxTComponentDescriptors }
 

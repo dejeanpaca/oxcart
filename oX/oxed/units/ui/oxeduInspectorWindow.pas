@@ -34,7 +34,7 @@ TYPE
       Wdg: wdgTGroup;
    end;
 
-   oxedTInspectorWindowGroupWidgets = specialize TPreallocatedArrayList<oxedTInspectorWindowGroup>;
+   oxedTInspectorWindowGroupWidgets = specialize TSimpleList<oxedTInspectorWindowGroup>;
 
    { oxedTInspector }
 

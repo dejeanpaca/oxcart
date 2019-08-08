@@ -11,7 +11,7 @@ UNIT oxuTypes;
 INTERFACE
 
    USES
-      sysutils, uStd, uPreallocatedArray, StringUtils;
+      sysutils, uStd, uSimpleList, StringUtils;
 
 TYPE
 
@@ -193,7 +193,7 @@ TYPE
 
    oxTResourceClass = class of oxTResource;
 
-   oxTPreallocatedResourceArrayListClass = specialize TPreallocatedArrayListClass<oxTResource>;
+   oxTPreallocatedResourceArrayListClass = specialize TSimpleListClass<oxTResource>;
 
    oxTTextureID = type longword;
 

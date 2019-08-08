@@ -20,7 +20,7 @@ TYPE
       Description: string;
    end;
 
-   oxedTPluginsList = specialize TPreallocatedArrayList<oxedTPlugin>;
+   oxedTPluginsList = specialize TSimpleList<oxedTPlugin>;
 
    { oxedTPluginsGlobal }
 

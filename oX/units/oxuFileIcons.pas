@@ -22,7 +22,7 @@ TYPE
       FileType: string;
    end;
 
-   oxTFileIconArrayList = specialize TPreallocatedArrayList<oxTFileIcon>;
+   oxTFileIconArrayList = specialize TSimpleList<oxTFileIcon>;
 
    { oxTFileIcons }
 

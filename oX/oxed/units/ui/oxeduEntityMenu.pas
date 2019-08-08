@@ -22,7 +22,7 @@ INTERFACE
       uOXED, oxeduIcons;
 
 TYPE
-   oxedTEntityList = specialize TPreallocatedArrayList<oxedTEntityFunction>;
+   oxedTEntityList = specialize TSimpleList<oxedTEntityFunction>;
 
    { oxedTEntityMenuGlobal }
 

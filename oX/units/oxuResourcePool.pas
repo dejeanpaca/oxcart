@@ -26,7 +26,7 @@ TYPE
       Load: oxTResourceLoaderRoutine;
    end;
 
-   oxTResourceLoaders = specialize TPreallocatedArrayList<oxTResourceLoader>;
+   oxTResourceLoaders = specialize TSimpleList<oxTResourceLoader>;
 
    { oxTResourcePool }
 
@@ -56,7 +56,7 @@ TYPE
       procedure Load(); virtual;
    end;
 
-   oxTResourcePoolList = specialize TPreallocatedArrayList<oxTResourcePool>;
+   oxTResourcePoolList = specialize TSimpleList<oxTResourcePool>;
 
    { oxTResourceGlobal }
 

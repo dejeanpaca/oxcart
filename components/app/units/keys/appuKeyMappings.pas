@@ -38,7 +38,7 @@ TYPE
       function ToString(): string;
    end;
 
-   appTKeyMappingList = specialize TPreallocatedArrayList<appTKeyMapping>;
+   appTKeyMappingList = specialize TSimpleList<appTKeyMapping>;
 
    appPKeyMappingGroup = ^appTKeyMappingGroup;
 
@@ -58,7 +58,7 @@ TYPE
       procedure Validate();
    end;
 
-   appTKeyMappingGroups = specialize TPreallocatedArrayList<appPkeyMappingGroup>;
+   appTKeyMappingGroups = specialize TSimpleList<appPkeyMappingGroup>;
 
    { appTKeyMappings }
 

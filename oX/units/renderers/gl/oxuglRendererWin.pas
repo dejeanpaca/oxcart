@@ -124,7 +124,7 @@ end;
 {$IFNDEF GLES}
 function getPFARB(wnd: oglTWindow; var pfd: PIXELFORMATDESCRIPTOR): longint;
 var
-   vals: specialize TPreallocatedArrayList<GLint>;
+   vals: specialize TSimpleList<GLint>;
    pixelFormats: array[0..1023] of longint;
    nFormats: dword = 0;
 
@@ -200,7 +200,7 @@ end;
 {$IFNDEF GLES}
 function winGetContext(wnd: oglTWindow; sharedContext: HGLRC = 0): HGLRC;
 var
-   vals: specialize TPreallocatedArrayList<GLint>;
+   vals: specialize TSimpleList<GLint>;
    extContextProfile: boolean = false;
    contextFlags: GLint;
    message: string;

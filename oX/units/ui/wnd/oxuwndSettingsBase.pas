@@ -23,7 +23,7 @@ USES
 
 TYPE
    oxTSettingsWindowStringFunction = function(): TAppendableString;
-   oxTSettingsWindowStringFunctions = specialize TPreallocatedArrayList<oxTSettingsWindowStringFunction>;
+   oxTSettingsWindowStringFunctions = specialize TSimpleList<oxTSettingsWindowStringFunction>;
 
    { oxTSettingsWindowBase }
 
