@@ -412,8 +412,11 @@ begin
    if(force) then
       DimensionsSet := false;
 
-   if(not DimensionsSet) then
+   if(not DimensionsSet) then begin
       GetComputedDimensions(Dimensions);
+
+      SizeChanged();
+   end;
 end;
 
 procedure uiTControl.Initialize();
