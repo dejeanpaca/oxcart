@@ -15,7 +15,7 @@ INTERFACE
       {app}
       uApp, appuEvents, appuKeys, appuActionEvents, appuMouse,
       {oX}
-      oxuRunRoutines, oxuTypes, oxuWindows, oxuFont, oxuResourcePool,
+      oxuRunRoutines, oxuTypes, oxuWindows, oxuFont, oxuResourcePool, oxuWindow,
       oxuPrimitives, oxuWindowTypes, oxuRender, oxuTransform,
       oxuTexture, oxuTextureGenerate, oxuRenderer,
       {ui}
@@ -362,6 +362,7 @@ TYPE
       BackEscapeKey: appTKeyListItem;
       DefaultConfirmationKey: appTKeyListItem;
       DefaultBackground: uiTWindowBackground;
+      DefaultDimensions: oxTDimensions;
 
       {routines to call whenever a window is created}
       OnCreate,
@@ -378,6 +379,7 @@ TYPE
       { WINDOW CREATION }
       {setup a created window}
       procedure SetupCreatedWindow(wnd: uiTWindow; var createData: uiTWindowCreateData);
+
       {creates a window}
       function Make(var createData: uiTWindowCreateData; out wnd: uiTWindow; const title: StdString;
                position: oxTPoint; dimensions: oxTDimensions; wHandler: uiTWindowListener = nil): longint;
@@ -388,6 +390,7 @@ TYPE
                const position: oxTPoint; const dimensions: oxTDimensions; wHandler: uiTWindowListener = nil): uiTWindow;
       function MakeChild(wnd: uiTWindow; const title: StdString;
                const position: oxTPoint; const dimensions: oxTDimensions; wHandler: uiTWindowListener = nil): uiTWindow;
+      function MakeChild(wnd: uiTWindow): uiTWindow;
 
       {disposes of a window}
       procedure Dispose(var wndRef: uiTWindow; destroyObject: boolean = true);
@@ -781,6 +784,11 @@ function uiTWindowGlobal.MakeChild(wnd: uiTWindow; const title: StdString;
          const position: oxTPoint; const dimensions: oxTDimensions; wHandler: uiTWindowListener): uiTWindow;
 begin
    Result := MakeChild(Create, wnd, title, position, dimensions, wHandler);
+end;
+
+function uiTWindowGlobal.MakeChild(wnd: uiTWindow): uiTWindow;
+begin
+   Result := MakeChild(Create, wnd, '', oxNullPoint, uiWindow.DefaultDimensions);
 end;
 
 procedure uiTWindowHelper.RemoveSubWindow(child: uiTWindow);
@@ -2568,6 +2576,7 @@ INITIALIZATION
    uiWindow.BackEscapeKey           := backEscapeKey;
    uiWindow.DefaultConfirmationKey  := defaultConfirmationKey;
    uiWindow.DefaultBackground       := defaultBackground;
+   uiWindow.DefaultDimensions.Assign(320, 240);
 
    {initialize default values}
    uiWindow.RestoreCreateDefaults();
