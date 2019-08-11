@@ -190,10 +190,10 @@ TYPE
       procedure Reset(); virtual;
    end;
 
-   appTControllerDeviceList = specialize TPreallocatedArrayList<appTControllerDevice>;
+   appTControllerDeviceList = specialize TSimpleList<appTControllerDevice>;
 
    appTOnControllerEventRoutine = procedure(var ev: appTControllerEvent);
-   appTOnControllerEventRoutines = specialize TPreallocatedArrayList<appTOnControllerEventRoutine>;
+   appTOnControllerEventRoutines = specialize TSimpleList<appTOnControllerEventRoutine>;
 
    { appTOnControllerEventRoutinesHelper }
 

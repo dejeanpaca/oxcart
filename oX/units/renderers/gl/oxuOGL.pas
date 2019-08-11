@@ -58,7 +58,7 @@ TYPE
 
    {$IFDEF X11}
    {glx attributes array}
-   TXAttrIntPreallocatedArray = specialize TPreallocatedArrayList<XAttrInt>;
+   TXAttrIntPreallocatedArray = specialize TSimpleList<XAttrInt>;
    {$ENDIF}
 
    { oglTWindow }
