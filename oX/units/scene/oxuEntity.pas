@@ -134,6 +134,8 @@ TYPE
 
       {remove components and children}
       procedure Empty();
+      {remove children}
+      procedure EmptyChildren();
 
       {load resources for all components}
       procedure LoadResources();
@@ -807,6 +809,11 @@ procedure oxTEntity.Empty();
 begin
    Children.Destroy();
    Components.Destroy();
+end;
+
+procedure oxTEntity.EmptyChildren();
+begin
+   Children.Destroy();
 end;
 
 procedure oxTEntity.LoadResources();
