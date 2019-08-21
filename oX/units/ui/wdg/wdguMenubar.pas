@@ -18,7 +18,7 @@ INTERFACE
       oxuTypes, oxuFont,
       {ui}
       uiuWindowTypes, uiuTypes, uiuSkinTypes,
-      uiuWindow, uiuWidget, uiWidgets, uiuControl, uiuDraw,
+      uiuWindow, uiuWidget, uiWidgets, uiuControl, uiuDraw, uiuWidgetRender,
       {}
       uiuContextMenu,
       wdguBase, wdguWorkbar;
@@ -86,7 +86,6 @@ CONST
    MENUBAR_SEPARATION = 15;
    MENUBAR_PADDING = 5;
    MENUBAR_BOTTOM_PADDING = 2;
-   MENUBAR_SELECTION_HIGHLIGHT_HEIGHT = 4;
 
    BAR_SPACING = 2;
    HAMBURGER_BAR_COUNT = 3;
@@ -211,18 +210,19 @@ begin
             dec(r.x, Separation div 2);
          end;
 
-         r.h := MENUBAR_SELECTION_HIGHLIGHT_HEIGHT;
-         r.y := RPosition.y - Dimensions.h + MENUBAR_SELECTION_HIGHLIGHT_HEIGHT;
+         r.h := Dimensions.h - 4;
+         r.y := RPosition.y - 2;
          r.w := f.GetLength(selected^.Caption);
+
          if(SelectedMenu > 0) then
             inc(r.w, Separation)
          else begin
             dec(r.x, PaddingLeft);
             inc(r.w, Separation div 2);
+            inc(r.w, PaddingLeft);
          end;
 
-         SetColor(colors^.Highlight);
-         uiDraw.Box(r);
+         uiRenderWidget.Box(r, colors^.Highlight, colors^.Highlight);
       end;
 
       {return to start position}
@@ -237,9 +237,12 @@ begin
          current := @Menus.Items.List[i];
 
          if(current^.Properties.IsSet(uiCONTEXT_MENU_ITEM_ENABLED)) and
-         (uiTContextMenu(current^.Sub).Items.n > 0) then
-            SetColorBlended(colors^.Text)
-         else
+         (uiTContextMenu(current^.Sub).Items.n > 0) then begin
+            if(i <> SelectedMenu) then
+               SetColorBlended(colors^.Text)
+            else
+               SetColorBlended(colors^.TextInHighlight);
+         end else
             SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).DisabledColors.Text);
 
          f.Write(r.x, r.y - r.h + 1 + PaddingBottom, current^.Caption);
