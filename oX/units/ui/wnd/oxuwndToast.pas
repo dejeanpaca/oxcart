@@ -19,9 +19,9 @@ INTERFACE
       oxuWindows, oxuFont, oxuPaths, oxuWindow,
       oxuTexture, oxuTextureGenerate,
       {ui}
-      uiuControl, uiuWindowTypes, uiuWindow, uiuTypes, uiuWidget, uiWidgets, oxuUI,
+      uiuControl, uiuWindowTypes, uiuWindow, uiuTypes, uiuSkinTypes, uiuWidget, uiWidgets, oxuUI,
       oxuwndBase,
-      wdguLabel, wdguDivisor;
+      wdguBlock, wdguLabel, wdguDivisor;
 
 CONST
    oxcTOAST_DURATION_INDEFINITE        = 0;
@@ -173,6 +173,9 @@ begin
 
    if(Font = nil) then
       Font := oxui.GetDefaultFont();
+
+   wdg := wdgBlock.Add(oxPoint(0, Window.Dimensions.h - 1), oxDimensions(Window.Dimensions.w, 4));
+   wdgTBlock(wdg).Color := uiTSkin(Window.Skin).Window.Colors.cTitle;
 
    {add title if any}
    if(Title <> '') then begin
