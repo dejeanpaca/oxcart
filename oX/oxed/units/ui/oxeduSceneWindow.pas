@@ -249,7 +249,7 @@ begin
       if(appk.Shift()) then
          distance := 5;
 
-      distance := distance * oxedSettings.CameraSpeed * oxTime.Flow;
+      distance := distance * oxedSettings.CameraSpeed * oxBaseTime.Flow;
 
       interpolated := appk.Interpolated(kcW, kcUP);
       if(interpolated <> 0) then {forward}
