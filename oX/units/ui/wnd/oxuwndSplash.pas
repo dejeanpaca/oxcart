@@ -121,9 +121,11 @@ begin
       wdg.Color := wdg.Color.Darken(0.3);
    end;
 
-   if(not AlwaysShowOnStart) then
-      wdgCheckbox.Add('Show on start', oxPoint(wdgDEFAULT_SPACING, 15), oxwndSplash.ShowOnStart).
+   if(not AlwaysShowOnStart) then begin
+      wdg := wdgCheckbox.Add('Show on start', oxPoint(wdgDEFAULT_SPACING, 15), oxwndSplash.ShowOnStart).
          SetControl(@controlShowOnStartCheckbox);
+      wdg.SetPosition(wdgPOSITION_VERTICAL_BOTTOM);
+   end;
 
    if(Link <> '') and (LinkCaption = '') then
       LinkCaption := Link;
@@ -157,7 +159,7 @@ begin
 
    Width := 480;
    Height := 420;
-   BackgroundColor := cBlack4ub;
+   BackgroundColor.Assign(32, 32, 42, 242);
 
    ID := uiControl.GetID('ox.splash');
 end;
