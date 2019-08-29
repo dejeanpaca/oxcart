@@ -73,16 +73,16 @@ var
 begin
    if(not Timer.Paused) then begin
       {calculate time flow}
-      oxTime.Flow := oxTime.Timer.TimeFlow();
-      maxTime := oxTime.MaxTimeFlow * oxTime.Timer.Factor;
+      Flow := Timer.TimeFlow();
+      maxTime := MaxTimeFlow * Timer.Factor;
 
       {correct time flow}
       {the time flow must not exceed the maximum time flow,
        but only if oxcMaxTimeFlow is not 0.0}
-      if(oxTime.MaxTimeFlow <> 0.0) and (oxTime.Flow > maxTime) then
-         oxTime.Flow := maxTime;
+      if(MaxTimeFlow <> 0.0) and (Flow > maxTime) then
+         Flow := maxTime;
    end else
-      oxTime.Flow := 0;
+      Flow := 0;
 end;
 
 function oxTTime.Paused(): boolean;
