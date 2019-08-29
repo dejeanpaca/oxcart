@@ -56,11 +56,11 @@ TYPE
    end;
 
 VAR
-   bmpExt: fhTExtension;
-   bmpLoader: fhTHandler;
+   ext: fhTExtension;
+   loader: fhTHandler;
 
 {loads the bitmap file}
-procedure dBMPLoad(data: pointer);
+procedure load(data: pointer);
 var
    ld: imgPFileData;
    imgP: imgTImage;
@@ -70,7 +70,7 @@ var
 
 begin
    ld := data;
-   imgP := ld^.image;
+   imgP := ld^.Image;
 
    {read the header}
    {Jeader does not need to be initialized as were reading it from a file.}
@@ -83,7 +83,7 @@ begin
 
    {check the bitmap}
    if(Info.Compression <> 0) then begin
-      ld^.error := eUNSUPPORTED;
+      ld^.SetError(eUNSUPPORTED);
       exit;
    end;
 
@@ -102,7 +102,7 @@ begin
       32: imgP.PixF := PIXF_RGBA;
       else begin
          imgP.PixF  := PIXF_UNSUPPORTED;
-         ld^.error  := eUNSUPPORTED;
+         ld^.SetError(eUNSUPPORTED);
          exit;
       end;
    end;
@@ -112,7 +112,7 @@ begin
 
    {get memory for bitmap and the color table}
    ld^.Allocate();
-   if(ld^.error <> 0) then
+   if(ld^.Error <> 0) then
       exit;
 
    if(Info.BitCount = 4) then
@@ -120,22 +120,23 @@ begin
    else if(Info.BitCount = 8) then
       pal.Make(imgP, PIXF_BGR, 256);
 
-   if(ld^.error <> 0) then
+   if(ld^.Error <> 0) then
       exit;
 
    {read in the palette, if one is present}
    ld^.ReadPalette(1);
-   if(ld^.error = 0) then begin
+   if(ld^.Error = 0) then begin
       {read in the bitmap}
       ld^.Seek(Header.Offset);
-      if(ld^.error = 0) then
+
+      if(ld^.Error = 0) then
          ld^.BlockRead(imgP.Image^, imgP.Size);
    end;
 end;
 
 BEGIN
    {register the extension and loader}
-   imgFile.Loaders.RegisterHandler(bmpLoader, 'WINBMP', @dBMPLoad);
-   imgFile.Loaders.RegisterExt(bmpExt, '.bmp', @bmpLoader);
+   imgFile.Loaders.RegisterHandler(loader, 'WINBMP', @load);
+   imgFile.Loaders.RegisterExt(ext, '.bmp', @loader);
 
 END.

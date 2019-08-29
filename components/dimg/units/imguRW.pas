@@ -28,7 +28,7 @@ TYPE
 
    imgTFileData = record
       Image: imgTImage;
-      Error: longint;
+      Error: TError;
       eDescription: string;
       FileType: longword;
       f: PFile;
@@ -62,6 +62,8 @@ TYPE
 
       {perform post loading tasks}
       procedure PostLoad(var props: imgTRWProperties);
+
+      procedure SetError(newError: TError);
    end;
 
    { imgTFileGlobal }
@@ -422,6 +424,11 @@ begin
    ProcessFormat();
    {set the channel order}
    ProcessColorChannelOrder();
+end;
+
+procedure imgTFileData.SetError(newError: TError);
+begin
+   Error := newError;
 end;
 
 { LOGGING }

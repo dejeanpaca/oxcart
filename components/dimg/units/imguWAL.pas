@@ -43,16 +43,14 @@ VAR
 IMPLEMENTATION
 
 VAR
-   walExt: fhTExtension;
-   walLoader: fhTHandler;
+   ext: fhTExtension;
+   loader: fhTHandler;
 
-{ PALETTE }
+{ palette }
 {$INCLUDE quake2_pal.inc}
 
-{LOADING}
-
 {Loads the wal image.}
-procedure dWALLoad(data: pointer);
+procedure load(data: pointer);
 var
    hdr: walTHeader;
    ld: imgPFileData;
@@ -60,7 +58,7 @@ var
 
 begin
    ld    := data;
-   imgP  := ld^.image;
+   imgP  := ld^.Image;
 
    {read the header}
    if(ld^.BlockRead(hdr, SizeOf(hdr)) = -1) then
@@ -68,7 +66,7 @@ begin
 
    {check the values}
    if(hdr.Width = 0) or (hdr.Height = 0) then begin
-      ld^.error := eINVALID;
+      ld^.SetError(eINVALID);
       exit;
    end;
 
@@ -86,11 +84,13 @@ begin
 
    {read in only the first mipmap}
    ld^.Seek(hdr.Offset[0]);
-   if(ld^.error = 0) then begin
+   if(ld^.Error = 0) then begin
       ld^.Allocate();
-      if(ld^.error = 0) then begin
+
+      if(ld^.Error = 0) then begin
          ld^.BlockRead(imgP.Image^, imgP.Size);
-         if(ld^.error <> 0) then begin
+
+         if(ld^.Error <> 0) then begin
             {associate the q2 palette with the image}
             if(imgP.palette = nil) then begin
                imgP.SetExternalPalette(q2Palette);
@@ -113,8 +113,8 @@ INITIALIZATION
    q2Palette.sDescription := walcsPalDescription;
 
    {register the extension and the loader}
-   imgFile.Loaders.RegisterHandler(walLoader, 'WAL', @dWALLoad);
-   imgFile.Loaders.RegisterExt(walEXt, '.ext', @walLoader);
+   imgFile.Loaders.RegisterHandler(loader, 'WAL', @load);
+   imgFile.Loaders.RegisterExt(ext, '.ext', @loader);
 
 FINALIZATION
    FreeObject(q2Palette);

@@ -386,6 +386,7 @@ TYPE
    imgPPaletteHandler   = ^imgTPaletteHandler;
 
    imgTPixelFormat = longint;
+   imgPImagePage = ^imgTImagePage;
 
    { PALETTE }
 
@@ -431,6 +432,18 @@ TYPE
 
    { IMAGE}
 
+   imgTImagePage = record
+      Width,
+      Height: loopint;
+
+      Page: Pointer;
+   end;
+
+   imgTImages = record
+      n: loopint;
+      Images: imgPImagePage;
+   end;
+
    { imgTImage }
 
    imgTImage = class
@@ -458,14 +471,10 @@ TYPE
       unitSpec: longint;
 
       {multiple image support}
-(*    nImages: longword;
-      Images: array of record
-         Width, Height: longword;
-         Image: pointer;
-      end;*)
+      Images: imgTImages;
 
-      error,
-      fileError: longint;
+      Error,
+      FileError: longint;
 
       {checks if the image is valid}
       function Valid(): boolean;

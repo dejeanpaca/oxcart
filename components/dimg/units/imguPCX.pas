@@ -52,13 +52,11 @@ TYPE
    end;
 
 VAR
-   pcxExt: fhTExtension;
-   pcxLoader: fhTHandler;
-
-{LOADING}
+   ext: fhTExtension;
+   loader: fhTHandler;
 
 {load the PCX image}
-procedure dPCXLoad(data: pointer);
+procedure load(data: pointer);
 var
    ld: imgPFileData;
    imgP: imgTImage;
@@ -136,17 +134,19 @@ begin
 end;
 
 begin
-   ld          := data;
-   imgP        := ld^.image;
+   ld := data;
+   imgP := ld^.image;
 
-   fileSize    := ld^.f^.GetSize();
+   fileSize := ld^.f^.GetSize();
 
    {get memory for the file}
    GetMem(pcxData, fileSize);
-   if(pcxData <> nil) then begin
+
+  if(pcxData <> nil) then begin
       {read in the entire file}
       ld^.BlockRead(pcxData^, fileSize);
-      if(ld^.error <> 0) then begin
+
+     if(ld^.Error <> 0) then begin
          cleanup();
          exit;
       end;
@@ -156,12 +156,12 @@ begin
 
       {check if the PCX is supported}
       if(hdr^.Manufacturer <> pcxcManufacturer) then begin
-         ld^.error := eUNSUPPORTED;
+         ld^.SetError(eUNSUPPORTED);
          exit;
       end;
 
       if(hdr^.Encoding <> 0) and (hdr^.Encoding <> pcxcENCODING) then begin
-         ld^.error := eUNSUPPORTED;
+         ld^.SetError(eUNSUPPORTED);
          exit;
       end;
 
@@ -178,21 +178,22 @@ begin
          8: imgP.PixF  := PIXF_INDEX_8;
          24:imgP.PixF  := PIXF_RGB;
          else begin
-            ld^.error := eUNSUPPORTED;
+            ld^.SetError(eUNSUPPORTED);
             exit;
          end;
       end;
 
       lineSize          := hdr^.nPlanes * hdr^.BytesPerLine;
       if(lineSize = 0) then begin
-         ld^.error := eINVALID;
+         ld^.SetError(eINVALID);
          exit;
       end;
 
       {allocate memory for the image}
       ld^.Calculate();
       ld^.Allocate();
-      if(ld^.error <> 0) then begin
+
+      if(ld^.Error <> 0) then begin
          cleanup();
          exit;
       end;
@@ -200,8 +201,10 @@ begin
       {load the data}
       pcxiData    := pcxData + 127; {get the position of the image data}
       imgData     := imgP.Image;
+
       if(imgP.PixelDepth = 24) then begin
          incCount := 3;
+
          {process all lines}
          if(hdr^.Encoding = 0) then begin
             for i := 0 to (imgP.Height-1) do begin
@@ -261,7 +264,7 @@ begin
 
                {get memory for the palette}
                pal.Make(imgP, PIXF_RGB, 256);
-               if(ld^.error <> 0) then
+               if(ld^.Error <> 0) then
                   exit;
 
                palData := imgP.palette.Data;
@@ -277,11 +280,11 @@ begin
       end;
    {if(pcxData <> nil)}
    end else
-      ld^.error := eNO_MEMORY;
+      ld^.SetError(eNO_MEMORY);
 end;
 
 BEGIN
    {register the extension and the loader}
-   imgFile.Loaders.RegisterHandler(pcxLoader, 'PCX', @dPCXLoad);
-   imgFile.Loaders.RegisterExt(pcxExt, '.pcx', @pcxLoader);
+   imgFile.Loaders.RegisterHandler(loader, 'PCX', @load);
+   imgFile.Loaders.RegisterExt(ext, '.pcx', @loader);
 END.

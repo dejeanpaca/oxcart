@@ -19,8 +19,8 @@ IMPLEMENTATION
    USES imguTGAStuff;
 
 VAR
-   tgaExt: fhTExtension;
-   tgaWriter: fhTHandler;
+   ext: fhTExtension;
+   writer: fhTHandler;
 
    XFileFooter: tgaTFooter = (
       offsetExt:  0;
@@ -30,7 +30,7 @@ VAR
    );
 
 {this routine is the purpose of this unit, it is the targa image writer}
-procedure dTGAWrite(data: pointer);
+procedure writeImage(data: pointer);
 var
    ld: imgPFileData;
    Header: tgaTHeader;
@@ -41,12 +41,12 @@ var
 {write an uncompressed true color image}
 function writeUncompressedTrueColor(): longint;
 begin
-   result := ld^.BlockWrite(imgP.Image^, imgP.Size);
+   Result := ld^.BlockWrite(imgP.Image^, imgP.Size);
 end;
 
-begin {dTGAWrite}
-   ld       := data;
-   imgP     := ld^.image;
+begin {writeImage}
+   ld := data;
+   imgP := ld^.Image;
 
    {check if the image is of a supported format}
    if(imgP.PixF <> PIXF_RGB) and (imgP.PixF <> PIXF_RGBA) and
@@ -77,22 +77,22 @@ begin {dTGAWrite}
    if(imgP.Origin and imgcBT_ORIGIN_VERTICAL = 0) then
       imgSpec.imgDescriptor := imgSpec.imgDescriptor or TGA_ORIGIN_VERTICAL;
 
-   {write the header}
+   {writeImage the header}
    if(ld^.BlockWrite(Header, SizeOf(Header)) < 0) then
       exit;
 
-   {write the image specification}
+   {writeImage the image specification}
    if(ld^.BlockWrite(imgSpec, SizeOf(imgSpec)) < 0) then
       exit;
 
-   {NOTE: Write here the image ID}
-   {TODO: Write here the image palette}
+   {NOTE: writeImage here the image ID}
+   {TODO: writeImage here the image palette}
 
-   {write the image down}
+   {writeImage the image down}
    if(writeUncompressedTrueColor() < 0) then
       exit;
 
-   {write the footer}
+   {writeImage the footer}
    if(ld^.BlockWrite(XFileFooter, SizeOf(XFileFooter)) < 0) then
       exit;
 
@@ -101,8 +101,8 @@ end;
 
 BEGIN
    {register the extension and the writer}
-   imgFile.Writers.RegisterHandler(tgaWriter, 'TGA', @dTGAWrite);
-   imgFile.Writers.RegisterExt(tgaExt, '.tga', @tgaWriter);
+   imgFile.Writers.RegisterHandler(writer, 'TGA', @writeImage);
+   imgFile.Writers.RegisterExt(ext, '.tga', @writer);
 
    XFileFooter.Signature := tgacFooterSignature;
 END.

@@ -30,7 +30,7 @@ VAR
    pbmExt,
    pgmExt,
    ppmExt: fhTExtension;
-   pnmLoader: fhTHandler;
+   loader: fhTHandler;
 
 procedure pnmLoad(data: pointer);
 var
@@ -52,7 +52,8 @@ begin
    i := 0;
    repeat
       ld^.BlockRead(c, 1);
-      if(ld^.error = 0) then begin
+
+      if(ld^.Error = 0) then begin
          if(c = #10) then
             break;
 
@@ -68,43 +69,43 @@ end;
 
 begin
    ld := data; 
-   imgP := ld^.image;
+   imgP := ld^.Image;
 
    ld^.BlockRead(ID, SizeOf(pnmTID));
-   if(ld^.error <> 0) then exit;
+   if(ld^.Error <> 0) then exit;
 
    if(id = pnmcP6ID) then
       pnmType := pnmcP6
    else begin
-      ld^.error := eUNSUPPORTED;
+      ld^.SetError(eUNSUPPORTED);
       exit;
    end;
 
    j := 0;
    repeat
       xreadstr(aStr);
-      if(ld^.error = 0) then begin
+      if(ld^.Error = 0) then begin
          if(aStr[1] <> '#') then begin
             {get the width and height}
             if(j = 0) then begin
                Val(CopyToDel(aStr), imgP.Width, code);
 
                if(code <> 0) then begin
-                  ld^.error := eINVALID;
+                  ld^.SetError(eINVALID);
                   exit;
                end;
 
                Val(CopyToDel(aStr), imgP.Height, code);
 
                if(code <> 0) then begin
-                  ld^.error := eINVALID;
+                  ld^.SetError(eINVALID);
                   exit;
                end;
             {get the maximum color}
             end else begin
                if(aStr = '255') then break
                else begin
-                  ld^.error := eINVALID;
+                  ld^.SetError(eINVALID);
                   exit;
                end;
             end;
@@ -126,23 +127,25 @@ begin
 
    {allocate memory for the image}
    ld^.Allocate();
-   if(ld^.error <> 0) then
+
+   if(ld^.Error <> 0) then
       exit;
 
    {read in all the data}
    if(imgP.Image <> nil) then begin
       {$PUSH}{$HINTS OFF}
       ld^.BlockRead(imgP.Image^, imgP.Width * imgP.Height * 3);{$POP}
-      if(ld^.error <> 0) then 
+
+      if(ld^.Error <> 0) then
          exit;
    end;
 end;
 
 BEGIN
    {register the extensions and the loader}
-   imgFile.Loaders.RegisterExt(pbmExt, '.pbm', @pnmLoader);
-   imgFile.Loaders.RegisterExt(pgmExt, '.pgm', @pnmLoader);
-   imgFile.Loaders.RegisterExt(ppmExt, '.ppm', @pnmLoader);
+   imgFile.Loaders.RegisterExt(pbmExt, '.pbm', @loader);
+   imgFile.Loaders.RegisterExt(pgmExt, '.pgm', @loader);
+   imgFile.Loaders.RegisterExt(ppmExt, '.ppm', @loader);
 
-   imgFile.Loaders.RegisterHandler(pnmloader, 'PNM', @pnmLoad);
+   imgFile.Loaders.RegisterHandler(loader, 'PNM', @pnmLoad);
 END.
