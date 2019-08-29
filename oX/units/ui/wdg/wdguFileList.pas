@@ -166,7 +166,8 @@ TYPE
 
    wdgTFileListGlobal = class(specialize wdgTBase<wdgTFileList>)
       Internal: uiTWidgetClass; static;
-      DirectoryColor: TColor4ub; static;
+      DirectoryColor,
+      FileColor: TColor4ub; static;
 
       {get the file icon for a given file descriptor}
       class function GetFileIcon(const f: TFileDescriptor): wdgTListGlyph; static;
@@ -592,6 +593,7 @@ begin
             oxRender.BlendDefault();
             SetColorBlended(glyph.Color);
             oxRenderingUtilities.TexturedQuad(px, py, height, height, glyph.Glyph);
+
             {restore text color}
             SetTextColor();
          end;
@@ -882,7 +884,7 @@ class function wdgTFileListGlobal.GetFileIcon(const f: TFileDescriptor): wdgTLis
 begin
    if(f.IsFile()) then begin
       Result.Glyph := oxFileIcons.Get(ExtractFileExtNoDot(f.Name));
-      Result.Color := cWhite4ub;
+      Result.Color := wdgFileList.FileColor;
    end else begin
       Result.Glyph := oxFileIcons.GetDirectory();
       Result.Color := wdgFileList.DirectoryColor;
@@ -928,5 +930,6 @@ INITIALIZATION
    wdgFileGrid.FileNameLines := 2;
 
    wdgFileList.DirectoryColor.Assign(255, 206, 0, 255);
+   wdgFileList.FileColor.Assign(255, 255, 255, 255);
 
 END.
