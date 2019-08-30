@@ -71,27 +71,28 @@ procedure PreAddTabs();
 begin
    oxwndSettings.Tabs.AddTab('Editor', 'editor');
 
-   wdgDivisor.Add('Editor settings', oxPoint(wdgDEFAULT_SPACING, oxwndSettings.Tabs.GetHeight() - wdgDEFAULT_SPACING));
+   wdgDivisor.Add('Editor settings');
 
-   wdg.UnixLineEndings := wdgCheckbox.Add('Unix (linux) line ending ', uiWidget.LastRect.BelowOf());
-   wdg.ClearMessagesOnStart := wdgCheckbox.Add('Clear messages on start ', uiWidget.LastRect.BelowOf());
-   wdg.FocusGameViewOnStart := wdgCheckbox.Add('Focus game view on start ', uiWidget.LastRect.BelowOf());
+   wdg.UnixLineEndings := wdgCheckbox.Add('Unix (linux) line ending ');
+   wdg.ClearMessagesOnStart := wdgCheckbox.Add('Clear messages on start ');
+   wdg.FocusGameViewOnStart := wdgCheckbox.Add('Focus game view on start ');
 
-   wdg.HandleLibraryErrors := wdgCheckbox.Add('Handle library errors', uiWidget.LastRect.BelowOf());
-   wdg.HandleLibraryErrors.SetHint('Editor will handle run-time library errors. If you want to debug editor/project outside (in lazarus) you can disable this.');
+   wdg.HandleLibraryErrors := wdgCheckbox.Add('Handle library errors');
+   wdg.HandleLibraryErrors.
+      SetHint('Editor will handle run-time library errors. If you want to debug editor/project outside (in lazarus) you can disable this.');
 
-   wdg.StartWithLastProject := wdgCheckbox.Add('Start with last opened project', uiWidget.LastRect.BelowOf());
+   wdg.StartWithLastProject := wdgCheckbox.Add('Start with last opened project');
    wdg.StartWithLastProject.SetHint('Starts editor with the last opened project.');
 
    wdgDivisor.Add('Build');
 
-   wdg.BuildOnProjectOpen := wdgCheckbox.Add('Start build immediately on project open', uiWidget.LastRect.BelowOf());
+   wdg.BuildOnProjectOpen := wdgCheckbox.Add('Start build immediately on project open');
    wdg.BuildOnProjectOpen.SetHint('Starts a rebuild immediately when a project is opened');
 
-   wdg.RequireRebuildOnOpen := wdgCheckbox.Add('Require rebuild on project open', uiWidget.LastRect.BelowOf());
+   wdg.RequireRebuildOnOpen := wdgCheckbox.Add('Require rebuild on project open');
    wdg.RequireRebuildOnOpen.SetHint('To prevent any side-effects, a full rebuild is required when a project is opened to ensure built code matches editor/engine code.'#13'This can be skipped if you want to ensure this is the case yourself.');
 
-   wdg.ShowBuildOutput := wdgCheckbox.Add('Show build output in the messages window', uiWidget.LastRect.BelowOf());
+   wdg.ShowBuildOutput := wdgCheckbox.Add('Show build output in the messages window');
    wdg.ShowBuildOutput.SetHint('Show lazarus and fpc build output in the messages window');
 end;
 
