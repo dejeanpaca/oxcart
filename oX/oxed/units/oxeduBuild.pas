@@ -894,12 +894,6 @@ begin
    end;
 end;
 
-procedure onOutputLine();
-begin
-   if(oxedSettings.ShowBuildOutput) then
-      oxedMessages.v(build.Output.LastLine);
-end;
-
 VAR
    oxedInitRoutines: oxTRunRoutine;
 
@@ -920,7 +914,5 @@ INITIALIZATION
    oxedActions.OPEN_PROJECT_CONFIGURATION := appActionEvents.SetCallback(@oxedBuild.OpenProjectConfiguration);
 
    oxedProjectScanner.OnDone.Add(@onScanDone);
-
-   build.Output.OnLine.Add(@onOutputLine);
 
 END.
