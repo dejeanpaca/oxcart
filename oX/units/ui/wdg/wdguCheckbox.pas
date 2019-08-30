@@ -63,7 +63,8 @@ TYPE
       Height: longint; static;
       LineWidth: single; static;
 
-      ColorDisabled: TColor4ub; static;
+      DisabledColor,
+      CheckedColor: TColor4ub; static;
 
       function Add(const Caption: StdString;
                   const Pos: oxTPoint;
@@ -181,9 +182,9 @@ begin
    {render check if the checkbox is marked}
    if(checked) then begin
       if(enabled) then
-         source.SetColor(uiTSkin(pwnd.Skin).Colors.InputText)
+         source.SetColor(wdgCheckbox.CheckedColor)
       else
-         source.SetColor(uiTSkin(pwnd.Skin).DisabledColors.InputText);
+         source.SetColor(wdgCheckbox.DisabledColor);
 
       oxRender.LineWidth(wdgCheckbox.LineWidth);
       {draw a checkmark}
@@ -298,7 +299,8 @@ INITIALIZATION
    wdgCheckbox.Height := 18;
    wdgCheckbox.LineWidth := 2.0;
 
-   wdgCheckbox.ColorDisabled.Assign(96, 96, 96, 255);
+   wdgCheckbox.DisabledColor.Assign(96, 96, 96, 255);
+   wdgCheckbox.CheckedColor.Assign(32, 91, 32, 255);
    wdgCheckbox.Internal.Register('widget.checkbox', @initWidget);
 
 END.
