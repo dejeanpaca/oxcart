@@ -37,20 +37,24 @@ TYPE
 
       {setup matrix from vPosition, vScale and vRotation properties}
       procedure SetupMatrix();
+      {create a final matrix using matrix and rotation matrix}
+      procedure FinalizeMatrix();
       {apply the matrix}
       procedure Apply(); virtual;
       {apply the specified matrix (will replace the Matrix property)}
       procedure Apply(const m: TMatrix4f); virtual;
 
       procedure Translate(x, y, z: single); virtual;
+      procedure GetTranslateMatrix(x, y, z: single; out m: TMatrix4f); virtual;
       procedure Rotate(const angles: TVector3f);
       procedure Rotate(x, y, z: single);
       procedure Rotate(w, x, y, z: single); virtual;
-      procedure Rotate(w, x, y, z: single; out m: TMatrix4f); virtual;
+      procedure GetRotateMatrix(w, x, y, z: single; out m: TMatrix4f); virtual;
       procedure RotateX(w: single); virtual;
       procedure RotateY(w: single); virtual;
       procedure RotateZ(w: single); virtual;
       procedure Scale(x, y, z: single); virtual;
+      procedure GetScaleMatrix(x, y, z: single; out m: TMatrix4f); virtual;
       procedure Scale(s: single);
 
       procedure Translate(const v: TVector3f); virtual;
@@ -122,6 +126,13 @@ begin
    Scale(vScale);
 end;
 
+procedure oxTTransform.FinalizeMatrix();
+begin
+   Matrix := Matrix * RotationMatrix;
+
+   Scale(vScale);
+end;
+
 procedure oxTTransform.Apply();
 begin
 end;
@@ -146,6 +157,17 @@ begin
    Matrix := Matrix * m;
 end;
 
+procedure oxTTransform.GetTranslateMatrix(x, y, z: single; out m: TMatrix4f);
+begin
+   m := vmmUnit4;
+
+   m[0][3] := x;
+   m[1][3] := y;
+   m[2][3] := z;
+
+   Matrix := Matrix * m;
+end;
+
 procedure oxTTransform.Rotate(const angles: TVector3f);
 begin
    vRotation := angles;
@@ -160,9 +182,9 @@ var
    xm, ym, zm: TMatrix4f;
 
 begin
-   Rotate(y, 0, 1, 0, ym);
-   Rotate(z, 0, 0, 1, zm);
-   Rotate(x, 1, 0, 0, xm);
+   GetRotateMatrix(y, 0, 1, 0, ym);
+   GetRotateMatrix(z, 0, 0, 1, zm);
+   GetRotateMatrix(x, 1, 0, 0, xm);
 
    RotationMatrix := ym * zm * xm * RotationMatrix;
 end;
@@ -203,7 +225,7 @@ begin
    RotationMatrix := m * RotationMatrix;
 end;
 
-procedure oxTTransform.Rotate(w, x, y, z: single; out m: TMatrix4f);
+procedure oxTTransform.GetRotateMatrix(w, x, y, z: single; out m: TMatrix4f);
 var
    c,
    s,
@@ -263,6 +285,15 @@ begin
    m[2][2] := z;
 
    Matrix := Matrix * m;
+end;
+
+procedure oxTTransform.GetScaleMatrix(x, y, z: single; out m: TMatrix4f);
+begin
+   m := vmmUnit4;
+
+   m[0][0] := x;
+   m[1][1] := y;
+   m[2][2] := z;
 end;
 
 procedure oxTTransform.Scale(s: single);
