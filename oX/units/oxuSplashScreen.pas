@@ -119,8 +119,8 @@ begin
    DisplayTime := oxSplashScreen.DefaultDisplayTime;
    {$ENDIF}
 
-   TTimer.Init(timer);
-   timer.Start();
+   TTimer.Init(Timer);
+   Timer.Start();
 end;
 
 destructor oxTSplashScreen.Destroy();
@@ -181,7 +181,7 @@ procedure oxTSplashScreen.WaitForDisplayTime();
 begin
    repeat
       oxRun.Sleep();
-   until timer.Cur() > (StartTime + DisplayTime);
+   until Timer.Cur() > (StartTime + DisplayTime);
 end;
 
 procedure oxTSplashScreen.Run();
@@ -264,7 +264,7 @@ begin
       oxTransform.Apply(m);
    end;
 
-   dots := trunc((timer.Cur() mod 1000) / 250);
+   dots := trunc((Timer.Cur() mod 1000) / 250);
 
    oxui.Material.Apply();
    f := oxf.GetDefault();
@@ -292,7 +292,7 @@ end;
 
 function oxTBasicSplashScreen.GetVersionString(): string;
 begin
-   result := ox.GetVersionString();
+   Result := ox.GetVersionString();
 end;
 
 { INITIALIZATION }
