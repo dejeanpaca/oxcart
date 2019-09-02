@@ -50,6 +50,9 @@ TYPE
       procedure Rotate(x, y, z: single);
       procedure Rotate(w, x, y, z: single); virtual;
       procedure GetRotateMatrix(w, x, y, z: single; out m: TMatrix4f); virtual;
+      procedure GetRotateMatrixX(w: single; out m: TMatrix4f); virtual;
+      procedure GetRotateMatrixY(w: single; out m: TMatrix4f); virtual;
+      procedure GetRotateMatrixZ(w: single; out m: TMatrix4f); virtual;
       procedure RotateX(w: single); virtual;
       procedure RotateY(w: single); virtual;
       procedure RotateZ(w: single); virtual;
@@ -66,6 +69,7 @@ TYPE
       function GetRight(): TVector3f; virtual;
 
       procedure GetEuler(out v: TVector3f);
+      procedure GetEulerXYZ(out v: TVector3f);
       procedure GetEuler(var x, y, z: single);
       procedure GetEuler();
 
@@ -182,11 +186,11 @@ var
    xm, ym, zm: TMatrix4f;
 
 begin
-   GetRotateMatrix(y, 0, 1, 0, ym);
-   GetRotateMatrix(z, 0, 0, 1, zm);
-   GetRotateMatrix(x, 1, 0, 0, xm);
+   GetRotateMatrixY(y, ym);
+   GetRotateMatrixZ(z, zm);
+   GetRotateMatrixX(x, xm);
 
-   RotationMatrix := ym * zm * xm * RotationMatrix;
+   RotationMatrix := ym * zm * xm;
 end;
 
 procedure oxTTransform.Rotate(w, x, y, z: single);
@@ -256,6 +260,60 @@ begin
    m[2][0] := (z * cx) - y * s;
    m[2][1] := (z * cy) + x * s;
    m[2][2] := (z * cz) + c;
+end;
+
+procedure oxTTransform.GetRotateMatrixX(w: single; out m: TMatrix4f);
+var
+   cosw,
+   sinw: single;
+
+begin
+   m := vmmUnit4;
+
+   cosw := cos(w * vmcToRad);
+   sinw := sin(w * vmcToRad);
+
+   m[1][1] := cosw;
+   m[1][2] := -sinw;
+
+   m[2][1] := sinw;
+   m[2][2] := cosw;
+end;
+
+procedure oxTTransform.GetRotateMatrixY(w: single; out m: TMatrix4f);
+var
+   cosw,
+   sinw: single;
+
+begin
+   m := vmmUnit4;
+
+   cosw := cos(w * vmcToRad);
+   sinw := sin(w * vmcToRad);
+
+   m[0][0] := cosw;
+   m[0][2] := sinw;
+
+   m[2][0] := -sinw;
+   m[2][2] := cosw;
+end;
+
+procedure oxTTransform.GetRotateMatrixZ(w: single; out m: TMatrix4f);
+var
+   cosw,
+   sinw: single;
+
+begin
+   m := vmmUnit4;
+
+   cosw := cos(w * vmcToRad);
+   sinw := sin(w * vmcToRad);
+
+   m[0][0] := cosw;
+   m[0][1] := -sinw;
+
+   m[1][0] := sinw;
+   m[1][1] := cosw;
 end;
 
 procedure oxTTransform.RotateX(w: single);
@@ -356,24 +414,46 @@ begin
 end;
 
 procedure oxTTransform.GetEuler(out v: TVector3f);
-var
-   sy: single;
-   singular: Boolean;
-
-
 begin
-   if(Matrix[0][0] = 1.0) then begin
-      v[1] := arctan2(Matrix[0][2], Matrix[2][3]);
-      v[0] := 0;
-      v[2] := 0;
-   end else if(Matrix[0][0] = -1.0) then begin
-      v[1] := arctan2(Matrix[0][2], Matrix[2][3]);
-      v[0] := 0;
-      v[2] := 0;
+   if (RotationMatrix[1, 0] < 0.999999) then begin
+       if(RotationMatrix[1, 0] > -0.99999) then begin
+           v[2] := arcsin(RotationMatrix[1, 0]);
+           v[1] := arctan2(-RotationMatrix[2, 0], RotationMatrix[0, 0]);
+           v[0] := arctan2(-RotationMatrix[1, 2], RotationMatrix[1, 1]);
+       end else begin
+           v[2] := - (vmcPI / 2);
+           v[1] := - arctan2(RotationMatrix[2, 1], RotationMatrix[2, 2]);
+           v[0] := 0;
+       end;
    end else begin
-      v[0] := arctan2(Matrix[2][0], Matrix[0][0]);
-      v[1] := arcsin(Matrix[1][0]);
-      v[2] := arctan2(Matrix[1][2], Matrix[1][1]);
+      v[2] := vmcPI / 2;
+      v[1] := arctan2(RotationMatrix[2, 1], RotationMatrix[2, 2]);
+      v[0] := 0;
+   end;
+
+   v[0] := v[0] * vmcToDeg;
+   v[1] := v[1] * vmcToDeg;
+   v[2] := v[2] * vmcToDeg;
+end;
+
+procedure oxTTransform.GetEulerXYZ(out v: TVector3f);
+begin
+   v := vmvZero3f;
+
+   if (RotationMatrix[0, 2] < 0.999999) then begin
+       if(RotationMatrix[0, 2] > -0.99999) then begin
+           v[1] := arcsin(RotationMatrix[0, 2]);
+           v[0] := arctan2(-RotationMatrix[1, 2], RotationMatrix[2, 2]);
+           v[2] := arctan2(-RotationMatrix[0, 1], RotationMatrix[0, 0]);
+       end else begin
+           v[1] := - (vmcPI / 2);
+           v[0] := - arctan2(RotationMatrix[1, 0], RotationMatrix[1, 1]);
+           v[2] := 0;
+       end;
+   end else begin
+      v[1] := vmcPI / 2;
+      v[0] := arctan2(RotationMatrix[1, 0], RotationMatrix[1, 1]);
+      v[2] := 0;
    end;
 
    v[0] := v[0] * vmcToDeg;
