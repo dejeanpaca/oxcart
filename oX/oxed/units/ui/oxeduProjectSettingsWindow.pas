@@ -296,15 +296,35 @@ var
 begin
    dimensions.Assign(100, 20);
 
-   wdgDivisor.Add('Basics', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('Basics');
    wdgLabel.Add('Main unit (if specified, will be the only unit listed in soruce), when you want to manage the order of things yourself');
-   widgets.Build.MainUnit := wdgInputBox.Add(oxedProject.MainUnit, uiWidget.LastRect.BelowOf(), oxNullDimensions);
+   widgets.Build.MainUnit := wdgInputBox.Add(oxedProject.MainUnit);
    uiWidget.LastRect.VerticalSpacing();
 
-   widgets.Build.DebugResources := wdgCheckbox.Add('Debug Resources', uiWidget.LastRect.BelowOf(), oxedProject.Session.DebugResources);
+   widgets.Build.DebugResources := wdgCheckbox.Add('Debug Resources', oxedProject.Session.DebugResources);
 
-   wdgDivisor.Add('Global symbols', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('Global symbols');
    uiWidget.LastRect.VerticalSpacing();
+
+   wdgList.Add().Resize(240, 160);
+   lastRect := uiWidget.LastRect;
+
+   button := wdgButton.Add('Add', uiWidget.LastRect.RightOf(wdgDEFAULT_SPACING, 0, false), dimensions, @addGlobalSymbol);
+   button.SetButtonPosition([uiCONTROL_GRID_TOP]);
+
+   button := wdgButton.Add('Remove', uiWidget.LastRect.BelowOf(0, 0, false), dimensions, @removeGlobalSymbol);
+   button.SetButtonPosition([uiCONTROL_GRID_MIDDLE]);
+
+   button := wdgButton.Add('Move Up', uiWidget.LastRect.BelowOf(0, 0, false), dimensions, @moveGlobalSymbolUp);
+   button.SetButtonPosition([uiCONTROL_GRID_MIDDLE]);
+
+   button := wdgButton.Add('Move Down', uiWidget.LastRect.BelowOf(0, 0, false), dimensions, @moveGlobalSymbolDown);
+   button.SetButtonPosition([uiCONTROL_GRID_BOTTOM]);
+
+   uiWidget.LastRect := lastRect;
+   uiWidget.LastRect.GoLeft();
+
+   wdgDivisor.Add('Build modes');
 
    wdgList.Add(uiWidget.LastRect.BelowOf(), oxDimensions(240, 160));
    lastRect := uiWidget.LastRect;
@@ -324,31 +344,14 @@ begin
    uiWidget.LastRect := lastRect;
    uiWidget.LastRect.GoLeft();
 
-   wdgDivisor.Add('Build modes', uiWidget.LastRect.BelowOf());
-
-   wdgList.Add(uiWidget.LastRect.BelowOf(), oxDimensions(240, 160));
-   lastRect := uiWidget.LastRect;
-
-   button := wdgButton.Add('Add', uiWidget.LastRect.RightOf(wdgDEFAULT_SPACING, 0, false), dimensions, @addGlobalSymbol);
-   button.SetButtonPosition([uiCONTROL_GRID_TOP]);
-
-   button := wdgButton.Add('Remove', uiWidget.LastRect.BelowOf(0, 0, false), dimensions, @removeGlobalSymbol);
-   button.SetButtonPosition([uiCONTROL_GRID_MIDDLE]);
-
-   button := wdgButton.Add('Move Up', uiWidget.LastRect.BelowOf(0, 0, false), dimensions, @moveGlobalSymbolUp);
-   button.SetButtonPosition([uiCONTROL_GRID_MIDDLE]);
-
-   button := wdgButton.Add('Move Down', uiWidget.LastRect.BelowOf(0, 0, false), dimensions, @moveGlobalSymbolDown);
-   button.SetButtonPosition([uiCONTROL_GRID_BOTTOM]);
-
-   uiWidget.LastRect := lastRect;
-   uiWidget.LastRect.GoLeft();
-
    uiWidget.LastRect.VerticalSpacing();
 
-   wdgDivisor.Add('Build mode settings', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('Build mode settings');
    wdgLabel.Add('Build mode: ');
-   widgets.Build.Modes := wdgDropDownList.Add(uiWidget.LastRect.RightOf(), oxDimensions(160, 20));
+
+   widgets.Build.Modes := wdgDropDownList.Add();
+   widgets.Build.Modes.Resize(160, 20);
+
    UpdateBuildModesWidget();
 end;
 

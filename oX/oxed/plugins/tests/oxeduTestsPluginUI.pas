@@ -167,17 +167,15 @@ procedure oxedTTestsWindow.AddWidgets();
 begin
    inherited AddWidgets();
 
-   wdg.IncludeOx := wdgCheckbox.Add('Include oX tests', oxNullPoint, oxedTests.IncludeOx);
+   wdg.IncludeOx := wdgCheckbox.Add('Include oX tests', oxedTests.IncludeOx);
 
-   wdg.Ok := wdgButton.Add('OK', oxNullPoint, oxNullDimensions, @Close);
-   wdg.Ok.SetButtonPosition([uiCONTROL_GRID_RIGHT]);
-   wdg.Scan := wdgButton.Add('Scan', oxNullPoint, oxNullDimensions, @Scan);
-   wdg.Scan.SetButtonPosition([uiCONTROL_GRID_LEFT]);
+   wdg.Ok := wdgButton.Add('OK').UseCallback(@Close).SetButtonPosition([uiCONTROL_GRID_RIGHT]);
+   wdg.Scan := wdgButton.Add('Scan').UseCallback(@Scan).SetButtonPosition([uiCONTROL_GRID_LEFT]);
 
-   wdg.Divisor := wdgDivisor.Add('', oxNullPoint);
+   wdg.Divisor := wdgDivisor.Add('');
 
    uiWidget.Create.Instance := oxedwdgTTestsHierarchy;
-   wdg.List := oxedwdgTTestsHierarchy(wdgList.Add(oxNullPoint, oxNullDimensions));
+   wdg.List := oxedwdgTTestsHierarchy(wdgList.Add());
    wdg.List.Load();
 
    wdg.List.SetPosition(wdgPOSITION_VERTICAL_TOP);

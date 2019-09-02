@@ -1453,7 +1453,7 @@ begin
          if(Result >= ItemCount) then
             Result := -1
          else
-            offs := (result - ItemOffset) * ItemHeight;
+            offs := (Result - ItemOffset) * ItemHeight;
       end else begin
          i := ItemOffset;
 
