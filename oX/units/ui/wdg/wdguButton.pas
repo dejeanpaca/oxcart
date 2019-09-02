@@ -79,7 +79,12 @@ TYPE
       function Key(var k: appTKeyEvent): boolean;  override;
 
       procedure GetComputedDimensions(out d: oxTDimensions); override;
-      procedure SetButtonPosition(pos: uiTControlGridPosition);
+      function SetButtonPosition(pos: uiTControlGridPosition): wdgTButton;
+
+      function UseCallback(setCallback: TProcedure): wdgTButton;
+      function UseCallback(setCallback: TObjectProcedure): wdgTButton;
+      function UseCallback(setCallback: uiTWidgetCallbackRoutine): wdgTButton;
+      function UseCallback(setCallback: uiTWidgetObjectCallbackRoutine): wdgTButton;
 
       private
          {curved frame properties}
@@ -249,10 +254,36 @@ begin
    d.h := f.GetHeight() + PaddingBottom + PaddingTop + Border;
 end;
 
-procedure wdgTButton.SetButtonPosition(pos: uiTControlGridPosition);
+function wdgTButton.SetButtonPosition(pos: uiTControlGridPosition): wdgTButton;
 begin
    ButtonGridPosition := pos;
    CurvedFrameProperties := uiRenderWidget.GetCurvedFrameProperties(pos);
+
+   Result := Self;
+end;
+
+function wdgTButton.UseCallback(setCallback: TProcedure): wdgTButton;
+begin
+   Callback.Use(setCallback);
+   Result := Self;
+end;
+
+function wdgTButton.UseCallback(setCallback: TObjectProcedure): wdgTButton;
+begin
+   Callback.Use(setCallback);
+   Result := Self;
+end;
+
+function wdgTButton.UseCallback(setCallback: uiTWidgetCallbackRoutine): wdgTButton;
+begin
+   Callback.Use(setCallback);
+   Result := Self;
+end;
+
+function wdgTButton.UseCallback(setCallback: uiTWidgetObjectCallbackRoutine): wdgTButton;
+begin
+   Callback.Use(setCallback);
+   Result := Self;
 end;
 
 procedure InitWidget();
