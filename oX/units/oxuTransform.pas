@@ -36,12 +36,6 @@ TYPE
 
       {setup matrix from vPosition, vScale and vRotation properties}
       procedure SetupMatrix();
-      {assemble matrix without reconstructing the rotation matrix}
-      procedure AssembleMatrix();
-      {apply the rotation matrix to the main matrix}
-      procedure ApplyRotation();
-      {create a final matrix using matrix and rotation matrix}
-      procedure FinalizeMatrix();
       {apply the matrix}
       procedure Apply(); virtual;
       {apply the specified matrix (will replace the Matrix property)}
@@ -117,40 +111,22 @@ begin
 end;
 
 procedure oxTTransform.SetupMatrix();
-begin
-   RotationMatrix := vmmUnit4;
+var
+   m: TMatrix4f;
 
-   RotateY(vRotation[1]);
-   RotateZ(vRotation[2]);
-   RotateX(vRotation[0]);
+begin
+   GetRotationMatrixY(vRotation[1], RotationMatrix);
+
+   GetRotationMatrixZ(vRotation[2], m);
+   RotationMatrix := RotationMatrix * m;
+
+   GetRotationMatrixX(vRotation[0], m);
+   RotationMatrix := RotationMatrix * m;
 
    Matrix := vmmUnit4;
 
    Translate(vPosition);
 
-   Matrix := Matrix * RotationMatrix;
-
-   Scale(vScale);
-end;
-
-procedure oxTTransform.AssembleMatrix();
-begin
-   Matrix := vmmUnit4;
-
-   Translate(vPosition);
-
-   Matrix := Matrix * RotationMatrix;
-
-   Scale(vScale);
-end;
-
-procedure oxTTransform.ApplyRotation();
-begin
-   Matrix := Matrix * RotationMatrix;
-end;
-
-procedure oxTTransform.FinalizeMatrix();
-begin
    Matrix := Matrix * RotationMatrix;
 
    Scale(vScale);
@@ -202,8 +178,6 @@ end;
 
 procedure oxTTransform.Rotate(x, y, z: single);
 begin
-   RotationMatrix := vmmUnit4;
-
    vRotation[1] := y;
    RotateY(y);
 
@@ -276,7 +250,7 @@ begin
    m[2][1] := sinw;
    m[2][2] := cosw;
 
-   RotationMatrix := RotationMatrix * m;
+   Matrix := Matrix * m;
 end;
 
 procedure oxTTransform.RotateY(w: single);
@@ -298,7 +272,7 @@ begin
    m[2][0] := -sinw;
    m[2][2] := cosw;
 
-   RotationMatrix := RotationMatrix * m;
+   Matrix := Matrix * m;
 end;
 
 procedure oxTTransform.RotateZ(w: single);
@@ -320,7 +294,7 @@ begin
    m[1][0] := sinw;
    m[1][1] := cosw;
 
-   RotationMatrix := RotationMatrix * m;
+   Matrix := Matrix * m;
 end;
 
 procedure oxTTransform.GetRotationMatrixX(w: single; out m: TMatrix4f);
