@@ -220,6 +220,7 @@ TYPE
       function Equal(v: TVector2; epsilon: single): boolean; {$IFDEF VM_INLINE_HELPERS}inline;{$ENDIF}
       procedure Assign(x, y: single); {$IFDEF VM_INLINE_HELPERS}inline;{$ENDIF}
       function ToString(decimals: loopint = 0; const separator: string = ','): string;
+      class function Create(x, y: single): TVector2; static; {$IFDEF VM_INLINE_HELPERS}inline;{$ENDIF}
    end;
 
    { TVector3Helper }
@@ -236,6 +237,7 @@ TYPE
       function Equal(v: TVector3; epsilon: single): boolean; {$IFDEF VM_INLINE_HELPERS}inline;{$ENDIF}
       procedure Assign(x, y, z: single); {$IFDEF VM_INLINE_HELPERS}inline;{$ENDIF}
       function ToString(decimals: loopint = 0; const separator: string = ','): string;
+      class function Create(x, y, z: single): TVector3; static; {$IFDEF VM_INLINE_HELPERS}inline;{$ENDIF}
    end;
 
    { TVector4Helper }
@@ -251,6 +253,7 @@ TYPE
       function Equal(v: TVector4; epsilon: single): boolean; {$IFDEF VM_INLINE_HELPERS}inline;{$ENDIF}
       procedure Assign(x, y, z, w: single); {$IFDEF VM_INLINE_HELPERS}inline;{$ENDIF}
       function ToString(decimals: loopint = 0; const separator: string = ','): string;
+      class function Create(x, y, z, w: single): TVector4; static; {$IFDEF VM_INLINE_HELPERS}inline;{$ENDIF}
    end;
 
    { TVector2iHelper }
@@ -2027,6 +2030,12 @@ begin
    Result := sf(Self[0], decimals) + separator + sf(Self[1], decimals);
 end;
 
+class function TVector2Helper.Create(x, y: single): TVector2;
+begin
+   Result[0] := x;
+   Result[1] := y;
+end;
+
 { TVector3Helper }
 
 procedure TVector3Helper.Normalize();
@@ -2136,6 +2145,13 @@ begin
    Result := sf(Self[0], decimals) + separator + sf(Self[1], decimals) + separator + sf(Self[2], decimals);
 end;
 
+class function TVector3Helper.Create(x, y, z: single): TVector3;
+begin
+   Result[0] := x;
+   Result[1] := y;
+   Result[2] := z;
+end;
+
 
 { TVector4Helper }
 
@@ -2243,6 +2259,14 @@ end;
 function TVector4Helper.ToString(decimals: loopint; const separator: string): string;
 begin
    Result := sf(Self[0], decimals) + separator + sf(Self[1], decimals) + separator + sf(Self[2], decimals) + separator + sf(Self[3], decimals);
+end;
+
+class function TVector4Helper.Create(x, y, z, w: single): TVector4;
+begin
+   Result[0] := x;
+   Result[1] := y;
+   Result[2] := z;
+   Result[3] := w;
 end;
 
 
