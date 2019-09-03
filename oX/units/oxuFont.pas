@@ -352,7 +352,7 @@ begin
       oxRender.TextureCoords(Buf.t[0]);
 
       if(oxFont.writeUpsideDown) then
-         oxTransform.Rotate(180.0, 1.0, 0.0, 0.0);
+         oxTransform.RotateX(180.0);
 
       oxTransform.Apply();
    end;
@@ -1008,4 +1008,3 @@ INITIALIZATION
    oxFont.Filter := oxTEXTURE_FILTER_NONE;
 
 END.
-

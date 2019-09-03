@@ -26,7 +26,7 @@ TYPE
          Colors: array of TColor3f;
 
          theta: single;
-         farZ, 
+         farZ,
          farZ2: single;
          speed: single;
 
@@ -68,14 +68,14 @@ begin
       try
          SetLength(Stars, nStars);
       except
-         errorCode := eNO_MEMORY; 
+         errorCode := eNO_MEMORY;
          exit;
       end;
 
       try
          SetLength(Colors, nStars);
       except
-         errorCode := eNO_MEMORY; 
+         errorCode := eNO_MEMORY;
          exit;
       end;
 
@@ -95,7 +95,7 @@ end;
 procedure oxTStarfield.Render();
 var
    i: longint;
-   dt, 
+   dt,
    col: single;
 
 begin
@@ -122,7 +122,7 @@ begin
          end;
 
          col := 1.0 - (abs(Stars[i][2]) / farZ);
-         if(col <= 0.05) then 
+         if(col <= 0.05) then
             col := 0.05;
 
          FillDWord(Colors[i], 3, longword(col));
@@ -131,7 +131,7 @@ begin
       {prepare for rendering}
       oxTransform.Identity();
 
-      oxTransform.Rotate(theta, 0, 0, 1.0);
+      oxTransform.RotateZ(theta);
       oxTransform.Apply();
 
       oxRender.Vertex(Stars[0]);
