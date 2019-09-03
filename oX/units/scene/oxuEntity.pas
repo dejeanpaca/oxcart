@@ -521,6 +521,7 @@ end;
 procedure oxTEntity.SetRotation(const v: TVector3f);
 begin
    vRotation := v;
+   ClampRotation();
 
    SetupMatrix();
 
