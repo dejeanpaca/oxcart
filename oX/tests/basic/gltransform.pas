@@ -6,7 +6,7 @@ INTERFACE
       uColors, appuKeys,
       uOX, oxuScene, oxuWindowTypes, oxuWindow, oxuWindows, oxuProjectionType, oxuProjection,
       oxuTypes, oxuRender, oxuRenderer, oxuMaterial, oxuTransform, oxuRunRoutines,
-      oxuFont, oxumPrimitive, oxuKeyboardControl,
+      oxuFont, oxumPrimitive, oxuKeyboardControl, oxuRenderUtilities,
       {$INCLUDE usesgl.inc},
       vmVector;
 
@@ -23,6 +23,24 @@ var
 
 begin
    primitive.Render();
+
+   oxRender.LineWidth(2);
+   oxRender.DisableColor();
+   oxRender.DisableBlend();
+
+   {x axis}
+   oxRender.Color(cBlue4f);
+   oxRenderingUtilities.Line(TVector3f.Create(0, 0, 0), TVector3f.Create(5, 0, 0));
+
+   {y axis}
+   oxRender.Color(cGreen4f);
+   oxRenderingUtilities.Line(TVector3f.Create(0, 0, 0), TVector3f.Create(0, 5, 0));
+
+   {z axis}
+   oxRender.Color(cRed4f);
+   oxRenderingUtilities.Line(TVector3f.Create(0, 0, 0), TVector3f.Create(0, 0, 5));
+
+   oxRender.LineWidth(1);
 
    projection.QuickOrtho2DZero();
 
@@ -42,13 +60,11 @@ begin
    projections[0].Apply();
 
    oxTransform.Identity();
-   oxTransform.Translate(0, 0, -5.0);
 
    oxTransform.vPosition[0] := 0;
    oxTransform.vPosition[1] := 0;
    oxTransform.vPosition[2] := -5.0;
 
-   oxTransform.Identity();
    oxTransform.vRotation := rotation;
 
    oxTransform.SetupMatrix();
