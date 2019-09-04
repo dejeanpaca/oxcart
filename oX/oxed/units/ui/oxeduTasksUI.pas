@@ -101,12 +101,7 @@ begin
    oxedMenuToolbar.Toolbar.AddSeparator();
 
    oxedTasksUI.Icons.Tasks := oxedIcons.Create($f0ae);
-   if(oxedTasksUI.Icons.Tasks <> nil) then
-     oxedTasksUI.Icons.Tasks.MarkUsed();
-
    oxedTasksUI.Icons.Running := oxedIcons.Create($f110);
-   if(oxedTasksUI.Icons.Running <> nil) then
-     oxedTasksUI.Icons.Running.MarkUsed();
 
    oxedTasksUI.Wdg.Tasks := oxedMenuToolbar.Toolbar.AddButton(oxedTasksUI.Icons.Running, 0, @showTasks);
 

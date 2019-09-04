@@ -897,10 +897,9 @@ begin
       gen.Filter := oxFont.Filter;
 
       errCode := gen.Generate(tfn, f.Texture);
-      if(errCode = 0) then begin
-         f.Texture.MarkUsed();
+
+      if(errCode = 0) then
          f.FirstBuild();
-      end;
    end;
 
    gen.Dispose();

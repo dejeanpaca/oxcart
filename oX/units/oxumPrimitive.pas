@@ -283,6 +283,7 @@ begin
    oxResource.Destroy(Material);
 
    Material := newMaterial;
+
    if(Material <> nil) then
       Material.MarkUsed();
 end;

@@ -75,6 +75,7 @@ begin
    oxResource.Destroy(GenericFile.Texture);
 
    GenericFile.Texture := tex;
+
    if(tex <> nil) then
       tex.MarkUsed();
 end;
@@ -84,6 +85,7 @@ begin
    oxResource.Destroy(GenericDirectory.Texture);
 
    GenericDirectory.Texture := tex;
+
    if(tex <> nil) then
       tex.MarkUsed();
 end;
