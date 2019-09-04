@@ -120,6 +120,7 @@ INTERFACE
       oxuconDVar,
       oxuconWindow,
       oxuconKeyMappings,
+      oxuconInput,
       {$ENDIF}
 
       {$IFDEF OX_FEATURE_MODELS}
