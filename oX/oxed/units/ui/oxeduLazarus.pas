@@ -18,7 +18,8 @@ INTERFACE
       {oX}
       oxuwndToast,
       {oxed}
-      uOXED, oxeduActions, oxeduBuild, oxeduMessages, oxeduProject;
+      uOXED, oxeduSettings,
+      oxeduActions, oxeduBuild, oxeduMessages, oxeduProject;
 
 TYPE
 
@@ -41,7 +42,8 @@ VAR
 procedure runLazarus();
 begin
    try
-      oxToast.Show('Lazaurs', 'Starting lazarus ... ');
+      if(oxedSettings.ShowNotifications) then
+         oxToast.Show('Lazaurs', 'Starting lazarus ... ');
 
       laz.Options := laz.Options - [poWaitOnExit];
       laz.Execute();
@@ -85,7 +87,9 @@ begin
          laz.Parameters.Add('--force-new-instance');
          laz.Parameters.Add(oxedProject.TempPath + oxPROJECT_LIB_LPI);
       end else begin
-         oxToast.Show('Lazaurs', 'Already running');
+         if(oxedSettings.ShowNotifications) then
+            oxToast.Show('Lazaurs', 'Already running');
+
          log.v('Lazarus already running');
          exit;
       end;
