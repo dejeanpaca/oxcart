@@ -56,7 +56,7 @@ TYPE
       Speed: longword;
       Progress: oxTProgressIndicatorData;
 
-      constructor Create; override;
+      constructor Create(); override;
 
       procedure Render(); override;
 
@@ -70,9 +70,15 @@ TYPE
       function SetPercentage(p: single): wdgTProgressBar;
       {set the progress bar as undefined}
       function Undefined(): wdgTProgressBar;
+      {stop and clear the progress bar}
+      procedure Stop();
    end;
 
-   wdgTProgressBarGlobal = class(specialize wdgTBase<wdgTProgressBar>)
+   wdgTProgressBarBase = class(specialize wdgTBase<wdgTProgressBar>)
+   end;
+
+   wdgTProgressBarStatics = class(wdgTProgressBarBase)
+      public
       Internal: uiTWidgetClass; static;
 
       {adds a ProgressBar to a window}
@@ -81,11 +87,11 @@ TYPE
    end;
 
 VAR
-   wdgProgressBar: wdgTProgressBarGlobal;
+   wdgProgressBar: wdgTProgressBarStatics;
 
 IMPLEMENTATION
 
-constructor wdgTProgressBar.Create;
+constructor wdgTProgressBar.Create();
 begin
    inherited;
 
@@ -104,6 +110,7 @@ var
    p: single;
    s: String;
    f: oxTFont;
+   renderProperties: TBitSet;
 
 begin
    if(Dimensions.w = 0) or (Dimensions.h = 0) then
@@ -111,8 +118,12 @@ begin
 
    pSkin := GetSkinObject();
 
-   uiRenderWidget.Box(uiTWidget(self), GetColor(wdgscPROGRESS_BAR_SURFACE),
-      pSkin.Colors.Border, wdgRENDER_BLOCK_ALL or wdgRENDER_BLOCK_SIMPLE);
+   renderProperties := wdgRENDER_BLOCK_ALL or wdgRENDER_BLOCK_SIMPLE;
+
+   if(PaddingTop = 0) then
+      renderProperties := renderProperties xor wdgRENDER_BLOCK_BORDER;
+
+   uiRenderWidget.Box(uiTWidget(self), GetColor(wdgscPROGRESS_BAR_SURFACE), pSkin.Colors.Border, renderProperties);
 
    maxw := Dimensions.w - 2;
 
@@ -124,58 +135,59 @@ begin
    SetColor(wdgscPROGRESS_BAR);
 
    {undefined progress bar}
-   if(Progress.ShowProgressWith = oxPROGRESS_INDICATOR_NONE) then begin
-      if(Speed = 0) then
-         exit;
+   if(Progress.ItemsDone <> -1) then begin
+      if(Progress.ShowProgressWith = oxPROGRESS_INDICATOR_NONE) then begin
+         if(Speed <> 0) then begin
+            r.w := round((Dimensions.w - 2) / 3);
+            cur := timer.Cur() mod Speed;
 
-      r.w := round((Dimensions.w - 2) / 3);
-      cur := timer.Cur() mod Speed;
+            p := 1 / Speed * cur;
 
-      p := 1 / Speed * cur;
+            undefinedPos := round((maxw) * p);
 
-      undefinedPos := round((maxw) * p);
+            r.x := r.x + undefinedPos;
 
-      r.x := r.x + undefinedPos;
+            if(undefinedPos + r.w > maxw) then begin
+               leftover := undefinedPos + r.w - maxw;
+               r.w := r.w - leftover;
+            end else
+               leftover := 0;
 
-      if(undefinedPos + r.w > maxw) then begin
-         leftover := undefinedPos + r.w - maxw;
-         r.w := r.w - leftover;
-      end else
-         leftover := 0;
+            uiDraw.Box(r);
 
-      uiDraw.Box(r);
+            if(leftover > 0) then begin
+               r.x := RPosition.x + 1;
+               r.w := leftover;
 
-      if(leftover > 0) then begin
-         r.x := RPosition.x + 1;
-         r.w := leftover;
-
-         uiDraw.Box(r);
-      end;
-   end else begin
-      p := 0;
-
-      {get ratio progress from set source}
-
-      if(Progress.ShowProgressWith = oxPROGRESS_INDICATOR_ITEMS) then begin
-         if(Progress.ItemsDone > 0) then begin
-            p := (1 / Progress.ItemsTotal) * Progress.ItemsDone;
+               uiDraw.Box(r);
+            end;
          end;
-      end else if (Progress.ShowProgressWith = oxPROGRESS_INDICATOR_PERCENTAGE) then
-         p := Progress.Percentage / 100
-      else if (Progress.ShowProgressWith = oxPROGRESS_INDICATOR_RATIO) then
-         p := Progress.Ratio;
+      end else begin
+         p := 0;
 
-      {correct ratio to not go out of bounds}
-      if(p < 0) then
-         p := 0
-      else if(p > 1) then
-         p := 1;
+         {get ratio progress from set source}
 
-      {render progress bar if any progress made}
-      r.w := round(p * maxw);
+         if(Progress.ShowProgressWith = oxPROGRESS_INDICATOR_ITEMS) then begin
+            if(Progress.ItemsDone > 0) then begin
+               p := (1 / Progress.ItemsTotal) * Progress.ItemsDone;
+            end;
+         end else if (Progress.ShowProgressWith = oxPROGRESS_INDICATOR_PERCENTAGE) then
+            p := Progress.Percentage / 100
+         else if (Progress.ShowProgressWith = oxPROGRESS_INDICATOR_RATIO) then
+            p := Progress.Ratio;
 
-      if(r.w > 0) then
-         uiDraw.Box(r);
+         {correct ratio to not go out of bounds}
+         if(p < 0) then
+            p := 0
+         else if(p > 1) then
+            p := 1;
+
+         {render progress bar if any progress made}
+         r.w := round(p * maxw);
+
+         if(r.w > 0) then
+            uiDraw.Box(r);
+      end;
    end;
 
    s := Progress.ToString();
@@ -196,10 +208,10 @@ begin
    wdgProgressBar.Internal.SkinDescriptor := @wdgProgressBarSkinDescriptor;
    wdgProgressBar.Internal.Done(wdgTProgressBar);
 
-   wdgProgressBar := wdgTProgressBarGlobal.Create(wdgProgressBar.Internal);
+   wdgProgressBar := wdgTProgressBarStatics.Create(wdgProgressBar.Internal);
 end;
 
-function wdgTProgressBarGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions;
+function wdgTProgressBarStatics.Add(const Pos: oxTPoint; const Dim: oxTDimensions;
             max: longint = 100): wdgTProgressBar;
 
 begin
@@ -247,7 +259,13 @@ begin
    Progress.ItemsTotal := 0;
    Progress.ItemsDone := 0;
    Progress.ShowProgressWith := oxPROGRESS_INDICATOR_NONE;
+
    Result := Self;
+end;
+
+procedure wdgTProgressBar.Stop();
+begin
+   Progress.ItemsDone := -1;
 end;
 
 
