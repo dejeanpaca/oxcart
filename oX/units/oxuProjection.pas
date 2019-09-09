@@ -58,6 +58,9 @@ TYPE
       procedure Ortho(w, h: single; zNear, zFar: single);
       procedure Ortho2D(w, h: single);
 
+      {create a perspective correct aspect ortho}
+      procedure AspectOrtho(h: single; zNear, zFar: single);
+
       {set default orthographic properties}
       procedure DefaultOrtho();
 
@@ -260,20 +263,26 @@ begin
 end;
 
 procedure oxTProjectionHelper.Ortho(w, h: single; zNear, zFar: single);
-var
-   fx, fy: single;
-
 begin
-   fx := w * a.acX;
-   fy := h * a.acY;
-
-   Ortho(-fx, fx, -fy, fy, zNear, zFar);
+   Ortho(-w, w, -h, h, zNear, zFar);
 end;
 
 procedure oxTProjectionHelper.Ortho2D(w, h: single);
 begin
    Ortho(w, h, -1.0, 1.0);
 end;
+
+procedure oxTProjectionHelper.AspectOrtho(h: single; zNear, zFar: single);
+var
+   fx, fy: single;
+
+begin
+   fx := h * a.acX;
+   fy := h * a.acY;
+
+   Ortho(-fx, fx, -fy, fy, zNear, zFar);
+end;
+
 
 procedure oxTProjectionHelper.DefaultOrtho();
 begin
