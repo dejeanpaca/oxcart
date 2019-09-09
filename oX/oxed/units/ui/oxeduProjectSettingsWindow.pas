@@ -370,7 +370,7 @@ begin
 
    Instance := oxeduiTProjectSettingsWindow;
 
-   console.Selected^.AddCommand('settings', @consoleCallback);
+   console.Selected^.AddCommand('wnd:project_settings', @consoleCallback);
 
    inherited Create;
 

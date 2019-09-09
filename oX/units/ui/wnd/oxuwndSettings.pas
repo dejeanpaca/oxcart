@@ -167,7 +167,7 @@ begin
 
    UseSurface := true;
 
-   console.Selected^.AddCommand('settings', @consoleCallback);
+   console.Selected^.AddCommand('wnd:settings', @consoleCallback);
 
    inherited Create;
 

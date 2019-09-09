@@ -308,7 +308,7 @@ end;
 procedure Initialize();
 begin
    oxwndDVarEditor := oxTDVarEditorWindow.Create();
-   console.Selected^.AddCommand('dvar_editor', @consoleCallback);
+   console.Selected^.AddCommand('wnd:dvar_editor', @consoleCallback);
 end;
 
 procedure deinitialize();

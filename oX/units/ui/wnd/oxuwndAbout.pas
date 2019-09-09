@@ -95,7 +95,7 @@ end;
 procedure Initialize();
 begin
    oxwndAbout := oxTAboutWindow.Create();
-   console.Selected^.AddCommand('about', @consoleCallback);
+   console.Selected^.AddCommand('wnd:about', @consoleCallback);
 end;
 
 procedure deinitialize();
