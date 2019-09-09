@@ -309,27 +309,6 @@ begin
    oxConsole.Console.w('Insufficient arguments.');
 end;
 
-procedure listCommands(var con: conTConsole);
-var
-   i: loopint;
-   handler: conPHandler;
-
-begin
-   handler := con.CommandHandlers.s;
-
-   if(handler <> nil) then repeat
-      con.i();
-
-      for i := 0 to handler^.nCommands - 1 do begin
-         con.i(handler^.Commands^[i].sID + ' ' + handler^.Commands^[i].sHelp);
-      end;
-
-      handler := handler^.Next;
-   until (handler = nil);
-
-   con.i();
-end;
-
 procedure consoleCommand(var con: conTConsole);
 var
    i: loopint;
@@ -347,8 +326,6 @@ begin
       end else if(cmd = 'history') then begin
          for i := 0 to (con.History.Entries.n - 1) do
             con.s(con.History.Entries.List[i]);
-      end else if(cmd = 'list') then begin
-         listCommands(con);
       end else if(cmd = 'fullscreen') then begin
          oxConsole.Fullscreen := not oxConsole.Fullscreen;
          log.i('Console fullscreen set to: ' + sf(oxConsole.Fullscreen));
@@ -357,6 +334,32 @@ begin
          con.w('Unknown or unsupported console command.');
    end else
       con.w('No console command arguments specified.');
+end;
+
+procedure consoleHelp(var con: conTConsole);
+var
+   i: loopint;
+   handler: conPHandler;
+
+begin
+   handler := con.CommandHandlers.s;
+
+   while(handler <> nil) do begin
+      for i := 0 to handler^.nCommands -1 do begin
+         if(handler^.Commands^[i].sHelp <> '') then
+            log.i(handler^.Commands^[i].sID + ' > `' + handler^.Commands^[i].sHelp)
+         else
+            log.i(handler^.Commands^[i].sID);
+      end;
+
+      handler := handler^.Next;
+   end;
+
+   for i := 0 to con.Commands.n - 1 do begin
+      log.i(con.Commands.List[i].sID);
+   end;
+
+   log.i();
 end;
 
 procedure oxconCommandNotify(var con: conTConsole; nID: longint);
@@ -373,7 +376,7 @@ begin
       cidCLEAR_CONSOLE:
          ConsoleUtils.console.Clear();
       cidHELP:
-         con.w('Help not yet available.');
+         consoleHelp(con);
       else
          con.e('Error: Unknown console command.');
    end;
