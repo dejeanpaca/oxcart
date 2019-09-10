@@ -13,6 +13,7 @@ INTERFACE
    USES
       uStd, uFile,
       {oX}
+      uOX, oxuRunRoutines,
       oxuFile, oxuMaterial;
 
 TYPE
@@ -28,8 +29,8 @@ TYPE
    oxTMaterialFile = class(oxTFileRW)
       class procedure Init(out options: oxTMaterialFileOptions); static;
 
-      function Load(const name: string): oxTMaterial;
-      function Load(var f: TFile; const fn: string = '.mat'): oxTMaterial;
+      function Read(const name: string): oxTMaterial;
+      function Read(var f: TFile; const fn: string = '.mat'): oxTMaterial;
    end;
 
 VAR
@@ -44,26 +45,26 @@ begin
    ZeroOut(options, SizeOf(options));
 end;
 
-function oxTMaterialFile.Load(const name: string): oxTMaterial;
+function oxTMaterialFile.Read(const name: string): oxTMaterial;
 var
    options: oxTMaterialFileOptions;
 
 begin
    Init(options);
 
-   inherited Load(name, @options);
+   inherited Read(name, @options);
 
    Result := options.Material;
 end;
 
-function oxTMaterialFile.Load(var f: TFile; const fn: string): oxTMaterial;
+function oxTMaterialFile.Read(var f: TFile; const fn: string): oxTMaterial;
 var
    options: oxTMaterialFileOptions;
 
 begin
    Init(options);
 
-   inherited Load(f, fn, @options);
+   inherited Read(f, fn, @options);
 
    Result := options.Material;
 end;
@@ -78,8 +79,11 @@ begin
    FreeObject(oxfMaterial);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
 
-   ox.Init.Add('material_file', @init, @deinit);
+   ox.Init.Add(initRoutines, 'material_file', @init, @deinit);
 
 END.
