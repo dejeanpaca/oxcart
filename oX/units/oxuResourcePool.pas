@@ -11,23 +11,13 @@ UNIT oxuResourcePool;
 INTERFACE
 
    USES
-      uStd, oxuTypes
-      {$IFDEF OX_RESOURCE_DEBUG}, StringUtils, uLog{$ENDIF};
+      {$IFDEF OX_RESOURCE_DEBUG}StringUtils, uLog, {$ENDIF}
+      uStd, oxuTypes, oxuResourceLoader;
 
 CONST
    oxRESOURCE_POOL_INCREMENT: loopint = 1024;
 
 TYPE
-   oxTResourceLoaderRoutine = procedure(resource: oxTResource);
-
-   oxPResourceLoader = ^oxTResourceLoader;
-   oxTResourceLoader = record
-      ResourceType: oxTResourceClass;
-      Load: oxTResourceLoaderRoutine;
-   end;
-
-   oxTResourceLoaders = specialize TSimpleList<oxTResourceLoader>;
-
    { oxTResourcePool }
 
    oxTResourcePool = class(oxTPreallocatedResourceArrayListClass)
@@ -61,7 +51,6 @@ TYPE
    { oxTResourceGlobal }
 
    oxTResourceGlobal = record
-      Loaders: oxTResourceLoaders;
       Pools: oxTResourcePoolList;
 
       {load a resource}
@@ -71,10 +60,6 @@ TYPE
       {free resource object}
       procedure Free(var resource);
 
-      {add a resource loader}
-      procedure AddLoader(resourceType: oxTResourceClass; loader: oxTResourceLoaderRoutine);
-      {find a resource loader by the given resource type}
-      function FindLoader(resourceType: oxTResourceClass): oxPResourceLoader;
 
       procedure Add(pool: oxTResourcePool);
       function Find(pool: oxTResourcePool): loopint;
@@ -103,7 +88,7 @@ begin
             oxTResourcePool(oxTResource(resource).Pool).Load()
          else begin
             {otherwise we find the loader}
-            loader := FindLoader(oxTResourceClass(oxTResource(resource).ClassType));
+            loader := oxPResourceLoader(oxTResource(resource).GetLoader());
 
             assert(loader <> nil, 'Resource loader not found for class type ' + oxTResource(resource).ClassName);
 
@@ -205,42 +190,6 @@ begin
    {$ENDIF}
 
    FreeObject(resource);
-end;
-
-procedure oxTResourceGlobal.AddLoader(resourceType: oxTResourceClass; loader: oxTResourceLoaderRoutine);
-var
-   l: oxTResourceLoader;
-
-begin
-   assert(resourceType <> nil, 'Cannot add loader for nil resource type');
-   assert(loader <> nil, 'Cannot add nil resource loader routine');
-
-   l.ResourceType := resourceType;
-   l.Load := loader;
-
-   Loaders.Add(l);
-end;
-
-function oxTResourceGlobal.FindLoader(resourceType: oxTResourceClass): oxPResourceLoader;
-var
-   i: loopint;
-   properType: TClass;
-
-begin
-   properType := resourceType;
-
-   {find class type that inherits from oxTResource, as we need to match with the base type instead of anything inherited}
-   while(properType.ClassParent.ClassName <> 'oxTResource') do begin
-      properType := properType.ClassParent;
-   end;
-
-   {find the type in the list}
-   for i := 0 to Loaders.n - 1 do begin
-      if(Loaders.List[i].ResourceType = oxTResourceClass(properType)) then
-         exit(@Loaders.List[i]);
-   end;
-
-   Result := nil;
 end;
 
 procedure oxTResourceGlobal.Add(pool: oxTResourcePool);
@@ -366,7 +315,6 @@ begin
 end;
 
 INITIALIZATION
-   oxResource.Loaders.InitializeValues(oxResource.Loaders);
    oxResource.Pools.InitializeValues(oxResource.Pools);
 
 END.
