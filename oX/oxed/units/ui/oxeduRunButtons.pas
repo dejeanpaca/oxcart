@@ -45,8 +45,8 @@ begin
    enable := oxedProjectRunner.CanRun();
 
    oxedRunButtons.Wdg.Play^.Enable(enable and (not running));
-   oxedRunButtons.Wdg.Pause^.Enable(enable);
-   oxedRunButtons.Wdg.Stop^.Enable(enable and running);
+   oxedRunButtons.Wdg.Pause^.Enable(running);
+   oxedRunButtons.Wdg.Stop^.Enable(running);
 end;
 
 procedure Initialize();
