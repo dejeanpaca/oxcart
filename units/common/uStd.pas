@@ -58,6 +58,11 @@ TYPE
    TSingleArray = array of single;
    TDoubleArray = array of double;
 
+   TOObject = object
+   end;
+
+   POObject = ^TOObject;
+
    { TSimpleList }
 
    {helps to maintain a list of elements in an array}
