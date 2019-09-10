@@ -70,14 +70,12 @@ begin
    Result := wdgRENDER_CORNERS_ALL or wdgRENDER_LINES_ALL;
 
    if(pos = [uiCONTROL_GRID_MIDDLE]) then begin
-      Result.Clear(wdgRENDER_CORNERS_ALL);
-      Result.Clear(wdgRENDER_LINE_BOTTOM);
+      Result.Clear(wdgRENDER_CORNERS_ALL or wdgRENDER_LINE_BOTTOM);
       exit;
    end;
 
    if(pos = [uiCONTROL_GRID_MIDDLE, uiCONTROL_GRID_MIDDLE_HORIZONTAL]) or (pos = [uiCONTROL_GRID_MIDDLE_HORIZONTAL]) then begin
-      Result.Clear(wdgRENDER_CORNERS_ALL);
-      Result.Clear(wdgRENDER_LINE_RIGHT);
+      Result.Clear(wdgRENDER_CORNERS_ALL or wdgRENDER_LINE_RIGHT);
       exit;
    end;
 
@@ -296,7 +294,10 @@ class procedure uiRenderWidget.Box(x1, y1, x2, y2: longint; const sColor, bColor
 var
    sc,
    bc: TColor4ub;
-   px1, py1, px2, py2: loopint;
+   px1,
+   py1,
+   px2,
+   py2: loopint;
 
 begin
    sc := sColor;
