@@ -41,6 +41,8 @@ TYPE
       procedure Deselected();
       {check if the widget is selected}
       function IsSelected(): boolean;
+      {check if we're currently hovered over}
+      function Hovering(): boolean; inline;
 
       {set the position of a widget}
       function SetPosition(Properties: TBitSet; Separation: boolean = true): uiTWidget;
@@ -660,6 +662,11 @@ end;
 function uiTWidgetHelper.IsSelected(): boolean;
 begin
    Result := (oxui.Select.l >= Level) and (oxui.Select.s[Level] = Self);
+end;
+
+function uiTWidgetHelper.Hovering(): boolean;
+begin
+   Result := wdgpHOVERING in  Properties;
 end;
 
 procedure uiTWidgetGlobal.Deselect(wnd: uiTWindow);
