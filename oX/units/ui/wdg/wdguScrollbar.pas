@@ -405,7 +405,7 @@ var
 
 begin
    if(LightMode) then begin
-      if(not (wdgpHOVERING in Properties)) and (not Permanent) then
+      if(not Hovering()) and (not Permanent) then
          exit;
 
       if(not Permanent) then begin

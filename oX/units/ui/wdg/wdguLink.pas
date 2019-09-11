@@ -108,7 +108,7 @@ procedure wdgTLink.Render();
 begin
    if(wdgpENABLED in Properties) then begin
       if(not Used) then begin
-         if(wdgpHOVERING in Properties) then
+         if Hovering() then
             inherited Render(GetColor(wdgscLINK_HOVER))
          else
             inherited Render(GetColor(wdgscLINK_TEXT));

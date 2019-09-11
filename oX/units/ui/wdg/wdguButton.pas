@@ -189,12 +189,12 @@ begin
       renderProperties := renderProperties or CurvedFrameProperties;
    end;
 
-   if(not (wdgpHOVERING in Properties)) or (not Pressed) then
+   if(not Hovering()) or (not Pressed) then
       renderProperties.Prop(wdgRENDER_BLOCK_BORDER);
 
    {if no textures present then render normally}
    if(wdgpENABLED in Properties) then begin
-      if(wdgpHOVERING in Properties) or (Pressed) then
+      if Hovering() or Pressed then
          uiRenderWidget.Box(uiTWidget(Self), GetColor(wdgscBUTTON_HOVER), colors^.SelectedBorder, renderProperties, window.opacity)
       else
          uiRenderWidget.Box(uiTWidget(Self), GetColor(wdgscBUTTON_REGULAR), colors^.Border, renderProperties, window.opacity);

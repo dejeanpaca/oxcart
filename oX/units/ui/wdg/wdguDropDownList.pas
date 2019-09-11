@@ -248,7 +248,7 @@ begin
 
    {draw rectangle}
    if(wdgpENABLED in Properties) then begin
-      if(not IsSelected()) and (not (wdgpHOVERING in Properties)) then
+      if(not IsSelected()) and (not Hovering()) then
          SetColor(pSkin.Colors.Border)
       else
          SetColor(pSkin.Colors.SelectedBorder);

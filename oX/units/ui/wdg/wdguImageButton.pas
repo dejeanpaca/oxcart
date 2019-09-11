@@ -210,7 +210,7 @@ begin
       imageY := y - ((Dimensions.h - ImageHeight) div 2);
 
       if(wdgpENABLED in Properties) then begin
-         if(not (wdgpHOVERING in Properties)) then begin
+         if(not Hovering()) then begin
             if(not Texture.Texture.HasAlpha()) then
                SetColor(Color)
             else
