@@ -144,6 +144,11 @@ INTERFACE
       {$ENDIF}
       {%H-}uOX,
 
+      {$IFDEF OX_FEATURE_UI}
+      oxuwndSettings,
+      oxuwndInputSettings,
+      {$ENDIF}
+
       {loaders}
       oxuMaterialLoader,
       oxuShaderFileReader;
