@@ -37,6 +37,10 @@ TYPE
       procedure AllocateInc(count: loopint);
       {increase allocated number of elements by specified count (allocates to the multiple of Increment)}
       procedure RequireAllocate(count: loopint);
+      {allocates memory to insert one element at given index}
+      procedure Insert(index: loopint);
+      {insert element at the given index}
+      procedure Insert(index: loopint; var p: T);
       {allocates memory to insert count elements at given index, and moves out other elements to free the space}
       procedure InsertRange(index, count: loopint);
 
@@ -117,9 +121,34 @@ begin
       Allocate(count);
 end;
 
+procedure TSimpleListClass.Insert(index: loopint);
+var
+   i: loopint;
+
+begin
+   {allocate more memory if needed}
+   if(a < n + 1) then
+      AllocateInc(n + 1 - a);
+
+   {move existing items out of way if required}
+   if(index < n) then begin
+      for i := n downto index do begin
+         List[i + 1] := List[i];
+      end;
+   end;
+
+   inc(n, 1);
+end;
+
+procedure TSimpleListClass.Insert(index: loopint; var p: T);
+begin
+   Insert(index);
+
+   List[index] := p;
+end;
+
 procedure TSimpleListClass.InsertRange(index, count: loopint);
 var
-   pn,
    i: loopint;
 
 begin
@@ -127,16 +156,14 @@ begin
    if(a < n + count) then
       AllocateInc(n + count - a);
 
-   pn := n;
-   inc(n, count);
-
    {move existing items out of way if required}
-   if(index < pn) then begin
-      for i := pn - 1 downto index do begin
+   if(index < n) then begin
+      for i := n - 1 downto index do begin
          List[i + count] := List[i];
       end;
    end;
 
+   inc(n, count);
 end;
 
 function TSimpleListClass.AddTo(var p: T): boolean;
@@ -197,7 +224,7 @@ begin
       {move all items above below}
       if(index < n - 1) then begin
          for i := index to (n - 2) do
-            Move(List[i + 1], List[i], SizeOf(T));
+            List[i] := List[i + 1];
       end;
 
       dec(n);
