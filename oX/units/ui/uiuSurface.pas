@@ -55,7 +55,7 @@ begin
 
       if(Result <> nil) then begin
          {surfaces should not be movable}
-         Exclude(Result.Properties, uiwndpMOVE_BY_SURFACE);
+         Result.Properties := Result.Properties - [uiwndpMOVE_BY_SURFACE, uiwndpRESIZABLE, uiwndpMOVABLE];
          Result.Properties := Result.Properties + [uiwndpNO_ESCAPE_KEY, uiwndpNO_CONFIRMATION_KEY];
       end;
    end;
