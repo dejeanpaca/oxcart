@@ -108,15 +108,15 @@ begin
       error := fpIOCtl(fileHandle, linux._ior('j', JSIOCGVERSION, sizeof(version)), @version);
 
       if(error = 0) then begin
-         log.i('Driver version: ' + sf(version) + '(' + sf(version_bytes[1]) + '.' + sf(version_bytes[2]) + '.' + sf(version_bytes[3]) + '.' + sf(version_bytes[0]) + ')');
+         log.i('Driver version: ' + sf(version) + ' (' + sf(version_bytes[1]) + '.' + sf(version_bytes[2]) + '.' + sf(version_bytes[3]) + '.' + sf(version_bytes[0]) + ')');
       end else
          log.w('Failed to get driver version: ' + linux.GetErrorString(fpgeterrno()));
 
-      fpgeterrno;
+      fpgeterrno();
 
       error := fpIOCtl(fileHandle, linux._ior('j', JSIOCGNAME, sizeof(pname)), @pname);
 
-      if(error = 0) then
+      if(error > 0) then
          Name := pchar(pname)
       else begin
          Name := FileName;
