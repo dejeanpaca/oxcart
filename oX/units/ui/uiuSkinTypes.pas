@@ -36,6 +36,7 @@ TYPE
       cInnerFrame,
       cTitleBt,
       cTitleBtHighlight,
+      cTitleIcon,
       Shadow: TColor4ub;
    end;
 
