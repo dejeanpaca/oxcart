@@ -46,6 +46,7 @@ TYPE
    {a window}
 
    uiTWindowProperty = (
+      uiwndpSYSTEM,
       uiwndpENABLED,
       uiwndpINITIALIZED,
       uiwndpVISIBLE,
@@ -112,6 +113,8 @@ TYPE
 
       {skin}
       Skin: TObject;
+      {window icon}
+      Icon: TObject;
 
       {properties}
       Background: uiTWindowBackground;
