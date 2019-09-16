@@ -17,7 +17,7 @@ INTERFACE
       {ox}
       uOX, oxuTypes, oxuRunRoutines, oxuwndSettings,
       {ui}
-      uiWidgets, wdguLabel, wdguDivisor;
+      uiWidgets, wdguLabel, wdguButton, wdguDivisor;
 
 
 IMPLEMENTATION
@@ -30,6 +30,20 @@ procedure revertSettings();
 begin
 end;
 
+procedure configureKeyboard();
+begin
+
+end;
+
+procedure configurePointer();
+begin
+end;
+
+procedure rescanControllers();
+begin
+   appControllers.Reset();
+end;
+
 procedure addTabs();
 var
    i: loopint;
@@ -39,18 +53,22 @@ begin
 
    wdgDivisor.Add('Keyboard');
    wdgLabel.Add('We assume you have a keyboard attached');
+   wdgButton.Add('Configure').UseCallback(@configureKeyboard);
 
    wdgDivisor.Add('Mouse / Pointer');
    wdgLabel.Add('We also assume you have a mouse/pointer attached');
+   wdgButton.Add('Configure').UseCallback(@configurePointer);
 
    wdgDivisor.Add('Controllers');
 
    if(appControllers.List.n > 0) then begin
       for i := 0 to appControllers.List.n - 1 do begin
-         wdgLabel.Add(appControllers.List[i].GetName());
+         wdgButton.Add(appControllers.List[i].GetName());
       end;
-   end else
+   end else begin
       wdgLabel.Add('No controllers detected/supported');
+      wdgButton.Add('Rescan').UseCallback(@rescanControllers);
+   end;
 end;
 
 procedure init();
