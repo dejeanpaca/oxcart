@@ -16,7 +16,7 @@ INTERFACE
       uStd, oxuTypes, oxuWindow,
       {ui}
       uiuWindow, oxuUI, uiuWindowTypes, uiuTypes, uiuSkinTypes,
-      uiuDraw, uiWidgets, uiuWidgetWindow, uiuWidget,
+      uiuDraw, uiWidgets, uiuWidgetWindow, uiuWidget, uiuSimpleWindowList,
       wdguTabs, wdguBlock;
 
 TYPE
