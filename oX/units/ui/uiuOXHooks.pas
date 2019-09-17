@@ -15,7 +15,7 @@ INTERFACE
       oxuUIHooks, oxuTypes, oxuWindowTypes, oxuWindow, oxuWindows, oxuRenderer,
       {ui}
       uiuCursor,
-      uiuWindowTypes, uiuWindow;
+      uiuWindowTypes, uiuWindow, uiuWindowRender;
 
 TYPE
 
@@ -74,7 +74,7 @@ end;
 procedure uiTOXHooks.Render(wnd: oxTWindow);
 begin
    if(uiWindow.AutoRender) then
-      uiWindow.Render(wnd);
+      uiWindowRender.Render(wnd);
 end;
 
 procedure uiTOXHooks.Minimize(wnd: oxTWindow);

@@ -20,7 +20,7 @@ INTERFACE
       oxuMaterial, oxuFont, oxumPrimitive, oxuWindow, oxuTransform, oxuResourcePool, oxuPrimitives,
       oxuRun, oxuRunRoutines,
       {ui}
-      oxuUI, uiuWindow;
+      oxuUI, uiuWindow, uiuWindowRender;
 
 CONST
    oxSPLASH_SCREEN_DEFAULT_DISPLAY_TIME = 2000;
@@ -244,7 +244,7 @@ var
    dotsString: ShortString;
 
 begin
-   uiWindow.RenderPrepare(AssociatedWindow);
+   uiWindowRender.Prepare(AssociatedWindow);
 
    oxui.Material.Apply();
 
