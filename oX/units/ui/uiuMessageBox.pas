@@ -339,8 +339,7 @@ begin
       true).
       SetID(WDGID_TEXT));
 
-   Include(labelWidget.FontProperties, oxfpCenterVertical);
-   Include(labelWidget.FontProperties, oxfpCenterHorizontalTotal);
+   labelWidget.FontProperties := labelWidget.FontProperties + [oxfpCenterVertical, oxfpCenterHorizontalTotal];
 
    labelWidget.Multiline();
 end;

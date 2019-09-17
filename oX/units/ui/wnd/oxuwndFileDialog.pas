@@ -491,8 +491,7 @@ begin
 
       parent := oxTWindow(oxui.GetUseWindow().oxwParent);
 
-      Include(uiWindow.Create.Properties, uiwndpAUTO_CENTER);
-      Include(uiWindow.Create.Properties, uiwndpNO_DISPOSE_OF_EXT_DATA);
+      uiWindow.Create.Properties := uiWindow.Create.Properties + [uiwndpAUTO_CENTER, uiwndpNO_DISPOSE_OF_EXT_DATA];
       uiWindow.Create.Instance := oxuiTFileDialogWindow;
 
       wnd := uiWindow.MakeChild(parent,
