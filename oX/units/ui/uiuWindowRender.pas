@@ -11,15 +11,13 @@ UNIT uiuWindowRender;
 INTERFACE
 
    USES
-      uStd, uLog, uColors, vmVector,
-      {app}
-      uApp, appuEvents, appuKeys, appuActionEvents, appuMouse,
+      uStd, uColors, vmVector,
       {oX}
-      oxuTypes, oxuWindows, oxuFont, oxuResourcePool, oxuWindow,
-      oxuPrimitives, oxuWindowTypes, oxuRender, oxuTransform,
-      oxuTexture, oxuTextureGenerate, oxuRenderer, oxuRenderUtilities,
+      oxuTypes, oxuWindowTypes, oxuFont,
+      oxuPrimitives, oxuTransform, oxuTexture,
+      oxuRenderer, oxuRender, oxuRenderUtilities,
       {ui}
-      oxuUI, uiuSkin, uiuZOrder, uiuTypes, uiuControl, uiuSkinTypes,
+      oxuUI, uiuTypes, uiuSkinTypes,
       uiuWindowTypes, uiuWidget, uiuDraw, uiWidgets, uiuWindow;
 
 TYPE
