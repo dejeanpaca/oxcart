@@ -104,7 +104,7 @@ TYPE
    uiTDockableArea = class(uiTDockableWindow)
       procedure Initialize; override;
 
-      class procedure Fit(const wnds: uiTPreallocatedWindowListArray; ofsX, ofsY, newWidth, newHeight, dimW, dimH: loopint; exclude: uiTWindow = nil); static;
+      class procedure Fit(const wnds: uiTSimpleWindowList; ofsX, ofsY, newWidth, newHeight, dimW, dimH: loopint; exclude: uiTWindow = nil); static;
       class procedure FitWindow(dockableWnd: uiTDockableWindow; ofsX, ofsY, newWidth, newHeight, dimW, dimH: loopint); static;
 
       {make all existing windows in the given area}
@@ -429,7 +429,7 @@ begin
    Background.Color.Assign(32, 32, 64, 255);
 end;
 
-class procedure uiTDockableArea.Fit(const wnds: uiTPreallocatedWindowListArray; ofsX, ofsY, newWidth, newHeight, dimW, dimH: loopint; exclude: uiTWindow = nil);
+class procedure uiTDockableArea.Fit(const wnds: uiTSimpleWindowList; ofsX, ofsY, newWidth, newHeight, dimW, dimH: loopint; exclude: uiTWindow = nil);
 var
    i: loopint;
    dockableWnd: uiTDockableWindow;
@@ -574,7 +574,7 @@ end;
 procedure uiTDockableArea.SizeChanged();
 var
    ofsX, ofsY: longint;
-   wnds: uiTPreallocatedWindowListArray;
+   wnds: uiTSimpleWindowList;
 
 begin
    inherited SizeChanged;
@@ -965,7 +965,7 @@ function ProcessHorizontal(all: boolean = false): boolean;
 var
    horizontal,
    left,
-   right: uiTPreallocatedWindowListArray;
+   right: uiTSimpleWindowList;
 
    i,
    totalWidth,
@@ -1020,7 +1020,7 @@ function ProcessVertical(all: boolean = false): boolean;
 var
    vertical,
    above,
-   below: uiTPreallocatedWindowListArray;
+   below: uiTSimpleWindowList;
 
    i,
    totalHeight,

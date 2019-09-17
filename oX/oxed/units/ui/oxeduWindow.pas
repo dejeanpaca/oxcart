@@ -218,7 +218,7 @@ end;
 
 procedure deinit();
 var
-   windows: uiTPreallocatedWindowListArray;
+   windows: uiTSimpleWindowList;
    i: loopint;
 
 begin
