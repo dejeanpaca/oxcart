@@ -7,7 +7,7 @@
    Axes are mapped from -1.0 to +1.0
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT appuController;
 
 INTERFACE
@@ -154,6 +154,9 @@ TYPE
       procedure LogDevice(); virtual;
       procedure DeInitialize(); virtual;
 
+      {run individual devices (input collection, connection detection, ...)}
+      procedure Run(); virtual;
+
       {called when the device is disconnected}
       procedure Disconnected();
 
@@ -188,6 +191,8 @@ TYPE
       procedure DeInitialize(); virtual;
       {perform run operations}
       procedure Run(); virtual;
+      {run individual controllers}
+      procedure RunControllers();
       {reinitialize all devices}
       procedure Reset(); virtual;
    end;
@@ -303,6 +308,11 @@ begin
 
 end;
 
+procedure appTControllerDevice.Run();
+begin
+
+end;
+
 procedure appTControllerDevice.Disconnected();
 begin
    log.w('Input controller device seems disconnected: ' + Name);
@@ -331,7 +341,19 @@ end;
 
 procedure appTControllerHandler.Run();
 begin
+   RunControllers();
+end;
 
+procedure appTControllerHandler.RunControllers();
+var
+   i: loopint;
+
+begin
+   if(appControllers.List.n > 0) then begin
+      for i := 0 to (appControllers.List.n - 1) do begin
+         appControllers.List.List[i].Run();
+      end;
+   end;
 end;
 
 procedure appTControllerHandler.Reset();
