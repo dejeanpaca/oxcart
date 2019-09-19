@@ -57,6 +57,7 @@ INTERFACE
          {$ENDIF}
          {$IF DEFINED(WINDOWS)}
          {%H-}appuControllerXInput,
+         {%H-}appuControllerDirectInput,
          {$ENDIF}
       {$ENDIF}
 
