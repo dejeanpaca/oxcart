@@ -18,6 +18,7 @@ Sources are listed here in the following form
 - openal has been acquired from the Free Pascal sources
   - We needed to be able to compile for `x64` and prebuilt does not come with lazarus install
 - DirectX <https://github.com/CMCHTPC/DelphiDX12>
+  - We require the `Units` directory from the repository only which you can put into the `dx/` directory
   - <https://github.com/CMCHTPC/DelphiDX12.git> `dx/`
 
 ## Modifications
