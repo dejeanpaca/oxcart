@@ -12,7 +12,7 @@ INTERFACE
 
    USES
       uStd, uLog,
-      appuController;
+      appuController, appuControllerWindows;
 
 TYPE
 
