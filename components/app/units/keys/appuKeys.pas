@@ -172,7 +172,7 @@ TYPE
       {checks whether a key with the specified keycode was pressed in this cycle}
       function CyclePressed(KeyCode: longint): boolean;
       {checks whether a key with the specified keycode was pressed/released in same cycle}
-      function PressedReleases(KeyCode: longint): boolean;
+      function PressedReleased(KeyCode: longint): boolean;
 
       {get an interpolated value for keypressed}
       function Interpolated(kc: loopint): single;
@@ -510,35 +510,33 @@ end;
 
 function appTKeyGlobal.Shift(): boolean;
 begin
-   Result := appk.IsPressed(kcLSHIFT) or appk.IsPressed(kcRSHIFT);
+   Result := IsPressed(kcLSHIFT) or IsPressed(kcRSHIFT);
 end;
 
 function appTKeyGlobal.Control(): boolean;
 begin
-   Result := appk.IsPressed(kcLCTRL) or appk.IsPressed(kcRCTRL);
+   Result := IsPressed(kcLCTRL) or IsPressed(kcRCTRL);
 end;
 
 function appTKeyGlobal.Alt(): boolean;
 begin
-   Result := appk.IsPressed(kcLALT) or appk.IsPressed(kcRALT);
+   Result := IsPressed(kcLALT) or IsPressed(kcRALT);
 end;
 
 function appTKeyGlobal.OS(): boolean;
 begin
-   Result := appk.IsPressed(kcLOS) or appk.IsPressed(kcROS);
+   Result := IsPressed(kcLOS) or IsPressed(kcROS);
 end;
 
-{checks whether any of the CONTEXT keys is being held or not}
 function appTKeyGlobal.Context(): boolean;
 begin
-   Result := appk.IsPressed(kcLCONTEXT) or appk.IsPressed(kcRCONTEXT);
+   Result := IsPressed(kcLCONTEXT) or IsPressed(kcRCONTEXT);
 end;
 
-{checks whether a key with the specified keycode is pressed}
 function appTKeyGlobal.IsPressed(KeyCode: longint): boolean;
 begin
    if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
-      Result := appk.Properties[KeyCode].IsSet(kpPRESSED)
+      Result := Properties[KeyCode].IsSet(kpPRESSED)
    else
       Result := false;
 end;
@@ -546,7 +544,7 @@ end;
 function appTKeyGlobal.Released(KeyCode: longint): boolean;
 begin
    if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
-      Result := appk.Properties[KeyCode].IsSet(kpWAS_PRESSED) and (not appk.Properties[KeyCode].IsSet(kpPRESSED))
+      Result := Properties[KeyCode].IsSet(kpWAS_PRESSED) and (not Properties[KeyCode].IsSet(kpPRESSED))
    else
       Result := false;
 end;
@@ -554,7 +552,7 @@ end;
 function appTKeyGlobal.JustPressed(KeyCode: longint): boolean;
 begin
    if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
-      Result := (not appk.Properties[KeyCode].IsSet(kpWAS_PRESSED)) and appk.Properties[KeyCode].IsSet(kpPRESSED)
+      Result := (not Properties[KeyCode].IsSet(kpWAS_PRESSED)) and Properties[KeyCode].IsSet(kpPRESSED)
    else
       Result := false;
 end;
@@ -562,7 +560,7 @@ end;
 function appTKeyGlobal.WasPressed(KeyCode: longint): boolean;
 begin
    if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
-      Result := appk.Properties[KeyCode].IsSet(kpWAS_PRESSED)
+      Result := Properties[KeyCode].IsSet(kpWAS_PRESSED)
    else
       Result := false;
 end;
@@ -570,15 +568,15 @@ end;
 function appTKeyGlobal.CyclePressed(KeyCode: longint): boolean;
 begin
    if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
-      Result := appk.Properties[KeyCode].IsSet(kpCYCLE_PRESSED)
+      Result := Properties[KeyCode].IsSet(kpCYCLE_PRESSED)
    else
       Result := false;
 end;
 
-function appTKeyGlobal.PressedReleases(KeyCode: longint): boolean;
+function appTKeyGlobal.PressedReleased(KeyCode: longint): boolean;
 begin
    if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
-      Result := appk.Properties[KeyCode].IsSet(kpPRESSED_RELEASED)
+      Result := Properties[KeyCode].IsSet(kpPRESSED_RELEASED)
    else
       Result := false;
 end;
@@ -619,17 +617,17 @@ var
    i: loopint;
 
 begin
-   for i := Low(appk.Properties) to High(appk.Properties) do begin
-      if(appk.Properties[i].IsSet(kpPRESSED)) then
+   for i := Low(Properties) to High(Properties) do begin
+      if(Properties[i].IsSet(kpPRESSED)) then
          writeln('Pressed: ', appkNames.Get(i));
 
-      if(appk.Properties[i].IsSet(kpWAS_PRESSED)) then
+      if(Properties[i].IsSet(kpWAS_PRESSED)) then
          writeln('WasPressed: ', appkNames.Get(i));
 
-      if(appk.Properties[i].IsSet(kpCYCLE_PRESSED)) then
+      if(Properties[i].IsSet(kpCYCLE_PRESSED)) then
          writeln('CyclePressed: ', appkNames.Get(i));
 
-      if(appk.Properties[i].IsSet(kpPRESSED_RELEASED)) then
+      if(Properties[i].IsSet(kpPRESSED_RELEASED)) then
          writeln('PressedReleased: ', appkNames.Get(i));
    end;
 end;
