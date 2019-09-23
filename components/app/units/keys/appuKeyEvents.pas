@@ -11,7 +11,7 @@ UNIT appuKeyEvents;
 INTERFACE
 
    USES
-      uStd, appuKeys, appuEvents;
+      uStd, appuKeys, appuEvents, appuInputTypes;
 
 CONST
    {event actions}

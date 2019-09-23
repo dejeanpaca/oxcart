@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, StringUtils, uLog,
       {app}
-      appuEvents, appuKeys, appuKeyEvents, appuMouse, appuMouseEvents,
+      appuEvents, appuInputTypes, appuKeys, appuKeyEvents, appuMouse, appuMouseEvents,
       {oX}
       oxuTypes, oxuWindowTypes, {%H-}oxuWindow, oxuWindows, oxuPlatform, oxuPlatforms,
       oxuWindowsOS, oxuRenderer,
