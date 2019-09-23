@@ -115,6 +115,7 @@ CONST
 
    {maximum number of axes supported}
    appMAX_CONTROLLER_AXES = 32;
+   appMAX_CONTROLLER_TRIGGERS = 32;
 
 TYPE
    appTControllerEventType = (
@@ -130,23 +131,21 @@ TYPE
 
       {counts of axes and buttons}
       AxisCount,
+      TriggerCount,
       HatCount,
       ButtonCount: longint;
 
       {is the device valid (present)}
       Valid: boolean;
 
-      {state of all buttons, max 64 supported}
-      KeyState: TBitSet64;
-      {state of all axes}
-      Axes: array[0..appMAX_CONTROLLER_AXES - 1] of single;
-
-      {XInput specific properties}
-
-      {identifier}
-      GUID: string;
-      {is the controller a game controller (gamepad, joystick)}
-      GameController: boolean;
+      State: record
+         {state of all buttons, max 64 supported}
+         KeyState: TBitSet64;
+         {state of all axes}
+         Triggers: array[0..appMAX_CONTROLLER_AXES - 1] of single;
+         {state of all axes}
+         Axes: array[0..appMAX_CONTROLLER_AXES - 1] of single;
+      end;
 
       constructor Create(); virtual;
 
