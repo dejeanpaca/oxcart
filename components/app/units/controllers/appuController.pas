@@ -140,7 +140,7 @@ TYPE
 
       State: record
          {state of all buttons, max 64 supported}
-         KeyState: TBitSet64;
+         Keys: TBitSet64;
          {state of all axes}
          Triggers: array[0..appMAX_CONTROLLER_AXES - 1] of single;
          {state of all axes}
@@ -172,7 +172,7 @@ TYPE
       {key value (non-zero means pressed)}
       Value: single;
       {which keys are being held}
-      KeyState: TBitSet;
+      Keys: TBitSet;
 
       {function to which this button/axis is mapped}
       MappedFunction: longint;

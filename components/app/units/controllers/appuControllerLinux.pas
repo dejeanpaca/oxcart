@@ -172,7 +172,7 @@ begin
 
          if(jsevent.typ and JS_EVENT_BUTTON > 0) then begin
             event.Typ := appCONTROLLER_EVENT_BUTTON;
-            KeyState := KeyState or (1 shr jsevent.number);
+            State.Keys := State.Keys or (1 shr jsevent.number);
          end else
             event.Typ := appCONTROLLER_EVENT_AXIS;
 
@@ -180,16 +180,16 @@ begin
             event.Value := 0;
 
             if(jsevent.typ and JS_EVENT_AXIS > 0) then
-               Axes[jsevent.number] := 0;
+               State.Axes[jsevent.number] := 0;
          end else begin
             if(jsevent.typ and JS_EVENT_AXIS > 0) then begin
-               Axes[jsevent.number] := 1 / 32767 * jsevent.value;
-               event.Value := Axes[jsevent.number];
+               State.Axes[jsevent.number] := 1 / 32767 * jsevent.value;
+               event.Value := State.Axes[jsevent.number];
             end else
                event.Value := jsevent.value;
          end;
 
-         event.KeyState := KeyState;
+         event.Keys := State.Keys;
          event.Value := jsevent.value;
 
          if(jsevent.typ and JS_EVENT_INIT = 0) then
