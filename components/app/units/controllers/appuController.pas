@@ -15,7 +15,7 @@ INTERFACE
    USES
       uStd, uLog, StringUtils,
       {app}
-      uApp, appuEvents,
+      uApp, appuEvents, appuInputTypes,
       {ox}
       oxuRunRoutines, oxuRun;
 
@@ -113,14 +113,18 @@ CONST
       (Name: 'r2'; MappedFunction: appCONTROLLER_RIGHT_TRIGGER)
    );
 
+   {maximum number of buttons supported}
+   appMAX_CONTROLLER_BUTTONS = 32;
    {maximum number of axes supported}
-   appMAX_CONTROLLER_AXES = 32;
-   appMAX_CONTROLLER_TRIGGERS = 32;
+   appMAX_CONTROLLER_AXES = 16;
+   {maximum number of triggers supported}
+   appMAX_CONTROLLER_TRIGGERS = 8;
 
 TYPE
    appTControllerEventType = (
       appCONTROLLER_EVENT_BUTTON,
-      appCONTROLLER_EVENT_AXIS
+      appCONTROLLER_EVENT_AXIS,
+      appCONTROLLER_EVENT_TRIGGER
    );
 
    { appTControllerDevice }
@@ -141,7 +145,10 @@ TYPE
 
       State: record
          {state of all buttons, max 64 supported}
-         Keys: TBitSet64;
+         KeyState: TBitSet64;
+         {more detailed key state}
+         Keys: appiTKeyStates;
+         KeyProperties: array[0..appMAX_CONTROLLER_BUTTONS] of appiTKeyState;
          {state of all axes}
          Triggers: array[0..appMAX_CONTROLLER_AXES - 1] of single;
          {state of all axes}
@@ -170,11 +177,11 @@ TYPE
       Typ: appTControllerEventType;
 
       {key number}
-      Number: longint;
+      KeyCode: loopint;
       {key value (non-zero means pressed)}
       Value: single;
-      {which keys are being held}
-      Keys: TBitSet;
+      {which keys are being currently held}
+      KeyState: TBitSet;
 
       {function to which this button/axis is mapped}
       MappedFunction: longint;
@@ -280,13 +287,10 @@ end;
 function appTControllers.GetMappedFunction(const name: string): longint;
 var
    i: loopint;
-   lowerName: string;
 
 begin
-   lowerName := LowerCase(name);
-
    for i := 0 to high(appCONTROLLER_FUNCTIONS) do begin
-      if(appCONTROLLER_FUNCTIONS[i].Name = lowerName) then
+      if(appCONTROLLER_FUNCTIONS[i].Name = name) then
          exit(appCONTROLLER_FUNCTIONS[i].MappedFunction);
    end;
 
@@ -298,6 +302,7 @@ end;
 constructor appTControllerDevice.Create();
 begin
    Valid := true;
+   State.Keys.SetupKeys(appMAX_CONTROLLER_BUTTONS, @State.KeyProperties);
 end;
 
 procedure appTControllerDevice.LogDevice();
