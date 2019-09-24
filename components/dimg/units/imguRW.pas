@@ -5,7 +5,7 @@
    Started On:    02.04.2013.
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT imguRW;
 
 INTERFACE

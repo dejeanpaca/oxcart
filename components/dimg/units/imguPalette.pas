@@ -5,7 +5,7 @@
    Started On:    24.12.2013.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxdefines.inc}
 UNIT imguPalette;
 
 INTERFACE

@@ -5,7 +5,7 @@
    Started On:    20.12.2007.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxdefines.inc}
 UNIT imguWAL;
 
 {Quake WAL Image Format.

@@ -5,7 +5,7 @@
    Started On:    05.11.2007.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxdefines.inc}
 UNIT imguJPEG;
 
 {A JPEG image loader for the dImage unit. Not a stand-alone loader like dTarga
