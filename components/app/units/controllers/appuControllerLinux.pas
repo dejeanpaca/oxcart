@@ -11,7 +11,7 @@ UNIT appuControllerLinux;
 INTERFACE
 
    USES baseunix, sysutils, uStd, uLog, StringUtils, uLinux,
-      appuController;
+      appuInputTypes, appuController;
 
 TYPE
 
@@ -182,8 +182,7 @@ begin
             State.Keys.Process(jsevent.number, event.Value > 0);
          end else  if(jsevent.typ and JS_EVENT_AXIS > 0) then begin
             event.Typ := appCONTROLLER_EVENT_AXIS;
-            State.Axes[jsevent.number].AssignRaw(jsevent.value);
-
+            State.Axes[jsevent.number] := GetNormalizedValue(jsevent.value);
             event.Value := State.Axes[jsevent.number];
          end;
 

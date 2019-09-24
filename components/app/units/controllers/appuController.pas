@@ -140,6 +140,10 @@ TYPE
       HatCount,
       ButtonCount: longint;
 
+      {dead zone for axis/trigger}
+      DeadZone: single;
+      DeadZoneStretch: boolean;
+
       {is the device valid (present)}
       Valid: boolean;
 
@@ -168,6 +172,9 @@ TYPE
       procedure Disconnected();
 
       function GetName(): string;
+
+      {get normalized value for axis or trigger}
+      function GetNormalizedValue(rawValue: loopint): appiTAxisState;
    end;
 
    { appTControllerEvent }
@@ -302,6 +309,8 @@ end;
 constructor appTControllerDevice.Create();
 begin
    Valid := true;
+   DeadZone := 0.1;
+   DeadZoneStretch := true;
    State.Keys.SetupKeys(appMAX_CONTROLLER_BUTTONS, @State.KeyProperties);
 end;
 
@@ -333,6 +342,30 @@ begin
       Result := Name
    else
       Result := 'Unknown';
+end;
+
+function appTControllerDevice.GetNormalizedValue(rawValue: loopint): appiTAxisState;
+begin
+   {get positive raw value}
+   Result := appiTAxisState.GetRaw(abs(rawValue), 32767);
+
+   {dead zone means 0}
+   if(Result < DeadZone) then begin
+      Result := 0;
+   end else begin
+      {correct for strech}
+      if(DeadZoneStretch) then begin
+         Result := (1 / DeadZone) * Result;
+      end;
+   end;
+
+   {correct if we went over}
+   if(Result > 1) then
+      Result := 1;
+
+   {we convert to negative value if raw value was negative}
+   if(rawValue < 0) then
+      Result := Result * -1;
 end;
 
 { appTControllerHandler }

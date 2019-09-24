@@ -29,7 +29,8 @@ TYPE
    { appiTAxisStateHelper }
 
    appiTAxisStateHelper = type helper for appiTAxisState
-      procedure AssignRaw(value: loopint);
+      class function GetRaw(value: loopint; max: loopint = 32767): single; static;
+      procedure AssignRaw(value: loopint; max: loopint = 32767);
    end;
 
    appiPKeyState = ^appiTKeyState;
@@ -69,9 +70,14 @@ IMPLEMENTATION
 
 { appiTAxisStateHelper }
 
-procedure appiTAxisStateHelper.AssignRaw(value: loopint);
+class function appiTAxisStateHelper.GetRaw(value: loopint; max: loopint): single;
 begin
-   Self := 1 / 32767 * value;
+   Result := (1 / max) * value;
+end;
+
+procedure appiTAxisStateHelper.AssignRaw(value: loopint; max: loopint);
+begin
+   Self := GetRaw(value, max);
 end;
 
 { appiTKeyStates }
