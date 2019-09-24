@@ -28,7 +28,8 @@ TYPE
 
    wdgTMenubar = class(wdgTWorkbar)
       Separation,
-      SelectedMenu: loopint;
+      SelectedMenu,
+      HoveredMenu: loopint;
       {a more compact mode with a single button}
       HamburgerMode: boolean;
 
@@ -36,17 +37,18 @@ TYPE
       Menus: uiTContextMenu;
 
       constructor Create(); override;
-      procedure Initialize; override;
-      destructor Destroy; override;
+      procedure Initialize(); override;
+      destructor Destroy(); override;
 
       function Add(const menuCaption: StdString): uiTContextMenu;
 
       procedure Render(); override;
       procedure Point(var e: appTMouseEvent; x, y: longint); override;
+      procedure Hover(x, y: longint; what: uiTHoverEvent); override;
 
       function Key(var k: appTKeyEvent): boolean; override;
 
-      procedure DeInitialize; override;
+      procedure DeInitialize(); override;
 
       function HasItems(index: loopint): boolean;
 
@@ -117,16 +119,17 @@ begin
    Menus := uiTContextMenu.Create('');
 
    SelectedMenu := -1;
+   HoveredMenu := -1;
 end;
 
-procedure wdgTMenubar.Initialize;
+procedure wdgTMenubar.Initialize();
 begin
    inherited Initialize;
 
    Color := wdgMenubar.Color;
 end;
 
-destructor wdgTMenubar.Destroy;
+destructor wdgTMenubar.Destroy();
 begin
    inherited Destroy;
 
@@ -142,11 +145,16 @@ procedure wdgTMenubar.Render();
 var
    f: oxTFont;
    r: oxTRect;
+
+   i,
    selectedItemCount,
-   i: loopint;
+   currentMenuHighlight: loopint;
+
    colors: uiPSkinColorSet;
+
    selected,
    current: uiPContextMenuItem;
+
    dim,
    barSize: loopint;
 
@@ -187,72 +195,78 @@ begin
       exit;
    end;
 
-   if(Menus.Items.n > 0) then begin
-      f := CachedFont;
-      r.x := RPosition.x + PaddingLeft;
+   if(Menus.Items.n <= 0) then
+      exit;
 
-      selectedItemCount := 0;
+   f := CachedFont;
 
-      selected := nil;
-      if(SelectedMenu <> -1) then begin
-         selected := @Menus.Items.List[SelectedMenu];
+   currentMenuHighlight := SelectedMenu;
+   if(HoveredMenu > -1) then
+      currentMenuHighlight := HoveredMenu;
 
-         if(selected^.Sub <> nil) then
-            selectedItemCount := uiTContextMenu(Menus.Items[SelectedMenu].Sub).Items.n
-      end;
+   selectedItemCount := 0;
 
+   selected := nil;
 
-      if(selectedItemCount > 0) and ((IsSelected()) or (uiContextMenu.Owner = Self)) then begin
-         if(SelectedMenu > 0) then begin
-            for i := 0 to (SelectedMenu - 1) do
-               inc(r.x, f.GetLength(Menus.Items.List[i].Caption) + Separation);
+   if(currentMenuHighlight <> -1) then begin
+      selected := @Menus.Items.List[currentMenuHighlight];
 
-            dec(r.x, Separation div 2);
-         end;
-
-         r.h := Dimensions.h - 4;
-         r.y := RPosition.y - 2;
-         r.w := f.GetLength(selected^.Caption);
-
-         if(SelectedMenu > 0) then
-            inc(r.w, Separation)
-         else begin
-            dec(r.x, PaddingLeft);
-            inc(r.w, Separation div 2);
-            inc(r.w, PaddingLeft);
-         end;
-
-         uiRenderWidget.Box(r, colors^.Highlight, colors^.Highlight);
-      end;
-
-      {return to start position}
-      r.x := RPosition.x + PaddingLeft;
-      r.y := RPosition.y;
-
-      r.h := Dimensions.h;
-      r.w := Dimensions.w;
-
-      f.Start();
-
-      for i := 0 to (Menus.Items.n - 1) do begin
-         current := @Menus.Items.List[i];
-
-         if(current^.Properties.IsSet(uiCONTEXT_MENU_ITEM_ENABLED)) and
-         (uiTContextMenu(current^.Sub).Items.n > 0) then begin
-            if(i <> SelectedMenu) then
-               SetColorBlended(colors^.Text)
-            else
-               SetColorBlended(colors^.TextInHighlight);
-         end else
-            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).DisabledColors.Text);
-
-         f.WriteInRect(current^.Caption, r, [oxfpCenterVertical]);
-
-         inc(r.x, f.GetLength(current^.Caption) + Separation);
-      end;
-
-      oxf.Stop();
+      if(selected^.Sub <> nil) then
+         selectedItemCount := uiTContextMenu(Menus.Items[currentMenuHighlight].Sub).Items.n;
    end;
+
+   if (selectedItemCount > 0) or (uiContextMenu.Owner = Self) then begin
+      r.x := RPosition.x + PaddingLeft;
+
+      if(currentMenuHighlight > 0) then begin
+         for i := 0 to (currentMenuHighlight - 1) do
+            inc(r.x, f.GetLength(Menus.Items.List[i].Caption) + Separation);
+
+         dec(r.x, Separation div 2);
+      end;
+
+      r.h := Dimensions.h - 4;
+      r.y := RPosition.y - 2;
+      r.w := f.GetLength(selected^.Caption);
+
+      if(currentMenuHighlight > 0) then
+         inc(r.w, Separation)
+      else begin
+         dec(r.x, PaddingLeft);
+         inc(r.w, Separation div 2);
+         inc(r.w, PaddingLeft);
+      end;
+
+      uiRenderWidget.Box(r, colors^.Highlight, colors^.Highlight);
+   end;
+
+   {return to start position}
+   r.x := RPosition.x + PaddingLeft;
+   r.y := RPosition.y;
+
+   r.h := Dimensions.h;
+   r.w := Dimensions.w;
+
+   f.Start();
+
+   for i := 0 to (Menus.Items.n - 1) do begin
+      current := @Menus.Items.List[i];
+
+      if(current^.Properties.IsSet(uiCONTEXT_MENU_ITEM_ENABLED)) and
+      (uiTContextMenu(current^.Sub).Items.n > 0) then begin
+         if(i <> currentMenuHighlight) then
+            SetColorBlended(colors^.Text)
+         else
+            SetColorBlended(colors^.TextInHighlight);
+      end else
+         SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).DisabledColors.Text);
+
+      f.WriteInRect(current^.Caption, r, [oxfpCenterVertical]);
+
+      inc(r.x, f.GetLength(current^.Caption) + Separation);
+   end;
+
+   oxf.Stop();
 end;
 
 function contextWindowListener({%H-}wnd: uiTControl; const event: appTEvent): longint;
@@ -291,6 +305,14 @@ begin
    end;
 end;
 
+procedure wdgTMenubar.Hover(x, y: longint; what: uiTHoverEvent);
+begin
+   if(what <> uiHOVER_NO) then
+      HoveredMenu := OnWhere(x, y)
+   else
+      HoveredMenu := -1;
+end;
+
 function wdgTMenubar.Key(var k: appTKeyEvent): boolean;
 begin
    Result := true;
@@ -308,7 +330,7 @@ begin
       Result := false;
 end;
 
-procedure wdgTMenubar.DeInitialize;
+procedure wdgTMenubar.DeInitialize();
 begin
    uiContextMenu.ClearOwner(Self);
 end;
@@ -321,34 +343,48 @@ end;
 function wdgTMenubar.OnWhere(x, y: loopint): loopint;
 var
    f: oxTFont;
+   startX,
    rx,
+   len,
    i: loopint;
    hamburgerClicked: boolean;
 
 begin
-   if(Menus.Items.n > 0) then begin
-      if(not HamburgerMode) then begin
-         rx := 0;
-         inc(rx, PaddingLeft);
+   if(Menus.Items.n <= 0) then
+      exit(-1);
 
-         f := CachedFont;
+   if(not HamburgerMode) then begin
+      rx := 0;
+      inc(rx, PaddingLeft);
 
-         for i := 0 to (Menus.Items.n - 1) do begin
-            if(x >= rx) and (x < rx + f.GetLength(Menus.Items.List[i].Caption)) then begin
-               exit(i);
-            end;
+      f := CachedFont;
 
-            inc(rx, f.GetLength(Menus.Items.List[i].Caption) + Separation);
-         end;
-      end else begin
-         if(Dimensions.w > Dimensions.h) then
-            hamburgerClicked := x < Dimensions.h
+      for i := 0 to (Menus.Items.n - 1) do begin
+         len := f.GetLength(Menus.Items.List[i].Caption);
+
+         startX := rx;
+
+         if(i > 0) then
+            dec(startX, Separation div 2);
+
+         if(i = 0) or (i = Menus.Items.n - 1) then
+            inc(len, Separation div 2)
          else
-            hamburgerClicked := y >= Dimensions.h - Dimensions.w;
+            inc(len, Separation);
 
-         if(hamburgerClicked) then
-            exit(0);
+         if(x >= startX) and (x < startX + len) then
+            exit(i);
+
+         inc(rx, f.GetLength(Menus.Items.List[i].Caption) + Separation);
       end;
+   end else begin
+      if(Dimensions.w > Dimensions.h) then
+         hamburgerClicked := x < Dimensions.h
+      else
+         hamburgerClicked := y >= Dimensions.h - Dimensions.w;
+
+      if(hamburgerClicked) then
+         exit(0);
    end;
 
    Result := -1;
