@@ -5,7 +5,7 @@
    Started On:    24.11.2007.
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT appuMouse;
 
 INTERFACE

@@ -17,7 +17,7 @@
    Started on:    27.09.2010.
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT uAppInfo;
 
 INTERFACE

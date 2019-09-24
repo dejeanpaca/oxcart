@@ -5,7 +5,7 @@
    Started On:    30.10.2013.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT appuCrashDetect;
 
 INTERFACE

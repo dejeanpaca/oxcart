@@ -5,7 +5,7 @@
    Started On:    17.01.2017.
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT appukXCodes;
 
 INTERFACE

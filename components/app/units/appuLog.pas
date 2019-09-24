@@ -5,7 +5,7 @@
    Started On:    28.11.2012.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT appuLog;
 
 INTERFACE

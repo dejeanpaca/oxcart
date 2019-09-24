@@ -5,7 +5,7 @@
    Started On:    26.03.2018.
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT appuCtrlBreak;
 
 INTERFACE
