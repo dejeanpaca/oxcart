@@ -24,8 +24,13 @@ CONST
    kpPRESSED_RELEASED         = $08;
 
 TYPE
-   appiTAxis = word;
-   appiTTrigger = word;
+   appiTAxisState = single;
+
+   { appiTAxisStateHelper }
+
+   appiTAxisStateHelper = type helper for appiTAxisState
+      procedure AssignRaw(value: loopint);
+   end;
 
    appiPKeyState = ^appiTKeyState;
    appiTKeyState = TBitSet;
@@ -61,6 +66,13 @@ TYPE
    end;
 
 IMPLEMENTATION
+
+{ appiTAxisStateHelper }
+
+procedure appiTAxisStateHelper.AssignRaw(value: loopint);
+begin
+   Self := 1 / 32767 * value;
+end;
 
 { appiTKeyStates }
 
