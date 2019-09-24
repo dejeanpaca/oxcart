@@ -131,7 +131,10 @@ TYPE
       Modifiers: TBitSet;
       {determines which keys are pressed and which are not, keycode corresponds to
       a key in the array} {useful for games}
-      Properties: array[0..appkcKEYS_PRESSED_SIZE - 1] of TBitSet;
+      Properties: array[0..appkcKEYS_PRESSED_SIZE - 1] of appiTKeyState;
+
+      {handles the properties array}
+      KeyProperties: appiTKeyStates;
 
       ReverseRemapCodes: appTKeyRemapCodes;
 
@@ -535,81 +538,47 @@ end;
 
 function appTKeyGlobal.IsPressed(KeyCode: longint): boolean;
 begin
-   if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
-      Result := Properties[KeyCode].IsSet(kpPRESSED)
-   else
-      Result := false;
+   Result := KeyProperties.IsPressed(KeyCode);
 end;
 
 function appTKeyGlobal.Released(KeyCode: longint): boolean;
 begin
-   if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
-      Result := Properties[KeyCode].IsSet(kpWAS_PRESSED) and (not Properties[KeyCode].IsSet(kpPRESSED))
-   else
-      Result := false;
+   Result := KeyProperties.Released(KeyCode);
 end;
 
 function appTKeyGlobal.JustPressed(KeyCode: longint): boolean;
 begin
-   if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
-      Result := (not Properties[KeyCode].IsSet(kpWAS_PRESSED)) and Properties[KeyCode].IsSet(kpPRESSED)
-   else
-      Result := false;
+   Result := KeyProperties.JustPressed(KeyCode);
 end;
 
 function appTKeyGlobal.WasPressed(KeyCode: longint): boolean;
 begin
-   if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
-      Result := Properties[KeyCode].IsSet(kpWAS_PRESSED)
-   else
-      Result := false;
+   Result := KeyProperties.WasPressed(KeyCode);
 end;
 
 function appTKeyGlobal.CyclePressed(KeyCode: longint): boolean;
 begin
-   if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
-      Result := Properties[KeyCode].IsSet(kpCYCLE_PRESSED)
-   else
-      Result := false;
+   Result := KeyProperties.CyclePressed(KeyCode);
 end;
 
 function appTKeyGlobal.PressedReleased(KeyCode: longint): boolean;
 begin
-   if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
-      Result := Properties[KeyCode].IsSet(kpPRESSED_RELEASED)
-   else
-      Result := false;
+   Result := KeyProperties.PressedReleased(KeyCode);
 end;
 
 function appTKeyGlobal.Interpolated(kc: loopint): single;
 begin
-   if(Properties[kc].IsSet(kpPRESSED_RELEASED)) then
-      Result := 0.25
-   else if(Properties[kc].IsSet(kpPRESSED) and Properties[kc].IsSet(kpWAS_PRESSED)) then
-      Result := 1.0
-   else if(Properties[kc].IsSet(kpWAS_PRESSED) or Properties[kc].IsSet(kpPRESSED)) then
-      Result := 0.5
-   else
-      Result := 0;
+   Result := KeyProperties.Interpolated(kc);
 end;
 
 function appTKeyGlobal.Interpolated(kc, optionalKC: loopint): single;
 begin
-   Result := Interpolated(kc);
-
-   if(Result = 0) then
-      Result := Interpolated(optionalKC);
+   Result := KeyProperties.Interpolated(kc, optionalKC);
 end;
 
 procedure appTKeyGlobal.UpdateCycle();
-var
-   i: loopint;
-
 begin
-   for i := Low(Properties) to High(Properties) do begin
-      Properties[i].Clear(kpCYCLE_PRESSED or kpPRESSED_RELEASED);
-      Properties[i].Prop(kpWAS_PRESSED, Properties[i].IsSet(kpPRESSED));
-   end;
+   KeyProperties.UpdateCycle();
 end;
 
 procedure appTKeyGlobal.LogState();
@@ -680,6 +649,8 @@ var
    i: loopint;
 
 begin
+   appk.KeyProperties.SetupKeys(256, @appk.Properties[0]);
+
    for i := 0 to high(appkRemapCodes) do begin
       if(appkRemapCodes[i] <> 0) then
          appk.ReverseRemapCodes[appkRemapCodes[i]] := i;
