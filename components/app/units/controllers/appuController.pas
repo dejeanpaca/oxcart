@@ -130,6 +130,7 @@ TYPE
       Name: string;
 
       {counts of axes and buttons}
+      DeviceIndex,
       AxisCount,
       TriggerCount,
       HatCount,
@@ -165,6 +166,7 @@ TYPE
    { appTControllerEvent }
 
    appTControllerEvent = record
+      Device: appTControllerDevice;
       Typ: appTControllerEventType;
 
       {key number}
@@ -218,7 +220,7 @@ TYPE
       evh: appTEventHandler;
       evhp: appPEventHandler;
 
-      procedure Queue(var ev: appTControllerEvent);
+      procedure Queue(var ev: appTControllerEvent; controller: appTControllerDevice);
 
       procedure Add(device: appTControllerDevice);
       procedure Reset();
@@ -247,12 +249,13 @@ end;
 
 { appTControllers }
 
-procedure appTControllers.Queue(var ev: appTControllerEvent);
+procedure appTControllers.Queue(var ev: appTControllerEvent; controller: appTControllerDevice);
 var
    event: appTEvent;
 
 begin
    OnEvent.Call(ev);
+   ev.Controller := controller;
 
    appEvents.Init(event, 0, appControllers.evhp);
 
@@ -263,6 +266,7 @@ end;
 procedure appTControllers.Add(device: appTControllerDevice);
 begin
    List.Add(device);
+   device.DeviceIndex := List.n - 1;
 end;
 
 procedure appTControllers.Reset;

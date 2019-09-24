@@ -193,7 +193,7 @@ begin
          event.Value := jsevent.value;
 
          if(jsevent.typ and JS_EVENT_INIT = 0) then
-            appControllers.Queue(event);
+            appControllers.Queue(event, Self);
       end else begin
          error := fpgeterrno;
 
