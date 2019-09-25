@@ -526,9 +526,9 @@ begin
 
          for i := 0 to oxedProject.Units.n - 1 do begin
             if(i < oxedProject.Units.n - 1) then
-               Result.Add('   ' + oxedProject.Units.List[i].Name + ',')
+               Result.Add('   {%H-}' + oxedProject.Units.List[i].Name + ',')
             else
-               Result.Add('   ' + oxedProject.Units.List[i].Name);
+               Result.Add('   {$H-}' + oxedProject.Units.List[i].Name);
          end;
       end;
    end;
