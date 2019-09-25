@@ -94,7 +94,7 @@ VAR
 
 function colorValueControl(wdg: uiTWidget; what: longword): longint;
 begin
-   result := -1;
+   Result := -1;
 
    if((wdg = wdgidR) or (wdg = wdgidG) or (wdg = wdgidB) or (wdg = wdgidA)) and (what = wdghINPUTBOX_CHANGED) then begin
       oxwndTColorPickerDialog(oxuiTColorPickerWindow(wdg.wnd).BaseHandler).UpdateColor();
