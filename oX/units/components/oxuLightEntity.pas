@@ -30,6 +30,7 @@ IMPLEMENTATION
 function getEntity(out component: oxTLightComponent): oxTEntity;
 begin
    component := oxTLightComponent.Create();
+
    Result := oxEntity.New('Light', component);
 end;
 
@@ -40,7 +41,7 @@ var
    component: oxTLightComponent;
 
 begin
-   result := getEntity(component);
+   Result := getEntity(component);
 end;
 
 END.

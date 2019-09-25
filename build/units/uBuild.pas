@@ -11,7 +11,7 @@ UNIT uBuild;
 INTERFACE
 
    USES
-      process, sysutils, strutils, pipes, uProcessHelpers, ParamUtils, Classes, StreamIO,
+      process, sysutils, strutils, uProcessHelpers, ParamUtils, StreamIO,
       uStd, uLog, uFileUtils, StringUtils, ConsoleUtils, uSimpleParser, uTiming,
       udvars, dvaruFile,
       appuPaths

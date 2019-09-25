@@ -36,7 +36,7 @@ function getEntity(const name: StdString; out component: oxTPrimitiveModelCompon
 begin
    component := oxTPrimitiveModelComponent.Create();
 
-   result := oxEntity.New(name, component);
+   Result := oxEntity.New(name, component);
 end;
 
 { oxTPrimitiveModelEntities }
