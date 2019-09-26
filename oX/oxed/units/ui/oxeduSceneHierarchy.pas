@@ -239,10 +239,8 @@ end;
 function wdgTSceneHierarchy.GetFontColor(index: longint): TColor4ub;
 begin
    if(index > -1) then begin
-      if(not oxTEntity(Visible.List[index].Item).Enabled) then begin
-         exit(inherited GetFontColor(index).Darken(0.5));
-      end;
-
+      if(not oxTEntity(Visible.List[index].Item).Enabled) then
+         exit(inherited GetFontColor(index).Darken(0.25));
    end;
 
    Result := inherited GetFontColor(index);
