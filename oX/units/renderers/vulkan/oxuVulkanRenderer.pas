@@ -8,8 +8,8 @@
 {$INCLUDE oxdefines.inc}
 {$INCLUDE oxfeaturedefines.inc}
 
-{$IFDEF OX_NO_VULKAN_RENDERER}
-   {$FATAL Included vulkan renderer, with OX_NO_VULKAN_RENDERER defined}
+{$IFNDEF OX_RENDERER_VULKAN}
+   {$FATAL Included vulkan renderer, with no OX_RENDERER_VULKAN defined}
 {$ENDIF}
 
 UNIT oxuVulkanRenderer;
