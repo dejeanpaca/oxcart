@@ -4,12 +4,13 @@
 
    Started On:    29.12.2013.
 }
+{$INCLUDE oxdefines.inc}
+{$INCLUDE oxfeaturedefines.inc}
 
 {$IFDEF OX_NO_GL_RENDERER}
    {$FATAL Included gl renderer, with OX_NO_GL_RENDERER defined}
 {$ENDIF}
 
-{$INCLUDE oxdefines.inc}
 UNIT oxuglRenderer;
 
 INTERFACE

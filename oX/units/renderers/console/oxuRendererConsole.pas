@@ -5,11 +5,13 @@
    Started On:    28.11.2016.
 }
 
+{$INCLUDE oxdefines.inc}
+{$INCLUDE oxfeaturedefines.inc}
+
 {$IFDEF OX_NO_CONSOLE_RENDERER}
    {$FATAL Included console renderer, with OX_NO_CONSOLE_RENDERER defined}
 {$ENDIF}
 
-{$INCLUDE oxdefines.inc}
 UNIT oxuRendererConsole;
 
 INTERFACE

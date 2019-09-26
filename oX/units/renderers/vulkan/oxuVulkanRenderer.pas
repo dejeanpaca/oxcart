@@ -5,11 +5,13 @@
    Started On:    28.11.2016.
 }
 
+{$INCLUDE oxdefines.inc}
+{$INCLUDE oxfeaturedefines.inc}
+
 {$IFDEF OX_NO_VULKAN_RENDERER}
    {$FATAL Included vulkan renderer, with OX_NO_VULKAN_RENDERER defined}
 {$ENDIF}
 
-{$INCLUDE oxdefines.inc}
 UNIT oxuVulkanRenderer;
 
 INTERFACE
