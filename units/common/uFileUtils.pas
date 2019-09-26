@@ -211,12 +211,12 @@ IMPLEMENTATION
 
 function TFileDescriptor.IsDirectory(): boolean;
 begin
-   result := Attr and faDirectory <> 0;
+   Result := Attr and faDirectory <> 0;
 end;
 
 function TFileDescriptor.IsFile(): boolean;
 begin
-   result := Attr and faDirectory = 0;
+   Result := Attr and faDirectory = 0;
 end;
 
 function TFileDescriptor.IsHidden(): boolean;
@@ -289,13 +289,14 @@ end;
 class function TFileUtilsGlobal.hFileSize(const f: THandle): fileint;
 begin
    Result := FileSeek(f, fileint(0), fsFromEnd);
+
    if(Result <> -1) then
       FileSeek(f, fileint(0), fsFromBeginning);
 end;
 
 class function TFileUtilsGlobal.DirectoryExists(const dir: StdString): boolean;
 begin
-   result := sysutils.DirectoryExists(dir);
+   Result := sysutils.DirectoryExists(dir);
 end;
 
 class function TFileUtilsGlobal.DirectoryEmpty(const dir: StdString): boolean;
@@ -351,9 +352,9 @@ class function TFileUtilsGlobal.CreateDirectory(const dir: StdString): boolean;
 begin
    {first find if the path exists}
    if(not DirectoryExists(dir)) then
-      result := CreateDir(dir)
+      Result := CreateDir(dir)
    else
-      result := true;
+      Result := true;
 end;
 
 class function RmDirChildren(const dir: StdString): boolean;
@@ -362,7 +363,7 @@ var
    code: longint;
 
 begin
-   result := true;
+   Result := true;
 
    {find first}
    if(dir = '') then
@@ -377,14 +378,14 @@ begin
             {found directory, recurse into it}
             if(src.Attr and faDirectory > 0) then begin
                if(not RmDirChildren(dir + DirectorySeparator + src.Name)) then
-                  result := false;
+                  Result := false;
             end;
          end;
 
          {delete file}
          if(src.Attr and faDirectory = 0) then begin
             if(not DeleteFile(dir + DirectorySeparator + src.Name)) then
-               result := false;
+               Result := false;
          end;
 
          {next file/directory}
@@ -395,7 +396,7 @@ begin
    {remove directory}
    if(dir <> '') then begin
       if(not RemoveDir(dir)) then
-         result := false;
+         Result := false;
    end;
 
    {we're done}
@@ -404,7 +405,7 @@ end;
 
 class function TFileUtilsGlobal.RmDir(const dir: StdString): boolean;
 begin
-   result := RmDirChildren(ExcludeTrailingPathDelimiter(dir));
+   Result := RmDirChildren(ExcludeTrailingPathDelimiter(dir));
 end;
 
 class function TFileUtilsGlobal.PathType(const path: StdString): TFilePathType;
@@ -440,7 +441,7 @@ end;
 
 class function TFileUtilsGlobal.Erase(const fn: StdString): boolean;
 begin
-   result := DeleteFile(fn);
+   Result := DeleteFile(fn);
 end;
 
 class function TFileUtilsGlobal.Copy(const source, destination: StdString): longint;
@@ -453,7 +454,7 @@ var
    count, written: fileint;
 
 begin
-   result := 0;
+   Result := 0;
    count := 0;
    written := 0;
    {$IFDEF DEBUG}
@@ -478,28 +479,28 @@ begin
    repeat
       BlockRead(sF, buffer, BUFFER_SIZE, count);
       if(ioerror() <> 0) then begin
-         result := eFILE_COPY_READ_SOURCE;
+         Result := eFILE_COPY_READ_SOURCE;
          break;
       end;
 
       BlockWrite(dF, buffer, count, written);
       if(ioerror() <> 0) then begin
-         result := eFILE_COPY_WRITE_DESTINATION;
+         Result := eFILE_COPY_WRITE_DESTINATION;
          break;
       end;
 
       if(written <> count) then begin
-         result := eFILE_COPY_WRITE_DESTINATION;
+         Result := eFILE_COPY_WRITE_DESTINATION;
          break;
       end;
    until eof(sF);
 
    Close(dF);
-   if(result <> 0) then
+   if(Result <> 0) then
       ioErrorIgn()
    else begin
       if(ioerror() <> 0) then
-         result := eFILE_COPY_WRITE_DESTINATION;
+         Result := eFILE_COPY_WRITE_DESTINATION;
    end;
 
    Close(sF);
@@ -634,7 +635,7 @@ begin
    close(f);
    error := ioerror();
    if(error <> 0) then
-      result := -error;
+      Result := -error;
 end;
 
 class function TFileUtilsGlobal.LoadStringPipe(const fn: StdString; out data: StdString): fileint;
@@ -737,7 +738,7 @@ begin
    error := ioerror();
 
    if(error <> 0) then
-      result := -error
+      Result := -error
    else
       Result := 0;
 end;
@@ -788,9 +789,9 @@ end;
 class function TFileUtilsGlobal.WriteString(const fn: StdString; const data: StdString): longint;
 begin
    if(data <> '') then
-      result := Write(fn, (@data[1])^, Length(data))
+      Result := Write(fn, (@data[1])^, Length(data))
    else
-      result := CreateFile(fn);
+      Result := CreateFile(fn);
 end;
 
 class function TFileUtilsGlobal.SaveMem(const fn: StdString; var m; size: int64): int64;
@@ -800,7 +801,7 @@ var
    error: longint;
 
 begin
-   result := -1;
+   Result := -1;
 
    {open the file}
    error := FileRewrite(f, fn);
@@ -822,7 +823,7 @@ begin
    if(error <> 0) then
       exit(-error);
 
-   result := brw;
+   Result := brw;
 end;
 
 class function TFileUtilsGlobal.LoadToMem(const fn: StdString; var m; size: int64): int64;
@@ -839,7 +840,7 @@ begin
 end;
 
 begin
-   result := -1;
+   Result := -1;
 
    {open the file}
    error := FileReset(f, fn);
@@ -854,7 +855,7 @@ begin
       exit(error);
    end;
 
-   result := fsize;
+   Result := fsize;
    if(size < fsize) then
       size := fsize;
 
@@ -866,9 +867,9 @@ begin
       error := ioerror();
       if(error = 0) then
          {return how much was read}
-         result := br
+         Result := br
       else
-        result := -error;
+        Result := -error;
    end;
 
    cleanup();
@@ -888,7 +889,7 @@ begin
 end;
 
 begin
-   result := -1;
+   Result := -1;
 
    {open the file}
    error := FileReset(f, fn);
@@ -913,7 +914,7 @@ begin
          {close the file}
          close(f);
          ioErrorIgn();
-         result := br;
+         Result := br;
       end else
          exit(-error);
    end else
@@ -977,17 +978,17 @@ begin
    ioErrorIgn();
    FindClose(f);
 
-   result := error;
+   Result := error;
 end;
 
 class function TFileUtilsGlobal.FindAll(const path: StdString; out list: TFileDescriptorList; properties: TBitSet): longint;
 begin
-   result := FindAll(path, faDirectory or faReadOnly, list, properties);
+   Result := FindAll(path, faDirectory or faReadOnly, list, properties);
 end;
 
 class function TFileUtilsGlobal.FindDirectories(const path: StdString; attr: longint; out list: TFileDescriptorList; properties: TBitSet): longint;
 begin
-   result := FindAll(path, attr, list, properties or FILE_FIND_ALL_ONLY_DIRECTORIES);
+   Result := FindAll(path, attr, list, properties or FILE_FIND_ALL_ONLY_DIRECTORIES);
 end;
 
 class procedure TFileUtilsGlobal.Sort(var list: TFileDescriptorList; directoriesFirst: boolean; caseSensitive: boolean);
