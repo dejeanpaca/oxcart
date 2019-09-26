@@ -18,7 +18,7 @@ INTERFACE
       uOX, oxuPaths, oxuRunRoutines,
       {oxed}
       uOXED, oxeduSettings, oxeduRecents,
-      oxeduWindow, oxeduSplash, oxeduSplashScreen, oxeduSettingsWindow, oxeduIcons,
+      oxeduWindow, oxeduSplash, oxeduSplashScreen, oxeduIcons,
       oxeduEntities,
       {build}
       oxeduBuild,
@@ -33,7 +33,7 @@ INTERFACE
       oxeduToolbar, oxeduWorkbar, oxeduStatusbar, oxeduDockableArea, oxeduMenuToolbar,
       oxeduTasksUI, oxeduProjectContextMenu, oxeduProjectSettingsWindow,
       oxeduViewScene, oxeduSceneView, oxeduProjectDialog, oxeduSceneEditTools,
-      oxeduRunButtons, oxeduStatusInfo,
+      oxeduRunButtons, oxeduStatusInfo, oxeduSettingsWindow,
       {components}
       oxeduCameraComponent, oxeduLightComponent,
       {initialize keys last}

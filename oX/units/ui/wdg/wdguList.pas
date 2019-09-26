@@ -1227,7 +1227,7 @@ begin
    Result := MaxWidth <= GetVisibleHorizontalSpace();
 end;
 
-function scrollbarControl(wdg: TObject; what: longword): longint;
+function scrollbarControl(wdg: uiTWidget; what: loopint): loopint;
 var
    parent: wdgTList;
 
@@ -1241,7 +1241,7 @@ begin
    end;
 end;
 
-function horizontalScrollbarControl(wdg: TObject; what: longword): longint;
+function horizontalScrollbarControl(wdg: uiTWidget; what: loopint): loopint;
 var
    parent: wdgTList;
 

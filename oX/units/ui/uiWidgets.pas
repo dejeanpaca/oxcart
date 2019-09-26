@@ -23,7 +23,7 @@ CONST
 
 TYPE
    {same as uiTWidgetControlProc, except we use the actual type here (returns -1 if it did nothing)}
-   uiTWidgetControlMethod = function(wdg: uiTWidget; what: longword): longint;
+   uiTWidgetControlMethod = function(wdg: uiTWidget; what: loopint): loopint;
 
    { uiTWidgetHelper }
 
@@ -69,7 +69,7 @@ TYPE
       procedure Hide();
 
       { target }
-      procedure SetTarget(cp: uiTWidgetControlProc = nil);
+      procedure SetTarget(cp: uiTWidgetControlMethod = nil);
 
       {gets a skin associated with the widget, if none available returns default}
       function GetSkin(): uiPWidgetSkin;
@@ -138,7 +138,7 @@ TYPE
    uiTWidgetTarget = record
       Window: uiTWindow;
       Widget: uiTWidget;
-      ControlProcedure: uiTWidgetControlProc;
+      ControlProcedure: uiTWidgetControlMethod;
       Font: oxTFont;
    end;
 
@@ -226,7 +226,7 @@ TYPE
 
       {creates a widget}
       function Make(const wc: uiTWidgetClass; const Pos: oxTPoint;
-                  const Dim: oxTDimensions; cp: uiTWidgetControlProc = nil): uiTWidget;
+                  const Dim: oxTDimensions; cp: uiTWidgetControlMethod = nil): uiTWidget;
       {adds a widget to a window}
       function Add(wnd: uiTWindow; const wc: uiTWidgetClass; const Pos: oxTPoint;
                            const Dim: oxTDimensions): uiTWidget;
@@ -280,10 +280,10 @@ TYPE
       {set target window or widget}
       procedure SetTarget(wnd: uiTWindow);
       {set target window/widget and control procedure}
-      procedure SetTarget(wnd: uiTWindow; cp: uiTWidgetControlProc);
+      procedure SetTarget(wnd: uiTWindow; cp: uiTWidgetControlMethod);
 
       {set or clear a target control procedure}
-      procedure SetTargetCP(cp: uiTWidgetControlProc);
+      procedure SetTargetCP(cp: uiTWidgetControlMethod);
       procedure ClearTargetCP();
 
       procedure SetTargetFont(font: oxTFont);
@@ -469,7 +469,7 @@ end;
 { WIDGET CREATION AND ADDING }
 
 function uiTWidgetGlobal.Make(const wc: uiTWidgetClass; const Pos: oxTPoint;
-            const Dim: oxTDimensions; cp: uiTWidgetControlProc = nil): uiTWidget;
+            const Dim: oxTDimensions; cp: uiTWidgetControlMethod = nil): uiTWidget;
 var
    wdg: uiTWidget = nil;
 
@@ -489,7 +489,7 @@ begin
       wdg.Dimensions := Dim;
       wdg.Properties := uiWidget.DefaultProperties;
       wdg.WdgClass   := @wc;
-      wdg.WdgControl := cp;
+      wdg.SetControlMethod(cp);
       wdg.ZIndex     := Create.ZIndex;
 
       if(wdg.wdgClass^.NonSelectable) then
@@ -1221,7 +1221,7 @@ begin
    LastRect.SetDefault(wnd.Dimensions.h);
 end;
 
-procedure uiTWidgetGlobal.SetTargetCP(cp: uiTWidgetControlProc);
+procedure uiTWidgetGlobal.SetTargetCP(cp: uiTWidgetControlMethod);
 begin
    target.ControlProcedure := cp;
 end;
@@ -1258,7 +1258,7 @@ begin
    Target := TargetStack.List[TargetStack.Count];
 end;
 
-procedure uiTWidgetGlobal.SetTarget(wnd: uiTWindow; cp: uiTWidgetControlProc);
+procedure uiTWidgetGlobal.SetTarget(wnd: uiTWindow; cp: uiTWidgetControlMethod);
 begin
    SetTarget(wnd);
    SetTargetCP(cp);
@@ -1266,7 +1266,7 @@ end;
 
 { uiTWidgetHelper }
 
-procedure uiTWidgetHelper.SetTarget(cp: uiTWidgetControlProc);
+procedure uiTWidgetHelper.SetTarget(cp: uiTWidgetControlMethod);
 begin
    uiWidget.ClearTarget();
 

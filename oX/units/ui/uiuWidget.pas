@@ -60,7 +60,7 @@ TYPE
    uiTWidgets = type uiTControls;
 
    {widget control routine, default result should be 0}
-   uiTWidgetControlProc = function(wdg: TObject; what: longword): longint;
+   uiTWidgetControlProc = function(wdg: uiTControl; what: loopint): loopint;
 
    uiTWidgetProperty = (
       {is the widget enabled}
@@ -145,7 +145,7 @@ TYPE
 
       { actions }
       {notify the widget controller of something}
-      function Control(what: longword): loopint;
+      function Control(what: loopint): loopint;
       {set a control routine}
       function SetControl(controlProc: uiTWidgetControlProc): uiTWidget; virtual;
 
@@ -410,7 +410,7 @@ end;
 
 { ACTIONS }
 
-function uiTWidget.Control(what: longword): loopint;
+function uiTWidget.Control(what: loopint): loopint;
 begin
    if(wdgControl <> nil) then
       Result := wdgControl(self, what)

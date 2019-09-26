@@ -77,7 +77,7 @@ VAR
 
 IMPLEMENTATION
 
-function controlEnable(wdg: uiTWidget; what: longword): longint;
+function controlEnable(wdg: uiTWidget; what: loopint): loopint;
 begin
    Result := -1;
 
