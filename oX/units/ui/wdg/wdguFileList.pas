@@ -595,7 +595,7 @@ begin
             oxRenderingUtilities.TexturedQuad(px, py, height, height, glyph.Glyph);
 
             {restore text color}
-            SetTextColor();
+            SetFontColor(-1);
          end;
       end
    else begin
