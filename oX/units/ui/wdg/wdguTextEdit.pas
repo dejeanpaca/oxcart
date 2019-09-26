@@ -53,7 +53,7 @@ TYPE
             TargetTextPosition: loopint;
          end;
 
-         Lines: TPreallocatedStringArrayList;
+         Lines: TSimpleStringList;
 
          {callback when text is changed}
          OnTextChanged: procedure(wdg: wdgTTextEdit);

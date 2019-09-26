@@ -27,7 +27,7 @@ TYPE
 
    oxedwdgTTestsHierarchy = class(wdgTCheckboxHierarchy)
       function GetValue(index: loopint): StdString; override;
-      function GetSubItems({%H-}index: loopint; ref: pointer): TPreallocatedPointerArrayList; override;
+      function GetSubItems({%H-}index: loopint; ref: pointer): TSimplePointerList; override;
       function Expandable(index: loopint): boolean; override;
       function IsChecked(ref: pointer): boolean; override;
    end;
@@ -85,7 +85,7 @@ begin
    Result := PUnitTestResultsPool(Visible.List[index].Item)^.Results.Group;
 end;
 
-function oxedwdgTTestsHierarchy.GetSubItems(index: loopint; ref: pointer): TPreallocatedPointerArrayList;
+function oxedwdgTTestsHierarchy.GetSubItems(index: loopint; ref: pointer): TSimplePointerList;
 var
    i: loopint;
    source: PUnitTestResultsPool;

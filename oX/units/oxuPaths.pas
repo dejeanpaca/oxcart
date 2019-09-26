@@ -42,7 +42,7 @@ TYPE
       {working directory used as base}
       WorkingDirectory: StdString;
       {list of asset paths}
-      List: TPreallocatedStringArrayList;
+      List: TSimpleStringList;
 
       {return a path at which location an asset can be found}
       function Find(const asset: StdString): StdString;

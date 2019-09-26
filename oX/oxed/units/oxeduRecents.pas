@@ -16,7 +16,7 @@ INTERFACE
      uOXED, oxeduProject, oxeduProjectManagement;
 
 TYPE
-   oxedTRecentsList = TPreallocatedStringArrayList;
+   oxedTRecentsList = TSimpleStringList;
 
    { oxedTRecents }
 

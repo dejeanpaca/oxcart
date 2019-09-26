@@ -741,7 +741,7 @@ end;
 
 function TFile.ReadStrings(out strings: TStringArray): fileint;
 var
-   list: TPreallocatedStringArrayList;
+   list: TSimpleStringList;
    currentLine: StdString = '';
    i: loopint;
 

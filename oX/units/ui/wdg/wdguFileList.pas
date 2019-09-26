@@ -144,7 +144,7 @@ TYPE
       {get complete path for a given item}
       function GetPath(index: loopint): StdString;
 
-      function GetSubItems(index: loopint; ref: pointer): TPreallocatedPointerArrayList; override;
+      function GetSubItems(index: loopint; ref: pointer): TSimplePointerList; override;
       function Expandable(index: loopint): boolean; override;
 
       procedure RemoveAll; override;
@@ -154,7 +154,7 @@ TYPE
       procedure OnLoad(); virtual;
 
       protected
-         procedure ExpandData(const items: TPreallocatedPointerArrayList; index: loopint); override;
+         procedure ExpandData(const items: TSimplePointerList; index: loopint); override;
          procedure CollapseData(index, count: loopint); override;
 
          {Return the index for the file reference matching the name and level, or -1 if nothing found.
@@ -244,7 +244,7 @@ end;
 
 procedure wdgTHierarchicalFileList.Load;
 var
-   items: TPreallocatedPointerArrayList;
+   items: TSimplePointerList;
    rootF: TFileDescriptor;
 
 begin
@@ -379,7 +379,7 @@ begin
       Result := '';
 end;
 
-function wdgTHierarchicalFileList.GetSubItems(index: loopint; ref: pointer): TPreallocatedPointerArrayList;
+function wdgTHierarchicalFileList.GetSubItems(index: loopint; ref: pointer): TSimplePointerList;
 var
    props: TBitSet;
    p: StdString;
@@ -454,7 +454,7 @@ begin
 
 end;
 
-procedure wdgTHierarchicalFileList.ExpandData(const items: TPreallocatedPointerArrayList; index: loopint);
+procedure wdgTHierarchicalFileList.ExpandData(const items: TSimplePointerList; index: loopint);
 var
    i: loopint;
 

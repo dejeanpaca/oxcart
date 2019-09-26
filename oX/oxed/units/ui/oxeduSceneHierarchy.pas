@@ -37,7 +37,7 @@ TYPE
       procedure Assign(newScene: oxTEntity);
 
       function GetValue(index: loopint): StdString; override;
-      function GetSubItems({%H-}index: loopint; ref: pointer): TPreallocatedPointerArrayList; override;
+      function GetSubItems({%H-}index: loopint; ref: pointer): TSimplePointerList; override;
       function Expandable(index: loopint): boolean; override;
 
       function Key(var k: appTKeyEvent): boolean; override;
@@ -263,7 +263,7 @@ begin
       wnd.Open(nil);
 end;
 
-function wdgTSceneHierarchy.GetSubItems(index: loopint; ref: pointer): TPreallocatedPointerArrayList;
+function wdgTSceneHierarchy.GetSubItems(index: loopint; ref: pointer): TSimplePointerList;
 var
    ent: oxTEntity;
    i: loopint;

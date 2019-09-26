@@ -34,7 +34,7 @@ TYPE
       function Find(const name: StdString): oxedPProjectUnit;
    end;
 
-   oxedTProjectSymbols = TPreallocatedStringArrayList;
+   oxedTProjectSymbols = TSimpleStringList;
 
    oxedPProjectBuildMode = ^oxedTProjectBuildMode;
    oxedTProjectBuildMode = record
@@ -83,7 +83,7 @@ TYPE
       BuildModes: oxedTProjectBuildModes;
 
       {command line parameters to be used when a project is run}
-      RunParameters: TPreallocatedStringArrayList;
+      RunParameters: TSimpleStringList;
 
       {main unit uses, if specified will be the only unit included by default in project}
       MainUnit: StdString;

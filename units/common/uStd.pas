@@ -131,29 +131,29 @@ TYPE
       class procedure InitializeValues(out what: specialize TSimpleList<T>; setIncrement: loopint = -1); static;
    end;
 
-   TPreallocatedLongintArrayList = specialize TSimpleList<longint>;
-   TPreallocatedInt64ArrayList = specialize TSimpleList<int64>;
-   TPreallocatedDWordArrayList = specialize TSimpleList<dword>;
-   TPreallocatedQWordArrayList = specialize TSimpleList<QWord>;
+   TSimpleLongintList = specialize TSimpleList<longint>;
+   TSimpleInt64List = specialize TSimpleList<int64>;
+   TSimpleDWordList = specialize TSimpleList<dword>;
+   TSimpleQWordList = specialize TSimpleList<QWord>;
 
-   TPreallocatedStringArrayList = specialize TSimpleList<StdString>;
-   TPreallocatedAnsiStringArrayList = specialize TSimpleList<ansistring>;
+   TSimpleStringList = specialize TSimpleList<StdString>;
+   TSimpleAnsiStringList = specialize TSimpleList<ansistring>;
 
-   { TPreallocatedStringArrayListHelper }
+   { TSimpleStringListHelper }
 
-   TPreallocatedStringArrayListHelper = record helper for TPreallocatedStringArrayList
+   TSimpleStringListHelper = record helper for TSimpleStringList
       function FindString(const s: StdString): loopint;
       function FindLowercase(const s: StdString): loopint;
    end;
 
-   { TPreallocatedAnsiStringArrayListHelper }
+   { TSimpleAnsiStringListHelper }
 
-   TPreallocatedAnsiStringArrayListHelper = record helper for TPreallocatedAnsiStringArrayList
+   TSimpleAnsiStringListHelper = record helper for TSimpleAnsiStringList
       function FindString(const s: string): loopint;
       function FindLowercase(const s: string): loopint;
    end;
 
-   TPreallocatedPointerArrayList = specialize TSimpleList<pointer>;
+   TSimplePointerList = specialize TSimpleList<pointer>;
 
    TProcedures = specialize TSimpleList<TProcedure>;
    TBoolFunctions = specialize TSimpleList<TBoolFunction>;
@@ -247,7 +247,7 @@ TYPE
    end;
 
 CONST
-   DefaultPreallocatedArrayAllocationIncrement: loopint = 32;
+   DefaultSimpleListAllocationIncrement: loopint = 32;
 
 VAR
    ioE: longint = eNONE;
@@ -476,9 +476,9 @@ begin
    end;
 end;
 
-{ TPreallocatedStringArrayListHelper }
+{ TSimpleStringListHelper }
 
-function TPreallocatedStringArrayListHelper.FindString(const s: StdString): loopint;
+function TSimpleStringListHelper.FindString(const s: StdString): loopint;
 var
    i: loopint;
 
@@ -491,7 +491,7 @@ begin
    Result := -1;
 end;
 
-function TPreallocatedStringArrayListHelper.FindLowercase(const s: StdString): loopint;
+function TSimpleStringListHelper.FindLowercase(const s: StdString): loopint;
 var
    i: loopint;
    l: string;
@@ -509,9 +509,9 @@ begin
    Result := -1;
 end;
 
-{ TPreallocatedAnsiStringArrayListHelper }
+{ TSimpleAnsiStringListHelper }
 
-function TPreallocatedAnsiStringArrayListHelper.FindString(const s: string): loopint;
+function TSimpleAnsiStringListHelper.FindString(const s: string): loopint;
 var
    i: loopint;
 
@@ -524,7 +524,7 @@ begin
    Result := -1;
 end;
 
-function TPreallocatedAnsiStringArrayListHelper.FindLowercase(const s: string): loopint;
+function TSimpleAnsiStringListHelper.FindLowercase(const s: string): loopint;
 var
    i: loopint;
    l: string;
@@ -950,7 +950,7 @@ end;
 class procedure TSimpleList.Initialize(out what: specialize TSimpleList<T>; setIncrement: loopint);
 begin
    if(setIncrement = -1) then
-      setIncrement := DefaultPreallocatedArrayAllocationIncrement;
+      setIncrement := DefaultSimpleListAllocationIncrement;
 
    assert(setIncrement > 0, 'Invalid value provided for preallocated list increment');
 
@@ -963,13 +963,13 @@ class procedure TSimpleList.InitializeEmpty(out what: specialize TSimpleList<T>)
 begin
    ZeroPtr(@what, SizeOf(what));
 
-   what.Increment :=  DefaultPreallocatedArrayAllocationIncrement;
+   what.Increment :=  DefaultSimpleListAllocationIncrement;
 end;
 
 class procedure TSimpleList.InitializeValues(out what: specialize TSimpleList<T>; setIncrement: loopint);
 begin
    if(setIncrement = -1) then
-      setIncrement := DefaultPreallocatedArrayAllocationIncrement;
+      setIncrement := DefaultSimpleListAllocationIncrement;
 
    assert(setIncrement > 0, 'Invalid value provided for preallocated list increment');
 

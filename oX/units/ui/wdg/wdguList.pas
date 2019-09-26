@@ -93,7 +93,7 @@ TYPE
       MaxWidth: loopint;
 
       {stored offsets for all items}
-      ItemOffsets: TPreallocatedInt64ArrayList;
+      ItemOffsets: TSimpleInt64List;
 
       {the last position where a pointer event occured}
       LastPointerPosition: oxTPoint;
@@ -283,7 +283,7 @@ TYPE
 
    wdgTStringList = class(wdgTStringListBase)
       public
-         Items: TPreallocatedStringArrayList;
+         Items: TSimpleStringList;
 
       constructor Create(); override;
 
