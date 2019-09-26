@@ -62,7 +62,7 @@
       <Filename Value="setup"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir)"/>
+      <IncludeFiles Value="$(ProjOutDir);../oX/units"/>
       <OtherUnitFiles Value="../units/common;../build/units;../units/parsers/simple;../units/udVars;../components/app/units;../units/uFile;../oX/units"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
