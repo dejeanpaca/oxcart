@@ -129,8 +129,6 @@ TYPE
             t: wdgTTabsPreallocatedArrayList;
          end;
 
-         function GetHighlightedTab(): loopint;
-
          function OnWhat(x, y: longint; out tabIndex: loopint): loopint;
          {recalculate and store various aspects of the tabs widget}
          procedure Recalculate();
@@ -353,8 +351,7 @@ procedure wdgTTabs.RenderHorizontal();
 var
    i,
    x,
-   y,
-   currentHighlight: longint;
+   y: longint;
 
    current: wdgPTabEntry;
 
@@ -381,8 +378,6 @@ begin
    if(Tabs.t.n < 1) then
       exit;
 
-   currentHighlight := GetHighlightedTab();
-
    {render tab titles}
    for i := 0 to (Tabs.t.n - 1) do begin
       current :=  @Tabs.t.List[i];
@@ -392,18 +387,20 @@ begin
       {draw the tab title border}
       SetColor(pSkin.Colors.Border);
 
-      if(currentHighlight <> i) then begin
-         uiDraw.Rect(x, y - wdgTabs.HeaderNonSelectedDecrease,
-            x + current^.TotalWidth - 1, y - HeaderHeight + 1)
+      if(Tabs.Selected <> i) then begin
+         uiDraw.Rect(x, y - wdgTabs.HeaderNonSelectedDecrease, x + current^.TotalWidth - 1, y - HeaderHeight + 1)
       end else
          uiDraw.Rect(x, y, x + current^.TotalWidth - 1, y - HeaderHeight + 1);
 
       {fill the tab title surface}
-      if(currentHighlight <> i) then begin
-         SetColor(pSkin.Colors.Surface.Darken(0.3));
+      if(Tabs.Selected <> i) then begin
+         if(Tabs.Highlighted <> i) then
+            SetColor(pSkin.Colors.Surface.Darken(0.3))
+         else
+            SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Focal);
 
          uiDraw.Box(x + 1, y - wdgTabs.HeaderNonSelectedDecrease - 1,
-            x + current^.TotalWidth - 2, y - HeaderHeight + 1)
+            x + current^.TotalWidth - 2, y - HeaderHeight + 1);
       end else begin
          SetSelectedColor(current^.AssociatedSelectedControl);
 
@@ -421,13 +418,13 @@ begin
       r.w := current^.TotalWidth;
 
       r.h := HeaderHeight;
-      if(currentHighlight <> i) then begin
+      if(Tabs.Selected <> i) then begin
          dec(r.y, wdgTabs.HeaderNonSelectedDecrease);
          dec(r.h, wdgTabs.HeaderNonSelectedDecrease);
       end;
 
       f.Start();
-         if(currentHighlight <> i) then
+         if(Tabs.Selected <> i) then
             SetColorBlended(pSkin.Colors.Text)
          else
             SetColorBlended(pSkin.Colors.TextInHighlight);
@@ -442,8 +439,7 @@ procedure wdgTTabs.RenderVertical();
 var
    i,
    x,
-   y,
-   currentHighlight: loopint;
+   y: loopint;
 
    current: wdgPTabEntry;
 
@@ -470,8 +466,6 @@ begin
    if(Tabs.t.n < 1) then
       exit;
 
-   currentHighlight := GetHighlightedTab();
-
    {render tab titles}
    for i := 0 to (Tabs.t.n - 1) do begin
       current :=  @Tabs.t.List[i];
@@ -481,15 +475,18 @@ begin
       {draw the tab title border}
       SetColor(pSkin.Colors.Border);
 
-         if(currentHighlight <> i) then begin
+      if(Tabs.Selected <> i) then begin
          uiDraw.Rect(x + wdgTabs.HeaderNonSelectedDecrease, y,
             x + current^.TotalWidth - 1, y - current^.TotalHeight + 1)
       end else
          uiDraw.Rect(x, y, x + current^.TotalWidth - 1, y - current^.TotalHeight + 1);
 
       {fill the tab title surface}
-      if(currentHighlight <> i) then begin
-         SetColor(pSkin.Colors.Surface.Darken(0.3));
+      if(Tabs.Selected <> i) then begin
+         if(Tabs.Highlighted <> i) then
+            SetColor(pSkin.Colors.Surface.Darken(0.3))
+         else
+            SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Focal);
 
          uiDraw.Box(x + 1 + wdgTabs.HeaderNonSelectedDecrease, y - 1,
             x + current^.TotalWidth - 2, y - current^.TotalHeight + 1)
@@ -509,13 +506,13 @@ begin
       r.y := RPosition.y - current^.y;
 
       r.h := HeaderHeight;
-      if(currentHighlight <> i) then
+      if(Tabs.Selected <> i) then
          dec(r.h, wdgTabs.HeaderNonSelectedDecrease);
 
       r.w := current^.TotalWidth;
 
       f.Start();
-         if(currentHighlight <> i) then
+         if(Tabs.Selected <> i) then
             SetColorBlended(pSkin.Colors.Text)
          else
             SetColorBlended(pSkin.Colors.TextInHighlight);
@@ -803,13 +800,6 @@ end;
 procedure wdgTTabs.OnTabSecondaryClick(index: loopint);
 begin
 
-end;
-
-function wdgTTabs.GetHighlightedTab(): loopint;
-begin
-   Result := Tabs.Selected;
-   if(Tabs.Highlighted > -1) then
-      Result := Tabs.Highlighted;
 end;
 
 INITIALIZATION
