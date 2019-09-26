@@ -202,19 +202,17 @@ begin
       py := r.y - (r.h - padding * 2) div 2;
 
       if(glyph.Glyph <> nil) and (glyph.Glyph.rId <> 0) then begin
+         inc(r.x, (height * 2) + (padding * 2));
+         f.WriteCentered(s, r, [oxfpCenterVertical]);
+
          oxRender.BlendDefault();
          SetColorBlended(glyph.Color);
          oxRenderingUtilities.TexturedQuad(px, py, height, height, glyph.Glyph);
          oxui.Material.ApplyTexture('texture', f.Texture);
-      end;
-
-      inc(r.x, (height * 2) + (padding * 2));
-
-      {restore color}
-      SetFontColor(index);
-   end;
-
-   f.WriteCentered(s, r, [oxfpCenterVertical]);
+      end else
+         f.WriteCentered(s, r, [oxfpCenterVertical]);
+   end else
+      f.WriteCentered(s, r, [oxfpCenterVertical]);
 end;
 
 procedure wdgTHierarchyList.Load();
