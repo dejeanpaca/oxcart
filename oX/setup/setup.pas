@@ -1,8 +1,8 @@
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxdefines.inc}
 PROGRAM setup;
 
 USES
-   sysutils, uStd, uLog, ParamUtils, uBuild, uFileUtils, uLPI, oxuBuild;
+   sysutils, uStd, uLog, ParamUtils, uBuild, uFileUtils, uLPI;
 
 {$R *.res}
 
