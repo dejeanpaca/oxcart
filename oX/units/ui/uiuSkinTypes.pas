@@ -164,6 +164,7 @@ TYPE
       TextInHighlight,
       InactiveText,
       Highlight,
+      Focal,
       Shadow,
       Surface,
       LightSurface,
