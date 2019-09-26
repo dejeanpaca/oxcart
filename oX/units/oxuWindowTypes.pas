@@ -90,7 +90,7 @@ TYPE
 
    oxTWindowClass = class of oxTWindow;
 
-   oxTPreallocatedWindowsList = specialize TSimpleList<oxTWindow>;
+   oxTSimpleWindowsList = specialize TSimpleList<oxTWindow>;
 
    oxTWindowRoutine = procedure(wnd: oxTWindow);
    oxTWindowRoutines = specialize TSimpleList<oxTWindowRoutine>;

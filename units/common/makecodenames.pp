@@ -25,7 +25,7 @@ TYPE
    end;
 
 VAR
-   cnames: specialize TPreallocatedArrayList<TCode>;
+   cnames: specialize TSimpleList<TCode>;
    parseData: TParseData;
 
 function doReadFile(var p: TParseData): boolean;

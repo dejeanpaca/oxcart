@@ -37,7 +37,7 @@ VAR
 
 IMPLEMENTATION
 
-procedure ExpandAttributes(wnd: oglTWindow; var attr: TXAttrIntPreallocatedArray; fb: boolean = false);
+procedure ExpandAttributes(wnd: oglTWindow; var attr: TXAttrIntSimpleList; fb: boolean = false);
 begin
    if(wnd.RenderSettings.ColorBits >= 24) then begin
       attr.Add(GLX_RED_SIZE, 8);
@@ -79,7 +79,7 @@ end;
 
 function chooseVisual(wnd: oglTWindow): boolean;
 var
-   attr: TXAttrIntPreallocatedArray;
+   attr: TXAttrIntSimpleList;
 
 begin
    attr.Initialize(attr);
@@ -229,7 +229,7 @@ end;
 
 function getContextAttribs(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext;
 var
-   attr: TXAttrIntPreallocatedArray;
+   attr: TXAttrIntSimpleList;
    extContext: boolean;
    contextFlags: LongInt;
 

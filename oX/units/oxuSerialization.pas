@@ -16,7 +16,7 @@ INTERFACE
       uOX, oxuRunRoutines, oxuGlobalInstances;
 
 TYPE
-   TPreallocatedTypeKyndArrayList = specialize TSimpleList<TTypeKind>;
+   TSimpleTypeKyndList = specialize TSimpleList<TTypeKind>;
 
    { oxTSerializable }
 

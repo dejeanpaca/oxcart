@@ -22,12 +22,12 @@ TYPE
       FileType: string;
    end;
 
-   oxTFileIconArrayList = specialize TSimpleList<oxTFileIcon>;
+   oxTFileIconList = specialize TSimpleList<oxTFileIcon>;
 
    { oxTFileIcons }
 
    oxTFileIcons = record
-      Icons: oxTFileIconArrayList;
+      Icons: oxTFileIconList;
       GenericFile,
       GenericDirectory: oxTFileIcon;
 

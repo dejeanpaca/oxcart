@@ -196,7 +196,7 @@ TYPE
 
    oxTResourceClass = class of oxTResource;
 
-   oxTPreallocatedResourceArrayListClass = specialize TSimpleListClass<oxTResource>;
+   oxTSimpleResourceListClass = specialize TSimpleListClass<oxTResource>;
 
    oxTTextureID = type longword;
 

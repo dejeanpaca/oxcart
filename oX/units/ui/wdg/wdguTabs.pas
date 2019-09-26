@@ -57,7 +57,7 @@ TYPE
       Widgets: uiTWidgets;
    end;
 
-   wdgTTabsPreallocatedArrayList = specialize TSimpleList<wdgTTabEntry>;
+   wdgTTabsSimpleList = specialize TSimpleList<wdgTTabEntry>;
 
    { wdgTTabs }
 
@@ -126,7 +126,7 @@ TYPE
             TotalWidth,
             TotalHeight: loopint;
 
-            t: wdgTTabsPreallocatedArrayList;
+            t: wdgTTabsSimpleList;
          end;
 
          function OnWhat(x, y: longint; out tabIndex: loopint): loopint;
