@@ -28,6 +28,8 @@
    {$DEFINE OX_LIBRARY_SUPPORT}
 {$ENDIF}
 
+{$INCLUDE oxfeaturedefines.inc}
+
 { CUSTOM OPTIONS }
 
 {$IFDEF OX_PROJECT_DEFINES}

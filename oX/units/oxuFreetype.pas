@@ -6,8 +6,6 @@
 }
 
 {$INCLUDE oxdefines.inc}
-{$INCLUDE oxfeaturedefines.inc}
-
 UNIT oxuFreetype;
 
 INTERFACE
