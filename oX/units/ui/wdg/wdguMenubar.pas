@@ -244,7 +244,7 @@ begin
    oxf.Stop();
 end;
 
-function contextWindowListener({%H-}wnd: uiTControl; const event: appTEvent): longint;
+function contextWindowListener({%H-}wnd: uiTWindow; const event: appTEvent): loopint;
 begin
    Result := -1;
 

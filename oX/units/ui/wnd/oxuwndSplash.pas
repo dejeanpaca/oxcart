@@ -139,7 +139,7 @@ begin
    end;
 end;
 
-function splashWndHandler({%H-}wnd: uiTControl; const event: appTEvent): longint;
+function splashWndHandler({%H-}wnd: uiTWindow; const event: appTEvent): loopint;
 var
    m: appTMouseEvent;
 
@@ -175,7 +175,7 @@ begin
 
    inherited;
 
-   Window.wHandler := @splashWndHandler;
+   Window.SetHandler(@splashWndHandler);
    Window.Background.Color := BackgroundColor;
 
    if(Window <> nil) then

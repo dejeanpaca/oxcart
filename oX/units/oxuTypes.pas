@@ -19,11 +19,11 @@ TYPE
 
    oxTPoint = record
       x,
-      y: longint;
+      y: loopint;
 
-      procedure Assign(nx, ny: longint);
-      class function Make(nx, ny: longint): oxTPoint; static;
-      class function MakeCenterPoint(w, h, w2, h2: longint): oxTPoint; static;
+      procedure Assign(nx, ny: loopint);
+      class function Make(nx, ny: loopint): oxTPoint; static;
+      class function MakeCenterPoint(w, h, w2, h2: loopint): oxTPoint; static;
       class function Null(): oxTPoint; static;
 
       {distance between another point}
@@ -52,11 +52,11 @@ TYPE
    { oxTDimensions }
 
    oxTDimensions = record
-      w, h: longint;
+      w, h: loopint;
 
-      procedure Assign(nw, nh: longint);
-      class function Make(width, height: longint): oxTDimensions; static;
-      class function Fit(width, width2, height, height2: longint): oxTDimensions; static;
+      procedure Assign(nw, nh: loopint);
+      class function Make(width, height: loopint): oxTDimensions; static;
+      class function Fit(width, width2, height, height2: loopint): oxTDimensions; static;
       class function Null(): oxTDimensions; static;
 
       {tells if both dimensions have a positive value}
@@ -70,7 +70,7 @@ TYPE
    oxTDimensionsf = record
       w, h: single;
 
-      procedure Assign(nw, nh: longint);
+      procedure Assign(nw, nh: loopint);
       class function Make(width, height: single): oxTDimensionsf; static;
       class function Fit(width, width2, height, height2: single): oxTDimensionsf; static;
       class function Null(): oxTDimensionsf; static;
@@ -87,12 +87,12 @@ TYPE
       x,
       y,
       w,
-      h: longint;
+      h: loopint;
 
-      procedure Assign(nx, ny, nw, nh: longint);
+      procedure Assign(nx, ny, nw, nh: loopint);
       procedure Assign(const p: oxTPoint; const d: oxTDimensions);
-      class function Make(nx, ny, nw, nh: longint): oxTRect; static;
-      function Inside(px, py: longint): Boolean;
+      class function Make(nx, ny, nw, nh: loopint): oxTRect; static;
+      function Inside(px, py: loopint): Boolean;
       {fits another rect inside this one, if can't fit inside it resizes the given rect}
       procedure FitInside(var another: oxTRect);
       {fits another rect inside this one, if it can't fit inside it centers it}
@@ -291,19 +291,19 @@ VAR
    oxNullDimensions: oxTDimensions;
 
 {return an oxTPoint record with the specified coordinates}
-function oxPoint(x, y: longint): oxTPoint;
+function oxPoint(x, y: loopint): oxTPoint;
 {return an oxTDimensions record with the specified width and height}
-function oxDimensions(w, h: longint): oxTDimensions;
+function oxDimensions(w, h: loopint): oxTDimensions;
 
 IMPLEMENTATION
 
-function oxPoint(x, y: longint): oxTPoint;
+function oxPoint(x, y: loopint): oxTPoint;
 begin
    Result.x := x;
    Result.y := y;
 end;
 
-function oxDimensions(w, h: longint): oxTDimensions;
+function oxDimensions(w, h: loopint): oxTDimensions;
 begin
    Result.w := w;
    Result.h := h;
@@ -519,7 +519,7 @@ end;
 
 { oxTDimensionsf }
 
-procedure oxTDimensionsf.Assign(nw, nh: longint);
+procedure oxTDimensionsf.Assign(nw, nh: loopint);
 begin
    w := nw;
    h := nh;
@@ -602,21 +602,21 @@ end;
 
 { oxTPoint }
 
-procedure oxTPoint.Assign(nx, ny: longint);
+procedure oxTPoint.Assign(nx, ny: loopint);
 begin
    x := nx;
    y := ny;
 end;
 
-class function oxTPoint.Make(nx, ny: longint): oxTPoint;
+class function oxTPoint.Make(nx, ny: loopint): oxTPoint;
 begin
    Result.x := nx;
    Result.y := ny;
 end;
 
-class function oxTPoint.MakeCenterPoint(w, h, w2, h2: longint): oxTPoint;
+class function oxTPoint.MakeCenterPoint(w, h, w2, h2: loopint): oxTPoint;
 var
-   cw, ch: longint;
+   cw, ch: loopint;
 
 begin
    cw := w2 div 2;
@@ -644,7 +644,7 @@ end;
 
 { oxTRect }
 
-procedure oxTRect.Assign(nx, ny, nw, nh: longint);
+procedure oxTRect.Assign(nx, ny, nw, nh: loopint);
 begin
    x := nx;
    y := ny;
@@ -660,7 +660,7 @@ begin
    self.h := d.h;
 end;
 
-class function oxTRect.Make(nx, ny, nw, nh: longint): oxTRect;
+class function oxTRect.Make(nx, ny, nw, nh: loopint): oxTRect;
 begin
    Result.x := nx;
    Result.y := ny;
@@ -668,7 +668,7 @@ begin
    Result.h := nh;
 end;
 
-function oxTRect.Inside(px, py: longint): Boolean;
+function oxTRect.Inside(px, py: loopint): Boolean;
 begin
    Result := (px >= x) and (px < x + w) and (py <= y) and (py > y - h);
 end;
@@ -725,19 +725,19 @@ end;
 
 { oxTDimensions }
 
-procedure oxTDimensions.Assign(nw, nh: longint);
+procedure oxTDimensions.Assign(nw, nh: loopint);
 begin
    w := nw;
    h := nh;
 end;
 
-class function oxTDimensions.Make(width, height: longint): oxTDimensions;
+class function oxTDimensions.Make(width, height: loopint): oxTDimensions;
 begin
    Result.w := width;
    Result.h := height;
 end;
 
-class function oxTDimensions.Fit(width, width2, height, height2: longint): oxTDimensions;
+class function oxTDimensions.Fit(width, width2, height, height2: loopint): oxTDimensions;
 begin
    Result.w := width;
    if width2 < Result.w then

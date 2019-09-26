@@ -97,27 +97,27 @@ TYPE
       {get coordinates for maximization}
       procedure GetMaximizationCoords(out p: oxTPoint; out d: oxTDimensions; exclude: uiTControl = nil);
       {get pointer position}
-      function GetPointerPosition(x, y: longint): oxTPoint;
+      function GetPointerPosition(x, y: loopint): oxTPoint;
 
       {moves a window}
-      procedure Move(x, y: longint);
+      procedure Move(x, y: loopint);
       procedure Move(position: oxTPoint);
 
-      procedure MoveAdjusted(x, y: longint);
+      procedure MoveAdjusted(x, y: loopint);
       procedure MoveAdjusted(const p: oxTPoint);
       {move a the window for a relative position}
-      procedure MoveRelative(x, y: longint);
+      procedure MoveRelative(x, y: loopint);
       procedure MoveRelative(p: oxTPoint);
 
       {resizes a window}
-      procedure Resize(w, h: longint; ignoreRestrictions: boolean = false);
+      procedure Resize(w, h: loopint; ignoreRestrictions: boolean = false);
       procedure Resize(newSize: oxTDimensions; ignoreRestrictions: boolean = false);
 
-      procedure ResizeAdjusted(w, h: longint; ignoreRestrictions: boolean = false);
+      procedure ResizeAdjusted(w, h: loopint; ignoreRestrictions: boolean = false);
       procedure ResizeAdjusted(const newSize: oxTDimensions; ignoreRestrictions: boolean = false);
 
       {adjust width and height according to window restrictions}
-      procedure AdjustSizesWithRestrictions(var w, h: longint);
+      procedure AdjustSizesWithRestrictions(var w, h: loopint);
       procedure AdjustSizesWithRestrictions(var d: oxTDimensions);
 
       {sends a notification event to the window}
@@ -145,24 +145,26 @@ TYPE
 
       { window listeners }
 
+      procedure SetHandler(listener: uiTWindowListenerMethod);
+
       {adds a listener to the list, returns true if added}
-      function AddListener(listener: uiTWindowListener): boolean;
+      function AddListener(listener: uiTWindowListenerMethod): boolean;
       {removes a listener from the list, returns true if the listener specified was found in the list}
-      function RemoveListener(listener: uiTWindowListener): boolean;
+      function RemoveListener(listener: uiTWindowListenerMethod): boolean;
       {removes all listeners}
       procedure RemoveListeners();
 
       { size }
 
       {get the title height}
-      function GetTitleHeight(): longint;
+      function GetTitleHeight(): loopint;
       {get the frame width and height}
-      function GetFrameWidth(): longint;
-      function GetFrameHeight(): longint;
+      function GetFrameWidth(): loopint;
+      function GetFrameHeight(): loopint;
       {get the total non-client height of the window}
-      function GetNonClientHeight(): longint;
+      function GetNonClientHeight(): loopint;
       {get the total non-client width of the window}
-      function GetNonClientWidth(): longint;
+      function GetNonClientWidth(): loopint;
       {get total width (including non-client)}
       function GetTotalWidth(): loopint;
       {get total height (including non-client)}
@@ -206,7 +208,7 @@ TYPE
       { background }
       procedure SetBackgroundType(t: uiTWindowBackgroundType);
       procedure SetBackgroundColor(const clr: TColor4ub);
-      function SetBackground(const fn: StdString): longint;
+      function SetBackground(const fn: StdString): loopint;
 
       {background texture type}
       procedure SetBackgroundFit(fit: uiTWindowBackgroundFit);
@@ -226,16 +228,16 @@ TYPE
       { finding windows }
 
       {finds a window and returns selection}
-      procedure Find(x, y: longint; var s: uiTSelectInfo);
+      procedure Find(x, y: loopint; var s: uiTSelectInfo);
       {find the first child of the specified class, specifying recursive if you want to all levels}
       function Find(c: uiTWindowClass; recursive: boolean = false): uiTWindow;
 
       {returns the top level parent window, or the specified window if it has no parent}
       function GetTopLevel(): uiTWindow;
       {checks whether a window exists at any level within this window and returns its level}
-      function Exists(pwnd: uiTWindow; sub: boolean = true): longint;
+      function Exists(pwnd: uiTWindow; sub: boolean = true): loopint;
       {checks whether a window exists in this window and returns its index}
-      function ExistChild(pwnd: uiTWindow): longint;
+      function ExistChild(pwnd: uiTWindow): loopint;
 
       { EFFECTS }
       procedure SetOpacity(newOpacity: single);
@@ -255,7 +257,7 @@ TYPE
 
       {adjusts the window position}
       procedure AdjustPosition();
-      procedure AdjustPosition(x, y: longint; var p: oxTPoint);
+      procedure AdjustPosition(x, y: loopint; var p: oxTPoint);
       procedure AdjustDimensions(var d: oxTDimensions);
       {get the center position}
       function GetCenterPosition(): oxTPoint;
@@ -321,7 +323,7 @@ TYPE
       {border width/height for resizing a window}
       SizeBorder,
       {allocate memory for how many window listeners at a time}
-      ListenerAllocationStep: longint;
+      ListenerAllocationStep: loopint;
 
       {default window buttons}
       DefaultButtons,
@@ -372,14 +374,14 @@ TYPE
 
       {creates a window}
       function Make(var createData: uiTWindowCreateData; out wnd: uiTWindow; const title: StdString;
-               position: oxTPoint; dimensions: oxTDimensions; wHandler: uiTWindowListener = nil): longint;
+               position: oxTPoint; dimensions: oxTDimensions; wHandler: uiTWindowListenerMethod = nil): loopint;
       function Make(wnd: uiTWindow; const title: StdString;
-               position: oxTPoint; dimensions: oxTDimensions; wHandler: uiTWindowListener = nil): longint;
+               position: oxTPoint; dimensions: oxTDimensions; wHandler: uiTWindowListenerMethod = nil): loopint;
       {creates a child window whose parent is wnd}
       function MakeChild(var createData: uiTWindowCreateData; wnd: uiTWindow; const title: StdString;
-               const position: oxTPoint; const dimensions: oxTDimensions; wHandler: uiTWindowListener = nil): uiTWindow;
+               const position: oxTPoint; const dimensions: oxTDimensions; wHandler: uiTWindowListenerMethod = nil): uiTWindow;
       function MakeChild(wnd: uiTWindow; const title: StdString;
-               const position: oxTPoint; const dimensions: oxTDimensions; wHandler: uiTWindowListener = nil): uiTWindow;
+               const position: oxTPoint; const dimensions: oxTDimensions; wHandler: uiTWindowListenerMethod = nil): uiTWindow;
       function MakeChild(wnd: uiTWindow): uiTWindow;
 
       {disposes of a window}
@@ -397,7 +399,7 @@ TYPE
 
       { WINDOW SELECTION }
       {tells to how many levels two selections are equal}
-      function SelectionEqu(const s1, s2: uiTSelectInfo): longint;
+      function SelectionEqu(const s1, s2: uiTSelectInfo): loopint;
 
       { FINDING WINDOWS }
       {returns the top level parent window of the currently selected window}
@@ -464,7 +466,7 @@ end;
 
 procedure uiTWindowGlobalOnHelper.Call(wnd: uiTWindow);
 var
-   i: longint;
+   i: loopint;
 
 begin
    for i := 0 to n - 1 do
@@ -560,7 +562,7 @@ begin
 end;
 
 function uiTWindowGlobal.Make(var createData: uiTWindowCreateData; out wnd: uiTWindow; const title: StdString;
-      position: oxTPoint; dimensions: oxTDimensions; wHandler: uiTWindowListener): longint;
+      position: oxTPoint; dimensions: oxTDimensions; wHandler: uiTWindowListenerMethod): loopint;
 
 begin
    Result := eNONE;
@@ -587,7 +589,7 @@ begin
       wnd.ZIndex := createData.ZIndex;
 
       SetupCreatedWindow(wnd, createData);
-      wnd.wHandler := wHandler;
+      wnd.SetHandler(wHandler);
 
       uiWidget.LastRect.Assign(wnd);
    end else
@@ -595,15 +597,15 @@ begin
 end;
 
 function uiTWindowGlobal.Make(wnd: uiTWindow; const title: StdString;
-      position: oxTPoint; dimensions: oxTDimensions; wHandler: uiTWindowListener): longint;
+      position: oxTPoint; dimensions: oxTDimensions; wHandler: uiTWindowListenerMethod): loopint;
 begin
    Result := Make(Create, wnd, title, position, dimensions, wHandler);
 end;
 
 function uiTWindowGlobal.MakeChild(var createData: uiTWindowCreateData; wnd: uiTWindow; const title: StdString;
-         const position: oxTPoint; const dimensions: oxTDimensions; wHandler: uiTWindowListener): uiTWindow;
+         const position: oxTPoint; const dimensions: oxTDimensions; wHandler: uiTWindowListenerMethod): uiTWindow;
 var
-   errcode: longint;
+   errcode: loopint;
    child: uiTWindow;
 
 begin
@@ -625,7 +627,7 @@ begin
 end;
 
 function uiTWindowGlobal.MakeChild(wnd: uiTWindow; const title: StdString;
-         const position: oxTPoint; const dimensions: oxTDimensions; wHandler: uiTWindowListener): uiTWindow;
+         const position: oxTPoint; const dimensions: oxTDimensions; wHandler: uiTWindowListenerMethod): uiTWindow;
 begin
    Result := MakeChild(Create, wnd, title, position, dimensions, wHandler);
 end;
@@ -726,19 +728,19 @@ end;
 
 { WINDOW LISTENERS }
 
-function uiTWindowHelper.AddListener(listener: uiTWindowListener): boolean;
+function uiTWindowHelper.AddListener(listener: uiTWindowListenerMethod): boolean;
 begin
-   Result := Listeners.Add(listener);
+   Result := Listeners.Add(uiTWindowListener(listener));
 end;
 
-function uiTWindowHelper.RemoveListener(listener: uiTWindowListener): boolean;
+function uiTWindowHelper.RemoveListener(listener: uiTWindowListenerMethod): boolean;
 var
-   i: longint;
-   where: longint = -1;
+   i: loopint;
+   where: loopint = -1;
 
 begin
    for i := 0 to Listeners.n - 1 do begin
-      if(Listeners[i] = listener) then begin
+      if(Listeners[i] = uiTWindowListener(listener)) then begin
          where := i;
          break;
       end;
@@ -779,7 +781,7 @@ end;
 
 procedure uiTWindowHelper.PropagateEvent(var event: appTEvent);
 var
-   i: longint;
+   i: loopint;
 
 begin
    if(wHandler <> nil) then
@@ -968,14 +970,14 @@ end;
 
 procedure uiTWindowHelper.GetMaximizationCoords(out p: oxTPoint; out d: oxTDimensions; exclude: uiTControl);
 var
-   i: longint;
+   i: loopint;
    wdg: uiTWidget;
    x,
    rightX,
    y,
    bottomY,
    w,
-   h: longint;
+   h: loopint;
 
 begin
    h := Dimensions.h;
@@ -1030,14 +1032,14 @@ begin
    end;
 end;
 
-function uiTWindowHelper.GetPointerPosition(x, y: longint): oxTPoint;
+function uiTWindowHelper.GetPointerPosition(x, y: loopint): oxTPoint;
 begin
    Result.x := x - (RPosition.x + GetFrameWidth());
    Result.y := y - RPosition.y + Dimensions.h - 1;
 end;
 
 { WINDOW MANAGEMENT }
-procedure uiTWindowHelper.Move(x, y: longint);
+procedure uiTWindowHelper.Move(x, y: loopint);
 begin
    if(x <> Position.x) or (y <> Position.y) then begin
       Position.x := x;
@@ -1053,7 +1055,7 @@ begin
    Move(position.x, position.y);
 end;
 
-procedure uiTWindowHelper.MoveAdjusted(x, y: longint);
+procedure uiTWindowHelper.MoveAdjusted(x, y: loopint);
 begin
    Move(x + GetFrameWidth() - 1, y - GetTitleHeight() - 1);
 end;
@@ -1063,7 +1065,7 @@ begin
    MoveAdjusted(p.x, p.y);
 end;
 
-procedure uiTWindowHelper.MoveRelative(x, y: longint);
+procedure uiTWindowHelper.MoveRelative(x, y: loopint);
 begin
    if(x <> 0) or (y <> 0) then
       Move(Position.x + x, Position.y + y)
@@ -1075,7 +1077,7 @@ begin
       Move(Position.x + p.x, Position.y + p.y);
 end;
 
-procedure uiTWindowHelper.Resize(w, h: longint; ignoreRestrictions: boolean);
+procedure uiTWindowHelper.Resize(w, h: loopint; ignoreRestrictions: boolean);
 var
    horizontalMove: boolean;
 
@@ -1113,7 +1115,7 @@ begin
    Resize(newSize.w, newSize.h, ignoreRestrictions);
 end;
 
-procedure uiTWindowHelper.ResizeAdjusted(w, h: longint; ignoreRestrictions: boolean = false);
+procedure uiTWindowHelper.ResizeAdjusted(w, h: loopint; ignoreRestrictions: boolean = false);
 var
    d: oxTDimensions;
 
@@ -1136,7 +1138,7 @@ begin
    Resize(d.w, d.h, ignoreRestrictions);
 end;
 
-procedure uiTWindowHelper.AdjustSizesWithRestrictions(var w, h: longint);
+procedure uiTWindowHelper.AdjustSizesWithRestrictions(var w, h: loopint);
 begin
    if(w < MinimumSize.w) then
       w := MinimumSize.w;
@@ -1188,7 +1190,7 @@ begin
    Background.Color := clr;
 end;
 
-function uiTWindowHelper.SetBackground(const fn: StdString): longint;
+function uiTWindowHelper.SetBackground(const fn: StdString): loopint;
 begin
    Result := oxTextureGenerate.Generate(fn, oxTTexture(Background.Texture));
 
@@ -1312,7 +1314,7 @@ end;
 
 procedure uiTWindowHelper.Select();
 var
-   i: longint;
+   i: loopint;
    selected: uiTControl;
    previouslySelected: uiTWindow;
    previouslySelectedWdg: uiTWidget;
@@ -1363,7 +1365,8 @@ end;
 procedure uiTWindowHelper.Deselect(reselect: boolean);
 var
    i: longint;
-   sWnd, pWnd: uiTWindow;
+   sWnd,
+   pWnd: uiTWindow;
 
 begin
    oxui.mSelect.Deselect(uiTControl(Self));
@@ -1409,10 +1412,10 @@ begin
    OnDeactivate();
 end;
 
-function uiTWindowGlobal.SelectionEqu(const s1, s2: uiTSelectInfo): longint;
+function uiTWindowGlobal.SelectionEqu(const s1, s2: uiTSelectInfo): loopint;
 var
    i,
-   rep_end: longint;
+   rep_end: loopint;
 
 begin
    Result := -1;
@@ -1434,10 +1437,10 @@ begin
 end;
 
 { FINDING WINDOWS }
-procedure uiFindNext(parentWdg: uiTWidget; const widgets: uiTWidgets; x, y: longint; var s: uiTSelectInfo);
+procedure uiFindNext(parentWdg: uiTWidget; const widgets: uiTWidgets; x, y: loopint; var s: uiTSelectInfo);
 var
    r: oxTRect;
-   i: longint;
+   i: loopint;
    wdg: uiTWidget;
 
 
@@ -1467,10 +1470,10 @@ begin
    end;
 end;
 
-procedure uiFindNext(wnd: uiTWindow; x, y: longint; var s: uiTSelectInfo);
+procedure uiFindNext(wnd: uiTWindow; x, y: loopint; var s: uiTSelectInfo);
 var
    r: oxTRect;
-   i: longint;
+   i: loopint;
    p: uiTWindow;
 
 
@@ -1505,7 +1508,7 @@ begin
 end;
 
 
-procedure uiTWindowHelper.Find(x, y: longint; var s: uiTSelectInfo);
+procedure uiTWindowHelper.Find(x, y: loopint; var s: uiTSelectInfo);
 begin
    s.l   := -1;
    s.x   := x;
@@ -1548,9 +1551,9 @@ begin
 end;
 
 {checks whether the window exists}
-function uiTWindowHelper.Exists(pwnd: uiTWindow; sub: boolean): longint;
+function uiTWindowHelper.Exists(pwnd: uiTWindow; sub: boolean): loopint;
 var
-   i: longint;
+   i: loopint;
 
 begin
    Result := -1;
@@ -1571,9 +1574,9 @@ begin
    end;
 end;
 
-function uiTWindowHelper.ExistChild(pwnd: uiTWindow): longint;
+function uiTWindowHelper.ExistChild(pwnd: uiTWindow): loopint;
 var
-   i: longint;
+   i: loopint;
 
 begin
    if(pwnd <> nil) then begin
@@ -1693,7 +1696,7 @@ end;
 { INTERNAL }
 procedure uiTWindowHelper.UpdatePositions();
 var
-   i: longint;
+   i: loopint;
    child,
    ext: uiTWindow;
 
@@ -1738,7 +1741,7 @@ end;
 
 procedure uiTWindowHelper.UpdateParentSize(selfNotify: boolean = true);
 var
-   i: longint;
+   i: loopint;
    child: uiTWindow;
 
 begin
@@ -1764,7 +1767,7 @@ begin
    dec(Position.y, GetTitleHeight());
 end;
 
-procedure uiTWindowHelper.AdjustPosition(x, y: longint; var p: oxTPoint);
+procedure uiTWindowHelper.AdjustPosition(x, y: loopint; var p: oxTPoint);
 begin
    p.x := x + GetFrameWidth();
    p.y := y - GetTitleHeight();
@@ -1938,22 +1941,22 @@ end;
 
 { Z Order}
 
-function uiTWindowHelper.GetTitleHeight(): longint;
+function uiTWindowHelper.GetTitleHeight(): loopint;
 begin
    Result := uiTSkin(Skin).Window.Frames[ord(Frame)].TitleHeight;
 end;
 
-function uiTWindowHelper.GetFrameWidth(): longint;
+function uiTWindowHelper.GetFrameWidth(): loopint;
 begin
    Result := uiTSkin(Skin).Window.Frames[ord(Frame)].FrameWidth;
 end;
 
-function uiTWindowHelper.GetFrameHeight(): longint;
+function uiTWindowHelper.GetFrameHeight(): loopint;
 begin
    Result := uiTSkin(Skin).Window.Frames[ord(Frame)].FrameHeight;
 end;
 
-function uiTWindowHelper.GetNonClientHeight(): longint; inline;
+function uiTWindowHelper.GetNonClientHeight(): loopint; inline;
 begin
    if(Frame <> uiwFRAME_STYLE_NONE) then
       Result := GetTitleHeight() + GetFrameHeight()
@@ -1961,7 +1964,7 @@ begin
       Result := 0;
 end;
 
-function uiTWindowHelper.GetNonClientWidth(): longint; inline;
+function uiTWindowHelper.GetNonClientWidth(): loopint; inline;
 begin
    if(Frame <> uiwFRAME_STYLE_NONE) then
       Result := GetFrameWidth() * 2
@@ -2111,6 +2114,11 @@ end;
 function uiTWindowHelper.IsOpen(): boolean;
 begin
    Result := not (uiwndpCLOSED in Properties);
+end;
+
+procedure uiTWindowHelper.SetHandler(listener: uiTWindowListenerMethod);
+begin
+   wHandler := uiTWindowListener(listener);
 end;
 
 function uiTWindowGlobal.GetNotification(const event: appTEvent): uiTWindowEvents;

@@ -250,7 +250,7 @@ end;
 
 { CONSOLE CONTROL }
 
-function parentResize({%H-}wnd: uiTControl; const e: appTEvent): longint;
+function parentResize({%H-}wnd: uiTwindow; const e: appTEvent): loopint;
 begin
    Result := -1;
 
@@ -471,7 +471,7 @@ begin
 end;
 
 { CONSOLE WINDOW HANDLER }
-function oxConsoleWndHandler(wnd: uiTControl; const event: appTEvent): longint;
+function oxConsoleWndHandler(wnd: uiTWindow; const event: appTEvent): loopint;
 var
    key: appTKey;
 
@@ -581,7 +581,7 @@ begin
    if(oxConsole.Window <> nil) then begin
       Include(oxConsole.Window.Properties, uiwndpNO_ESCAPE_KEY);
       oxConsole.Window.Properties.Immovable();
-      oxConsole.Window.wHandler := @oxConsoleWndHandler;
+      oxConsole.Window.SetHandler(@oxConsoleWndHandler);
 
       {set background to none and close the window}
       oxConsole.Window.SetBackgroundType(uiwBACKGROUND_NONE);
