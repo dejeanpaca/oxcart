@@ -47,6 +47,8 @@ TYPE
 
       constructor Create(); override;
 
+      procedure SetEnabled(newEnabled: boolean = true);
+
       {add a component to the list of components}
       function Add(component: oxTComponent): oxTComponent; {$IFDEF OX_LIBRARY_SUPPORT}virtual;{$ENDIF}
       {add an entity to the list of children}
@@ -140,7 +142,7 @@ TYPE
       {load resources for all components}
       procedure LoadResources();
 
-      destructor Destroy; override;
+      destructor Destroy(); override;
    end;
 
    { oxTEntitiesHelper }
@@ -240,6 +242,11 @@ begin
    Enabled := true;
 
    oxEntity.OnCreate.Call(self);
+end;
+
+procedure oxTEntity.SetEnabled(newEnabled: boolean);
+begin
+   Enabled := newEnabled;
 end;
 
 function oxTEntity.Add(component: oxTComponent): oxTComponent;
@@ -831,7 +838,7 @@ begin
    end;
 end;
 
-destructor oxTEntity.Destroy;
+destructor oxTEntity.Destroy();
 begin
    inherited Destroy;
 
