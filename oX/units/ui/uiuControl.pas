@@ -38,6 +38,7 @@ TYPE
    uiPControlID = ^uiTControlID;
    uiTControlID = record
       Name: StdString;
+      {control Id (negative Ids may indicate external reference)}
       ID: loopint;
 
       function ToString(): StdString;
@@ -76,15 +77,14 @@ TYPE
       Dimensions: oxTDimensions;
 
       {what nesting level this control is part of, should be properly set when reparented}
-      Level: longint;
+      Level,
       {how many pixels of border this widget has}
       Border,
       {how much padding this widget has}
       PaddingTop,
       PaddingRight,
       PaddingBottom,
-      PaddingLeft: longint;
-
+      PaddingLeft,
       {z index of the control}
       ZIndex: loopint;
 
@@ -121,15 +121,15 @@ TYPE
       function GetComputedWidth(): loopint;
       function GetComputedHeight(): loopint;
       {set padding for every side}
-      procedure SetPadding(p: longint);
+      procedure SetPadding(p: loopint);
       {set padding for top, right, bottom, left}
-      procedure SetPadding(t, r, b, l: longint);
+      procedure SetPadding(t, r, b, l: loopint);
       {set padding for top and bottm}
-      procedure SetHorizontalPadding(p: longint);
+      procedure SetHorizontalPadding(p: loopint);
       {set padding for top and bottm}
-      procedure SetVerticalPadding(p: longint);
+      procedure SetVerticalPadding(p: loopint);
       {set padding}
-      procedure SetBorder(p: longint);
+      procedure SetBorder(p: loopint);
       {get the visible vertical space}
       function GetVisibleVerticalSpace(): int64;
       {get the visible horizontal space}
@@ -147,8 +147,8 @@ TYPE
 
       function GetSurfaceColor(): TColor4ub; virtual;
 
-      function GetPointerPosition(x, y: longint): oxTPoint; virtual;
-      function GetAbsolutePointer(x, y: longint): oxTPoint; virtual;
+      function GetPointerPosition(x, y: loopint): oxTPoint; virtual;
+      function GetAbsolutePointer(x, y: loopint): oxTPoint; virtual;
       function GetAbsolutePointer(p: oxTPoint): oxTPoint; virtual;
 
       {render this control}
@@ -361,7 +361,7 @@ begin
    Result := GetComputedDimensionsf().h;
 end;
 
-procedure uiTControl.SetPadding(p: longint);
+procedure uiTControl.SetPadding(p: loopint);
 begin
    PaddingTop := p;
    PaddingRight := p;
@@ -370,7 +370,7 @@ begin
    PaddingChanged();
 end;
 
-procedure uiTControl.SetPadding(t, r, b, l: longint);
+procedure uiTControl.SetPadding(t, r, b, l: loopint);
 begin
    PaddingTop := t;
    PaddingRight := r;
@@ -379,19 +379,19 @@ begin
    PaddingChanged();
 end;
 
-procedure uiTControl.SetHorizontalPadding(p: longint);
+procedure uiTControl.SetHorizontalPadding(p: loopint);
 begin
    PaddingLeft := p;
    PaddingRight := p;
 end;
 
-procedure uiTControl.SetVerticalPadding(p: longint);
+procedure uiTControl.SetVerticalPadding(p: loopint);
 begin
    PaddingTop := p;
    PaddingBottom := p;
 end;
 
-procedure uiTControl.SetBorder(p: longint);
+procedure uiTControl.SetBorder(p: loopint);
 begin
    Border := p;
    BorderChanged();
@@ -439,13 +439,13 @@ begin
    Result := cWhite4ub;
 end;
 
-function uiTControl.GetPointerPosition(x, y: longint): oxTPoint;
+function uiTControl.GetPointerPosition(x, y: loopint): oxTPoint;
 begin
    Result.x := x - RPosition.x;
    Result.y := y - RPosition.y + Dimensions.h - 1;
 end;
 
-function uiTControl.GetAbsolutePointer(x, y: longint): oxTPoint;
+function uiTControl.GetAbsolutePointer(x, y: loopint): oxTPoint;
 begin
    Result.x := RPosition.x + x;
    Result.y := RPosition.y - (Dimensions.h - 1 - y);
