@@ -16,7 +16,9 @@ INTERFACE
       uStd, uAppInfo, appuEvents, appuActionEvents, appuKeys, appuKeyMappings,
       {oX}
       uOX, oxuTypes, oxuRunRoutines,
-      {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
+      {$IFDEF OX_FEATURE_CONSOLE}
+      oxuConsoleBackend,
+      {$ENDIF}
       {ui}
       oxuUI, uiuControl, uiuWindow, uiWidgets, uiuTypes, uiuMessageBox, uiuWidget, uiuKeyMappings,
       {wnd}
@@ -138,11 +140,13 @@ begin
    inherited;
 end;
 
+{$IFDEF OX_FEATURE_CONSOLE}
 procedure consoleCallback({%H-}con: conPConsole);
 begin
    if(oxedwndRunSettings <> nil) then
       oxedwndRunSettings.Open();
 end;
+{$ENDIF}
 
 constructor oxedTSettingsWindow.Create();
 begin
@@ -151,7 +155,10 @@ begin
 
    Instance := oxeduiTRunSettingsWindow;
 
-   console.Selected^.AddCommand('wnd:run_settings', @consoleCallback);
+   {$IFDEF OX_FEATURE_CONSOLE}
+   if(console.Selected <> nil) then
+      console.Selected^.AddCommand('wnd:run_settings', @consoleCallback);
+   {$ENDIF}
 
    inherited Create;
 

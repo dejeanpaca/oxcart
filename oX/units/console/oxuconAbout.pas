@@ -16,7 +16,7 @@ INTERFACE
       uAppInfo,
       {ox}
       uOX, oxuRunRoutines,
-      oxuConsoleBackend, oxuConsole;
+      oxuConsoleBackend;
 
 IMPLEMENTATION
 
@@ -57,7 +57,7 @@ end;
 
 procedure Initialize();
 begin
-   oxConsole.console.AddCommand('about', @command);
+   console.Selected^.AddCommand('about', @command);
 end;
 
 VAR

@@ -374,6 +374,7 @@ end;
 procedure conTConsole.Initialize();
 begin
    SetDefaultSizes();
+
    if(console.Selected = nil) then
       Select();
 
