@@ -165,7 +165,6 @@ TYPE
 
       procedure RenderColumn(index, columnIndex: loopint; var r: oxTRect); override;
 
-      procedure SetFontColor(index: longint);
 
       procedure UpdateItemHeight(); override;
 
@@ -247,23 +246,6 @@ begin
          Include(props, oxfpCenterTop);
 
       f.WriteCentered(s, r, props);
-   end;
-end;
-
-procedure wdgTStringGrid.SetFontColor(index: longint);
-begin
-   if(HighlightHovered) then begin
-      if(Transparent) then begin
-         if(index <> HighlightedItem) then
-            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.Text)
-         else
-            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight);
-      end else begin
-         if(index <> HighlightedItem) then
-            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.InputText)
-         else
-            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight)
-      end;
    end;
 end;
 
