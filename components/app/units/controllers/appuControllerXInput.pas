@@ -20,7 +20,7 @@ TYPE
 
    { appTXInputControllerHandler }
 
-   appTXInputControllerHandler = class(appTControllerHandler)
+   appTXInputControllerHandler = object(appTControllerHandler)
       public
          {XInput specific properties}
 
@@ -29,9 +29,9 @@ TYPE
          {is the controller a game controller (gamepad, joystick)}
          GameController: boolean;
 
-      procedure Initialize(); override;
-      procedure Reset(); override;
-      procedure Run(); override;
+      procedure Initialize(); virtual;
+      procedure Reset(); virtual;
+      procedure Run(); virtual;
 
       private
          function Add(index: loopint): boolean;
@@ -48,6 +48,9 @@ TYPE
    end;
 
 IMPLEMENTATION
+
+VAR
+   appXInputControllerHandler: appTXInputControllerHandler;
 
 { appTXInputControllerDevice }
 
@@ -134,6 +137,7 @@ begin
 end;
 
 INITIALIZATION
-   appControllers.AddHandler(appTXInputControllerHandler.Create());
+   appXInputControllerHandler.Create();
+   appControllers.AddHandler(appXInputControllerHandler);
 
 END.

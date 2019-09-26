@@ -18,10 +18,10 @@ TYPE
 
    { appTDirectInputControllerHandler }
 
-   appTDirectInputControllerHandler = class(appTControllerHandler)
-      procedure Initialize(); override;
-      procedure Reset(); override;
-      procedure Run(); override;
+   appTDirectInputControllerHandler = object(appTControllerHandler)
+      procedure Initialize(); virtual;
+      procedure Reset(); virtual;
+      procedure Run(); virtual;
 
       private
          procedure Add(const {%H-}fn: string);
@@ -37,6 +37,9 @@ TYPE
    end;
 
 IMPLEMENTATION
+
+VAR
+   appDirectInputControllerHandler: appTDirectInputControllerHandler;
 
 { appTDirectInputControllerDevice }
 
@@ -79,6 +82,7 @@ begin
 end;
 
 INITIALIZATION
-   appControllers.AddHandler(appTDirectInputControllerHandler.Create());
+   appDirectInputControllerHandler.Create();
+   appControllers.AddHandler(appDirectInputControllerHandler);
 
 END.
