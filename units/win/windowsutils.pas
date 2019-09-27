@@ -123,19 +123,19 @@ var
    bufSize: windows.DWORD = sizeof(contents);
 
 begin
-   key := OpenRegistryKey(base, path);
    value := 0;
+   Result := false;
+
+   key := OpenRegistryKey(base, path);
 
    if(key <> 0) then begin
       contents := 0;
 
-      if(RegQueryValueEx(key, pchar(name), nil, nil, @contents, @bufSize) = ERROR_SUCCESS) then begin
+      if(RegQueryValueEx(key, pchar(name), nil, nil, @contents, @bufSize) = ERROR_SUCCESS) then
          value := contents;
-         exit(true);
-      end;
    end;
 
-   Result := false;
+   windows.RegCloseKey(key);
 end;
 
 function GetVidAndPidFromDeviceId(const deviceId: string; out vid, pid: longint): boolean;
