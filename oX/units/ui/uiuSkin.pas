@@ -11,11 +11,12 @@ UNIT uiuSkin;
 INTERFACE
 
    USES
-      uStd, uColors,
+      uStd, uColors, uLog,
       {oX}
-      oxuRunRoutines,
+      oxuRunRoutines, oxuPlatform,
       {ui}
-      oxuUI, uiuTypes, uiuWindowTypes, uiuSkinTypes;
+      oxuUI, uiuTypes, uiuWindowTypes, uiuSkinTypes,
+      uiuPlatform;
 
 CONST
    {window rendering constants}
@@ -310,7 +311,16 @@ begin
 end;
 
 procedure Initialize();
+var
+   platform: uiTPlatformComponent;
+
 begin
+   platform := uiTPlatformComponent(oxPlatform.GetComponent('ui.platform'));
+
+   if(platform <> nil) then begin
+      log.v('System theme: ' + platform.GetSystemTheme());
+   end;
+
    InitStandardSkin();
 
    uiSkin.SetupDefaultWidget(oxui.DefaultSkin);
