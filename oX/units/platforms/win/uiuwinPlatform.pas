@@ -11,6 +11,7 @@ UNIT uiuwinPlatform;
 INTERFACE
 
    USES
+      windowsutils, windows,
       uStd,
       uOX, oxuPlatform, oxuPlatforms, oxuRunRoutines,
       oxuWindowsPlatform, uiuPlatform;
@@ -19,9 +20,6 @@ TYPE
    { uiTWindowsPlatformComponent }
 
    uiTWindowsPlatformComponent = class(uiTPlatformComponent)
-      {Check if the system is currently using a dark theme.
-      Returns 0 for no, 1 for yes, and -1 if unknown}
-      function IsSystemDarkTheme(): loopint; override;
       {get the name of the system theme}
       function GetSystemTheme(): StdString; override;
    end;
@@ -33,14 +31,20 @@ IMPLEMENTATION
 
 { uiTWindowsPlatformComponent }
 
-function uiTWindowsPlatformComponent.IsSystemDarkTheme(): loopint;
-begin
-   Result := -1;
-end;
-
 function uiTWindowsPlatformComponent.GetSystemTheme(): StdString;
+var
+  appsUseLightTheme: windows.DWORD;
+
 begin
    Result := 'unknown';
+
+   if(OutRegistryDWord(HKEY_CURRENT_USER, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize',
+      'AppsUseLightTheme', appsUseLightTheme)) then begin
+      if(appsUseLightTheme > 0) then
+         Result := 'light'
+      else
+        Result := 'dark';
+   end;
 end;
 
 function componentReturn(): TObject;
