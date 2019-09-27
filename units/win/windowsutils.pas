@@ -14,11 +14,15 @@ INTERFACE
    USES sysutils, windows, StringUtils;
 
 function GetConsoleWindow(): HWND;
+
 function OpenRegistryKey(base: HKEY; const name: string): HKEY;
 function OpenRegistryKeyUnicode(base: HKEY; const name: UnicodeString): HKEY;
 function GetRegistryString(key: HKEY; const name: string): string;
 function GetRegistryStringUnicode(key: HKEY; const name: UnicodeString): UnicodeString;
 function GetRegistryDWord(key: HKEY; const name: string): windows.DWORD;
+
+function OutRegistryDWord(base: HKEY; const path, name: string; out value: windows.DWORD): boolean;
+
 function GetVidAndPidFromDeviceId(const deviceId: string; out vid, pid: longint): boolean;
 
 IMPLEMENTATION
@@ -110,6 +114,28 @@ begin
       exit(contents);
 
    Result := 0;
+end;
+
+function OutRegistryDWord(base: HKEY; const path, name: string; out value: windows.DWORD): boolean;
+var
+   key: HKEY;
+   contents: windows.DWORD;
+   bufSize: windows.DWORD = sizeof(contents);
+
+begin
+   key := OpenRegistryKey(base, path);
+   value := 0;
+
+   if(key <> 0) then begin
+      contents := 0;
+
+      if(RegQueryValueEx(key, pchar(name), nil, nil, @contents, @bufSize) = ERROR_SUCCESS) then begin
+         value := contents;
+         exit(true);
+      end;
+   end;
+
+   Result := false;
 end;
 
 function GetVidAndPidFromDeviceId(const deviceId: string; out vid, pid: longint): boolean;
