@@ -21,8 +21,9 @@ INTERFACE
 CONST
    wdgscPROGRESS_BAR_SURFACE = 0;
    wdgscPROGRESS_BAR = 1;
+   wdgscPROGRESS_PAUSED = 1;
 
-   wdgProgressBarSkinColorDescriptor: array[0..1] of uiTWidgetSkinColorDescriptor = (
+   wdgProgressBarSkinColorDescriptor: array[0..2] of uiTWidgetSkinColorDescriptor = (
       (
          Name: 'surface';
          Color: (255, 255, 255, 255)
@@ -30,6 +31,10 @@ CONST
       (
          Name: 'bar';
          Color: (0, 153, 255, 204)
+      ),
+      (
+         Name: 'paused';
+         Color: (153, 183, 0, 204)
       )
    );
 
@@ -70,6 +75,10 @@ TYPE
       function SetPercentage(p: single): wdgTProgressBar;
       {set the progress bar as undefined}
       function Undefined(): wdgTProgressBar;
+      {set the progress bar in a paused state}
+      procedure Pause();
+      {set the progress bar in a resumed state}
+      procedure Resume();
       {stop and clear the progress bar}
       procedure Stop();
    end;
@@ -132,7 +141,10 @@ begin
    r.h := Dimensions.h - 2;
    r.w := maxw;
 
-   SetColor(wdgscPROGRESS_BAR);
+   if(not Progress.Paused) then
+      SetColor(wdgscPROGRESS_BAR)
+   else
+      SetColor(wdgscPROGRESS_PAUSED);
 
    {undefined progress bar}
    if(Progress.ItemsDone <> -1) then begin
@@ -261,6 +273,20 @@ begin
    Progress.ShowProgressWith := oxPROGRESS_INDICATOR_NONE;
 
    Result := Self;
+end;
+
+procedure wdgTProgressBar.Pause();
+begin
+   if(not Progress.Paused) then begin
+      Progress.Paused := true;
+   end;
+end;
+
+procedure wdgTProgressBar.Resume();
+begin
+   if(Progress.Paused) then begin
+      Progress.Paused := false;
+   end;
 end;
 
 procedure wdgTProgressBar.Stop();
