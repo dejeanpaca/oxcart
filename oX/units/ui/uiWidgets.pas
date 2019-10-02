@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, StringUtils, uColors, appuEvents,
       {oX}
-      oxuRunRoutines, oxuTypes, oxuUI, oxuWindows, oxuWindow,
+      oxuRunRoutines, oxuTypes, oxuUI, oxuWindows, oxuWindow, oxuWindowTypes,
       {ui}
       uiuTypes, oxuFont, uiuWindowTypes, uiuWidget, uiuControl, uiuSkin, uiuSkinTypes, uiuDraw;
 
@@ -31,6 +31,9 @@ TYPE
       procedure SetControlMethod(controlProc: uiTWidgetControlMethod);
 
       procedure RenderAll();
+
+      {gets the top ui object}
+      function GetUI(): oxTUI;
 
       { selection }
       {selects a widget}
@@ -616,9 +619,14 @@ begin
    end;
 end;
 
+function uiTWidgetHelper.GetUI(): oxTUI;
+begin
+   Result := oxTUI(oxTWindow(oxwParent).UIBase);
+end;
+
 procedure uiTWidgetHelper.Select();
 begin
-   oxui.Select.Assign(uiTControl(self));
+   GetUI().Select.Assign(uiTControl(self));
    Action(uiwdgACTION_ACTIVATE);
    OnActivate();
 end;
@@ -649,7 +657,7 @@ begin
          w^.s := -1;
    end;
 
-   oxui.Select.Deselect(Self);
+   GetUI().Select.Deselect(Self);
 
    {perform actions if we're not disposing of the widget}
    if(not (wdgpDESTROY_IN_PROGRESS in Properties)) then begin
@@ -661,7 +669,7 @@ end;
 
 function uiTWidgetHelper.IsSelected(): boolean;
 begin
-   Result := (oxui.Select.l >= Level) and (oxui.Select.s[Level] = Self);
+   Result := (GetUI().Select.l >= Level) and (GetUI().Select.s[Level] = Self);
 end;
 
 function uiTWidgetHelper.Hovering(): boolean;
@@ -1051,7 +1059,7 @@ begin
    appEvents.DisableWithData(Self);
 
    Deselected();
-   oxui.mSelect.Deselect(Self);
+   GetUI().mSelect.Deselect(Self);
 
    {de-initialize the widget}
    DeInitialize();
@@ -1305,7 +1313,7 @@ begin
       Result := uiTSkin(uiTWindow(wnd).Skin);
 
    if(Result = nil) then
-      Result := oxui.DefaultSkin;
+      Result := GetUI().DefaultSkin;
 end;
 
 function uiTWidgetHelper.GetColor(clrIdx: longint): TColor4ub;
@@ -1367,17 +1375,17 @@ end;
 
 procedure uiTWidgetHelper.LockPointer(x, y: single);
 begin
-   if(oxui.PointerCapture.Typ = uiPOINTER_CAPTURE_NONE) then begin
-      oxui.PointerCapture.Typ := uiPOINTER_CAPTURE_WIDGET;
-      oxui.PointerCapture.Wdg := Self;
-      oxui.PointerCapture.Point.Assign(x, y);
+   if(GetUI().PointerCapture.Typ = uiPOINTER_CAPTURE_NONE) then begin
+      GetUI().PointerCapture.Typ := uiPOINTER_CAPTURE_WIDGET;
+      GetUI().PointerCapture.Wdg := Self;
+      GetUI().PointerCapture.Point.Assign(x, y);
    end;
 end;
 
 procedure uiTWidgetHelper.UnlockPointer();
 begin
-   if(oxui.PointerCapture.Typ = uiPOINTER_CAPTURE_WIDGET) then begin
-      oxui.PointerCapture.Clear();
+   if(GetUI().PointerCapture.Typ = uiPOINTER_CAPTURE_WIDGET) then begin
+      GetUI().PointerCapture.Clear();
    end;
 end;
 

@@ -49,6 +49,8 @@ TYPE
       Instance,
       {minimum base class type the above set instance needs to be}
       MinimumInstanceType: uiTWindowClass;
+      {base UI object}
+      UIBase: oxTUI;
 
       {minimum size for the created window}
       MinimumSize,
@@ -59,6 +61,9 @@ TYPE
    { uiTWindowHelper }
 
    uiTWindowHelper = class helper for uiTWindow
+      {get the base UI object}
+      function GetUI(): oxTUI;
+
       {select this window (bring to focus)}
       procedure Select();
       {queue a select event for the window}
@@ -401,10 +406,6 @@ TYPE
       {tells to how many levels two selections are equal}
       function SelectionEqu(const s1, s2: uiTSelectInfo): loopint;
 
-      { FINDING WINDOWS }
-      {returns the top level parent window of the currently selected window}
-      function GetSelectedTopLevelParent(): uiTWindow;
-
       { UTILITIES }
       {get window notification from an event, or uiWINDOW_EVENT_NONE}
       function GetNotification(const event: appTEvent): uiTWindowEvents;
@@ -480,7 +481,24 @@ end;
 
 procedure uiTWindowGlobal.SetupCreatedWindow(wnd: uiTWindow; var createData: uiTWindowCreateData);
 begin
-   wnd.SetSkin(oxui.DefaultSkin);
+   {set window parent}
+   if(createData.Parent <> nil) then begin
+      wnd.Parent := createData.Parent;
+
+      createData.oxwParent := oxTWindow(createData.Parent.oxwParent);
+   end;
+
+   wnd.oxwParent := createData.oxwParent;
+
+   {set the base UI object if this is an oxTWindow}
+   if(wnd.oxwParent = wnd) or (wnd.oxwParent = nil) then
+      oxTWindow(wnd).UIBase := createData.UIBase;
+
+   {setup properties}
+
+   assert(wnd.GetUI() <> nil, 'Tried to create a window with no base ui set in creation data');
+
+   wnd.SetSkin(wnd.GetUI().DefaultSkin);
 
    wnd.Background       := uiWindow.DefaultBackground;
 
@@ -502,15 +520,6 @@ begin
       wnd.MaximumSize := createData.MaximumSize;
 
    wnd.AdjustSizesWithRestrictions(wnd.Dimensions);
-
-   {set window parent}
-   if(createData.Parent <> nil) then begin
-      wnd.Parent := createData.Parent;
-
-      createData.oxwParent := oxTWindow(createData.Parent.oxwParent);
-   end;
-
-   wnd.oxwParent := createData.oxwParent;
 
    {set window data}
    uiSkin.SetWindowDefault(wnd);
@@ -536,7 +545,7 @@ begin
    RestoreCreateDefaults();
 
    {select this window is none is selected}
-   if(oxui.Select.GetSelectedWnd() = nil) then
+   if(wnd.GetUI().Select.GetSelectedWnd() = nil) then
       wnd.Select();
 
    uiWindow.OnCreate.Call(wnd);
@@ -671,8 +680,8 @@ begin
 
    appEvents.DisableForWindow(wnd);
 
-   oxui.Select.Deselect(uiTControl(wnd));
-   oxui.mSelect.Deselect(uiTControl(wnd));
+   wnd.GetUI().Select.Deselect(uiTControl(wnd));
+   wnd.GetUI().mSelect.Deselect(uiTControl(wnd));
 
    Destroyed(wnd);
 
@@ -696,8 +705,8 @@ procedure uiTWindowGlobal.Destroyed(wnd: uiTWindow);
 begin
    assert(wnd <> nil, 'Tried to mark a nil window as destroyed');
 
-   if(oxui.UseWindow = wnd) then
-      oxui.UseWindow := nil;
+   if(wnd.GetUI().UseWindow = wnd) then
+      wnd.GetUI().UseWindow := nil;
 
    {call all OnDestroy routines}
    uiWindow.OnDestroy.Call(wnd);
@@ -844,8 +853,8 @@ begin
          HideNoSelect(False);
 
       {clear any pointer lock}
-      if(oxui.PointerCapture.Wnd = Self) then
-         oxui.PointerCapture.Clear();
+      if(GetUI().PointerCapture.Wnd = Self) then
+         GetUI().PointerCapture.Clear();
 
       {TODO: Check if any children performed the lock}
 
@@ -1177,6 +1186,8 @@ begin
 
    data.MinimumSize := oxNullDimensions;
    data.MaximumSize := oxNullDimensions;
+
+   data.UIBase := oxui;
 end;
 
 { BACKGROUND }
@@ -1309,7 +1320,15 @@ end;
 {WINDOW SELECTION}
 function uiTWindowHelper.IsSelected(): boolean;
 begin
-   Result := (Level <= oxui.Select.l) and (oxui.Select.s[Level] = Self);
+   Result := (Level <= GetUI().Select.l) and (GetUI().Select.s[Level] = Self);
+end;
+
+function uiTWindowHelper.GetUI(): oxTUI;
+begin
+   if(oxwParent <> nil) then
+      Result := oxTUI(oxTWindow(oxwParent).UIBase)
+   else
+      Result := oxTUI(oxTWindow(Self).UIBase);
 end;
 
 procedure uiTWindowHelper.Select();
@@ -1320,20 +1339,20 @@ var
    previouslySelectedWdg: uiTWidget;
 
 begin
-   selected := oxui.Select.Selected;
-   previouslySelected := oxui.Select.GetSelectedWnd();
-   previouslySelectedWdg := oxui.Select.GetSelectedWdg();
+   selected := GetUI().Select.Selected;
+   previouslySelected := GetUI().Select.GetSelectedWnd();
+   previouslySelectedWdg := GetUI().Select.GetSelectedWdg();
 
    if(selected <> Self) then begin
-      oxui.Select.Assign(uiTControl(Self));
+      GetUI().Select.Assign(uiTControl(Self));
 
-      oxui.UseWindow := Self;
+      GetUI().UseWindow := Self;
 
       if(previouslySelected <> Self) then begin
          {move the window and all it's parents to the top of the z order}
-         for i := 0 to oxui.Select.l do begin
-            if(i > 0) and (oxui.Select.s[i - 1].ControlType = uiCONTROL_WINDOW) then
-               uiTWindow(oxui.Select.s[i - 1]).w.z.MoveToTop(oxui.Select.s[i])
+         for i := 0 to GetUI().Select.l do begin
+            if(i > 0) and (GetUI().Select.s[i - 1].ControlType = uiCONTROL_WINDOW) then
+               uiTWindow(GetUI().Select.s[i - 1]).w.z.MoveToTop(GetUI().Select.s[i])
          end;
 
          Notification(uiWINDOW_ACTIVATE);
@@ -1369,12 +1388,12 @@ var
    pWnd: uiTWindow;
 
 begin
-   oxui.mSelect.Deselect(uiTControl(Self));
+   GetUI().mSelect.Deselect(uiTControl(Self));
 
    if(not IsSelected()) then
       exit;
 
-   oxui.Select.Deselect(uiTControl(Self));
+   GetUI().Select.Deselect(uiTControl(Self));
 
    if(reselect) then begin
       sWnd := nil;
@@ -1615,52 +1634,39 @@ begin
    Self.Level := target.Level + 1;
 end;
 
-function uiTWindowGlobal.GetSelectedTopLevelParent(): uiTWindow;
-var
-   wnd: uiTWindow;
-
-begin
-   wnd := oxui.Select.GetSelectedWnd();
-
-   if(wnd <> nil) then
-      Result := wnd.GetTopLevel()
-   else
-      Result := nil;
-end;
-
 { WINDOW RENDERING }
 
 procedure uiTWindowHelper.SetColor(r, g, b, a: byte);
 begin
    a := round(opacity * a);
 
-   oxui.Material.ApplyColor('color', r, g, b, a);
+   GetUI().Material.ApplyColor('color', r, g, b, a);
 end;
 
 procedure uiTWindowHelper.SetColor(r, g, b, a: single);
 begin
    a := opacity * a;
 
-   oxui.Material.ApplyColor('color', r, g, b, a);
+   GetUI().Material.ApplyColor('color', r, g, b, a);
 end;
 
 procedure uiTWindowHelper.SetColor(color: TColor4ub);
 begin
    color[3] := round(opacity * color[3]);
 
-   oxui.Material.ApplyColor('color', color);
+   GetUI().Material.ApplyColor('color', color);
 end;
 
 procedure uiTWindowHelper.SetColor(color: TColor4f);
 begin
-   oxui.Material.ApplyColor('color', color);
+   GetUI().Material.ApplyColor('color', color);
 end;
 
 procedure uiTWindowHelper.SetColorBlended(r, g, b, a: byte);
 begin
    a := round(opacity * a);
 
-   oxui.Material.ApplyColor('color', r, g, b, a);
+   GetUI().Material.ApplyColor('color', r, g, b, a);
    oxRender.EnableBlend();
 end;
 
@@ -1668,7 +1674,7 @@ procedure uiTWindowHelper.SetColorBlended(r, g, b, a: single);
 begin
    a := opacity * a;
 
-   oxui.Material.ApplyColor('color', r, g, b, a);
+   GetUI().Material.ApplyColor('color', r, g, b, a);
    oxRender.EnableBlend();
 end;
 
@@ -1676,7 +1682,7 @@ procedure uiTWindowHelper.SetColorBlended(color: TColor4ub);
 begin
    color[3] := round(opacity * color[3]);
 
-   oxui.Material.ApplyColor('color', color);
+   GetUI().Material.ApplyColor('color', color);
    oxRender.EnableBlend();
 end;
 
@@ -1684,7 +1690,7 @@ procedure uiTWindowHelper.SetColorBlended(color: TColor4f);
 begin
    color[3] := opacity * color[3];
 
-   oxui.Material.ApplyColor('color', color);
+   GetUI().Material.ApplyColor('color', color);
    oxRender.EnableBlend();
 end;
 
@@ -1815,19 +1821,19 @@ end;
 
 procedure uiTWindowHelper.LockPointer(x, y: single);
 begin
-   if(oxui.PointerCapture.Typ = uiPOINTER_CAPTURE_NONE) then begin
-      oxui.PointerCapture.Typ := uiPOINTER_CAPTURE_WINDOW;
-      oxui.PointerCapture.Wnd := Self;
-      oxui.PointerCapture.Point.Assign(x, y);
+   if(GetUI().PointerCapture.Typ = uiPOINTER_CAPTURE_NONE) then begin
+      GetUI().PointerCapture.Typ := uiPOINTER_CAPTURE_WINDOW;
+      GetUI().PointerCapture.Wnd := Self;
+      GetUI().PointerCapture.Point.Assign(x, y);
 
-      oxui.PointerCapture.LockWindow();
+      GetUI().PointerCapture.LockWindow();
    end;
 end;
 
 procedure uiTWindowHelper.UnlockPointer();
 begin
-   if(oxui.PointerCapture.Typ = uiPOINTER_CAPTURE_WINDOW) then begin
-      oxui.PointerCapture.Clear();
+   if(GetUI().PointerCapture.Typ = uiPOINTER_CAPTURE_WINDOW) then begin
+      GetUI().PointerCapture.Clear();
    end;
 end;
 

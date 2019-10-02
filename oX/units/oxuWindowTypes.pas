@@ -63,6 +63,9 @@ TYPE
       {platform associated with the window}
       Platform: TObject;
 
+      {base UI object}
+      UIBase: TObject;
+
       {externally associated window}
       ExternalWindow: uiTWindow;
       {external ox parent window}
