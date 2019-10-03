@@ -48,8 +48,6 @@ TYPE
      procedure SetDefault(skin: uiTSkin);
      {sets up a widget skin from a descriptor}
      procedure SetupWidget(s: uiTSkin; var skin: uiTWidgetSkin; var descriptor: uiTWidgetSkinDescriptor);
-     {setups default widget skins}
-     procedure SetupDefaultWidget(skin: uiTSkin);
 
      {dispose a widget skin}
      procedure DisposeWidget(var skin: uiTWidgetSkin);
@@ -187,18 +185,6 @@ begin
       descriptor.Setup(TObject(s), @skin);
 end;
 
-procedure uiTSkinGlobal.SetupDefaultWidget(skin: uiTSkin);
-begin
-   try
-      if(oxui.nWidgetTypes > 0) then begin
-         SetLength(skin.wdgSkins, oxui.nWidgetTypes);
-         ZeroOut(skin.wdgSkins[0], int64(SizeOf(uiTWidgetSkin)) * int64(oxui.nWidgetTypes));
-      end;
-   except
-      exit;
-   end;
-end;
-
 { DEFAULT SKIN }
 procedure InitStandardSkin();
 var
@@ -322,8 +308,6 @@ begin
    end;
 
    InitStandardSkin();
-
-   uiSkin.SetupDefaultWidget(oxui.DefaultSkin);
 end;
 
 procedure DeInitialize();

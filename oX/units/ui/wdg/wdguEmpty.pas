@@ -14,7 +14,8 @@ INTERFACE
    {oX}
    oxuTypes,
    {ui}
-   uiuWidget, uiWidgets, wdguBase;
+   uiuWidget, uiWidgets, uiuRegisteredWidgets,
+   wdguBase;
 
 TYPE
    wdgTEmptyGlobal = class(specialize wdgTBase<uiTWidget>)

@@ -16,7 +16,7 @@ INTERFACE
       oxuTypes, oxuFont,
       {ui}
       uiuWindowTypes, uiuSkinTypes,
-      uiuWidget, uiuWindow, uiWidgets, uiuWidgetRender, uiuDraw,
+      uiuWidget, uiuWindow, uiWidgets, uiuWidgetRender, uiuRegisteredWidgets, uiuDraw,
       wdguBase;
 
 TYPE

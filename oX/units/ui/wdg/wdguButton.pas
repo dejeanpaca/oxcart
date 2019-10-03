@@ -18,7 +18,7 @@ INTERFACE
       oxuTypes, oxuFont,
       {ui}
       uiuControl, uiuWindowTypes, uiuTypes, uiuSkinTypes,
-      uiuWidget, uiuWindow, uiuWidgetRender, uiWidgets, wdguBase;
+      uiuWidget, uiuWindow, uiuWidgetRender, uiWidgets, uiuRegisteredWidgets, wdguBase;
 
 CONST
    wdghBUTTON_CLICKED                     = $0001;

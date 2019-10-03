@@ -18,7 +18,7 @@ INTERFACE
       uOX, oxuTypes, oxuRender,
       {ui}
       uiuTypes, oxuUI, uiuWindowTypes, uiuSkinTypes,
-      uiuWidget, uiWidgets, uiuDraw, uiuWidgetRender,
+      uiuWidget, uiWidgets, uiuDraw, uiuWidgetRender, uiuRegisteredWidgets,
       wdguBase;
 
 CONST

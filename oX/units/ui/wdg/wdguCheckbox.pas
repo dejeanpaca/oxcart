@@ -18,7 +18,7 @@ INTERFACE
       oxuTypes, oxuFont, oxuRender,
       {ui}
       uiuDraw, uiuWindowTypes, uiuSkinTypes,
-      uiuWidget, uiWidgets, uiuWidgetRender, wdguBase;
+      uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuWidgetRender, wdguBase;
 
 CONST
    wdgcCHECKBOX_TOGGLE                          = $0001;
