@@ -1,26 +1,28 @@
 {
-   uiuInitialize, UI initialization
-   Copyright (C) 2007. Dejan Boras
+   uiuBase, UI base setup
+   Copyright (C) 2019. Dejan Boras
 
-   Started On:    01.05.2007.
+   Started On:    04.09.2019.
 }
 
 {$INCLUDE oxdefines.inc}
-UNIT uiuInitialize;
+UNIT uiuBase;
 
 INTERFACE
 
    USES
+      uLog, udvars,
+      oxuRunRoutines,
       uiuSkinTypes;
 
 TYPE
-   { uiTInitialization }
+   { uiTBase }
 
-   uiTInitialization = record
+   uiTBase = record
       {ui is initialized and ready}
       Initialized,
       {ui started initialization (if false it means it never attempted to initialize)}
-      StartedInitialization,
+      StartedInitialization: boolean;
 
       {standard internal skin}
       StandardSkin: uiTSkin;
@@ -46,35 +48,35 @@ TYPE
    end;
 
 VAR
-   uiInitialization: uiTInitialization;
+   ui: uiTBase;
 
 IMPLEMENTATION
 
-procedure uiTInitialization.Initialize();
+procedure uiTBase.Initialize();
 begin
    InitializationProcs.iCall();
 end;
 
-procedure uiTInitialization.DeInitialize();
+procedure uiTBase.DeInitialize();
 begin
    InitializationProcs.dCall();
 end;
 
-procedure uiTInitialization.BaseInitialize();
+procedure uiTBase.BaseInitialize();
 begin
-   oxui.StartedInitialization := true;
-   oxui.BaseInitializationProcs.iCall();
+   StartedInitialization := true;
+   BaseInitializationProcs.iCall();
 
    log.i('Initialized UI');
 end;
 
-procedure uiTInitialization.BaseDeInitialize();
+procedure uiTBase.BaseDeInitialize();
 begin
    if(StartedInitialization) then begin
       StartedInitialization := false;
 
       {de-initialize UI}
-      oxui.BaseInitializationProcs.dCall();
+      BaseInitializationProcs.dCall();
 
       log.i('Deinitialized UI');
    end;

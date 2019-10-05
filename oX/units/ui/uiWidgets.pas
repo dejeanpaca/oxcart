@@ -13,9 +13,11 @@ INTERFACE
    USES
       uStd, uColors, appuEvents,
       {oX}
-      oxuRunRoutines, oxuTypes, oxuUI, oxuWindows, oxuWindow, oxuWindowTypes,
+      oxuRunRoutines, oxuTypes, oxuUI, oxuWindows, oxuWindow, oxuWindowTypes, oxuFont,
       {ui}
-      uiuTypes, oxuFont, uiuWindowTypes, uiuWidget, uiuControl, uiuSkin, uiuSkinTypes, uiuDraw, uiuRegisteredWidgets;
+      uiuTypes, uiuWindowTypes, uiuBase,
+      uiuSkin, uiuSkinTypes, uiuDraw,
+      uiuControl, uiuWidget, uiuRegisteredWidgets;
 
 CONST
    wdgevDISPOSE = 1;
@@ -1482,6 +1484,6 @@ VAR
 INITIALIZATION
    uiWidget.evh := appEvents.AddHandler(uiWidget.EventHandler, 'ox.widget', @eventAction);
 
-   oxui.BaseInitializationProcs.Add(initRoutines, 'widgets', @InitWidgets, @DeInitWidgets);
+   ui.BaseInitializationProcs.Add(initRoutines, 'widgets', @InitWidgets, @DeInitWidgets);
 
 END.

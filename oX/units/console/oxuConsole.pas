@@ -23,8 +23,8 @@ INTERFACE
      uOX, oxuTypes, oxuGlobalKeys, oxuFont, oxuWindow, oxuRun, oxuRunRoutines,
      oxuConsoleBackend, oxuWindowTypes, oxuWindows, oxuRenderUtilities,
      {ui}
-     oxuUI, uiuDraw, uiuTypes, uiuWindowTypes, uiuWindow, uiuControl, uiuSkinTypes,
-     uiuWidget, uiWidgets, uiuSkin, wdguInputBox;
+     uiuBase, oxuUI, uiuDraw, uiuTypes, uiuWindowTypes, uiuWindow, uiuSkinTypes,
+     uiuControl, uiuWidget, uiWidgets, uiuSkin, wdguInputBox;
 
 TYPE
 
@@ -733,7 +733,7 @@ VAR
 
 INITIALIZATION
    ox.Init.Add(initRoutines, 'console', @Initialize, @DeInitialize);
-   oxui.InitializationProcs.iAdd(uiInitRoutines, 'console', @uiInitialize);
+   ui.InitializationProcs.iAdd(uiInitRoutines, 'console', @uiInitialize);
 
    oxConsole.Height        := 0.6;
    oxConsole.IbHeight      := 20;

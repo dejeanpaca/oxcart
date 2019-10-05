@@ -16,7 +16,7 @@ INTERFACE
       oxuRunRoutines, oxuPlatform,
       {ui}
       oxuUI, uiuTypes, uiuWindowTypes, uiuSkinTypes,
-      uiuPlatform;
+      uiuBase, uiuPlatform;
 
 CONST
    {window rendering constants}
@@ -327,8 +327,8 @@ VAR
    loadRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxui.BaseInitializationProcs.Add(initRoutines, 'skin', @Initialize, @DeInitialize);
-   oxui.InitializationProcs.iAdd(loadRoutines, 'skin.load', @skinLoad);
+   ui.BaseInitializationProcs.Add(initRoutines, 'skin', @Initialize, @DeInitialize);
+   ui.InitializationProcs.iAdd(loadRoutines, 'skin.load', @skinLoad);
 
 END.
 

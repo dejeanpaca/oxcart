@@ -14,7 +14,9 @@ INTERFACE
       uStd, uLog,
       {ox}
       oxuPaths, oxuFont, oxuRunRoutines, oxuGlobalInstances,
-      oxuUI, oxuFreetypeFonts;
+      oxuFreetypeFonts,
+      {ui}
+      oxuUI, uiuBase;
 
 TYPE
    uiPDefaultFontManager = ^uiTDefaultFontManager;
@@ -98,9 +100,9 @@ INITIALIZATION
    oxGlobalInstances.Add('uiTDefaultFontManager', @uiDefaultFont);
 
    {$IFNDEF OX_LIBRARY}
-   oxui.InitializationProcs.Add(initRoutines, 'default_font', @initialize, @deinitialize);
+   ui.InitializationProcs.Add(initRoutines, 'default_font', @initialize, @deinitialize);
    {$ELSE}
-   oxui.InitializationProcs.Add(initRoutines, 'default_font', @initializeLibrary);
+   ui.InitializationProcs.Add(initRoutines, 'default_font', @initializeLibrary);
    {$ENDIF}
 
 END.

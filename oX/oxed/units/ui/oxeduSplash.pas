@@ -14,7 +14,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuwndSplash, oxuRunRoutines,
       {ui}
-      oxuUI, uiuContextMenu, uiuWidget, uiuControl,
+      uiuBase, oxuUI, uiuContextMenu, uiuWidget, uiuControl,
       {widgets}
       wdguButton,
       {oxed}
@@ -116,7 +116,7 @@ INITIALIZATION
    oxwndSplash.ShowBuildInformation := true;
    oxwndSplash.ImageFileName := 'oxed' + DirectorySeparator + 'data' + DirectorySeparator + 'oxed.jpg';
 
-   oxui.BaseInitializationProcs.dAdd(initRoutines, 'oxed.splash', @DeInitialize);
+   ui.BaseInitializationProcs.dAdd(initRoutines, 'oxed.splash', @DeInitialize);
 
    oxedMenubar.OnInit.Add(@initMenu);
 
