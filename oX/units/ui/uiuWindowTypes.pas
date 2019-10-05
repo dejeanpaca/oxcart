@@ -21,12 +21,6 @@ INTERFACE
 
 TYPE
    { WINDOWS }
-   uiPWindowReference = ^uiTWindowReference;
-   uiTWindowReference = record
-      idx: longint;
-      uid: QWord;
-      wnd: TObject;
-   end;
 
    {window background}
    uiTWindowBackground = record
