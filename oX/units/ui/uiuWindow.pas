@@ -661,8 +661,12 @@ begin
 
    Include(wndRef.Properties, uiwndpDESTRUCTION_IN_PROGRESS);
 
+
    wnd := wndRef;
    wndRef := nil;
+
+   {starting to destroy}
+   wnd.OnDestroy();
 
    {unhook from parent}
    if(wnd.Parent <> nil) then
