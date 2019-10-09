@@ -122,13 +122,13 @@ TYPE
       RootFile: StdString;
       BaseLevel: loopint;
 
-      constructor Create; override;
-      destructor Destroy; override;
+      constructor Create(); override;
+      destructor Destroy(); override;
 
       function GetValue(index: loopint): StdString; override;
       function GetGlyph(index: loopint): wdgTListGlyph; override;
 
-      procedure Load; override;
+      procedure Load(); override;
 
       {loads current directory}
       procedure LoadCurrent();
@@ -147,7 +147,7 @@ TYPE
       function GetSubItems(index: loopint; ref: pointer): TSimplePointerList; override;
       function Expandable(index: loopint): boolean; override;
 
-      procedure RemoveAll; override;
+      procedure RemoveAll(); override;
 
       procedure Reload();
 
@@ -207,7 +207,7 @@ end;
 
 { wdgTHierarchicalFileList }
 
-constructor wdgTHierarchicalFileList.Create;
+constructor wdgTHierarchicalFileList.Create();
 begin
    inherited Create;
 
@@ -225,7 +225,7 @@ begin
    Files.InitializeValues(Files);
 end;
 
-destructor wdgTHierarchicalFileList.Destroy;
+destructor wdgTHierarchicalFileList.Destroy();
 begin
    inherited Destroy;
 
@@ -242,7 +242,7 @@ begin
    Result := wdgFileList.GetFileIcon(Files.List[index]);
 end;
 
-procedure wdgTHierarchicalFileList.Load;
+procedure wdgTHierarchicalFileList.Load();
 var
    items: TSimplePointerList;
    rootF: TFileDescriptor;
@@ -436,7 +436,7 @@ begin
       Result := false;
 end;
 
-procedure wdgTHierarchicalFileList.RemoveAll;
+procedure wdgTHierarchicalFileList.RemoveAll();
 begin
    Files.Dispose();
 
@@ -584,11 +584,11 @@ begin
          glyph := wdgFileList.GetFileIcon(pf^);
 
          if(glyph.Glyph <> nil) and (glyph.Glyph.rId <> 0) then begin
-            height := r.h - padding * 2;
+            height := r.h - (padding * 2);
 
             oxRender.BlendDefault();
             SetColorBlended(glyph.Color);
-            uiDrawUtilities.Glyph(r.x, r.y, height, height, glyph.Glyph);
+            uiDrawUtilities.Glyph(r.x , r.y, height, height, glyph.Glyph);
 
             {restore text color}
             SetFontColor(-1);
@@ -609,7 +609,7 @@ begin
 
             oxRender.BlendDefault();
             SetColorBlended(glyph.Color);
-            uiDrawUtilities.Glyph(r.x, r.y - padding, height, height, glyph.Glyph);
+            uiDrawUtilities.Glyph(r.x + ((r.w - height) div 2), r.y - padding, height, height, glyph.Glyph);
 
             br.y := br.y - r.h + (fh * wdgFileGrid.FileNameLines) + fh div 2;
          end;
