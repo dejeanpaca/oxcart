@@ -132,6 +132,12 @@ begin
    if(FileUtils.DirectoryExists(fn)) then begin
       log.i('project > Opening from: ' + fn);
 
+      {prevent opening the same project}
+      if(oxedProject <> nil) and (fn = oxedProject.Path) then begin
+         oxedMessages.i('Project already open');
+         exit;
+      end;
+
       {check if the project exists}
       if(FileUtils.DirectoryExists(fn + oxPROJECT_DIRECTORY)) then begin
          New();
