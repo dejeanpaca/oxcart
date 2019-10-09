@@ -18,7 +18,8 @@ INTERFACE
       oxuTypes, oxuFont, oxuRender, oxuUI, oxuTexture, oxuRenderUtilities, oxuResourcePool,
       {ui}
       uiuTypes, uiuWindowTypes, uiuSkinTypes,
-      uiuWindow, uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuControl, uiuWidgetWindow, uiuDraw,
+      uiuWindow, uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuControl, uiuWidgetWindow,
+      uiuDraw, uiuDrawUtilities,
       {wdg}
       wdguList, wdguCheckbox;
 
@@ -96,9 +97,9 @@ TYPE
       used to check if a callback changed selection, so we can check and not override what the callback did.}
       PreviouslySelected: uiTcontrol;
 
-      procedure Render; override;
+      procedure Render(); override;
 
-      procedure OnDeactivate; override;
+      procedure OnDeactivate(); override;
       procedure DeInitialize(); override;
    end;
 
@@ -121,7 +122,7 @@ TYPE
       Parent: uiTContextMenu;
 
       constructor Create(const newName: StdString);
-      destructor Destroy; override;
+      destructor Destroy(); override;
 
       {insert item at a specific place}
       procedure InsertAt(index: loopint);
@@ -217,7 +218,7 @@ CONST
    {border size when there is no border rendered (but still want some space around)}
    BORDER_SIZE_NONE = 1;
    ITEM_HEIGHT = 20;
-   SEPARATOR_ITEM_HEIGHT = 5;
+   SEPARATOR_ITEM_HEIGHT = 6;
    ITEM_PADDING = 3;
    ITEM_LEFT_BLANK = 28;
 
@@ -349,7 +350,7 @@ end;
 
 { uiTContextMenuWindow }
 
-procedure uiTContextMenuWindow.Render;
+procedure uiTContextMenuWindow.Render();
 begin
    inherited Render;
 
@@ -357,13 +358,13 @@ begin
    uiDraw.Rect(RPosition, Dimensions);
 end;
 
-procedure uiTContextMenuWindow.OnDeactivate;
+procedure uiTContextMenuWindow.OnDeactivate();
 begin
    if(oxui.Select.GetSelectedWnd().ClassType <> uiTContextMenuWindow) then
       uiContextMenu.Destroy()
 end;
 
-procedure uiTContextMenuWindow.DeInitialize;
+procedure uiTContextMenuWindow.DeInitialize();
 var
    owner: uiTControl;
 
@@ -509,17 +510,42 @@ begin
    f.WriteCentered(item^.Caption, ir, [oxfpCenterVertical]);
 end;
 
-procedure renderKeyMap();
+procedure RenderKeyMap();
 begin
    {render key mapping}
    if(RenderKeyMapping) and (item^.Key <> nil) and (MaxKeymapLength > 0) then begin
       keyMapping := item^.Key^.ToString();
       SetColorBlended(clr.Darken(0.25));
 
-      f.Write(r.x + Dimensions.w - (5 + f.GetLength(keyMapping)), r.y - (r.h div 2) - f.GetHeight() div 2, keyMapping);
+      ir.x := r.x + Dimensions.w - 5 - f.GetLength(keyMapping);
+
+      f.WriteCentered(keyMapping, ir, [oxfpCenterVertical]);
 
       SetColorBlended(pSkin.Colors.Text);
    end;
+end;
+
+procedure PrepareGlyph();
+begin
+   size := (r.h - 4) div 2;
+
+   if(enabled) then
+      oxui.Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0)
+   else
+      oxui.Material.ApplyColor('color', 0.5, 0.5, 0.5, 1);
+end;
+
+procedure RenderCheckbox();
+begin
+   PrepareGlyph();
+
+   ir := r;
+   inc(ir.x, 2);
+   dec(ir.y, (r.h - size) div 2);
+   ir.w := size;
+   ir.h := size;
+
+   wdgTCheckbox.RenderCheckbox(Self, menu.Items.List[index].Properties.IsSet(uiCONTEXT_MENU_ITEM_CHECKED), enabled, false, ir);
 end;
 
 begin
@@ -529,12 +555,7 @@ begin
    pSkin := uiTSkin(uiTWindow(wnd).Skin);
 
    if(item^.Glyph <> nil) then begin
-      size := (r.h - 4) div 2;
-
-      if(enabled) then
-         oxui.Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0)
-      else
-         oxui.Material.ApplyColor('color', 0.5, 0.5, 0.5, 1);
+      PrepareGlyph();
 
       oxRenderingUtilities.TexturedQuad(r.x + 2 + size, r.y - 1 - size, size, size, item^.Glyph);
       oxui.Material.ApplyTexture('texture', nil);
@@ -544,31 +565,16 @@ begin
       f := CachedFont;
       f.Start();
       DetermineColor();
-      renderKeyMap();
-
       RenderCaption();
+      RenderKeyMap();
       oxf.Stop();
    end else if(item^.ItemType = uiCONTEXT_MENU_CHECKBOX) then begin
-      size := (r.h - 4);
-
-      if(enabled) then
-         oxui.Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0)
-      else
-         oxui.Material.ApplyColor('color', 0.5, 0.5, 0.5, 1);
-
-      ir := r;
-      inc(ir.x, 2);
-      dec(ir.y, (r.h - size) div 2);
-      ir.w := size;
-      ir.h := size;
-
-      wdgTCheckbox.RenderCheckbox(Self, menu.Items.List[index].Properties.IsSet(uiCONTEXT_MENU_ITEM_CHECKED), enabled, false, ir);
-
+      RenderCheckbox();
       f := CachedFont;
       f.Start();
       DetermineColor();
-      renderKeyMap();
       RenderCaption();
+      RenderKeyMap();
       oxf.Stop();
    end else if(item^.ItemType = uiCONTEXT_MENU_SUB) then begin
       f := CachedFont;
@@ -578,14 +584,14 @@ begin
       RenderCaption();
       SetColorBlended(clr.Darken(0.25));
 
-      f.Write(r.x + Dimensions.w - (5 + f.GetLength('>')), r.y - (r.h div 2) - f.GetHeight() div 2, '>');
+      ir.x := r.x + Dimensions.w - (5 + f.GetLength('>'));
+
+      f.WriteCentered('>', ir, [oxfpCenterVertical]);
       SetColorBlended(pSkin.Colors.Text);
       oxf.Stop();
    end else if (item^.ItemType = uiCONTEXT_MENU_SEPARATOR) then begin
-      SetColor(pSkin.Colors.Border);
-
       oxui.Material.ApplyTexture('texture', nil);
-      uiDraw.HLine(r.x, r.y - (r.h div 2), r.x + r.w - 1);
+      uiDrawUtilities.HorizontalDivisorSunken(wnd, r.x, r.y - (r.h div 2), r.x + r.w - 1, pSkin.Colors.Surface);
    end;
 end;
 
@@ -707,7 +713,7 @@ begin
    Items.InitializeValues(Items);
 end;
 
-destructor uiTContextMenu.Destroy;
+destructor uiTContextMenu.Destroy();
 var
    i: longint;
 
@@ -1033,4 +1039,3 @@ INITIALIZATION
 
    internalWidget.Register('widget.context_menu', @initializeWidget);
 END.
-
