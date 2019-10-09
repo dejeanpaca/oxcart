@@ -16,7 +16,8 @@ INTERFACE
       oxuTypes, oxuFont,
       {ui}
       uiuWindowTypes, uiuSkinTypes,
-      uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuDraw, uiuWindow, wdguBase;
+      uiuWidget, uiWidgets, uiuRegisteredWidgets, wdguBase,
+      uiuWindow, uiuDrawUtilities;
 
 
 TYPE
@@ -89,11 +90,7 @@ begin
       x2 := x + Dimensions.w - (PaddingRight + PaddingLeft + 1);
 
       if(Caption = '') then begin
-         SetColor(cSurface.Lighten(1.3));
-         uiDraw.HLine(x, y, x2);
-
-         SetColor(cSurface.Darken(0.8));
-         uiDraw.HLine(x, y - 1, x2);
+         uiDrawUtilities.HorizontalDivisorSunken(wnd, x, y, x2, cSurface);
       end else begin
          SetColorBlendedEnabled(uiTSkin(uiTWindow(wnd).Skin).Colors.Text,
             uiTSkin(uiTWindow(wnd).Skin).DisabledColors.Text);
@@ -104,13 +101,8 @@ begin
 
          w := CachedFont.GetLength(Caption);
 
-         SetColor(cSurface.Lighten(1.3));
-         uiDraw.HLine(x, y, x + 5);
-         uiDraw.HLine(x + 5 + CachedFont.GetWidth() * 2 + w, y, x2);
-
-         SetColor(cSurface.Darken(0.8));
-         uiDraw.HLine(x, y - 1, x + 5);
-         uiDraw.HLine(x + 5 + CachedFont.GetWidth() * 2 + w, y - 1, x2);
+         uiDrawUtilities.HorizontalDivisorSunken(wnd, x, y, x + 5, cSurface);
+         uiDrawUtilities.HorizontalDivisorSunken(wnd, x + 10 + CachedFont.GetWidth() + w, y, x2, cSurface);
       end;
    end else begin
       x := RPosition.x + (Dimensions.w div 2);
@@ -118,11 +110,7 @@ begin
       y2 := y - Dimensions.h + (PaddingTop + PaddingBottom + 1);
 
       if(Caption = '') then begin
-         SetColor(cSurface.Lighten(1.3));
-         uiDraw.VLine(x + 1, y, y2);
-
-         SetColor(cSurface.Darken(0.8));
-         uiDraw.VLine(x, y, y2);
+         uiDrawUtilities.VerticalDivisorSunken(wnd, x, y, y2, cSurface);
       end;
    end;
 end;
