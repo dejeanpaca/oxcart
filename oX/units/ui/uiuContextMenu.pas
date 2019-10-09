@@ -539,6 +539,8 @@ procedure RenderCheckbox();
 begin
    PrepareGlyph();
 
+   size := r.h - 4;
+
    ir := r;
    inc(ir.x, 2);
    dec(ir.y, (r.h - size) div 2);
