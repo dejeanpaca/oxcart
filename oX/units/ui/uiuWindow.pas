@@ -2004,7 +2004,7 @@ end;
 function uiTWindowHelper.GetIconDimensions(): oxTDimensions;
 begin
    if(Icon <> nil) then begin
-      Result.w := round(GetTitleHeight() * 0.5);
+      Result.w := round(GetTitleHeight() * 0.75);
       Result.h := Result.w;
    end else begin
       Result.w := 0;

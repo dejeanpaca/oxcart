@@ -18,7 +18,7 @@ INTERFACE
       oxuRenderer, oxuRender, oxuRenderUtilities,
       {ui}
       oxuUI, uiuTypes, uiuSkinTypes,
-      uiuWindowTypes, uiuWidget, uiuDraw, uiWidgets, uiuWindow;
+      uiuWindowTypes, uiuWidget, uiuDraw, uiuDrawUtilities, uiWidgets, uiuWindow;
 
 TYPE
    uiTWindowRenderHelper = class helper(uiTWindowHelper) for uiTWindow
@@ -180,22 +180,20 @@ end;
 
 procedure renderIcon();
 var
-   tex: oxTTexture;
    d: oxTDimensions;
    x,
    y: single;
 
 begin
    if(Icon <> nil) then begin
-      tex := oxTTexture(Icon);
       d := GetIconDimensions();
 
       SetColorBlended(colors^.cTitleIcon);
 
-      x := APosition.x + fw + d.w / 2;
-      y := APosition.y - ((GetTitleHeight() - d.h) div 2) - d.h / 2;
+      x := APosition.x + fw;
+      y := APosition.y - ((GetTitleHeight() - d.h) div 2) + 1;
 
-      oxRenderingUtilities.TexturedQuad(x, y, d.w / 2, d.h / 2, tex);
+      uiDrawUtilities.Glyph(x, y, d.w, d.h, oxTTexture(Icon));
    end;
 end;
 
