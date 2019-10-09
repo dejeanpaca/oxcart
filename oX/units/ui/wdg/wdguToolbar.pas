@@ -288,31 +288,31 @@ begin
 
    for i := 0 to Items.n - 1 do begin
       if(Items.List[i].Typ = WDG_TOOLBAR_ITEM_BUTTON) and (Items.List[i].Glyph <> nil) and (Items.List[i].Glyph.rId <> 0) then begin
-         size := Items.List[i].Size div 2;
+         size := Items.List[i].Size;
 
          if(not Vertical) then begin
-            px := RPosition.x + Items.List[i].RelativePosition + size;
-            py := RPosition.y - ((Dimensions.h - Items.List[i].Size) div 2) - size;
+            px := RPosition.x + Items.List[i].RelativePosition;
+            py := RPosition.y - ((Dimensions.h - Items.List[i].Size) div 2);
          end else begin
-            px := RPosition.x + ((Dimensions.w - Items.List[i].Size) div 2) + size;
-            py := RPosition.y - Items.List[i].RelativePosition - size;
+            px := RPosition.x + ((Dimensions.w - Items.List[i].Size) div 2);
+            py := RPosition.y - Items.List[i].RelativePosition;
          end;
 
          SetupColor(Items.List[i]);
 
          if(not (WDG_TOOLBAR_ITEM_SPIN in Items.List[i].Properties)) then begin
-            oxRenderingUtilities.TexturedQuad(px, py, size, size, Items.List[i].Glyph);
+            uiDrawUtilities.Glyph(px, py, size, size, Items.List[i].Glyph);
          end else begin
             m := oxTransform.Matrix;
 
             rotation := - (360 * ((timer.Cur() mod 1000) / 1000)) * Items.List[i].SpinSpeed;
 
             oxTransform.Identity();
-            oxTransform.Translate(px, py, 0);
+            oxTransform.Translate(px + size / 2, py - size / 2, 0);
             oxTransform.RotateZ(rotation);
             oxTransform.Apply();
 
-            oxRenderingUtilities.TexturedQuad(0, 0, size, size, Items.List[i].Glyph);
+            oxRenderingUtilities.TexturedQuad(0, 0, size / 2, size / 2, Items.List[i].Glyph);
 
             oxTransform.Apply(m);
          end
