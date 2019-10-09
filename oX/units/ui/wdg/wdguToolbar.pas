@@ -16,7 +16,7 @@ INTERFACE
       oxuUI, oxuTypes, oxuTexture, oxuFont, oxuRenderUtilities, oxuRender, oxuTransform, oxuResourcePool,
       {ui}
       uiuTypes, uiuWindowTypes, uiuSkinTypes,
-      uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuDraw, uiuDrawUtilities,
+      uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuDrawUtilities,
       wdguBase, wdguWorkbar;
 
 CONST

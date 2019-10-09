@@ -17,7 +17,7 @@ INTERFACE
       {app}
       appuKeys, appuMouse,
       {oX}
-      oxuTypes, oxuFont, oxuFileIcons, oxuRender, oxuTexture, oxuRenderUtilities,
+      oxuTypes, oxuFont, oxuFileIcons, oxuRender,
       {ui}
       uiuTypes, uiuWindowTypes, uiuSkinTypes, uiuFiles,
       uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuDrawUtilities,
