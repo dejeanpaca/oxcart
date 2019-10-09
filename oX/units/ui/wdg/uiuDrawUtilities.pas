@@ -12,6 +12,7 @@ INTERFACE
 
    USES
       uStd, uColors,
+      oxuTexture, oxuRenderUtilities,
       {ui}
       uiuControl, uiuWindow, uiuWindowTypes,
       uiuDraw;
@@ -28,6 +29,8 @@ TYPE
       class procedure HorizontalDivisor(wnd: uiTControl; x1, y1, x2: loopint; color: TColor4ub); static; inline;
       class procedure VerticalDivisorSunken(wnd: uiTControl; x1, y1, y2: loopint; color: TColor4ub); static; inline;
       class procedure HorizontalDivisorSunken(wnd: uiTControl; x1, y1, x2: loopint; color: TColor4ub); static; inline;
+
+      class procedure Glyph(x, y, w, h: single; tex: oxTTexture); static;
    end;
 
 VAR
@@ -91,6 +94,11 @@ end;
 class procedure uiTDrawUtilities.HorizontalDivisorSunken(wnd: uiTControl; x1, y1, x2: loopint; color: TColor4ub);
 begin
    HorizontalDivisorSunken(uiTWindow(wnd), x1, y1, x2, color);
+end;
+
+class procedure uiTDrawUtilities.Glyph(x, y, w, h: single; tex: oxTTexture);
+begin
+   oxRenderingUtilities.TexturedQuad(x + (w / 2), y - (h / 2), w / 2, h / 2, tex);
 end;
 
 END.
