@@ -89,8 +89,6 @@ begin
 
       skin := oxui.GetDefaultSkin();
 
-      writeln('shit');
-
       if(WidgetClasses[n]^.SkinDescriptor <> nil) then
          uiSkin.SetupWidget(skin, skin.wdgSkins[n], WidgetClasses[n]^.SkinDescriptor^);
    end;
@@ -99,7 +97,6 @@ end;
 procedure uiTRegisteredWidgets.SetupDefaultWidget(skin: uiTSkin);
 begin
    if(nWidgetTypes > 0) then begin
-      writeln('WTF');
       SetLength(skin.wdgSkins, nWidgetTypes);
 
       ZeroOut(skin.wdgSkins[0], int64(SizeOf(uiTWidgetSkin)) * int64(nWidgetTypes));
@@ -167,7 +164,6 @@ end;
 
 procedure skinInitialize();
 begin
-   writeln('but why');
    uiRegisteredWidgets.SetupDefaultWidget(oxui.GetDefaultSkin());
 end;
 
