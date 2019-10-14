@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       uStd, oxuTypes, oxuWindow,
       {ui}
-      uiuWindow, oxuUI, uiuWindowTypes, uiuTypes, uiuSkinTypes,
+      uiuWindow, uiuUI, uiuWindowTypes, uiuTypes, uiuSkinTypes,
       uiuDraw, uiWidgets, uiuWidgetWindow, uiuWidget, uiuSimpleWindowList,
       wdguTabs, wdguBlock;
 
@@ -1169,7 +1169,7 @@ begin
 
    {check for dockable area first}
    if(IsDockableWindow(uiTWindow(Parent))) then begin
-      p := uiTWindow(Parent).GetPointerPosition(oxui.mSelect.startPoint.x, oxui.mSelect.startPoint.y);
+      p := uiTWindow(Parent).GetPointerPosition(GetUI().mSelect.startPoint.x, GetUI().mSelect.startPoint.y);
 
       s.x := p.x;
       s.y := p.y;
@@ -1197,7 +1197,7 @@ begin
 
    if(uiDockableWindow.Found = nil) then begin
       {if not in dockable area, then check the found window}
-      uiTWindow(oxwParent).Find(oxui.mSelect.startPoint.x, oxui.mSelect.startPoint.y, s);
+      uiTWindow(oxwParent).Find(GetUI().mSelect.startPoint.x, GetUI().mSelect.startPoint.y, s);
 
       found := s.GetSelectedWnd();
       if(found <> nil) and (IsDockableWindow(found)) and (not found.IsType(uiTDockableArea)) then begin

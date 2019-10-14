@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       oxuRunRoutines, oxuTypes, oxuUI, oxuWindows, oxuWindow, oxuWindowTypes, oxuFont,
       {ui}
-      uiuTypes, uiuWindowTypes, uiuBase,
+      uiuTypes, uiuWindowTypes, uiuBase, uiuUI,
       uiuSkin, uiuSkinTypes, uiuDraw,
       uiuControl, uiuWidget, uiuRegisteredWidgets;
 
@@ -35,7 +35,7 @@ TYPE
       procedure RenderAll();
 
       {gets the top ui object}
-      function GetUI(): oxTUI;
+      function GetUI(): uiTUI;
 
       { selection }
       {selects a widget}
@@ -564,9 +564,9 @@ begin
    end;
 end;
 
-function uiTWidgetHelper.GetUI(): oxTUI;
+function uiTWidgetHelper.GetUI(): uiTUI;
 begin
-   Result := oxTUI(oxTWindow(oxwParent).UIBase);
+   Result := uiTUI(oxTWindow(oxwParent).UIBase);
 end;
 
 procedure uiTWidgetHelper.Select();
