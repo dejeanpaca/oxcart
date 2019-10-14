@@ -270,6 +270,8 @@ end;
 
 procedure oxTCamera.Initialize();
 begin
+   Transform := oxTTransform.Instance();
+
    Reset();
 end;
 
@@ -284,8 +286,7 @@ begin
    vView  := oxvCameraView;
    vUp    := oxvCameraUp;
    vRight := oxvCameraRight;
-
-   Transform := oxTTransform.Instance();
+   Transform.Identity();
 end;
 
 INITIALIZATION
