@@ -11,7 +11,7 @@ UNIT wdguStatusbar;
 INTERFACE
 
    USES
-      uColors,
+      uStd, uColors,
       {oX}
       oxuTypes, oxuFont,
       {ui}
@@ -48,13 +48,6 @@ VAR
    wdgStatusbar: wdgTStatusbarGlobal;
 
 IMPLEMENTATION
-
-procedure initializeWidget();
-begin
-   wdgStatusbar.Internal.Done(wdgTStatusbar);
-
-   wdgStatusbar := wdgTStatusbarGlobal.Create(wdgStatusbar.Internal);
-end;
 
 { wdgTStatusbar }
 
@@ -104,8 +97,20 @@ begin
    wdg.AutoPosition();
 end;
 
+procedure init();
+begin
+   wdgStatusbar.Internal.Done(wdgTStatusbar);
+
+   wdgStatusbar := wdgTStatusbarGlobal.Create(wdgStatusbar.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgStatusbar);
+end;
+
 INITIALIZATION
-   wdgStatusbar.Internal.Register('widget.statusbar', @initializeWidget);
+   wdgStatusbar.Internal.Register('widget.statusbar', @init, @deinit);
 
    wdgStatusbar.Height := wdgWORKBAR_HEIGHT;
    wdgStatusbar.Color.Assign(255, 127, 0, 255);

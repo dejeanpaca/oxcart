@@ -328,7 +328,7 @@ begin
    Calculate();
 end;
 
-procedure initWidget();
+procedure init();
 begin
    wdgTitleButtons.Internal.SelectOnAdd := false;
    wdgTitleButtons.Internal.NonSelectable := true;
@@ -340,8 +340,13 @@ begin
    uiWindow.OnCreate.Add(@wdgAdd);
 end;
 
+procedure deinit();
+begin
+   FreeObject(wdgTitleButtons);
+end;
+
 INITIALIZATION
    wdgTitleButtons.ButtonSizeRatio := 0;
-   wdgTitleButtons.Internal.Register('widget.title_buttons', @InitWidget);
+   wdgTitleButtons.Internal.Register('widget.title_buttons', @init, @deinit);
 
 END.

@@ -759,22 +759,32 @@ begin
    SelectedGridItem := -1;
 end;
 
-procedure InitWidget();
+procedure init();
 begin
    wdgGrid.Internal.Done(wdgTGrid);
 
    wdgGrid := wdgTGridGlobal.Create(wdgGrid.Internal);
 end;
 
-procedure InitStringWidget();
+procedure deinit();
+begin
+   FreeObject(wdgGrid);
+end;
+
+procedure initString();
 begin
    wdgStringGrid.Internal.Done(wdgTStringGrid);
 
    wdgStringGrid := wdgTStringGridGlobal.Create(wdgStringGrid.Internal);
 end;
 
+procedure deinitString();
+begin
+   FreeObject(wdgStringGrid);
+end;
+
 INITIALIZATION
-   wdgGrid.Internal.Register('widget.grid', @InitWidget);
-   wdgStringGrid.Internal.Register('widget.stringgrid', @InitStringWidget);
+   wdgGrid.Internal.Register('widget.grid', @init, @deinit);
+   wdgStringGrid.Internal.Register('widget.stringgrid', @initString, @deinitString);
 
 END.

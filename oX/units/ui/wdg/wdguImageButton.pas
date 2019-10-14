@@ -355,15 +355,6 @@ begin
    CalculateQuad();
 end;
 
-procedure InitWidget();
-begin
-   wdgImageButton.Internal.Instance := wdgTImageButton;
-   wdgImageButton.internal.SkinDescriptor := @wdgImageButtonSkinDescriptor;
-   wdgImageButton.internal.Done();
-
-   wdgImageButton := wdgTImageButtonGlobal.Create(wdgImageButton.Internal);
-end;
-
 function wdgTImageButtonGlobal.Add(const fn: StdString;
       const Pos: oxTPoint; const Dim: oxTDimensions; action: TEventID = 0): wdgTImageButton;
 
@@ -401,7 +392,21 @@ begin
    Result.Callback.Use(callback);
 end;
 
+procedure init();
+begin
+   wdgImageButton.Internal.Instance := wdgTImageButton;
+   wdgImageButton.internal.SkinDescriptor := @wdgImageButtonSkinDescriptor;
+   wdgImageButton.internal.Done();
+
+   wdgImageButton := wdgTImageButtonGlobal.Create(wdgImageButton.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgImageButton);
+end;
+
 INITIALIZATION
-   wdgImageButton.Internal.Register('widget.image_button', @InitWidget);
+   wdgImageButton.Internal.Register('widget.image_button', @init, @deinit);
 
 END.

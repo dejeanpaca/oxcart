@@ -642,13 +642,6 @@ begin
    result := Self;
 end;
 
-procedure InitWidget();
-begin
-   wdgScrollbar.Internal.Done(wdgTScrollbar);
-
-   wdgScrollbar := wdgTScrollbarGlobal.Create(wdgScrollbar.Internal);
-end;
-
 function wdgTScrollbarGlobal.Add(Total, Visible: longint;
       const Pos: oxTPoint; const Dim: oxTDimensions; horizontal: boolean): wdgTScrollbar;
 
@@ -667,6 +660,17 @@ begin
    Result := Add(Total, Visible, oxNullPoint, oxNullDimensions);
 end;
 
+procedure init();
+begin
+   wdgScrollbar.Internal.Done(wdgTScrollbar);
+
+   wdgScrollbar := wdgTScrollbarGlobal.Create(wdgScrollbar.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgScrollbar);
+end;
 
 INITIALIZATION
    wdgScrollbar.MinHandleSize := 16;
@@ -674,6 +678,6 @@ INITIALIZATION
    wdgScrollbar.LightWidth := 10;
    wdgScrollbar.LightOpacity := 127;
 
-   wdgScrollbar.Internal.Register('widget.scrollbar', @InitWidget);
+   wdgScrollbar.Internal.Register('widget.scrollbar', @init, @deinit);
 
 END.

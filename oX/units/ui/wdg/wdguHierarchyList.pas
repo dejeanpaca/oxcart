@@ -111,13 +111,6 @@ VAR
 
 IMPLEMENTATION
 
-procedure InitWidget();
-begin
-   wdgHierarchyList.Internal.Done(wdgTHierarchyList);
-
-   wdgHierarchyList := wdgTHierarchyListGlobal.Create(wdgHierarchyList.Internal);
-end;
-
 { wdgTHierarchyList }
 
 constructor wdgTHierarchyList.Create();
@@ -477,7 +470,19 @@ begin
 
 end;
 
+procedure init();
+begin
+   wdgHierarchyList.Internal.Done(wdgTHierarchyList);
+
+   wdgHierarchyList := wdgTHierarchyListGlobal.Create(wdgHierarchyList.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgHierarchyList);
+end;
+
 INITIALIZATION
-   wdgHierarchyList.Internal.Register('widget.hierarchylist', @InitWidget);
+   wdgHierarchyList.Internal.Register('widget.hierarchylist', @init, @deinit);
 
 END.

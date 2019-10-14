@@ -110,20 +110,6 @@ CONST
    MENU_ITEM_HEIGHT           = 18;
    MENU_ITEM_PADDING          = 3;
 
-procedure initializeWidget();
-begin
-   wdgDropDownList.Internal.Done(wdgTDropDownList);
-
-   wdgDropDownList := wdgTDropDownListGlobal.Create(wdgDropDownList.Internal);
-end;
-
-procedure initializeMenuWidget();
-begin
-   wdgDropDownListMenu.Internal.Done(wdgTDropDownListMenu);
-
-   wdgDropDownListMenu := wdgTDropDownListMenuGlobal.Create(wdgDropDownListMenu.Internal);
-end;
-
 { wdgTDropDownListMenu }
 
 constructor wdgTDropDownListMenu.Create();
@@ -344,9 +330,33 @@ begin
 
 end;
 
+procedure init();
+begin
+   wdgDropDownList.Internal.Done(wdgTDropDownList);
+
+   wdgDropDownList := wdgTDropDownListGlobal.Create(wdgDropDownList.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgDropDownList);
+end;
+
+procedure initMenu();
+begin
+   wdgDropDownListMenu.Internal.Done(wdgTDropDownListMenu);
+
+   wdgDropDownListMenu := wdgTDropDownListMenuGlobal.Create(wdgDropDownListMenu.Internal);
+end;
+
+procedure deinitMenu();
+begin
+   FreeObject(wdgDropDownListMenu);
+end;
+
 INITIALIZATION
-   wdgDropDownList.Internal.Register('widget.drop_down_list', @initializeWidget);
-   wdgDropDownListMenu.Internal.Register('widget.drop_down_list_menu', @initializeMenuWidget);
+   wdgDropDownList.Internal.Register('widget.drop_down_list', @init, @deinit);
+   wdgDropDownListMenu.Internal.Register('widget.drop_down_list_menu', @initMenu, @deinitMenu);
 
    wdgDropDownList.DropAreaWidth := 16;
 

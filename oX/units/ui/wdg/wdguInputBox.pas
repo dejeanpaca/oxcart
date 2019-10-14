@@ -554,14 +554,6 @@ begin
    d.h := CachedFont.GetHeight() + 12;
 end;
 
-procedure InitWidget();
-begin
-   wdgInputBox.Internal.SkinDescriptor := @wdgInputSkinDescriptor;
-   wdgInputBox.Internal.Done(wdgTInputBox);
-
-   wdgInputBox := wdgTInputBoxGlobal.Create(wdgInputBox.Internal);
-end;
-
 function wdgTInputBoxGlobal.Add(const Initial: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions): wdgTInputBox;
 
@@ -683,8 +675,21 @@ begin
    wdgSkin^.SetColor(wdgscINPUT_BORDER_SELECTED, skin.Colors.SelectedBorder);
 end;
 
+procedure init();
+begin
+   wdgInputBox.Internal.SkinDescriptor := @wdgInputSkinDescriptor;
+   wdgInputBox.Internal.Done(wdgTInputBox);
+
+   wdgInputBox := wdgTInputBoxGlobal.Create(wdgInputBox.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgInputBox);
+end;
+
 INITIALIZATION
-   wdgInputBox.Internal.Register('widget.inputbox', @InitWidget);
+   wdgInputBox.Internal.Register('widget.inputbox', @init, @deinit);
    wdgInputSkinDescriptor.Setup := @setupSkin;
 
 END.

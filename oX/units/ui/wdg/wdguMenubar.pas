@@ -100,13 +100,6 @@ TYPE
       Menubar: wdgTMenubar;
    end;
 
-procedure initializeWidget();
-begin
-   wdgMenubar.Internal.Done(wdgTMenubar);
-
-   wdgMenubar := wdgTMenubarGlobal.Create(wdgMenubar.Internal);
-end;
-
 { wdgTMenubar }
 
 constructor wdgTMenubar.Create();
@@ -487,8 +480,20 @@ begin
    wdg.AutoPosition();
 end;
 
+procedure init();
+begin
+   wdgMenubar.Internal.Done(wdgTMenubar);
+
+   wdgMenubar := wdgTMenubarGlobal.Create(wdgMenubar.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgMenubar);
+end;
+
 INITIALIZATION
-   wdgMenubar.Internal.Register('widget.menubar', @initializeWidget);
+   wdgMenubar.Internal.Register('widget.menubar', @init, @deinit);
 
    wdgMenubar.Color.Assign(28, 28, 36, 255);
    wdgMenubar.Height := MENUBAR_HEIGHT;

@@ -93,14 +93,6 @@ begin
    end;
 end;
 
-procedure InitWidget();
-begin
-   wdgGroup.Internal.NonSelectable := true;
-   wdgGroup.Internal.Done(wdgTGroup);
-
-   wdgGroup := wdgTGroupGlobal.Create(wdgGroup.Internal);
-end;
-
 function wdgTGroupGlobal.Add(const Caption: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions): wdgTGroup;
 begin
@@ -118,7 +110,20 @@ begin
    Result := Add(Caption, oxNullPoint, oxNullDimensions);
 end;
 
+procedure init();
+begin
+   wdgGroup.Internal.NonSelectable := true;
+   wdgGroup.Internal.Done(wdgTGroup);
+
+   wdgGroup := wdgTGroupGlobal.Create(wdgGroup.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgGroup);
+end;
+
 INITIALIZATION
-   wdgGroup.Internal.Register('widget.group', @InitWidget);
+   wdgGroup.Internal.Register('widget.group', @init, @deinit);
 
 END.

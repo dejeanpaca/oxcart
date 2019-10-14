@@ -50,13 +50,6 @@ VAR
 
 IMPLEMENTATION
 
-procedure InitWidget();
-begin
-   wdgCheckboxHierarchy.Internal.Done(wdgTCheckboxHierarchy);
-
-   wdgCheckboxHierarchy := wdgTCheckboxHierarchyGlobal.Create(wdgCheckboxHierarchy.Internal);
-end;
-
 { wdgTCheckboxHierarchy }
 
 constructor wdgTCheckboxHierarchy.Create();
@@ -107,8 +100,19 @@ begin
    ExpanderSeparationWidth := 4 + ItemHeight;
 end;
 
+procedure init();
+begin
+   wdgCheckboxHierarchy.Internal.Done(wdgTCheckboxHierarchy);
+
+   wdgCheckboxHierarchy := wdgTCheckboxHierarchyGlobal.Create(wdgCheckboxHierarchy.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgCheckboxHierarchy);
+end;
 
 INITIALIZATION
-   wdgCheckboxHierarchy.Internal.Register('widget.checkboxhierarchy', @InitWidget);
+   wdgCheckboxHierarchy.Internal.Register('widget.checkboxhierarchy', @init, @deinit);
 
 END.

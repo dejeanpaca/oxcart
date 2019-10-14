@@ -35,14 +35,6 @@ VAR
 
 IMPLEMENTATION
 
-procedure InitWidget();
-begin
-   wdgTemplate.internal.Instance := wdgTTemplate;
-   wdgTemplate.internal.Done();
-
-   wdgTemplate := wdgTTemplateGlobal.Create(wdgTemplate.Internal);
-end;
-
 function wdgTTemplateGlobal.Add(const Caption: StdString; const Pos: oxTPoint; const Dim: oxTDimensions): wdgTTemplate;
 
 begin
@@ -58,7 +50,20 @@ begin
    end;
 end;
 
+procedure init();
+begin
+   wdgTemplate.internal.Instance := wdgTTemplate;
+   wdgTemplate.internal.Done();
+
+   wdgTemplate := wdgTTemplateGlobal.Create(wdgTemplate.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgTemplate);
+end;
+
 INITIALIZATION
-   wdgTemplate.Internal.Register('widget.template', @InitWidget);
+   wdgTemplate.Internal.Register('widget.template', @init, @deinit);
 
 END.

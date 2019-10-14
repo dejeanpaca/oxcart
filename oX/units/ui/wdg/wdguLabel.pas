@@ -196,14 +196,6 @@ begin
    AutoSize();
 end;
 
-procedure InitWidget();
-begin
-   wdgLabel.Internal.NonSelectable := true;
-   wdgLabel.Internal.Done(wdgTLabel);
-
-   wdgLabel := wdgTLabelGlobal.Create(wdgLabel.Internal);
-end;
-
 function wdgTLabelGlobal.Add(const Caption: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions;
             inrect: boolean = false): wdgTLabel;
@@ -237,7 +229,20 @@ begin
    end;
 end;
 
+procedure init();
+begin
+   wdgLabel.Internal.NonSelectable := true;
+   wdgLabel.Internal.Done(wdgTLabel);
+
+   wdgLabel := wdgTLabelGlobal.Create(wdgLabel.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgLabel);
+end;
+
 INITIALIZATION
-   wdgLabel.Internal.Register('widget.label', @InitWidget);
+   wdgLabel.Internal.Register('widget.label', @init, @deinit);
 
 END.

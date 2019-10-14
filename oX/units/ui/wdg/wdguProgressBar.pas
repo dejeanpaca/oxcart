@@ -215,14 +215,6 @@ begin
    end;
 end;
 
-procedure InitWidget();
-begin
-   wdgProgressBar.Internal.SkinDescriptor := @wdgProgressBarSkinDescriptor;
-   wdgProgressBar.Internal.Done(wdgTProgressBar);
-
-   wdgProgressBar := wdgTProgressBarStatics.Create(wdgProgressBar.Internal);
-end;
-
 function wdgTProgressBarStatics.Add(const Pos: oxTPoint; const Dim: oxTDimensions;
             max: longint = 100): wdgTProgressBar;
 
@@ -294,8 +286,20 @@ begin
    Progress.ItemsDone := -1;
 end;
 
+procedure init();
+begin
+   wdgProgressBar.Internal.SkinDescriptor := @wdgProgressBarSkinDescriptor;
+   wdgProgressBar.Internal.Done(wdgTProgressBar);
+
+   wdgProgressBar := wdgTProgressBarStatics.Create(wdgProgressBar.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgProgressBar);
+end;
 
 INITIALIZATION
-   wdgProgressBar.Internal.Register('widget.progressbar', @InitWidget);
+   wdgProgressBar.Internal.Register('widget.progressbar', @init, @deinit);
 
 END.

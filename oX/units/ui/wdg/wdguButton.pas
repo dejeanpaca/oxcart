@@ -286,14 +286,6 @@ begin
    Result := Self;
 end;
 
-procedure InitWidget();
-begin
-   wdgButton.Internal.SkinDescriptor := @wdgButtonSkinDescriptor;
-   wdgButton.Internal.Done(wdgTButton);
-
-   wdgButton := wdgTButtonGlobal.Create(wdgButton.Internal);
-end;
-
 function wdgTButtonGlobal.Add(const Caption: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions;
             ActionEvent: TEventID = 0): wdgTButton;
@@ -351,7 +343,20 @@ begin
    Result := Add(Caption, uiWidget.LastRect.BelowOf(), oxNullDimensions, ActionEvent);
 end;
 
+procedure init();
+begin
+   wdgButton.Internal.SkinDescriptor := @wdgButtonSkinDescriptor;
+   wdgButton.Internal.Done(wdgTButton);
+
+   wdgButton := wdgTButtonGlobal.Create(wdgButton.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgButton);
+end;
+
 INITIALIZATION
-   wdgButton.Internal.Register('widget.button', @InitWidget);
+   wdgButton.Internal.Register('widget.button', @init, @deinit);
 
 END.
