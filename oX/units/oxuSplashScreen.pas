@@ -323,10 +323,6 @@ begin
    end;
 end;
 
-VAR
-   preInitializeRoutine,
-   startRoutine: oxTRunRoutine;
-
 INITIALIZATION
    oxSplashScreen.StartupInstance := oxTBasicSplashScreen;
    oxSplashScreen.DefaultDisplayTime := oxSPLASH_SCREEN_DEFAULT_DISPLAY_TIME;
@@ -335,6 +331,7 @@ INITIALIZATION
    oxSplashScreen.StartupThreaded := true;
    {$ENDIF}
 
-   ox.OnPreInitialize.Add(preInitializeRoutine, 'ox.splash_initialize', @splashInitialize);
-   ox.OnStart.Add(startRoutine, 'ox.splash_start', @splashStart);
+   ox.OnPreInitialize.Add('ox.splash_initialize', @splashInitialize);
+   ox.OnStart.Add('ox.splash_start', @splashStart);
+
 END.

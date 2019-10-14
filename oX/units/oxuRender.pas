@@ -332,9 +332,6 @@ begin
 end;
 
 VAR
-   {$IFNDEF OX_LIBRARY}
-   initRoutine: oxTRunRoutine;
-   {$ENDIF}
    grRender: oxPGlobalInstance;
 
 function instanceGlobal(): TObject;
@@ -350,7 +347,7 @@ INITIALIZATION
    grRender^.CopyOverReference := true;
 
    {$IFNDEF OX_LIBRARY}
-   oxRenderers.init.dAdd(initRoutine, 'oxRender', @OnDeInit);
+   oxRenderers.init.dAdd('oxRender', @OnDeInit);
    {$ENDIF}
 
 END.

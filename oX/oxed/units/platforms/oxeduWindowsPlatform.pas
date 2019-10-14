@@ -45,10 +45,7 @@ begin
    oxedPlatforms.Add(oxedTWindowsPlatform.Create());
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'platform.windows', @init);
+   oxed.Init.Add('platform.windows', @init);
 
 END.

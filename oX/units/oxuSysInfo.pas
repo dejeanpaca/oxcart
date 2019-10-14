@@ -22,9 +22,6 @@ INTERFACE
 IMPLEMENTATION
 
 {$IFDEF OX_LIBRARY}
-VAR
-   initRoutines: oxTRunRoutine;
-
 procedure initialize();
 var
    instance: appPSystemInformation;
@@ -43,7 +40,7 @@ INITIALIZATION
    {$ENDIF}
 
    {$IFDEF OX_LIBRARY}
-   app.InitializationProcs.Add(initRoutines, 'ox.system_information', @initialize);
+   app.InitializationProcs.Add('ox.system_information', @initialize);
    {$ENDIF}
 
 END.

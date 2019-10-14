@@ -79,11 +79,8 @@ begin
    oxedEntities.OnRemove.Add(@entityRemove);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'oxed.scene', @init);
+   ox.Init.Add('oxed.scene', @init);
 
    oxed.OnSceneChange.Add(@sceneChange);
 

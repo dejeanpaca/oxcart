@@ -63,10 +63,7 @@ begin
    end;
 end;
 
-VAR
-   routine: oxTRunRoutine;
-
 INITIALIZATION
-   ox.OnLoad.Add(routine, 'oxlib.scene_loader', @start);
+   ox.OnLoad.Add('oxlib.scene_loader', @start);
 
 END.

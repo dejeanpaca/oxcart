@@ -101,10 +101,7 @@ begin
    con.Clear();
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'problems', @init, @deinit);
+   oxed.Init.Add('problems', @init, @deinit);
 
 END.

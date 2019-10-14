@@ -79,11 +79,7 @@ begin
    FreeObject(oxfMaterial);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-
-   ox.Init.Add(initRoutines, 'material_file', @init, @deinit);
+   ox.Init.Add('material_file', @init, @deinit);
 
 END.

@@ -125,12 +125,8 @@ begin
    end;
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'oxed.components', @init, @deinit);
-   oxed.Init.Add(oxedInitRoutines, 'components', @oxed_init, @oxed_deinit);
+   ox.Init.Add('oxed.components', @init, @deinit);
+   oxed.Init.Add('components', @oxed_init, @oxed_deinit);
 
 END.

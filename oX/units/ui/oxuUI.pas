@@ -78,12 +78,8 @@ begin
    FreeObject(oxui);
 end;
 
-VAR
-   routine,
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.OnRun.Add(routine, 'ui.update_controls', @updateControls);
-   ui.BaseInitializationProcs.Add(initRoutines, 'ui.oxui', @init, @deinit);
+   ox.OnRun.Add('ui.update_controls', @updateControls);
+   ui.BaseInitializationProcs.Add('ui.oxui', @init, @deinit);
 
 END.

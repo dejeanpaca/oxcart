@@ -35,10 +35,8 @@ begin
        oxScene.UpdateComponentsInChildren();
 end;
 
-VAR
-   routine: oxTRunRoutine;
 
 INITIALIZATION
-   ox.OnRun.Add(routine, 'ox.scene_runner', @oxTSceneRunner.Run);
+   ox.OnRun.Add('ox.scene_runner', @oxTSceneRunner.Run);
 
 END.

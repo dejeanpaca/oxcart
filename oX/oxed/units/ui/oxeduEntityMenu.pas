@@ -230,11 +230,8 @@ begin
    FreeObject(oxedEntityMenu.CurrentMenu);
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'entity_menu', @init, @deinit);
+   oxed.Init.Add('entity_menu', @init, @deinit);
 
    oxedEntityMenu.EntityList.InitializeValues(oxedEntityMenu.EntityList);
 

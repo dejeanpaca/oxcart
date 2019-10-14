@@ -195,10 +195,7 @@ begin
    FreeObject(oxwndSettings);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'ox.settings', @init, @deinit);
+   ox.Init.Add('ox.settings', @init, @deinit);
 
 END.

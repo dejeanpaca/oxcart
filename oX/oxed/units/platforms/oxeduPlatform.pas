@@ -160,12 +160,11 @@ end;
 VAR
    platformEnabled: boolean;
    dvPlatformEnabled: TDVar;
-   oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
    dvgOXED.Add(dvPlatformEnabled, 'platform_enabled', dtcBOOL, @platformEnabled);
 
-   oxed.Init.dAdd(oxedInitRoutines, 'platforms', @deinit);
+   oxed.Init.dAdd('platforms', @deinit);
 
    oxedPlatforms.List.InitializeValues(oxedPlatforms.List);
 

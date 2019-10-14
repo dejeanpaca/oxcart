@@ -177,12 +177,9 @@ begin
    oxGlobalKeys.Hook(gkHandlerKey);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
    oxScreenshot.CaptureKey := gkHandlerKey.Key;
 
-   ox.Init.Add(initRoutines, 'screenshot', @initialize);
+   ox.Init.Add('screenshot', @initialize);
 
 END.

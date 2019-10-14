@@ -158,10 +158,7 @@ begin
    audioData.Destroy();
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'audio_file', @init, @deinit);
+   ox.Init.Add('audio_file', @init, @deinit);
 
 END.

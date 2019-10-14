@@ -2175,9 +2175,6 @@ begin
       uiTWindow(ev.wnd).Close();
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
    {set defaults}
    uiWindow.AutoRender := true;
@@ -2233,7 +2230,7 @@ INITIALIZATION
    uiWindow.NextWindowKey.Assign(kcTAB, kmCONTROL);
    uiWindow.PreviousWindowKey.Assign(kcTAB, kmCONTROL or kmSHIFT);
 
-   ui.BaseInitializationProcs.Add(initRoutines, 'window', @Initialize, @DeInitialize);
+   ui.BaseInitializationProcs.Add('window', @Initialize, @DeInitialize);
 
    {events}
    uiWindow.evhp := appEvents.AddHandler(uiWindow.evh, 'ox.uiwindow', @actionHandler);

@@ -165,10 +165,7 @@ begin
    Result := false;
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.PreInit.Add(initRoutines, 'gl.shader_loader', @init, @deinit);
+   ox.PreInit.Add('gl.shader_loader', @init, @deinit);
 
 END.

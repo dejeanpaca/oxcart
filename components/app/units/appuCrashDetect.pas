@@ -78,10 +78,7 @@ begin
       appCrashDetect.Run();
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   app.InitializationProcs.Add(initRoutines, 'crashdetect', @Initialize, @DeInitialize);
+   app.InitializationProcs.Add('crashdetect', @Initialize, @DeInitialize);
 
 END.

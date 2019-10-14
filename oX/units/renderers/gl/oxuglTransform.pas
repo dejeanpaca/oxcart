@@ -51,10 +51,7 @@ begin
    oxglRenderer.components.RegisterComponent('transform', @componentReturn);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.PreInit.Add(initRoutines, 'ox.gl.transform', @init);
+   ox.PreInit.Add('ox.gl.transform', @init);
 
 END.

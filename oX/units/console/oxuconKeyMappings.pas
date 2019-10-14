@@ -84,10 +84,7 @@ begin
    console.Selected^.AddHandler(conHandler, conTCommandNotifyProc(@conCommandNotify), conCommands);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'console.keymappings', @Initialize);
+   ox.Init.Add('console.keymappings', @Initialize);
 
 END.

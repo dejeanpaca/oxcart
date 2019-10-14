@@ -102,16 +102,13 @@ begin
 end;
 {$ENDIF}
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
    oxDefaultFont.Load := true;
 
    oxGlobalInstances.Add('oxTDefaultFontGlobal', @oxDefaultFont);
 
    {$IFNDEF OX_LIBRARY}
-   ox.BaseInit.Add(initRoutines, 'default_font', @load, @dispose);
+   ox.BaseInit.Add('default_font', @load, @dispose);
 
    oxTFD.Init(tfd);
 

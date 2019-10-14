@@ -297,13 +297,10 @@ begin
    uiSkin.Load(uiSkin.StandardSkin);
 end;
 
-VAR
-   initRoutines,
-   loadRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ui.BaseInitializationProcs.Add(initRoutines, 'skin', @Initialize, @DeInitialize);
-   ui.InitializationProcs.Add(loadRoutines, 'skin.load', @skinLoad);
+   ui.BaseInitializationProcs.Add('skin', @Initialize, @DeInitialize);
+   ui.InitializationProcs.Add('skin.load', @skinLoad);
 
 END.
 

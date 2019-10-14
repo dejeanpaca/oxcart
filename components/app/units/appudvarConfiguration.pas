@@ -81,15 +81,12 @@ begin
       appDVarTextConfiguration.Save();
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
    appDVarTextConfiguration.FileName := 'dvar.cfg';
    appDVarTextConfiguration.AutoLoad := true;
    appDVarTextConfiguration.AutoSave := true;
 
-   app.InitializationProcs.Add(initRoutines, 'dvar.textload', @load, @save);
+   app.InitializationProcs.Add('dvar.textload', @load, @save);
 
 END.
 

@@ -44,10 +44,7 @@ begin
    oxRenderers.UseRoutines.Add(@onUse);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.PreInit.Add(initRoutines, 'ox.gl.shader_loader', @init);
+   ox.PreInit.Add('ox.gl.shader_loader', @init);
 
 END.

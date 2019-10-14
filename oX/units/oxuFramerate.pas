@@ -141,12 +141,9 @@ begin
    oxFramerate.Increment();
 end;
 
-VAR
-   updateRoutine: oxTRunRoutine;
-
 INITIALIZATION
    oxFramerateInit(oxFramerate);
 
-   ox.OnRun.Add(updateRoutine, 'ox.framerate_update', @update);
+   ox.OnRun.Add('ox.framerate_update', @update);
 
 END.

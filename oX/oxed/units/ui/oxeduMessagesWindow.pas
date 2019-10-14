@@ -215,11 +215,9 @@ begin
    oxedMessages.Clear();
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'scene.messages', @init, @deinit);
+   oxed.Init.Add('scene.messages', @init, @deinit);
    oxedMenubar.OnInit.Add(@initMenubar);
 
    oxedProjectRunner.OnBeforeStart.Add(@onStart);

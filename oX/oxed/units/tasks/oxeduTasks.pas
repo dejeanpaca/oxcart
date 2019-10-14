@@ -185,11 +185,8 @@ begin
    oxedTasks.List.Dispose();
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.dAdd(oxedInitRoutines, 'oxed.tasks', @deinit);
+   oxed.Init.dAdd('oxed.tasks', @deinit);
 
    oxedTasks.List.InitializeValues(oxedTasks.List);
 

@@ -47,8 +47,10 @@ TYPE
      {adds a run routine to the execution list}
      procedure AddRoutine(var routine: oxTRunRoutine);
      procedure AddRoutine(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
+     procedure AddRoutine(const name: string; exec: TProcedure);
      procedure AddPreRoutine(var routine: oxTRunRoutine);
      procedure AddPreRoutine(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
+     procedure AddPreRoutine(const name: string; exec: TProcedure);
    end;
 
 VAR
@@ -232,6 +234,11 @@ begin
    ox.OnRun.Add(routine, name, exec);
 end;
 
+procedure oxTRunGlobal.AddRoutine(const name: string; exec: TProcedure);
+begin
+   ox.OnRun.Add(name, exec);
+end;
+
 procedure oxTRunGlobal.AddPreRoutine(var routine: oxTRunRoutine);
 begin
    ox.OnPreEvents.Add(routine);
@@ -240,6 +247,11 @@ end;
 procedure oxTRunGlobal.AddPreRoutine(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
 begin
    ox.OnPreEvents.Add(routine, name, exec);
+end;
+
+procedure oxTRunGlobal.AddPreRoutine(const name: string; exec: TProcedure);
+begin
+   ox.OnPreEvents.Add(name, exec);
 end;
 
 END.

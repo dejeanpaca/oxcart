@@ -121,11 +121,8 @@ begin
       oxedPreviewGenerator.Task.Start();
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'preview_generator', @oxedPreviewGenerator.Initialize, @deinit);
+   oxed.Init.Add('preview_generator', @oxedPreviewGenerator.Initialize, @deinit);
 
    TProcedures.InitializeValues(oxedPreviewGenerator.OnStart);
    TProcedures.InitializeValues(oxedPreviewGenerator.OnDone);

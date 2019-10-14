@@ -189,11 +189,8 @@ begin
    FreeObject(oxFilePreviewWindow);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'toast', @init, @deinit);
+   ox.Init.Add('toast', @init, @deinit);
 
    oxTFilePreviewHandlers.Initialize(oxFilePreviewWindow.Handlers);
 

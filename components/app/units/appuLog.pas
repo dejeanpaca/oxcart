@@ -76,10 +76,7 @@ begin
       appLog.Initialize();
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   app.InitializationProcs.Add(initRoutines, 'log', @initialize);
+   app.InitializationProcs.Add('log', @initialize);
 
 END.

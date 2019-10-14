@@ -25,6 +25,7 @@ TYPE
 
       {initialization procedures}
       BaseInitializationProcs,
+      WidgetInitializationProcs,
       InitializationProcs: oxTRunRoutines;
 
       {group for ui settings}
@@ -58,6 +59,8 @@ begin
 
    BaseInitializationProcs.iCall();
 
+   WidgetInitializationProcs.iCall();
+
    log.i('Initialized UI');
 end;
 
@@ -65,6 +68,8 @@ procedure uiTBase.BaseDeInitialize();
 begin
    if(StartedInitialization) then begin
       StartedInitialization := false;
+
+      WidgetInitializationProcs.dCall();
 
       {de-initialize UI}
       BaseInitializationProcs.dCall();

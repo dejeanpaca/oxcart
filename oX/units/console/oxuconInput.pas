@@ -66,10 +66,7 @@ begin
    console.Selected^.AddHandler(conHandler, conTCommandNotifyProc(@conCommandNotify), conCommands);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'console.input', @Initialize);
+   ox.Init.Add('console.input', @Initialize);
 
 END.

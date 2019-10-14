@@ -259,11 +259,8 @@ begin
       appPath.CreateConfiguration();
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
    appPath.Configuration.UseOrganization := true;
-   app.InitializationProcs.Add(initRoutines, 'configuration', @initialize);
+   app.InitializationProcs.Add('configuration', @initialize);
 
 END.

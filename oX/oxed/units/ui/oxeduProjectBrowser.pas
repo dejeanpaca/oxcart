@@ -363,11 +363,8 @@ begin
    end;
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'scene.projectbrowser', @init, @deinit);
+   oxed.Init.Add('scene.projectbrowser', @init, @deinit);
    oxedMenubar.OnInit.Add(@initMenubar);
 
    oxedProjectManagement.OnOpen.Add(@projectOpen);

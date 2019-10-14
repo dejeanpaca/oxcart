@@ -585,12 +585,9 @@ begin
    {$ENDIF}
 end;
 
-VAR
-   initRoutine: oxTRunRoutine;
-
 INITIALIZATION
    oxRenderers.UseRoutines.Add(@onUse);
-   oxRenderers.Init.dAdd(initRoutine, 'shader', @deinit);
+   oxRenderers.Init.dAdd('shader', @deinit);
 
    InitializeUniformSizes();
 

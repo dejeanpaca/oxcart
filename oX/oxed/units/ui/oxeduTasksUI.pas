@@ -114,11 +114,9 @@ procedure deinit();
 begin
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxed.Init.dAdd(oxedInitRoutines, 'oxed.tasks-ui', @deinit);
+   oxed.Init.dAdd('oxed.tasks-ui', @deinit);
    oxedMenubar.OnInit.Add(@initialize);
 
    oxedTasks.OnTaskStart.Add(@toggleAnimate);

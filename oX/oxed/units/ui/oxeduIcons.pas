@@ -141,11 +141,8 @@ begin
       item^.SetGlyph(tex);
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'oxed.icons', @init);
+   oxed.Init.Add('oxed.icons', @init);
    oxedIcons.DefaultContextMenuSize := 32;
 
 END.

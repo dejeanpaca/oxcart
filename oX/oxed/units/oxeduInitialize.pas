@@ -104,10 +104,7 @@ begin
    oxed.Init.dCall();
 end;
 
-VAR
-   initRoutine: oxTRunRoutine;
-
 INITIALIZATION
-   ox.OnInitialize.Add(initRoutine, 'oxed.init', @oxedInitialize, @oxedDeInitialize);
+   ox.OnInitialize.Add('oxed.init', @oxedInitialize, @oxedDeInitialize);
 
 END.

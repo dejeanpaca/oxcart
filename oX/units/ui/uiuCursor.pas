@@ -170,12 +170,9 @@ begin
    uiCursor.CustomCursors.Dispose();
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
    uiCursor.CurrentCursorType := uiCURSOR_TYPE_DEFAULT;
-   ox.Init.Add(initRoutines, 'ui.cursor', @init, @deinit);
+   ox.Init.Add('ui.cursor', @init, @deinit);
 
    uiCursor.LoadedCursors.Initialize(uiCursor.LoadedCursors);
    uiCursor.CustomCursors.Initialize(uiCursor.CustomCursors);

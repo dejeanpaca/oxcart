@@ -267,11 +267,8 @@ begin
    oxGlobalKeys.Dispose();
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.dAdd(initRoutines, 'globalkeys', @DeInitialize);
+   ox.Init.dAdd('globalkeys', @DeInitialize);
 
 END.
 

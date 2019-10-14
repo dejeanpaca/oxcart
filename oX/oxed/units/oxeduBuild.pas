@@ -894,11 +894,8 @@ begin
    end;
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'build', @oxedTBuildGlobal.Initialize, @oxedTBuildGlobal.Deinitialize);
+   oxed.Init.Add('build', @oxedTBuildGlobal.Initialize, @oxedTBuildGlobal.Deinitialize);
 
    TProcedures.InitializeValues(oxedBuild.OnPrepare);
    TProcedures.InitializeValues(oxedBuild.OnDone);

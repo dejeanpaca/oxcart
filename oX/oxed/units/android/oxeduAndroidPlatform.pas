@@ -44,10 +44,7 @@ begin
    oxedPlatforms.Add(oxedTAndroidPlatform.Create());
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'platform.android', @init);
+   oxed.Init.Add('platform.android', @init);
 
 END.

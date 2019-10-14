@@ -1481,12 +1481,9 @@ begin
    Result := (wdg <> nil) and (wdg.ID.ID = id.ID);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
    uiWidget.evh := appEvents.AddHandler(uiWidget.EventHandler, 'ox.widget', @eventAction);
 
-   ui.BaseInitializationProcs.Add(initRoutines, 'widgets', @InitWidgets, @DeInitWidgets);
+   ui.BaseInitializationProcs.Add('widgets', @InitWidgets, @DeInitWidgets);
 
 END.

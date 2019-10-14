@@ -137,11 +137,9 @@ begin
    FreeObject(oxedPluginsWindow);
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'ox.settings', @init, @deinit);
+   oxed.Init.Add('ox.settings', @init, @deinit);
    oxedMenubar.OnInit.Add(@menubarInit);
 
 END.

@@ -186,13 +186,10 @@ begin
    end;
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
    {set defaults}
    appSI.systemName := 'unknown';
 
-   app.InitializationProcs.Add(initRoutines, 'systeminformation', @Initialize);
+   app.InitializationProcs.Add('systeminformation', @Initialize);
 
 END.

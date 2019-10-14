@@ -19,7 +19,6 @@ PROGRAM ninePatch;
 VAR
    patch: oxT9Patch;
    texture: oxTTexture;
-   initRoutines: oxTRunRoutine;
 
 procedure Render({%H-}wnd: oxTWindow);
 var
@@ -53,7 +52,7 @@ end;
 
 BEGIN
    appInfo.setName('test9Patch');
-   ox.OnInitialize.Add(initRoutines, 'initialize', @Initialize);
+   ox.OnInitialize.Add('initialize', @Initialize);
 
    oxRun.Go();
 END.

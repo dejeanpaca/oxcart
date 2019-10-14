@@ -292,11 +292,9 @@ begin
    OnProjectChange();
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'scene.inspector', @init, @deinit);
+   oxed.Init.Add('scene.inspector', @init, @deinit);
    oxedMenubar.OnInit.Add(@initMenubar);
 
    oxedProjectManagement.OnOpen.Add(@OnProjectChange);

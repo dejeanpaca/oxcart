@@ -405,11 +405,9 @@ begin
    FreeObject(oxedInspectEntity);
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'scene.inspector', @init, @deinit);
+   oxed.Init.Add('scene.inspector', @init, @deinit);
 
    oxed.OnSceneChange.Add(@sceneChange);
    oxedProjectRunner.OnStart.Add(@sceneChange);

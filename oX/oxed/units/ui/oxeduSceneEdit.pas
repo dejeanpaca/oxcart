@@ -526,11 +526,8 @@ begin
       oxedSceneEdit.Instance.Select();
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'scene.edit', @init, @deinit);
+   oxed.Init.Add('scene.edit', @init, @deinit);
    oxedMenubar.OnInit.Add(@initMenubar);
 
    oxedProjectRunner.OnStop.Add(@projectStop);

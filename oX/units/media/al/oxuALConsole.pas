@@ -128,11 +128,8 @@ begin
    oxConsole.console.AddHandler(conHandler);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'console.keymappings', @init);
+   ox.Init.Add('console.keymappings', @init);
 
 END.
 

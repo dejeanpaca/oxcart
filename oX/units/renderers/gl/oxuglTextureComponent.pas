@@ -97,10 +97,7 @@ begin
    oglTextureID.Free();
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.PreInit.Add(initRoutines, 'ox.gl.texture_component', @init, @deinit);
+   ox.PreInit.Add('ox.gl.texture_component', @init, @deinit);
 
 END.

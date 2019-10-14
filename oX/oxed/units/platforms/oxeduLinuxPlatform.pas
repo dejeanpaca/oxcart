@@ -45,10 +45,7 @@ begin
    oxedPlatforms.Add(oxedTLinuxPlatform.Create());
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'platform.linux', @init);
+   oxed.Init.Add('platform.linux', @init);
 
 END.

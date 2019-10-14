@@ -258,13 +258,10 @@ begin
       oxSceneRender.Scenes[0].Scene := oxScene;
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
    oxGlobalInstances.Add(oxTSceneRender, @oxSceneRender, @instanceGlobal);
 
-   ox.Init.Add(initRoutines, 'ox.scene_render', @init, @deinit);
+   ox.Init.Add('ox.scene_render', @init, @deinit);
    oxSceneManagement.OnSceneChange.Add(@change);
 
    {$IFDEF OX_LIBRARY}

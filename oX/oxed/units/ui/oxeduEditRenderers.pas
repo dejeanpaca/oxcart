@@ -234,14 +234,11 @@ begin
    oxedEditRenderers.Init.dCall();
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
    oxTRunRoutines.Initialize(oxedEditRenderers.Init);
    oxedEditRenderers.Glyphs3D := true;
 
-   oxed.Init.Add(oxedInitRoutines, 'oxed.edit_renderers', @init, @deinit);
+   oxed.Init.Add('oxed.edit_renderers', @init, @deinit);
 
 
 END.

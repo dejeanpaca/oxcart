@@ -997,11 +997,8 @@ begin
    oxf.Default := nil;
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'ox.font', @init, @deinit);
+   ox.Init.Add('ox.font', @init, @deinit);
 
    {this indicates whether vertically flipped texture coordinates should be generated}
    oxFont.FlippedGen := false;

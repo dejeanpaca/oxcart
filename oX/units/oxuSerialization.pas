@@ -1329,14 +1329,11 @@ begin
       oxSerialization.Serializers.List[i].PropertiesDone();
    end;
 end;
-
-VAR
-   initRoutines: oxTRunRoutine;
  
 INITIALIZATION
    init();
 
-   ox.Init.Add(initRoutines, 'ox.serialization', @initSerialization);
+   ox.Init.Add('ox.serialization', @initSerialization);
 
    oxGlobalInstances.Add('oxTSerializationManager', @oxSerialization);
 
