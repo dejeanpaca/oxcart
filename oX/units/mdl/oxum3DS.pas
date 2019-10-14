@@ -735,6 +735,6 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ox.Init.iAdd(initRoutines, 'model.3ds', @init);
+   ox.Init.Add(initRoutines, 'model.3ds', @init);
 
 END.

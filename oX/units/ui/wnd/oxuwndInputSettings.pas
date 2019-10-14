@@ -83,6 +83,6 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ox.Init.iAdd(initRoutines, 'ox.wnd:settings.input', @init);
+   ox.Init.Add(initRoutines, 'ox.wnd:settings.input', @init);
 
 END.

@@ -84,6 +84,6 @@ VAR
 INITIALIZATION
    oxedSceneScreenshot.CaptureKey := gkHandlerKey.Key;
 
-   oxed.Init.iAdd(initRoutines, 'scene_screenshot', @initialize);
+   oxed.Init.Add(initRoutines, 'scene_screenshot', @initialize);
 
 END.

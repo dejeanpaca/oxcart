@@ -733,7 +733,7 @@ VAR
 
 INITIALIZATION
    ox.Init.Add(initRoutines, 'console', @Initialize, @DeInitialize);
-   ui.InitializationProcs.iAdd(uiInitRoutines, 'console', @uiInitialize);
+   ui.InitializationProcs.Add(uiInitRoutines, 'console', @uiInitialize);
 
    oxConsole.Height        := 0.6;
    oxConsole.IbHeight      := 20;

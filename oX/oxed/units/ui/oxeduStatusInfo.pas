@@ -81,7 +81,7 @@ VAR
 INITIALIZATION
    TTimerInterval.Initialize(interval);
 
-   oxed.PostInit.iAdd(oxedInitRoutines, 'status_info', @initialize);
+   oxed.PostInit.Add(oxedInitRoutines, 'status_info', @initialize);
 
    ox.OnRun.Add(updateRoutine, 'oxed.update_status_info', @updateInfo);
 

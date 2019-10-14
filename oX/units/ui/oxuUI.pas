@@ -18,7 +18,7 @@ INTERFACE
       uOX, oxuWindow, oxuWindows, oxuRenderer, oxuRenderers, oxuTypes, oxuResourcePool, oxuRunRoutines,
       oxuShader, oxuMaterial, oxuFont,
       {ui}
-      uiuTypes, uiuControl, uiuWindowTypes, uiuSkinTypes, uiuWidget, uiuBase, uiuUI, uiuSkin;
+      uiuTypes, uiuControl, uiuWindowTypes, uiuWidget, uiuBase, uiuUI, uiuSkin;
 
 VAR
    oxui: uiTUI;

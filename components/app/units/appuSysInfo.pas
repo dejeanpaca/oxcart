@@ -193,6 +193,6 @@ INITIALIZATION
    {set defaults}
    appSI.systemName := 'unknown';
 
-   app.InitializationProcs.iAdd(initRoutines, 'systeminformation', @Initialize);
+   app.InitializationProcs.Add(initRoutines, 'systeminformation', @Initialize);
 
 END.

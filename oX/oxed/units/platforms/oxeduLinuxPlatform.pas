@@ -49,6 +49,6 @@ VAR
    oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxed.Init.iAdd(oxedInitRoutines, 'platform.linux', @init);
+   oxed.Init.Add(oxedInitRoutines, 'platform.linux', @init);
 
 END.

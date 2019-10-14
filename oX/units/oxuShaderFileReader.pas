@@ -146,6 +146,6 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ox.Init.iAdd(initRoutines, 'shader_reader', @init);
+   ox.Init.Add(initRoutines, 'shader_reader', @init);
 
 END.

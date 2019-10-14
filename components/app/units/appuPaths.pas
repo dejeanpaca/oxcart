@@ -264,6 +264,6 @@ VAR
 
 INITIALIZATION
    appPath.Configuration.UseOrganization := true;
-   app.InitializationProcs.iAdd(initRoutines, 'configuration', @initialize);
+   app.InitializationProcs.Add(initRoutines, 'configuration', @initialize);
 
 END.

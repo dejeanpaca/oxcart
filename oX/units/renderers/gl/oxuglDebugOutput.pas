@@ -111,7 +111,7 @@ VAR
 
 INITIALIZATION
    {$IFNDEF OX_LIBRARY}
-   ox.PreInit.iAdd(initRoutines, 'ox.gl.debug_output', @init);
+   ox.PreInit.Add(initRoutines, 'ox.gl.debug_output', @init);
    {$ENDIF}
 
 END.

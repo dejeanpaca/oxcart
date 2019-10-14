@@ -55,6 +55,6 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ox.PreInit.iAdd(initRoutines, 'ox.gl.transform', @init);
+   ox.PreInit.Add(initRoutines, 'ox.gl.transform', @init);
 
 END.

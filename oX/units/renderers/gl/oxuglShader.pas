@@ -289,6 +289,6 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ox.PreInit.iAdd(initRoutines, 'ox.gl.shader', @init);
+   ox.PreInit.Add(initRoutines, 'ox.gl.shader', @init);
 
 END.

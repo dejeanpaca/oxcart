@@ -136,6 +136,6 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ox.Init.iAdd(initRoutines, 'audio_wav', @init);
+   ox.Init.Add(initRoutines, 'audio_wav', @init);
 
 END.

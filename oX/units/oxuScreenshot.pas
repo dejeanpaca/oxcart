@@ -183,6 +183,6 @@ VAR
 INITIALIZATION
    oxScreenshot.CaptureKey := gkHandlerKey.Key;
 
-   ox.Init.iAdd(initRoutines, 'screenshot', @initialize);
+   ox.Init.Add(initRoutines, 'screenshot', @initialize);
 
 END.

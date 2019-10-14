@@ -145,7 +145,7 @@ VAR
    oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxed.Init.iAdd(oxedInitRoutines, 'oxed.icons', @init);
+   oxed.Init.Add(oxedInitRoutines, 'oxed.icons', @init);
    oxedIcons.DefaultContextMenuSize := 32;
 
 END.

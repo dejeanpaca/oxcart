@@ -43,7 +43,6 @@ TYPE
       function Find(const exec: TProcedure): oxPRunRoutine;
       procedure Add(var routine: oxTRunRoutine);
       procedure Add(out routine: oxTRunRoutine; exec: TProcedure);
-      procedure iAdd(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
       procedure dAdd(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
       procedure Add(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
       procedure Add(out routine: oxTRunRoutine; const name: string; init, deinit: TProcedure);
@@ -183,11 +182,6 @@ end;
 procedure oxTRunRoutines.Add(out routine: oxTRunRoutine; exec: TProcedure);
 begin
    Add(routine, '', exec);
-end;
-
-procedure oxTRunRoutines.iAdd(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
-begin
-   Add(routine, name, exec);
 end;
 
 procedure oxTRunRoutines.dAdd(out routine: oxTRunRoutine; const name: string; exec: TProcedure);

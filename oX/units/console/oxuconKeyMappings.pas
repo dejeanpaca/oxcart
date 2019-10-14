@@ -88,6 +88,6 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ox.Init.iAdd(initRoutines, 'console.keymappings', @Initialize);
+   ox.Init.Add(initRoutines, 'console.keymappings', @Initialize);
 
 END.

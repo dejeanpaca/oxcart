@@ -83,7 +83,7 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ox.Init.iAdd(initRoutines, 'oxed.scene', @init);
+   ox.Init.Add(initRoutines, 'oxed.scene', @init);
 
    oxed.OnSceneChange.Add(@sceneChange);
 
