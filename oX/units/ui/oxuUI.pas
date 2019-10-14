@@ -134,7 +134,7 @@ begin
    Wnd := nil;
 end;
 
-procedure uiTPointerCapture.LockWindow;
+procedure uiTPointerCapture.LockWindow();
 begin
    if(wnd <> nil) then begin
       appm.Grab(wnd.oxwParent);

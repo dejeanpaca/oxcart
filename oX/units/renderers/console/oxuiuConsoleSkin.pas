@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uColors,
       {oX}
-      oxuUI, uiuTypes, uiuSkin, uTVideo, uTVideoColors, ConsoleUtils;
+      uiuTypes, uiuSkin, uTVideo, uTVideoColors, ConsoleUtils;
 
 VAR
    oxuiConsoleSkin: uiTSkin;
@@ -81,7 +81,7 @@ begin
       ShadowSize := 1;
 
       {title button symbols}
-      cTitleBtSymbols := oxui.GetDefaultSkin().Window.cTitleBtSymbols;
+      cTitleBtSymbols := uiSkin.StandardSkin.Window.cTitleBtSymbols;
    end;
 
    { COLORS }
