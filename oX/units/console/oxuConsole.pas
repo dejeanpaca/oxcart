@@ -685,7 +685,7 @@ begin
    oxGlobalKeys.Hook(congkHandlerAlt);
 
    {prepare skin for input widget}
-   uiSkin.SetupWidget(oxui.DefaultSkin, consoleInputSkin, wdgInputSkinDescriptor);
+   uiSkin.SetupWidget(oxui.GetDefaultSkin(), consoleInputSkin, wdgInputSkinDescriptor);
    consoleInputSkin.SetColor(wdgscINPUT_TEXT, oxConsole.Colors.InputText);
    consoleInputSkin.SetColor(wdgscINPUT_CURSOR, oxConsole.Colors.InputCursor);
 

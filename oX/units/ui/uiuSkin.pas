@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       oxuRunRoutines, oxuPlatform,
       {ui}
-      oxuUI, uiuTypes, uiuWindowTypes, uiuSkinTypes,
+      uiuTypes, uiuSkinTypes,
       uiuBase, uiuPlatform;
 
 CONST
@@ -37,15 +37,16 @@ TYPE
 
      { GENERAL }
 
+     { skins }
+     nSkins: longint;
+     Skins: array of uiTSkin;
+
+     {standard internal skin}
+     StandardSkin: uiTSkin;
+
      { SKINS }
-     {set a skin to the window}
-     procedure SetWindow(var wnd: uiTWindow; cSkin: longint);
-     {set the default skin to the window}
-     procedure SetWindowDefault(var wnd: uiTWindow);
      {processes a skin}
      procedure Process(skin: uiTSkin);
-     {set the default skin for an interface}
-     procedure SetDefault(skin: uiTSkin);
      {sets up a widget skin from a descriptor}
      procedure SetupWidget(s: uiTSkin; var skin: uiTWidgetSkin; var descriptor: uiTWidgetSkinDescriptor);
 
@@ -67,23 +68,6 @@ VAR
 IMPLEMENTATION
 
 { SKINS }
-procedure uiTSkinGlobal.SetWindow(var wnd: uiTWindow; cSkin: longint);
-begin
-   if(cSkin = 0) then
-      wnd.Skin := oxui.DefaultSkin
-   else begin
-      dec(cSkin);
-
-      if(cSkin < oxui.nSkins) then
-         wnd.Skin := oxui.Skins[cSkin];
-   end;
-end;
-
-procedure uiTSkinGlobal.SetWindowDefault(var wnd: uiTWindow);
-begin
-   SetWindow(wnd, 0);
-end;
-
 procedure uiTSkinGlobal.DisposeWidget(var skin: uiTWidgetSkin);
 begin
    SetLength(skin.Colors, 0);
@@ -110,13 +94,13 @@ var
    i: longint;
 
 begin
-   for i := 0 to (oxui.nSkins - 1) do begin
-      if(oxui.Skins[i] <> nil) then
-         FreeObject(oxui.Skins[i]);
+   for i := 0 to (nSkins - 1) do begin
+      if(Skins[i] <> nil) then
+         FreeObject(Skins[i]);
 
-      SetLength(oxui.Skins, 0);
-      oxui.Skins := nil;
-      oxui.nSkins := 0;
+      SetLength(Skins, 0);
+      Skins := nil;
+      nSkins := 0;
    end;
 end;
 
@@ -137,11 +121,6 @@ begin
    skin.Window.Frames[none].TitleHeight   := 0;
    skin.Window.Frames[none].FrameWidth    := 0;
    skin.Window.Frames[none].FrameHeight   := 0;
-end;
-
-procedure uiTSkinGlobal.SetDefault(skin: uiTSkin);
-begin
-   oxui.DefaultSkin := Skin;
 end;
 
 procedure uiTSkinGlobal.SetupWidget(s: uiTSkin; var skin: uiTWidgetSkin; var descriptor: uiTWidgetSkinDescriptor);
@@ -193,8 +172,8 @@ var
    dockable: loopint;
 
 begin
-   oxui.StandardSkin := uiTSkin.Create();
-   oxui.StandardSkin.Name := 'standard';
+   uiSkin.StandardSkin := uiTSkin.Create();
+   uiSkin.StandardSkin.Name := 'standard';
 
    {set up title and frame sizes}
    normal := ord(uiwFRAME_STYLE_NORMAL);
@@ -202,7 +181,7 @@ begin
    dockable := ord(uiwFRAME_STYLE_DOCKABLE);
 
    { WINDOW }
-   with oxui.StandardSkin.Window do begin
+   with uiSkin.StandardSkin.Window do begin
       Frames[normal].TitleHeight   := 22;
       Frames[normal].FrameWidth    := 4;
       Frames[normal].FrameHeight   := 4;
@@ -259,7 +238,7 @@ begin
 
    { COLORS }
 
-   with oxui.StandardSkin.Colors do begin
+   with uiSkin.StandardSkin.Colors do begin
       {text colors}
       Text.Assign(255, 255, 255, 255);
       TextInHighlight.Assign(255, 255, 255, 255);
@@ -282,18 +261,16 @@ begin
    end;
 
    { disabled colors }
-   oxui.StandardSkin.DisabledColors := oxui.StandardSkin.Colors;
+   uiSkin.StandardSkin.DisabledColors := uiSkin.StandardSkin.Colors;
 
-   with oxui.StandardSkin.DisabledColors do begin
+   with uiSkin.StandardSkin.DisabledColors do begin
       InputText.Assign(192, 192, 192, 255);
       Highlight.Assign(224, 224, 224, 255);
       TextInHighlight.Assign(192, 192, 192, 255);
       Text.Assign(160, 160, 160, 255);
    end;
 
-   uiSkin.Process(oxui.StandardSkin);
-
-   oxui.DefaultSkin := oxui.StandardSkin;
+   uiSkin.Process(uiSkin.StandardSkin);
 end;
 
 procedure Initialize();
@@ -303,23 +280,21 @@ var
 begin
    platform := uiTPlatformComponent(oxPlatform.GetComponent('ui.platform'));
 
-   if(platform <> nil) then begin
+   if(platform <> nil) then
       log.v('System theme: ' + platform.GetSystemTheme());
-   end;
 
    InitStandardSkin();
 end;
 
 procedure DeInitialize();
 begin
-   uiSkin.Dispose(oxui.StandardSkin);
-   oxui.DefaultSkin := nil;
+   uiSkin.Dispose(uiSkin.StandardSkin);
    uiSkin.Dispose();
 end;
 
 procedure skinLoad();
 begin
-   uiSkin.Load(oxui.StandardSkin);
+   uiSkin.Load(uiSkin.StandardSkin);
 end;
 
 VAR

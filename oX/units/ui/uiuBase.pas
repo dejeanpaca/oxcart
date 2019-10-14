@@ -12,8 +12,7 @@ INTERFACE
 
    USES
       uLog, udvars,
-      oxuRunRoutines,
-      uiuSkinTypes;
+      oxuRunRoutines;
 
 TYPE
    { uiTBase }
@@ -23,15 +22,6 @@ TYPE
       Initialized,
       {ui started initialization (if false it means it never attempted to initialize)}
       StartedInitialization: boolean;
-
-      {standard internal skin}
-      StandardSkin: uiTSkin;
-      {default skin}
-      DefaultSkin: uiTSkin;
-
-      { skins }
-      nSkins: longint;
-      Skins: array of uiTSkin;
 
       {initialization procedures}
       BaseInitializationProcs,
@@ -65,6 +55,7 @@ end;
 procedure uiTBase.BaseInitialize();
 begin
    StartedInitialization := true;
+
    BaseInitializationProcs.iCall();
 
    log.i('Initialized UI');

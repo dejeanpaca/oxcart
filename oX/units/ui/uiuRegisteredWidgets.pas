@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       oxuRunRoutines,
       {ui}
-      uiuBase, uiuTypes, uiuWidget, oxuUI, uiuSkinTypes, uiuSkin;
+      uiuBase, oxuUI, uiuTypes, uiuWidget, uiuSkinTypes, uiuSkin;
 
 TYPE
 
@@ -75,6 +75,7 @@ end;
 procedure uiTRegisteredWidgets.RegisterClass(var wc: uiTWidgetClass);
 var
    n: longint;
+   skin: uiTSkin;
 
 begin
    assert(ReportedWidgetTypes < nWidgetTypes, 'uiWidgets > More classes registered than reported(' + sf(nWidgetTypes) + '). While registering: ' + wc.sName);
@@ -86,8 +87,10 @@ begin
       WidgetClasses[n] := @wc;
       WidgetClasses[n]^.cID := n;
 
+      skin := oxui.GetDefaultSkin();
+
       if(WidgetClasses[n]^.SkinDescriptor <> nil) then
-         uiSkin.SetupWidget(oxui.DefaultSkin, oxui.DefaultSkin.wdgSkins[n], WidgetClasses[n]^.SkinDescriptor^);
+         uiSkin.SetupWidget(skin, skin.wdgSkins[n], WidgetClasses[n]^.SkinDescriptor^);
    end;
 end;
 
@@ -161,14 +164,14 @@ end;
 
 procedure skinInitialize();
 begin
-   uiRegisteredWidgets.SetupDefaultWidget(oxui.DefaultSkin);
+   uiRegisteredWidgets.SetupDefaultWidget(oxui.GetDefaultSkin());
 end;
 
 VAR
-   skinInitRoutines: oxTRunRoutine;
+   initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ui.BaseInitializationProcs.Add(skinInitRoutines, 'widget.skin', @skinInitialize);
+   ui.BaseInitializationProcs.Add(initRoutines, 'widget.skin', @skinInitialize);
 
    InitDummyWidgetClass();
 

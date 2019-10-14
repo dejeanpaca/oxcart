@@ -81,7 +81,7 @@ begin
       ShadowSize := 1;
 
       {title button symbols}
-      cTitleBtSymbols := oxui.DefaultSkin.Window.cTitleBtSymbols;
+      cTitleBtSymbols := oxui.GetDefaultSkin().Window.cTitleBtSymbols;
    end;
 
    { COLORS }

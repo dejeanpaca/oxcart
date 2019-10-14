@@ -203,6 +203,8 @@ TYPE
       procedure SetColorBlended(color: TColor4f);
 
       procedure SetSkin(newSkin: uiTSkin);
+      {set the default skin to the window}
+      procedure SetDefaultSkin();
 
       { management }
 
@@ -498,7 +500,7 @@ begin
 
    assert(wnd.GetUI() <> nil, 'Tried to create a window with no base ui set in creation data');
 
-   wnd.SetSkin(wnd.GetUI().DefaultSkin);
+   wnd.SetSkin(wnd.GetUI().GetDefaultSkin());
 
    wnd.Background       := uiWindow.DefaultBackground;
 
@@ -522,7 +524,6 @@ begin
    wnd.AdjustSizesWithRestrictions(wnd.Dimensions);
 
    {set window data}
-   uiSkin.SetWindowDefault(wnd);
    wnd.Frame := createData.Frame;
 
    if(uiWindow.UseDefaultIcon) then
@@ -1703,6 +1704,11 @@ begin
    Skin := newSkin;
 end;
 
+procedure uiTWindowHelper.SetDefaultSkin();
+begin
+   SetSkin(oxui.GetDefaultSkin());
+end;
+
 { INTERNAL }
 procedure uiTWindowHelper.UpdatePositions();
 var
@@ -2142,12 +2148,15 @@ end;
 procedure Initialize();
 begin
    uiWindow.EscapeKeys := appTKeyList.Create('uiWindow.EscapeKeys');
+
    {list of confirmation keys, used for the default confirmation action}
    uiWindow.ConfirmationKeys := appTKeyList.Create('uiWindow.ConfirmationKeys');
 
    uiWindow.EscapeKeys.Add(uiWindow.DefaultEscapeKey);
    uiWindow.EscapeKeys.Add(uiWindow.BackEscapeKey);
    uiWindow.ConfirmationKeys.Add(uiWindow.DefaultConfirmationKey);
+
+   uiWindow.RestoreCreateDefaults();
 end;
 
 procedure DeInitialize();

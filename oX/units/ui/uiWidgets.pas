@@ -1237,7 +1237,7 @@ begin
       Result := uiTSkin(uiTWindow(wnd).Skin);
 
    if(Result = nil) then
-      Result := GetUI().DefaultSkin;
+      Result := GetUI().GetDefaultSkin();
 end;
 
 function uiTWidgetHelper.GetColor(clrIdx: longint): TColor4ub;
