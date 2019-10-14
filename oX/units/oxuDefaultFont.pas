@@ -122,7 +122,7 @@ INITIALIZATION
    {we only need the extension to load with the proper loader}
    tfd.TextureName := 'default_font.tga';
    {$ELSE}
-   ox.BaseInit.Add(initRoutines, 'default_font', @loadLibrary);
+   ox.BaseInit.Add('default_font', @loadLibrary);
    {$ENDIF}
 
 END.

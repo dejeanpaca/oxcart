@@ -42,6 +42,6 @@ end;
 
 INITIALIZATION
    oxRun.AddRoutine('ox.lib.update_input', @updateInput);
-   ox.Init.iAdd('ox.lib.update_input', @init);
+   ox.Init.Add('ox.lib.update_input', @init);
 
 END.
