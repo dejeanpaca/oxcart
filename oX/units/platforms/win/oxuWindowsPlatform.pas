@@ -418,27 +418,40 @@ begin
       WindowClass.lpfnWndProc    := WndProc(@WindowsMsgFunc);
       WindowClass.cbClsExtra     := 0;
       WindowClass.cbWndExtra     := 0;
-
-      {Get the Windows Instance for our app.}
-      WindowClass.hInstance      := system.MainInstance;
-      WindowClass.hIcon          := LoadIcon(0, IDI_APPLICATION);
       WindowClass.hCursor        := 0;
       WindowClass.hbrBackground  := 0;
       WindowClass.lpszMenuName   := nil;
 
-      {Name the specified Window Class}
+      {Name the specified window class}
       WindowClass.lpszClassName  := PChar(windowClassName);
+
+      {Get the windows instance for our app}
+      WindowClass.hInstance      := system.MainInstance;
+
+      {get window icon}
+      WindowClass.hIcon          := LoadIcon(0, IDI_APPLICATION);
+
+      error := GetLastError();
+
+      if(error <> 0) then
+         log.w('win-gdi > Failed to create application icon: ' + winos.FormatMessage(error));
+
+      { register the class }
 
       classAtom := RegisterClass(@WindowClass);
 
-      error := GetLastError();
-      if(error <> 0) then
-         log.e('win-gdi > Failed to create window class: ' + winos.FormatMessage(error));
+      if(classAtom = 0) then begin
+         error := GetLastError();
+
+         if(error <> 0) then
+            log.e('win-gdi > Failed to create window class: ' + winos.FormatMessage(error));
+      end else
+         error := 0;
 
       hasClass := true;
    end;
 
-   Result := classAtom <> 0;
+   Result := (classAtom <> 0) and (error = 0);
 end;
 
 function CreateWindow(window: oxTWindow): HWND;
