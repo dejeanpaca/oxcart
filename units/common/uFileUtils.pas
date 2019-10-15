@@ -259,9 +259,9 @@ end;
 class function TFileUtilsGlobal.ValidHandle(handle: THandle): boolean;
 begin
    {$IF defined(WINDOWS) AND defined(CPU64)}
-      Result := int64(handle) <> THandle(-1);
+      Result := int64(handle) <> -1;
    {$ELSE}
-      Result := handle <> THandle(-1);
+      Result := int32(handle) <> -1;
    {$ENDIF}
 end;
 
