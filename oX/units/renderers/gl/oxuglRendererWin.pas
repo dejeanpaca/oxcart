@@ -354,14 +354,14 @@ begin
       if(Result <> 0) then begin
          wnd.wd.LastError := winos.GetLastError();
 
-      if(wnd.wd.LastError = 0) and (not wnd.oxProperties.Context) and (shareContext <> 0) then begin
-         wglShareLists(Result, shareContext);
-         wnd.wd.LastError := winos.GetLastError();
+         if(wnd.wd.LastError = 0) and (not wnd.oxProperties.Context) and (shareContext <> 0) then begin
+            wglShareLists(Result, shareContext);
+            wnd.wd.LastError := winos.GetLastError();
 
-         if(wnd.wd.LastError <> 0) then
-            log.w('gl > (' + method + ') Failed to share lists with context ' + sf(shareContext));
+            if(wnd.wd.LastError <> 0) then
+               log.w('gl > (' + method + ') Failed to share lists with context ' + sf(shareContext));
+         end;
       end;
-   end;
    end;
 
    if(wnd.wd.LastError <> 0) then
