@@ -97,7 +97,9 @@ end;
 {destroy the default font}
 procedure dispose();
 begin
-   oxResource.Free(oxDefaultFont.Font.Texture);
+   if(oxDefaultFont.Font <> nil) then
+      oxResource.Free(oxDefaultFont.Font.Texture);
+
    FreeObject(oxDefaultFont.Font);
 end;
 {$ENDIF}
