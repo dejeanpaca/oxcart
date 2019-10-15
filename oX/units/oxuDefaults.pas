@@ -103,6 +103,10 @@ INTERFACE
       uiuSkinLoader,
       {$ENDIF}
 
+      {$IFDEF OX_FEATURE_PARAMS}
+      oxuRendererCmd,
+      {$ENDIF}
+
       {others}
       {$IFDEF OX_FEATURE_AUDIO}
       oxuAudio,
