@@ -16,7 +16,7 @@ INTERFACE
      uOX, oxuRunRoutines;
 
 CONST
-   oxcFramerateUpdateInterval: longword = 1000;
+   oxcFramerateUpdateInterval: longint = 1000;
 
 TYPE
    oxTFramerate = record

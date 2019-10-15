@@ -285,7 +285,7 @@ begin
       Position.y := pWnd.Dimensions.h + (titleHeight + Buttons.h) div 2;
       Position.x := pWnd.Dimensions.w - totalWidth - uiTWindow(wnd).GetFrameWidth() -
          {move away from the b}
-         (round((Buttons.h)) div 4);
+         loopint((round((Buttons.h)) div 4));
 
       {update widgets relative position}
       PositionUpdate();

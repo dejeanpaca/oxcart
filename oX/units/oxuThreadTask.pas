@@ -74,7 +74,7 @@ TYPE
       {time when the task was started}
       StartTime,
       {time to sleep between runs}
-      SleepTime: longword;
+      SleepTime: longint;
 
       RunnerInstanceType: oxTThreadTaskRunnerClass;
 
