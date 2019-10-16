@@ -12,7 +12,7 @@ INTERFACE
 
    USES
       {ox}
-      oxuTypes, oxuwndSettings, oxuRunRoutines,
+      oxuwndSettings, oxuRunRoutines,
       {widgets}
       uiuWidget, uiWidgets,
       wdguCheckbox, wdguDivisor,

@@ -15,7 +15,7 @@ INTERFACE
       {app}
       appuMouse,
       {oX}
-      uOX, oxuWindow, oxuWindows, oxuRenderer, oxuRenderers, oxuTypes, oxuResourcePool, oxuRunRoutines,
+      uOX, oxuWindow, oxuWindows, oxuRenderer, oxuRenderers, oxuResourcePool, oxuRunRoutines,
       oxuShader, oxuMaterial, oxuFont,
       {ui}
       uiuTypes, uiuControl, uiuWindowTypes, uiuWidget, uiuBase, uiuUI, uiuSkin;

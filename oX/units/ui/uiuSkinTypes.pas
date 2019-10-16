@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uColors, StringUtils,
       {oX}
-      oxuTypes, oxuTexture, uiuTypes, oxuResourcePool;
+      oxuTexture, uiuTypes, oxuResourcePool;
 
 TYPE
    { SKINS }

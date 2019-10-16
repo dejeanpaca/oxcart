@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uLog,
       {oX}
-      uOX, oxuTypes, oxuWindowTypes, oxuWindow, oxuUIHooks, oxuGlobalInstances,
+      uOX, oxuWindowTypes, oxuWindow, oxuUIHooks, oxuGlobalInstances,
       oxuRenderer, oxuWindowSettings, oxuWindows,
       {io}
       uiuWindowTypes, uiuControl;

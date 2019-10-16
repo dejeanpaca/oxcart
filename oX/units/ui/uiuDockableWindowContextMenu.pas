@@ -13,7 +13,7 @@ INTERFACE
    USES
       uColors,
       {oX}
-      uStd, oxuTypes, oxuWindow, oxuRunRoutines,
+      uStd, oxuWindow, oxuRunRoutines,
       {ui}
       uiuBase, uiuWindow, oxuUI, uiuTypes, uiWidgets, uiuWidget,
       uiuContextMenu, uiuDockableWindow, uiuWidgetWindow,

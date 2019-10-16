@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd,
       {oX}
-      oxuTypes, oxuRunRoutines,
+      oxuRunRoutines,
       {ui}
       uiuBase, oxuUI, uiuWindowTypes, uiuWindow, uiuPointerEvents, uiuContextMenu;
 

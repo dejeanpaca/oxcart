@@ -15,7 +15,7 @@ INTERFACE
       {app}
       uApp, appuController,
       {ox}
-      uOX, oxuTypes, oxuwndSettings,
+      uOX, oxuwndSettings,
       {ui}
       uiWidgets, wdguLabel, wdguButton, wdguDivisor;
 

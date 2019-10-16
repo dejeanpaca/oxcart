@@ -13,9 +13,7 @@ INTERFACE
    USES
       uStd,
       {app}
-      appuEvents,
-      {oX}
-      oxuTypes;
+      appuEvents;
 
 TYPE
    {background type}

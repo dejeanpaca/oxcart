@@ -17,7 +17,7 @@ INTERFACE
       uStd, uLog, StringUtils, vmMath,
       uImage, imguOperations,
       {ox}
-      uOX, oxuPaths, oxuTexture, oxuTextureGenerate, oxuTypes, oxuFont;
+      uOX, oxuPaths, oxuTexture, oxuTextureGenerate, oxuFont;
 
 TYPE
    oxTFreetypeAlphaType = (

@@ -14,7 +14,7 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uStd, uLog, StringUtils, ParamUtils,
       {ox}
-      oxuTypes, oxuTexture,
+      oxuTexture,
       {$IFDEF X11}GLX, oxuX11Platform{$ENDIF}
       {$IFDEF WINDOWS}windows, oxuWindowsOS{$ENDIF}
       {$IFDEF COCOA}CocoaAll, oxuCocoaPlatform{$ENDIF};

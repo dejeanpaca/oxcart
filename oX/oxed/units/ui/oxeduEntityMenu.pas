@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uLog,
       {ox}
-      oxuRunRoutines, oxuTypes, oxuEntity, oxuScene,
+      oxuRunRoutines, oxuEntity, oxuScene,
       {entities}
       oxuCameraEntity, oxuLightEntity, oxuPrimitiveModelEntities,
       {ui}
