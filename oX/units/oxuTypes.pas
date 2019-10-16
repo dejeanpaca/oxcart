@@ -766,8 +766,4 @@ begin
    Result := sf(w) + 'x' + sf(h);
 end;
 
-INITIALIZATION
-   oxNullPoint := oxTPoint.Null();
-   oxNullDimensions := oxTDimensions.Null();
-
 END.
