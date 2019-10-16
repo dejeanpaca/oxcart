@@ -17,7 +17,8 @@ INTERFACE
       oxuProjectionType, oxuProjection,
       oxuWindowTypes, oxuCamera, oxuRender, oxuTransform, oxuWindows, oxuSerialization,
       oxuMaterial, oxuGlobalInstances,
-      oxuScene, oxuEntity, oxuComponent, oxuCameraComponent, oxuRenderComponent;
+      oxuScene, oxuEntity, oxuSceneManagement,
+      oxuComponent, oxuCameraComponent, oxuRenderComponent;
 
 TYPE
 

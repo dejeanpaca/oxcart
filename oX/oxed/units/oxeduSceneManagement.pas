@@ -13,9 +13,10 @@ INTERFACE
    USES
       sysutils, uStd, uLog, udvars, uFileUtils, appuPaths,
       {ox}
-      uOX, oxuScene, oxuPaths,
+      uOX, oxuScene, oxuSceneManagement, oxuPaths,
       {oxed}
-      uOXED, oxeduDefaultScene, oxeduProject, oxeduProjectSettings, oxeduProjectSession, oxeduMessages, oxeduProjectManagement,
+      uOXED, oxeduDefaultScene, oxeduMessages,
+      oxeduProject, oxeduProjectSettings, oxeduProjectSession, oxeduProjectManagement,
       oxuSceneFile;
 
 TYPE
