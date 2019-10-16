@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, vmVector,
       {ox}
-      uOX, oxuRunRoutines,
+      uOX,
       oxuProjectionType, oxuProjection,
       oxuWindowTypes, oxuCamera, oxuRender, oxuTransform, oxuWindows, oxuSerialization,
       oxuMaterial, oxuGlobalInstances,

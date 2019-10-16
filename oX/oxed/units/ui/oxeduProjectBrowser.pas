@@ -11,18 +11,17 @@ UNIT oxeduProjectBrowser;
 INTERFACE
 
    USES
-      uStd, uColors, uLog,
+      uStd,
       {app}
       appuMouse, appuKeys, uApp,
       {ox}
-      oxuRunRoutines, oxuTypes, oxuScene,
-      oxuRender, oxuRenderer, oxuTimer,
+      oxuTypes,
       {ui}
-      uiuControl, uiuTypes, uiuWindow, uiuWidget, uiWidgets, uiuWidgetWindow,
+      uiuControl, uiuWindow, uiWidgets, uiuWidgetWindow,
       wdguWorkbar, wdguFileList, wdguLabel, wdguInputBox, wdguDivisor, oxuwndFileContextMenu,
       oxuFilePreviewWindow,
       {oxed}
-      uOXED, oxeduSettings, oxeduWindow, oxeduMenubar,
+      uOXED, oxeduWindow, oxeduMenubar,
       oxeduProjectContextMenu, oxeduProject, oxeduProjectManagement;
 
 TYPE

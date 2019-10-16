@@ -11,9 +11,7 @@ UNIT oxeduProject;
 INTERFACE
 
    USES
-      sysutils, uStd, uLog, udvars, uFileUtils, StringUtils, uBuild,
-      {ox}
-      oxuScene,
+      sysutils, uStd, uLog, uFileUtils, StringUtils, uBuild,
       {oxed}
       uOXED, oxeduSettings;
 

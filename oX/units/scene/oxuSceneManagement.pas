@@ -16,7 +16,7 @@ INTERFACE
       {$IFNDEF OX_LIBRARY}
       uOX, oxuRunRoutines,
       {$ENDIF}
-      oxuGlobalInstances, oxuEntity, oxuWorld, oxuSerialization, oxuScene;
+      oxuGlobalInstances, oxuEntity, oxuSerialization, oxuScene;
 
 TYPE
    oxPSceneManagement = ^oxTSceneManagement;

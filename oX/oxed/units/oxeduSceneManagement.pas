@@ -11,12 +11,12 @@ UNIT oxeduSceneManagement;
 INTERFACE
 
    USES
-      sysutils, uStd, uLog, udvars, uFileUtils, appuPaths,
+      uStd, uLog, uFileUtils,
       {ox}
-      uOX, oxuScene, oxuSceneManagement, oxuPaths,
+      uOX, oxuScene, oxuSceneManagement,
       {oxed}
       uOXED, oxeduDefaultScene, oxeduMessages,
-      oxeduProject, oxeduProjectSettings, oxeduProjectSession, oxeduProjectManagement,
+      oxeduProject, oxeduProjectManagement,
       oxuSceneFile;
 
 TYPE

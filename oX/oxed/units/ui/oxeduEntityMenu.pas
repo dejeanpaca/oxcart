@@ -13,11 +13,11 @@ INTERFACE
    USES
       uStd, uLog,
       {ox}
-      oxuRunRoutines, oxuEntity, oxuScene,
+      oxuEntity, oxuScene,
       {entities}
       oxuCameraEntity, oxuLightEntity, oxuPrimitiveModelEntities,
       {ui}
-      uiuControl, uiuContextMenu, uiuWidgetWindow, uiuWidget,
+      uiuContextMenu, uiuWidgetWindow, uiuWidget,
       {oxed}
       uOXED, oxeduIcons;
 

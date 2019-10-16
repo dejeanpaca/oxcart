@@ -11,12 +11,9 @@ UNIT oxeduProjectSession;
 INTERFACE
 
    USES
-      sysutils, uStd, uLog, udvars, dvaruFile, uFileUtils,
-      uAppInfo,
-      {ox}
-      oxuScene,
+      sysutils, uStd, udvars, dvaruFile,
       {oxed}
-      uOXED, oxeduProject, oxeduMessages;
+      oxeduProject;
 
 CONST
    OXED_PROJECT_SESSION_FILE = 'session.dvar';
