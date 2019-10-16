@@ -28,6 +28,8 @@ INTERFACE
         oxuSysInfo,
       {$ENDIF}
 
+      oxuSerializationTypes,
+
       {image loaders}
       {$INCLUDE ../../components/dimg/units/imgIncludeAllLoaders.inc},
       {image writers}

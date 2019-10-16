@@ -72,6 +72,7 @@ TYPE
       procedure InitFloatArray(floatKind: TFloatType; newElements: longint; newSettings: oxTSerializationPropertySettingsSet = [OX_SERIALIZATION_ARRAY, OX_SERIALIZATION_EXTERNAL]);
       procedure InitOrd(newKind: TTypeKind; newOrdinalType: TOrdType; newSettings: oxTSerializationPropertySettingsSet = [OX_SERIALIZATION_EXTERNAL]);
       procedure InitOrdArray(newKind: TTypeKind; newOrdinalType: TOrdType; newElements: longint; newSettings: oxTSerializationPropertySettingsSet = [OX_SERIALIZATION_ARRAY, OX_SERIALIZATION_EXTERNAL]);
+      procedure InitRecord(newTotalSize: loopint);
    end;
 
    { oxTSerializationProperty }
@@ -126,7 +127,7 @@ TYPE
       constructor Create(setTypeOf: TClass; instance: oxTSerializationInstanceFunction);
       constructor CreateRecord(const newTypeName: string);
 
-      destructor Destroy; override;
+      destructor Destroy(); override;
 
       class procedure InitProp(out prop: oxTSerializationProperty); static;
 
@@ -392,6 +393,8 @@ begin
 
             if(TObject(targetProp^) = nil) then
                CloneAllProperties(source, target, oxTSerialization(prop.Serializer));
+         end else if(prop.Dt^.Kind = tkRecord) then begin
+            {TODO: Clone record}
          end else if(prop.Dt^.Kind = tkAString) then begin
             if(prop.PropInfo <> nil) then
                SetPropValue(target, prop.PropInfo, GetPropValue(source, prop.PropInfo))
@@ -636,7 +639,9 @@ begin
          else if(Dt^.Kind = tkSString) then
             exit(GetStrProp(ofWhat, PropInfo))
          else if(Dt^.Kind = tkFloat) then
-            exit(sf(GetFloatProp(ofWhat, PropInfo)));
+            exit(sf(GetFloatProp(ofWhat, PropInfo)))
+         else if(Dt^.Kind = tkRecord) then
+            exit('Record');
       except
          log.e('serialization > Failed to get property ' + Name + ' of ' + TypeOf.ClassName);
       end;
@@ -778,14 +783,18 @@ end;
 
 { oxTSerializationDataType }
 
-function oxTSerializationDataType.GetElementSize: loopint;
+function oxTSerializationDataType.GetElementSize(): loopint;
 begin
-   Result := oxSerialization.GetSize(Kind, OrdinalType, FloatType);
+   If(Kind = tkRecord) then
+      Result := TotalSize
+   else
+      Result := oxSerialization.GetSize(Kind, OrdinalType, FloatType);
 end;
 
-procedure oxTSerializationDataType.SetSize;
+procedure oxTSerializationDataType.SetSize();
 begin
    ElementSize := GetElementSize();
+
    if(Elements = 0) then
       TotalSize := ElementSize
    else
@@ -867,6 +876,14 @@ begin
    SetSize();
 end;
 
+procedure oxTSerializationDataType.InitRecord(newTotalSize: loopint);
+begin
+   Init(Self);
+
+   Kind := tkRecord;
+   TotalSize := newTotalSize;
+end;
+
 { oxTSerialization }
 
 constructor oxTSerialization.Create(setTypeOf: TClass; instance: oxTSerializationInstanceFunction);
@@ -904,7 +921,7 @@ begin
    oxSerialization.Add(Self);
 end;
 
-destructor oxTSerialization.Destroy;
+destructor oxTSerialization.Destroy();
 begin
    inherited Destroy;
 
