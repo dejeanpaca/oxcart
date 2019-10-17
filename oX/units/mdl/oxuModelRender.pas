@@ -57,6 +57,11 @@ begin
 
    currentMaterial.Apply();
 
+   if(Mesh.Data.t <> nil) then
+      oxRender.TextureCoords(Mesh.Data.t[0])
+   else
+      oxRender.DisableTextureCoords();
+
    if(Mesh.Data.i <> nil) then
       oxRender.Primitives(Mesh.Primitive, pM.IndiceCount, pword(@Mesh.Data.i[pM.StartIndice]))
    else if(Mesh.Data.il <> nil) then
