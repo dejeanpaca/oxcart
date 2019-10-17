@@ -13,7 +13,7 @@ INTERFACE
    USES
       sysutils, uStd, uLog, uTiming,
       {ox}
-      oxuEntity, oxuScene;
+      oxuEntity, oxuScene, oxuSceneManagement;
 
 TYPE
    { oxTSceneLoader }
@@ -56,12 +56,12 @@ begin
    scene.LoadResources();
    log.v('scene > Loaded resources (Elapsed: ' + startTime.ElapsedfToString() + 's)');
 
+   scene.LoadComponentsInChildren();
+   log.v('scene > Loaded components');
+
    OnLoaded.Call();
    scene.CallOnLoaded();
    log.v('scene > Loaded scene');
-
-   scene.LoadComponentsInChildren();
-   log.v('scene > Loaded components');
 
    scene.StartComponentsInChildren();
    log.v('scene > Started components');
