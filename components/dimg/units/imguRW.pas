@@ -13,10 +13,12 @@ INTERFACE
    USES
       uStd, uLog, StringUtils,
       uFileHandlers, uFile, {%H-}uFiles,
-      uImage, imguOperations;
+      uImage, imguOperations,
+      oxuGlobalInstances;
 
 TYPE
    imgPFileData = ^imgTFileData;
+   imgPRWProperties = ^imgTRWProperties;
 
    imgTRWProperties = record
       SupressLog,
@@ -66,9 +68,11 @@ TYPE
       procedure SetError(newError: TError);
    end;
 
-   { imgTFileGlobal }
+   imgPFile = ^imgTFile;
 
-   imgTFileGlobal = record
+   { imgTFile }
+
+   imgTFile = record
       public
       Loaders: fhTHandlerInfo; {image loaders}
       Writers: fhTHandlerInfo; {image writers}
@@ -96,22 +100,22 @@ TYPE
    end;
 
 VAR
-   imgFile: imgTFileGlobal;
+   imgFile: imgTFile;
 
 IMPLEMENTATION
 
-procedure imgTFileGlobal.Init(out props: imgTRWProperties);
+procedure imgTFile.Init(out props: imgTRWProperties);
 begin
    ZeroOut(props, SizeOf(props));
    props.setToDefaultOrigin := img.settings.setToDefaultOrigin;
 end;
 
-procedure imgTFileGlobal.Init(out ld: imgTFileData);
+procedure imgTFile.Init(out ld: imgTFileData);
 begin
    ZeroOut(ld, SizeOf(ld));
 end;
 
-procedure imgTFileGlobal.SetErrorData(var errorData: imgTErrorData; const data: imgTFileData);
+procedure imgTFile.SetErrorData(var errorData: imgTErrorData; const data: imgTFileData);
 begin
    errorData.e := data.error;
 
@@ -135,7 +139,7 @@ begin
    end;
 end;
 
-function imgTFileGlobal.Load(var image: imgTImage; const fileName: string): longint;
+function imgTFile.Load(var image: imgTImage; const fileName: string): longint;
 var
    props: imgTRWProperties;
 
@@ -145,7 +149,7 @@ begin
    Result := Load(image, fileName, props);
 end;
 
-function imgTFileGlobal.Load(var image: imgTImage; const fileName: string; var props: imgTRWProperties): longint;
+function imgTFile.Load(var image: imgTImage; const fileName: string; var props: imgTRWProperties): longint;
 var
    f: TFile;
 
@@ -155,7 +159,7 @@ begin
    Result := Load(image, fileName, f, props);
 end;
 
-function imgTFileGlobal.Load(var image: imgTImage; const fileName: string; var f: TFile; var props: imgTRWProperties): longint;
+function imgTFile.Load(var image: imgTImage; const fileName: string; var f: TFile; var props: imgTRWProperties): longint;
 var
    data: imgTFileData;
    fd: fhTFindData;
@@ -234,13 +238,13 @@ begin
          if(data.Error <> 0) and (f.Error = 0) then
             log.e('Image handler (' + fd.Handler^.Name + ') returned error ' + GetErrorCodeString(data.Error) + ' for: ' + image.FileName);
       end else begin
-         props.error.f := imgeLOADER_NOT_FOUND;
+         props.Error.f := imgeLOADER_NOT_FOUND;
          exit(imgeLOADER_NOT_FOUND);
       end;
    end;
 end;
 
-function imgTFileGlobal.Write(var image: imgTImage; const fileName: string): longint;
+function imgTFile.Write(var image: imgTImage; const fileName: string): longint;
 var
    props: imgTRWProperties;
 
@@ -250,7 +254,7 @@ begin
    Result := Write(image, fileName, props);
 end;
 
-function imgTFileGlobal.Write(var image: imgTImage; const fileName: string; var props: imgTRWProperties): longint;
+function imgTFile.Write(var image: imgTImage; const fileName: string; var props: imgTRWProperties): longint;
 var
    data: imgTFileData;
    fd: fhTFindData;
@@ -433,7 +437,7 @@ end;
 
 { LOGGING }
 
-procedure imgTFileGlobal.LogHandlers();
+procedure imgTFile.LogHandlers();
 var
    curext: fhPExtension = nil;
 
@@ -466,5 +470,8 @@ begin
 
    log.Leave();
 end;
+
+INITIALIZATION
+   oxGlobalInstances.Add('imgTFile', @imgFile);
 
 END.
