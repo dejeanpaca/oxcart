@@ -95,6 +95,7 @@ function sf(value: comp; dec: longint): string; inline;
 function sf(value: comp): string; inline;
 {$ENDIF}
 function sf(value: boolean): string; inline;
+function sf(value: pointer): string; inline;
 
 {WHITESPACE STRIPPING}
 procedure StripLeadingWhitespace(var st: string);
@@ -339,12 +340,15 @@ end;
 
 function sf(value: boolean): string; inline;
 begin
-   case value of
-      true:
-         Result := 'true';
-      false:
-         Result := 'false';
-   end;
+   if(value) then
+      Result := 'true'
+   else
+      Result := 'false';
+end;
+
+function sf(value: pointer): string;
+begin
+   Result := addr2str(value);
 end;
 
 {WHITESPACE STRIPPING}
