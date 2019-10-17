@@ -53,7 +53,7 @@ var
 begin
    {$IFNDEF GLES}
    fmt := 0;
-   glTexImage2D(GL_PROXY_TEXTURE_2D, 0, typ, gen.image.Width, gen.image.Height, 0, typ, storageType, nil);
+   glTexImage2D(GL_PROXY_TEXTURE_2D, 0, typ, gen.Image.Width, gen.Image.Height, 0, typ, storageType, nil);
    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, @fmt);
    Result := fmt <> 0;
    {$ELSE}
@@ -83,12 +83,12 @@ begin
    {determine storage type and pixel format}
 
    storageType := GL_UNSIGNED_BYTE;
-   if(gen.image.PixF = PIXF_RGB) then
+   if(gen.Image.PixF = PIXF_RGB) then
       typ := GL_RGB
-   else if (gen.image.PixF = PIXF_RGBA) then
+   else if (gen.Image.PixF = PIXF_RGBA) then
       typ := GL_RGBA
    else begin
-      log.e('gl > Image pixel format not supported: ' + img.PIXFName(gen.image.PixF));
+      log.e('gl > Image pixel format not supported: ' + img.PIXFName(gen.Image.PixF));
       exit(eUNSUPPORTED);
    end;
 
@@ -121,7 +121,7 @@ begin
    if(glErr <> 0) then begin
       Result := oxeRENDERER;
 
-      log.e('gl > error(' + sf(glErr) + ') while generating texture image: ' + gen.image.FileName);
+      log.e('gl > error(' + sf(glErr) + ') while generating texture image: ' + gen.Image.FileName);
    end;
 end;
 
