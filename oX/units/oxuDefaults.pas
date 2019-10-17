@@ -42,11 +42,10 @@ INTERFACE
       {$IFDEF OX_PLATFORM_SUPPORT}
          {$IFNDEF OX_LIBRARY}
             { platforms }
-            {%H-}oxuPlatform,
             {$IF defined(WINDOWS)}
                {%H-}oxuPlatformWindows,
             {$ELSEIF defined(ANDROID)}
-            {%H-}oxuAndroidPlatform,
+               {%H-}oxuAndroidPlatform,
             {$ELSEIF defined(X11)}
                {%H-}oxuX11Platform,
             {$ELSEIF defined(COCOA)}

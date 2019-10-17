@@ -165,5 +165,4 @@ INITIALIZATION
    oxTPlatformInstancesList.Initialize(oxPlatforms.Instances);
    oxTPlatformList.Initialize(oxPlatforms.List);
 
-
 END.

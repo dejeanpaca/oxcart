@@ -25,7 +25,7 @@ TYPE
    oxglTFPShader = class(oxTShader)
       Instance: oxglTFPShader; static;
 
-      constructor Create; override;
+      constructor Create(); override;
 
       function Compile(): boolean; override;
 
@@ -48,7 +48,7 @@ VAR
 
 { oxglTFPShader }
 
-constructor oxglTFPShader.Create;
+constructor oxglTFPShader.Create();
 begin
    inherited Create;
 end;
