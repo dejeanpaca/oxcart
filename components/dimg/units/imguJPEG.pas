@@ -8,10 +8,6 @@
 {$INCLUDE oxdefines.inc}
 UNIT imguJPEG;
 
-{A JPEG image loader for the dImage unit. Not a stand-alone loader like dTarga
-or dBMP, but quite good enough. I'd made my own stand-alone loader if I had the
-time or will to study the JPEG format, but I guess this is good enough.}
-
 INTERFACE
 
    USES
@@ -156,7 +152,7 @@ begin
    f.Free();
 end;
 
-BEGIN
+INITIALIZATION
    {register the extensions and the loader}
    imgFile.Loaders.RegisterHandler(loader, 'JPEG', @load);
    {jpeg handler doesn't support file abstractions}
@@ -164,4 +160,5 @@ BEGIN
 
    imgFile.Loaders.RegisterExt(ext, '.jpg', @loader);
    imgFile.Loaders.RegisterExt(ext2, '.jpeg', @loader);
+
 END.

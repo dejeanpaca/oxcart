@@ -9,12 +9,13 @@
 UNIT imguWAL;
 
 {Quake WAL Image Format.
-Loads in only the first mipmap as the current dImage implementation does not
+Loads in only the first mipmap as the current uImage implementation does not
 support multiple images(mipmaps).}
 
 INTERFACE
 
-   USES uStd, uImage, uFileHandlers, imguRW;
+   USES
+      uStd, uImage, uFileHandlers, imguRW;
 
 CONST
    walcsPalAuthor       = 'ID Software';

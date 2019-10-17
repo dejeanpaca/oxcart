@@ -141,11 +141,12 @@ begin
    end;
 end;
 
-BEGIN
+INITIALIZATION
    {register the extensions and the loader}
    imgFile.Loaders.RegisterExt(pbmExt, '.pbm', @loader);
    imgFile.Loaders.RegisterExt(pgmExt, '.pgm', @loader);
    imgFile.Loaders.RegisterExt(ppmExt, '.ppm', @loader);
 
    imgFile.Loaders.RegisterHandler(loader, 'PNM', @pnmLoad);
+
 END.

@@ -10,7 +10,8 @@ UNIT imguTGA;
 
 INTERFACE
 
-   USES uImage, uFileHandlers, imguRW;
+   USES
+      uImage, uFileHandlers, imguRW;
 
 IMPLEMENTATION
 
@@ -201,7 +202,7 @@ begin {load}
    {the image has been loaded successfully | mission accomplished}
 end;
 
-BEGIN
+INITIALIZATION
    {register the extension and the loader}
    imgFile.Loaders.RegisterHandler(loader, 'TGA', @load);
    imgFile.Loaders.RegisterExt(ext, '.tga', @loader);

@@ -21,7 +21,8 @@ General outline of the bitmap file format:
 
 INTERFACE
 
-   USES uStd, uImage, uFileHandlers, imguRW;
+   USES
+      uStd, uImage, uFileHandlers, imguRW;
 
 IMPLEMENTATION
 
@@ -134,7 +135,7 @@ begin
    end;
 end;
 
-BEGIN
+INITIALIZATION
    {register the extension and loader}
    imgFile.Loaders.RegisterHandler(loader, 'WINBMP', @load);
    imgFile.Loaders.RegisterExt(ext, '.bmp', @loader);

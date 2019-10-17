@@ -10,8 +10,8 @@ UNIT imguRW;
 
 INTERFACE
 
-USES
-   uStd, uLog, StringUtils,
+   USES
+      uStd, uLog, StringUtils,
       uFileHandlers, uFile, {%H-}uFiles,
       uImage, imguOperations;
 
@@ -468,4 +468,3 @@ begin
 end;
 
 END.
-
