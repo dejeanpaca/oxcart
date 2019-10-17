@@ -50,6 +50,7 @@ TYPE
       procedure DisableNormals(); override;
 
       procedure TextureCoords(var v: TVector2f); override;
+      procedure DisableTextureCoords(); override;
 
       procedure Lines(var v: array of TVector2f); override;
       procedure Lines(var v: array of TVector3f); override;
@@ -188,7 +189,7 @@ begin
    {$IFDEF DEBUG}LastUsedColor := @v;{$ENDIF}
 end;
 
-procedure oglTRender.DisableColor;
+procedure oglTRender.DisableColor();
 begin
    glDisableClientState(GL_COLOR_ARRAY);
 end;
@@ -200,7 +201,7 @@ begin
    {$IFDEF DEBUG}LastUsedNormals := @v;{$ENDIF}
 end;
 
-procedure oglTRender.DisableNormals;
+procedure oglTRender.DisableNormals();
 begin
    glDisableClientState(GL_NORMAL_ARRAY);
 end;
@@ -211,6 +212,11 @@ begin
    glTexCoordPointer(2, GL_FLOAT, 0, @v);
 
    {$IFDEF DEBUG}LastUsedTextureCoords := @v;{$ENDIF}
+end;
+
+procedure oglTRender.DisableTextureCoords();
+begin
+   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 end;
 
 procedure oglTRender.Lines(var v: array of TVector2f);
