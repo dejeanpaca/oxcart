@@ -16,28 +16,31 @@ INTERFACE
       oxuTypes, oxuMaterial, oxuMesh, oxuModel, oxuRender;
 
 TYPE
-   { oxTModelRenderGlobal }
+   { oxTModelRender }
 
-   oxTModelRenderGlobal = record
-      class function GetMaterial(material: oxTMaterial): oxTMaterial; static;
+   oxTModelRender = record
+      {get material to render with (fallbacks to default materials if the specified one is not available)}
+      class function GetMaterial(material: oxTMaterial = nil): oxTMaterial; static;
 
-      procedure SetupMeshRender(const mesh: oxTMesh);
+      {prepare rendering of a mesh (assign data)}
+      procedure PrepareRender(const mesh: oxTMesh);
 
       {render mesh with the given mesh material}
       procedure RenderMesh(const mesh: oxTMesh; material: oxTMaterial; const pM: oxTMeshMaterial);
       {render mesh with the given material}
       procedure RenderMesh(const mesh: oxTMesh; material: oxTMaterial = nil);
+      {render a given model}
       procedure Render(model: oxTModel);
    end;
 
 VAR
-   oxModelRender: oxTModelRenderGlobal;
+   oxModelRender: oxTModelRender;
 
 IMPLEMENTATION
 
-{ oxTModelRenderGlobal }
+{ oxTModelRender }
 
-class function oxTModelRenderGlobal.GetMaterial(material: oxTMaterial): oxTMaterial;
+class function oxTModelRender.GetMaterial(material: oxTMaterial): oxTMaterial;
 begin
    Result := material;
 
@@ -48,7 +51,7 @@ begin
       Result := oxMaterial.Default;
 end;
 
-procedure oxTModelRenderGlobal.SetupMeshRender(const mesh: oxTMesh);
+procedure oxTModelRender.PrepareRender(const mesh: oxTMesh);
 begin
    oxRender.Vertex(Mesh.Data.v[Mesh.Data.vertexOffset]);
 
@@ -68,7 +71,7 @@ begin
       oxRender.DisableColor();
 end;
 
-procedure oxTModelRenderGlobal.RenderMesh(const mesh: oxTMesh; material: oxTMaterial; const pM: oxTMeshMaterial);
+procedure oxTModelRender.RenderMesh(const mesh: oxTMesh; material: oxTMaterial; const pM: oxTMeshMaterial);
 var
    currentMaterial: oxTMaterial;
 
@@ -85,7 +88,7 @@ begin
       oxRender.Primitives(Mesh.Primitive, pM.IndiceCount, PDWord(@Mesh.Data.il[pM.StartIndice]))
 end;
 
-procedure oxTModelRenderGlobal.RenderMesh(const mesh: oxTMesh; material: oxTMaterial);
+procedure oxTModelRender.RenderMesh(const mesh: oxTMesh; material: oxTMaterial);
 var
    i: loopint;
 
@@ -95,7 +98,7 @@ begin
 
       material := GetMaterial(material);
 
-      SetupMeshRender(mesh);
+      PrepareRender(mesh);
 
       if(mesh.Materials.n > 0) then begin
          for i := 0 to mesh.Materials.n - 1 do begin
@@ -121,7 +124,7 @@ begin
 
 end;
 
-procedure oxTModelRenderGlobal.Render(model: oxTModel);
+procedure oxTModelRender.Render(model: oxTModel);
 var
    i: loopint;
    mat: oxTMaterial;
