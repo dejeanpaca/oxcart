@@ -156,7 +156,7 @@ end;
 
 procedure oxTLibrary.Run();
 begin
-   oxRun.GoCycle();
+   oxRun.GoCycle(false);
 end;
 
 function oxTLibrary.GetSettings(): oxPLibrarySettings;
