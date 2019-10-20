@@ -21,6 +21,8 @@ TYPE
    oxTModelRenderGlobal = record
       class function GetMaterial(material: oxTMaterial): oxTMaterial; static;
 
+      procedure SetupMeshRender(const mesh: oxTMesh);
+
       {render mesh with the given mesh material}
       procedure RenderMesh(const mesh: oxTMesh; material: oxTMaterial; const pM: oxTMeshMaterial);
       {render mesh with the given material}
@@ -46,6 +48,26 @@ begin
       Result := oxMaterial.Default;
 end;
 
+procedure oxTModelRenderGlobal.SetupMeshRender(const mesh: oxTMesh);
+begin
+   oxRender.Vertex(Mesh.Data.v[Mesh.Data.vertexOffset]);
+
+   if(Mesh.Data.t <> nil) then begin
+      oxRender.TextureCoords(Mesh.Data.t[0])
+   end else
+     oxRender.DisableTextureCoords();
+
+   if(Mesh.Data.n <> nil) then begin
+      oxRender.Normals(Mesh.Data.n[Mesh.Data.vertexOffset]);
+   end else
+      oxRender.DisableNormals();
+
+   if(Mesh.Data.c <> nil) then begin
+      oxRender.Color(Mesh.Data.c[0]);
+   end else
+      oxRender.DisableColor();
+end;
+
 procedure oxTModelRenderGlobal.RenderMesh(const mesh: oxTMesh; material: oxTMaterial; const pM: oxTMeshMaterial);
 var
    currentMaterial: oxTMaterial;
@@ -56,11 +78,6 @@ begin
       currentMaterial := GetMaterial(material);
 
    currentMaterial.Apply();
-
-   if(Mesh.Data.t <> nil) then
-      oxRender.TextureCoords(Mesh.Data.t[0])
-   else
-      oxRender.DisableTextureCoords();
 
    if(Mesh.Data.i <> nil) then
       oxRender.Primitives(Mesh.Primitive, pM.IndiceCount, pword(@Mesh.Data.i[pM.StartIndice]))
@@ -78,17 +95,7 @@ begin
 
       material := GetMaterial(material);
 
-      oxRender.Vertex(Mesh.Data.v[Mesh.Data.vertexOffset]);
-
-      if(Mesh.Data.n <> nil) then begin
-         oxRender.Normals(Mesh.Data.n[Mesh.Data.vertexOffset]);
-      end else
-         oxRender.DisableNormals();
-
-      if(Mesh.Data.c <> nil) then begin
-         oxRender.Color(Mesh.Data.c[0]);
-      end else
-         oxRender.DisableColor();
+      SetupMeshRender(mesh);
 
       if(mesh.Materials.n > 0) then begin
          for i := 0 to mesh.Materials.n - 1 do begin
