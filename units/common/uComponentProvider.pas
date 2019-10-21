@@ -43,6 +43,7 @@ TYPE
       AllocationStep: longint;
 
       procedure Initialize(var cp: TComponentProvider);
+      procedure InitializeValues(var cp: TComponentProvider);
    end;
 
 VAR
@@ -55,7 +56,11 @@ IMPLEMENTATION
 procedure TComponentProviderGlobal.Initialize(var cp: TComponentProvider);
 begin
    ZeroOut(cp, SizeOf(cp));
+   InitializeValues(cp);
+end;
 
+procedure TComponentProviderGlobal.InitializeValues(var cp: TComponentProvider);
+begin
    cp.Components.InitializeValues(cp.Components, AllocationStep);
 end;
 
