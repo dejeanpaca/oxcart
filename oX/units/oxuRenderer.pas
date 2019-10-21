@@ -72,7 +72,7 @@ TYPE
          ExternalRenderer: oxTRenderer;
          {$ENDIF}
 
-      constructor Create; virtual;
+      constructor Create(); virtual;
 
       {initialize the renderer}
       procedure Initialize(); virtual;
@@ -178,7 +178,7 @@ end;
 
 { oxTRenderer }
 
-constructor oxTRenderer.Create;
+constructor oxTRenderer.Create();
 begin
    WindowInstance := oxTWindow;
    WindowSettings := oxrDefaultWindowSettings;
