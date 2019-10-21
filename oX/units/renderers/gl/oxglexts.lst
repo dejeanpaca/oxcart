@@ -60,3 +60,4 @@ GL_ARB_shader_objects
 GL_ARB_shading_language_100
 GL_ARB_compatibility
 GL_ARB_debug_output
+GL_ARB_texture_non_power_of_two

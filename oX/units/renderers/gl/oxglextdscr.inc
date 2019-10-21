@@ -1,6 +1,6 @@
 {File generated via oxbuildglextdscr.}
 
-   oglnExtensionDescriptors = 55;
+   oglnExtensionDescriptors = 56;
 
 { extension IDs }
    cGL_ARB_depth_texture = 0;
@@ -58,6 +58,7 @@
    cGL_ARB_shading_language_100 = 52;
    cGL_ARB_compatibility = 53;
    cGL_ARB_debug_output = 54;
+   cGL_ARB_texture_non_power_of_two = 55;
 
 TYPE
    oglPExtensionDescriptors = ^oglTExtensionDescriptors;
@@ -121,5 +122,6 @@ CONST
       (Name: 'GL_ARB_shader_objects'; Present: false),
       (Name: 'GL_ARB_shading_language_100'; Present: false),
       (Name: 'GL_ARB_compatibility'; Present: false),
-      (Name: 'GL_ARB_debug_output'; Present: false)
+      (Name: 'GL_ARB_debug_output'; Present: false),
+      (Name: 'GL_ARB_texture_non_power_of_two'; Present: false)
    );
