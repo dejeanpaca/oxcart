@@ -12,7 +12,7 @@ PROGRAM oxbuildglextdscr;
       uStd, uSimpleParser;
 
 CONST
-   MAX_EXT = 8192-1;
+   MAX_EXT = 8192 - 1;
 
 VAR
    {list of extensions}
@@ -45,7 +45,7 @@ var
 begin
    writeln('Reading file: ', fn);
    TParseData.Init(p);
-   p.ReadMethod := TParseExtMethod(@readf);
+   p.ReadMethod := TParseMethod(@readf);
    p.Read(fn);
 
    if(ioE <> 0) then begin
@@ -77,7 +77,7 @@ begin
       writeln(f);
 
       writeln(f, 'TYPE');
-      writeln(f, '   oglPExtensionDescriptors = ^oglTExtensionDescriptors');
+      writeln(f, '   oglPExtensionDescriptors = ^oglTExtensionDescriptors;');
       writeln(f, '   oglTExtensionDescriptors = array[0 .. oglnExtensionDescriptors - 1] of oglTExtensionDescriptor;');
       writeln(f);
       writeln(f, 'CONST');
