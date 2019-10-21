@@ -1224,7 +1224,7 @@ end;
 function FileRewrite(out f: text; const fn: StdString): longint;
 begin
    Assign(f, fn);
-   Reset(f);
+   Rewrite(f);
 
    Result := ioerror();
 end;
