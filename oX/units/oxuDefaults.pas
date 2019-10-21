@@ -47,7 +47,7 @@ INTERFACE
             {$ELSEIF defined(ANDROID)}
                {%H-}oxuAndroidPlatform,
             {$ELSEIF defined(X11)}
-               {%H-}oxuX11Platform,
+               {%H-}oxuPlatformX11,
             {$ELSEIF defined(COCOA)}
                {%H-}oxuCocoaPlatform,
             {$ENDIF}
