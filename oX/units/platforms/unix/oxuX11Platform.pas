@@ -184,6 +184,8 @@ VAR
 { EVENTS }
 constructor oxTX11Platform.Create();
 begin
+   inherited;
+
    Name := 'X11';
    x11 := Self;
 end;
