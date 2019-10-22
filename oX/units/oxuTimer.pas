@@ -46,16 +46,14 @@ IMPLEMENTATION
 
 procedure oxTTime.Pause();
 begin
-   if(not Timer.Paused) then begin
+   if(not Timer.Paused) then
       Timer.Pause();
-   end;
 end;
 
 procedure oxTTime.Resume();
 begin
-   if(Timer.Paused) then begin
+   if(Timer.Paused) then
       Timer.Resume();
-   end;
 end;
 
 procedure oxTTime.TogglePause();
