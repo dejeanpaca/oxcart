@@ -16,10 +16,10 @@ INTERFACE
       {oX}
       oxuWindowTypes, oxuGlobalKeys, oxuGlobalInstances, oxuWindow,
       {ui}
-      oxuUI, uiuKeyEvents;
+      uiuUI, oxuUI, uiuKeyEvents;
 
 TYPE
-   oxTKeyRoutine = function(var key: appTKeyEvent; wnd: oxTWindow): boolean;
+   oxTKeyRoutine = function(oxui: uiTUI; var key: appTKeyEvent; wnd: oxTWindow): boolean;
 
    { oxTKeyGlobal }
 
@@ -27,8 +27,8 @@ TYPE
       Routine,
       UpRoutine: oxTKeyRoutine;
 
-      function Handle(var {%H-}e: appTEvent; var k: appTKeyEvent; wnd: oxTWindow): boolean; virtual;
-      function Handle(var k: appTKeyEvent): boolean; virtual;
+      function Handle(oxui: uiTUI; var {%H-}e: appTEvent; var k: appTKeyEvent; wnd: oxTWindow): boolean; virtual;
+      function Handle(oxui: uiTUI; var k: appTKeyEvent): boolean; virtual;
    end;
 
 VAR
@@ -36,7 +36,7 @@ VAR
 
 IMPLEMENTATION
 
-function oxTKeyGlobal.Handle(var {%H-}e: appTEvent; var k: appTKeyEvent; wnd: oxTWindow): boolean;
+function oxTKeyGlobal.Handle(oxui: uiTUI; var {%H-}e: appTEvent; var k: appTKeyEvent; wnd: oxTWindow): boolean;
 begin
    {let the ui process keys}
    Result := uiKeyEvents.Action(oxui, e);
@@ -46,15 +46,15 @@ begin
       if(not oxGlobalKeys.Call(k.Key, wnd)) then begin
          {if no global key then call the callback routine}
          if(Routine <> nil) and (k.Key.IsPressed()) then
-            Result := Routine(k, wnd);
+            Result := Routine(oxui, k, wnd);
 
          if(UpRoutine <> nil) and (k.Key.Released()) then
-            Result := UpRoutine(k, wnd)
+            Result := UpRoutine(oxui, k, wnd)
       end;
    end;
 end;
 
-function oxTKeyGlobal.Handle(var k: appTKeyEvent): boolean;
+function oxTKeyGlobal.Handle(oxui: uiTUI; var k: appTKeyEvent): boolean;
 var
    e: appTEvent;
 
@@ -62,7 +62,7 @@ begin
    appEvents.Init(e, appKEY_EVENT, @appKeyEvents.evh);
    e.ExternalData := @k;
 
-   Result := Handle(e, k, oxWindow.Current);
+   Result := Handle(oxui, e, k, oxWindow.Current);
 end;
 
 procedure processKey(var e: appTEvent);
@@ -73,7 +73,7 @@ begin
    data := e.GetData();
 
    if(data <> nil) and (oxKey <> nil) then
-      oxKey.Handle(e, appPKeyEvent(data)^, oxTWindow(e.wnd))
+      oxKey.Handle(oxui, e, appPKeyEvent(data)^, oxTWindow(e.wnd))
 end;
 
 function instance(): TObject;
