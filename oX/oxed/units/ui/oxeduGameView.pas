@@ -129,7 +129,7 @@ begin
    if(projectPointer <> nil) then begin
       newM := e; {use copy so the original is not modified}
       GetMouseEvent(Self, newM, x, y);
-      projectPointer.Handle(newM);
+      projectPointer.Handle(nil, newM);
    end;
 end;
 
@@ -142,7 +142,7 @@ begin
       appm.Init(newM);
       newM.Action := appmcMOVED;
       GetMouseEvent(Self, newM, x, y);
-      projectPointer.Handle(newM);
+      projectPointer.Handle(nil, newM);
    end;
 end;
 
