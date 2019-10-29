@@ -45,6 +45,9 @@ TYPE
       constructor Create(); virtual;
 
       procedure AddArchitecture(archName, arch: string);
+
+      {reset when new project is created, opened or closed}
+      procedure ProjectReset(); virtual;
    end;
 
    oxedTPlatformsList = specialize TSimpleList<oxedTPlatform>;
@@ -90,6 +93,11 @@ begin
    a.Architecture := arch;
 
    Architectures.Add(a);
+end;
+
+procedure oxedTPlatform.ProjectReset();
+begin
+
 end;
 
 { oxedTPlatforms }
