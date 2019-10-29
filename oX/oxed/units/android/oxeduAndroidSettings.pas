@@ -63,7 +63,4 @@ INITIALIZATION
    oxedAndroidSettings.dvg.Add(dvManualFileManagement, 'manual_file_management', dtcBOOL, @oxedAndroidSettings.ManualFileManagement);
    oxedAndroidSettings.dvg.Add(dvPackageName, 'package_name', dtcSTRING, @oxedAndroidSettings.PackageName);
 
-   oxedProjectManagement.OnNew.Add(@oxedAndroidSettings.Reset);
-   oxedProjectManagement.OnClosed.Add(@oxedAndroidSettings.Reset);
-
 END.
