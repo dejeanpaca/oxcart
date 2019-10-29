@@ -405,7 +405,7 @@ begin
       platform := oxedPlatforms.List.list[i];
 
       for archIndex := 0 to platform.Architectures.n - 1 do begin
-         arch := platform.Architectures.List[i];
+         arch := platform.Architectures.List[archIndex];
 
          if(arch.Architecture <> '') then
             item := build.AddItem(platform.Name + ' (' + arch.Name + ')')
