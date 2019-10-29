@@ -66,6 +66,8 @@ begin
 
    f.Extension := ext;
    f.Count := 1;
+
+   inherited Add(f);
 end;
 
 function oxedTFileTypeStatisticsListHelper.FindByExtension(const ext: string): loopint;
