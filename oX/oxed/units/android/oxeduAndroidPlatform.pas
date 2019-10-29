@@ -15,7 +15,7 @@ INTERFACE
       {ox}
       oxuRunRoutines,
       {oxed}
-      uOXED, oxeduPlatform;
+      uOXED, oxeduPlatform, oxeduPlatformConfiguration;
 
 TYPE
    { oxedTAndroidPlatform }
@@ -35,6 +35,8 @@ begin
    Name := 'Android';
    id := 'android';
    GlyphName := 'brands:61819';
+
+   Configuration := oxedTPlatformConfiguration.Create();
 
    AddArchitecture('Default', '');
 end;
