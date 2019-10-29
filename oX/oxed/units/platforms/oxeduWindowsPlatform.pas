@@ -21,14 +21,14 @@ TYPE
    { oxedTWindowsPlatform }
 
    oxedTWindowsPlatform = class(oxedTPlatform)
-      constructor Create; override;
+      constructor Create(); override;
    end;
 
 IMPLEMENTATION
 
 { oxedTWindowsPlatform }
 
-constructor oxedTWindowsPlatform.Create;
+constructor oxedTWindowsPlatform.Create();
 begin
    inherited;
 
