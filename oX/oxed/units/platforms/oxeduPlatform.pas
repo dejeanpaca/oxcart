@@ -48,6 +48,13 @@ TYPE
 
       {reset when new project is created, opened or closed}
       procedure ProjectReset(); virtual;
+      {get settings group}
+      function GetDvarGroup(): PDVarGroup;
+
+      {called when the project is loaded}
+      procedure Load(); virtual;
+      {called when the project is saved}
+      procedure Save(); virtual;
    end;
 
    oxedTPlatformsList = specialize TSimpleList<oxedTPlatform>;
@@ -96,6 +103,21 @@ begin
 end;
 
 procedure oxedTPlatform.ProjectReset();
+begin
+
+end;
+
+function oxedTPlatform.GetDvarGroup(): PDVarGroup;
+begin
+   Result := nil;
+end;
+
+procedure oxedTPlatform.Load();
+begin
+
+end;
+
+procedure oxedTPlatform.Save();
 begin
 
 end;
