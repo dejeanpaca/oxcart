@@ -17,7 +17,9 @@ INTERFACE
       uiWidgets,
       wdguCheckbox, wdguDivisor, wdguInputBox, wdguLabel,
       {oxed}
-      uOXED, oxeduAndroidSettings, oxeduProjectSettingsWindow;
+      uOXED,
+      oxeduAndroidPlatform, oxeduPlatform,
+      oxeduAndroidSettings, oxeduProjectSettingsWindow;
 
 IMPLEMENTATION
 
@@ -28,17 +30,33 @@ VAR
       ManualFileManagement: wdgTCheckbox;
    end;
 
+
+
 procedure saveCallback();
+var
+   p: oxedTAndroidPlatform;
+
 begin
+   p := oxedTAndroidPlatform(oxedPlatforms.FindById('android'));
+
+   if(p <> nil) then
+      p.Enabled := wdg.Enabled.Checked();
+
    oxedAndroidSettings.PackageName := wdg.PackageName.GetText();
-   oxedAndroidSettings.Enabled := wdg.Enabled.Checked();
    oxedAndroidSettings.ManualFileManagement := wdg.ManualFileManagement.Checked();
 end;
 
 procedure revertCallback();
+var
+   p: oxedTAndroidPlatform;
+
 begin
+   p := oxedTAndroidPlatform(oxedPlatforms.FindById('android'));
+
+   if(p <> nil) then
+      wdg.Enabled.Check(p.Enabled);
+
    wdg.PackageName.SetText(oxedAndroidSettings.PackageName);
-   wdg.Enabled.Check(oxedAndroidSettings.Enabled);
    wdg.ManualFileManagement.Check(oxedAndroidSettings.ManualFileManagement);
 end;
 
@@ -49,11 +67,15 @@ begin
 end;
 
 procedure PreAddTabs();
+var
+   p: oxedTAndroidPlatform;
+
 begin
+   p := oxedTAndroidPlatform(oxedPlatforms.FindById('android'));
+
    oxedwndProjectSettings.Tabs.AddTab('Android', 'android');
 
-   wdg.Enabled := wdgCheckbox.Add('Enabled').
-      Check(oxedAndroidSettings.Enabled);
+   wdg.Enabled := wdgCheckbox.Add('Enabled').Check(p.Enabled);
 
    wdgDivisor.Add('Android settings');
 
