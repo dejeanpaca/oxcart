@@ -82,6 +82,8 @@ TYPE
 
       {command line parameters to be used when a project is run}
       RunParameters: TSimpleStringList;
+      {project features}
+      Features: TSimpleStringList;
 
       {main unit uses, if specified will be the only unit included by default in project}
       MainUnit: StdString;
