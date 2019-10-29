@@ -22,6 +22,8 @@ TYPE
 
    oxedTEditorPlatform = class(oxedTPlatform)
       constructor Create(); override;
+
+      procedure Load(); override;
    end;
 
 IMPLEMENTATION
@@ -36,9 +38,18 @@ begin
    Id := 'editor';
    GlyphName := 'brands:61820';
 
+   {editor platform is always enabled}
+   Enabled := true;
+
    Configuration := oxedTPlatformConfiguration.Create();
 
    AddArchitecture('editor', 'editor');
+end;
+
+procedure oxedTEditorPlatform.Load();
+begin
+   {prevent disabling editor platform via config file}
+   Enabled := true;
 end;
 
 procedure init();
