@@ -98,6 +98,7 @@ TYPE
 
       {called when a file is found with matching extension (if any), if returns false traversal is stopped}
       OnFile: function(const fn: StdString): boolean;
+      OnFileDescriptor: function(const f: TFileDescriptor): boolean;
 
       procedure Initialize();
       class procedure Initialize(out traverse: TFileTraverse); static;
@@ -1234,6 +1235,7 @@ var
    ext,
    fname: StdString;
    ok: boolean;
+   fd: TFileDescriptor;
 
 begin
    {build path}
@@ -1285,6 +1287,14 @@ begin
                   {call OnFile to perform operations on the file}
                   if(OnFile <> nil) and (not OnFile(fname)) then
                      stopTraverse := true;
+
+                  {call OnFile to perform operations on the file}
+                  if(OnFileDescriptor <> nil) then begin
+                     TFileDescriptor.From(fd, src);
+
+                     if(not OnFileDescriptor(fd)) then
+                        stopTraverse := true;
+                  end;
                end;
             end;
          end;
