@@ -19,7 +19,6 @@ IMPLEMENTATION
 procedure onFile(var f: oxedTScannerFile);
 var
    i: loopint;
-   fi: TFileDescriptor;
 
    statistics: oxedPFileTypeStatistics;
 
@@ -27,9 +26,8 @@ begin
    inc(oxedProjectStatistics.FileCount);
 
    i := oxedProjectStatistics.FileTypes.FindByExtension(f.Extension);
-   FileUtils.GetFileInfo(f.FileName, fi);
 
-   inc(oxedProjectStatistics.TotalSize, fi.Size);
+   inc(oxedProjectStatistics.TotalSize, f.fd.Size);
 
    if(i > -1) then begin
       inc(oxedProjectStatistics.FileTypes.List[i].Count);
@@ -39,9 +37,8 @@ begin
       statistics := oxedProjectStatistics.FileTypes.GetLast();
    end;
 
-
    if(statistics <> nil) then begin
-      inc(statistics^.TotalSize, fi.Size);
+      inc(statistics^.TotalSize, f.fd.Size);
       inc(statistics^.Count);
    end;
 end;
