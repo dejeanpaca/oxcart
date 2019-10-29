@@ -11,9 +11,9 @@ UNIT oxeduProjectPlatforms;
 INTERFACE
 
    USES
-      uStd,
+      uStd, uLog, udvars,
       {oxed}
-      oxeduPlatform, oxeduProjectManagement;
+      oxeduPlatform, oxeduProjectManagement, oxeduPlatformSettingsFile;
 
 IMPLEMENTATION
 
@@ -27,8 +27,43 @@ begin
    end;
 end;
 
+procedure loadProject();
+var
+   i: loopint;
+   p: oxedTPlatform;
+
+begin
+   for i := 0 to oxedPlatforms.List.n - 1 do begin;
+      p := oxedPlatforms.List.List[i];
+
+      log.v('Loaded platform > ' + p.Name);
+      p.ProjectReset();
+      oxedPlatformSettingsFile.Load(p);
+      p.Load();
+   end;
+end;
+
+procedure saveProject();
+var
+   i: loopint;
+   p: oxedTPlatform;
+
+begin
+   for i := 0 to oxedPlatforms.List.n - 1 do begin;
+      p := oxedPlatforms.List.List[i];
+
+      oxedPlatformSettingsFile.Save(p);
+      p.Save();
+
+      log.v('Saved platform > ' + p.Name);
+   end;
+end;
+
 INITIALIZATION
    oxedProjectManagement.OnNew.Add(@reset);
    oxedProjectManagement.OnClosed.Add(@reset);
+
+   oxedProjectManagement.OnLoadProject.Add(@loadProject);
+   oxedProjectManagement.OnSaveProject.Add(@saveProject);
 
 END.
