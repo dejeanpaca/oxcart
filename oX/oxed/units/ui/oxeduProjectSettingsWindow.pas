@@ -382,7 +382,7 @@ begin
 
    inherited Create;
 
-   oxKeyMappings.AddKey('ox.open_project_settings', 'Open project settings', kcS, kmSHIFT or kmALT)^.
+   uiKeyMappings.AddKey('ox.open_project_settings', 'Open project settings', kcS, kmSHIFT or kmALT)^.
       Action := OpenWindowAction;
 
    OnValidate.Add(@validateCallback);

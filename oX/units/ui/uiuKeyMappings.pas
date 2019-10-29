@@ -11,14 +11,16 @@ UNIT uiuKeyMappings;
 INTERFACE
 
    USES
-      uStd, uAppInfo, udvars, appuKeyMappings;
+      uStd, udvars,
+      {app}
+      uAppInfo, appuKeyMappings;
 
 VAR
-   oxKeyMappings: appTKeyMappingGroup;
+   uiKeyMappings: appTKeyMappingGroup;
 
 IMPLEMENTATION
 
 INITIALIZATION
-   appKeyMappings.AddGroup('Other', 'Everything else', oxKeyMappings);
+   appKeyMappings.AddGroup('Other', 'Everything else', uiKeyMappings);
 
 END.
