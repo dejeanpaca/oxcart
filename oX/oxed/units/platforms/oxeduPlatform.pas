@@ -158,13 +158,7 @@ begin
    oxedPlatforms.Dispose();
 end;
 
-VAR
-   platformEnabled: boolean;
-   dvPlatformEnabled: TDVar;
-
 INITIALIZATION
-   dvgOXED.Add(dvPlatformEnabled, 'platform_enabled', dtcBOOL, @platformEnabled);
-
    oxed.Init.dAdd('platforms', @deinit);
 
    oxedPlatforms.List.InitializeValues(oxedPlatforms.List);
