@@ -68,7 +68,43 @@ VAR
 
 IMPLEMENTATION
 
-function scanFile(const fd: TFileDescriptor): boolean; forward;
+function scanFile(const fd: TFileDescriptor): boolean;
+var
+   ext: StdString;
+   f: oxedTScannerFile;
+
+begin
+   Result := true;
+
+   {ignore stuff in the temp directory}
+   if(Pos(oxPROJECT_TEMP_DIRECTORY, fd.Name) = 1) then
+      exit;
+
+   ext := ExtractFileExt(fd.Name);
+   f.FileName := fd.Name;
+   f.Extension := ext;
+   f.fd := fd;
+
+   oxedProjectScanner.OnFile.Call(f);
+
+   if(oxedProjectScanner.Task.Terminated) then
+      exit(false);
+
+   if(oxedProjectScanner.Task.Terminated) then
+      exit(false);
+end;
+
+function onDirectory(const fd: TFileDescriptor): boolean;
+begin
+   Result := true;
+
+   if(fd.Name = oxPROJECT_TEMP_DIRECTORY) then
+      exit(false);
+
+   if(fd.Name = oxPROJECT_DIRECTORY) then
+      exit(false);
+end;
+
 
 { oxedTScannerOnFileProceduresHelper }
 
@@ -100,6 +136,7 @@ begin
       TFileTraverse.Initialize(Walker);
 
       Walker.OnFileDescriptor := @scanFile;
+      Walker.OnDirectory := @onDirectory;
 
       Task := oxedTProjectScannerTask.Create();
       Task.EmitAllEvents();
@@ -159,32 +196,6 @@ begin
    inherited;
 
    oxedProjectScanner.OnDone.Call();
-end;
-
-function scanFile(const fd: TFileDescriptor): boolean;
-var
-   ext: StdString;
-   f: oxedTScannerFile;
-
-begin
-   Result := true;
-
-   {ignore stuff in the temp directory}
-   if(Pos(oxPROJECT_TEMP_DIRECTORY, fd.Name) = 1) then
-      exit;
-
-   ext := ExtractFileExt(fd.Name);
-   f.FileName := fd.Name;
-   f.Extension := ext;
-   f.fd := fd;
-
-   oxedProjectScanner.OnFile.Call(f);
-
-   if(oxedProjectScanner.Task.Terminated) then
-      exit(false);
-
-   if(oxedProjectScanner.Task.Terminated) then
-      exit(false);
 end;
 
 procedure deinit();
