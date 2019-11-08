@@ -154,11 +154,15 @@ TYPE
       procedure Enable();
       procedure Enable(expression: boolean);
       procedure Disable();
+      {are we enabled}
+      function IsEnabled(): boolean;
 
       {visibility}
       procedure SetVisibility(visible: boolean);
       procedure SetVisible();
       procedure SetInvisible();
+      {is this widget visible}
+      function IsVisible(): boolean;
 
       { font }
       {gets an appropriate font for the widget}
@@ -445,6 +449,11 @@ begin
    Exclude(Properties, wdgpENABLED);
 end;
 
+function uiTWidget.ISEnabled(): boolean;
+begin
+   Result := wdgpENABLED in Properties;
+end;
+
 procedure uiTWidget.SetVisibility(visible: boolean);
 begin
    if(visible) then
@@ -469,6 +478,11 @@ begin
       Action(uiwdgACTION_INVISIBLE);
       OnInvisible();
    end;
+end;
+
+function uiTWidget.IsVisible(): boolean;
+begin
+   Result := wdgpVISIBLE in Properties;
 end;
 
 { FONT }
