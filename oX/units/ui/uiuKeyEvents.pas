@@ -215,7 +215,7 @@ begin
          d.wdg := wdg;
 
          {if there is a widget selected}
-         if(wdg <> nil) then
+         if(wdg <> nil) and wdg.IsEnabled() then
             {send the key to the widget}
             Result := wdg.Key(d.KeyEvent);
 

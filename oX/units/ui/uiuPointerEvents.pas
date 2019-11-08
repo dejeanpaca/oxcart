@@ -146,7 +146,9 @@ var
 
 begin
    sp := wdg.GetPointerPosition(p.x, p.y);
-   wdg.Point(m, sp.x, sp.y);
+
+   if(wdg.IsEnabled()) then
+      wdg.Point(m, sp.x, sp.y);
 end;
 
 procedure PointEvent(wnd: uiTWindow);
@@ -156,7 +158,8 @@ var
 begin
    sp := wnd.GetPointerPosition(p.x, p.y);
 
-   wnd.Point(m, sp.x, sp.y);
+   if(uiwndpENABLED in wnd.Properties) then
+      wnd.Point(m, sp.x, sp.y);
 end;
 
 function WidgetCapture(): boolean;
