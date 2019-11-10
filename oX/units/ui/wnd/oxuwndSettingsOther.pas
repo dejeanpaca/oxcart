@@ -91,6 +91,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.Init.Add('wnd:settings.other', @init);
+   ox.Init.Add('ox.wnd:settings.other', @init);
 
 END.

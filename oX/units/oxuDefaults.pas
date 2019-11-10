@@ -161,7 +161,7 @@ INTERFACE
       oxuwndSettings,
       oxuwndSettingsVideo,
       oxuwndSettingsAudio,
-      oxuwndInputSettings,
+      oxuwndSettingsInput,
       oxuwndSettingsOther,
       {$ENDIF}
 

@@ -107,6 +107,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.Init.Add('ox.settings', @init, @deinit);
+   ox.Init.Add('ox.wnd:settings', @init, @deinit);
 
 END.
