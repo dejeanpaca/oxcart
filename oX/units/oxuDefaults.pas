@@ -13,6 +13,9 @@ INTERFACE
    USES
       uStd,
       ufhStandard,
+      {$IFDEF ANDROID}
+      ulogAndroid,
+      {$ENDIF}
       { app }
       appuKeyStateUpdater,
       {$IFNDEF OX_LIBRARY}
