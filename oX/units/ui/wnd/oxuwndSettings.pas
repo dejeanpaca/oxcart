@@ -14,7 +14,7 @@ USES
    {app}
    uStd, appuKeys,
    {oX}
-   uOX, oxuTypes, oxuRunRoutines,
+   uOX, oxuRunRoutines,
    {$IFDEF OX_FEATURE_CONSOLE}
    oxuConsoleBackend,
    {$ENDIF}
@@ -22,7 +22,7 @@ USES
    {ui}
    uiuWindow, uiWidgets, uiuKeyMappings,
    {wnd}
-   oxuwndSettingsBase, oxuwndDVarEditor,
+   oxuwndSettingsBase,
    {widgets}
    wdguLabel, wdguButton, wdguDropDownList, wdguDivisor, wdguCheckbox;
 
@@ -45,11 +45,6 @@ IMPLEMENTATION
 procedure revertCallback();
 begin
 
-end;
-
-procedure openDVarEditor();
-begin
-   oxwndDVarEditor.Open();
 end;
 
 procedure oxTSettingsWindow.AddWidgets();
