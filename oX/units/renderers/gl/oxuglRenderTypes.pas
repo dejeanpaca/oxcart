@@ -29,9 +29,9 @@ CONST
 
 TYPE
    {$IFNDEF GLES}
-   oglTBLendRemap = array[0..2] of GLEnum;
+   oglTBlendRemap = array[0..2] of GLEnum;
    {$ELSE}
-   oglTBLendRemap = array[0..1] of GLEnum;
+   oglTBlendRemap = array[0..1] of GLEnum;
    {$ENDIF}
 
 CONST
@@ -45,7 +45,7 @@ CONST
       (GL_FUNC_ADD, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)  {filter}
    );
    {$ELSE}
-   oglBlendRemaps: array[0..longint(oxBLEND_MAX)] of TBlendRemap = (
+   oglBlendRemaps: array[0..longint(oxBLEND_MAX)] of oglTBlendRemap = (
       {blend function, left side, right side}
       (GL_ONE, GL_ONE), {none}
       (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA), {alpha}

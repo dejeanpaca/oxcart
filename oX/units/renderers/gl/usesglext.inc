@@ -5,12 +5,12 @@
 }
 
 {$IFDEF GLES}
-   gles
+   {%H-}gles
 	{$DEFINE NO_DGL}
 {$ELSE}
    {$IFNDEF NO_DGL}
-      dglOpenGL
+      {%H-}dglOpenGL
    {$ELSE}
-      gl, glext
+      {%H-}gl, {%H-}glext
    {$ENDIF}
 {$ENDIF}

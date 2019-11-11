@@ -12,7 +12,10 @@ INTERFACE
 
    USES
       {$INCLUDE usesgl.inc},
-      uStd, uLog, uColors, vmVector, StringUtils,
+      uStd, uLog, uColors, vmVector,
+      {$IFNDEF GLES}
+      StringUtils,
+      {$ENDIF}
       {oX}
       uOX, oxuRenderer, oxuRender, oxuTypes, oxuRunRoutines, oxuWindow,
       {ogl}
@@ -89,7 +92,7 @@ begin
       glBlendFunc(oglBlendRemaps[longint(blendFunc)][1], oglBlendRemaps[longint(blendFunc)][2]);
       glBlendEquation(oglBlendRemaps[longint(blendFunc)][0]);
       {$ELSE}
-      glBlendFunc(blendRemaps[longint(blendFunc)][0], blendRemaps[longint(blendFunc)][1]);
+      glBlendFunc(oglBlendRemaps[longint(blendFunc)][0], oglBlendRemaps[longint(blendFunc)][1]);
       {$ENDIF}
    end else
       glDisable(GL_BLEND);
@@ -332,8 +335,10 @@ VAR
    glInitRoutines: oxTRunRoutine;
 
 procedure renderInit();
+{$IFNDEF GLES}
 var
    i: loopint;
+{$ENDIF}
 
 begin
    {$IFNDEF GLES}
