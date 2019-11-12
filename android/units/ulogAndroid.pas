@@ -45,4 +45,3 @@ INITIALIZATION
 
    log.Handler.pDefault := @loghAndroid;
 END.
-
