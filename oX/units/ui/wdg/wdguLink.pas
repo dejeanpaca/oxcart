@@ -29,7 +29,7 @@ CONST
   wdgLinkSkinColorDescriptor: array[0..3] of uiTWidgetSkinColorDescriptor = (
       (
          Name: 'text';
-         Color: (32, 32, 255, 255)
+         Color: (92, 92, 255, 255)
       ),
       (
          Name: 'hover';
@@ -87,6 +87,8 @@ TYPE
 
       function Add(const Caption: StdString; const Link: StdString;
                  const Pos: oxTPoint; const Dim: oxTDimensions): wdgTLink;
+      function Add(const Caption: StdString; const Link: StdString): wdgTLink;
+      function Add(const link: uiTLink): wdgTLink;
    end;
 
 VAR
@@ -142,6 +144,33 @@ begin
    if(Result <> nil) then begin
       Result.SetCaption(Caption);
       Result.SetLink(Link);
+
+      AddDone(Result);
+   end;
+end;
+
+function wdgTLinkGlobal.Add(const Caption: StdString; const Link: StdString): wdgTLink;
+begin
+   Result := AddInternal();
+
+   if(Result <> nil) then begin
+      Result.SetCaption(Caption);
+      Result.SetLink(Link);
+
+      AddDone(Result);
+   end;
+end;
+
+function wdgTLinkGlobal.Add(const link: uiTLink): wdgTLink;
+begin
+   Result := AddInternal();
+
+   if(Result <> nil) then begin
+      Result.SetCaption(link.Caption);
+      Result.SetLink(link.Link);
+
+      if(link.Summary <> '') then
+         Result.SetHint(link.Summary);
 
       AddDone(Result);
    end;
