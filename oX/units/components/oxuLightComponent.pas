@@ -22,16 +22,12 @@ TYPE
 
    oxTLightComponent = class(oxTComponent)
       public
-      UseSceneProjection: boolean;
-
       Light: oxTLight;
 
       constructor Create(); override;
       destructor Destroy(); override;
 
       procedure GetBoundingBox(out bbox: TBoundingBox); override;
-
-      procedure OnAdd(); override;
 
       {get the descriptor for this component}
       function GetDescriptor(): oxPComponentDescriptor; override;
@@ -55,7 +51,6 @@ constructor oxTLightComponent.Create();
 begin
    inherited Create;
 
-   UseSceneProjection := true;
    oxTLight.Initialize(Light);
 end;
 
@@ -69,13 +64,6 @@ end;
 procedure oxTLightComponent.GetBoundingBox(out bbox: TBoundingBox);
 begin
    bbox := vmBBoxUnit;
-end;
-
-procedure oxTLightComponent.OnAdd();
-begin
-   inherited OnAdd;
-
-   oxTEntity(Parent).Renderable := false;
 end;
 
 function oxTLightComponent.GetDescriptor(): oxPComponentDescriptor;
