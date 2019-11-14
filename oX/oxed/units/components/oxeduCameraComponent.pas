@@ -1,6 +1,6 @@
 {
    oxeduCameraComponent, oxed camera component
-   Copyright (C) 2016. Dejan Boras
+   Copyright (C) 2017. Dejan Boras
 
    Started On:    27.04.2017.
 }
