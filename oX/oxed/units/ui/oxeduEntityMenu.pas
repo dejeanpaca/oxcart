@@ -15,7 +15,7 @@ INTERFACE
       {ox}
       oxuEntity, oxuScene,
       {entities}
-      oxuCameraEntity, oxuLightEntity, oxuPrimitiveModelEntities,
+      oxuCameraEntity, oxuLightEntity, oxuUIEntity, oxuPrimitiveModelEntities,
       {ui}
       uiuContextMenu, uiuWidgetWindow, uiuWidget,
       {oxed}
@@ -202,6 +202,8 @@ begin
    item := oxedEntityMenu.AddToMenu('Camera', @oxCameraEntity.Default);
    oxedIcons.Create(item, $f03d);
    item := oxedEntityMenu.AddToMenu('Light', @oxLightEntity.Default);
+   oxedIcons.Create(item, $f0eb);
+   item := oxedEntityMenu.AddToMenu('UI', @oxUIEntity.Default);
    oxedIcons.Create(item, $f0eb);
 
    oxedEntityMenu.Menus.Primitives := oxedEntityMenu.Menus.Create.AddSub('Primitives');
