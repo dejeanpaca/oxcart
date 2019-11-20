@@ -235,7 +235,7 @@ TYPE
 
    { TLineEndingTypeHelper }
 
-   TLineEndingTypeHelper = record helper for TLineEndingType
+   TLineEndingTypeHelper = type helper for TLineEndingType
       {get line ending string}
       function GetChars(): string;
       {get line ending type from the given name}
