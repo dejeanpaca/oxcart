@@ -679,7 +679,7 @@ begin
 
    if(uBuild.build.Options.IsLibrary) then begin
       {check if used fpc version matches us}
-      if(uBuild.build.CurrentPlatform^.Version <> FPC_VERSION) then begin
+      if(pos(FPC_VERSION, uBuild.build.CurrentPlatform^.Version) <> 1) then begin
          oxedMessages.e('Library fpc version mismatch. Got ' + uBuild.build.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
          exit;
       end;
