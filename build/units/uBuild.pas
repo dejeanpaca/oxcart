@@ -261,7 +261,8 @@ TYPE
       procedure SetupAvailableLazarus();
 
       {get current platform and settings as an fpc command line string}
-      function GetFPCCommandLine(): StdString;
+      function GetFPCCommandLineAsString(): StdString;
+      function GetFPCCommandLine(emptyBefore: loopint = 0; emptyAfter: loopint = 0): TStringArray;
 
       {get all commmand line defined symbol parameters}
       procedure GetSymbolParameters();
@@ -1510,7 +1511,7 @@ begin
    end;
 end;
 
-function TBuildSystem.GetFPCCommandLine(): StdString;
+function TBuildSystem.GetFPCCommandLineAsString(): StdString;
 var
    i: loopint;
    c: TAppendableString;
@@ -1531,6 +1532,46 @@ begin
    end;
 
    Result := c;
+end;
+
+function TBuildSystem.GetFPCCommandLine(emptyBefore: loopint = 0; emptyAfter: loopint = 0): TStringArray;
+var
+   count,
+   i,
+   index: loopint;
+   arguments: TStringArray;
+
+procedure AddArgument(const s: StdString);
+begin
+   arguments[index] := s;
+   inc(index);
+end;
+
+begin
+   count := emptyBefore + emptyAfter;
+
+   inc(count, Units.n);
+   inc(count, Includes.n);
+   inc(count, Symbols.n);
+
+   index := emptyBefore;
+
+   arguments := nil;
+   SetLength(arguments, count);
+
+   for i := 0 to Units.n - 1 do begin
+      AddArgument('-Fu' + Units.List[i]);
+   end;
+
+   for i := 0 to Includes.n - 1 do begin
+      AddArgument('-Fi' + Includes.List[i]);
+   end;
+
+   for i := 0 to Symbols.n - 1 do begin
+      AddArgument('-d' + Symbols.List[i]);
+   end;
+
+   Result := arguments;
 end;
 
 procedure TBuildSystem.GetSymbolParameters();
