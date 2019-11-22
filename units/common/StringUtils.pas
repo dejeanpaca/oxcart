@@ -2162,6 +2162,7 @@ var
    i: loopint;
 
 begin
+   Result := nil;
    SetLength(Result, Length(s));
 
    for i := 0 to Length(s) - 1 do
