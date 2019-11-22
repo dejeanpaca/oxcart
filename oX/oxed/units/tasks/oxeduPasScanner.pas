@@ -23,7 +23,11 @@ TYPE
    { oxedTPasScanner }
 
    oxedTPasScanner = record
-      FpcCommandLine: string;
+      {$IF FPC_FULLVERSION >= 030200}
+      FpcCommandLine: TStringArray;
+      {$ELSE}
+      FpcCommandLineString: StdString;
+      {$ENDIF}
 
       function Scan(const fn: string): oxedTPasScanResult;
    end;
@@ -70,7 +74,9 @@ function oxedTPasScanner.Scan(const fn: string): oxedTPasScanResult;
 var
    M: TPasModule;
    E: TPasTreeContainer;
-   commandLine: string;
+   {$IF FPC_FULLVERSION >= 030200}
+   commandLine: TAnsiStringArray;
+   {$ENDIF}
 
 begin
    {$IFDEF VER3_2}
@@ -80,13 +86,19 @@ begin
 
    ZeroOut(result, SizeOf(Result));
 
-   E := TSimpleParseEngine.Create;
+   E := TSimpleParseEngine.Create();
 
    try
       log.v('Parsing: ' + fn);
 
-      commandLine := fn + ' ' + FpcCommandLine;
-      M := ParseSource(E, commandLine, {$I %FPCTARGETOS%}, {$I %FPCTargetCPU});
+
+      {$IF FPC_FULLVERSION >= 030200}
+      commandLine := GetAnsiStrings(FpcCommandLine);
+      commandLine[0] := fn;
+      M := ParseSource(E, commandLine, {$I %FPCTARGETOS%}, {$I %FPCTargetCPU}, []);
+      {$ELSE}
+      M := ParseSource(E, fn + oxedPasScanner.FpcCommandLineString, {$I %FPCTARGETOS%}, {$I %FPCTargetCPU}, []);
+      {$ENDIF}
 
       if(M.InterfaceSection <> nil) then
          Result.IsUnit := true;
@@ -117,7 +129,12 @@ end;
 
 procedure onStart();
 begin
-   oxedPasScanner.FpcCommandLine := build.GetFPCCommandLine();
+   {get command line parameters with room for one more}
+   {$IF FPC_FULLVERSION >= 030200}
+   oxedPasScanner.FpcCommandLine := build.GetFPCCommandLine(1);
+   {$ELSE}
+   oxedPasScanner.FpcCommandLineString := build.GetFPCCommandLineAsString();
+   {$ENDIF}
 end;
 
 INITIALIZATION
