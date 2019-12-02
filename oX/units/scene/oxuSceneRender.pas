@@ -111,17 +111,20 @@ end;
 
 procedure oxTSceneRenderer.RenderCamera(var params: oxTSceneRenderParameters; camera: oxTCameraComponent; entity: oxTEntity);
 begin
-   if(not oxTEntity(camera.Parent).Enabled) or (not camera.Enabled) then
+   if(entity = nil) then
+      entity := Scene;
+
+   if(not entity.Enabled) or (not camera.IsEnabled()) then
       exit;
 
    params.Camera := @camera.Camera;
 
    if(camera.UseSceneProjection) then
-      params.Projection := @params.Projection
+      params.Projection := params.Projection
    else
       params.Projection := @camera.Projection;
 
-   RenderCamera(params);
+   RenderCamera(params, entity);
 end;
 
 procedure oxTSceneRenderer.RenderCamera(var params: oxTSceneRenderParameters; entity: oxTEntity);
@@ -150,7 +153,6 @@ procedure oxTSceneRenderer.Render(const projection: oxTProjection);
 var
    i: longint;
    cameras: oxTComponentsList;
-   cameraComponent: oxTCameraComponent;
    params: oxTSceneRenderParameters;
 
    layers: oxTComponentsList;
@@ -172,14 +174,14 @@ begin
 
    if(layers.n > 0) then begin
       for i := 0 to layers.n - 1 do begin
-         params.Projection := projection;
+         params.Projection := @projection;
          RenderLayer(oxTRenderLayerComponent(layers.List[i]), params, cameras);
       end;
+      writeln('Can haz layers');
    end;
 
    for i := 0 to (cameras.n - 1) do begin
-      params.Projection := projection;
-      RenderCamera(params, oxTCameraComponent(cameras.List[i]), nil);
+      RenderCamera(params, oxTCameraComponent(cameras.List[i]));
    end;
 
    cameras.Dispose();
