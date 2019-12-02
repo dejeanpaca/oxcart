@@ -172,6 +172,12 @@ TYPE
       procedure Call(entity: oxTEntity; component: oxTComponent);
    end;
 
+   { oxTComponentHelper }
+
+   oxTComponentHelper = class helper for oxTComponent
+      function IsEnabled(): boolean;
+   end;
+
    { oxTEntityGlobal }
 
    oxTEntityGlobal = class
@@ -205,6 +211,13 @@ end;
 function instanceGlobal(): TObject;
 begin
    Result := oxTEntityGlobal.Create();
+end;
+
+{ oxTComponentHelper }
+
+function oxTComponentHelper.IsEnabled(): boolean;
+begin
+   Result := oxTEntity(Parent).Enabled and Enabled;
 end;
 
 { oxTComponentCallbacksHelper }
