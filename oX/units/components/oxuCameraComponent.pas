@@ -82,7 +82,7 @@ procedure oxTCameraComponent.OnRotationChanged();
 begin
    Camera.vView := oxTTransform(Parent).GetForward();
    Camera.vUp := oxTTransform(Parent).GetUp();
-   Camera.vRight := oxTTransform(Parent).GetRight();
+   Camera.vRight := oxTTransform(Parent).GetRight() * -1;
 end;
 
 procedure oxTCameraComponent.GetBoundingBox(out bbox: TBoundingBox);

@@ -19,7 +19,7 @@ CONST
    oxvCameraPosition: TVector3  = (0.0, 0.0, 0.0);
    oxvCameraView: TVector3      = (0.0, 0.0, -1.0);
    oxvCameraUp: TVector3        = (0.0, 1.0, 0.0);
-   oxvCameraRight: TVector3     = (1.0, 0.0, 0.0);
+   oxvCameraRight: TVector3     = (-1.0, 0.0, 0.0);
 
 TYPE
    { oxTCamera }
@@ -286,6 +286,7 @@ begin
    vView  := oxvCameraView;
    vUp    := oxvCameraUp;
    vRight := oxvCameraRight;
+
    Transform.Identity();
 end;
 
