@@ -451,9 +451,9 @@ end;
 
 function oxTTransform.GetForward(): TVector3f;
 begin
-   Result[0] := -Matrix[0][2];
-   Result[1] := -Matrix[1][2];
-   Result[2] := -Matrix[2][2];
+   Result[0] := Matrix[0][2];
+   Result[1] := Matrix[1][2];
+   Result[2] := Matrix[2][2];
 end;
 
 function oxTTransform.GetUp(): TVector3f;
