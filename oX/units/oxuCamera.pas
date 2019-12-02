@@ -41,7 +41,7 @@ TYPE
       procedure Initialize();
       procedure Dispose();
 
-      {reset camer to default values}
+      {reset camera to default values}
       procedure Reset();
 
       {move the camera's position in a specified direction}

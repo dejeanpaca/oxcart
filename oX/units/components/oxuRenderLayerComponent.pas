@@ -11,7 +11,7 @@ UNIT oxuRenderLayerComponent;
 INTERFACE
 
    USES
-      uStd, vmVector,
+      uStd,
       {ox}
       oxuTransform, oxuEntity, oxuComponent, oxuComponentDescriptors, oxuSerialization;
 
