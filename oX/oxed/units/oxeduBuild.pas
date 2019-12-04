@@ -53,7 +53,7 @@ TYPE
    { oxedTBuildInitializationTask }
 
    oxedTBuildInitializationTask = class(oxedTTask)
-      constructor Create; override;
+      constructor Create(); override;
    end;
 
    { oxedTBuildGlobal }
@@ -117,6 +117,9 @@ TYPE
       class procedure OpenProjectDirectory(); static;
       {open project configuration directory}
       class procedure OpenProjectConfiguration(); static;
+
+      {setup the required build platform}
+      function SetupPlatform(): boolean;
    end;
 
 VAR
@@ -654,6 +657,9 @@ begin
    if(not oxedProject.Valid()) then
       exit;
 
+   if(not oxedBuild.SetupPlatform()) then
+      exit;
+
    {if we're missing everything, rebuild}
    if(not FileUtils.DirectoryExists(oxedProject.TempPath)) then
       oxedBuild.BuildType := OXED_BUILD_TASK_REBUILD;
@@ -864,6 +870,29 @@ end;
 class procedure oxedTBuildGlobal.OpenProjectConfiguration();
 begin
 
+end;
+
+function oxedTBuildGlobal.SetupPlatform(): boolean;
+var
+   platform: PBuildPlatform;
+
+begin
+   Result := false;
+
+   writeln(FPC_VERSION);
+
+   if(BuildTarget = OXED_BUILD_LIB) then begin
+      platform := build.FindPlatform(build.BuiltWithTarget, build.BuiltWithVersion);
+
+      if(platform = nil) then begin
+         oxedMessages.e('Failed to find suitable compiler for ' + build.BuiltWithTarget + ' and FPC ' + FPC_VERSION);
+         exit(false);
+      end;
+
+      build.SetPlatform(platform^.Name);
+
+      exit(true);
+   end;
 end;
 
 procedure CreateSourceFile(const fn: string);
