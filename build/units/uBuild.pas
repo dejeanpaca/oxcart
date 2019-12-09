@@ -67,12 +67,12 @@ TYPE
 
       Name,
       Path,
-      ConfigPath,
-      UseFpc: StdString;
+      ConfigPath: StdString;
 
       FPC: PBuildPlatform;
 
       class procedure Initialize(out install: TBuildLazarusInstall); static;
+      function GetFPCName(): StdString;
    end;
 
    TBuildLazarusInstalls = specialize TSimpleList<TBuildLazarusInstall>;
@@ -82,6 +82,7 @@ TYPE
    TLazarusInstallsHelper = record helper for TBuildLazarusInstalls
       function FindIndexByName(const name: StdString): loopint;
       function FindByName(const name: StdString): PBuildLazarusInstall;
+      function FindByPlatform(platform: PBuildPlatform): PBuildLazarusInstall;
    end;
 
 
@@ -257,6 +258,8 @@ TYPE
       function FindPlatform(const name: StdString): PBuildPlatform;
       {find lazarus install by name, returns nil if nothing found}
       function FindLazarusInstall(const name: StdString): PBuildLazarusInstall;
+      {find lazarus install by platform}
+      function FindLazarusInstallForPlatform(platform: PBuildPlatform): PBuildLazarusInstall;
       {get the platform we're compiled with}
       function GetCurrentPlatform(): StdString;
 
@@ -385,7 +388,6 @@ begin
    build.LazarusInstalls.Dispose();
    build.LazarusInstalls.Add(defaultLaz);
 
-   defaultLaz.UseFpc := build.Platforms.List[0].Name;
    defaultLaz.FPC := @build.Platforms.List[0];
 
    currentLazarus := build.LazarusInstalls.GetLast();
@@ -416,6 +418,19 @@ begin
 
    if(index > -1) then
       exit(@List[index]);
+
+   Result := nil;
+end;
+
+function TLazarusInstallsHelper.FindByPlatform(platform: PBuildPlatform): PBuildLazarusInstall;
+var
+   i: loopint;
+
+begin
+   for i := 0 to n - 1 do begin
+      if(List[i].FPC = platform) then
+         exit(@List[i]);
+   end;
 
    Result := nil;
 end;
@@ -455,6 +470,14 @@ begin
    ZeroPtr(@install, SizeOf(install));
 end;
 
+function TBuildLazarusInstall.GetFPCName(): StdString;
+begin
+   Result := '';
+
+   if(FPC <> nil) then
+      Result := FPC^.Name;
+end;
+
 { TBuildPlatform }
 
 class procedure TBuildPlatform.Initialize(out p: TBuildPlatform);
@@ -468,31 +491,8 @@ function TBuildPlatform.GetName(): StdString;
 begin
    Result := Name;
 
-   if(Name = 'default') then begin
-      {$IFDEF WINDOWS}
-         {$IFDEF CPU64}
-         Result := 'win64';
-         {$ELSE}
-         Result := 'win32';
-         {$ENDIF}
-      {$ENDIF}
-
-      {$IFDEF LINUX}
-         {$IFDEF CPU64}
-         Result := 'linux32';
-         {$ELSE}
-         Result := 'linux64';
-         {$ENDIF}
-      {$ENDIF}
-
-      {$IFDEF DARWIN}
-         {$IFDEF CPU64}
-         Result := 'darwin32';
-         {$ELSE}
-         Result := 'darwin64';
-         {$ENDIF}
-      {$ENDIF}
-   end;
+   if(Name = 'default') then
+      Result := build.GetBuiltWithTarget();
 end;
 
 { TPascalUnitBuilder }
@@ -1455,6 +1455,11 @@ begin
    Result := LazarusInstalls.FindByName(name);
 end;
 
+function TBuildSystem.FindLazarusInstallForPlatform(platform: PBuildPlatform): PBuildLazarusInstall;
+begin
+   Result := LazarusInstalls.FindByPlatform(platform);
+end;
+
 function TBuildSystem.GetCurrentPlatform(): StdString;
 begin
    Result := LowerCase({$I %FPCTARGETOS%});
@@ -1927,11 +1932,10 @@ var
 
 begin
    if(currentMode = 'lazarus') and (currentLazarus <> nil) then begin
-      platform := build.Platforms.findByName(currentValue);
+      platform := build.Platforms.FindByName(currentValue);
 
       if(platform <> nil) then begin
          {set the used fpc for the lazarus install}
-         currentLazarus^.UseFpc := currentValue;
          currentLazarus^.FPC := platform;
       end else
          log.w('Could not find platform: ' + currentValue + ' used by ' + currentLazarus^.Name);
@@ -2015,7 +2019,6 @@ INITIALIZATION
    { CONFIG PATH }
    build.dvgConfig.Add(dvUseFPC, 'use_fpc', dtcSTRING, @currentValue);
    dvUseFPC.pNotify := @dvUseFPCNotify;
-
 
    build.dvgConfig.Add(dvToolsPath, 'tools_path', dtcSTRING, @build.Tools.Path);
    build.dvgConfig.Add(dvBuildPath, 'build_path', dtcSTRING, @build.Tools.Build);

@@ -105,7 +105,7 @@ begin
 
       wdgLabel.Add('Lazarus Path: ' + laz^.Path);
       wdgLabel.Add('Lazarus Config Path: ' + laz^.ConfigPath);
-      wdgLabel.Add('Use FPC: ' + laz^.UseFpc + ' (found: ' + sf(laz^.FPC <> nil) + ')');
+      wdgLabel.Add('Use FPC: ' + laz^.GetFPCName() + ' (found: ' + sf(laz^.FPC <> nil) + ')');
    end;
 
    uiWidget.LastRect.GoBelow();
