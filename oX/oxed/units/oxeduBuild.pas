@@ -217,17 +217,36 @@ begin
 end;
 
 procedure buildInitialize();
+var
+   ok: boolean;
+
+procedure fail(const what: StdString);
+begin
+   oxedMessages.e(what);
+   ok := false;
+end;
+
 begin
    build.Initialize();
    lpi.Initialize();
 
    log.i('Done with build system initialization');
 
+   ok := true;
+
    if(not oxedBuild.BuildEnabled()) then
-      oxedMessages.e('Build system failed to initialize. You will not be able to run the project.');
+      fail('Build system failed to initialize. You will not be able to run the project.');
 
    if(not lpi.IsInitialized()) then
-      oxedMessages.e('LPI system failed to initialize. Cannot create project lpi files.');
+      fail('LPI system failed to initialize. Cannot create project lpi files.');
+
+   if(lpi.Initialized and build.Initialized) then begin
+      if(not oxedBuild.SetupPlatform()) then
+         fail('Could not setup fpc/lazarus to use with editor');
+   end;
+
+   if(not ok) then
+      fail('Failed to initialize build system');
 end;
 
 { oxedTBuildGlobal }
@@ -657,9 +676,6 @@ begin
    if(not oxedProject.Valid()) then
       exit;
 
-   if(not oxedBuild.SetupPlatform()) then
-      exit;
-
    {if we're missing everything, rebuild}
    if(not FileUtils.DirectoryExists(oxedProject.TempPath)) then
       oxedBuild.BuildType := OXED_BUILD_TASK_REBUILD;
@@ -875,11 +891,10 @@ end;
 function oxedTBuildGlobal.SetupPlatform(): boolean;
 var
    platform: PBuildPlatform;
+   laz: PBuildLazarusInstall;
 
 begin
    Result := false;
-
-   writeln(FPC_VERSION);
 
    if(BuildTarget = OXED_BUILD_LIB) then begin
       platform := build.FindPlatform(build.BuiltWithTarget, build.BuiltWithVersion);
@@ -890,6 +905,18 @@ begin
       end;
 
       build.SetPlatform(platform^.Name);
+
+      laz := build.FindLazarusInstallForPlatform(platform);
+
+      if(laz <> nil) then
+         build.SetLazarusInstall(laz^.Name)
+      else begin
+         log.w('Failed to find a lazarus install for fpc: ' + platform^.Name);
+         build.GetLazarus();
+      end;
+
+      log.v('Using platform: ' + build.CurrentPlatform^.Name + ', fpc ' + build.CurrentPlatform^.Version);
+      log.v('Using lazbuild: ' + build.CurrentLazarus^.Name + ', fpc ' + build.CurrentLazarus^.Path);
 
       exit(true);
    end;
