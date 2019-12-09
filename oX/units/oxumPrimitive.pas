@@ -407,7 +407,7 @@ begin
    Mesh.SetData(d + 1);
 
    { build circle/disk }
-   piece := (vmcPI * 2) / d;
+   piece := (vmcPi * 2) / d;
 
    for i := 0 to (d - 1) do begin
       p := piece * i;
@@ -550,8 +550,8 @@ begin
    primitiveType        := oxmPRIMITIVE_SPHERE;
    primitiveMethod      := oxmPRIMITIVE_SPHERE_METHOD_ENHANCED;
 
-   thetas               := vmcPI / stacks;
-   phis                 := vmcPI * 2 / slices;
+   thetas               := vmcPi / stacks;
+   phis                 := vmcPi * 2 / slices;
 
    { set face count }
    Mesh.Data.nFaces := 2 * (slices * (stacks - 1));
@@ -566,7 +566,7 @@ begin
    { top and bottom vertex }
 
    vmSphereToCartesian(r, 0.0, 0.0, Mesh.Data.v[0]);
-   vmSphereToCartesian(r, 0.0, vmcPI, Mesh.Data.v[bvex]);
+   vmSphereToCartesian(r, 0.0, vmcPi, Mesh.Data.v[bvex]);
 
    { create vertices }
    phi                  := 0.0;
@@ -700,12 +700,12 @@ begin
    n                 := 0;
 
    for i := 0 to stacks do begin
-      theta       := i * vmcPI / stacks;
+      theta       := i * vmcPi / stacks;
       sinTheta    := sin(theta);
       cosTheta    := cos(theta);
 
       for j := 0 to slices do begin
-         phi         := j * 2 * vmcPI / slices;
+         phi         := j * 2 * vmcPi / slices;
          sinPhi      := sin(phi);
          cosPhi      := cos(phi);
 
@@ -805,7 +805,7 @@ var
 
 begin
    majorStep := height / major;
-   minorStep := 2 * vmcPI / minor;
+   minorStep := 2 * vmcPi / minor;
 
    if(major < 2) or (minor < 3) then
       exit();
@@ -913,8 +913,8 @@ begin
 
    nv := 0;
 
-   majorStep := 2.7 * vmcPI / major;
-   minorStep := 2.7 * vmcPI / major;
+   majorStep := 2.7 * vmcPi / major;
+   minorStep := 2.7 * vmcPi / major;
 
    for i := 0 to major do begin
       a0 := i * majorStep;
@@ -1007,7 +1007,7 @@ begin
    Mesh.Data.v[0][2] := 0;
 
    { build cone }
-   piece := (vmcPI * 2) / divisions;
+   piece := (vmcPi * 2) / divisions;
 
    for i := 1 to divisions do begin
       p := piece * (i - 1);
