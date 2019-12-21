@@ -18,9 +18,18 @@ INTERFACE
       uOXED, oxeduPlatformConfiguration;
 
 TYPE
-   oxedTPlatformArchitecture = record
+
+   { oxedTPlatformArchitecture }
+
+   oxedTPlatformArchitecture = class
       Name,
-      Architecture: string;
+      Architecture,
+      {matches fpc platform}
+      Platform: string;
+
+      constructor Create(); virtual;
+
+      procedure Build(); virtual;
    end;
 
    oxedTPlatformArchitectureList = specialize TSimpleList<oxedTPlatformArchitecture>;
@@ -44,7 +53,7 @@ TYPE
 
       constructor Create(); virtual;
 
-      procedure AddArchitecture(archName, arch: string);
+      procedure AddArchitecture(arch: oxedTPlatformArchitecture);
 
       {reset when new project is created, opened or closed}
       procedure ProjectReset(); virtual;
@@ -81,6 +90,20 @@ VAR
 
 IMPLEMENTATION
 
+{ oxedTPlatformArchitecture }
+
+constructor oxedTPlatformArchitecture.Create();
+begin
+   Name := 'unknown';
+   Platform := 'unknown';
+   Architecture := 'unknown';
+end;
+
+procedure oxedTPlatformArchitecture.Build();
+begin
+
+end;
+
 { oxedTPlatform }
 
 constructor oxedTPlatform.Create();
@@ -91,15 +114,9 @@ begin
    Architectures.InitializeValues(Architectures);
 end;
 
-procedure oxedTPlatform.AddArchitecture(archName, arch: string);
-var
-   a: oxedTPlatformArchitecture;
-
+procedure oxedTPlatform.AddArchitecture(arch: oxedTPlatformArchitecture);
 begin
-   a.Name := archName;
-   a.Architecture := arch;
-
-   Architectures.Add(a);
+   Architectures.Add(arch);
 end;
 
 procedure oxedTPlatform.ProjectReset();
