@@ -27,6 +27,8 @@ TYPE
       {matches fpc platform}
       Platform: string;
 
+      PlatformObject: TObject;
+
       constructor Create(); virtual;
 
       procedure Build(); virtual;
@@ -117,6 +119,7 @@ end;
 procedure oxedTPlatform.AddArchitecture(arch: oxedTPlatformArchitecture);
 begin
    Architectures.Add(arch);
+   arch.PlatformObject := Self;
 end;
 
 procedure oxedTPlatform.ProjectReset();
