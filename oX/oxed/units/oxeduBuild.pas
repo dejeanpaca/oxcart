@@ -827,7 +827,8 @@ end;
 
 class procedure oxedTBuildGlobal.BuildStandaloneTask(arch: oxedTPlatformArchitecture);
 begin
-
+   oxedBuild.BuildArch := arch;
+   oxedBuild.StartTask(OXED_BUILD_TASK_STANDALONE);
 end;
 
 procedure oxedTBuildGlobal.RunTask(taskType: oxedTBuildTaskType);
