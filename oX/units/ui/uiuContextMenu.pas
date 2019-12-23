@@ -54,6 +54,8 @@ TYPE
       Action: TEventID;
       {index, used for external reference, has no meaning for the context menu itself}
       Index: loopint;
+      {external data}
+      ExternalData: pointer;
       {sub-context menu}
       Sub: TObject;
       {callback called when the item is activated}
