@@ -182,7 +182,7 @@ end;
 
 { oxedTBuildInitializationTask }
 
-constructor oxedTBuildInitializationTask.Create;
+constructor oxedTBuildInitializationTask.Create();
 begin
    inherited Create;
 
@@ -864,6 +864,8 @@ begin
       RebuildThirdParty();
       oxedProject.Session.ThirdPartyBuilt := true;
    end;
+
+   log.v('oxed > Build done');
 end;
 
 procedure oxedTBuildGlobal.StartTask(taskType: oxedTBuildTaskType);
