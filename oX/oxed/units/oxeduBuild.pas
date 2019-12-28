@@ -311,7 +311,7 @@ end;
 
 function getRelativePath(const unitFile: oxedTProjectUnit): string;
 begin
-   Result := '..' + DirectorySeparator + ExtractFilePath(unitFile.Path);
+   Result := ExtractRelativepath(oxedBuild.WorkingArea, oxedProject.Path + ExtractFilePath(unitFile.Path));
 end;
 
 function getFeatures(isLibrary: boolean = false): oxTFeaturePDescriptorList;
