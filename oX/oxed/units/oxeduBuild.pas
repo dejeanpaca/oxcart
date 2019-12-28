@@ -140,6 +140,8 @@ TYPE
       function GetWorkingAreaPath(): StdString;
       {get path for the working area}
       function GetPlatformPath(const base: StdString): StdString;
+      {get the target executable file name}
+      function GetTargetExecutableFileName(): StdString;
    end;
 
 VAR
@@ -408,7 +410,7 @@ begin
    end;
 
    recreateSymbols(f, IsLibrary);
-   f.SetValue(f.compiler.targetFilename, oxedProject.GetLibraryPath(false));
+   f.SetValue(f.compiler.targetFilename, oxedBuild.GetTargetExecutableFileName());
 end;
 
 procedure lpiLoaded(var f: TLPIFile);
@@ -701,6 +703,8 @@ begin
    if(not oxedProject.Valid()) then
       exit;
 
+   build.Options.IsLibrary := BuildTarget = OXED_BUILD_LIB;
+
    TargetPath := GetTargetPath();
    WorkingArea := GetWorkingAreaPath();
 
@@ -761,9 +765,7 @@ begin
       exit;
    end;
 
-   build.Options.IsLibrary := BuildTarget = OXED_BUILD_LIB;
-
-   if(build.Options.IsLibrary) then begin
+   if(BuildTarget = OXED_BUILD_LIB) then begin
       {check if used fpc version matches us}
       if(pos(FPC_VERSION, build.CurrentPlatform^.Version) <> 1) then begin
          oxedMessages.e('Library fpc version mismatch. Got ' + build.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
@@ -866,11 +868,12 @@ begin
       exit;
 
    if(taskType <> OXED_BUILD_TASK_STANDALONE) then
-      oxedBuild.BuildTarget := OXED_BUILD_LIB
+      BuildTarget := OXED_BUILD_LIB
    else
-      oxedBuild.BuildTarget := OXED_BUILD_STANDALONE;
+      BuildTarget := OXED_BUILD_STANDALONE;
 
    BuildType := taskType;
+   build.Options.IsLibrary := BuildTarget = OXED_BUILD_LIB;
 
    {determine if we need third party units}
    oxedBuild.IncludeThirdParty := (not oxedProject.Session.ThirdPartyBuilt) or oxedProject.Session.IncludeThirdPartyUnits;
@@ -985,6 +988,16 @@ begin
       Result := oxedProject.TempPath
    else
       Result := IncludeTrailingPathDelimiterNonEmpty(base) + oxedBuild.BuildArch.Platform + DirectorySeparator;
+end;
+
+function oxedTBuildGlobal.GetTargetExecutableFileName(): StdString;
+begin
+   Result := WorkingArea;
+
+   if(BuildTarget = OXED_BUILD_LIB) then
+      Result := Result + build.GetExecutableName(oxPROJECT_LIBRARY_NAME, true)
+   else
+      Result := Result + build.GetExecutableName(oxedProject.ShortName, false);
 end;
 
 procedure CreateSourceFile(const fn: string);
