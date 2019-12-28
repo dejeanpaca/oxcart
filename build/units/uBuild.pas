@@ -856,7 +856,7 @@ begin
 
    p := GetToolProcess();
 
-   p.Executable := GetLazarus()^.Path +  GetExecutableName('lazbuild');
+   p.Executable := GetLazarus()^.Path + GetExecutableName('lazbuild');
    if(Options.Rebuild) then
       p.Parameters.Add('-B');
 
@@ -885,8 +885,6 @@ begin
          Output.ExecutableName := ExtractFilePath(path) + executableName
       else
          Output.ExecutableName := ExtractAllNoExt(path);
-
-      Output.ExecutableName := GetExecutableName(Output.ExecutableName, Options.IsLibrary);
 
       Output.Success := true;
       log.k('build > Building successful');
