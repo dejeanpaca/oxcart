@@ -81,7 +81,12 @@ TYPE
       {what task type to run after scan}
       RunAfterScanTaskType: oxedTBuildTaskType;
 
-      TargetPath: string;
+      {TODO: Use working area for temporary stuff in a build}
+
+      {where we output our stuff}
+      TargetPath,
+      {where we output temporary files in order to make a build}
+      WorkingArea: string;
 
       class procedure Initialize(); static;
       class procedure Deinitialize(); static;
@@ -131,6 +136,10 @@ TYPE
       function SetupPlatform(): boolean;
       {get target path for current target}
       function GetTargetPath(): StdString;
+      {get path for the working area}
+      function GetWorkingAreaPath(): StdString;
+      {get path for the working area}
+      function GetPlatformPath(const base: StdString): StdString;
    end;
 
 VAR
@@ -467,8 +476,8 @@ begin
 
    context.Target := ExtractAllNoExt(source);
 
-   fnTemp := oxedBuild.TargetPath + '-Temp-' + source;
-   fn := oxedBuild.TargetPath + lpifn;
+   fnTemp := oxedBuild.WorkingArea + '-Temp-' + source;
+   fn := oxedBuild.WorkingArea + lpifn;
 
    lpi.Create(fnTemp, @context);
 
@@ -515,7 +524,7 @@ begin
 
    p.Add('appInfo.SetVersion(1, 0);' + LineEnding);
 
-   FileUtils.WriteString(oxedBuild.TargetPath + oxPROJECT_APP_INFO_INCLUDE, p);
+   FileUtils.WriteString(oxedBuild.WorkingArea + oxPROJECT_APP_INFO_INCLUDE, p);
 end;
 
 function GetComponentUses(): TAppendableString;
@@ -577,7 +586,7 @@ begin
 
    p := u.BuildProgram();
 
-   FileUtils.WriteString(oxedBuild.TargetPath + oxPROJECT_MAIN_SOURCE, p);
+   FileUtils.WriteString(oxedBuild.WorkingArea + oxPROJECT_MAIN_SOURCE, p);
 end;
 
 procedure RecreateLib();
@@ -599,11 +608,11 @@ begin
 
    p := u.BuildLibrary();
 
-   fn := oxedBuild.TargetPath + oxPROJECT_LIB_SOURCE + '.tmp';
+   fn := oxedBuild.WorkingArea + oxPROJECT_LIB_SOURCE + '.tmp';
 
    FileUtils.WriteString(fn, p);
 
-   target := oxedBuild.TargetPath + oxPROJECT_LIB_SOURCE;
+   target := oxedBuild.WorkingArea + oxPROJECT_LIB_SOURCE;
 
    if(CompareAndReplace(fn, target)) then
       log.v('Recreated ' + target);
@@ -611,7 +620,7 @@ end;
 
 function ShouldRecreate(const fn: string): boolean;
 begin
-   Result := (FileUtils.Exists(oxedBuild.TargetPath + fn) <= 0) or (oxedBuild.BuildType = OXED_BUILD_TASK_REBUILD);
+   Result := (FileUtils.Exists(oxedBuild.WorkingArea + fn) <= 0) or (oxedBuild.BuildType = OXED_BUILD_TASK_REBUILD);
 end;
 
 class function oxedTBuildGlobal.Recreate(): boolean;
@@ -668,7 +677,7 @@ begin
 
    build.Output.Redirect := true;
 
-   uBuild.build.Laz(oxedBuild.TargetPath + whichLpi);
+   uBuild.build.Laz(oxedBuild.WorkingArea + whichLpi);
 
    build.Output.Redirect := previousRedirect;
 end;
@@ -693,16 +702,34 @@ begin
       exit;
 
    TargetPath := GetTargetPath();
+   WorkingArea := GetWorkingAreaPath();
 
    log.v('Building into: ' + TargetPath);
+   log.v('Working area: ' + WorkingArea);
+
    assert(TargetPath <> '', 'Failed to set target path for build');
+   assert(WorkingArea <> '', 'Failed to set working area for build');
 
    if(BuildType <> OXED_BUILD_TASK_STANDALONE) then begin
       {if we're missing target path, rebuild}
       if(not FileUtils.DirectoryExists(TargetPath)) then
          BuildType := OXED_BUILD_TASK_REBUILD;
    end else begin
-      {remove previous build for standalone path}
+      {create working area directory}
+
+      if(TargetPath <> WorkingArea) then begin
+         FileUtils.RmDir(WorkingArea);
+
+         if(ForceDirectories(WorkingArea)) then begin
+            log.v('Created working area directory: ' + WorkingArea)
+         end else begin
+            FailBuild('Failed to create working area directory: ' + WorkingArea);
+            exit;
+         end;
+      end;
+
+      {create target directory}
+
       FileUtils.RmDir(TargetPath);
 
       if(ForceDirectories(TargetPath)) then
@@ -758,8 +785,10 @@ end;
 
 procedure DoCleanup();
 begin
-   if(FileUtils.DirectoryExists(oxedBuild.TargetPath)) then begin
-      if(FileUtils.RmDir(oxedBuild.TargetPath)) then
+   oxedBuild.WorkingArea := oxedBuild.GetWorkingAreaPath();
+
+   if(FileUtils.DirectoryExists(oxedBuild.WorkingArea)) then begin
+      if(FileUtils.RmDir(oxedBuild.WorkingArea)) then
          oxedMessages.i('Cleanup finished')
       else
          oxedMessages.w('Failed to remove temporary files');
@@ -942,11 +971,20 @@ end;
 
 function oxedTBuildGlobal.GetTargetPath(): StdString;
 begin
+   Result := GetPlatformPath(oxedProject.TempPath + 'build');
+end;
+
+function oxedTBuildGlobal.GetWorkingAreaPath(): StdString;
+begin
+   Result := GetPlatformPath(oxedProject.TempPath + 'build-temp');
+end;
+
+function oxedTBuildGlobal.GetPlatformPath(const base: StdString): StdString;
+begin
    if(BuildTarget <> OXED_BUILD_STANDALONE) then
       Result := oxedProject.TempPath
    else
-      Result := IncludeTrailingPathDelimiterNonEmpty(oxedProject.TempPath) + 'build' +
-         DirectorySeparator + oxedBuild.BuildArch.Platform + DirectorySeparator;
+      Result := IncludeTrailingPathDelimiterNonEmpty(base) + oxedBuild.BuildArch.Platform + DirectorySeparator;
 end;
 
 procedure CreateSourceFile(const fn: string);
