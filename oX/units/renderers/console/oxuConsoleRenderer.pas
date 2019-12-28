@@ -18,7 +18,8 @@ INTERFACE
    USES
       uStd, uImage, uTVideo, uLog, Video,
       {ox}
-      uOX, oxuWindowTypes, oxuRenderer, oxuRenderers, oxuPlatform
+      uOX,
+      oxuWindowTypes, oxuRenderer, oxuRenderers, oxuPlatform
       {$IFDEF WINDOWS}
       , oxuWindowsConsolePlatform
       {$ENDIF}
@@ -30,7 +31,7 @@ TYPE
    { oxTConsoleRenderer }
 
    oxTConsoleRenderer = class (oxTRenderer)
-      constructor Create; override;
+      constructor Create(); override;
 
       procedure OnInitialize(); override;
 
@@ -51,12 +52,13 @@ IMPLEMENTATION
 
 { oxglTRenderer }
 
-constructor oxTConsoleRenderer.Create;
+constructor oxTConsoleRenderer.Create();
 begin
    inherited;
 
    Id := 'renderer.console';
    Name := 'Console';
+
    PlatformInstance := oxTPlatform;
    {$IFDEF WINDOWS}
    PlatformInstance := oxTWindowsConsolePlatform;
@@ -64,7 +66,6 @@ begin
    {$IFDEF UNIX}
    PlatformInstance := oxTUnixConsolePlatform;
    {$ENDIF}
-   Init.Init(Id);
 
    WindowSettings.DepthBits := 0;
    WindowSettings.ColorBits := 8;

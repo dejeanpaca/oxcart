@@ -19,7 +19,10 @@ INTERFACE
       uStd, uImage,
       Vulkan,
       {ox}
-      uOX, oxuRenderer, oxuRenderers, oxuWindowTypes;
+      uOX, oxuRenderer, oxuRenderers, oxuWindowTypes,
+      {platform specific}
+      {$IFDEF WINDOWS}windows, oxuWindowsPlatform{$ENDIF}
+      {$IFDEF X11}oxuX11Platform{$ENDIF};
 
 TYPE
    oxTVulkanWindow = class(oxTWindow)
@@ -48,7 +51,7 @@ begin
    Name := 'Vulkan';
    WindowInstance := oxTVulkanWindow;
 
-   Init.Init(Id);
+   {$INCLUDE ../../ox_default_platform_instance.inc}
 end;
 
 procedure oxTVulkanRenderer.OnInitialize();
