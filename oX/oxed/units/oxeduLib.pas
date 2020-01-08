@@ -56,12 +56,13 @@ var
 
 begin
    logMessage := LoadLib();
+
    if(logMessage = '') then begin
-      result := true
+      Result := true
    end else begin
       oxedMessages.e(logMessage);
 
-      result := false;
+      Result := false;
       Unload();
    end;
 end;
@@ -91,7 +92,7 @@ begin
       Result := true;
 end;
 
-function oxedTLibraryGlobal.LoadLib: string;
+function oxedTLibraryGlobal.LoadLib(): string;
 var
    path: string;
    size: loopint;
@@ -144,7 +145,7 @@ begin
 
    Settings := oxLib.GetSettings();
 
-   exit('');
+   Result := '';
 end;
 
 END.
