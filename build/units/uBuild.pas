@@ -879,6 +879,8 @@ begin
    StoreOutput(p);
 
    if((p.ExitStatus = 0) and (p.ExitCode = 0)) then begin
+      {NOTE: we exepect file name in LPI to not have a path}
+
       executableName := GetExecutableNameFromLPI(path);
 
       if(executableName <> '') then
