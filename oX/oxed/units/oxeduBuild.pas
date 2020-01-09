@@ -98,8 +98,10 @@ TYPE
 
       {recreate project files}
       class function Recreate(): boolean; static;
-      {recreate project files}
+      {run the build process}
       procedure RunBuild();
+      {copy required run-time libraries for this build}
+      procedure CopyLibraries();
       {rebuild the entire project}
       class procedure Rebuild(); static;
       {build the part of project that changed}
@@ -778,11 +780,24 @@ begin
 
    if(build.Output.Success) then begin
       oxedMessages.k(modestring + ' success (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
+
+      CopyLibraries();
    end else
       oxedMessages.e(modestring + ' failed (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
 
    {if successful rebuild, we've made an initial build}
    oxedProject.Session.InitialBuildDone := true;
+end;
+
+procedure oxedTBuildGlobal.CopyLibraries();
+begin
+   {$IFDEF WINDOWS}
+   build.Libraries.Target := TargetPath;
+
+   build.CopyLibrary('oal_soft.dll', 'openal32.dll');
+   build.CopyLibrary('freetype-6.dll');
+   build.CopyLibrary('zlib1.dll');
+   {$ENDIF}
 end;
 
 procedure DoCleanup();
