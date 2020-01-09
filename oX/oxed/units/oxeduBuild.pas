@@ -804,13 +804,13 @@ begin
    source := build.Output.ExecutableName;
    destination := TargetPath + ExtractFileName(build.Output.ExecutableName);
 
-   log.v('Moving: ' + source + ' to ' + destination);
-
    {remove destination first}
    FileUtils.Erase(destination);
 
    {move the file}
-   if(not RenameFile(source, destination)) then
+   if(RenameFile(source, destination)) then
+      log.v('Moving: ' + source + ' to ' + destination)
+   else
       FailBuild('Failed to move: ' + source + ' to ' + destination);
 
 end;
