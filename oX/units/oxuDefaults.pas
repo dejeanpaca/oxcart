@@ -153,6 +153,8 @@ INTERFACE
          {$IFDEF OX_LIBRARY}
          oxulibInputUpdater,
          oxuLibSceneLoader,
+         {$ELSE}
+         oxunilSceneLoader,
          {$ENDIF}
          {$IFDEF OX_FEATURE_MODELS}
          oxuModelComponent,
