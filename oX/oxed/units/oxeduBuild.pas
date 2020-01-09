@@ -101,7 +101,7 @@ TYPE
       {run the build process}
       procedure RunBuild();
       {copy the built executable to target path}
-      procedure CopyExecutable();
+      procedure MoveExecutable();
       {copy required run-time libraries for this build}
       procedure CopyLibraries();
       {rebuild the entire project}
@@ -783,7 +783,7 @@ begin
    if(build.Output.Success) then begin
       oxedMessages.k(modestring + ' success (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
 
-      CopyExecutable();
+      MoveExecutable();
       CopyLibraries();
    end else
       oxedMessages.e(modestring + ' failed (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
@@ -792,7 +792,7 @@ begin
    oxedProject.Session.InitialBuildDone := true;
 end;
 
-procedure oxedTBuildGlobal.CopyExecutable();
+procedure oxedTBuildGlobal.MoveExecutable();
 var
    source,
    destination: StdString;
@@ -804,8 +804,15 @@ begin
    source := build.Output.ExecutableName;
    destination := TargetPath + ExtractFileName(build.Output.ExecutableName);
 
-   log.v('Copying: ' + source + ' to ' + destination);
-   FileUtils.Copy(source, destination);
+   log.v('Moving: ' + source + ' to ' + destination);
+
+   {remove destination first}
+   FileUtils.Erase(destination);
+
+   {move the file}
+   if(not RenameFile(source, destination)) then
+      FailBuild('Failed to move: ' + source + ' to ' + destination);
+
 end;
 
 procedure oxedTBuildGlobal.CopyLibraries();
