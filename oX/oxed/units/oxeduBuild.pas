@@ -14,7 +14,7 @@ INTERFACE
       sysutils, uStd, uLog, uBuild, uLPI, uFileUtils, StringUtils, uTiming, uFile, uFiles,
       uApp, appuActionEvents,
       {ox}
-      oxuRunRoutines, oxuThreadTask, oxuFeatures, oxuRenderer,
+      oxuThreadTask, oxuFeatures, oxuRenderer,
       {oxed}
       uOXED, oxeduMessages, oxeduProject, oxeduPlatform, oxeduTasks, oxeduActions, oxeduSettings, oxeduProjectScanner;
 
@@ -1042,7 +1042,7 @@ begin
       end;
 
       log.v('Using platform: ' + build.CurrentPlatform^.Name + ', fpc ' + build.CurrentPlatform^.Version);
-      log.v('Using lazbuild: ' + build.CurrentLazarus^.Name + ', fpc ' + build.CurrentLazarus^.Path);
+      log.v('Using lazbuild: ' + build.CurrentLazarus^.Name + ', at ' + build.CurrentLazarus^.Path);
 
       exit(true);
    end;
