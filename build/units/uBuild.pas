@@ -62,8 +62,6 @@ TYPE
    {per lazarus configuration}
 
    TBuildLazarusInstall = record
-      x64: boolean;
-
       Name,
       Path,
       ConfigPath: StdString;
@@ -298,8 +296,6 @@ begin
    defaultLaz.FPC := build.FindPlatformByName('default');
    build.LazarusInstalls.Dispose();
    build.LazarusInstalls.Add(defaultLaz);
-
-   defaultLaz.FPC := @build.Platforms.List[0];
 
    build.DefaultLazarus := build.LazarusInstalls.GetLast();
 end;
