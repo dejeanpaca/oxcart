@@ -3,7 +3,7 @@ PROGRAM setup;
 
 USES
    sysutils, uStd, uLog, ParamUtils, uFileUtils,
-   uBuild, uBuildLibraries, uLPI;
+   uBuild, uBuildLibraries, uBuildConfiguration, uLPI;
 
 {$R *.res}
 

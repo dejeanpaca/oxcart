@@ -13,7 +13,7 @@ INTERFACE
    USES
       sysutils, uStd, uLog, uLPI, uFileUtils, StringUtils, uTiming, uFile, uFiles,
       {build}
-      uBuild, uPasSourceHelper,
+      uBuild, uBuildConfiguration, uPasSourceHelper,
       {app}
       uApp, appuActionEvents,
       {ox}

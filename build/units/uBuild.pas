@@ -11,9 +11,8 @@ UNIT uBuild;
 INTERFACE
 
    USES
-      process, sysutils, strutils, uProcessHelpers, ParamUtils, StreamIO,
+      process, sysutils, uProcessHelpers, ParamUtils, StreamIO,
       uStd, uLog, uFileUtils, StringUtils, ConsoleUtils, uSimpleParser, uTiming,
-      udvars, dvaruFile,
       appuPaths
       {$IFDEF UNIX}, BaseUnix{$ENDIF};
 
@@ -111,14 +110,6 @@ TYPE
       BuiltWithVersion: StdString;
 
       Tools: TBuildSystemTools;
-      {dvar configuration root}
-      dvgLocation: TDVarGroup;
-      {units configuration root}
-      dvgUnits,
-      {configuration root}
-      dvgConfig,
-      {units base path group}
-      dvgUnitsBase: TDVarGroup;
 
       {build configuration path}
       ConfigPath,
@@ -168,24 +159,15 @@ TYPE
       DefaultPlatform: PBuildPlatform;
       DefaultLazarus: PBuildLazarusInstall;
 
-      OnInitialize: TProcedures;
+      OnInitialize,
+      OnLoadConfiguration,
+      OnSaveConfiguration: TProcedures;
 
       {initialize the build system}
       procedure Initialize();
       {reinitialize the build system (e.g. after config path change)}
       procedure ReInitialize();
       {load configuration}
-      procedure LoadConfiguration();
-      {save location configuration}
-      procedure SaveLocationConfiguration();
-      {load configured units}
-      procedure LoadUnits();
-
-      {load the specified config file}
-      procedure LoadConfigFile(const fn: StdString);
-
-      {automatically determine config path}
-      procedure AutoDetermineConfigPath();
 
       {get lazarus project filename for the given path (which may already include project filename)}
       function GetLPIFilename(const path: StdString): StdString;
@@ -291,57 +273,6 @@ VAR
 
 IMPLEMENTATION
 
-VAR
-   { store config_path configuration file}
-   dvConfigLocation: TDVar;
-
-   dvUnitsUnit,
-   dvUnitsInclude,
-   dvUnitsBaseWin,
-   dvUnitsBaseUnix,
-   dvUnitsBaseLinux,
-   dvUnitsBaseDarwin: TDVar;
-
-   currentMode: StdString = 'fpc';
-   currentConfigFilePath,
-   currentValue: StdString;
-
-   dvFPC,
-   dvLazarus,
-   dvPlatform,
-   dvCPU,
-   dvPath,
-   dvConfigPath,
-   dvUseFPC,
-
-   dvToolsPath,
-   dvBuildPath,
-   dvBuildLibOptimizationLevels: TDVar;
-
-   {current base path read from units.config}
-   winBasePath,
-   unixBasePath,
-   darwinBasePath: StdString;
-
-   currentPlatform: PBuildPlatform;
-   currentLazarus: PBuildLazarusInstall;
-
-function getdvCurrentPlatform(): PBuildPlatform;
-begin
-   if(build.Platforms.n > 0) then
-      exit(build.Platforms.GetLast());
-
-   Result := nil;
-end;
-
-function getdvCurrentLazInstall(): PBuildLazarusInstall;
-begin
-   if(build.LazarusInstalls.n > 0) then
-      exit(build.LazarusInstalls.GetLast());
-
-   Result := nil;
-end;
-
 procedure CreateDefaultPlatform();
 var
    defaultPlatform: TBuildPlatform;
@@ -353,9 +284,7 @@ begin
    build.Platforms.Dispose();
    build.Platforms.Add(defaultPlatform);
 
-   currentPlatform := build.Platforms.GetLast();
-
-   build.DefaultPlatform := currentPlatform;
+   build.DefaultPlatform := build.Platforms.GetLast();
 end;
 
 procedure CreateDefaultLazarus();
@@ -371,8 +300,7 @@ begin
 
    defaultLaz.FPC := @build.Platforms.List[0];
 
-   currentLazarus := build.LazarusInstalls.GetLast();
-   build.DefaultLazarus := currentLazarus;
+   build.DefaultLazarus := build.LazarusInstalls.GetLast();
 end;
 
 { TLazarusInstallsHelper }
@@ -526,16 +454,10 @@ begin
    CreateDefaultPlatform();
    CreateDefaultLazarus();
 
-   LoadConfiguration();
+   OnLoadConfiguration.Call();
 
    {setup default values if defaults were not overriden}
    SetupDefaults();
-
-   if(ConfigPath = 'default') then
-      exit;
-
-   {setup unit paths}
-   LoadUnits();
 
    OnInitialize.Call();
 
@@ -549,150 +471,6 @@ begin
 
    Initialized := true;
 end;
-
-procedure TBuildSystem.LoadConfiguration();
-var
-   tempConfigPath,
-   fn,
-   platform,
-   mode: StdString;
-
-begin
-   AutoDeterminedConfigPath := false;
-   tempConfigPath := appPath.HomeConfigurationDir('.' + SYSTEM_NAME);
-
-   fn := tempConfigPath + 'location.config';
-
-   if(FileUtils.Exists(fn) > 0) then begin
-      {load config_path configuration if one exists}
-      dvarf.ReadText(dvgLocation, fn);
-
-      {if can't find the specified location, restore default}
-      if (ConfigPath <> 'default') then begin
-         FileUtils.NormalizePathEx(ConfigPath);
-         ConfigPath := IncludeTrailingPathDelimiter(ConfigPath);
-
-         if not(FileUtils.DirectoryExists(ConfigPath)) then begin
-            log.w('build > Could not find configuration directory: ' + ConfigPath);
-            log.i('build > Will revert location configuration to default');
-
-            ConfigPath := 'default';
-         end;
-      end;
-   end;
-
-   if(ConfigPath = 'default') then begin
-      log.w('build > Configuration location is not set (location config at: ' + fn + ')');
-      AutoDetermineConfigPath();
-   end;
-
-   {$IFDEF WINDOWS}
-   platform := 'win';
-   {$ELSE}
-      {$IFDEF UNIX}
-         {$IFDEF DARWIN}
-         platform := 'darwin';
-         {$ELSE}
-         platform := 'unix';
-         {$ENDIF}
-      {$ELSE}
-      {$FATAL uBuild does not support this platform}
-      {$ENDIF}
-   {$ENDIF}
-
-   {read general configuration}
-   fn := ConfigPath + 'build.config';
-   if(FileUtils.Exists(fn) > 0) then
-      dvarf.ReadText(dvgConfig, fn);
-
-   {read per platform mode configuration}
-   mode := '';
-   if(BuildMode <> '') then
-      mode := '.' + BuildMode;
-
-   fn := ConfigPath + 'build.' + platform + mode + '.config';
-   if(FileUtils.Exists(fn) > 0) then
-      dvarf.ReadText(dvgConfig, fn);
-
-   {read user configuration}
-   fn := ConfigPath + 'user.config';
-   if(FileUtils.Exists(fn) > 0) then
-      dvarf.ReadText(dvgConfig, fn);
-
-   FileUtils.NormalizePathEx(Tools.Build);
-   FileUtils.NormalizePathEx(Tools.Path);
-end;
-
-procedure TBuildSystem.SaveLocationConfiguration();
-var
-   fn: StdString;
-
-begin
-   fn := appPath.HomeConfigurationDir('.' + SYSTEM_NAME) + 'location.config';
-
-   log.i('build > Wrote location configuration at: ' + fn);
-   dvarf.WriteText(dvgLocation, fn);
-end;
-
-procedure TBuildSystem.LoadUnits();
-var
-   fn: StdString;
-
-begin
-   fn := ConfigPath + 'units.config';
-
-   LoadConfigFile(fn);
-end;
-
-procedure TBuildSystem.LoadConfigFile(const fn: StdString);
-begin
-   if(FileUtils.Exists(fn) > 0) then begin
-      currentConfigFilePath := ExtractFilePath(fn);
-
-      {read Units from unit configuration}
-      dvarf.ReadText(dvgUnits, fn);
-   end;
-end;
-
-function tryDetermineConfigPath(startPath: StdString): boolean;
-var
-   path: StdString;
-
-begin
-   build.ConfigPath := IncludeTrailingPathDelimiter(startPath);
-   path := build.ConfigPath;
-
-   repeat
-      if(FileUtils.Exists(path + 'build' + DirectorySeparator + 'here.build') > 0) then begin
-         build.ConfigPath := path + 'build' + DirectorySeparator;
-         break;
-      end else begin
-         if(path = IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(path))) or (path = '') then begin
-            path := '';
-            break;
-         end;
-
-         path := IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(path));
-      end;
-   until (path = '');
-
-   if(path <> '') then
-      build.ConfigPath := IncludeTrailingPathDelimiter(path) + 'build' + DirectorySeparator
-   else
-      build.ConfigPath := 'default';
-
-   Result := path <> '';
-end;
-
-procedure TBuildSystem.AutoDetermineConfigPath();
-begin
-   if(not tryDetermineConfigPath(GetParentDirectory(appPath.GetExecutablePath()))) then
-      tryDetermineConfigPath(GetCurrentDir());
-
-   log.w('build > Auto determined config path: ' + ConfigPath);
-   AutoDeterminedConfigPath := true;
-end;
-
 
 function TBuildSystem.GetLPIFilename(const path: StdString): StdString;
 begin
@@ -1541,233 +1319,6 @@ begin
    Result := LowerCase(FPC_TARGETCPU + '-' + FPC_TARGETOS);
 end;
 
-function getBasePath(): StdString;
-begin
-   {$IFDEF UNIX}
-   {$IFDEF DARWIN}
-   Result := darwinBasePath;
-   {$ELSE}
-   Result := unixBasePath;
-   {$ENDIF}
-   {$ELSE}
-      {$IFDEF WINDOWS}
-      Result := winBasePath;
-      {$ELSE}
-      Result := '';
-      {$FATAL uBuild BasePath not support on this platform}
-      {$ENDIF}
-   {$ENDIF}
-end;
-
-function doesIncludeAll(const path: StdString): boolean;
-begin
-   Result := strutils.AnsiEndsStr('*', path);
-end;
-
-function isRelativePath(const path: StdString): boolean;
-begin
-   Result := strutils.AnsiContainsStr(path, '..');
-end;
-
-VAR
-   Walker: TFileTraverse;
-
-function onUnit(const fn: StdString): boolean;
-var
-   path: StdString;
-
-begin
-   Result := true;
-
-   path := ExtractFilePath(fn);
-
-   if(build.Units.FindString(path) < 0) then begin
-      build.Units.Add(path);
-
-      if(build.VerboseLog) then
-         log.v('Auto find unit path: ' + path);
-   end;
-end;
-
-function onInclude(const fn: StdString): boolean;
-var
-   path: StdString;
-
-begin
-   Result := true;
-
-   path := ExtractFilePath(fn);
-
-   if(build.Includes.FindString(path) < 0) then begin
-      build.Includes.Add(path);
-
-      if(build.VerboseLog) then
-         log.v('Auto find include path: ' + ExtractFilePath(fn));
-   end;
-end;
-
-procedure scanUnits(const startPath: StdString);
-begin
-   log.v('build > Will scan path for units: ' + startPath);
-
-   Walker.ResetExtensions();
-
-   Walker.AddExtension('.pas');
-
-   Walker.OnFile := @onUnit;
-   Walker.Run(startPath);
-end;
-
-procedure scanIncludes(const startPath: StdString);
-begin
-   log.v('build > Will scan path for includes: ' + startPath);
-
-   Walker.ResetExtensions();
-
-   Walker.AddExtension('.inc');
-
-   Walker.onFile := @onInclude;
-   Walker.Run(startPath);
-end;
-
-function processPath(var path: StdString): boolean;
-begin
-   Result := False;
-   ReplaceDirSeparators(path);
-
-   if(isRelativePath(path)) then
-      path := ExpandFileName(currentConfigFilePath + currentValue);
-
-   if(doesIncludeAll(path)) then
-      exit(True);
-end;
-
-{$push}{$warn 5024 off}
-procedure dvUnitNotify(var {%H-}context: TDVarNotificationContext);
-begin
-   if(processPath(currentValue)) then
-      scanUnits(ExtractFilePath(currentValue))
-   else
-      build.Units.Add(getBasePath() + currentValue);
-end;
-
-procedure dvIncludeNotify(var {%H-}context: TDVarNotificationContext);
-begin
-   if(processPath(currentValue)) then
-      scanIncludes(ExtractFilePath(currentValue))
-   else
-      build.Includes.Add(getBasePath() + currentValue);
-end;
-
-procedure dvNotifyBasePath(var context: TDVarNotificationContext);
-begin
-   FileUtils.NormalizePathEx(StdString(context.DVar^.Variable^));
-end;
-
-procedure dvFPCNotify(var {%H-}context: TDVarNotificationContext);
-var
-   platform: TBuildPlatform;
-
-begin
-   currentMode := 'fpc';
-
-   if(currentValue = 'default') then begin
-      currentPlatform := build.DefaultPlatform;
-      exit;
-   end;
-
-   platform.Initialize(platform);
-   platform.Name := currentValue;
-
-   build.Platforms.Add(platform);
-   currentPlatform := getdvCurrentPlatform();
-end;
-
-procedure dvLazarusNotify(var {%H-}context: TDVarNotificationContext);
-var
-   laz: TBuildLazarusInstall;
-
-begin
-   currentMode := 'lazarus';
-
-   if(currentValue = 'default') then begin
-      currentLazarus := build.DefaultLazarus;
-      exit;
-   end;
-
-   laz.Initialize(laz);
-   laz.Name := currentValue;
-
-   build.LazarusInstalls.Add(laz);
-   currentLazarus := getdvCurrentLazInstall();
-end;
-
-procedure dvCPUNotify(var {%H-}context: TDVarNotificationContext);
-begin
-   if(currentMode = 'fpc') and (currentPlatform <> nil) then begin
-      if(currentValue = '64') then
-         currentPlatform^.x64 := True;
-   end;
-end;
-
-procedure dvPlatformNotify(var {%H-}context: TDVarNotificationContext);
-begin
-   if(currentMode = 'fpc') and (currentPlatform <> nil) then
-      currentPlatform^.Platform := currentValue;
-end;
-
-procedure dvPathNotify(var {%H-}context: TDVarNotificationContext);
-begin
-   FileUtils.NormalizePathEx(currentValue);
-
-   if(currentMode = 'fpc') and (currentPlatform <> nil) then
-      currentPlatform^.Path := currentValue
-   else if(currentMode = 'lazarus') and (currentLazarus <> nil) then
-      currentLazarus^.Path := currentValue;
-end;
-
-procedure dvConfigPathNotify(var {%H-}context: TDVarNotificationContext);
-begin
-   FileUtils.NormalizePathEx(currentValue);
-
-   if(currentMode = 'fpc') and (currentPlatform <> nil) then
-      currentPlatform^.ConfigPath := currentValue
-   else if(currentMode = 'lazarus') and (currentLazarus <> nil) then
-      currentLazarus^.ConfigPath := currentValue;
-end;
-
-procedure dvUseFPCNotify(var {%H-}context: TDVarNotificationContext);
-var
-   platform: PBuildPlatform;
-
-begin
-   if(currentMode = 'lazarus') and (currentLazarus <> nil) then begin
-      platform := build.Platforms.FindByName(currentValue);
-
-      if(platform <> nil) then begin
-         {set the used fpc for the lazarus install}
-         currentLazarus^.FPC := platform;
-      end else
-         log.w('Could not find platform: ' + currentValue + ' used by ' + currentLazarus^.Name);
-   end;
-end;
-
-procedure libOptimizationLevelsNotify(var {%H-}context: TDVarNotificationContext);
-var
-   i: loopint;
-   optimizationLevels: TStringArray;
-
-begin
-   optimizationLevels := strExplode(currentValue, ',');
-
-   if(currentPlatform <> nil) and (Length(optimizationLevels) > 0) then begin
-      for i := 0 to High(optimizationLevels) do begin
-         currentPlatform^.OptimizationLevels.Add(optimizationLevels[i]);
-      end;
-   end;
-end;
-{$pop}
-
 VAR
    paramHandler: TParameterHandler;
 
@@ -1784,13 +1335,12 @@ end;
 
 
 INITIALIZATION
-   TFileTraverse.Initialize(Walker);
+   TProcedures.Initialize(build.OnInitialize);
+   TProcedures.Initialize(build.OnLoadConfiguration);
+   TProcedures.Initialize(build.OnSaveConfiguration);
    TProcedures.Initialize(build.Output.OnLine);
 
    build.ConfigPath := 'default';
-
-   build.dvgLocation := dvar.RootGroup;
-   build.dvgLocation.Add(dvConfigLocation, 'location', dtcSTRING, @build.ConfigPath);
 
    build.Units.Initialize(build.Units);
    build.Includes.Initialize(build.Includes);
@@ -1798,72 +1348,6 @@ INITIALIZATION
    build.Platforms.Initialize(build.Platforms);
    build.LazarusInstalls.Initialize(build.LazarusInstalls);
    build.OptimizationLevels.Initialize(build.OptimizationLevels);
-
-   { CONFIGURATION }
-   build.dvgConfig := dvar.RootGroup;
-
-   { FPC }
-   build.dvgConfig.Add(dvFPC, 'fpc', dtcSTRING, @currentValue);
-   dvFPC.pNotify := @dvFPCNotify;
-
-   { LAZARUS }
-   build.dvgConfig.Add(dvLazarus, 'lazarus', dtcSTRING, @currentValue);
-   dvLazarus.pNotify := @dvLazarusNotify;
-
-   { CPU }
-   build.dvgConfig.Add(dvCPU, 'cpu', dtcSTRING, @currentValue);
-   dvCPU.pNotify := @dvCPUNotify;
-
-   { PLATFORM }
-   build.dvgConfig.Add(dvPlatform, 'platform', dtcSTRING, @currentValue);
-   dvPlatform.pNotify := @dvPlatformNotify;
-
-   { PATH }
-   build.dvgConfig.Add(dvPath, 'path', dtcSTRING, @currentValue);
-   dvPath.pNotify := @dvPathNotify;
-
-   { CONFIG PATH }
-   build.dvgConfig.Add(dvConfigPath, 'config_path', dtcSTRING, @currentValue);
-   dvConfigPath.pNotify := @dvConfigPathNotify;
-
-   { CONFIG PATH }
-   build.dvgConfig.Add(dvUseFPC, 'use_fpc', dtcSTRING, @currentValue);
-   dvUseFPC.pNotify := @dvUseFPCNotify;
-
-   build.dvgConfig.Add(dvToolsPath, 'tools_path', dtcSTRING, @build.Tools.Path);
-   build.dvgConfig.Add(dvBuildPath, 'build_path', dtcSTRING, @build.Tools.Build);
-   build.dvgConfig.Add(dvBuildLibOptimizationLevels, 'lib_optimization_levels', dtcSTRING, @currentValue);
-   dvBuildLibOptimizationLevels.pNotify := @libOptimizationLevelsNotify;
-
-   { UNITS}
-
-   build.dvgUnits := dvar.RootGroup;
-   build.dvgUnits.Add('base', build.dvgUnitsBase);
-
-   build.dvgUnitsBase.Add(dvUnitsBaseWin, 'win', dtcSTRING, @winBasePath);
-   build.dvgUnitsBase.Add(dvUnitsBaseUnix, 'unix', dtcSTRING, @unixBasePath);
-   build.dvgUnitsBase.Add(dvUnitsBaseLinux, 'linux', dtcSTRING, @unixBasePath);
-   build.dvgUnitsBase.Add(dvUnitsBaseDarwin, 'darwin', dtcString, @darwinBasePath);
-
-   {$IFDEF WINDOWS}
-   dvUnitsBaseWin.pNotify := @dvNotifyBasePath;
-   {$ENDIF}
-
-   {$IFDEF DARWIN}
-      dvUnitsBaseDarwin.pNotify := @dvNotifyBasePath;
-   {$ELSE}
-     {$IFDEF UNIX}
-     dvUnitsBaseUnix.pNotify := @dvNotifyBasePath;
-     dvUnitsBaseLinux.pNotify := @dvNotifyBasePath;
-     {$ENDIF}
-   {$ENDIF}
-
-   build.dvgUnits.Add(dvUnitsUnit, 'unit', dtcSTRING, @currentValue);
-   dvUnitsUnit.pNotify := @dvUnitNotify;
-   build.dvgUnits.Add(dvUnitsInclude, 'include', dtcSTRING, @currentValue);
-   dvUnitsInclude.pNotify := @dvIncludeNotify;
-
-   CreateDefaultPlatform();
 
    parameters.AddHandler(paramHandler, 'build', '--build-verbose', @processParam);
 
