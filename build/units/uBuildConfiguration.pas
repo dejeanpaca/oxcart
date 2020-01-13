@@ -475,6 +475,11 @@ begin
    BuildConfiguration.LoadConfiguration();
 end;
 
+procedure loadUnits();
+begin
+   BuildConfiguration.LoadUnits();
+end;
+
 INITIALIZATION
    TFileTraverse.Initialize(Walker);
 
@@ -546,4 +551,5 @@ INITIALIZATION
    dvUnitsInclude.pNotify := @dvIncludeNotify;
 
    build.OnLoadConfiguration.Add(@loadConfiguration);
+   build.OnInitialize.Add(@loadUnits);
 END.
