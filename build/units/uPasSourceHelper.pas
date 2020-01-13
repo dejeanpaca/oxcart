@@ -1,0 +1,147 @@
+{
+   uPasSourceHelper
+   Copyright (C) 2019. Dejan Boras
+
+   Started On:    13.01.2019.
+}
+
+{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+UNIT uPasSourceHelper;
+
+INTERFACE
+
+   USES
+      uStd;
+
+TYPE
+   { TPascalSourceBuilder }
+
+   TPascalSourceBuilder = record
+      Name,
+      Header,
+      sInterface,
+      sImplementation,
+      sUses,
+      sExports,
+      sInitialization,
+      sMain: TAppendableString;
+
+      procedure AddUses(var p: TAppendableString);
+
+      function BuildUnit(): TAppendableString;
+      function BuildProgram(): TAppendableString;
+      function BuildLibrary(): TAppendableString;
+   end;
+
+IMPLEMENTATION
+
+{ TPascalUnitBuilder }
+
+procedure TPascalSourceBuilder.AddUses(var p: TAppendableString);
+begin
+   if(sUses <> '') then begin
+      p.Add('USES');
+      p.Add(sUses + ';');
+      p.Add('');
+   end;
+end;
+
+function TPascalSourceBuilder.BuildUnit(): TAppendableString;
+begin
+   Result := '';
+
+   if(Header <> '') then
+      Result.Add(Header);
+
+   Result.Add('UNIT ' + Name + ';');
+   Result.Add('');
+
+   Result.Add('INTERFACE');
+
+   AddUses(Result);
+
+   if(sInterface <> '') then begin
+      Result.Add('');
+      Result.Add(sInterface);
+   end;
+
+   Result.Add('');
+
+   Result.Add('IMPLEMENTATION');
+   Result.Add('');
+
+   if(sImplementation <> '') then begin
+      Result.Add(sImplementation);
+      Result.Add('');
+   end;
+
+   if(sInitialization <> '') then begin
+      Result.Add('INITIALIZATION');
+      Result.Add(sInitialization);
+      Result.Add('');
+   end;
+
+   Result.Add('END.');
+end;
+
+function TPascalSourceBuilder.BuildProgram: TAppendableString;
+begin
+   Result := '';
+
+   if(Header <> '') then
+      Result.Add(Header);
+
+   Result.Add('PROGRAM ' + Name + ';');
+
+   if(sUses <> '') then
+      AddUses(Result)
+   else
+      Result.Add('');
+
+   Result.Add('BEGIN');
+
+   if(sMain <> '') then begin
+      Result.Add('');
+      Result.Add(sMain);
+   end;
+
+   Result.Add('');
+   Result.Add('END.');
+end;
+
+function TPascalSourceBuilder.BuildLibrary: TAppendableString;
+begin
+   Result := '';
+
+   if(Header<> '') then
+      Result.Add(Header);
+
+   Result.Add('LIBRARY ' + Name + ';');
+   Result.Add('');
+
+   if(sUses <> '') then
+      AddUses(Result)
+   else
+      Result.Add('');
+
+   if(sInterface <> '') then begin
+      Result.Add('');
+      Result.Add(sInterface);
+   end;
+
+   if(sExports <> '') then begin
+      Result.Add('EXPORTS');
+      Result.Add(sExports + ';');
+      Result.Add('');
+   end;
+
+   if(sInitialization <> '') then begin
+      Result.Add('INITIALIZATION');
+      Result.Add(sInitialization);
+      Result.Add('');
+   end;
+
+   Result.Add('END.');
+end;
+
+END.

@@ -11,7 +11,10 @@ UNIT oxeduBuild;
 INTERFACE
 
    USES
-      sysutils, uStd, uLog, uBuild, uLPI, uFileUtils, StringUtils, uTiming, uFile, uFiles,
+      sysutils, uStd, uLog, uLPI, uFileUtils, StringUtils, uTiming, uFile, uFiles,
+      {build}
+      uBuild, uPasSourceHelper,
+      {app}
       uApp, appuActionEvents,
       {ox}
       oxuThreadTask, oxuFeatures, oxuRenderer,
