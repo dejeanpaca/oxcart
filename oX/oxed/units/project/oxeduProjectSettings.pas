@@ -14,7 +14,8 @@ INTERFACE
       sysutils, uStd, uLog, udvars, dvaruFile, uFileUtils,
       uAppInfo,
       {oxed}
-      uOXED, oxeduProject, oxeduMessages, oxeduSettings;
+      uOXED, oxeduProject, oxeduPackage,
+      oxeduMessages, oxeduSettings;
 
 CONST
    OXED_PROJECT_SETTINGS_FILE = 'settings.dvar';
@@ -43,10 +44,10 @@ VAR
    dvMainUnit,
    dvRunParameter,
    dvFeature,
-   dvLineEndings: TDVar;
+   dvLineEndings,
+   dvPackage: TDVar;
 
-   runParameter,
-   feature: StdString;
+   stringValue: StdString;
 
 { oxedTProjectSettings }
 
@@ -103,7 +104,7 @@ end;
 procedure dvRunParameterNotify(var context: TDVarNotificationContext);
 begin
    if(context.What = DVAR_NOTIFICATION_READ) then
-      oxedProject.RunParameters.Add(runParameter)
+      oxedProject.RunParameters.Add(stringValue)
    else if(context.What = DVAR_NOTIFICATION_WRITE) then begin
       context.Result := 0;
 
@@ -114,13 +115,36 @@ end;
 procedure dvFeatureNotify(var context: TDVarNotificationContext);
 begin
    if(context.What = DVAR_NOTIFICATION_READ) then
-      oxedProject.Features.Add(runParameter)
+      oxedProject.Features.Add(stringValue)
    else if(context.What = DVAR_NOTIFICATION_WRITE) then begin
       context.Result := 0;
 
       dvarPFileData(context.f)^.Write(context.Parent, dvFeature, oxedProject.Features.List, oxedProject.Features.n);
    end;
 end;
+
+procedure dvPackageNotify(var context: TDVarNotificationContext);
+var
+   i: loopint;
+
+begin
+   if(context.What = DVAR_NOTIFICATION_READ) then begin
+      if(stringValue[1] = '@') then
+         oxedProject.AddPackage(copy(stringValue, 2, Length(stringValue) - 1))
+      else
+         oxedProject.AddPackagePath(stringValue);
+   end else if(context.What = DVAR_NOTIFICATION_WRITE) then begin
+      context.Result := 0;
+
+      for i := 0 to oxedProject.Packages.n - 1 do begin
+         if(oxedProject.Packages.List[i].Path = '') then
+            dvarPFileData(context.f)^.Write(context.Parent, dvPackage, '@' + oxedProject.Packages.List[i].Name)
+         else
+            dvarPFileData(context.f)^.Write(context.Parent, dvPackage, oxedProject.Packages.List[i].Path);
+      end;
+   end;
+end;
+
 
 procedure dvMainUnitNotify(var context: TDVarNotificationContext);
 begin
@@ -146,10 +170,13 @@ INITIALIZATION
    dvGroup.Add(dvMainUnit, 'main_unit', dtcSTRING, @oxedProject.MainUnit, [dvarNOTIFY_WRITE]);
    dvMainUnit.pNotify := @dvMainUnitNotify;
 
-   dvGroup.Add(dvRunParameter, 'run_parameter', dtcSTRING, @runParameter, [dvarNOTIFY_WRITE]);
+   dvGroup.Add(dvRunParameter, 'run_parameter', dtcSTRING, @stringValue, [dvarNOTIFY_WRITE]);
    dvRunParameter.pNotify := @dvRunParameterNotify;
 
-   dvGroup.Add(dvFeature, 'feature', dtcSTRING, @feature, [dvarNOTIFY_WRITE]);
+   dvGroup.Add(dvFeature, 'feature', dtcSTRING, @stringValue, [dvarNOTIFY_WRITE]);
    dvFeature.pNotify := @dvFeatureNotify;
+
+   dvGroup.Add(dvPackage, 'package', dtcSTRING, @stringValue, [dvarNOTIFY_WRITE]);
+   dvPackage.pNotify := @dvPackageNotify;
 
 END.

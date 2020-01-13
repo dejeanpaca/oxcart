@@ -13,7 +13,7 @@ INTERFACE
    USES
       sysutils, uStd, uLog, uFileUtils, StringUtils, uBuild,
       {oxed}
-      uOXED, oxeduSettings;
+      uOXED, oxeduSettings, oxeduPackage;
 
 TYPE
    oxedPProjectUnit = ^oxedTProjectUnit;
@@ -77,6 +77,8 @@ TYPE
       Units,
       IncludeFiles: oxedTProjectUnitList;
 
+      Packages: oxedTPackagesList;
+
       Symbols: oxedTProjectSymbols;
       BuildModes: oxedTProjectBuildModes;
 
@@ -128,6 +130,9 @@ TYPE
 
       function GetConfigFilePath(const fn: StdString): StdString;
       function GetTempFilePath(const fn: StdString): StdString;
+
+      procedure AddPackage(const packageName: string);
+      procedure AddPackagePath(const packagePath: string);
    end;
 
 VAR
@@ -248,6 +253,28 @@ end;
 function oxedTProject.GetTempFilePath(const fn: StdString): StdString;
 begin
    Result := oxedProject.TempPath + fn;
+end;
+
+procedure oxedTProject.AddPackage(const packageName: string);
+var
+   p: oxedTPackage;
+
+begin
+   ZeroPtr(@p, SizeOf(p));
+   p.Name := packageName;
+
+   Packages.Add(p);
+end;
+
+procedure oxedTProject.AddPackagePath(const packagePath: string);
+var
+   p: oxedTPackage;
+
+begin
+   ZeroPtr(@p, SizeOf(p));
+   p.Path := packagePath;
+
+   Packages.Add(p);
 end;
 
 INITIALIZATION
