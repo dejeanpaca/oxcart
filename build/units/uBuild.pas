@@ -125,6 +125,9 @@ TYPE
       {build mode}
       BuildMode: StdString;
 
+      {selected optimization level}
+      OptimizationLevel: loopint;
+
       {Configurations for various platforms (first one is default one for the current system), for cross-compiling}
       Platforms: TBuildPlatforms;
 
@@ -136,7 +139,7 @@ TYPE
          Redirect,
          Success: boolean;
          ExitCode,
-         ExitStatus: longint;
+         ExitStatus: loopint;
          ExecutableName,
          ErrorDecription,
          LastLine: StdString;
@@ -228,12 +231,13 @@ TYPE
       {stores the output of a build process into the output structure}
       procedure StoreOutput(p: TProcess);
       procedure ResetOutput();
+      {wait for a build process to finish (fpc/lazbuild)}
       procedure Wait(p: TProcess);
 
       {get an optimization level name}
-      function GetOptimizationLevelName(optimizationLevel: longint): StdString;
+      function GetOptimizationLevelName(level: loopint): StdString;
       {get a human readable optimization level name}
-      function GetOptimizationLevelNameHuman(optimizationLevel: longint): StdString;
+      function GetOptimizationLevelNameHuman(level: loopint): StdString;
       {get lazarus executable}
       function GetLazarusExecutable(): StdString;
       function GetLazarusStartExecutable(): StdString;
@@ -741,7 +745,6 @@ begin
    end;
 
    Wait(p);
-
    StoreOutput(p);
 
    if((p.ExitStatus = 0) and (p.ExitCode = 0)) then begin
@@ -945,7 +948,7 @@ end;
 procedure TBuildSystem.LogOutput(const p: TProcess);
 var
    buffer: array[0..32768] of char;
-   bufferRead: longint;
+   bufferRead: loopint;
 
 begin
    {$IFDEF DEBUG}
@@ -1019,7 +1022,7 @@ end;
 function TBuildSystem.GetIncludesPath(const basePath: StdString; const paths: TSimpleStringList): StdString;
 var
    p, relative: StdString;
-   i: longint;
+   i: loopint;
 
 begin
    p := '';
@@ -1042,7 +1045,8 @@ function TBuildSystem.GetIncludesPath(const basePath: StdString; const paths: TS
 var
    p, relative: StdString;
    existingItems: TStringArray;
-   i, j: longint;
+   i,
+   j: loopint;
    exists: boolean;
    newPaths: TSimpleStringList;
 
@@ -1142,17 +1146,18 @@ begin
    end;
 end;
 
-function TBuildSystem.GetOptimizationLevelName(optimizationLevel: longint): StdString;
+function TBuildSystem.GetOptimizationLevelName(level: loopint): StdString;
 begin
-   if(optimizationLevel > 0) and (optimizationLevel <= CurrentPlatform^.OptimizationLevels.n) then
-      Result := CurrentPlatform^.OptimizationLevels.List[optimizationLevel - 1]
+   if(level > 0) and (level <= CurrentPlatform^.OptimizationLevels.n) then
+      Result := CurrentPlatform^.OptimizationLevels.List[level - 1]
    else
       Result := '';
 end;
 
-function TBuildSystem.GetOptimizationLevelNameHuman(optimizationLevel: longint): StdString;
+function TBuildSystem.GetOptimizationLevelNameHuman(level: loopint): StdString;
 begin
-   Result := GetOptimizationLevelName(optimizationLevel);
+   Result := GetOptimizationLevelName(level);
+
    if(Result = '') then
       Result := 'none';
 end;

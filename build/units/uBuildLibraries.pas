@@ -1,8 +1,8 @@
 {
    uBuildLibraries
-   Copyright (C) 2019. Dejan Boras
+   Copyright (C) 2020. Dejan Boras
 
-   Started On:    13.01.2019.
+   Started On:    13.01.2020.
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
@@ -11,7 +11,8 @@ UNIT uBuildLibraries;
 INTERFACE
 
    USES
-      uStd, uBuild;
+      uStd, uLog, StringUtils, uFileUtils,
+      uBuild;
 
 TYPE
    { TBuildSystemLibraries }
@@ -21,7 +22,6 @@ TYPE
 
       Source,
       Target: StdString;
-      OptimizationLevel: longint;
 
       {copy a library with the given name from source to target (set in Libraries)}
       function CopyLibrary(const name: StdString; const newName: StdString = ''): boolean;
@@ -36,7 +36,7 @@ function TBuildSystemLibraries.CopyLibrary(const name: StdString; const newName:
 var
    optimizationSource,
    usedSource: StdString;
-   optimizationLevel: longint;
+   optimizationLevel: loopint;
 
 function getNewName(): StdString;
 begin
@@ -48,27 +48,27 @@ end;
 
 function getPath(): StdString;
 begin
-   Result := Libraries.Source + IncludeTrailingPathDelimiterNonEmpty(CurrentPlatform^.GetName());
+   Result := Source + IncludeTrailingPathDelimiterNonEmpty(build.CurrentPlatform^.GetName());
 end;
 
 begin
    Result := false;
-   optimizationLevel := Libraries.OptimizationLevel;
+   optimizationLevel := build.OptimizationLevel;
    usedSource := '';
 
    {find optimized library if one specified}
-   if(Libraries.OptimizationLevel > 0) then begin
-      optimizationLevel := Libraries.OptimizationLevel;
+   if(build.OptimizationLevel > 0) then begin
+      optimizationLevel := build.OptimizationLevel;
 
       repeat
          optimizationSource := getPath() +
-            IncludeTrailingPathDelimiterNonEmpty(GetOptimizationLevelName(optimizationLevel)) + name;
+            IncludeTrailingPathDelimiterNonEmpty(build.GetOptimizationLevelName(optimizationLevel)) + name;
 
          if(FileUtils.Exists(optimizationSource) > 0) then begin
-            if(optimizationLevel <> Libraries.OptimizationLevel) then
+            if(optimizationLevel <> build.OptimizationLevel) then
                log.w('Could not find optimized library ' + name + ' at level ' +
-                  GetOptimizationLevelNameHuman(Libraries.OptimizationLevel) + ', used ' +
-                  GetOptimizationLevelNameHuman(optimizationLevel) + ' instead');
+                  build.GetOptimizationLevelNameHuman(build.OptimizationLevel) + ', used ' +
+                  build.GetOptimizationLevelNameHuman(optimizationLevel) + ' instead');
 
             usedSource := optimizationSource;
             break;
@@ -90,9 +90,9 @@ begin
       usedSource := '';
 
       if(optimizationLevel <= 0) then begin
-         for optimizationLevel := 1 to CurrentPlatform^.OptimizationLevels.n do begin
+         for optimizationLevel := 1 to build.CurrentPlatform^.OptimizationLevels.n do begin
             usedSource := getPath() +
-               IncludeTrailingPathDelimiterNonEmpty(GetOptimizationLevelName(optimizationLevel)) + name;
+               IncludeTrailingPathDelimiterNonEmpty(build.GetOptimizationLevelName(optimizationLevel)) + name;
 
             if(FileUtils.Exists(usedSource) > 0) then begin
                log.w('Using optimized library: ' + usedSource + ' because regular not found');
@@ -108,16 +108,16 @@ begin
       end;
    end;
 
-   if(FileUtils.Copy(usedSource, Libraries.Target + getNewName()) > 0) then begin
+   if(FileUtils.Copy(usedSource, Target + getNewName()) > 0) then begin
       log.k('Copied ' + getNewName() + ' library successfully');
       Result := true;
    end else
-      log.e('Failed to copy library from ' + usedSource + ' to ' + Libraries.Target + getNewName());
+      log.e('Failed to copy library from ' + usedSource + ' to ' + Target + getNewName());
 end;
 
 procedure initialize();
 begin
-   BuildLibraries.Source := Tools.Build + 'libraries' + DirectorySeparator;
+   BuildLibraries.Source := build.Tools.Build + 'libraries' + DirectorySeparator;
 end;
 
 INITIALIZATION
