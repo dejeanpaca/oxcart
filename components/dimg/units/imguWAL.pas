@@ -15,7 +15,8 @@ support multiple images(mipmaps).}
 INTERFACE
 
    USES
-      uStd, uImage, uFileHandlers, imguRW;
+      uStd, uImage, uFileHandlers, imguRW,
+      uOX;
 
 CONST
    walcsPalAuthor       = 'ID Software';
@@ -85,13 +86,13 @@ begin
 
    {read in only the first mipmap}
    ld^.Seek(hdr.Offset[0]);
-   if(ld^.Error = 0) then begin
+   if(ld^.GetError() = 0) then begin
       ld^.Allocate();
 
-      if(ld^.Error = 0) then begin
+      if(ld^.GetError() = 0) then begin
          ld^.BlockRead(imgP.Image^, imgP.Size);
 
-         if(ld^.Error <> 0) then begin
+         if(ld^.GetError() <> 0) then begin
             {associate the q2 palette with the image}
             if(imgP.palette = nil) then begin
                imgP.SetExternalPalette(q2Palette);
@@ -101,23 +102,29 @@ begin
    end;
 end;
 
+procedure init();
+begin
+  q2Palette := imgTPalette.Create();
+
+  q2Palette.nColors := 256;
+  q2Palette.PixF := PIXF_RGB;
+  q2Palette.Size := 256 * 3;
+  q2Palette.Data := @quake2palproc;
+  q2Palette.DataExternal := true;
+  q2Palette.sAuthor := walcsPalAuthor;
+  q2Palette.sName := walcsPalName;
+  q2Palette.sDescription := walcsPalDescription;
+
+  imgFile.Readers.RegisterHandler(loader, 'WAL', @load);
+  imgFile.Readers.RegisterExt(ext, '.ext', @loader);
+end;
+
+procedure deinit();
+begin
+  FreeObject(q2Palette);
+end;
+
 INITIALIZATION
-   q2Palette := imgTPalette.Create();
-
-   q2Palette.nColors := 256;
-   q2Palette.PixF := PIXF_RGB;
-   q2Palette.Size := 256 * 3;
-   q2Palette.Data := @quake2palproc;
-   q2Palette.DataExternal := true;
-   q2Palette.sAuthor := walcsPalAuthor;
-   q2Palette.sName := walcsPalName;
-   q2Palette.sDescription := walcsPalDescription;
-
-   {register the extension and the loader}
-   imgFile.Loaders.RegisterHandler(loader, 'WAL', @load);
-   imgFile.Loaders.RegisterExt(ext, '.ext', @loader);
-
-FINALIZATION
-   FreeObject(q2Palette);
+   ox.PreInit.Add('image.pnm', @init, @deinit);
 
 END.

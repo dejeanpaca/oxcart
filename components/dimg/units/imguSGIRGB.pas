@@ -13,7 +13,8 @@ UNIT imguSGIRGB;
 INTERFACE
 
    USES
-      uStd, uImage, uFileHandlers, imguRW, uColors;
+      uStd, uImage, uFileHandlers, imguRW, uColors,
+      uOX;
 
 IMPLEMENTATION
 
@@ -74,7 +75,7 @@ begin
    {get the header}
    ld^.BlockRead(hdr, SizeOf(THeader));
 
-   if(ld^.Error <> 0) then
+   if(ld^.GetError() <> 0) then
       exit;
 
    {header - check bpc}
@@ -161,16 +162,20 @@ begin
    {allocate memory for image}
    ld^.Allocate();
 
-   if(ld^.Error <> 0) then
+   if(ld^.GetError() <> 0) then
       exit;
 
    {now read the image}
    ld^.BlockRead(imgP.Image^, imgP.Size);
 end;
 
+procedure init();
+begin
+  imgFile.Readers.RegisterHandler(loader, 'SGIRGB', @load);
+  imgFile.Readers.RegisterExt(ext, '.rgb', @loader);
+end;
+
 INITIALIZATION
-   {register the extension and the loader}
-   imgFile.Loaders.RegisterHandler(loader, 'SGIRGB', @load);
-   imgFile.Loaders.RegisterExt(ext, '.rgb', @loader);
+   ox.PreInit.Add('image.sgirgb', @init);
 
 END.

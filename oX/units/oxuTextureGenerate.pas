@@ -14,7 +14,7 @@ INTERFACE
      uStd, uLog, StringUtils, uColors, vmVector, uFile,
      uImage, imguRW, imguOperations,
      {oX}
-     uOX, oxuRunRoutines, oxuRenderer, oxuRenderers, oxuTypes, oxuTexture, oxuPaths;
+     uOX, oxuRunRoutines, oxuRenderer, oxuRenderers, oxuTypes, oxuTexture, oxuPaths, oxuFile;
 
 TYPE
    { oxTTextureGenerate }
@@ -46,10 +46,8 @@ TYPE
       Dimensions: TVector2i;
 
       procedure OnLoad();
-      function Load(const fileName: string): longint;
-      function Load(const extension: string; var f: TFile): longint;
-
-      procedure LogFile(fn: string; err: boolean = false; props: imgPRWProperties = nil);
+      function Load(const fileName: string): loopint;
+      function Load(const extension: string; var f: TFile): loopint;
 
       {specify the texture generation size, only valid for textures whose size is unknown}
       procedure SetSize(width, height: longword);
@@ -151,105 +149,53 @@ begin
       imgOperations.SetOrigin(Image, Origin);
 end;
 
-function oxTTextureGenerate.Load(const fileName: string): longint;
+function oxTTextureGenerate.Load(const fileName: string): loopint;
 var
-   imgProps: imgTRWProperties;
+   imgProps: imgTRWOptions;
    fn: string;
 
 begin
-   {log the filename}
-   if(oxTextureGenerateSettings.LogNameAlways) then
-      LogFile(fileName);
-
    fn := oxPaths.Find(fileName);
 
    {load the image}
    imgFile.Init(imgProps);
    imgProps.SupressLog := true;
+   imgProps.Image := Image;
 
-   Result := imgFile.Load(Image, fn, imgProps);
+   Result := imgFile.Read(fn, imgProps);
 
    {check for errors}
    if(Result = 0) then begin
       OnLoad()
    end else begin
-      LogFile(fileName, true, @imgProps);
-
       DisposeImage();
       Result := oxeIMAGE;
    end;
 end;
 
-function oxTTextureGenerate.Load(const extension: string; var f: TFile): longint;
+function oxTTextureGenerate.Load(const extension: string; var f: TFile): loopint;
 var
-   imgProps: imgTRWProperties;
+   imgProps: imgTRWOptions;
 
 begin
    {load the image}
    imgFile.Init(imgProps);
-   imgProps.supressLog := true;
-   imgProps.setToDefaultOrigin := false;
+   imgProps.SupressLog := true;
+   imgProps.SetToDefaultOrigin := false;
+   imgProps.Image := Image;
 
-   Result := imgFile.Load(Image, extension, f, imgProps);
+   Result := oxTFileRW(imgFile).Read(f, extension, @imgProps);
 
    {check for errors}
    if(Result = 0) then
       OnLoad()
    else begin
-      LogFile(extension, true, @imgProps);
-
       DisposeImage();
 
       Result := oxeIMAGE;
    end;
 end;
 
-procedure oxTTextureGenerate.LogFile(fn: string; err: boolean; props: imgPRWProperties);
-var
-   s: string;
-   errCount: longint;
-
-procedure addError(const errors: string);
-begin
-   if(errCount > 0) then
-      s := s + ', ' + errors
-   else
-      s := s + errors;
-
-   inc(errCount);
-end;
-
-begin
-   s := 'texture > ';
-
-   if(err) then begin
-      errCount := 0;
-      s := s + 'error(';
-
-      if(props <> nil) then begin
-         if(props^.Error.e <> 0) then
-            addError('image: ' + GetErrorCodeString(props^.Error.e));
-
-         if(props^.Error.f <> 0) then
-            addError('file: ' + fFile.GetErrorString(props^.Error.f, props^.Error.io));
-
-         if(props^.Error.Description <> '') then
-            addError(props^.Error.Description);
-      end;
-
-      s := s + ') ';
-   end;
-
-   s := s + 'loading: ' + fn;
-
-   if(err) then
-      log.e(s)
-   else
-      log.v(s);
-
-   if(err) and (props <> nil) and (props^.Error.Description <> '') then
-      log.w('description: ' + props^.Error.Description);
-end;
 procedure oxTTextureGenerate.SetSize(width, height: longword);
 begin
    {correct and assign values}

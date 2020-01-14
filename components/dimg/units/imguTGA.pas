@@ -11,7 +11,8 @@ UNIT imguTGA;
 INTERFACE
 
    USES
-      uImage, uFileHandlers, imguRW;
+      uImage, uFileHandlers, imguRW,
+      uOX, oxuFile;
 
 IMPLEMENTATION
 
@@ -112,13 +113,13 @@ begin
 end;
 
 begin {load}
-   ld    := data;
+   ld    := oxPFileRWData(data)^.External;
    imgP  := ld^.Image;
 
    {first, check for a Targa File Footer and determine if the file is in the new
    TGA format, or the old format. Not used currently but may be helpful in the
    future.}
-   if(ld^.Seek(ld^.f^.GetSize() - 26) < 0) then
+   if(ld^.Seek(ld^.PFile^.f^.GetSize() - 26) < 0) then
       exit;
 
    {$PUSH}{$HINTS OFF}
@@ -202,9 +203,13 @@ begin {load}
    {the image has been loaded successfully | mission accomplished}
 end;
 
+procedure init();
+begin
+   imgFile.Readers.RegisterHandler(loader, 'TGA', @load);
+   imgFile.Readers.RegisterExt(ext, '.tga', @loader);
+end;
+
 INITIALIZATION
-   {register the extension and the loader}
-   imgFile.Loaders.RegisterHandler(loader, 'TGA', @load);
-   imgFile.Loaders.RegisterExt(ext, '.tga', @loader);
+   ox.PreInit.Add('image.tga', @init);
 
 END.

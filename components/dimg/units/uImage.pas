@@ -149,10 +149,6 @@ CONST
        132,140,148,156,165,173,181,189,
        197,206,214,222,230,239,247,255);
 
-   imgcFILE_TYPE_NORMAL = 00;
-   imgcFILE_TYPE_TEXT   = 01;
-   imgcFILE_TYPE_MEMORY = 02;
-
    {image properties}
    imgcPROPERTIES_PAL_EXTERNAL         = 0001; {external palette}
 
@@ -508,13 +504,6 @@ TYPE
       destructor Destroy(); override;
    end;
 
-   imgTErrorData = record
-      e,
-      f,
-      io: longint;
-      Description: StdString;
-   end;
-
    { imgTGlobal }
 
    imgTGlobal = record
@@ -537,8 +526,6 @@ TYPE
       end;
 
       { GENERAL IMAGE ROUTINES }
-      {error data}
-      procedure Init(out errorData: imgTErrorData);
       {dispose of the image data}
       procedure Dispose(var img: imgTImage);
 
@@ -592,11 +579,6 @@ VAR
 IMPLEMENTATION
 
 { IMAGE SUPPORT }
-
-procedure imgTGlobal.Init(out errorData: imgTErrorData);
-begin
-   ZeroOut(errorData,  SizeOf(errorData))
-end;
 
 function imgTImage.Valid(): boolean;
 begin

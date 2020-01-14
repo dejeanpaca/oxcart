@@ -25,7 +25,7 @@ begin
    f := oxExternalGlobalInstances.FindInstancePtr('imgTFile');
 
    if(f <> nil) then begin
-      imgFile.Loaders := f^.Loaders;
+      imgFile.Readers := f^.Readers;
       imgFile.Writers := f^.Writers;
    end else
       log.w('Could not find external imgTFile reference');

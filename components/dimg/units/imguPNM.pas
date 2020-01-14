@@ -14,7 +14,9 @@ Actually not. It can currently only load PPM P6 Raw files.}
 
 INTERFACE
 
-   USES uStd, uImage, uFileHandlers, imguRW, StringUtils;
+   USES
+      uStd, uImage, uFileHandlers, imguRW, StringUtils,
+      uOX;
 
 TYPE
    pnmTID = array[0..2] of char;
@@ -53,7 +55,7 @@ begin
    repeat
       ld^.BlockRead(c, 1);
 
-      if(ld^.Error = 0) then begin
+      if(ld^.GetError() = 0) then begin
          if(c = #10) then
             break;
 
@@ -72,7 +74,9 @@ begin
    imgP := ld^.Image;
 
    ld^.BlockRead(ID, SizeOf(pnmTID));
-   if(ld^.Error <> 0) then exit;
+
+   if(ld^.GetError() <> 0) then
+      exit;
 
    if(id = pnmcP6ID) then
       pnmType := pnmcP6
@@ -84,7 +88,7 @@ begin
    j := 0;
    repeat
       xreadstr(aStr);
-      if(ld^.Error = 0) then begin
+      if(ld^.GetError() = 0) then begin
          if(aStr[1] <> '#') then begin
             {get the width and height}
             if(j = 0) then begin
@@ -128,7 +132,7 @@ begin
    {allocate memory for the image}
    ld^.Allocate();
 
-   if(ld^.Error <> 0) then
+   if(ld^.GetError() <> 0) then
       exit;
 
    {read in all the data}
@@ -136,17 +140,21 @@ begin
       {$PUSH}{$HINTS OFF}
       ld^.BlockRead(imgP.Image^, imgP.Width * imgP.Height * 3);{$POP}
 
-      if(ld^.Error <> 0) then
+      if(ld^.GetError() <> 0) then
          exit;
    end;
 end;
 
-INITIALIZATION
-   {register the extensions and the loader}
-   imgFile.Loaders.RegisterExt(pbmExt, '.pbm', @loader);
-   imgFile.Loaders.RegisterExt(pgmExt, '.pgm', @loader);
-   imgFile.Loaders.RegisterExt(ppmExt, '.ppm', @loader);
+procedure init();
+begin
+  imgFile.Readers.RegisterExt(pbmExt, '.pbm', @loader);
+  imgFile.Readers.RegisterExt(pgmExt, '.pgm', @loader);
+  imgFile.Readers.RegisterExt(ppmExt, '.ppm', @loader);
 
-   imgFile.Loaders.RegisterHandler(loader, 'PNM', @pnmLoad);
+  imgFile.Readers.RegisterHandler(loader, 'PNM', @pnmLoad);
+end;
+
+INITIALIZATION
+   ox.PreInit.Add('image.pnm', @init);
 
 END.

@@ -14,27 +14,24 @@ INTERFACE
       uStd, uLog, StringUtils,
       uFileHandlers, uFile, {%H-}uFiles,
       uImage, imguOperations,
-      oxuGlobalInstances;
+      {oX}
+      uOX, oxuFile, oxuGlobalInstances;
 
 TYPE
    imgPFileData = ^imgTFileData;
-   imgPRWProperties = ^imgTRWProperties;
+   imgPRWOptions = ^imgTRWOptions;
 
-   imgTRWProperties = record
+   imgTRWOptions = record
       SupressLog,
       SetToDefaultOrigin: boolean;
-      Error: imgTErrorData;
+      Image: imgTImage;
    end;
 
    { imgTFileData }
 
    imgTFileData = record
       Image: imgTImage;
-      Error: TError;
-      eDescription: string;
-      FileType: longword;
-      f: PFile;
-      fn: string;
+      PFile: oxPFileRWData;
 
       {These routines are meant as a help for loaders to make performing
       common operations easier. This also helps to reduce the size of code
@@ -63,35 +60,31 @@ TYPE
       function BlockWrite(var buf; size: fileint): fileint;
 
       {perform post loading tasks}
-      procedure PostLoad(var props: imgTRWProperties);
+      procedure PostLoad(var props: imgTRWOptions);
 
-      procedure SetError(newError: TError);
+      procedure SetError(newError: TError; const description: string = '');
+      function GetError(): TError;
    end;
 
    imgPFile = ^imgTFile;
 
    { imgTFile }
 
-   imgTFile = record
-      public
-      Loaders: fhTHandlerInfo; {image loaders}
-      Writers: fhTHandlerInfo; {image writers}
+   imgTFile = class(oxTFileRW)
+      {initialize a loader data record}
+      class procedure Init(out props: imgTRWOptions); static;
+      {initialize a loader data record}
+      class procedure Init(out ld: imgTFileData); static;
 
-      {initialize a loader data record}
-      procedure Init(out props: imgTRWProperties);
-      {initialize a loader data record}
-      procedure Init(out ld: imgTFileData);
-      {fills out error data from file loader data}
-      procedure SetErrorData(var errorData: imgTErrorData; const data: imgTFileData);
+      {read an image}
+      function Read(const name: string): imgTImage;
+      {read an image}
+      function Read(const name: string; var options: imgTRWOptions): loopint;
 
       {load a image from a file}
-      function Load(var image: imgTImage; const fileName: string): longint;
-      function Load(var image: imgTImage; const fileName: string; var props: imgTRWProperties): longint;
-      function Load(var image: imgTImage; const fileName: string; var f: TFile; var props: imgTRWProperties): longint;
+      function Write(var image: imgTImage; const fileName: string): loopint;
 
-      {load a image from a file}
-      function Write(var image: imgTImage; const fileName: string): longint;
-      function Write(var image: imgTImage; const fileName: string; var props: imgTRWProperties): longint;
+      function OnRead(var data: oxTFileRWData): loopint; override;
 
       { LOGGING }
 
@@ -104,218 +97,73 @@ VAR
 
 IMPLEMENTATION
 
-procedure imgTFile.Init(out props: imgTRWProperties);
+class procedure imgTFile.Init(out props: imgTRWOptions);
 begin
-   ZeroOut(props, SizeOf(props));
+   ZeroPtr(@props, SizeOf(props));
    props.setToDefaultOrigin := img.settings.setToDefaultOrigin;
 end;
 
-procedure imgTFile.Init(out ld: imgTFileData);
+class procedure imgTFile.Init(out ld: imgTFileData);
 begin
-   ZeroOut(ld, SizeOf(ld));
+   ZeroPtr(@ld, SizeOf(ld));
 end;
 
-procedure imgTFile.SetErrorData(var errorData: imgTErrorData; const data: imgTFileData);
-begin
-   errorData.e := data.error;
+function imgTFile.Read(const name: string): imgTImage;
+var
+   options: imgTRWOptions;
 
-   if(data.f <> nil) then begin
-      errorData.f    := data.f^.error;
-      errorData.io   := data.f^.ioError;
+begin
+   Init(options);
+
+   inherited Read(name, @options);
+
+   Result := options.Image;
+end;
+
+function imgTFile.Read(const name: string; var options: imgTRWOptions): loopint;
+begin
+   Result := inherited Read(name, @options);
+end;
+
+function imgTFile.Write(var image: imgTImage; const fileName: string): loopint;
+var
+   options: imgTRWOptions;
+
+begin
+   Init(options);
+
+   Result := inherited Write(fileName, @options);
+end;
+
+function imgTFile.OnRead(var data: oxTFileRWData): loopint;
+var
+   pOptions: imgPRWOptions;
+   options: imgTRWOptions;
+   imageData: imgTFileData;
+
+begin
+   Init(imageData);
+   pOptions := data.Options;
+
+   if(pOptions = nil) then begin
+      Init(options);
+      pOptions := @options;
    end;
 
-   errorData.description := data.eDescription;
-end;
+  if(pOptions^.Image = nil) then
+      pOptions^.Image := imgTImage.Create();
 
-procedure imgLogError(const fn, what: string; const data: imgTFileData);
-begin
-   if(not img.settings.log) then begin
-      log.i(imgcName + ' > error ' + what + ': ' + fn);
+   imageData.Image := pOptions^.Image;
+   imageData.PFile := @data;
 
-      if(data.f <> nil) then
-         log.i('Error: ' + sf(data.error) + ', file: ' + sf(data.f^.error) + ', IO: ' + sf(data.f^.ioError))
-      else
-         log.i('Error: ' + sf(data.error));
-   end;
-end;
+   data.External := @imageData;
+   data.Handler^.CallHandler(@data);
 
-function imgTFile.Load(var image: imgTImage; const fileName: string): longint;
-var
-   props: imgTRWProperties;
+   Result := data.GetError();
 
-begin
-   Init(props);
-
-   Result := Load(image, fileName, props);
-end;
-
-function imgTFile.Load(var image: imgTImage; const fileName: string; var props: imgTRWProperties): longint;
-var
-   f: TFile;
-
-begin
-   fFile.Init(f);
-
-   Result := Load(image, fileName, f, props);
-end;
-
-function imgTFile.Load(var image: imgTImage; const fileName: string; var f: TFile; var props: imgTRWProperties): longint;
-var
-   data: imgTFileData;
-   fd: fhTFindData;
-   {if file is existing, and not needed to be opened}
-   existing: boolean;
-
-begin
-   Result := eNONE;
-
-   assert(@image <> nil, 'imgLoad received a nil image parameter.');
-
-   {initialize}
-   if(fileName <> '') then begin
-      Init(data);
-
-      {set up the loader data}
-      data.f := @f;
-      data.fn := fileName;
-
-      {check if the file is already open, in which case we don't do any file open/close}
-      existing := f.fMode <> fcfNONE;
-
-      if(img.Settings.logNameAlways) and (not props.supressLog) and (not existing) then
-         log.i(imgcName + ' > Loading: ' + fileName);
-
-      {find a file handler for this image}
-      imgFile.Loaders.FindHandler(fileName, fd);
-
-      {if a loader has been found}
-      if(fd.Handler <> nil) then begin
-         if(image = nil) then
-            image := imgTImage.Create()
-         else
-            image.DisposeData();
-
-         data.Image := image;
-
-         {store the fileName if specified}
-         if(img.settings.storeFileNames = true) then
-            image.FileName := fileName;
-
-         {open the file if instructed to do so}
-         if(not fd.handler^.DoNotOpenFile) and (not existing) then begin
-            f.Open(fileName);
-            if(f.error <> 0) then begin
-               SetErrorData(props.error, data);
-               exit(eIO);
-            end;
-
-            if(f.GetSize() <= 0) then begin
-               f.CloseAndDestroy();
-               props.error.e := eEMPTY;
-               exit(eEMPTY);
-            end;
-         end;
-
-         {call the loader}
-         fd.handler^.CallHandler(@data);
-
-         {if there is no error, perform post-loading tasks}
-         if(data.error = 0) then
-            data.PostLoad(props)
-         else begin
-            SetErrorData(props.error, data);
-
-            if(not props.supressLog) then
-               imgLogError(fileName, 'loading', data);
-         end;
-
-         {close the file if instructed to do so}
-         if(not fd.handler^.DoNotOpenFile) and (not existing) then
-            f.CloseAndDestroy();
-
-         Result := data.Error;
-
-         if(data.Error <> 0) and (f.Error = 0) then
-            log.e('Image handler (' + fd.Handler^.Name + ') returned error ' + GetErrorCodeString(data.Error) + ' for: ' + image.FileName);
-      end else begin
-         props.Error.f := imgeLOADER_NOT_FOUND;
-         exit(imgeLOADER_NOT_FOUND);
-      end;
-   end;
-end;
-
-function imgTFile.Write(var image: imgTImage; const fileName: string): longint;
-var
-   props: imgTRWProperties;
-
-begin
-   Init(props);
-
-   Result := Write(image, fileName, props);
-end;
-
-function imgTFile.Write(var image: imgTImage; const fileName: string; var props: imgTRWProperties): longint;
-var
-   data: imgTFileData;
-   fd: fhTFindData;
-   f: TFile;
-
-begin
-   Result := eNONE;
-   assert(@image <> nil, 'imgWrite received a nil image parameter.');
-
-   {initialize}
-   if(length(fileName) <> 0) then begin
-      fFile.Init(f);
-      Init(data);
-
-      {set up the loader data}
-      data.f   := @f;
-      data.image := image;
-      data.fn := fileName;
-
-      if(img.Settings.logNameAlways) and (not props.supressLog) then
-         log.i(imgcName+' > Writing: ' + fileName);
-
-      {call the file handler which will figure out what loader to call}
-      imgFile.Writers.FindHandler(fileName, fd);
-
-      {if a loader has been found}
-      if(fd.handler <> nil) then begin
-         {open the file if instructed to do so}
-         if(not fd.handler^.DoNotOpenFile) then begin
-            f.New(fileName);
-
-            if(f.error <> 0) then
-               exit(eIO);
-         end;
-
-         {call the loader}
-         fd.handler^.CallHandler(@data);
-         if(data.error <> 0) then begin
-            SetErrorData(props.error, data);
-
-            if(not props.supressLog) then
-               imgLogError(fileName, 'writing', data);
-         end;
-
-         {close the file if instructed to do so}
-         if(not fd.Handler^.DoNotOpenFile) then begin
-            f.CloseAndDestroy();
-
-            if(f.error <> 0) then begin
-               data.error := eIO;
-               SetErrorData(props.error, data);
-               exit(eIO);
-            end;
-         end;
-
-		   exit(data.error);
-      end else begin
-         props.error.e := imgeWRITER_NOT_FOUND;
-         exit(imgeWRITER_NOT_FOUND);
-      end;
-   end;
+   {finishing touches}
+   if(Result = 0) then
+       imageData.PostLoad(pOptions^);
 end;
 
 { LOADER HELPER ROUTINES }
@@ -342,15 +190,15 @@ var
 begin
    Result := eNONE;
 
-   if(pal.Valid(image)) and (fileType = imgcFILE_TYPE_NORMAL) then begin
+   if(pal.Valid(image)) then begin
       palette := image.palette;
 
       {if there are no padding bytes we can read in the table directly}
       if(padBytes = 0) then begin
          BlockRead(image.palette.Data^, image.palette.GetSize());
 
-         if(error <> 0) then
-            exit(error);
+         if(PFile^.Error <> 0) then
+            exit(PFile^.Error);
       {otherwise read bit by bit and skip the padding bytes}
       end else begin
          {get the number of elements and channels}
@@ -362,8 +210,8 @@ begin
             {read the current color and padding bytes}
             BlockRead(buf, fileint(channels) + fileint(padBytes));
 
-            if(error <> 0) then
-               exit(error);
+            if(PFile^.Error <> 0) then
+               exit(PFile^.Error);
 
             {move the color into the palette}
             move(buf, (image.palette.Data + pos)^, channels);
@@ -393,32 +241,35 @@ end;
 
 function imgTFileData.Seek(pos: fileint): fileint;
 begin
-   Result := TFile(f^).Seek(pos);
-   if(TFile (f^).error <> 0) then begin
-      error := eIO;
+   Result := PFile^.f^.Seek(pos);
+
+   if(PFile^.f^.Error <> 0) then begin
+      PFile^.SetError(eIO);
       Result := -1;
    end;
 end;
 
 function imgTFileData.BlockRead(out buf; size: fileint): fileint;
 begin
-   Result := TFile(f^).Read(buf, size);
-   if(TFile(f^).error <> 0) then begin
-      error := eIO;
+   Result := PFile^.f^.Read(buf, size);
+
+   if(PFile^.f^.Error <> 0) then begin
+      PFile^.SetError(eIO);
       Result := -1;
    end;
 end;
 
 function imgTFileData.BlockWrite(var buf; size: fileint): fileint;
 begin
-   Result := TFile(f^).Write(buf, size);
-   if(TFile(f^).error <> 0) then begin
-      error := eIO;
+   Result := PFile^.f^.Write(buf, size);
+
+   if(PFile^.f^.Error <> 0) then begin
+      PFile^.SetError(eIO);
       Result := -1;
    end;
 end;
 
-procedure imgTFileData.PostLoad(var props: imgTRWProperties);
+procedure imgTFileData.PostLoad(var props: imgTRWOptions);
 begin
    {set the origin}
    if(props.setToDefaultOrigin) then
@@ -430,9 +281,14 @@ begin
    ProcessColorChannelOrder();
 end;
 
-procedure imgTFileData.SetError(newError: TError);
+procedure imgTFileData.SetError(newError: TError; const description: string);
 begin
-   Error := newError;
+   PFile^.SetError(newError, description);
+end;
+
+function imgTFileData.GetError(): TError;
+begin
+   Result := PFile^.Error;
 end;
 
 { LOGGING }
@@ -462,8 +318,8 @@ end;
 begin
    log.Enter('dImage');
 
-   if(imgFile.Loaders.nExtensions > 0) then
-      writeLog('Loaders: ', imgFile.Loaders.eStart);
+   if(imgFile.Readers.nExtensions > 0) then
+      writeLog('Readers: ', imgFile.Readers.eStart);
 
    if(imgFile.Writers.nExtensions > 0) then
       writeLog('Writers: ', imgFile.Writers.eStart);
@@ -471,7 +327,19 @@ begin
    log.Leave();
 end;
 
+procedure init();
+begin
+   imgFile := imgTFile.Create();
+end;
+
+procedure deinit();
+begin
+   FreeObject(imgFile);
+end;
+
 INITIALIZATION
+   ox.PreInit.Add('model_file', @init, @deinit);
+
    oxGlobalInstances.Add('imgTFile', @imgFile);
 
 END.
