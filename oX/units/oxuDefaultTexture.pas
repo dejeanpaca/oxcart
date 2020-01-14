@@ -71,8 +71,10 @@ begin
          errorCode := oxTextureGenerate.Generate('*.tga', f, oxDefaultTexture.Texture);
 
          {do not dispose this ever}
-         oxDefaultTexture.Texture.MarkPermanent();
-         oxDefaultTexture.Texture.Path := ':default_texture';
+         if(oxDefaultTexture.Texture <> nil) then begin
+            oxDefaultTexture.Texture.MarkPermanent();
+            oxDefaultTexture.Texture.Path := ':default_texture';
+         end;
       end;
 
       if(f.Error <> 0) or (errorCode <> 0) then
