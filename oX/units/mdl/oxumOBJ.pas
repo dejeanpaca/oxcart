@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uLog, StringUtils, uFileHandlers, vmVector, uFile, uFiles, uColors,
       {oX}
-      uOX, oxuRunRoutines, oxuTypes,
+      oxuTypes,
       oxuFile, oxuMaterial, oxuModel, oxuModelFile, oxuMesh, oxuSerializationString, oxuPrimitives;
 
 IMPLEMENTATION
@@ -518,13 +518,9 @@ begin
    load(pData^, loaderData);
 end;
 
-procedure init();
-begin
-   oxfModel.Readers.RegisterHandler(objLoader, 'obj', @objLoad);
-   oxfModel.Readers.RegisterExt(objExt, '.obj', @objLoader);
-end;
 
 INITIALIZATION
-   ox.Init.Add('model.obj', @init);
+   oxfModel.Readers.RegisterHandler(objLoader, 'obj', @objLoad);
+   oxfModel.Readers.RegisterExt(objExt, '.obj', @objLoader);
 
 END.
