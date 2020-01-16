@@ -163,6 +163,7 @@ begin
    imgProps.Image := Image;
 
    Result := imgFile.Read(fn, imgProps);
+   Image := imgProps.Image;
 
    {check for errors}
    if(Result = 0) then begin
