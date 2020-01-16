@@ -33,6 +33,7 @@ TYPE
 
    oxTAboutWindow = class(oxTWindowBase)
       Copyright: string;
+      ShowBuiltWith: boolean;
       Links: array[0..3] of uiTLink;
 
       constructor Create(); override;
@@ -71,12 +72,17 @@ begin
          wdgLink.Add(Links[i]);
    end;
 
-   wdgDivisor.Add('Information', uiWidget.LastRect.BelowOf());
+   if(ShowBuiltWith) then begin
+      wdgDivisor.Add('Built with');
+      wdgLabel.Add('Free Pascal ' + {$I %FPCVERSION%} + ' ' + {$I %FPCTARGETCPU%} + '-' + {$I %FPCTARGETOS%} );
+   end;
+
+   wdgDivisor.Add('Information');
 
    wdgLabel.Add('CPU: ' + appSI.GetProcessorName());
    wdgLabel.Add('Memory: ' + appSI.GetMemorySize());
 
-   wdgDivisor.Add('Renderer Information', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('Renderer Information');
    wdgLabel.Add(oxRenderer.GetSummary(oxTWindow(Window.oxwParent)),
       uiWidget.LastRect.BelowOf(), oxNullDimensions);
 
@@ -132,8 +138,6 @@ begin
 end;
 
 INITIALIZATION
-
-
    ox.Init.Add('ox.about', @initialize, @deinitialize);
 
 END.
