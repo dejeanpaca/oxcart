@@ -59,7 +59,7 @@ TYPE
       {perform extended logging}
       LogExtended: boolean;
 
-      constructor Create; virtual;
+      constructor Create(); virtual;
 
       function Read(var f: TFile; var handler: fhTHandler; options: pointer; pdata: oxPFileRWData = nil): loopint;
       function Read(var f: TFile; const fn: StdString; options: pointer; pdata: oxPFileRWData = nil): loopint;
@@ -108,7 +108,7 @@ end;
 
 { oxTFileRW }
 
-constructor oxTFileRW.Create;
+constructor oxTFileRW.Create();
 begin
 end;
 
