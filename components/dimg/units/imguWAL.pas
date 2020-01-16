@@ -115,9 +115,6 @@ begin
   q2Palette.sAuthor := walcsPalAuthor;
   q2Palette.sName := walcsPalName;
   q2Palette.sDescription := walcsPalDescription;
-
-  imgFile.Readers.RegisterHandler(loader, 'WAL', @load);
-  imgFile.Readers.RegisterExt(ext, '.ext', @loader);
 end;
 
 procedure deinit();
@@ -126,6 +123,9 @@ begin
 end;
 
 INITIALIZATION
+   imgFile.Readers.RegisterHandler(loader, 'WAL', @load);
+   imgFile.Readers.RegisterExt(ext, '.ext', @loader);
+
    ox.PreInit.Add('image.pnm', @init, @deinit);
 
 END.

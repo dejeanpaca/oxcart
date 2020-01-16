@@ -24,7 +24,7 @@ INTERFACE
    USES
       uStd, uImage, uFileHandlers, imguRW,
       {ox}
-      uOX, oxuFile;
+      oxuFile;
 
 IMPLEMENTATION
 
@@ -137,13 +137,8 @@ begin
    end;
 end;
 
-procedure init();
-begin
+INITIALIZATION
    imgFile.Readers.RegisterHandler(loader, 'WINBMP', @load);
    imgFile.Readers.RegisterExt(ext, '.bmp', @loader);
-end;
-
-INITIALIZATION
-   ox.PreInit.Add('image.bmp', @init);
 
 END.

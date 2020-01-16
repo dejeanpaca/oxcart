@@ -17,7 +17,7 @@ INTERFACE
    USES
       uStd, uImage, uFileHandlers, imguRW, StringUtils,
       {ox}
-      uOX, oxuFile;
+      oxuFile;
 
 TYPE
    pnmTID = array[0..2] of char;
@@ -146,16 +146,11 @@ begin
    end;
 end;
 
-procedure init();
-begin
-  imgFile.Readers.RegisterExt(pbmExt, '.pbm', @loader);
-  imgFile.Readers.RegisterExt(pgmExt, '.pgm', @loader);
-  imgFile.Readers.RegisterExt(ppmExt, '.ppm', @loader);
-
-  imgFile.Readers.RegisterHandler(loader, 'PNM', @pnmLoad);
-end;
-
 INITIALIZATION
-   ox.PreInit.Add('image.pnm', @init);
+   imgFile.Readers.RegisterExt(pbmExt, '.pbm', @loader);
+   imgFile.Readers.RegisterExt(pgmExt, '.pgm', @loader);
+   imgFile.Readers.RegisterExt(ppmExt, '.ppm', @loader);
+
+   imgFile.Readers.RegisterHandler(loader, 'PNM', @pnmLoad);
 
 END.

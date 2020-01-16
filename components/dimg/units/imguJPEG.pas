@@ -154,17 +154,12 @@ begin
    f.Free();
 end;
 
-procedure init();
-begin
+INITIALIZATION
    imgFile.Readers.RegisterHandler(loader, 'JPEG', @load);
    {jpeg handler doesn't support file abstractions}
    loader.DoNotOpenFile := true;
 
    imgFile.Readers.RegisterExt(ext, '.jpg', @loader);
    imgFile.Readers.RegisterExt(ext2, '.jpeg', @loader);
-end;
-
-INITIALIZATION
-   ox.PreInit.Add('image.jpeg', @init);
 
 END.

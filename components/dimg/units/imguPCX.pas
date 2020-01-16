@@ -15,7 +15,7 @@ INTERFACE
    USES
       uStd, uImage, uFileHandlers, imguRW, uColors,
       {ox}
-      uOX, oxuFile;
+      oxuFile;
 
 IMPLEMENTATION
 
@@ -285,13 +285,8 @@ begin
       ld^.SetError(eNO_MEMORY);
 end;
 
-procedure init();
-begin
-  imgFile.Readers.RegisterHandler(loader, 'PCX', @load);
-  imgFile.Readers.RegisterExt(ext, '.pcx', @loader);
-end;
-
 INITIALIZATION
-   ox.PreInit.Add('image.pcx', @init);
+   imgFile.Readers.RegisterHandler(loader, 'PCX', @load);
+   imgFile.Readers.RegisterExt(ext, '.pcx', @loader);
 
 END.
