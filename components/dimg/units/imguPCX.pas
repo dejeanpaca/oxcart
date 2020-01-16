@@ -14,7 +14,8 @@ INTERFACE
 
    USES
       uStd, uImage, uFileHandlers, imguRW, uColors,
-      uOX;
+      {ox}
+      uOX, oxuFile;
 
 IMPLEMENTATION
 
@@ -135,7 +136,7 @@ begin
 end;
 
 begin
-   ld := data;
+   ld := oxTFileRWData(data^).External;
    imgP := ld^.image;
 
    fileSize := ld^.PFile^.f^.GetSize();

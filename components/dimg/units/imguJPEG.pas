@@ -13,7 +13,8 @@ INTERFACE
    USES
       uStd, uImage, uFileHandlers, imguRW,
       jpeglib, jerror, jdapimin, jdapistd, jdatasrc, Classes,
-      uOX;
+      {ox}
+      uOX, oxuFile;
 
 IMPLEMENTATION
 
@@ -120,7 +121,7 @@ var
    ld: imgPFileData;
 
 begin
-   ld := data;
+   ld := oxTFileRWData(data^).External;
 
    ZeroOut(jerr, SizeOf(jerr));
 

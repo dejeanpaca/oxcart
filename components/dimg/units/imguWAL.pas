@@ -16,7 +16,8 @@ INTERFACE
 
    USES
       uStd, uImage, uFileHandlers, imguRW,
-      uOX;
+      {ox}
+      uOX, oxuFile;
 
 CONST
    walcsPalAuthor       = 'ID Software';
@@ -59,7 +60,7 @@ var
    imgP: imgTImage;
 
 begin
-   ld    := data;
+   ld := oxTFileRWData(data^).External;
    imgP  := ld^.Image;
 
    {read the header}

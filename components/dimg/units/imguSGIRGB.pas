@@ -14,7 +14,8 @@ INTERFACE
 
    USES
       uStd, uImage, uFileHandlers, imguRW, uColors,
-      uOX;
+      {ox}
+      uOX, oxuFile;
 
 IMPLEMENTATION
 
@@ -69,7 +70,7 @@ var
    imgP: imgTImage;
 
 begin
-   ld    := data;
+   ld := oxTFileRWData(data^).External;
    imgP   := ld^.Image;
 
    {get the header}
