@@ -54,6 +54,7 @@ TYPE
       Configuration: oxedTPlatformConfiguration;
 
       constructor Create(); virtual;
+      destructor Destroy; override;
 
       procedure AddArchitecture(arch: oxedTPlatformArchitecture);
 
@@ -114,6 +115,20 @@ begin
    id := 'unknown';
 
    Architectures.InitializeValues(Architectures);
+end;
+
+destructor oxedTPlatform.Destroy;
+var
+   i: loopint;
+
+begin
+   inherited;
+
+   for i := 0 to Architectures.n - 1 do begin
+      FreeObject(Architectures.List[i]);
+   end;
+
+   Architectures.Dispose();
 end;
 
 procedure oxedTPlatform.AddArchitecture(arch: oxedTPlatformArchitecture);
