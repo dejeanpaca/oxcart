@@ -13,7 +13,7 @@ INTERFACE
    USES
       sysutils, uStd, uLog, uLPI, uFileUtils, StringUtils, uTiming, uFile, uFiles,
       {build}
-      uBuild, uBuildConfiguration, uPasSourceHelper,
+      uBuild, uBuildConfiguration, uBuildLibraries, uPasSourceHelper,
       {app}
       uApp, appuActionEvents,
       {ox}
@@ -856,11 +856,11 @@ begin
       exit;
 
    {$IFDEF WINDOWS}
-   build.Libraries.Target := TargetPath;
+   buildLibraries.Target := TargetPath;
 
-   build.CopyLibrary('oal_soft.dll', 'openal32.dll');
-   build.CopyLibrary('freetype-6.dll');
-   build.CopyLibrary('zlib1.dll');
+   buildLibraries.CopyLibrary('oal_soft.dll', 'openal32.dll');
+   buildLibraries.CopyLibrary('freetype-6.dll');
+   buildLibraries.CopyLibrary('zlib1.dll');
    {$ENDIF}
 end;
 
