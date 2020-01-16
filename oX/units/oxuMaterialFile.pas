@@ -26,7 +26,7 @@ TYPE
 
    { oxTMaterialFile }
 
-   oxTMaterialFile = class(oxTFileRW)
+   oxTMaterialFile = object(oxTFileRW)
       class procedure Init(out options: oxTMaterialFileOptions); static;
 
       function Read(const name: string): oxTMaterial;
@@ -69,17 +69,7 @@ begin
    Result := options.Material;
 end;
 
-procedure init();
-begin
-   oxfMaterial := oxTMaterialFile.Create();
-end;
-
-procedure deinit();
-begin
-   FreeObject(oxfMaterial);
-end;
-
 INITIALIZATION
-   ox.Init.Add('material_file', @init, @deinit);
+   oxfMaterial.Create();
 
 END.

@@ -24,7 +24,7 @@ TYPE
 
    { oxTSceneFile }
 
-   oxTSceneFile = class(oxTFileRW)
+   oxTSceneFile = object(oxTFileRW)
       class procedure Init(out options: oxTSceneFileOptions); static;
 
       function Read(const fn: string): oxTScene;
@@ -32,7 +32,7 @@ TYPE
 
       function Write(const fn: string; scene: oxTScene): loopint;
 
-      function OnWrite(var data: oxTFileRWData): loopint; override;
+      function OnWrite(var data: oxTFileRWData): loopint; virtual;
    end;
 
 VAR
@@ -103,23 +103,13 @@ begin
 end;
 
 
-procedure init();
-begin
-   oxfScene := oxTSceneFile.Create();
+INITIALIZATION
+   oxfScene.Create();
 
    oxfScene.Readers.RegisterHandler(readHandler, 'scene', @readHandle);
    oxfScene.Readers.RegisterExt(readExt, '.scene', @readHandler);
 
    oxfScene.Writers.RegisterHandler(writeHandler, 'scene', @writeHandle);
    oxfScene.Writers.RegisterExt(writeExt, '.scene', @writeHandler);
-end;
-
-procedure deinit();
-begin
-   FreeObject(oxfScene);
-end;
-
-INITIALIZATION
-   ox.Init.Add('scene_file', @init, @deinit);
 
 END.

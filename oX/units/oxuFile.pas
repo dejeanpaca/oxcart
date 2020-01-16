@@ -52,14 +52,14 @@ TYPE
 
    { oxTFileRW }
 
-   oxTFileRW = class
+   oxTFileRW = object
       Readers,
       Writers: fhTHandlerInfo;
 
       {perform extended logging}
       LogExtended: boolean;
 
-      constructor Create(); virtual;
+      constructor Create();
 
       function Read(var f: TFile; var handler: fhTHandler; options: pointer; pdata: oxPFileRWData = nil): loopint;
       function Read(var f: TFile; const fn: StdString; options: pointer; pdata: oxPFileRWData = nil): loopint;
@@ -110,6 +110,7 @@ end;
 
 constructor oxTFileRW.Create();
 begin
+
 end;
 
 procedure logIo(var f: TFile; const what: StdString = 'unknown');

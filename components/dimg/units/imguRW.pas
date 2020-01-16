@@ -70,7 +70,7 @@ TYPE
 
    { imgTFile }
 
-   imgTFile = class(oxTFileRW)
+   imgTFile = object(oxTFileRW)
       {initialize a loader data record}
       class procedure Init(out props: imgTRWOptions); static;
       {initialize a loader data record}
@@ -84,7 +84,7 @@ TYPE
       {load a image from a file}
       function Write(var image: imgTImage; const fileName: string): loopint;
 
-      function OnRead(var data: oxTFileRWData): loopint; override;
+      function OnRead(var data: oxTFileRWData): loopint; virtual;
 
       { LOGGING }
 
@@ -328,18 +328,8 @@ begin
    log.Leave();
 end;
 
-procedure init();
-begin
-   imgFile := imgTFile.Create();
-end;
-
-procedure deinit();
-begin
-   FreeObject(imgFile);
-end;
-
 INITIALIZATION
-   ox.PreInit.Add('model_file', @init, @deinit);
+   imgFile.Create();
 
    oxGlobalInstances.Add('imgTFile', @imgFile);
 
