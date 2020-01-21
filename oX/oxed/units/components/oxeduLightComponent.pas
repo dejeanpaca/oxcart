@@ -14,12 +14,12 @@ INTERFACE
       uStd,
       {ox}
       oxuRunRoutines,
-      oxuLightComponent, oxeduEditRenderers, oxeduComponent, oxeduComponentGlyphs;
+      oxuLightComponent, oxeduThingies, oxeduComponent, oxeduComponentGlyphs;
 
 TYPE
    { oxedTLightEditRenderer }
 
-   oxedTLightEditRenderer = class(oxedTEditRenderer)
+   oxedTLightEditRenderer = class(oxedTThingie)
       constructor Create();
    end;
 
@@ -49,6 +49,6 @@ begin
 end;
 
 INITIALIZATION
-   oxedEditRenderers.Init.Add('light', @init, @deinit);
+   oxedThingies.Init.Add('light', @init, @deinit);
 
 END.

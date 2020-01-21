@@ -27,7 +27,7 @@ TYPE
       {glyph associated with this component}
       Glyph: oxedTComponentGlyph;
       {edit mode renderer associated with this component}
-      EditRenderer: TObject;
+      Thingie: TObject;
 
       class procedure Initialize(out c: oxedTComponent); static;
    end;

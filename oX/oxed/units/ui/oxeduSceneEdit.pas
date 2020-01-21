@@ -20,7 +20,7 @@ INTERFACE
       {ui}
       uiuWindow, oxuMaterial,
       {oxed}
-      uOXED, oxeduMenubar, oxeduWindow, oxeduSceneWindow, oxeduScene, oxeduComponent, oxeduEditRenderers, oxeduEntityTypes,
+      uOXED, oxeduMenubar, oxeduWindow, oxeduSceneWindow, oxeduScene, oxeduComponent, oxeduThingies, oxeduEntityTypes,
       oxeduSettings, oxeduProjectRunner, oxeduComponentGlyph, oxeduActions;
 
 CONST
@@ -72,7 +72,7 @@ TYPE
 
       procedure UpdateAxisBBoxes();
       procedure RenderSelectAxes();
-      procedure RenderGlyphs(const componentPairs: oxedTEditRendererComponentPairs);
+      procedure RenderGlyphs(const componentPairs: oxedTThingieComponentPairs);
       procedure RenderGlyphStart();
       procedure RenderGlyph(entity: oxTEntity; component: oxedPComponent);
       procedure RenderGlyphDone();
@@ -126,7 +126,7 @@ end;
 
 procedure oxedTSceneEditRenderer.RenderEntity(var params: oxTSceneRenderParameters);
 var
-   editRender: oxedTEditRenderParameters;
+   editRender: oxedTThingieRenderParameters;
    editorData: oxedTEntityData;
 
 begin
@@ -213,7 +213,7 @@ end;
 
 procedure oxedTSceneEditWindow.SceneRenderEnd();
 var
-   componentRenderParams: oxedTEditRenderParameters;
+   componentRenderParams: oxedTThingieRenderParameters;
 
 begin
    { render selected entity }
@@ -222,7 +222,7 @@ begin
 
       { render components }
 
-      oxedEditRenderers.InitParams(componentRenderParams);
+      oxedThingies.InitParams(componentRenderParams);
 
       componentRenderParams.Window := Self;
       componentRenderParams.Camera := @Camera;
@@ -336,7 +336,7 @@ begin
    Camera.Transform.Apply(camMatrix);
 end;
 
-procedure oxedTSceneEditWindow.RenderGlyphs(const componentPairs: oxedTEditRendererComponentPairs);
+procedure oxedTSceneEditWindow.RenderGlyphs(const componentPairs: oxedTThingieComponentPairs);
 var
    i: loopint;
    component: oxedPComponent;
@@ -381,7 +381,7 @@ begin
    Transform.vRotation := rotation;
 
    distance := Camera.vPos.Distance(p);
-   if(not oxedEditRenderers.Glyphs3D) then
+   if(not oxedThingies.Glyphs3D) then
       distanceScale := distance * OXED_GLYPH_DISTANCE_SCALE
    else
       distanceScale := 1 * OXED_GLYPH_3D_DISTANCE_SCALE;

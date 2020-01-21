@@ -14,12 +14,12 @@ INTERFACE
       uStd,
       {ox}
       oxuRunRoutines,
-      oxuCameraComponent, oxeduEditRenderers, oxeduComponent, oxeduComponentGlyph, oxeduComponentGlyphs;
+      oxuCameraComponent, oxeduThingies, oxeduComponent, oxeduComponentGlyph, oxeduComponentGlyphs;
 
 TYPE
    { oxedTCameraEditRenderer }
 
-   oxedTCameraEditRenderer = class(oxedTEditRenderer)
+   oxedTCameraEditRenderer = class(oxedTThingie)
       constructor Create();
    end;
 
@@ -48,6 +48,6 @@ begin
 end;
 
 INITIALIZATION
-   oxedEditRenderers.Init.Add('camera', @init, @deinit);
+   oxedThingies.Init.Add('camera', @init, @deinit);
 
 END.

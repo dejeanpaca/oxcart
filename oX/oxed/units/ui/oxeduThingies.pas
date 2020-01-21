@@ -1,5 +1,5 @@
 {
-   oxeduEditRenderers, oxed edit window renderers
+   oxeduThingies, oxed edit window renderers
    Copyright (C) 2016. Dejan Boras
 
    Started On:    24.04.2017.
@@ -8,7 +8,7 @@
 }
 
 {$INCLUDE oxdefines.inc}
-UNIT oxeduEditRenderers;
+UNIT oxeduThingies;
 
 INTERFACE
 
@@ -25,7 +25,7 @@ INTERFACE
 
 TYPE
    {scene edit render parameters}
-   oxedTEditRenderParameters = record
+   oxedTThingieRenderParameters = record
       Window: uiTWindow;
       Camera: oxPCamera;
       Projection: oxPProjection;
@@ -35,9 +35,9 @@ TYPE
       Component: oxedPComponent;
    end;
 
-   { oxedTEditRenderer }
+   { oxedTThingie }
 
-   oxedTEditRenderer = class
+   oxedTThingie = class
       {renderer name}
       Name: string;
       {associated component type}
@@ -46,54 +46,54 @@ TYPE
       Selected: boolean;
 
       {render}
-      procedure Render(var {%H-}parameters: oxedTEditRenderParameters); virtual;
-      procedure RenderSelected(var {%H-}parameters: oxedTEditRenderParameters); virtual;
+      procedure Render(var {%H-}parameters: oxedTThingieRenderParameters); virtual;
+      procedure RenderSelected(var {%H-}parameters: oxedTThingieRenderParameters); virtual;
       procedure Initialize(); virtual;
       procedure Deinitialize(); virtual;
 
       procedure Associate(componentType: oxTComponentType);
    end;
 
-   oxedTEditRenderComponentPair = record
-      Renderer: oxedTEditRenderer;
+   oxedTThingieRenderComponentPair = record
+      Renderer: oxedTThingie;
       Component: oxedPComponent;
       ComponentObject: oxTComponent;
    end;
 
-   oxedTEditRendererComponentPairs = specialize TSimpleList<oxedTEditRenderComponentPair>;
+   oxedTThingieComponentPairs = specialize TSimpleList<oxedTThingieRenderComponentPair>;
 
-   { oxedTEditRendererComponentPairsHelper }
+   { oxedTThingieComponentPairsHelper }
 
-   oxedTEditRendererComponentPairsHelper = record helper for oxedTEditRendererComponentPairs
-      procedure Call(var params: oxedTEditRenderParameters);
-      procedure CallSelected(var params: oxedTEditRenderParameters);
+   oxedTThingieComponentPairsHelper = record helper for oxedTThingieComponentPairs
+      procedure Call(var params: oxedTThingieRenderParameters);
+      procedure CallSelected(var params: oxedTThingieRenderParameters);
    end;
 
-   { oxedTEditRenderersGlobal }
+   { oxedTThingiesGlobal }
 
-   oxedTEditRenderersGlobal = record
+   oxedTThingiesGlobal = record
       {are the glyphs rendered in 3d}
       Glyphs3D: boolean;
 
       {renderer initialization routines}
       Init: oxTRunRoutines;
 
-      function Find(componentType: oxTComponentType): oxedTEditRenderer;
-      function FindForEntity(entity: oxTEntity; exclude: oxTComponent = nil): oxedTEditRendererComponentPairs;
+      function Find(componentType: oxTComponentType): oxedTThingie;
+      function FindForEntity(entity: oxTEntity; exclude: oxTComponent = nil): oxedTThingieComponentPairs;
 
-      procedure InitParams(out params: oxedTEditRenderParameters);
+      procedure InitParams(out params: oxedTThingieRenderParameters);
 
-      procedure Initialize(editRenderer: oxedTEditRenderer);
+      procedure Initialize(Thingie: oxedTThingie);
    end;
 
 VAR
-  oxedEditRenderers: oxedTEditRenderersGlobal;
+  oxedThingies: oxedTThingiesGlobal;
 
 IMPLEMENTATION
 
-{ oxedTEditRendererComponentPairsHelper }
+{ oxedTThingieComponentPairsHelper }
 
-procedure oxedTEditRendererComponentPairsHelper.Call(var params: oxedTEditRenderParameters);
+procedure oxedTThingieComponentPairsHelper.Call(var params: oxedTThingieRenderParameters);
 var
   i: loopint;
 
@@ -107,7 +107,7 @@ begin
    end;
 end;
 
-procedure oxedTEditRendererComponentPairsHelper.CallSelected(var params: oxedTEditRenderParameters);
+procedure oxedTThingieComponentPairsHelper.CallSelected(var params: oxedTThingieRenderParameters);
 var
   i: loopint;
 
@@ -121,20 +121,20 @@ begin
    end;
 end;
 
-{ oxedTEditRenderersGlobal }
+{ oxedTThingiesGlobal }
 
-procedure oxedTEditRenderersGlobal.InitParams(out params: oxedTEditRenderParameters);
+procedure oxedTThingiesGlobal.InitParams(out params: oxedTThingieRenderParameters);
 begin
    ZeroOut(params, SizeOf(params));
 end;
 
-procedure oxedTEditRenderersGlobal.Initialize(editRenderer: oxedTEditRenderer);
+procedure oxedTThingiesGlobal.Initialize(Thingie: oxedTThingie);
 begin
-   editRenderer.Initialize();
+   Thingie.Initialize();
 end;
 
 
-function oxedTEditRenderersGlobal.Find(componentType: oxTComponentType): oxedTEditRenderer;
+function oxedTThingiesGlobal.Find(componentType: oxTComponentType): oxedTThingie;
 var
    i: loopint;
 
@@ -142,17 +142,17 @@ begin
    if(componentType <> nil) then begin
       for i := 0 to (oxedComponents.List.n - 1) do begin
          if (oxedComponents.List[i].Component.ClassName = componentType.ClassName) then
-            exit(oxedTEditRenderer(oxedComponents.List[i].EditRenderer));
+            exit(oxedTThingie(oxedComponents.List[i].Thingie));
       end;
    end;
 
    Result := nil;
 end;
 
-function oxedTEditRenderersGlobal.FindForEntity(entity: oxTEntity; exclude: oxTComponent): oxedTEditRendererComponentPairs;
+function oxedTThingiesGlobal.FindForEntity(entity: oxTEntity; exclude: oxTComponent): oxedTThingieComponentPairs;
 var
    i: loopint;
-   pair: oxedTEditRenderComponentPair;
+   pair: oxedTThingieRenderComponentPair;
 
 begin
    Result.Initialize(Result);
@@ -169,33 +169,33 @@ begin
 end;
 
 
-{ oxTEditRenderer }
+{ oxTThingie }
 
-procedure oxedTEditRenderer.Render(var parameters: oxedTEditRenderParameters);
+procedure oxedTThingie.Render(var parameters: oxedTThingieRenderParameters);
 begin
 
 end;
 
-procedure oxedTEditRenderer.RenderSelected(var parameters: oxedTEditRenderParameters);
+procedure oxedTThingie.RenderSelected(var parameters: oxedTThingieRenderParameters);
 begin
 
 end;
 
-procedure oxedTEditRenderer.Initialize();
+procedure oxedTThingie.Initialize();
 begin
 end;
 
-procedure oxedTEditRenderer.Deinitialize();
+procedure oxedTThingie.Deinitialize();
 begin
 
 end;
 
-procedure oxedTEditRenderer.Associate(componentType: oxTComponentType);
+procedure oxedTThingie.Associate(componentType: oxTComponentType);
 begin
    Component := oxedComponents.Find(componentType);
 
    if(Component <> nil) then
-      Component^.EditRenderer := Self
+      Component^.Thingie := Self
    else
       log.w('Could not associate component ' + componentType.ClassName + ' with renderer ' + Self.ClassName);
 end;
@@ -205,19 +205,19 @@ var
    i: loopint;
 
 begin
-   oxedEditRenderers.Init.iCall();
+   oxedThingies.Init.iCall();
 
    for i := 0 to (oxedComponents.List.n - 1) do begin
       {$IFDEF DEBUG_EXTENDED}
-      if(oxedComponents.List[i].EditRenderer <> nil) and (oxedComponents.List[i].Component = nil) then
-         log.v('Edit renderer for nil component: ', oxedComponents.List[i].EditRenderer.ClassName);
+      if(oxedComponents.List[i].Thingie <> nil) and (oxedComponents.List[i].Component = nil) then
+         log.v('Edit renderer for nil component: ', oxedComponents.List[i].Thingie.ClassName);
 
-      if(oxedComponents.List[i].EditRenderer = nil) and (oxedComponents.List[i].Component <> nil) then
+      if(oxedComponents.List[i].Thingie = nil) and (oxedComponents.List[i].Component <> nil) then
          log.v('Missing edit renderer: ', oxedComponents.List[i].Component.ClassName);
       {$ENDIF}
 
-      if(oxedComponents.List[i].EditRenderer <> nil) then
-         oxedEditRenderers.Initialize(oxedTEditRenderer(oxedComponents.List[i].EditRenderer));
+      if(oxedComponents.List[i].Thingie <> nil) then
+         oxedThingies.Initialize(oxedTThingie(oxedComponents.List[i].Thingie));
    end;
 end;
 
@@ -227,16 +227,16 @@ var
 
 begin
    for i := 0 to (oxedComponents.List.n - 1) do begin
-      if(oxedComponents.List[i].EditRenderer <> nil) then
-         oxedTEditRenderer(oxedComponents.List[i].EditRenderer).Deinitialize();
+      if(oxedComponents.List[i].Thingie <> nil) then
+         oxedTThingie(oxedComponents.List[i].Thingie).Deinitialize();
    end;
 
-   oxedEditRenderers.Init.dCall();
+   oxedThingies.Init.dCall();
 end;
 
 INITIALIZATION
-   oxTRunRoutines.Initialize(oxedEditRenderers.Init);
-   oxedEditRenderers.Glyphs3D := true;
+   oxTRunRoutines.Initialize(oxedThingies.Init);
+   oxedThingies.Glyphs3D := true;
 
    oxed.Init.Add('oxed.edit_renderers', @init, @deinit);
 
