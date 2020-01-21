@@ -1007,10 +1007,14 @@ var
    p: PBuildPlatform;
 
 begin
-   p := FindPlatform(name);
+   p := FindPlatformByName(name);
 
    if(p <> nil) then begin
-      CurrentPlatform := p;
+      if(CurrentPlatform <> p) then begin
+         CurrentPlatform := p;
+         log.v('Set platform: ' + CurrentPlatform^.GetName());
+      end;
+
       exit(true);
    end;
 
