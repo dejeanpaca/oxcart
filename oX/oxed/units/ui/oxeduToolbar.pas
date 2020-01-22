@@ -12,6 +12,8 @@ INTERFACE
 
    USES
       uStd, uColors,
+      {app}
+      appuEvents,
       {ox}
       oxuTexture,
       {ui}
@@ -76,10 +78,11 @@ begin
 end;
 
 
-function CreateButton(icon, action: loopint; const color: TColor4ub; const hint: StdString = ''): wdgPToolbarItem;
+function CreateButton(icon: loopint; action: TEventID; const color: TColor4ub; const hint: StdString = ''): wdgPToolbarItem;
 begin
-   Result := oxedToolbar.Toolbar.AddButton(oxedIcons.Create($f245), oxedActions.TOOL_TRANSLATE);
-   Result^.Color := ToolButtonColor;
+   Result := oxedToolbar.Toolbar.AddButton(oxedIcons.Create(icon), action);
+   Result^.Hint := hint;
+   Result^.Color := color;
 end;
 
 { oxedTToolbarGlobal }
