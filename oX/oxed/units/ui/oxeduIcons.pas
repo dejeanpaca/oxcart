@@ -62,6 +62,7 @@ begin
    oxFileIcons.Add(tex, 'java');
    oxFileIcons.Add(tex, 'js');
    oxFileIcons.Add(tex, 'json');
+   oxFileIcons.Add(tex, 'xml');
    oxFileIcons.Add(tex, 'php');
    oxFileIcons.Add(tex, 'sql');
 
@@ -72,6 +73,7 @@ begin
    tex := oxedIcons.Create($f15c {'file-text'});
    oxFileIcons.Add(tex, 'txt');
    oxFileIcons.Add(tex, 'md');
+   oxFileIcons.Add(tex, 'dvar');
 
    {file-image-o}
    tex := oxedIcons.Create($f1c5 {file-image});
