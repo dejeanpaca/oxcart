@@ -133,7 +133,7 @@ end;
 
 procedure skipChunk(var ld: imgTFileData; var data: TPNGLoaderData);
 begin
-   ld.Seek(ld.PFile^.f^.fPosition + data.chunk.length + 4);
+   ld.Seek(ld.f^.fPosition + data.chunk.length + 4);
 end;
 
 procedure loadIHDR(var ld: imgTFileData; var img: imgTImage; var data: TPNGLoaderData);
@@ -238,7 +238,7 @@ begin
          end;
       until (data.fzStream.avail_in <= 0);
 
-   until (pos >= data.chunk.length) or ld.PFile^.f^.EOF() or (error <> Z_OK);
+   until (pos >= data.chunk.length) or ld.f^.EOF() or (error <> Z_OK);
 
    skipCRC(ld);
 
@@ -401,7 +401,7 @@ begin
 
       if(ld.GetError() <> 0) then
         break;
-   until(ld.PFile^.f^.EOF() = true);
+   until(ld.f^.EOF() = true);
 end;
 
 function getPNGBufferSize(const img: imgTImage): int64;

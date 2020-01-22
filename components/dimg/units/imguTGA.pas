@@ -120,7 +120,7 @@ begin {load}
    {first, check for a Targa File Footer and determine if the file is in the new
    TGA format, or the old format. Not used currently but may be helpful in the
    future.}
-   if(ld^.Seek(ld^.PFile^.f^.GetSize() - 26) < 0) then
+   if(ld^.Seek(ld^.f^.GetSize() - 26) < 0) then
       exit;
 
    {$PUSH}{$HINTS OFF}
