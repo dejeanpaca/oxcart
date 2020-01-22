@@ -84,8 +84,10 @@ TYPE
 
       {load a image from a file}
       function Write(var image: imgTImage; const fileName: string): loopint;
+      function Write(var image: imgTImage; const fileName: string; var options: imgTRWOptions): loopint;
 
       function OnRead(var data: oxTFileRWData): loopint; virtual;
+      function OnWrite(var data: oxTFileRWData): loopint; virtual;
 
       { LOGGING }
 
@@ -137,6 +139,12 @@ begin
    Result := inherited Write(fileName, @options);
 end;
 
+function imgTFile.Write(var image: imgTImage; const fileName: string; var options: imgTRWOptions): loopint;
+begin
+   options.Image := image;
+   Result := inherited Write(fileName, @options);
+end;
+
 function imgTFile.OnRead(var data: oxTFileRWData): loopint;
 var
    pOptions: imgPRWOptions;
@@ -167,6 +175,26 @@ begin
    {finishing touches}
    if(Result = 0) then
        imageData.PostLoad(pOptions^);
+end;
+
+function imgTFile.OnWrite(var data: oxTFileRWData): loopint;
+var
+   imageData: imgTFileData;
+
+begin
+   Init(imageData);
+
+   if(data.Options = nil) then
+       exit(imgeGENERAL);
+
+   imageData.Image := imgPRWOptions(data.Options)^.Image;
+   imageData.PFile := @data;
+   imageData.f := data.f;
+
+   data.External := @imageData;
+   data.Handler^.CallHandler(@data);
+
+   Result := data.GetError();
 end;
 
 { LOADER HELPER ROUTINES }
