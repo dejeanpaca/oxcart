@@ -31,7 +31,7 @@ TYPE
 
    { oxedTProjectStatisticsWindow }
 
-   oxedTProjectStatisticsWindow = class(oxTSettingsWindowBase)
+   oxedTProjectStatisticsWindow = object(oxTSettingsWindowBase)
       widgets: record
          Statistics: wdgTStringList;
          AddParameter,
@@ -39,11 +39,11 @@ TYPE
          Separator: wdgTDivisor;
       end;
 
-      constructor Create(); override;
-      procedure Open(); override;
+      constructor Create();
+      procedure Open(); virtual;
 
       protected
-      procedure AddWidgets(); override;
+      procedure AddWidgets(); virtual;
    end;
 
 VAR
@@ -78,8 +78,7 @@ end;
 {$IFDEF OX_FEATURE_CONSOLE}
 procedure consoleCallback({%H-}con: conPConsole);
 begin
-   if(oxedwndProjectStatistics <> nil) then
-      oxedwndProjectStatistics.Open();
+   oxedwndProjectStatistics.Open();
 end;
 {$ENDIF}
 
@@ -105,12 +104,12 @@ end;
 
 procedure init();
 begin
-   oxedwndProjectStatistics := oxedTProjectStatisticsWindow.Create();
+   oxedwndProjectStatistics.Create();
 end;
 
 procedure deinit();
 begin
-   FreeObject(oxedwndProjectStatistics);
+   oxedwndProjectStatistics.Destroy();
 end;
 
 INITIALIZATION

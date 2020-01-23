@@ -45,7 +45,7 @@ TYPE
 
    { oxTFilePreviewWindow }
 
-   oxTFilePreviewWindow = class(oxTWindowBase)
+   oxTFilePreviewWindow = object(oxTWindowBase)
       public
          Handlers: oxTFilePreviewHandlers; static;
 
@@ -54,9 +54,9 @@ TYPE
       class function FindHandler(const extension: String): oxTFilePreviewHandler; static;
       class function Previewable(const fn: String; out handler: oxTFilePreviewHandler): boolean; static;
 
-      constructor Create; override;
-      procedure CreateWindow; override;
-      procedure AddWidgets; override;
+      constructor Create();
+      procedure CreateWindow(); virtual;
+      procedure AddWidgets(); virtual;
 
       {opens a file preview window}
       procedure Show(const fn: string);
@@ -181,12 +181,12 @@ end;
 
 procedure init();
 begin
-   oxFilePreviewWindow := oxTFilePreviewWindow.Create();
+   oxFilePreviewWindow.Create();
 end;
 
 procedure deinit();
 begin
-   FreeObject(oxFilePreviewWindow);
+   oxFilePreviewWindow.Destroy();
 end;
 
 INITIALIZATION

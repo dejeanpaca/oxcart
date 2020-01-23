@@ -192,8 +192,7 @@ end;
 procedure previewFile();
 begin
    if(not oxedProjectContextMenu.Parameters.IsDirectory) then begin
-      if(oxFilePreviewWindow <> nil) then
-         oxFilePreviewWindow.Show(oxedProjectContextMenu.Parameters.TargetPath);
+      oxFilePreviewWindow.Show(oxedProjectContextMenu.Parameters.TargetPath);
    end;
 end;
 

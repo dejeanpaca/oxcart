@@ -36,12 +36,12 @@ TYPE
 
    { oxedTSettingsWindow }
 
-   oxedTSettingsWindow = class(oxTSettingsWindowBase)
-      constructor Create(); override;
-      procedure Open; override;
+   oxedTSettingsWindow = object(oxTSettingsWindowBase)
+      constructor Create();
+      procedure Open(); virtual;
 
       protected
-      procedure AddWidgets(); override;
+      procedure AddWidgets(); virtual;
 
       procedure UpdateBuildModesWidget();
       procedure LoadBuildModeSettings();
@@ -361,8 +361,7 @@ end;
 {$IFDEF OX_FEATURE_CONSOLE}
 procedure consoleCallback({%H-}con: conPConsole);
 begin
-   if(oxedwndProjectSettings <> nil) then
-      oxedwndProjectSettings.Open();
+   oxedwndProjectSettings.Open();
 end;
 {$ENDIF}
 
@@ -391,7 +390,7 @@ begin
    OnSave.Add(@saveCallback);
 end;
 
-procedure oxedTSettingsWindow.Open;
+procedure oxedTSettingsWindow.Open();
 begin
    LoadBuildModeSettings();
 
@@ -400,12 +399,12 @@ end;
 
 procedure init();
 begin
-   oxedwndProjectSettings := oxedTSettingsWindow.Create();
+   oxedwndProjectSettings.Create();
 end;
 
 procedure deinit();
 begin
-   FreeObject(oxedwndProjectSettings);
+   oxedwndProjectSettings.Destroy();
 end;
 
 INITIALIZATION

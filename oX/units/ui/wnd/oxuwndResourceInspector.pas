@@ -47,7 +47,7 @@ TYPE
 
    { oxTResourceInspectorWindow }
 
-   oxTResourceInspectorWindow = class(oxTWindowBase)
+   oxTResourceInspectorWindow = object(oxTWindowBase)
       wdg: record
          Divisor: wdgTDivisor;
          Close: wdgTButton;
@@ -55,15 +55,15 @@ TYPE
          List: oxwdgTResourceInspectorGrid;
       end;
 
-      constructor Create(); override;
+      constructor Create();
 
       protected
-      procedure CreateWindow(); override;
-      procedure AddWidgets(); override;
+      procedure CreateWindow(); virtual;
+      procedure AddWidgets(); virtual;
 
       protected
       procedure Resized();
-      procedure WindowDestroyed({%H-}wnd: oxuiTWindowBase); override;
+      procedure WindowDestroyed({%H-}wnd: oxuiTWindowBase); virtual;
    end;
 
 VAR
@@ -107,7 +107,7 @@ begin
    inherited SizeChanged();
 
    if(BaseHandler <> nil) then
-      oxTResourceInspectorWindow(BaseHandler).Resized();
+      oxTResourceInspectorWindow(BaseHandler^).Resized();
 end;
 
 procedure oxTResourceInspectorWindow.AddWidgets();
@@ -173,7 +173,7 @@ end;
 
 procedure Initialize();
 begin
-   oxwndResourceInspector := oxTResourceInspectorWindow.Create();
+   oxwndResourceInspector.Create();
 
    {$IFDEF OX_FEATURE_CONSOLE}
    if(console.Selected <> nil) then
@@ -183,7 +183,7 @@ end;
 
 procedure deinitialize();
 begin
-   FreeObject(oxwndResourceInspector);
+   oxwndResourceInspector.Destroy();
 end;
 
 INITIALIZATION

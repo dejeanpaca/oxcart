@@ -29,11 +29,11 @@ TYPE
 
    { oxTSystemInformationWindow }
 
-   oxTSystemInformationWindow = class(oxTWindowBase)
-      constructor Create(); override;
+   oxTSystemInformationWindow = object(oxTWindowBase)
+      constructor Create();
 
       protected
-      procedure AddWidgets(); override;
+      procedure AddWidgets(); virtual;
    end;
 
 VAR
@@ -98,7 +98,7 @@ end;
 
 procedure Initialize();
 begin
-   oxwndSystemInformation := oxTSystemInformationWindow.Create();
+   oxwndSystemInformation.Create();
 
    {$IFDEF OX_FEATURE_CONSOLE}
    if(console.Selected <> nil) then
@@ -108,7 +108,7 @@ end;
 
 procedure deinitialize();
 begin
-   FreeObject(oxwndSystemInformation);
+   oxwndSystemInformation.Destroy();
 end;
 
 INITIALIZATION
