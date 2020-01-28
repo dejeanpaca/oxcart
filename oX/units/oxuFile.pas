@@ -181,9 +181,8 @@ begin
          end;
       end else
          exit(eUNSUPPORTED);
-   end;
-
-   Result := eINVALID_ARG;
+   end else
+      Result := eINVALID_ARG;
 end;
 
 function oxTFileRW.Read(const fn: StdString; options: pointer = nil; pdata: oxPFileRWData = nil): loopint;
@@ -275,9 +274,8 @@ begin
          end;
       end else
          exit(eUNSUPPORTED);
-   end;
-
-   Result := eINVALID_ARG;
+   end else
+      Result := eINVALID_ARG;
 end;
 
 function oxTFileRW.Write(const fn: StdString; options: pointer; pdata: oxPFileRWData): loopint;
