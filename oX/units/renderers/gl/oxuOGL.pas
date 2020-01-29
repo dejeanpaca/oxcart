@@ -100,7 +100,7 @@ TYPE
          MaxTextureStackDepth: GLuint;
       end;
 
-      constructor Create; override;
+      constructor Create(); override;
 
       function Downgrade32(): boolean;
    end;
@@ -112,7 +112,7 @@ TYPE
 
    { OPENGL }
 
-   oglTBlendFunc       = array[0..1] of GLenum;
+   oglTBlendFunc = array[0..1] of GLenum;
 
    { oglTGlobal }
 
@@ -140,10 +140,6 @@ TYPE
       {compare two OpenGL versions (source and target), 0 is equal, -1 is target lower, +1 is target higher}
       class function CompareVersions(sMajor, sMinor, tMajor, tMinor: longword): longint; static;
       class function CompareVersions(const s, t: oglTVersion): longint; static;
-
-      {$IFNDEF GLES}
-      class function GetShaderTypeString(shaderType: GLenum): string; static;
-      {$ENDIF}
 
       function ValidRC(rc: oglTRenderingContext): boolean;
 
@@ -218,7 +214,7 @@ IMPLEMENTATION
 
 { oglTWindow }
 
-constructor oglTWindow.Create;
+constructor oglTWindow.Create();
 begin
    inherited;
 
@@ -510,6 +506,7 @@ begin
    s := copy(versionString, p + 1, pE - p - 1);
 
    val(s, minor, code);
+
    if(code <> 0) then
       exit;
 
@@ -534,26 +531,6 @@ class function oglTGlobal.CompareVersions(const s, t: oglTVersion): longint;
 begin
    result := ogl.CompareVersions(s.Major, s.Minor, t.Major, t.Minor);
 end;
-
-{$IFNDEF GLES}
-class function oglTGlobal.GetShaderTypeString(shaderType: GLenum): string;
-begin
-   if(shaderType = GL_VERTEX_SHADER) then
-      Result := 'vertex'
-   else if(shaderType = GL_FRAGMENT_SHADER) then
-      Result := 'fragment'
-   else if (shaderType = GL_GEOMETRY_SHADER) then
-      Result := 'geometry'
-   else if (shaderType = GL_TESS_EVALUATION_SHADER) then
-      Result := 'tess_evaluation'
-   else if (shaderType = GL_TESS_CONTROL_SHADER) then
-      Result := 'tess_control'
-   else if (shaderType = GL_COMPUTE_SHADER) then
-      Result := 'compute'
-   else
-      Result := 'unknown';
-end;
-{$ENDIF}
 
 function oglTGlobal.ValidRC(rc: oglTRenderingContext): boolean;
 begin
