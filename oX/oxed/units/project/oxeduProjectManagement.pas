@@ -29,6 +29,8 @@ TYPE
       OnNew,
       {called when the project is open}
       OnOpen,
+      {called before the project is closed}
+      OnClose,
       {called when the project is closed}
       OnClosed,
       {called when the project is saved}
@@ -60,6 +62,8 @@ IMPLEMENTATION
 procedure oxedTProjectManagement.Destroy();
 begin
    if(oxedProject <> nil) then begin
+      OnClose.Call();
+
       FreeObject(oxedProject);
 
       OnClosed.Call();
@@ -178,6 +182,7 @@ end;
 INITIALIZATION
    TProcedures.InitializeValues(oxedProjectManagement.OnNew);
    TProcedures.InitializeValues(oxedProjectManagement.OnOpen);
+   TProcedures.InitializeValues(oxedProjectManagement.OnClose);
    TProcedures.InitializeValues(oxedProjectManagement.OnClosed);
    TProcedures.InitializeValues(oxedProjectManagement.OnSaved);
    TProcedures.InitializeValues(oxedProjectManagement.OnOverwritten);
