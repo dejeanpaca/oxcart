@@ -21,9 +21,9 @@ TYPE
    oxTRendererProperties = record
       Textures: record
          {does the renderer support power of 2 textures}
-         NonPowerOf2,
+         Npot,
          {has a warning about power of 2 textures been issued}
-         WarnedPot: boolean;
+         WarnedNpot: boolean;
       end;
    end;
 

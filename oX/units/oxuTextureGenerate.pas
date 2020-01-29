@@ -369,12 +369,12 @@ end;
 
 function oxTTextureGenerate.CheckPot(): boolean;
 begin
-   Result := oxTex.IsPot(Image.Width, Image.Height) or (oxRenderer.Properties.Textures.NonPowerOf2);
+   Result := oxTex.IsPot(Image.Width, Image.Height) or (oxRenderer.Properties.Textures.Npot);
 
    {the texture is not power of 2, and such are not supported, so warn}
-   if(not Result) and (not oxRenderer.Properties.Textures.WarnedPot) then begin
+   if(not Result) and (not oxRenderer.Properties.Textures.WarnedNpots) then begin
       log.w('Non power of 2 textures are not supported for renderer: ' + oxRenderer.Name);
-      oxRenderer.Properties.Textures.WarnedPot := true;
+      oxRenderer.Properties.Textures.WarnedNpot := true;
    end;
 end;
 
