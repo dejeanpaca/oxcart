@@ -5,7 +5,7 @@
    Started On:    14.03.2009.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT appuKeyEvents;
 
 INTERFACE

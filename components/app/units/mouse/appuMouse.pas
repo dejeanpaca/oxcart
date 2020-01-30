@@ -5,7 +5,7 @@
    Started On:    24.11.2007.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT appuMouse;
 
 INTERFACE

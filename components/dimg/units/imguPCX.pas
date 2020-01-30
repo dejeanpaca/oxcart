@@ -5,7 +5,7 @@
    Started On:    20.12.2007.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT imguPCX; {PCX}
 
 {TODO: Implement 4-bit image loading with palette.}

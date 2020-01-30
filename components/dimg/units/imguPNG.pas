@@ -5,7 +5,7 @@
    Started On:    13.11.2007.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT imguPNG;
 
 INTERFACE

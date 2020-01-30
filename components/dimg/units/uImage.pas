@@ -5,7 +5,7 @@
    Started On:    26.05.2007.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT uImage;
 
 {Intended to provide a unified 'interface' and routines for reading/writing/manipulating images of various formats.}

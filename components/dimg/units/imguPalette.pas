@@ -5,7 +5,7 @@
    Started On:    24.12.2013.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT imguPalette;
 
 INTERFACE

@@ -5,7 +5,7 @@
    Started On:    30.04.2011.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT appuPaths;
 
 INTERFACE

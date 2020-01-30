@@ -5,7 +5,7 @@
    Started On:    01.03.2007.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT uApp;
 
 INTERFACE

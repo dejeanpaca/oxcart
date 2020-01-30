@@ -5,7 +5,7 @@
    Started On:    26.06.2009.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT imguTGAStuff;
 
 INTERFACE

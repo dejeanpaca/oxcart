@@ -5,7 +5,7 @@
    Started On:    17.01.2017.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT appukXCodes;
 
 INTERFACE

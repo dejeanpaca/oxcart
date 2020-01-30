@@ -5,7 +5,7 @@
    Started On:    20.04.2018.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT appuRegional;
 
 INTERFACE

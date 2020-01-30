@@ -5,7 +5,7 @@
    Started On:    28.11.2012.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT appuLog;
 
 INTERFACE

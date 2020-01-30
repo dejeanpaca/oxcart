@@ -5,7 +5,7 @@
    Started on:    30.01.2020.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT uThreadUtils;
 
 INTERFACE

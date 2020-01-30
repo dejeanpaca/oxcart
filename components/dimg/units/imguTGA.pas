@@ -5,7 +5,7 @@
    Started On:    31.05.2007.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT imguTGA;
 
 INTERFACE

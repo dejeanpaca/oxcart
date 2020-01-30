@@ -5,13 +5,13 @@
    Started On:    29.01.2020.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxeduProjectPackages;
 
 INTERFACE
 
    USES
-      uStd, StringUtils,
+      uStd,
       {oxed}
       oxeduPackage, oxeduProject, oxeduProjectManagement;
 

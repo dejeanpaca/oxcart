@@ -6,7 +6,7 @@
    Started On:    08.01.2012.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT appudvarConfiguration;
 
 INTERFACE

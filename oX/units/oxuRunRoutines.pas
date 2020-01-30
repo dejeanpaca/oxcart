@@ -5,7 +5,7 @@
    Started On:    19.09.2008.
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT oxuRunRoutines;
 
 INTERFACE

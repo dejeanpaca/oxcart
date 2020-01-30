@@ -5,7 +5,7 @@
    Started On:    09.01.2018,
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT uJSON;
 
 INTERFACE

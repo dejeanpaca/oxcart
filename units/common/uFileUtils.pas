@@ -5,7 +5,7 @@
    Started On:    01.11.2013.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT uFileUtils;
 
 INTERFACE
