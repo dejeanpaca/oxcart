@@ -176,7 +176,6 @@ CONST
       )
    );
 
-
    oglRenderingContextNull: oglTRenderingContext = {$IFDEF WINDOWS}0{$ENDIF}{$IFDEF X11}nil{$ENDIF}{$IFDEF COCOA}nil{$ENDIF};
 
    oglDefaultSettings: oglTSettings = (
