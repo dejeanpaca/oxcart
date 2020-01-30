@@ -143,11 +143,11 @@ begin
    uiWindow.Create.Properties := uiWindow.Create.Properties - [uiwndpSELECTABLE, uiwndpMOVE_BY_SURFACE, uiwndpMOVABLE];
 
    Width := parent.Dimensions.w - 8;
-   Height := 70;
+   Height := 92;
 
    {position the window}
    x := (parent.Dimensions.w - Width) div 2;
-   y := Height + 4;
+   y := Height - 1;
 
    inherited CreateWindow;
 
@@ -253,7 +253,7 @@ end;
 
 INITIALIZATION
    wdgidLABEL := uiControl.GetID('toast.label');
-   wdgidTITLE := uiControl.GetID('toast.label');
+   wdgidTITLE := uiControl.GetID('toast.title');
 
    ox.Init.Add('toast', @initToast, @deInitToast);
 
