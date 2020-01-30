@@ -15,7 +15,7 @@ INTERFACE
       uStd, uTiming, uLog,
       appuEvents
       {$IFNDEF NO_THREADS}
-      , oxuRun
+      , oxuRun, uThreadUtils
       {$ENDIF};
 
 CONST
@@ -58,6 +58,7 @@ TYPE
    oxTThreadTask = class
       {task name}
       Name: string;
+
       {task thread}
       Thread: TThread;
       {is the tread pending termination (task finish)}
@@ -141,6 +142,9 @@ TYPE
       procedure Startup();
       {called when thread task ends from the runner}
       procedure Finish();
+
+      {set the thread name}
+      procedure SetName(const newName: string);
    end;
 
    oxTThreadTasksList = specialize TSimpleList<oxTThreadTask>;
@@ -315,6 +319,11 @@ begin
    FreeObject(Thread);
    {$IFNDEF NO_THREADS}
    Thread := RunnerInstanceType.Create(true, Self);
+
+   {$IFDEF DEBUG}
+   if(Thread <> nil) then
+      TThreadUtils.SetThreadName(Thread, Name);
+   {$ENDIF}
    {$ENDIF}
 
    {$IFNDEF NO_THREADS}
@@ -451,6 +460,16 @@ begin
 
    if(OX_THREAD_TASK_EMIT_DONE in Events.Emit) then
       oxThreadEvents.Queue(Self, OX_THREAD_TASK_DONE);
+end;
+
+procedure oxTThreadTask.SetName(const newName: string);
+begin
+   Name := newName;
+
+   {$IF NOT DEFINED(NO_THREADS) AND DEFINED(DEBUG)}
+   if(Thread <> nil) then
+      TThreadUtils.SetThreadName(Thread, newName);
+   {$ENDIF}
 end;
 
 procedure processEvents(var event: appTEvent);
