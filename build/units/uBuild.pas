@@ -136,7 +136,7 @@ TYPE
       end;
 
       FPCOptions: record
-         UnitOutputPath: StdString;
+         UnitOutputDirectory: StdString;
       end;
 
       Options: record
@@ -602,8 +602,8 @@ begin
    if(Options.Rebuild) then
       p.Parameters.Add('-B');
 
-   if(FPCOptions.UnitOutputPath <> '') then
-      p.Parameters.Add('-FU' + FPCOptions.UnitOutputPath);
+   if(FPCOptions.UnitOutputDirectory <> '') then
+      p.Parameters.Add('-FU' + FPCOptions.UnitOutputDirectory);
 
    if(Units.n > 0) then begin
       for i := 0 to Units.n - 1 do begin
