@@ -5,7 +5,8 @@
 PROGRAM setup;
 
    USES
-      sysutils, uStd, StringUtils, uLog, uFileUtils, uBuild, uLPI, uTest, appuPaths, ParamUtils, uTiming;
+      sysutils, uStd, StringUtils, uLog, uFileUtils, appuPaths, ParamUtils, uTiming,
+      uBuild, uBuildConfiguration, uLPI, uTest;
 
 TYPE
    TTool = record
@@ -148,8 +149,8 @@ BEGIN
    if(not build.Initialized) then begin
       if(build.ConfigPath = 'default') then begin
          log.w('Configuration path doesn''t seem set, will attempt to set one');
-         build.AutoDetermineConfigPath();
-         build.SaveLocationConfiguration();
+         BuildConfiguration.AutoDetermineConfigPath();
+         BuildConfiguration.SaveLocationConfiguration();
 
          log.w('Attempt to reinitialize build');
          build.Initialize();
