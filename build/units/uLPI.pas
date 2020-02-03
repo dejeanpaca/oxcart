@@ -85,7 +85,8 @@ TYPE
          searchPaths: record
             root,
             includeFiles,
-            otherUnits: TDOMNode;
+            otherUnits,
+            unitOutputDirectory: TDOMNode;
          end;
 
          target,
@@ -136,6 +137,7 @@ TYPE
       procedure AddCustomOption(const option: StdString);
       procedure AddUnitPath(const newPath: StdString);
       procedure AddIncludePath(const newPath: StdString);
+      procedure SetUnitOutputDirectory(const newPath: StdString);
       procedure SetTitle(const newTitle: StdString);
       procedure AddRequiredPackage(const packageName: StdString);
       procedure AddSymbol(const symbol: StdString);
@@ -292,6 +294,7 @@ begin
          if(compiler.searchPaths.root <> nil) then begin
             compiler.searchPaths.includeFiles := compiler.searchPaths.root.FindNode('IncludeFiles');
             compiler.searchPaths.otherUnits := compiler.searchPaths.root.FindNode('OtherUnitFiles');
+            compiler.searchPaths.unitOutputDirectory := compiler.searchPaths.root.FindNode('UnitOutputDirectory');
          end;
 
          compiler.codeGeneration.root := compiler.root.FindNode('CodeGeneration');
@@ -521,6 +524,14 @@ begin
       includes := newPath;
 
    SetValue(compiler.searchPaths.includeFiles, includes);
+end;
+
+procedure TLPIFile.SetUnitOutputDirectory(const newPath: StdString);
+begin
+   if(compiler.searchPaths.unitOutputDirectory = nil) then
+      compiler.searchPaths.unitOutputDirectory := compiler.searchPaths.root.CreateChild('UnitOutputDirectory');
+
+   SetValue(compiler.searchPaths.unitOutputDirectory, newPath);
 end;
 
 procedure TLPIFile.SetTitle(const newTitle: StdString);
