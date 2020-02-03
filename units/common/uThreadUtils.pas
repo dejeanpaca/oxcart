@@ -21,7 +21,7 @@ TYPE
    { TThreadUtils }
 
    TThreadUtils = record
-      class procedure SetThreadName({%H-}t: TThread; const name: string); static;
+      class procedure SetThreadName({%H-}t: TThread; const {%H-}name: string); static;
    end;
 
 IMPLEMENTATION
@@ -58,7 +58,7 @@ begin
 end;
 
 {$ELSE}
-procedure TThreadUtils.SetThreadName(t: TThread);
+class procedure TThreadUtils.SetThreadName(t: TThread; const name: string);
 begin
 end;
 {$ENDIF}
