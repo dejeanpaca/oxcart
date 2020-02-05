@@ -21,7 +21,9 @@ TYPE
    uiTFiles = record
       Sort,
       SortFoldersFirst,
-      ShowHiddenFiles: boolean;
+      ShowHiddenFiles,
+      {should we send files to the trash/recycle location}
+      UseTrash: boolean;
 
       {sort files}
       procedure SortFiles(var files: TFileDescriptorList);
@@ -35,7 +37,8 @@ IMPLEMENTATION
 VAR
    dvSortFiles,
    dvSortFoldersFirst,
-   dvShowHiddenFiles: TDVar;
+   dvShowHiddenFiles,
+   dvUseTrash: TDVar;
 
 { uiTFileSettings }
 
@@ -50,9 +53,11 @@ end;
 INITIALIZATION
    uiFiles.SortFoldersFirst := true;
    uiFiles.Sort := true;
+   uiFiles.UseTrash := true;
 
    uiTUI.dvg.Add(dvSortFiles, 'sort_files', dtcBOOL, @uiFiles.Sort);
    uiTUI.dvg.Add(dvSortFoldersFirst, 'sort_folders_first', dtcBOOL, @uiFiles.SortFoldersFirst);
    uiTUI.dvg.Add(dvShowHiddenFiles, 'show_hidden_files', dtcBOOL, @uiFiles.ShowHiddenFiles);
+   uiTUI.dvg.Add(dvUseTrash, 'use_trash', dtcBOOL, @uiFiles.UseTrash);
 
 END.
