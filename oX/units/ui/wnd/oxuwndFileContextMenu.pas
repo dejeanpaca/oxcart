@@ -11,11 +11,12 @@ UNIT oxuwndFileContextMenu;
 INTERFACE
 
    USES
-      sysutils, uStd, StringUtils, uFileUtils,
+      sysutils, uStd, uLog, StringUtils,
+      uFileUtils, uFileTrash,
       {app}
       uApp, appuEvents, appuActionEvents,
       {ox}
-      oxuRunRoutines,
+      oxuRunRoutines, oxuPlatform,
       {ui}
       oxuUI, uiuBase, uiuTypes, uiuWidget, uiuContextMenu, uiuWidgetWindow, uiuMessageBox, uiuFiles;
 
@@ -265,10 +266,17 @@ var
 begin
    wnd := getWindow(wdg);
 
-   if(wnd.Parameters.IsDirectory) then
-      ok := FileUtils.RmDir(wnd.Parameters.TargetPath)
-   else
-      ok := FileUtils.Erase(wnd.Parameters.TargetPath);
+   if(uiFiles.UseTrash) then begin
+      ok := FileTrash.Recycle(wnd.Parameters.TargetPath);
+
+      if(not ok) then
+         log.e('Failed to move to trash: ' + wnd.Parameters.TargetPath + ' (' + sf(FileTrash.LastError) + ')');
+   end else begin
+     if(wnd.Parameters.IsDirectory) then
+        ok := FileUtils.RmDir(wnd.Parameters.TargetPath)
+     else
+        ok := FileUtils.Erase(wnd.Parameters.TargetPath);
+   end;
 
    if(ok) then begin
       oxwndFileContextMenu.LastAction := oxwndFileContextMenu.Events.DELETE_FILE;
