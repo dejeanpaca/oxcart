@@ -65,6 +65,7 @@ end;
 procedure packageNotify(var context: TDVarNotificationContext);
 var
    i: loopint;
+   path: StdString;
 
 begin
    if(context.What = DVAR_NOTIFICATION_WRITE) then begin
@@ -76,7 +77,11 @@ begin
          end;
       end;
    end else if(context.What = DVAR_NOTIFICATION_READ) then begin
-      // TODO: Handle identifiers and path
+      if(currentPackage[1] = '@') then begin
+         path := Copy(currentPackage, 1, Length(currentPackage) - 1);
+         oxedProject.AddPackagePath(path);
+      end else
+         oxedProject.AddPackagePath(currentPackage);
    end;
 end;
 
