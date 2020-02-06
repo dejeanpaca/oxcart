@@ -26,7 +26,7 @@ INTERFACE
       oxeduProjectPlatforms,
       oxeduProjectRunner, oxeduSceneClone,
       oxeduProjectScanner, oxeduPasScanner, oxeduStatisticsScanner,
-      oxeduProjectPackages,
+      oxeduProjectPackages, oxeduProjectPackagesConfiguration,
       {additional}
       oxeduBuildEvents, oxeduLazarus,
       {windows}
