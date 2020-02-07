@@ -43,7 +43,7 @@ procedure runLazarus();
 begin
    try
       if(oxedSettings.ShowNotifications) then
-         oxToast.Show('Lazaurs', 'Starting lazarus ... ');
+         oxToast.Show('Lazarus', 'Starting lazarus ... ');
 
       laz.Options := laz.Options - [poWaitOnExit];
       laz.Execute();
@@ -94,7 +94,7 @@ begin
          laz.Parameters.Add(oxedProject.TempPath + oxPROJECT_LIB_LPI);
       end else begin
          if(oxedSettings.ShowNotifications) then
-            oxToast.Show('Lazaurs', 'Already running');
+            oxToast.Show('Lazarus', 'Already running');
 
          log.v('Lazarus already running');
          exit;
