@@ -116,6 +116,8 @@ TYPE
 
       procedure AddPackage(const packageId: string);
       procedure AddPackagePath(const packagePath: string);
+
+      function GetPackagePath(const package: oxedTPackage): StdString;
    end;
 
 VAR
@@ -151,6 +153,7 @@ end;
 procedure oxedTProject.SetPath(const newPath: StdString);
 begin
    Path := IncludeTrailingPathDelimiter(newPath);
+   MainPackage.Path := Path;
    log.v('Project path set to: ' + Path);
    ConfigPath := IncludeTrailingPathDelimiter(Path + oxPROJECT_DIRECTORY);
    TempPath := IncludeTrailingPathDelimiter(Path + oxPROJECT_TEMP_DIRECTORY);
@@ -239,6 +242,14 @@ begin
    p.Path := packagePath;
 
    Packages.Add(p);
+end;
+
+function oxedTProject.GetPackagePath(const package: oxedTPackage): StdString;
+begin
+   if(package.Id = '') then
+      exit(ExpandFileName(package.Path));
+
+   Result := package.Path;
 end;
 
 INITIALIZATION
