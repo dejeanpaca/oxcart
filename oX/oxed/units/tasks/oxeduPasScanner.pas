@@ -124,13 +124,22 @@ begin
    unitFile.Path := f.FileName;
 
    if(f.Extension = '.pas') then begin
-      oxedProject.MainPackage.Units.Add(unitFile);
+      f.Package^.Units.Add(unitFile);
    end else if(f.Extension = '.inc') then
-      oxedProject.MainPackage.IncludeFiles.Add(unitFile);
+      f.Package^.IncludeFiles.Add(unitFile);
 end;
 
 procedure onStart();
+var
+   i: loopint;
+
 begin
+   oxedProject.MainPackage.DisposeList();
+
+   for i := 0 to oxedProject.Packages.n - 1 do begin
+      oxedProject.Packages.List[i].DisposeList();
+   end;
+
    {get command line parameters with room for one more}
    {$IF FPC_FULLVERSION >= 030200}
    oxedPasScanner.FpcCommandLine := build.GetFPCCommandLine(1);
