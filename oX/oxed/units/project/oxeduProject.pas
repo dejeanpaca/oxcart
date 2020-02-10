@@ -13,25 +13,9 @@ INTERFACE
    USES
       sysutils, uStd, uLog, uFileUtils, StringUtils, uBuild,
       {oxed}
-      uOXED, oxeduSettings, oxeduPackage;
+      uOXED, oxeduSettings, oxeduPackage, oxeduPackageTypes;
 
 TYPE
-   oxedPProjectUnit = ^oxedTProjectUnit;
-   oxedTProjectUnit = record
-      {name of the unit/include file}
-      Name,
-      {path to the file}
-      Path: StdString;
-   end;
-
-   oxedTProjectUnitList = specialize TSimpleList<oxedTProjectUnit>;
-
-   { oxedTProjectUnitListHelper }
-
-   oxedTProjectUnitListHelper = record helper for oxedTProjectUnitList
-      function Find(const name: StdString): oxedPProjectUnit;
-   end;
-
    oxedTProjectSymbols = TSimpleStringList;
 
    oxedPProjectBuildMode = ^oxedTProjectBuildMode;
@@ -75,7 +59,7 @@ TYPE
       Modified: boolean;
 
       Units,
-      IncludeFiles: oxedTProjectUnitList;
+      IncludeFiles: oxedTPackageUnitList;
 
       Packages: oxedTPackagesList;
 
@@ -145,26 +129,6 @@ IMPLEMENTATION
 function oxedProjectValid(): boolean;
 begin
    Result := (oxedProject <> nil) and (oxedProject.HasPath());
-end;
-
-{ oxedTProjectUnitListHelper }
-
-function oxedTProjectUnitListHelper.Find(const name: StdString): oxedPProjectUnit;
-var
-   i: loopint;
-   lName: StdString;
-
-begin
-   if(n > 0) then begin
-      lName := LowerCase(name);
-
-      for i := 0 to n - 1 do begin
-         if(lName = LowerCase(List[i].Name)) then
-            exit(@List[i]);
-      end;
-   end;
-
-   Result := nil;
 end;
 
 { oxedTProject }
