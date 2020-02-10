@@ -14,7 +14,7 @@ UNIT oxeduPackage;
 INTERFACE
 
    USES
-      uStd, StringUtils;
+      uStd, StringUtils, oxeduPackageTypes;
 
 TYPE
    { oxedTPackage }
@@ -29,9 +29,14 @@ TYPE
       {evaluated path}
       EvaluatedPath: StdString;
 
+      Units,
+      IncludeFiles: oxedTPackageUnitList;
+
       function GetPath(): StdString;
       function GetIdentifier(): StdString;
       function GetDisplayName(): StdString;
+
+      procedure DisposeList();
 
       class procedure Init(out p: oxedTPackage); static;
    end;
@@ -78,9 +83,18 @@ begin
       Result := Path;
 end;
 
+procedure oxedTPackage.DisposeList();
+begin
+   Units.Dispose();
+   IncludeFiles.Dispose();
+end;
+
 class procedure oxedTPackage.Init(out p: oxedTPackage);
 begin
    ZeroOut(p, SizeOf(p));
+
+   oxedTPackageUnitList.Initialize(p.Units);
+   oxedTPackageUnitList.Initialize(p.IncludeFiles);
 end;
 
 END.

@@ -418,13 +418,13 @@ begin
    f.compiler.applyConventions := false;
 
    if(oxedBuild.BuildType <> OXED_BUILD_TASK_REBUILD_THIRD_PARTY) then begin
-      for i := 0 to oxedProject.Units.n - 1 do begin
-         relativePath := getRelativePath(oxedProject.Units.List[i]);
+      for i := 0 to oxedProject.MainPackage.Units.n - 1 do begin
+         relativePath := getRelativePath(oxedProject.MainPackage.Units.List[i]);
          f.AddUnitPath(relativePath);
       end;
 
-      for i := 0 to oxedProject.IncludeFiles.n - 1 do begin
-         relativePath := getRelativePath(oxedProject.IncludeFiles.List[i]);
+      for i := 0 to oxedProject.MainPackage.IncludeFiles.n - 1 do begin
+         relativePath := getRelativePath(oxedProject.MainPackage.IncludeFiles.List[i]);
          f.AddIncludePath(relativePath);
       end;
    end;
@@ -590,15 +590,15 @@ begin
       Result.Add('{main unit}');
       Result.Add('    {%H-}' + oxedProject.MainUnit);
    end else begin
-      if(oxedProject.Units.n > 0) then begin
+      if(oxedProject.MainPackage.Units.n > 0) then begin
          Result := Result + ',';
          Result.Add('{units}');
 
-         for i := 0 to oxedProject.Units.n - 1 do begin
-            if(i < oxedProject.Units.n - 1) then
-               Result.Add('   {%H-}' + oxedProject.Units.List[i].Name + ',')
+         for i := 0 to oxedProject.MainPackage.Units.n - 1 do begin
+            if(i < oxedProject.MainPackage.Units.n - 1) then
+               Result.Add('   {%H-}' + oxedProject.MainPackage.Units.List[i].Name + ',')
             else
-               Result.Add('   {%H-}' + oxedProject.Units.List[i].Name);
+               Result.Add('   {%H-}' + oxedProject.MainPackage.Units.List[i].Name);
          end;
       end;
    end;
@@ -664,7 +664,7 @@ begin
 
    {check if main unit exists}
    if(oxedProject.MainUnit <> '') then begin
-      if(oxedProject.Units.Find(oxedProject.MainUnit) = nil) then begin
+      if(oxedProject.MainPackage.Units.Find(oxedProject.MainUnit) = nil) then begin
          oxedMessages.e('Specified main unit ' + oxedProject.MainUnit + ' not found.');
          exit(false);
       end;

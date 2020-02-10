@@ -124,9 +124,9 @@ begin
    unitFile.Path := f.FileName;
 
    if(f.Extension = '.pas') then begin
-      oxedProject.Units.Add(unitFile);
+      oxedProject.MainPackage.Units.Add(unitFile);
    end else if(f.Extension = '.inc') then
-      oxedProject.IncludeFiles.Add(unitFile);
+      oxedProject.MainPackage.IncludeFiles.Add(unitFile);
 end;
 
 procedure onStart();
