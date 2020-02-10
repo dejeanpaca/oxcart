@@ -55,9 +55,9 @@ begin
    Result := False;
 end;
 {$ELSE}
-procedure TFileTrash.Recycle(const fn: StdString);
+function TFileTrash.Recycle(const fn: StdString): boolean;
 begin
-
+   Result := false;
 end;
 {$ENDIF}
 
