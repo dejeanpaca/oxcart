@@ -98,8 +98,6 @@ begin
             trashPath := '';
       end;
    end;
-
-   writeln('TRASH: ', trashPath);
 end;
 
 function TFileTrash.Recycle(const fn: StdString): boolean;
