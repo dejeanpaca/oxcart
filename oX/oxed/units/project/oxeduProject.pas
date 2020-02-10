@@ -182,6 +182,7 @@ begin
    RunParameters.Initialize(RunParameters);
    BuildModes.Initialize(BuildModes);
    Symbols.Initialize(Symbols);
+   Packages.Initialize(Packages);
 end;
 
 procedure oxedTProject.SetPath(const newPath: StdString);
@@ -260,7 +261,7 @@ var
    p: oxedTPackage;
 
 begin
-   ZeroPtr(@p, SizeOf(p));
+   oxedTPackage.Init(p);
    p.Id := packageId;
 
    Packages.Add(p);
@@ -271,7 +272,7 @@ var
    p: oxedTPackage;
 
 begin
-   ZeroPtr(@p, SizeOf(p));
+   oxedTPackage.Init(p);
    p.Path := packagePath;
 
    Packages.Add(p);
