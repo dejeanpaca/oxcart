@@ -17,7 +17,7 @@ INTERFACE
       {ox}
       oxuRunRoutines, oxuThreadTask, oxuRun,
       {oxed}
-      uOXED, oxeduProject, oxeduProjectManagement, oxeduTasks, oxeduActions;
+      uOXED, oxeduPackage, oxeduProject, oxeduProjectManagement, oxeduTasks, oxeduActions;
 
 TYPE
    { oxedTProjectScannerTask }
@@ -26,8 +26,6 @@ TYPE
       constructor Create(); override;
       procedure Run(); override;
 
-      procedure TaskStart(); override;
-
       procedure ThreadStart(); override;
       procedure ThreadDone(); override;
    end;
@@ -35,6 +33,8 @@ TYPE
    oxedTScannerFile = record
       FileName,
       Extension: StdString;
+
+      Package: oxedPPackage;
 
       fd: TFileDescriptor;
    end;
@@ -53,6 +53,8 @@ TYPE
    oxedTProjectScannerGlobal = record
       Walker: TFileTraverse;
       Task: oxedTProjectScannerTask;
+
+      CurrentPackage: oxedPPackage;
 
       OnStart,
       OnDone: TProcedures;
@@ -84,6 +86,7 @@ begin
    f.FileName := fd.Name;
    f.Extension := ext;
    f.fd := fd;
+   f.Package := oxedProjectScanner.CurrentPackage;
 
    oxedProjectScanner.OnFile.Call(f);
 
@@ -158,13 +161,27 @@ begin
 end;
 
 procedure oxedTProjectScannerTask.Run();
+var
+   i: loopint;
+
+procedure scanPackage(var p: oxedTPackage; const path: StdString);
+begin
+   log.v('Scanning: ' + path);
+   oxedProjectScanner.CurrentPackage := @p;
+   oxedProjectScanner.Walker.Run(path);
+end;
+
 begin
    inherited Run;
 
    log.v('Project scan started ...');
 
    try
-     oxedProjectScanner.Walker.Run();
+      scanPackage(oxedProject.MainPackage, oxedProject.Path);
+
+      for i := 0 to oxedProject.Packages.n - 1 do begin
+         scanPackage(oxedProject.Packages.List[i], oxedProject.GetPackagePath(oxedProject.Packages.List[i]));
+      end;
    except
       on e: Exception do begin
          log.e('Project scanner failed running');
@@ -172,15 +189,10 @@ begin
       end;
    end;
 
+   oxedProjectScanner.CurrentPackage := nil;
+
    oxedProject.Session.InitialScanDone := true;
    log.v('Done project scan');
-end;
-
-procedure oxedTProjectScannerTask.TaskStart();
-begin
-   inherited TaskStart;
-
-   oxedProject.MainPackage.DisposeList();
 end;
 
 procedure oxedTProjectScannerTask.ThreadStart();
