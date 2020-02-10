@@ -105,7 +105,7 @@ TYPE
          wndID: uiTControlID;
 
          SystemLocations,
-         RecentsLocations: TAnsiStringArray;
+         RecentsLocations: TStringArray;
 
       public
          {create the dialog}
