@@ -246,6 +246,9 @@ end;
 
 function oxedTProject.GetPackagePath(const package: oxedTPackage): StdString;
 begin
+   if(@package = @MainPackage) then
+      exit(Path);
+
    if(package.Id = '') then
       exit(ExpandFileName(package.Path));
 
