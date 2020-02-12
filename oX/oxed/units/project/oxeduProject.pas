@@ -13,7 +13,7 @@ INTERFACE
    USES
       sysutils, uStd, uLog, uFileUtils, StringUtils, uBuild,
       {oxed}
-      uOXED, oxeduSettings, oxeduPackage, oxeduPackageTypes;
+      uOXED, oxeduSettings, oxeduPackage;
 
 TYPE
    oxedTProjectSymbols = TSimpleStringList;
@@ -118,6 +118,7 @@ TYPE
       procedure AddPackagePath(const packagePath: string);
 
       function GetPackagePath(const package: oxedTPackage): StdString;
+      function GetPackageRelativePath(const package: oxedTPackage): StdString;
    end;
 
 VAR
@@ -250,9 +251,20 @@ begin
       exit(Path);
 
    if(package.Id = '') then
-      exit(ExpandFileName(package.Path));
+      exit(IncludeTrailingPathDelimiterNonEmpty(StdString(ExpandFileName(package.Path))));
 
-   Result := package.Path;
+   Result := IncludeTrailingPathDelimiterNonEmpty(package.Path);
+end;
+
+function oxedTProject.GetPackageRelativePath(const package: oxedTPackage): StdString;
+begin
+   if(@package = @MainPackage) then
+      exit('');
+
+   if(package.Id <> '') then
+      exit(IncludeTrailingPathDelimiterNonEmpty(package.Path));
+
+   Result := IncludeTrailingPathDelimiterNonEmpty(package.Path);
 end;
 
 INITIALIZATION
