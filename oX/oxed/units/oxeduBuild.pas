@@ -586,8 +586,19 @@ begin
 end;
 
 function GetUsesString(): TAppendableString;
-var
-   i: loopint;
+
+   procedure processPackage(var p: oxedTPackage);
+   var
+      i: loopint;
+
+   begin
+      for i := 0 to p.Units.n - 1 do begin
+         if(i < p.Units.n - 1) then
+            Result.Add('   {%H-}' + p.Units.List[i].Name + ',')
+         else
+            Result.Add('   {%H-}' + p.Units.List[i].Name);
+      end;
+   end;
 
 begin
    Result := '';
@@ -607,12 +618,7 @@ begin
          Result := Result + ',';
          Result.Add('{units}');
 
-         for i := 0 to oxedProject.MainPackage.Units.n - 1 do begin
-            if(i < oxedProject.MainPackage.Units.n - 1) then
-               Result.Add('   {%H-}' + oxedProject.MainPackage.Units.List[i].Name + ',')
-            else
-               Result.Add('   {%H-}' + oxedProject.MainPackage.Units.List[i].Name);
-         end;
+         processPackage(oxedProject.MainPackage);
       end;
    end;
 end;
