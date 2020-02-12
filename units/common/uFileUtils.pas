@@ -367,15 +367,18 @@ class function RmDirChildren(const dir: StdString): boolean;
 var
    src: TSearchRec;
    code: longint;
+   dirPath: StdString;
 
 begin
    Result := true;
 
+   dirPath := IncludeTrailingPathDelimiterNonEmpty(dir);
+
    {find first}
-   if(dir = '') then
+   if(dirPath = '') then
       code := FindFirst('*', faReadOnly or faDirectory, src)
    else
-      code := FindFirst(dir + DirectorySeparator + '*', faReadOnly or faDirectory, src);
+      code := FindFirst(dirPath + '*', faReadOnly or faDirectory, src);
 
    if(code = 0) then begin
       repeat
@@ -383,14 +386,14 @@ begin
          if(src.Name <> '.') and (src.Name <> '..') then begin
             {found directory, recurse into it}
             if(src.Attr and faDirectory > 0) then begin
-               if(not RmDirChildren(dir + DirectorySeparator + src.Name)) then
+               if(not RmDirChildren(dirPath + src.Name)) then
                   Result := false;
             end;
          end;
 
          {delete file}
          if(src.Attr and faDirectory = 0) then begin
-            if(not DeleteFile(dir + DirectorySeparator + src.Name)) then
+            if(not DeleteFile(dirPath + src.Name)) then
                Result := false;
          end;
 
@@ -1191,7 +1194,7 @@ end;
 
 procedure TFileTraverse.Run(const startPath: StdString);
 begin
-   path           := startPath;
+   path           := IncludeTrailingPathDelimiterNonEmpty(startPath);
    stopTraverse   := false;
    Running        := true;
 
@@ -1240,13 +1243,13 @@ var
 begin
    {build path}
    if(name <> '') then
-      path := IncludeTrailingPathDelimiterNonEmpty(path) + name;
+      path := path + name;
 
    {find first}
    if(path = '') then
       result := FindFirst('*', faReadOnly or faDirectory, src)
    else
-      result := FindFirst(UTF8Decode(Path + DirectorySeparator + '*'), faReadOnly or faDirectory, src);
+      result := FindFirst(UTF8Decode(path + '*'), faReadOnly or faDirectory, src);
 
    if(result = 0) then begin
       repeat
@@ -1289,7 +1292,7 @@ begin
                if(ok) then begin
                   {build filename}
                   if(path <> '') then
-                     fname := path + DirectorySeparator + UTF8Encode(src.Name)
+                     fname := path + UTF8Encode(src.Name)
                   else
                      fname := UTF8Encode(src.Name);
 
