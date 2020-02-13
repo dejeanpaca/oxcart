@@ -56,12 +56,6 @@ TYPE
       procedure ThreadDone(); override;
    end;
 
-   { oxedTBuildInitializationTask }
-
-   oxedTBuildInitializationTask = class(oxedTTask)
-      constructor Create(); override;
-   end;
-
    { oxedTBuildGlobal }
 
    oxedTBuildGlobal = record
@@ -79,7 +73,6 @@ TYPE
 
       {is there a task currently running}
       Task: oxedTBuildTask;
-      InitializationTask: oxedTBuildInitializationTask;
       {should we include third party units in the current build}
       IncludeThirdParty,
       {indicates to run after a project scan has been done}
@@ -213,16 +206,6 @@ begin
    end;
 end;
 
-{ oxedTBuildInitializationTask }
-
-constructor oxedTBuildInitializationTask.Create();
-begin
-   inherited Create;
-
-   Name := 'BuildInitialization';
-   TaskType := oxedTBuildInitializationTask;
-end;
-
 { TBuildTask }
 
 constructor oxedTBuildTask.Create();
@@ -291,11 +274,7 @@ end;
 
 class procedure oxedTBuildGlobal.Initialize();
 begin
-   oxedBuild.InitializationTask := oxedTBuildInitializationTask.Create();
-   oxedBuild.InitializationTask.SetRoutine(@buildInitialize);
-
-   oxedBuild.InitializationTask.Start();
-   oxedBuild.InitializationTask.EmitAllEvents();
+   buildInitialize();
 
    oxedBuild.Task := oxedTBuildTask.Create();
    oxedBuild.Task.EmitAllEvents();
@@ -304,7 +283,6 @@ end;
 class procedure oxedTBuildGlobal.Deinitialize();
 begin
    FreeObject(oxedBuild.Task);
-   FreeObject(oxedBuild.InitializationTask);
 end;
 
 function oxedTBuildGlobal.BuildEnabled(): boolean;
