@@ -105,14 +105,14 @@ IMPLEMENTATION
 
 { oxTFreetypeFont }
 
-constructor oxTFreetypeFont.Create;
+constructor oxTFreetypeFont.Create();
 begin
    FlipVertically := true;
    MaxPixelValues := true;
    AlphaType := oxFREETYPE_ALPHA_AVERAGE;
 end;
 
-destructor oxTFreetypeFont.Destroy;
+destructor oxTFreetypeFont.Destroy();
 begin
    inherited;
 
@@ -181,7 +181,7 @@ begin
 
          FT_Glyph_Transform(glyph, @trans, nil);
 
-         FT_Glyph_To_Bitmap (glyph, FT_RENDER_MODE_NORMAL, nil, true);
+         FT_Glyph_To_Bitmap(glyph, FT_RENDER_MODE_NORMAL, nil, true);
          bm := PFT_BitmapGlyph(glyph);
 
          Result.Width := bm^.bitmap.width;
