@@ -291,7 +291,7 @@ end;
 
 constructor oxTThreadTask.Create();
 begin
-   Name := 'task';
+   Name := ClassName;
 
    RunnerInstanceType := oxTThreadTaskRunner;
    DoThreadSwitching := true;
@@ -325,6 +325,8 @@ begin
    {$ENDIF}
    {$ENDIF}
 
+   StartPrepare();
+
    {call start event}
    if(OX_THREAD_TASK_EMIT_START in Events.Emit) then begin
       ThreadStart();
@@ -332,7 +334,6 @@ begin
    end;
 
    {$IFNDEF NO_THREADS}
-   StartPrepare();
    Thread.Start();
    {$ELSE}
    RunHere();
@@ -360,8 +361,6 @@ end;
 
 procedure oxTThreadTask.RunHere();
 begin
-   StartPrepare();
-
    Startup();
    Run();
    Finish();
