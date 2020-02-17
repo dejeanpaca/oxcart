@@ -31,6 +31,11 @@ INTERFACE
       oxeduBuildEvents, oxeduLazarus, oxeduMessages, oxeduProjectManagement,
       {components}
       oxeduCameraComponent, oxeduLightComponent, oxeduUIComponent,
+      {platforms}
+      oxeduEditorPlatform,
+      oxeduWindowsPlatform,
+      oxeduLinuxPlatform,
+      oxeduAndroidPlatform,
       {$IFNDEF NO_UI}
       {base ui}
       oxeduRecents, oxeduSplash, oxeduSplashScreen, oxeduIcons,
@@ -49,19 +54,11 @@ INTERFACE
       oxeduWindowTitle, oxeduProjectNotification,
       oxuStandardFilePreviewers, oxeduSceneScreenshot, oxeduPreviewGenerator,
       oxeduiBuildOutput,
+      oxeduPluginsUI,
+      {platforms}
+      oxeduAndroidSettingsWindow
       {$ENDIF}
-      {editor}
-      oxeduEditorPlatform,
-      {windows}
-      oxeduWindowsPlatform,
-      {linux}
-      oxeduLinuxPlatform,
-      {android}
-      oxeduAndroidPlatform, oxeduAndroidSettingsWindow
       {plugins}
-      {$IFNDEF NO_UI}
-      , oxeduPluginsUI
-      {$ENDIF}
       {$INCLUDE ../plugins/oxed_plugins.inc};
 
 procedure oxedInitialize();
