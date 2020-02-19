@@ -92,7 +92,6 @@ begin
    oxedMenuToolbar.Toolbar.UpdateHint();
 end;
 
-
 procedure initialize();
 begin
    if(oxedMenuToolbar.Toolbar = nil) then
@@ -113,7 +112,6 @@ end;
 procedure deinit();
 begin
 end;
-
 
 INITIALIZATION
    oxed.Init.dAdd('oxed.tasks-ui', @deinit);
