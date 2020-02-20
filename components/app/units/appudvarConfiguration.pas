@@ -42,9 +42,9 @@ IMPLEMENTATION
 function appTDVarTextConfiguration.GetFN(): StdString;
 begin
    if(Path = '') then
-      result := appPath.Configuration.Path + Filename
+      Result := appPath.Configuration.Path + Filename
    else
-      result := Path + Filename;
+      Result := Path + Filename;
 end;
 
 class procedure appTDVarTextConfiguration.Load();
@@ -82,7 +82,7 @@ begin
 end;
 
 INITIALIZATION
-   appDVarTextConfiguration.FileName := 'dvar.cfg';
+   appDVarTextConfiguration.FileName := 'config.dvar';
    appDVarTextConfiguration.AutoLoad := true;
    appDVarTextConfiguration.AutoSave := true;
 
