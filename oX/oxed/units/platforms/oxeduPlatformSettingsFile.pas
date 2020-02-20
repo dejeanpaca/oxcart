@@ -19,7 +19,7 @@ TYPE
    { oxedTPlatformSettingsFile }
 
    oxedTPlatformSettingsFile = record
-      function GetFn(var platform: oxedTPlatform): string;
+      function GetFn(var platform: oxedTPlatform): StdString;
       procedure Load(var platform: oxedTPlatform);
       procedure Save(var platform: oxedTPlatform);
    end;
@@ -31,7 +31,7 @@ IMPLEMENTATION
 
 { oxedTPlatformSettingsFile }
 
-function oxedTPlatformSettingsFile.GetFn(var platform: oxedTPlatform): string;
+function oxedTPlatformSettingsFile.GetFn(var platform: oxedTPlatform): StdString;
 begin
    Result := oxedProject.GetConfigFilePath(platform.Id + '.dvar');
 end;
