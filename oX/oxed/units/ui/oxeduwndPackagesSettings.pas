@@ -48,7 +48,6 @@ begin
    Result := '';
 end;
 
-
 procedure revertCallback();
 begin
 end;
@@ -78,15 +77,14 @@ begin
    end;
 end;
 
-
 procedure addPath();
 begin
-   if(dlgAddPath = nil) then
-      dlgAddPath := oxFileDialog.Open();
+   if(dlgAddPath = nil) then begin
+      dlgAddPath := oxFileDialog.OpenDirectories();
+      dlgAddPath.SetTitle('Add Path');
+      dlgAddPath.Callback := @addPathCallback;
+   end;
 
-   dlgAddPath.SetTitle('Add Path');
-   dlgAddPath.Callback := @addPathCallback;
-   dlgAddPath.ShowDirectoriesOnly := true;
    dlgAddPath.Open();
 end;
 
