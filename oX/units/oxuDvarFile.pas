@@ -11,7 +11,8 @@ UNIT oxuDvarFile;
 INTERFACE
 
    USES
-      uStd, uLog, udvars, dvaruFile;
+      uStd, uLog, udvars, dvaruFile,
+      appuPaths;
 
 TYPE
    { oxTDvarFile }
@@ -19,7 +20,10 @@ TYPE
    oxTDvarFile = object
       Enabled: boolean;
       dvg: PDVarGroup;
-      Path: StdString;
+      {path to where the file will be stored (if empty configuration directory is used)}
+      Path,
+      {file name of the dvar file (can also include a relative path to Path)}
+      FileName: StdString;
 
       constructor Create();
 
@@ -39,7 +43,10 @@ end;
 
 function oxTDvarFile.GetFn(): StdString;
 begin
-   Result := Path;
+   if(Path <> '') then
+      Result := Path + FileName
+   else
+      Result := appPath.Configuration.Path + FileName;
 end;
 
 procedure oxTDvarFile.Load();
