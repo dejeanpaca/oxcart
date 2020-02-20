@@ -13,21 +13,13 @@ INTERFACE
    USES
       sysutils, uStd, udvars, dvaruFile,
       {oxed}
-      oxeduProject, oxeduProjectPackages, oxeduProjectManagement;
+      oxeduProject, oxeduProjectPackages, oxeduProjectManagement, oxeduProjectConfigurationFileHelper;
 
 CONST
    OXED_PROJECT_PACKAGES_CONFIGURATION_FILE = 'packages.dvar';
 
-TYPE
-
-   { oxedTProjectPackagesConfiguration }
-
-   oxedTProjectPackagesConfiguration = record
-      class function GetFn(): string; static;
-
-      class procedure Load(); static;
-      class procedure Save(); static;
-   end;
+VAR
+   oxedProjectPackagesConfigurationFile: oxedTProjectConfigurationFileHelper;
 
 IMPLEMENTATION
 
@@ -37,29 +29,14 @@ VAR
 
    currentPackage: StdString;
 
-{ oxedTProjectPackagesConfiguration }
-
-class function oxedTProjectPackagesConfiguration.GetFn(): string;
+procedure load();
 begin
-   Result := oxedProject.GetConfigFilePath(OXED_PROJECT_PACKAGES_CONFIGURATION_FILE);
+   oxedProjectPackagesConfigurationFile.Load();
 end;
 
-procedure UpdateVars();
+procedure save();
 begin
-end;
-
-class procedure oxedTProjectPackagesConfiguration.Load();
-begin
-   UpdateVars();
-
-   dvarf.ReadText(dvGroup, GetFn());
-end;
-
-class procedure oxedTProjectPackagesConfiguration.Save();
-begin
-   UpdateVars();
-
-   dvarf.WriteText(dvGroup, GetFn());
+   oxedProjectPackagesConfigurationFile.Save();
 end;
 
 procedure packageNotify(var context: TDVarNotificationContext);
@@ -96,7 +73,11 @@ INITIALIZATION
    dvPackage.pNotify := @packageNotify;
    dvPackage.Properties := dvPackage.Properties + [dvarNOTIFY_READ, dvarNOTIFY_WRITE];
 
-   oxedProjectManagement.OnLoadProject.Add(@oxedTProjectPackagesConfiguration.Load);
-   oxedProjectManagement.OnSaveProject.Add(@oxedTProjectPackagesConfiguration.Save);
+   oxedProjectPackagesConfigurationFile.Create();
+   oxedProjectPackagesConfigurationFile.FileName := OXED_PROJECT_PACKAGES_CONFIGURATION_FILE;
+   oxedProjectPackagesConfigurationFile.dvg := @dvGroup;
+
+   oxedProjectManagement.OnLoadProject.Add(@load);
+   oxedProjectManagement.OnSaveProject.Add(@save);
 
 END.

@@ -14,22 +14,14 @@ INTERFACE
       sysutils, uStd, uLog, udvars, dvaruFile, uFileUtils,
       uAppInfo,
       {oxed}
-      uOXED, oxeduProject, oxeduPackage,
+      uOXED, oxeduProject, oxeduPackage, oxeduProjectConfigurationFileHelper,
       oxeduMessages, oxeduSettings;
 
 CONST
    OXED_PROJECT_SETTINGS_FILE = 'settings.dvar';
 
-TYPE
-
-   { oxedTProjectSettings }
-
-   oxedTProjectSettings = record
-      class function GetFn(): StdString; static;
-
-      class procedure Load(); static;
-      class procedure Save(); static;
-   end;
+VAR
+   oxedProjectSettingsFile: oxedTProjectConfigurationFileHelper;
 
 IMPLEMENTATION
 
@@ -48,12 +40,6 @@ VAR
 
    stringValue: StdString;
 
-{ oxedTProjectSettings }
-
-class function oxedTProjectSettings.GetFn(): StdString;
-begin
-   Result := oxedProject.GetConfigFilePath(OXED_PROJECT_SETTINGS_FILE);
-end;
 
 procedure UpdateVars();
 begin
@@ -66,12 +52,8 @@ begin
    dvLineEndings.Update(oxedProject.LineEndings);
 end;
 
-class procedure oxedTProjectSettings.Load();
+procedure validateLoad();
 begin
-   UpdateVars();
-
-   dvarf.ReadText(dvGroup, GetFn());
-
    if(oxedProject.Name = '') then begin
       oxedProject.Name := 'project';
       oxedMessages.w('Project name not valid, reset to default');
@@ -91,13 +73,6 @@ begin
 
    if(oxedProject.LineEndings = '') then
       oxedProject.LineEndings := oxedSettings.LineEndings;
-end;
-
-class procedure oxedTProjectSettings.Save();
-begin
-   UpdateVars();
-
-   dvarf.WriteText(dvGroup, GetFn());
 end;
 
 procedure dvRunParameterNotify(var context: TDVarNotificationContext);
@@ -151,5 +126,11 @@ INITIALIZATION
 
    dvGroup.Add(dvFeature, 'feature', dtcSTRING, @stringValue, [dvarNOTIFY_WRITE]);
    dvFeature.pNotify := @dvFeatureNotify;
+
+   oxedProjectSettingsFile.Create();
+   oxedProjectSettingsFile.FileName := OXED_PROJECT_SETTINGS_FILE;
+   oxedProjectSettingsFile.BeforeLoad := @UpdateVars;
+   oxedProjectSettingsFile.AfterLoad := @validateLoad;
+   oxedProjectSettingsFile.BeforeSave := @UpdateVars;
 
 END.

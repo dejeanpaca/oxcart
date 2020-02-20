@@ -104,9 +104,9 @@ begin
 
    log.v('project > Saving: ' + oxedProject.Name);
 
-   oxedTProjectSettings.Save();
+   oxedProjectSettingsFile.Save();
    log.v('project > Saved settings');
-   oxedTProjectSession.Save();
+   oxedProjectSessionFile.Save();
    log.v('project > Saved session');
 
    {save other project data}
@@ -158,10 +158,10 @@ begin
          oxedProjectManagement.OnPreOpen.Call();
 
          {TODO: Check if project settings loaded properly}
-         oxedTProjectSettings.Load();
+         oxedProjectSettingsFile.Load();
          log.v('project > Loading project: ' + oxedProject.Name);
          log.v('project > Loaded settings');
-         oxedTProjectSession.Load();
+         oxedProjectSessionFile.Load();
          log.v('project > Loaded session');
          oxedProject.RecreateTempDirectory();
 
