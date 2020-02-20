@@ -44,7 +44,8 @@ IMPLEMENTATION
 
 VAR
    dvManualFileManagement,
-   dvPackageName: TDVar;
+   dvPackageName,
+   dvSDKPath: TDVar;
 
 { oxedTAndroidSettings }
 
@@ -70,5 +71,7 @@ INITIALIZATION
 
    oxedAndroidSettings.Project.dvg.Add(dvManualFileManagement, 'manual_file_management', dtcBOOL, @oxedAndroidSettings.Project.ManualFileManagement);
    oxedAndroidSettings.Project.dvg.Add(dvPackageName, 'package_name', dtcSTRING, @oxedAndroidSettings.Project.PackageName);
+
+   oxedAndroidSettings.dvg.Add(dvSDKPath, 'sdk_path', dtcSTRING, @oxedAndroidSettings.SDKPath);
 
 END.
