@@ -11,7 +11,7 @@ UNIT oxeduAndroidSettings;
 INTERFACE
 
    USES
-      uStd, udvars, uFile,
+      uStd, udvars, uFile, StringUtils, uLog,
       {oxed}
       uOXED, oxeduProjectManagement;
 
@@ -21,7 +21,9 @@ TYPE
    oxedTAndroidSettings = record
       dvg: TDVarGroup;
 
-      SDKPath: StdString;
+      SDKPath,
+      UsedNDK,
+      NDKPath: StdString;
 
       Project: record
          dvg: TDVarGroup;
@@ -34,7 +36,11 @@ TYPE
          ManualFileManagement: boolean;
       end;
 
-      class procedure Reset(); static;
+      procedure ProjectReset();
+      procedure Validate();
+
+      {get the ndk path}
+      function GetNDKPath(): StdString;
    end;
 
 VAR
@@ -49,21 +55,39 @@ VAR
 
 { oxedTAndroidSettings }
 
-class procedure oxedTAndroidSettings.Reset();
+procedure oxedTAndroidSettings.ProjectReset();
 begin
-  with oxedAndroidSettings do begin
-     Project.PackageName := '';
-     Project.ManualFileManagement := false;
-  end;
+  Project.PackageName := '';
+  Project.ManualFileManagement := false;
+end;
+
+procedure oxedTAndroidSettings.Validate();
+begin
+   SDKPath := IncludeTrailingPathDelimiterNonEmpty(SDKPath);
+
+   if(SDKPath = '') then
+      log.w('Android SDK path not set')
+   else begin
+      if(UsedNDK = '') and (NDKPath = '') then
+         log.w('Android NDK is not set');
+   end;
+end;
+
+function oxedTAndroidSettings.GetNDKPath(): StdString;
+begin
+   if(NDKPath <> '') then
+      Result := NDKPath
+   else
+      Result := SDKPath + UsedNDK;
 end;
 
 procedure preOpen();
 begin
-   oxedAndroidSettings.Reset();
+   oxedAndroidSettings.ProjectReset();
 end;
 
 INITIALIZATION
-   oxedTAndroidSettings.Reset();
+   oxedAndroidSettings.ProjectReset();
    oxedProjectManagement.OnPreOpen.Add(@preOpen);
 
    dvar.Init(oxedAndroidSettings.dvg, 'android');
