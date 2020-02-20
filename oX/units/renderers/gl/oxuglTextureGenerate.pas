@@ -42,7 +42,9 @@ var
    storageType,
    texDim: GLuint;
    glErr: GLenum;
+   {$IFNDEF GLES}
    mips: boolean;
+   {$ENDIF}
 
 function enoughMem(): boolean;
 {$IFNDEF GLES}
@@ -97,8 +99,6 @@ begin
       exit(oxeNO_GRAPHICS_MEM);
    end;
 
-   mips := (gen.MipCount = -1) or (gen.MipCount > 0);
-
    {bind texture and assign parameters}
    glBindTexture(texDim, Tex);
    tex.SetFilter(gen.Filter);
@@ -109,6 +109,8 @@ begin
 
    {generate 2D mipmaps}
    {$IFNDEF GLES}
+   mips := (gen.MipCount = -1) or (gen.MipCount > 0);
+
    if(mips) then begin
       glGenerateMipmap(texDim);
 
