@@ -9,52 +9,16 @@ UNIT oxeduAndroidSettingsFile;
 INTERFACE
 
    USES
-      uStd, uLog, udvars, dvaruFile,
+      uStd, uLog, udvars,
       {app}
       appuPaths,
       {oxed}
-      uOXED, oxeduAndroidSettings;
-
-TYPE
-   { oxedTAndroidSettingsFile }
-
-   oxedTAndroidSettingsFile = record
-      function GetFn(): StdString;
-      procedure Load();
-      procedure Save();
-   end;
+      uOXED, oxeduAndroidSettings, oxuDvarFile;
 
 VAR
-   oxedAndroidSettingsFile: oxedTAndroidSettingsFile;
+   oxedAndroidSettingsFile: oxTDvarFile;
 
 IMPLEMENTATION
-
-{ oxedTPlatformSettingsFile }
-
-function oxedTAndroidSettingsFile.GetFn(): StdString;
-begin
-   Result := appPath.Configuration.Path + 'android.dvar';
-end;
-
-procedure oxedTAndroidSettingsFile.Load();
-var
-   fn: StdString;
-
-begin
-   fn := GetFn();
-   dvarf.ReadText(oxedAndroidSettings.dvg, fn);
-   log.v('Loaded: ' + fn);
-end;
-
-procedure oxedTAndroidSettingsFile.Save();
-var
-   fn: StdString;
-
-begin
-   fn := GetFn();
-   dvarf.WriteText(oxedAndroidSettings.dvg, fn);
-   log.v('Saved: ' + fn);
-end;
 
 procedure init();
 begin
@@ -67,6 +31,10 @@ begin
 end;
 
 INITIALIZATION
+   oxedAndroidSettingsFile.Create();
+   oxedAndroidSettingsFile.FileName := 'android.dvar';
+   oxedAndroidSettingsFile.dvg := @oxedAndroidSettings.dvg;
+
    oxed.init.Add('android.settings_file', @init, @deinit)
 
 END.
