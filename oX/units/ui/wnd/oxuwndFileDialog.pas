@@ -163,8 +163,12 @@ TYPE
 
       {create a new Open file dialog}
       function Open(): oxTFileDialog;
+      {create a new Open file dialog}
+      function OpenDirectories(): oxTFileDialog;
       {create a new Save file dialog}
       function Save(): oxTFileDialog;
+      {create a new Save file dialog}
+      function SaveDirectories(): oxTFileDialog;
       {create a new SaveAs file dialog}
       function SaveAs(): oxTFileDialog;
    end;
@@ -774,6 +778,12 @@ begin
    result := dlg;
 end;
 
+function oxTFileDialogGlobal.OpenDirectories(): oxTFileDialog;
+begin
+   Result := Open();
+   Result.ShowDirectoriesOnly := true;
+end;
+
 function oxTFileDialogGlobal.Save(): oxTFileDialog;
 var
    dlg: oxTFileDialog = nil;
@@ -782,6 +792,12 @@ begin
    dlg := oxTFileDialog.Create(oxFILE_DLG_SAVE);
 
    result := dlg;
+end;
+
+function oxTFileDialogGlobal.SaveDirectories(): oxTFileDialog;
+begin
+   Result := Save();
+   Result.ShowDirectoriesOnly := true;
 end;
 
 function oxTFileDialogGlobal.SaveAs(): oxTFileDialog;
