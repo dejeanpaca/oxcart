@@ -21,10 +21,16 @@ TYPE
    oxedTAndroidSettings = record
       dvg: TDVarGroup;
 
-      {android package name}
-      PackageName: StdString;
-      {should you manage android files yourself}
-      ManualFileManagement: boolean;
+      Project: record
+         dvg: TDVarGroup;
+
+         { PROJECT SETTINGS }
+
+         {android package name}
+         PackageName: StdString;
+         {should you manage android files yourself}
+         ManualFileManagement: boolean;
+      end;
 
       class procedure Reset(); static;
    end;
@@ -43,17 +49,24 @@ VAR
 class procedure oxedTAndroidSettings.Reset();
 begin
   with oxedAndroidSettings do begin
-     PackageName := '';
-     ManualFileManagement := false;
+     Project.PackageName := '';
+     Project.ManualFileManagement := false;
   end;
+end;
+
+procedure preOpen();
+begin
+   oxedAndroidSettings.Reset();
 end;
 
 INITIALIZATION
    oxedTAndroidSettings.Reset();
+   oxedProjectManagement.OnPreOpen.Add(@preOpen);
 
    dvar.Init(oxedAndroidSettings.dvg, 'android');
+   dvar.Init(oxedAndroidSettings.Project.dvg, 'android');
 
-   oxedAndroidSettings.dvg.Add(dvManualFileManagement, 'manual_file_management', dtcBOOL, @oxedAndroidSettings.ManualFileManagement);
-   oxedAndroidSettings.dvg.Add(dvPackageName, 'package_name', dtcSTRING, @oxedAndroidSettings.PackageName);
+   oxedAndroidSettings.Project.dvg.Add(dvManualFileManagement, 'manual_file_management', dtcBOOL, @oxedAndroidSettings.Project.ManualFileManagement);
+   oxedAndroidSettings.Project.dvg.Add(dvPackageName, 'package_name', dtcSTRING, @oxedAndroidSettings.Project.PackageName);
 
 END.
