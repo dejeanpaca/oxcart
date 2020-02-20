@@ -21,6 +21,8 @@ TYPE
    oxedTAndroidSettings = record
       dvg: TDVarGroup;
 
+      SDKPath: StdString;
+
       Project: record
          dvg: TDVarGroup;
 
