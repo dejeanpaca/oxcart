@@ -30,14 +30,16 @@ var
    list: wdgTDropDownList;
 
 begin
+   oxwndSettings.Tabs.AddTab('Audio', 'audio');
+
    wdgCheckbox.Add('Enabled').Check(oxAudio.Enabled);
+
+   wdgDivisor.Add('Audio settings');
 
    wdgLabel.Add('Backend', uiWidget.LastRect.BelowOf(0, -4), oxNullDimensions);
    list := wdgDropDownList.Add(uiWidget.LastRect.RightOf(0, 4), oxDimensions(90, 20));
 
    list.Add('Default');
-
-   wdgDivisor.Add('');
 end;
 
 

@@ -76,7 +76,7 @@ end;
 procedure init();
 begin
    oxwndSettings.OnRevert.Add(@revertSettings);
-   oxwndSettings.PostAddTabs.Add(@addTabs);
+   oxwndSettings.OnAddTabs.Add(@addTabs);
 end;
 
 INITIALIZATION
