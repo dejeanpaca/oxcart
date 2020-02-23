@@ -38,15 +38,16 @@ CONST
    oxFILE_DLG_HEIGHT             = 320;
 
 TYPE
+   oxPFileDialog = ^oxTFileDialog;
 
    { wdgTFileDialogFileList }
 
    wdgTFileDialogFileList = class(wdgTFileList)
-      Dialog: TObject;
+      Dialog: oxPFileDialog;
 
-      constructor Create; override;
+      constructor Create(); override;
 
-      procedure OnPathChanged; override;
+      procedure OnPathChanged(); override;
       procedure ItemClicked(index: loopint; button: TBitSet = appmcLEFT); override;
       procedure ItemCleared(); override;
 
@@ -56,7 +57,7 @@ TYPE
 
    { oxTFileDialog }
 
-   oxTFileDialog = class
+   oxTFileDialog = object
       public
          Title,
          SelectedFile: StdString;
@@ -77,8 +78,8 @@ TYPE
 
          StoredDimensions: oxTDimensions; static;
 
-         Callback: procedure(dialog: oxTFileDialog);
-         OnPathChange: procedure(dialog: oxTFileDialog);
+         Callback: procedure(var dialog: oxTFileDialog);
+         OnPathChange: procedure(var dialog: oxTFileDialog);
 
          wdg: record
             Path,
@@ -134,7 +135,7 @@ TYPE
    { oxuiTFileDialogWindow }
 
    oxuiTFileDialogWindow = class(uiTWindow)
-      Dialog: oxTFileDialog;
+      Dialog: oxPFileDialog;
 
       SuppressDeactivate: boolean;
 
@@ -180,7 +181,7 @@ IMPLEMENTATION
 
 TYPE
    TFileList = class(wdgTStringItemList)
-      Dialog: oxTFileDialog;
+      Dialog: oxPFileDialog;
    end;
 
    { TRecentsList }
@@ -206,7 +207,7 @@ end;
 
 procedure oxuiTFileDialogWindow.DeInitialize();
 begin
-   Dialog.wnd := nil;
+   Dialog^.wnd := nil;
 end;
 
 procedure oxuiTFileDialogWindow.OnDeactivate;
@@ -215,7 +216,7 @@ begin
       exit;
 
    if(not SuppressDeactivate) then
-      Dialog.Done(true)
+      Dialog^.Done(true)
    else
       SuppressDeactivate := false;
 
@@ -233,45 +234,39 @@ procedure oxuiTFileDialogWindow.SizeChanged();
 begin
    inherited SizeChanged();
 
-   Dialog.OnResize();
+   Dialog^.OnResize();
 end;
 
 { wdgTFileDialogFileList }
 
-constructor wdgTFileDialogFileList.Create;
+constructor wdgTFileDialogFileList.Create();
 begin
-   inherited Create;
+   inherited;
 
    Selectable := true;
 end;
 
-procedure wdgTFileDialogFileList.OnPathChanged;
-var
-   dlg: oxTFileDialog;
-
+procedure wdgTFileDialogFileList.OnPathChanged();
 begin
-   inherited OnPathChanged;
+   inherited;
 
-   dlg := oxTFileDialog(Dialog);
+   Dialog^.wdg.Path.SetText(CurrentPath);
 
-   dlg.wdg.Path.SetText(CurrentPath);
-   if(dlg.OnPathChange <> nil) then
-      dlg.OnPathChange(dlg);
+   if(Dialog^.OnPathChange <> nil) then
+      Dialog^.OnPathChange(Dialog^);
 end;
 
 procedure wdgTFileDialogFileList.ItemClicked(index: loopint; button: TBitSet = appmcLEFT);
 var
-   dlg: oxTFileDialog;
    from: uiTWidgetWindowOrigin;
 
 begin
    inherited ItemClicked(index, button);
 
    if(button = appmcLEFT) then begin
-      dlg := oxTFileDialog(Dialog);
-      if(LastGridItemUnderPointer <> -1) and (dlg.wdg.Filename <> nil) then begin
-         if(dlg.DialogType <> oxFILE_DLG_OPEN) then
-            dlg.wdg.Filename.SetText(Files.List[LastGridItemUnderPointer].Name)
+      if(LastGridItemUnderPointer <> -1) and (Dialog^.wdg.Filename <> nil) then begin
+         if(Dialog^.DialogType <> oxFILE_DLG_OPEN) then
+            Dialog^.wdg.Filename.SetText(Files.List[LastGridItemUnderPointer].Name)
       end;
 
       SetupRequireFile();
@@ -284,7 +279,7 @@ begin
 
       oxwndFileContextMenu.Parameters.OnDone.Use(@OnContextMenuDone);
 
-      oxuiTFileDialogWindow(oxTFileDialog(Dialog).wnd).SuppressDeactivate := true;
+      oxuiTFileDialogWindow(Dialog^.wnd).SuppressDeactivate := true;
       from.SetPoint(GetAbsolutePointer(LastPointerPosition), Self);
 
       oxwndFileContextMenu.Open(from);
@@ -300,24 +295,19 @@ end;
 
 procedure wdgTFileDialogFileList.OnContextMenuDone();
 begin
-   oxTFileDialog(Dialog).wdg.Files.Reload();
+   Dialog^.wdg.Files.Reload();
 end;
 
 procedure wdgTFileDialogFileList.SetupRequireFile();
-var
-   dlg: oxTFileDialog;
-
 begin
-   dlg := oxTFileDialog(Dialog);
-
-   if(dlg.RequireFile) and (dlg.DialogType = oxFILE_DLG_OPEN) then begin
+   if(Dialog^.RequireFile) and (Dialog^.DialogType = oxFILE_DLG_OPEN) then begin
       if(LastGridItemUnderPointer < 0) then
-         dlg.wdg.Ok.Disable()
+         Dialog^.wdg.Ok.Disable()
       else begin
          if(not Files[LastGridItemUnderPointer].IsDirectory()) then
-            dlg.wdg.Ok.Enable()
+            Dialog^.wdg.Ok.Enable()
          else
-            dlg.wdg.Ok.Disable();
+            Dialog^.wdg.Ok.Disable();
       end;
    end;
 end;
@@ -330,7 +320,7 @@ begin
 
    if(button = appmcLEFT) then begin
       if(Dialog <> nil) then
-         Dialog.SetPath(Dialog.SystemLocations[index]);
+         Dialog^.SetPath(Dialog^.SystemLocations[index]);
    end;
 end;
 
@@ -359,7 +349,7 @@ end;
 
 function wdgControl(wdg: uiTWidget; what: loopint): loopint;
 var
-   dlg: oxTFileDialog;
+   dlg: oxPFileDialog;
 
 begin
    result := -1;
@@ -370,20 +360,20 @@ begin
       result := 0;
 
       if(what = wdghINPUTBOX_CONFIRM) then begin
-         if(DirectoryExists(dlg.wdg.Path.GetText())) then
-            dlg.wdg.Files.FindAll(dlg.wdg.Path.GetText());
+         if(DirectoryExists(dlg^.wdg.Path.GetText())) then
+            dlg^.wdg.Files.FindAll(dlg^.wdg.Path.GetText());
          end;
    end else if(wdg = uiWidget.IDs.CANCEL) then
-      dlg.Done(true)
+      dlg^.Done(true)
    else if(wdg = uiWidget.IDs.OK) then
-      dlg.Done(false)
+      dlg^.Done(false)
    else if (wdg = oxFileDialog.ids.wdgUP) then begin
       if(what = wdghBUTTON_CLICKED) then
-         dlg.wdg.Files.GoUp();
+         dlg^.wdg.Files.GoUp();
    end;
 end;
 
-function getSystemPaths(dialog: oxTFileDialog): TAnsiStringArray;
+function getSystemPaths(var dialog: oxTFileDialog): TAnsiStringArray;
 CONST
    COUNT = 2;
 
@@ -416,54 +406,54 @@ end;
 
 procedure mbNotifyFail(var mb: uiTMessageBoxData);
 var
-   dialog: oxTFileDialog;
+   dialog: oxPFileDialog;
 
 begin
-   dialog := oxTFileDialog(uiTMessageBoxWindow(mb.Window).External);
+   dialog := oxPFileDialog(uiTMessageBoxWindow(mb.Window).ExternalPtr);
 
    Exclude(mb.Window.Properties, uiwndpCLOSE_SELECT);
-   dialog.wnd.Select();
+   dialog^.wnd.Select();
 end;
 
 procedure mbNotify(var mb: uiTMessageBoxData);
 var
-   dialog: oxTFileDialog;
+   dialog: oxPFileDialog;
    path: StdString;
 
 begin
-   dialog := oxTFileDialog(uiTMessageBoxWindow(mb.Window).External);
+   dialog := oxPFileDialog(uiTMessageBoxWindow(mb.Window).ExternalPtr);
 
    if(mb.Input <> '') and (mb.What = uimbcWHAT_BUTTON) and (mb.Button = uimbcOK) then begin
-      path := dialog.wdg.Files.CurrentPath;
+      path := dialog^.wdg.Files.CurrentPath;
       if(path <> '') then
          path := IncludeTrailingPathDelimiter(path);
 
       path := path + mb.Input;
 
       if(CreateDir(path)) then
-         dialog.wdg.Files.Reload()
+         dialog^.wdg.Files.Reload()
       else begin
-         uiMessageBox.ShowWarning('Faile to create directory', 'Failed to create directory at ' + #13 + path, @mbNotifyFail).External := dialog;
+         uiMessageBox.ShowWarning('Faile to create directory', 'Failed to create directory at ' + #13 + path, @mbNotifyFail).ExternalPtr := dialog;
          exit;
       end;
    end;
 
    Exclude(mb.Window.Properties, uiwndpCLOSE_SELECT);
-   dialog.wnd.Select();
+   dialog^.wnd.Select();
 end;
 
 function filenameInputControl(wdg: uiTWidget; what: loopint): loopint;
 var
-   dialog: oxTFileDialog;
+   dialog: oxPFileDialog;
 
 begin
    if(what = wdghINPUTBOX_CHANGED) then begin
       dialog := oxuiTFileDialogWindow(wdg.wnd).Dialog;
 
       if(wdgTInputBox(wdg).GetText() <> '') then
-         dialog.wdg.Ok.Enable()
+         dialog^.wdg.Ok.Enable()
       else
-         dialog.wdg.Ok.Disable();
+         dialog^.wdg.Ok.Disable();
    end;
 
    Result := -1;
@@ -505,7 +495,7 @@ begin
 
       if(wnd <> nil) then begin
          {link the oxTFileDialog object with the window}
-         oxuiTFileDialogWindow(wnd).Dialog := Self;
+         oxuiTFileDialogWindow(wnd).Dialog := @Self;
 
          if(DialogType <> oxFILE_DLG_OPEN) and (ShowFilenameInput) then
             filenameInput := true;
@@ -533,7 +523,7 @@ begin
 
          uiWidget.Create.Instance := TSystemFilesList;
          wdg.System := wdgTStringList(wdgStringList.Add());
-         TFileList(wdg.System).Dialog := Self;
+         TFileList(wdg.System).Dialog := @Self;
 
          wdg.System.Assign(getSystemPaths(Self));
 
@@ -549,7 +539,7 @@ begin
 
          uiWidget.Create.Instance := TRecentsList;
          wdg.Recents := wdgTStringList(wdgStringList.Add());
-         TFileList(wdg.Recents).Dialog := Self;
+         TFileList(wdg.Recents).Dialog := @Self;
 
          { restore previous target }
          uiWidget.PopTarget();
@@ -558,7 +548,7 @@ begin
          uiWidget.Create.Instance := wdgTFileDialogFileList;
          wdg.Files := wdgTFileDialogFileList(wdgFileList.Add());
          wdg.Files.SetDirectoriesOnly(ShowDirectoriesOnly);
-         wdg.Files.Dialog := Self;
+         wdg.Files.Dialog := @Self;
          wdg.Files.IncludeParentDirectoryLink := false;
 
          uiWidget.LastRect.GoLeft();
@@ -685,7 +675,7 @@ procedure oxTFileDialog.CreateDirectory();
 begin
    oxuiTFileDialogWindow(wnd).SuppressDeactivate := true;
 
-   uiMessageBox.ShowInput('Create directory', 'Enter the name of the directory', @mbNotify).External := oxuiTFileDialogWindow(wnd).Dialog;
+   uiMessageBox.ShowInput('Create directory', 'Enter the name of the directory', @mbNotify).ExternalPtr := oxuiTFileDialogWindow(wnd).Dialog;
 end;
 
 procedure oxTFileDialog.OnResize();
@@ -769,13 +759,8 @@ end;
 { GENERAL ROUTINES }
 
 function oxTFileDialogGlobal.Open(): oxTFileDialog;
-var
-   dlg: oxTFileDialog = nil;
-
 begin
-   dlg := oxTFileDialog.Create(oxFILE_DLG_OPEN);
-
-   result := dlg;
+   Result.Create(oxFILE_DLG_OPEN);
 end;
 
 function oxTFileDialogGlobal.OpenDirectories(): oxTFileDialog;
@@ -785,13 +770,8 @@ begin
 end;
 
 function oxTFileDialogGlobal.Save(): oxTFileDialog;
-var
-   dlg: oxTFileDialog = nil;
-
 begin
-   dlg := oxTFileDialog.Create(oxFILE_DLG_SAVE);
-
-   result := dlg;
+   Result.Create(oxFILE_DLG_SAVE);
 end;
 
 function oxTFileDialogGlobal.SaveDirectories(): oxTFileDialog;
@@ -801,15 +781,9 @@ begin
 end;
 
 function oxTFileDialogGlobal.SaveAs(): oxTFileDialog;
-var
-   dlg: oxTFileDialog = nil;
-
 begin
-   dlg := oxTFileDialog.Create(oxFILE_DLG_SAVE_AS);
-
-   result := dlg;
+   Result.Create(oxFILE_DLG_SAVE_AS);
 end;
-
 
 INITIALIZATION
    oxFileDialog.doDestroy := true;
