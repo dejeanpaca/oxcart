@@ -56,7 +56,7 @@ procedure saveCallback();
 begin
 end;
 
-procedure addPathCallback(dialog: oxTFileDialog);
+procedure addPathCallback(var dialog: oxTFileDialog);
 var
    path: StdString;
 
@@ -79,12 +79,6 @@ end;
 
 procedure addPath();
 begin
-   if(dlgAddPath = nil) then begin
-      dlgAddPath := oxFileDialog.OpenDirectories();
-      dlgAddPath.SetTitle('Add Path');
-      dlgAddPath.Callback := @addPathCallback;
-   end;
-
    dlgAddPath.Open();
 end;
 
@@ -145,11 +139,6 @@ begin
    oxedwndProjectSettings.OnValidate.Add(@validateCallback);
 end;
 
-procedure deinit();
-begin
-   FreeObject(dlgAddPath);
-end;
-
 { oxedwdgTPackagesList }
 
 function oxedwdgTPackagesList.GetValue(index: loopint): StdString;
@@ -190,6 +179,11 @@ begin
 end;
 
 INITIALIZATION
-   oxed.Init.Add('oxed.packages_settings_window', @init, @deinit);
+   oxed.Init.Add('oxed.packages_settings_window', @init);
+
+   dlgAddPath := oxFileDialog.OpenDirectories();
+   dlgAddPath.SetTitle('Add Path');
+   dlgAddPath.Callback := @addPathCallback;
+
 
 END.

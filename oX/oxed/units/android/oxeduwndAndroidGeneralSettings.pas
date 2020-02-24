@@ -30,7 +30,7 @@ VAR
    dlgSDKPath,
    dlgNDKPath: oxTFileDialog;
 
-procedure openSDKPathCallback(dialog: oxTFileDialog);
+procedure openSDKPathCallback(var dialog: oxTFileDialog);
 var
    path: StdString;
 
@@ -44,16 +44,10 @@ end;
 
 procedure openSDKPath();
 begin
-   if(dlgSDKPath = nil) then begin
-      dlgSDKPath := oxFileDialog.OpenDirectories();
-      dlgSDKPath.SetTitle('Find SDK Path');
-      dlgSDKPath.Callback := @openSDKPathCallback;
-   end;
-
    dlgSDKPath.Open();
 end;
 
-procedure openNDKPathCallback(dialog: oxTFileDialog);
+procedure openNDKPathCallback(var dialog: oxTFileDialog);
 var
    path: StdString;
 
@@ -67,12 +61,6 @@ end;
 
 procedure openNDKPath();
 begin
-   if(dlgNDKPath = nil) then begin
-      dlgNDKPath := oxFileDialog.OpenDirectories();
-      dlgNDKPath.SetTitle('Find NDK Path');
-      dlgNDKPath.Callback := @openNDKPathCallback;
-   end;
-
    dlgNDKPath.Open();
 
    if(oxedAndroidSettings.SDKPath <> '') then
@@ -120,5 +108,13 @@ end;
 
 INITIALIZATION
    oxed.Init.Add('android.general_settings', @init);
+
+   dlgSDKPath := oxFileDialog.OpenDirectories();
+   dlgSDKPath.SetTitle('Find SDK Path');
+   dlgSDKPath.Callback := @openSDKPathCallback;
+
+   dlgNDKPath := oxFileDialog.OpenDirectories();
+   dlgNDKPath.SetTitle('Find NDK Path');
+   dlgNDKPath.Callback := @openNDKPathCallback;
 
 END.
