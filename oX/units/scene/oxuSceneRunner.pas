@@ -1,8 +1,6 @@
 {
    oxuSceneRunner, scene runner
    Copyright (c) 2018. Dejan Boras
-
-   Started On:    19.12.2018.
 }
 
 {$INCLUDE oxdefines.inc}

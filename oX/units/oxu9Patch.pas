@@ -2,8 +2,6 @@
    oxu9Patch, textures 9patch support
    Copyright (c) 2017. Dejan Boras
 
-   Started On:    02.04.2017.
-
    Works similar to how android 9-patch works.
 }
 

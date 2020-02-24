@@ -1,8 +1,6 @@
 {
    ParamUtils, utilities for managing parameters
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    19.01.2011.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}

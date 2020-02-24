@@ -1,8 +1,6 @@
 {
    iniParser, .INI & .INF file format parser
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    10.08.2007.
 }
 
 {BUG: The unit does not add lines which only have keys.}

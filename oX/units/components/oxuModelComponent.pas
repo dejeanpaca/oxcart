@@ -1,8 +1,6 @@
 {
    oxuModelComponent, model component
    Copyright (c) 2018. Dejan Boras
-
-   Started On:    30.01.2018.
 }
 
 {$INCLUDE oxdefines.inc}

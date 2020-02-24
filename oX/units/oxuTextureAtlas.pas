@@ -1,8 +1,6 @@
 {
    oxuTextureAtlas, texture atlas
    Copyright (c) 2017. Dejan Boras
-
-   Started On:    04.09.2017.
 }
 
 {$INCLUDE oxdefines.inc}

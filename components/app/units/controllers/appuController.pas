@@ -2,8 +2,6 @@
    appuController, input controller(gamepad, joystick) handling
    Copyright (C) 2016. Dejan Boras
 
-   Started On:    08.09.2016.
-
    Axes are mapped from -1.0 to +1.0
 }
 

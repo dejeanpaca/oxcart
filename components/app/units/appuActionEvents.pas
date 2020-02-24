@@ -2,8 +2,6 @@
    appuActionEvents, application action events
    Copyright (C) 2009. Dejan Boras
 
-   Started On:    27.12.2009.
-
    NOTE: An action with value 0 indicates no action.
 }
 

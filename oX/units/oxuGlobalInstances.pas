@@ -1,8 +1,6 @@
 {
    oxuGlobalInstances, handles global instances
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    12.06.2017.
 }
 
 {$INCLUDE oxdefines.inc}

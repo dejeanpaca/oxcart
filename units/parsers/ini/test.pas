@@ -1,7 +1,7 @@
 {
-   Started on:   10.09.2007.
-
    A test for the iniParser unit
+
+   Copyright (C) 2007. Dejan Boras
 }
 
 {$APPTYPE CONSOLE}{$MODE OBJFPC}{$H+}{$I-}
@@ -41,7 +41,7 @@ BEGIN
    timStart(timer);
 
    iniLoadFile(FileName, data);
-   if(iniError <> 0) then 
+   if(iniError <> 0) then
       writeln('Failed loading file.');
 
    timUpdate(timer);

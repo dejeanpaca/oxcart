@@ -1,8 +1,6 @@
 {
    ulogHTML, uLog HTML handler
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    02.11.2011.
 }
 
 {$MODE OBJFPC}{$H+}

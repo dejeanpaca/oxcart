@@ -1,8 +1,6 @@
 {
    wdguLink, link widget for the UI
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    03.10.2016.
 }
 
 {$INCLUDE oxdefines.inc}

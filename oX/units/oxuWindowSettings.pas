@@ -1,8 +1,6 @@
 {
    oxuWindowSettings, oX window settings
    Copyright (c) 2017. Dejan Boras
-
-   Started On:    28.02.2017.
 }
 
 {$INCLUDE oxdefines.inc}

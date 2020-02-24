@@ -1,8 +1,6 @@
 {
    uApp, base app unit
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    01.03.2007.
 }
 
 {$INCLUDE oxheader.inc}

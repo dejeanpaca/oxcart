@@ -1,8 +1,6 @@
 {
    uiuSimpleWindowList, simple window list
-   Copyright (C) 2011. Dejan Boras
-
-   Started On:    17.09.2019.
+   Copyright (C) 2019. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    uThreads, utilities for thread management
    Copyright (C) Dejan Boras 2018.
-
-   Started on:    18.04.2018.
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}{$MODESWITCH TYPEHELPERS}

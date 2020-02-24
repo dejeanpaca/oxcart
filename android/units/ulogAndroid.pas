@@ -1,8 +1,6 @@
 {
    ulogAndroid, uLog android handler
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    11.11.2019.
 }
 
 {$MODE OBJFPC}{$H+}

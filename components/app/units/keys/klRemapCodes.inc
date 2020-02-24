@@ -1,8 +1,6 @@
 {
    klRemapCodes.inc, keycode remaps for linux
    Copyright (C) 2008. Dejan Boras
-
-   Started On:    23.03.2008.
 }
 
 000,

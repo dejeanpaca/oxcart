@@ -1,8 +1,6 @@
 {
    uBitSet, bitset manipulation
-   Copyright (C) 2007. - 2011. Dejan Boras
-
-   Started On:    10.12.2007.
+   Copyright (C) 2007. Dejan Boras
 }
 
 {$MODE OBJFPC}{$H+}

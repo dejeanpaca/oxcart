@@ -1,8 +1,6 @@
 {
    oxuSceneCamera, oX scene camera management
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    29.12.2016.
 }
 
 {$INCLUDE oxdefines.inc}

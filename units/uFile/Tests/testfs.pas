@@ -1,7 +1,7 @@
 {
    testfs, tests a simple filesystem based on YPAK
 
-   Started On:    06.03.2011.
+   Copyright (C) 2011. Dejan Boras
 }
 
 PROGRAM testfs;

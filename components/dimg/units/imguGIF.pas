@@ -1,8 +1,6 @@
 {
    imguGIF, gif image loader
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    29.08.2019.
 }
 
 {$INCLUDE oxheader.inc}

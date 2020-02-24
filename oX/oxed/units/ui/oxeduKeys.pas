@@ -1,8 +1,6 @@
 {
    oxeduKeys, oxed key mappings
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    07.01.2017.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    texpax, texture packer
-
-   Started On:    02.04.2013.
-   Last Update:   26.05f2.2013.
+   Copyright (C) 2013. Dejan Boras
 }
 
 {$MODE OBJFPC}{$H+}

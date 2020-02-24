@@ -1,8 +1,6 @@
 {
    oxuShaders, oX shader management
-   Copyright (C) 2009. - 2010. Dejan Boras
-
-   Started On:    21.12.2009.
+   Copyright (C) 2009. Dejan Boras
 
    Note: OX_EXTRA_SHADER_LOGGING can be used to make the unit output extra logging information.
 }

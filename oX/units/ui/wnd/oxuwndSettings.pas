@@ -1,8 +1,6 @@
 {
    oxuwndSettings, oX Settings Window
    Copyright (C) 2014. Dejan Boras
-
-   Started On:    16.06.2014.
 }
 
 {$INCLUDE oxdefines.inc}

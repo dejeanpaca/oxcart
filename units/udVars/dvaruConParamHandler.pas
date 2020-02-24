@@ -1,8 +1,6 @@
 {
    uDVars, manages dvar
    Copyright (c) 2011. Dejan Boras
-
-   Started On:    01.11.2011.
 }
 
 UNIT dvaruConParamHandler;

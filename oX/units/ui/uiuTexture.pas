@@ -1,8 +1,6 @@
 {
    uiuTexture, ui textures
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    20.09.2018.
 }
 
 {$INCLUDE oxdefines.inc}

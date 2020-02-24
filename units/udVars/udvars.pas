@@ -1,8 +1,6 @@
 {
    udvars, manages dvar
    Copyright (c) 2011. Dejan Boras
-
-   Started On:    28.05.2011.
 }
 
 {$IFDEF NODVAR}

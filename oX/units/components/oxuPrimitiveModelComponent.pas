@@ -1,8 +1,6 @@
 {
    oxuPrimitiveModelComponent, primitive model component
    Copyright (c) 2017. Dejan Boras
-
-   Started On:    17.01.2017.
 }
 
 {$INCLUDE oxdefines.inc}

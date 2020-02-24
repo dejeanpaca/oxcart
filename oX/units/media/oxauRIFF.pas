@@ -1,8 +1,6 @@
 {
    oxauRIFF, RIFF file format handling
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    14.09.2007.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {   
    ConsoleUtils, various utilities for console programs
    Copyright (C) 2008. Dejan Boras
-
-   Started On:    19.04.2008.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}

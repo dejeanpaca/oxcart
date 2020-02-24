@@ -1,8 +1,6 @@
 {
    oxuMaterial, material
    Copyright (C) 2009. Dejan Boras
-
-   Started On:    14.11.2009.
 }
 
 {$INCLUDE oxdefines.inc}

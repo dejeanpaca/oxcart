@@ -1,8 +1,6 @@
 {
    oxeduWindowTitle, window title updating
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    09.04.2018.
 }
 
 {$INCLUDE oxdefines.inc}

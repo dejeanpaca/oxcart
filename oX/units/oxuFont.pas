@@ -1,8 +1,6 @@
 {
   oxuFont, common oX constants
   Copyright (c) 2011. Dejan Boras
-
-  Started On:    17.02.2011.
 }
 
 {$INCLUDE oxdefines.inc}

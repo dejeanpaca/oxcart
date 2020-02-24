@@ -1,8 +1,6 @@
 {
    oxum3DS, 3DS model loader for oX
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    15.05.2007.
 }
 
 {$INCLUDE oxdefines.inc}

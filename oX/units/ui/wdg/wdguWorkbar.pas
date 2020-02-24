@@ -1,8 +1,6 @@
 {
    wdguWorkbar, empty bar to place other widgets to, creates a bar of sorts
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    25.01.2017.
 }
 
 {$INCLUDE oxdefines.inc}

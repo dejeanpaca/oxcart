@@ -1,7 +1,7 @@
 {
-   A small program to test dFile.
+   A small program to test uFile
 
-   Started On:    14.12.2007.
+   Copyright (C) 2007. Dejan Boras
 }
 
 {$MODE OBJFPC}{$H+}{$I-}

@@ -1,8 +1,6 @@
 {
    oxeduSettings, oxed settings
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    23.01.2017.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,7 +1,6 @@
 {
    template, a test template program
-
-   Started On:    14.05.2012.
+   Copyright (C) 2012. Dejan Boras
 }
 
 

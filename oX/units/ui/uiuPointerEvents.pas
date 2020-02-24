@@ -1,8 +1,6 @@
 {
    uiuPointerEvents, UI mouse events
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    16.03.2011.
 }
 
 {$INCLUDE oxdefines.inc}

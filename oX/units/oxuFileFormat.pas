@@ -1,8 +1,6 @@
 {
   oxuFileFormat, common oX file format functionality
   Copyright (c) 2012. Dejan Boras
-
-   Started On:    29.09.2012.
 }
 
 {$INCLUDE oxdefines.inc}

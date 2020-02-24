@@ -1,8 +1,6 @@
 {
    oxuOXEDPlatform
    Copyright (c) 2017. Dejan Boras
-
-   Started On:    14.06.2017.
 }
 
 {$INCLUDE oxdefines.inc}

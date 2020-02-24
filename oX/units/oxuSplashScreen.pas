@@ -1,10 +1,6 @@
 {
    oxuSplashScreen, splash screen
    Copyright (C) 2017. Dejan Boras
-
-   NOTE: This is just an abstraction. Requires per platform implementation (for platforms that support it).
-
-   Started On:    05.02.2017.
 }
 
 {$INCLUDE oxdefines.inc}

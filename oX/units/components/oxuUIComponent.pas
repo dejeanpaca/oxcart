@@ -1,8 +1,6 @@
 {
    oxuUIComponent, ui component
    Copyright (c) 2019. Dejan Boras
-
-   Started On:    14.11.2019.
 }
 
 {$INCLUDE oxdefines.inc}

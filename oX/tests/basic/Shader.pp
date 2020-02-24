@@ -1,7 +1,6 @@
 {
    Shader, tests shader functionality
-
-   Started On:    27.09.2017.
+   Copyright (C) 2017. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

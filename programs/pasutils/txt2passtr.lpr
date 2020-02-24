@@ -1,8 +1,6 @@
 {
    txt2passstr, converts a text file into a pascal string
    Copyright (c) 2011. Dejan Boras
-
-   Started On:    17.11.2011.
 }
 
 {$MODE OBJFPC}{$H+}

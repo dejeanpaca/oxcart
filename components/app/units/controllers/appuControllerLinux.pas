@@ -1,8 +1,6 @@
 {
    appuControllerLinux, input controller handling for Linux
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    08.09.2016.
 }
 
 {$INCLUDE oxheader.inc}

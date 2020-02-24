@@ -2,8 +2,6 @@
    oxuconWindow, window console extension
    Copyright (C) 2012 Dejan Boras
 
-   Started On:    04.11.2016.
-
    Configure windows via the console
 }
 

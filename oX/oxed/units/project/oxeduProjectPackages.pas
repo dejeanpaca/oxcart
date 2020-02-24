@@ -1,8 +1,6 @@
 {
    oxeduProjectPackages, oxed project package handling
    Copyright (C) 2020. Dejan Boras
-
-   Started On:    29.01.2020.
 }
 
 {$INCLUDE oxheader.inc}

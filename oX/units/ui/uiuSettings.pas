@@ -1,8 +1,6 @@
 {
    uiuFiles, file related ui stuff
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    13.12.2018.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    appuLog, application logging
    Copyright (C) 2012. Dejan Boras
-
-   Started On:    28.11.2012.
 }
 
 {$INCLUDE oxheader.inc}

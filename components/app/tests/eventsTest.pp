@@ -1,5 +1,5 @@
 {
-   Started On:    19.12.2013.
+   Copyright (C) 2013. Dejan Boras
 }
 
 {$MODE OBJFPC}{$H+}

@@ -1,8 +1,6 @@
 {
    oxuwndColorPicker, color picker window
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    07.02.2018.
 }
 
 {$INCLUDE oxdefines.inc}

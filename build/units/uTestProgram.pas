@@ -2,8 +2,6 @@
    uTestProgram
    Copyright (C) 2015. Dejan Boras
 
-   Started On:    16.02.2015.
-
    Handles a test program, compiles and runs it and reports Results.
 }
 

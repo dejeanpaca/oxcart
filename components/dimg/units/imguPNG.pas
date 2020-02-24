@@ -1,8 +1,6 @@
 {
    imguPNG, PNG image loader for dImage
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    13.11.2007.
 }
 
 {$INCLUDE oxheader.inc}

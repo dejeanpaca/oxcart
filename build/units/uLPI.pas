@@ -1,8 +1,6 @@
 {
    uLPI, manipulates LPI files
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    02.01.2017.
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}

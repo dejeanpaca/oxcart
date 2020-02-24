@@ -1,8 +1,6 @@
 {
    oxauWAV, handles wav files
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    11.09.2017.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    oxuCameraInput, camera input control
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    11.07.2019.
 }
 
 {$INCLUDE oxdefines.inc}

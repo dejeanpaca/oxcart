@@ -1,8 +1,6 @@
 {
    uiuTypes, UI types
    Copyright (C) 2013. Dejan Boras
-
-   Started On:    07.01.2013.
 }
 
 {$INCLUDE oxdefines.inc}

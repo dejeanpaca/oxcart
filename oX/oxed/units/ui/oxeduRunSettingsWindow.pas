@@ -1,8 +1,6 @@
 {
    oxeduRunSettingsWindow, project settings
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    03.11.2017.
 }
 
 {$INCLUDE oxdefines.inc}

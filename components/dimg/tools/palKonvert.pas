@@ -1,9 +1,6 @@
 {
    palKonvert
-
    Copyright (C) 2008. Dejan Boras
-
-   Started on:    19.04.2008.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}

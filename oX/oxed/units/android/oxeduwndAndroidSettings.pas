@@ -1,8 +1,6 @@
 {
    oxeduwndAndroidSettings, oxed android settings window
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    17.06.2019.
 }
 
 {$INCLUDE oxdefines.inc}

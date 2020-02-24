@@ -1,6 +1,6 @@
 {
    daluContext, OpenAL context management
-   Copyright (C) 2009. - 2010. Dejan Boras
+   Copyright (C) 2009.. Dejan Boras
 
    This file is part of dAL.
 
@@ -16,8 +16,6 @@
 
    You should have received a copy of the GNU General Public License
    along with dAL.  If not, see <http://www.gnu.org/licenses/>.
-
-   Started On:    11.09.2009.
 }
 
 {$INCLUDE oxdefines.inc}

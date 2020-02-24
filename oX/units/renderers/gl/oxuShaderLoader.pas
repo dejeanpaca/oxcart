@@ -1,8 +1,6 @@
 {
    oxuShaderLoader, shader loader renderer component
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    21.12.2017.
 }
 
 {$INCLUDE oxdefines.inc}

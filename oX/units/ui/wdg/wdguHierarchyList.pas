@@ -1,8 +1,6 @@
 {
    wdguHierarchyList, hierarchical list
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    20.03.2017.
 }
 
 {$INCLUDE oxdefines.inc}

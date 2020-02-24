@@ -1,7 +1,6 @@
 {
    Includes all image loaders.
-
-   Started On:    21.10.2009.
+   Copyright (C) 2009. Dejan Boras
 }
 
 imguBMP, imguJPEG, imguTGA, imguPCX, imguPNM, imguWAL, imguSGIRGB, imguPNG

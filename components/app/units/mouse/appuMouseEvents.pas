@@ -1,8 +1,6 @@
 {
    appuMouseEvents, mouse events
    Copyright (C) 2009 Dejan Boras
-
-   Started On:    14.03.2009.
 }
 
 {$INCLUDE oxheader.inc}

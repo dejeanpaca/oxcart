@@ -1,8 +1,6 @@
 {
    oxuRunRoutines, run routines
    Copyright (C) 2008. Dejan Boras
-
-   Started On:    19.09.2008.
 }
 
 {$INCLUDE oxheader.inc}

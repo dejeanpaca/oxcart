@@ -1,8 +1,6 @@
 {
    oxuLogHTML, sets up html logging for oX
    Copyright (C) 2012. Dejan Boras
-
-   Started On:    14.04.2012.
 }
 
 {$INCLUDE oxdefines.inc}

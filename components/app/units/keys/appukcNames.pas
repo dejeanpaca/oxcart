@@ -1,8 +1,6 @@
 {
    appukcNames, keycode name routines
    Copyright (C) 2008. Dejan Boras
-
-   Started On:    26.11.2008.
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}

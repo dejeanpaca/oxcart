@@ -1,8 +1,6 @@
 {
    oxulibImageRW, includes image loaders/writers in library mode
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    17.10.2019.
 }
 
 {$INCLUDE oxdefines.inc}

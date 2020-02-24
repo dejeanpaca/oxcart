@@ -1,8 +1,6 @@
 {
    oxuWindowsOS, Windows OS specific functionality
-   Copyright (c) 2011. Dejan Boras
-
-   Started On:    07.10.2013.
+   Copyright (c) 2013. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

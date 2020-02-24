@@ -3,8 +3,6 @@
    Provides mechanisms for registering and calling multiple file handlers.
 
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    22.06.2007.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}

@@ -1,8 +1,6 @@
 {
    vmQuaternions, quaternion mathematics & operations
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    16.09.2007.
 }
 
 {$MODE OBJFPC}{$H+}

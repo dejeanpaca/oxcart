@@ -2,8 +2,6 @@
    appuAndroidKey.pas, android key event handling and key remaps
    Copyright (C) 2009. Dejan Boras
 
-   Started On:    31.12.2011.
-
    TODO: Remap the rest of the keycodes.
 }
 

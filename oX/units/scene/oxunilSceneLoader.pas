@@ -1,8 +1,6 @@
 {
    oxunilSceneLoader, nil scene loader
    Copyright (c) 2020. Dejan Boras
-
-   Started On:    09.01.2019.
 }
 
 {$INCLUDE oxdefines.inc}

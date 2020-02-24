@@ -1,8 +1,6 @@
 {
    oxeduBuild, oxed build system
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    03.01.2017.
 }
 
 {$INCLUDE oxdefines.inc}

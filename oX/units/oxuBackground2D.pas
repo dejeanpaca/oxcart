@@ -1,8 +1,6 @@
 {
    oxuBackground2D, 2D backgrounds
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    12.03.2011.
 }
 
 {$INCLUDE oxdefines.inc}

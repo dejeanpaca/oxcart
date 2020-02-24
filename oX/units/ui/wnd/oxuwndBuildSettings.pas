@@ -1,8 +1,6 @@
 {
    oxuwndBuildSettings, oX build settings window
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    15.05.2017.
 }
 
 {$INCLUDE oxdefines.inc}

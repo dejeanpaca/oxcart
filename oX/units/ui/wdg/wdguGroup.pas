@@ -1,8 +1,6 @@
 {
    wdguGroup, ui group widget
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    29.11.2016.
 }
 
 {$INCLUDE oxdefines.inc}

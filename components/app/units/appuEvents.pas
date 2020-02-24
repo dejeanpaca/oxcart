@@ -1,8 +1,6 @@
 {
    appuEvents, application event management
    Copyright (C) 2008. Dejan Boras
-
-   Started On:    16.12.2008.
 }
 
 {$INCLUDE oxheader.inc}

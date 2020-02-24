@@ -1,11 +1,8 @@
 q3Parser
 Version: 0100
 
-Copyright (c) Dejan Boras 2007.
+Copyright (c) 2007. Dejan Boras
 All rights reserved.
-
-Started on:       10.08.2007.
-Last update:      31.01.2011.
 
    This document discusses q3Parser which is a freepascal compiler unit that
 deals with parsing q3 or similar language files.
@@ -31,7 +28,7 @@ Index:
 1.1 About
    q3Parser is a parser for files such as Quake 3 .shader and .cfg files, as
 well as any other files using the identical syntax. It is simple, small, has
-a good performance and is easy to use. 
+a good performance and is easy to use.
 
 2. Usage
 
@@ -48,7 +45,7 @@ Pass the file name of the file to be parsed, and the structure variable into
 which the structure of the file will be loaded. The routine will open, parse
 through the file, fill in the structure with all usable data it finds(and
 unusable if you want to).
-   
+
 After that you can analyse the structure for required data. This is something
 you need to do manually.
 
@@ -64,8 +61,8 @@ those in memory.
    In case you have a structure filled with data or one you filled yourself,
 you can save it to a file using the routine q3pWriteFile. Just pass it the
 name of the file the data will be saved to, and the structure that contains
-the data. 
-   
+the data.
+
 Note that the routine will create a new file(or rewrite the old one). The
 routine has predefined formatting which cannot be influenced too much(you can
 define tab spacing sizes). Note that in any case such formatting looks nice
@@ -74,13 +71,13 @@ and is syntactically correct.
 If you do not have a structure filled with data then you need create one
 yourself. Either by loading an existing file, or by using the structure
 management routines.
-  
+
 2.4 Structure management routines
 
    These routines are used mostly internally. While they may be useful to
 the programmer, there is no real need for them, at least not if you only want
 to read files.
-  
+
 3. Problems:
 
 3.1 Parser restrictions
@@ -100,7 +97,7 @@ not allowed and all unparseable sections of the file will be identified
 as garbage.
 
 The syntax of the file must be identical to the Q3 shader files. If not then
-you are using the wrong parser. The parser may fix some errors in the file, 
+you are using the wrong parser. The parser may fix some errors in the file,
 but mostly it will ignore syntactically incorrect or erroneous parts of files.
 
 4. Syntax

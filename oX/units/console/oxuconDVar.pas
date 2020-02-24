@@ -2,8 +2,6 @@
    oxuconDVar, dvars console extension
    Copyright (C) 2012 Dejan Boras
 
-   Started On:    16.06.2009.
-
    This unit serves to give the user ability to manipulate and list
    variables via console commands.
 }

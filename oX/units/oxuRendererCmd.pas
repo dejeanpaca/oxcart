@@ -1,8 +1,6 @@
 {
    oxuRendererCmd
    Copyright (c) 2019. Dejan Boras
-
-   Started On:    15.10.2019.
 }
 
 {$INCLUDE oxdefines.inc}

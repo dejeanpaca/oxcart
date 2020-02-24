@@ -1,8 +1,6 @@
 {
    wdguImage, image widget
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    02.10.2016.
 }
 
 {$INCLUDE oxdefines.inc}

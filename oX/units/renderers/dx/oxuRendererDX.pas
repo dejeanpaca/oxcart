@@ -1,8 +1,6 @@
 {
    oxudxRenderer, DirectX renderer
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    27.12.2018.
 }
 
 {$INCLUDE oxdefines.inc}

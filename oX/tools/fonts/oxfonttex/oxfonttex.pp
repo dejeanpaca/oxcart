@@ -1,8 +1,6 @@
 {
    oxfonttex, creates a font texture
    Copyright (C) 2009. Dejan Boras
-   
-   Started On:    26.06.2009.
 }
 
 {$MODE OBJFPC}{$H+}

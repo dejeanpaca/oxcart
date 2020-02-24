@@ -1,8 +1,6 @@
 {
    oxuRenderer, oX renderer
-   Copyright (C) 2007. Dejan Boras
-
-   Started On:    29.12.2013.
+   Copyright (C) 2013. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

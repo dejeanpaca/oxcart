@@ -1,8 +1,6 @@
 {
    imguPaletteRW, read/write image palette files
    Copyright (C) 2013. Dejan Boras
-
-   Started On:    02.04.2013.
 }
 
 {$INCLUDE oxheader.inc}

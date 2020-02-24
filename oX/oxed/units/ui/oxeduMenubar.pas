@@ -1,8 +1,6 @@
 {
    oxeduMenubar, menu bar setup for oxed
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    16.10.2016.
 }
 
 {$INCLUDE oxdefines.inc}

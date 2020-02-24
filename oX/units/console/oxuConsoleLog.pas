@@ -1,8 +1,6 @@
 {
    oxuConsoleLog, console log handler
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    26.12.2016.
 }
 
 {$MODE OBJFPC}{$H+}

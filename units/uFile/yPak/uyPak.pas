@@ -1,8 +1,6 @@
 {
    uyPak, yPak base unit
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    24.02.2011.
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}

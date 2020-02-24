@@ -1,8 +1,6 @@
 {
    oxuSerializationString, object serialization string support
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    07.01.2018,
 }
 
 {$INCLUDE oxdefines.inc}

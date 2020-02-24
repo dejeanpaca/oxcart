@@ -1,8 +1,6 @@
 {
    oxuclParameters, common command line parameters
    Copyright (c) 2017. Dejan Boras
-
-   Started On:    02.04.2017.
 }
 
 {$INCLUDE oxdefines.inc}

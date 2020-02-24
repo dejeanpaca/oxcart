@@ -1,8 +1,6 @@
 {
    oxuWorld, world
    Copyright (c) 2017. Dejan Boras
-
-   Started On: 16.07.2017.
 }
 
 {$INCLUDE oxdefines.inc}

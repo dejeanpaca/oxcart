@@ -2,7 +2,6 @@
    oxuglDebugOutput, handle ARB_debug_output
    Copyright (C) 2017. Dejan Boras
 
-   Started On:    23.06.2017.
    https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_debug_output.txt
 }
 

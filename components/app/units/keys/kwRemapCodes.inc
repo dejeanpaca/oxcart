@@ -1,8 +1,6 @@
 {
    kwRemapCodes.inc, remap codes for Windows OS (virtual keys based)
    Copyright (C) 2008. Dejan Boras
-
-   Started On:    23.03.2008.
 }
 
 0, {0}

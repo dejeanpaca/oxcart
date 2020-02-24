@@ -1,8 +1,6 @@
 {
    oxuFreetypeFonts, freetype font support
    Copyright (c) 2018. Dejan Boras
-
-   Started On:    28.05.2018.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    oxuglExtensions, basic OpenGL extension management
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    07.10.2013.
 }
 
 {$INCLUDE oxdefines.inc}

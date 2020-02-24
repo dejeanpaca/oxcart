@@ -2,8 +2,6 @@
    oxuconKeyMappings, keymappings console extension
    Copyright (C) 2017. Dejan Boras
 
-   Started On:    08.01.2017.
-
    Configure key mappings via the console
 }
 

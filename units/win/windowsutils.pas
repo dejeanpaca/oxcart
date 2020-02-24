@@ -1,8 +1,6 @@
 {
    windowsutils, Windows OS utilities
-   Copyright (C) 2009. Dejan Boras
-
-   Started On:    05.09.2016.
+   Copyright (C) 2016. Dejan Boras
 }
 
 

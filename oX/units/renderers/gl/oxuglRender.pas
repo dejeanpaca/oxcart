@@ -1,8 +1,6 @@
 {
    oxuRender, rendering
-   Copyright (C) 2011. Dejan Boras
-
-   Started On:    21.02.2016.
+   Copyright (C) 2016. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

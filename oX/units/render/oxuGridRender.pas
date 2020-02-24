@@ -1,8 +1,6 @@
 {
    oxuGridRender, utilities and helpers for rendering
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    15.01.2017.
 }
 
 {$INCLUDE oxdefines.inc}

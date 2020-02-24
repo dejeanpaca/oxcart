@@ -1,8 +1,6 @@
 {
    oxuWindowsConsolePlatform, Windows OS console specific functionality
    Copyright (c) 2018. Dejan Boras
-
-   Started On:    05.02.2018.
 }
 
 {$INCLUDE oxdefines.inc}

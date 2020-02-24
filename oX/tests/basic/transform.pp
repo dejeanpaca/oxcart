@@ -1,7 +1,6 @@
 {
    transform
-
-   Started On:   12.08.2019.
+   Copyright (C) 2019. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    wdguColorPick, color pick widget
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    10.02.2018.
 }
 
 {$INCLUDE oxdefines.inc}

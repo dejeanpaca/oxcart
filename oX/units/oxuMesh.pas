@@ -2,8 +2,6 @@
    oxuMesh, mesh
    Copyright (c) 2017. Dejan Boras
 
-   Started On:    11.07.2017.
-
    TODO: Support for multiple channels
 }
 

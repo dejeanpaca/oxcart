@@ -1,8 +1,6 @@
 {
    oxeduTasksUI, ui to show active tasks
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    08.07.2017.
 }
 
 {$INCLUDE oxdefines.inc}

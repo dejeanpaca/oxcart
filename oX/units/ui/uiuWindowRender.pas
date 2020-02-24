@@ -1,8 +1,6 @@
 {
    uiuWindowRender, UI window rendering
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    17.09.2019.
 }
 
 {$INCLUDE oxdefines.inc}

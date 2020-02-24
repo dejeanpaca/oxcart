@@ -1,8 +1,6 @@
 {
-   wdguEmopty, empty widget
+   wdguEmpty, empty widget
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    05.04.2017.
 }
 
 {$INCLUDE oxdefines.inc}

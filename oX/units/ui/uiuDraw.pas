@@ -1,8 +1,6 @@
 {
    uiuDraw, UI drawing component
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    04.01.2016.
 }
 
 {$INCLUDE oxdefines.inc}

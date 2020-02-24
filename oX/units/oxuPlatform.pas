@@ -1,8 +1,6 @@
 {
    oxuPlatform, platform interface
    Copyright (c) 2012. Dejan Boras
-
-   Started On:    21.02.2012.
 }
 
 {$INCLUDE oxdefines.inc}

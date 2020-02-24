@@ -1,5 +1,6 @@
 {
-   Started On:		   09.10.2012.
+   Gathers system information on windows systems
+   Copyright (C) 2012. Dejan Boras
 }
 
 {$INCLUDE oxheader.inc}

@@ -1,8 +1,6 @@
 {
    StringUtils, string manipulation utilities
    Copyright (C) 2010. Dejan Boras
-
-   Started On:    06.08.2010.
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH TYPEHELPERS}{$MODESWITCH ADVANCEDRECORDS}

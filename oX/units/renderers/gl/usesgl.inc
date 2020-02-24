@@ -1,7 +1,7 @@
 {
    usesgl.inc, includes gl units according to platform or target
 
-   Started On:    11.02.2011.
+   Copyright (c) 2011. Dejan Boras
 }
 
 {$IFDEF GLES}

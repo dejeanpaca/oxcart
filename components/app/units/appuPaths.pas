@@ -1,8 +1,6 @@
 {
    appuPaths, handling of common file paths
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    30.04.2011.
 }
 
 {$INCLUDE oxheader.inc}

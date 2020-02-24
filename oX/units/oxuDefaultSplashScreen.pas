@@ -1,8 +1,6 @@
 {
    oxuDefaultSplashScreen, default splash screen
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    29.04.2019.
 }
 
 {$INCLUDE oxdefines.inc}

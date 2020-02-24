@@ -2,8 +2,6 @@
    wdguFileList, file list widget
    Copyright (C) 2017. Dejan Boras
 
-   Started On:    09.01.2017.
-
    TODO: Implement file icons
 }
 

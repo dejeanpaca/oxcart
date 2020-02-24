@@ -2,8 +2,6 @@
    q3uShaders, a q3 shader parser
    Copyright (C) 2009. Dejan Boras
 
-   Started On:    29.10.2009.
-
    This unit is intended to help process Quake .shader files.
 }
 

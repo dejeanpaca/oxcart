@@ -1,8 +1,6 @@
 {
    uTVideoImg, image operations
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    10.09.2008.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}

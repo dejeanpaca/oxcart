@@ -1,8 +1,6 @@
 {
    oxumOBJ, OBJ model loader
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    22.08.2007.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    oxeduInitialize, oxed initialization
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    11.04.2017.
 }
 
 {$INCLUDE ../plugins/oxed_default_plugins.inc}

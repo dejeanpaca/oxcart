@@ -3,8 +3,6 @@
    Copyright (C) 2013. Dejan Boras
 
    NOTE: This is just an abstraction. Requires per platform implementation (for platforms that support it).
-   
-   Started On:    25.11.2013.
 }
 
 {$INCLUDE oxdefines.inc}

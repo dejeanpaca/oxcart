@@ -1,8 +1,6 @@
 {
    oxeduLazarus, oxed lazarus management
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    20.05.2019.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    oxuPaths, common oX paths
-   Copyright (C) 2011. Dejan Boras
-
-   Started On:    27.10.2013.
+   Copyright (C) 2013. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

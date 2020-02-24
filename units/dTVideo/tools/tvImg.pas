@@ -2,8 +2,6 @@
    tvImg
    Converts normal images to dTVideo images(.tvi) and views them
    Copyright (C) 2008. Dejan Boras
-
-   Started On:    10.09.2008.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}

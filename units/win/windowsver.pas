@@ -1,10 +1,7 @@
 {
    windowsver, Windows OS version information
    Copyright (C) 2009. Dejan Boras
-
-   Started On:    12.01.2009.
 }
-
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
 UNIT windowsver;

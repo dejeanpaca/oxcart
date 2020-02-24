@@ -2,8 +2,6 @@
    oxuconInput
    Copyright (C) 2019. Dejan Boras
 
-   Started On:    04.09.2019.
-
    Manage input devices via console
 }
 

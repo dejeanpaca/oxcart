@@ -1,8 +1,6 @@
 {
    imguJPEG, JPEG image loader for dImage
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    05.11.2007.
 }
 
 {$INCLUDE oxheader.inc}

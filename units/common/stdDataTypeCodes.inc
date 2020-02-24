@@ -1,8 +1,6 @@
 {
    stdDataTypeCodes.inc, standard data type codes
-   Copyright (c) 2009. Dejan Boras
-
-   Started on:    22.12.2008.
+   Copyright (c) 2008. Dejan Boras
 
    This is a list of standardised data type codes used within many of my 
    programs and libraries. Instead of using multiple list of codes that do the

@@ -1,8 +1,6 @@
 {
    appuRegional, handling of regional formats/settings
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    20.04.2018.
 }
 
 {$INCLUDE oxheader.inc}

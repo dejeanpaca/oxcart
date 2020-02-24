@@ -1,8 +1,6 @@
 {
    uJSON, json reading/writing support
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    09.01.2018,
 }
 
 {$INCLUDE oxheader.inc}

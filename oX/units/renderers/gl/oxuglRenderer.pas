@@ -1,8 +1,6 @@
 {
-   oxgluRenderer, oX OpenGL renderer base
+   oxuglRenderer, oX OpenGL renderer base
    Copyright (C) 2013. Dejan Boras
-
-   Started On:    29.12.2013.
 }
 {$INCLUDE oxdefines.inc}
 

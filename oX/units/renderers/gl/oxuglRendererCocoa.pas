@@ -1,8 +1,6 @@
 {
    oxuglRendererCocoa, gl renderer cocoa (mac os x ) platform component
    Copyright (c) 2017. Dejan Boras
-
-   Started On:    31.12.2017.
 }
 
 {$INCLUDE oxdefines.inc}

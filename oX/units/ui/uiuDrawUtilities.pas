@@ -1,8 +1,6 @@
 {
    uiuDrawUtilities, UI drawing utilities
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    09.10.2019.
 }
 
 {$INCLUDE oxdefines.inc}

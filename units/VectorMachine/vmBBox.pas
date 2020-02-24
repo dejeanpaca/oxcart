@@ -1,8 +1,6 @@
 {
    vmBBox, bounding box operations
    Copyright (C) 2010. Dejan Boras
-
-   Started On:    05.09.2010.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH TYPEHELPERS}

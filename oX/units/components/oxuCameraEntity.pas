@@ -1,8 +1,6 @@
 {
    oxuCameraEntity, common camera entities
    Copyright (c) 2017. Dejan Boras
-
-   Started On:    18.01.2017.
 }
 
 {$INCLUDE oxdefines.inc}

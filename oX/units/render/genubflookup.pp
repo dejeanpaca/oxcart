@@ -1,8 +1,6 @@
 {
    genubflookup, generates a unsigned byte to float color lookup table (ubflookup.inc)
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    12.05.2011.
 }
 
 {$MODE OBJFPC}

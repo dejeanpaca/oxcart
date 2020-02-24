@@ -1,8 +1,6 @@
 {
    uiuUtils, platform specific UI functionality
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    19.06.2019.
 }
 
 {$INCLUDE oxdefines.inc}

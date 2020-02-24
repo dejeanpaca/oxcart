@@ -1,8 +1,6 @@
 {
    imguOperations, image operations
    Copyright (C) 2013. Dejan Boras
-
-   Started On:    07.04.2013.
 }
 
 {$INCLUDE oxheader.inc}

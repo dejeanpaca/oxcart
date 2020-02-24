@@ -1,8 +1,6 @@
 {
    oxeduGameView, oxed scene view window
-   Copyright (C) 2016. Dejan Boras
-
-   Started On:    19.01.2017.
+   Copyright (C) 2017. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

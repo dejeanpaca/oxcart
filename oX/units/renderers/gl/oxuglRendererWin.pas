@@ -1,8 +1,6 @@
 {
    oxuglRendererWin, gl renderer windows platform component
    Copyright (c) 2016. Dejan Boras
-
-   Started On:    05.01.2016.
 }
 
 {$INCLUDE oxdefines.inc}

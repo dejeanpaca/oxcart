@@ -1,8 +1,6 @@
 {
    oxauAIFF, AudioIFF file format handling
-   Copyright (C) 2007. - 2009. Dejan Boras
-
-   Started On:    14.09.2007.
+   Copyright (C) 2007. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

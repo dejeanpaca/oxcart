@@ -2,8 +2,6 @@
 	dvaruFile, DVar file support
 	Copyright (c) 2011. Dejan Boras
 
-	Started On:		09.10.2011.
-
    Reads and writes dvars into a file, as:
       key = value
    per line.

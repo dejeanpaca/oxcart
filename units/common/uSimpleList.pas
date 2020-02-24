@@ -1,8 +1,6 @@
 {
    uSimpleList, simple list class
    Copyright (C) Dejan Boras 2017.
-
-   Started on:    15.05.2017.
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}{$MODESWITCH TYPEHELPERS}

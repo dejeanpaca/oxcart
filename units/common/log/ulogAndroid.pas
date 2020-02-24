@@ -1,8 +1,6 @@
 {
    ulogAndroid, android log handler
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    24.12.2011.
 }
 
 { ANDROID LOG HANDLER }

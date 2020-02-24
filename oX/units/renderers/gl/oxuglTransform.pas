@@ -1,8 +1,6 @@
 {
    oxuglTransform, OpenGL transform matrix
    Copyright (C) 2013. Dejan Boras
-
-   Started On:    10.12.2013.
 }
 
 {$INCLUDE oxdefines.inc}

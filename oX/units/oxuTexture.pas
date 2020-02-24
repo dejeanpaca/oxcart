@@ -1,8 +1,6 @@
 {
    oxuTexture, textures
    Copyright (c) 2013. Dejan Boras
-
-   Started On:    16.05.2013.
 }
 
 {$INCLUDE oxdefines.inc}

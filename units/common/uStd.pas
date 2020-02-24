@@ -1,8 +1,6 @@
 {
    uStd, standard resources unit(something like system unit)
    Copyright (C) Dejan Boras 2011.
-
-   Started on:    30.01.2011.
 }
 
 {$INCLUDE oxheader.inc}

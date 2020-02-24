@@ -1,7 +1,6 @@
 {
    jniutils, utilities for dealing with java native interface
-
-   Started On:    02.01.2012.
+   Copyright (c) 2012. Dejan Boras
 }
 
 {$MODE OBJFPC}{$H+}
@@ -23,7 +22,7 @@ VAR
 function jniJStringToString(Env: PJNIEnv; JStr: jstring): String;
 {JNI_OnLoad callback}
 function jniOnLoad(jvm: PJavaVM; reserved: pointer): jint; cdecl;
-   
+
 IMPLEMENTATION
 
 function jniJStringToString(Env: PJNIEnv; JStr: jstring): String;
@@ -33,7 +32,7 @@ var
 
 begin
    if(JStr = nil) then
-      exit(''); 
+      exit('');
 
    Chars:= Env^^.GetStringUTFChars(Env, JStr, IsCopy);
    if Chars = nil then

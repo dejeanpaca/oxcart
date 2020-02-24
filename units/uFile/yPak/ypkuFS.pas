@@ -1,8 +1,6 @@
 {
    ypkuFS, YPAK file system
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    06.03.2011.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}

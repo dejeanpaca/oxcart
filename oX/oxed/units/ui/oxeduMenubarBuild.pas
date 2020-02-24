@@ -1,8 +1,6 @@
 {
    oxeduMenubarBuild, menu bar build options
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    23.12.2019.
 }
 
 {$INCLUDE oxdefines.inc}

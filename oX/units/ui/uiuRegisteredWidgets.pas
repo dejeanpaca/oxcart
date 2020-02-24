@@ -1,8 +1,6 @@
 {
    uiuRegisteredWidgets, all registered widgets
-   Copyright (C) 2010. Dejan Boras
-
-   Started On:    03.10.2019.
+   Copyright (C) 2019. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    oxuMaterialFile, material file support
    Copyright (C) 2010. Dejan Boras
-
-   Started On:    14.08.2010.
 }
 
 {$INCLUDE oxdefines.inc}

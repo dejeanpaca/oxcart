@@ -1,5 +1,6 @@
 {
-   Started On:    28.12.2011.
+   Human readable binary sizes
+   Copyright (C) 2011. Dejan Boras
 }
 
 {$MODE OBJFPC}{$H+}

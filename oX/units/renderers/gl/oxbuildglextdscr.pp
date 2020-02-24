@@ -1,8 +1,6 @@
 {
    oxbuildglextdscr
    Copyright (c) 2011. Dejan Boras
-
-   Started On:    28.03.2011.
 }
 
 {$MODE OBJFPC}{$H+}

@@ -1,8 +1,6 @@
 {
    oxeduiBuildOutput, build output
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    30.08.2019.
 }
 
 {$INCLUDE oxdefines.inc}

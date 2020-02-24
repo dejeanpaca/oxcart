@@ -1,8 +1,6 @@
 {
    appuControllerWindows, common windows functionality for controller support
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    19.09.2019.
 }
 
 {$INCLUDE oxheader.inc}

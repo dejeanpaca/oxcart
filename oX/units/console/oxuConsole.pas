@@ -1,8 +1,6 @@
 {
    oxuConsole, command console front-end
    Copyright (c) 2011. Dejan Boras
-
-   Started On:    30.07.2012.
 }
 
 {$INCLUDE oxdefines.inc}

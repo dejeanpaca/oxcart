@@ -1,8 +1,6 @@
 {
    vmMath, general math operations
    Copyright (C) 2010. Dejan Boras
-
-   Started On:    03.10.2010.
 }
 
 {$MODE OBJFPC}{$H+}

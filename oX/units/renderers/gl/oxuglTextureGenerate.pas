@@ -1,8 +1,6 @@
 {
    oxuglTextureGenerateComponent, texture generating component
-   Copyright (C) 2011. Dejan Boras
-
-   Started On:    08.02.2016.
+   Copyright (C) 2016. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

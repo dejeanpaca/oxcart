@@ -1,8 +1,6 @@
 {
    oxumMD2, MD2 model loader
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    06.06.2007.
 }
 
 {$INCLUDE oxdefines.inc}

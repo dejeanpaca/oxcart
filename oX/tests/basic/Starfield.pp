@@ -1,7 +1,6 @@
 {
    Starfield
-
-   Started On:    07.05.2011.
+   Copyright (C) 2011. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

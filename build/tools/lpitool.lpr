@@ -1,7 +1,6 @@
 {
    lpitool, manipulates lpi files
-
-   Started On: 18.09.2015.
+   Copyright (c) 2015. Dejan Boras
 
    Required packages
    @lazpackage LazUtils

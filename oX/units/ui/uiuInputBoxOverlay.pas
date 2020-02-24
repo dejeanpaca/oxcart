@@ -1,8 +1,6 @@
 {
    uiuInputBoxOverlay,
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    12.10.2018.
 }
 
 {$INCLUDE oxdefines.inc}

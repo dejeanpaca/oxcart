@@ -1,8 +1,6 @@
 {
    oxuWGL, WGL extensions list
    Copyright (C) 2013. Dejan Boras
-
-   Started On:    07.10.2013.
 }
 
 {$INCLUDE oxdefines.inc}

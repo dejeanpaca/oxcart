@@ -1,8 +1,6 @@
 {
    oxeduStatusInfo, status bar information
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    04.04.2019.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,7 +1,6 @@
 {
    Commmon tools for tests.
-
-   Started On:    18.02.2011.
+   Copyright (C) 2011. Dejan Boras
 }
 
 

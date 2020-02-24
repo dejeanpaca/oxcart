@@ -1,8 +1,6 @@
 {
    oxuwndQuickMenu, oX Quick Menu Window
-   Copyright (C) 2010. Dejan Boras
-
-   Started On:    21.04.2011.
+   Copyright (C) 2011. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

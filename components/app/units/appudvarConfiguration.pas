@@ -1,8 +1,6 @@
 {
    appudvarConfiguration, app DVAR text configuration file support
    Copyright (C) 2012. Dejan Boras
-
-   Started On:    08.01.2012.
 }
 
 {$INCLUDE oxheader.inc}

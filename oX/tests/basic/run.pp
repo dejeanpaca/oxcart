@@ -1,7 +1,6 @@
 {
    As basic as it gets. Includes minimal functionality needed to run a oX based program.
-
-   Started On:    26.08.2013.
+   Copyright (C) 2013. Dejan Boras
 }
 
 
