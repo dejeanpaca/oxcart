@@ -996,7 +996,8 @@ end;
 
 class function TFileUtilsGlobal.FindDirectories(const path: StdString; attr: longint; out list: TFileDescriptorList; properties: TBitSet): longint;
 begin
-   Result := FindAll(path, attr, list, properties or FILE_FIND_ALL_ONLY_DIRECTORIES);
+   Result := FindAll(IncludeTrailingPathDelimiterNonEmpty(path) + '*', attr or faDirectory, list,
+      properties or FILE_FIND_ALL_ONLY_DIRECTORIES or FILE_FIND_ALL_SKIP_PARENT_DIRECTORY_LINK);
 end;
 
 class procedure TFileUtilsGlobal.Sort(var list: TFileDescriptorList; directoriesFirst: boolean; caseSensitive: boolean);
