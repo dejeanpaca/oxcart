@@ -3,7 +3,7 @@
    Copyright (C) 2015. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT uBuild;
 
 INTERFACE
@@ -11,17 +11,13 @@ INTERFACE
    USES
       process, sysutils, uProcessHelpers, ParamUtils, StreamIO,
       uStd, uLog, uFileUtils, StringUtils, ConsoleUtils, uSimpleParser, uTiming,
-      appuPaths
+      appuPaths,
+      uFPCHelpers
       {$IFDEF UNIX}, BaseUnix{$ENDIF};
 
 CONST
    { build system name }
    SYSTEM_NAME = 'fpbuild';
-
-   FPC_VERSION = {$I %FPCVersion%};
-   FPC_TARGET = {$I %FPCTARGET%};
-   FPC_TARGETCPU = {$I %FPCTARGETCPU%};
-   FPC_TARGETOS = {$I %FPCTARGETOS%};
 
 TYPE
    PBuildPlatform = ^TBuildPlatform;
@@ -32,11 +28,11 @@ TYPE
       x64: boolean;
 
       Name,
-      Platform,
       Path,
       ConfigPath,
       {fpc version}
       Version: StdString;
+      Platform: TFPCPlatformString;
       OptimizationLevels: TSimpleStringList;
 
       class procedure Initialize(out p: TBuildPlatform); static;
