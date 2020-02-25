@@ -1132,31 +1132,10 @@ end;
 function wdgTList.GetFontColor(index: longint): TColor4ub;
 begin
    if(wdgpENABLED in Properties) then begin
-      if(HighlightHovered) then begin
-         if(not Transparent) then begin
-            if(index <> HighlightedItem) then
-               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.Text
-            else
-               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight;
-         end else begin
-            if(index <> HighlightedItem) then
-               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.InputText
-            else
-               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight;
-         end;
-      end else begin
-         if(not Transparent) then begin
-            if(index <> HighlightedItem) then
-               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.Text
-            else
-               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight;
-         end else begin
-            if(index <> HighlightedItem) then
-               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.InputText
-            else
-               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight;
-         end;
-      end;
+      if(index <> HighlightedItem) then
+         Result := uiTSkin(uiTWindow(wnd).Skin).Colors.Text
+      else
+         Result := uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight;
    end else
       Result := uiTSkin(uiTWindow(wnd).Skin).DisabledColors.Text;
 end;
