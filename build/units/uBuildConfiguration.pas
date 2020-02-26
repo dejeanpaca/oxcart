@@ -255,14 +255,14 @@ end;
 VAR
    Walker: TFileTraverse;
 
-function onUnit(const fn: StdString): boolean;
+function onUnit(const f: TFileDescriptor): boolean;
 var
    path: StdString;
 
 begin
    Result := true;
 
-   path := ExtractFilePath(fn);
+   path := ExtractFilePath(f.Name);
 
    if(build.Units.FindString(path) < 0) then begin
       build.Units.Add(path);
@@ -272,20 +272,20 @@ begin
    end;
 end;
 
-function onInclude(const fn: StdString): boolean;
+function onInclude(const f: TFileDescriptor): boolean;
 var
    path: StdString;
 
 begin
    Result := true;
 
-   path := ExtractFilePath(fn);
+   path := ExtractFilePath(f.Name);
 
    if(build.Includes.FindString(path) < 0) then begin
       build.Includes.Add(path);
 
       if(build.VerboseLog) then
-         log.v('Auto find include path: ' + ExtractFilePath(fn));
+         log.v('Auto find include path: ' + ExtractFilePath(f.Name));
    end;
 end;
 

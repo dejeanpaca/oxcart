@@ -82,6 +82,8 @@ TYPE
    PFileDescriptorList = ^TFileDescriptorList;
    TFileDescriptorList = specialize TSimpleList<TFileDescriptor>;
 
+   PFileTraverse = ^TFileTraverse;
+
    { TFileTraverse }
 
    TFileTraverse = record
@@ -95,9 +97,10 @@ TYPE
       Recursive: boolean;
 
       {called when a file is found with matching extension (if any), if returns false traversal is stopped}
-      OnFile: function(const fn: StdString): boolean;
-      OnFileDescriptor: function(const f: TFileDescriptor): boolean;
+      OnFile: function(const f: TFileDescriptor): boolean;
       OnDirectory: function(const f: TFileDescriptor): boolean;
+
+      ExternalData: pointer;
 
       procedure Initialize();
       class procedure Initialize(out traverse: TFileTraverse); static;
@@ -1296,15 +1299,11 @@ begin
                      fname := UTF8Encode(src.Name);
 
                   {call OnFile to perform operations on the file}
-                  if(OnFile <> nil) and (not OnFile(fname)) then
-                     stopTraverse := true;
-
-                  {call OnFile to perform operations on the file}
-                  if(OnFileDescriptor <> nil) then begin
+                  if(OnFile<> nil) then begin
                      TFileDescriptor.From(fd, src);
                      fd.Name := fname;
 
-                     if(not OnFileDescriptor(fd)) then
+                     if(not OnFile(fd)) then
                         stopTraverse := true;
                   end;
                end;
