@@ -9,10 +9,11 @@ UNIT oxeduwndAndroidSettings;
 INTERFACE
 
    USES
+      uStd,
       {ox}
       oxuRunRoutines,
       {widgets}
-      uiWidgets,
+      uiWidgets, uiuWidget,
       wdguCheckbox, wdguDivisor, wdguInputBox, wdguLabel,
       {oxed}
       uOXED,
@@ -23,7 +24,8 @@ IMPLEMENTATION
 
 VAR
    wdg: record
-      PackageName: wdgTInputBox;
+      PackageName,
+      ProjectFilesPath: wdgTInputBox;
       Enabled,
       ManualFileManagement: wdgTCheckbox;
    end;
@@ -40,6 +42,7 @@ begin
 
    oxedAndroidSettings.Project.PackageName := wdg.PackageName.GetText();
    oxedAndroidSettings.Project.ManualFileManagement := wdg.ManualFileManagement.Checked();
+   oxedAndroidSettings.Project.ProjectFilesPath := wdg.ProjectFilesPath.GetText();
 end;
 
 procedure revertCallback();
@@ -54,12 +57,22 @@ begin
 
    wdg.PackageName.SetText(oxedAndroidSettings.Project.PackageName);
    wdg.ManualFileManagement.Check(oxedAndroidSettings.Project.ManualFileManagement);
+   wdg.ProjectFilesPath.SetText(oxedAndroidSettings.Project.ProjectFilesPath);
+   wdg.ProjectFilesPath.Enable(wdg.ManualFileManagement.Checked());
 end;
 
 procedure InitSettings();
 begin
    oxedwndProjectSettings.OnSave.Add(@saveCallback);
    oxedwndProjectSettings.OnRevert.Add(@revertCallback);
+end;
+
+function manualFileManagementControl(cb: uiTWidget; what: loopint): loopint;
+begin
+   Result := -1;
+
+   if(what = wdgcCHECKBOX_TOGGLE) then
+      wdg.ProjectFilesPath.Enable(wdgTCheckbox(cb).Checked());
 end;
 
 procedure PreAddTabs();
@@ -82,6 +95,12 @@ begin
 
    wdg.ManualFileManagement := wdgCheckbox.Add('Manual file management (aka do it yourself)').
       Check(oxedAndroidSettings.Project.ManualFileManagement);
+   wdg.ManualFileManagement.SetControlMethod(@manualFileManagementControl);
+
+   wdgLabel.Add('Path for the android project files (only if manual file management is enabled)');
+   wdg.ProjectFilesPath := wdgInputBox.Add('');
+
+   revertCallback();
 end;
 
 procedure init();
