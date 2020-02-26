@@ -262,7 +262,9 @@ begin
    uiSkin.StandardSkin.DisabledColors := uiSkin.StandardSkin.Colors;
 
    with uiSkin.StandardSkin.DisabledColors do begin
-      InputText.Assign(192, 192, 192, 255);
+      InputText.Assign(32, 32, 32, 255);
+      InputSurface.Assign(192, 192, 192, 255);
+      InputPlaceholder.Assign(160, 160, 160, 255);
       Highlight.Assign(224, 224, 224, 255);
       TextInHighlight.Assign(192, 192, 192, 255);
       Text.Assign(160, 160, 160, 255);
