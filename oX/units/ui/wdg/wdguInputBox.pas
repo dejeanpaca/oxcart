@@ -37,19 +37,30 @@ CONST
 CONST
    wdgscINPUT_SURFACE          = 0;
    wdgscINPUT_TEXT             = 1;
-   wdgscINPUT_CURSOR           = 2;
-   wdgscINPUT_PLACEHOLDER      = 3;
-   wdgscINPUT_BORDER           = 4;
-   wdgscINPUT_BORDER_SELECTED  = 5;
+   wdgscINPUT_SURFACE_DISABLED = 2;
+   wdgscINPUT_TEXT_DISABLED    = 3;
+   wdgscINPUT_CURSOR           = 4;
+   wdgscINPUT_PLACEHOLDER      = 5;
+   wdgscINPUT_PLACEHOLDER_DISABLED = 6;
+   wdgscINPUT_BORDER           = 7;
+   wdgscINPUT_BORDER_SELECTED  = 8;
 
-   wdgInputSkinColorDescriptor: array[0..5] of uiTWidgetSkinColorDescriptor = (
+   wdgInputSkinColorDescriptor: array[0..8] of uiTWidgetSkinColorDescriptor = (
       (
          Name: 'surface';
          Color: (255, 255, 255, 255)
       ),
       (
+         Name: 'surface_disabled';
+         Color: (232, 232, 232, 255)
+      ),
+      (
          Name: 'text';
          Color: (0, 0, 0, 255)
+      ),
+      (
+         Name: 'text_disabled';
+         Color: (32, 32, 32, 255)
       ),
       (
          Name: 'cursor';
@@ -57,6 +68,10 @@ CONST
       ),
       (
          Name: 'placeholder';
+         Color: (192, 192, 192, 255)
+      ),
+      (
+         Name: 'placeholder_disabled';
          Color: (192, 192, 192, 255)
       ),
       (
@@ -72,7 +87,7 @@ CONST
    wdgInputSkinDescriptor: uiTWidgetSkinDescriptor = (
       Name: 'input';
 
-      nColors: 6;
+      nColors: 9;
       nImages: 0;
       nBools: 0;
       nStrings: 0;
@@ -213,13 +228,15 @@ begin
    renderProperties := wdgRENDER_BLOCK_SURFACE or wdgRENDER_BLOCK_BORDER;
 
    if(not CustomDrawnContainer) then begin
-      surfaceColor := GetColor(wdgscINPUT_SURFACE);
       borderColor := GetColor(wdgscINPUT_BORDER);
 
       if(IsEnabled()) then begin
+         surfaceColor := GetColor(wdgscINPUT_SURFACE);
+
          if (IsSelected()) and (Hovering()) then
             borderColor := GetColor(wdgscINPUT_BORDER);
-      end;
+      end else
+         surfaceColor := GetColor(wdgscINPUT_SURFACE_DISABLED);
 
       uiRenderWidget.Box(uiTWidget(self), surfaceColor, borderColor, renderProperties, uiTWindow(wnd).opacity)
    end else
@@ -239,10 +256,18 @@ begin
 
          if(Content <> '') then begin
             s := copy(Content, ib.CursorOfs + 1, ib.MaxChars);
-            SetColorBlended(wdgscINPUT_TEXT);
+
+            if IsEnabled() then
+               SetColorBlended(wdgscINPUT_TEXT)
+            else
+               SetColorBlended(wdgscINPUT_TEXT_DISABLED);
          end else if(Placeholder <> '') then begin
             s := copy(Placeholder, 1, ib.MaxChars);
-            SetColorBlended(wdgscINPUT_PLACEHOLDER);
+
+            if IsEnabled() then
+               SetColorBlended(wdgscINPUT_PLACEHOLDER)
+            else
+               SetColorBlended(wdgscINPUT_PLACEHOLDER_DISABLED);
          end;
 
          f.WriteCentered(s, r, [oxfpCenterVertical]);
@@ -668,8 +693,11 @@ begin
 
    wdgSkin^.SetColor(wdgscINPUT_SURFACE, skin.Colors.InputSurface);
    wdgSkin^.SetColor(wdgscINPUT_TEXT, skin.Colors.InputText);
+   wdgSkin^.SetColor(wdgscINPUT_SURFACE_DISABLED, skin.DisabledColors.InputSurface);
+   wdgSkin^.SetColor(wdgscINPUT_TEXT_DISABLED, skin.DisabledColors.InputText);
    wdgSkin^.SetColor(wdgscINPUT_CURSOR, skin.Colors.InputText);
    wdgSkin^.SetColor(wdgscINPUT_PLACEHOLDER, skin.Colors.InputPlaceholder);
+   wdgSkin^.SetColor(wdgscINPUT_PLACEHOLDER_DISABLED, skin.DisabledColors.InputPlaceholder);
    wdgSkin^.SetColor(wdgscINPUT_BORDER, skin.Colors.Border);
    wdgSkin^.SetColor(wdgscINPUT_BORDER_SELECTED, skin.Colors.SelectedBorder);
 end;
