@@ -16,7 +16,7 @@ INTERFACE
       {ui}
       uiuWindow, uiWidgets, uiuControl, uiuWidget,
       {widgets}
-      wdguLabel, wdguButton, wdguTabs, wdguCheckboxHierarchy, oxuwndFileDialog,
+      wdguLabel, wdguButton, wdguTabs, wdguCheckboxHierarchy, wdguDivisor, oxuwndFileDialog,
       {oxed}
       uOXED, oxeduProject, oxeduProjectPackages,
       oxeduProjectSettingsWindow;
@@ -109,8 +109,7 @@ begin
 
    tabs.AddTab('Packages', 'packages');
 
-   // TODO: Add Widgets
-   wdgLabel.Add('Packages');
+   wdgDivisor.Add('Packages');
 
    wdgButton.Add('Add Path').
       UseCallback(@addPath).SetHint('Include a directory as a package');

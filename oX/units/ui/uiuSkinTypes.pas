@@ -200,7 +200,7 @@ begin
    if(colorIndex >= 0) and (colorIndex < nColors) then
       exit(Colors^[colorIndex].Color);
 
-   result := cWhite4ub;
+   Result := cWhite4ub;
 end;
 
 { uiTSkin }
@@ -215,9 +215,9 @@ end;
 function uiTSkin.Get(cID: longint): uiPWidgetSkin;
 begin
    if(wdgSkins <> nil) and (cID >= 0) and (cID < Length(wdgSkins)) then
-      result := @wdgSkins[cID]
+      Result := @wdgSkins[cID]
    else
-     result := nil;
+      Result := nil;
 end;
 
 { uiTWidgetSkin }
