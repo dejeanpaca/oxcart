@@ -84,6 +84,12 @@ TYPE
 
    PFileTraverse = ^TFileTraverse;
 
+   TFileTraverseData = record
+      Traverse: PFileTraverse;
+      ExternalData: Pointer;
+      f: TFileDescriptor;
+   end;
+
    { TFileTraverse }
 
    TFileTraverse = record
@@ -97,8 +103,8 @@ TYPE
       Recursive: boolean;
 
       {called when a file is found with matching extension (if any), if returns false traversal is stopped}
-      OnFile: function(const f: TFileDescriptor): boolean;
-      OnDirectory: function(const f: TFileDescriptor): boolean;
+      OnFile: function(const f: TFileTraverseData): boolean;
+      OnDirectory: function(const f: TFileTraverseData): boolean;
 
       ExternalData: pointer;
 
@@ -1240,7 +1246,7 @@ var
    ext,
    fname: StdString;
    ok: boolean;
-   fd: TFileDescriptor;
+   fd: TFileTraverseData;
 
 begin
    {build path}
@@ -1253,6 +1259,9 @@ begin
    else
       result := FindFirst(UTF8Decode(Path + DirectorySeparator + '*'), faReadOnly or faDirectory, src);
 
+   fd.Traverse := @Self;
+   fd.ExternalData := ExternalData;
+
    if(result = 0) then begin
       repeat
          {avoid special directories}
@@ -1263,11 +1272,11 @@ begin
                   if(OnDirectory = nil) then
                      RunDirectory(UTF8Encode(src.Name))
                   else begin
-                     TFileDescriptor.From(fd, src);
-                     fd.Name := UTF8Encode(src.Name);
+                     TFileDescriptor.From(fd.f, src);
+                     fd.f.Name := UTF8Encode(src.Name);
 
                      if(OnDirectory(fd)) then
-                        RunDirectory(fd.Name);
+                        RunDirectory(fd.f.Name);
                   end;
                end;
             end else begin
@@ -1300,8 +1309,8 @@ begin
 
                   {call OnFile to perform operations on the file}
                   if(OnFile<> nil) then begin
-                     TFileDescriptor.From(fd, src);
-                     fd.Name := fname;
+                     TFileDescriptor.From(fd.f, src);
+                     fd.f.Name := fname;
 
                      if(not OnFile(fd)) then
                         stopTraverse := true;

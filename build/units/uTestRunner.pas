@@ -36,20 +36,20 @@ VAR
 
 IMPLEMENTATION
 
-function RecursiveOnFile(const f: TFileDescriptor): boolean;
+function RecursiveOnFile(const f: TFileTraverseData): boolean;
 var
    ext: StdString;
 
 begin
    Result := true;
 
-   if(FileExists(ExtractFilePath(f.Name) + DirectorySeparator + 'tests.self') and (not UnitTests.SelfTest)) then
+   if(FileExists(ExtractFilePath(f.f.Name) + DirectorySeparator + 'tests.self') and (not UnitTests.SelfTest)) then
       exit;
 
-   ext := ExtractFileExts(f.Name, 2);
+   ext := ExtractFileExts(f.f.Name, 2);
    if(ext <> '') then begin
       if(ext = '.test.lpi') or (ext = '.test.pas') then
-         TestProgram.RunProgram(f.Name);
+         TestProgram.RunProgram(f.f.Name);
    end;
 end;
 
