@@ -132,6 +132,7 @@ begin
       until not FileUtils.DirectoryExists(destination);
 
       FileUtils.CopyDirectory(oxedProjectContextMenu.Parameters.TargetPath, destination);
+      reloadBrowserNav(true);
    end;
 end;
 
