@@ -1282,7 +1282,7 @@ begin
 
    RootPath := '';
    if(ConfigPath <> 'default') then
-      RootPath := GetParentDirectory(ConfigPath);
+      RootPath := IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(ConfigPath));
 
    if(DefaultPlatform^.OptimizationLevels.n = 0) then begin
       DefaultPlatform^.OptimizationLevels.Add('none');
