@@ -103,6 +103,8 @@ TYPE
 
       Tools: TBuildSystemTools;
 
+      {base oX path}
+      RootPath,
       {build configuration path}
       ConfigPath,
       {build mode}
@@ -1261,7 +1263,7 @@ begin
       if(VerboseLog) then
          log.v('build > auto tools/build defaults for windows');
 
-      Tools.Path :=  ExpandFileName(IncludeTrailingPathDelimiterNonEmpty(ConfigPath) + '..\tools');
+      Tools.Path := ExpandFileName(IncludeTrailingPathDelimiterNonEmpty(ConfigPath) + '..\tools');
       {$ENDIF}
 
       FileUtils.NormalizePathEx(Tools.Path);
@@ -1278,6 +1280,10 @@ begin
          log.v('Auto build path: ' + Tools.Build);
    end;
 
+   RootPath := '';
+   if(ConfigPath <> 'default') then
+      RootPath := GetParentDirectory(ConfigPath);
+
    if(DefaultPlatform^.OptimizationLevels.n = 0) then begin
       DefaultPlatform^.OptimizationLevels.Add('none');
 
@@ -1287,7 +1293,6 @@ begin
       DefaultPlatform^.OptimizationLevels.Add('sse3');
       {$ENDIF}
    end;
-
 
    if(DefaultLazarus^.Path = '') then begin
       {$IF DEFINED(LINUX)}
