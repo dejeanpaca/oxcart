@@ -206,7 +206,7 @@ begin
    app.OpenLink(wnd.Parameters.TargetPath);
 
    oxwndFileContextMenu.LastAction := oxwndFileContextMenu.Events.OPEN_FILE;
-   wnd.Parameters.OnDone.Call(wdg);
+   wnd.Parameters.OnDoneCall();
 end;
 
 procedure mbRenameNotify(var mb: uiTMessageBoxData);
@@ -229,7 +229,7 @@ begin
          RenameFile(wnd.Parameters.TargetPath, path + mb.Input);
 
          oxwndFileContextMenu.LastAction := oxwndFileContextMenu.Events.RENAME_FILE;
-         wnd.Parameters.OnDone.Call();
+         wnd.Parameters.OnDoneCall();
       end;
    end;
 end;
@@ -278,7 +278,7 @@ begin
 
    if(ok) then begin
       oxwndFileContextMenu.LastAction := oxwndFileContextMenu.Events.DELETE_FILE;
-      wnd.Parameters.OnDone.Call(wdg);
+      wnd.Parameters.OnDoneCall();
    end else
       uiMessageBox.Show('Failed to delete', 'Failed to delete target: ' + wnd.Parameters.TargetPath, uimbsCRITICAL, uimbcOK);
 end;
@@ -300,7 +300,7 @@ begin
 
       if(CreateDir(path)) then begin
          oxwndFileContextMenu.LastAction := oxwndFileContextMenu.Events.CREATE_DIRECTORY;
-         wnd.Parameters.OnDone.Call();
+         wnd.Parameters.OnDoneCall();
       end else
          uiMessageBox.ShowWarning('Faile to create directory', 'Failed to create directory at ' + #13 + path);
    end;
