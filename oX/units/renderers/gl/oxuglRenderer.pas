@@ -20,7 +20,8 @@ INTERFACE
       oxuglInfo,
       {platform specific}
       {$IFDEF WINDOWS}windows, oxuglRendererWin, oxuWindowsPlatform, oxuWindowsOS{$ENDIF}
-      {$IFDEF X11}GLX, oxuX11Platform, oxuglRendererX11{$ENDIF};
+      {$IFDEF X11}GLX, oxuX11Platform, oxuglRendererX11{$ENDIF}
+      {$IFDEF COCOA}oxuglCocoa, oxuCocoaPlatform, oxuglRendererCocoa{$ENDIF};
 
 TYPE
    { oxglTRenderer }

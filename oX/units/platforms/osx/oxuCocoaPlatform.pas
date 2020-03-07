@@ -70,8 +70,8 @@ TYPE
       procedure Minimize(wnd: oxTWindow); override;
       procedure Restore(wnd: oxTWindow); override;
 
-      function MessageBox(wParent: uiTWindow;
-         const Title, Say: string; Style: uiTMessageBoxStyle; Buttons: longword): longword; override;
+      function MessageBox(wParent: uiTWindow; const Title, Say: StdString;
+         Style: uiTMessageBoxStyle; Buttons: longword): longword; override;
 
       procedure LoadCursor(cursorType: uiTCursorType); override;
       procedure SetCursor(cursorType: uiTCursorType); override;
@@ -164,8 +164,8 @@ function TCocoaPlatform.Initialize(): boolean;
 begin
    Result := inherited;
 
-      { pointer driver }
-   PointerDriver := TX11PointerDriver.Create();
+   { pointer driver }
+   PointerDriver := TCocoaPointerDriver.Create();
 end;
 
 function TCocoaPlatform.DeInitialize(): boolean;
@@ -235,7 +235,7 @@ procedure TCocoaPlatform.Restore(wnd: oxTWindow);
 begin
 end;
 
-function TCocoaPlatform.MessageBox(wParent: uiTWindow; const Title, Say: string;
+function TCocoaPlatform.MessageBox(wParent: uiTWindow; const Title, Say: StdString;
    Style: uiTMessageBoxStyle; Buttons: longword): longword;
 begin
    result := 0;
@@ -252,10 +252,5 @@ end;
 INITIALIZATION
    { platform }
    oxPlatforms.Register(TCocoaPlatform);
-
-   appm.SetDriver(appTPointerDriver(cocoaPointerDriver));
-
-FINALIZATION
-   FreeObject(cocoaPointerDriver);
 
 END.
