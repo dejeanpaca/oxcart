@@ -1236,7 +1236,7 @@ begin
       if(VerboseLog) then
          log.v('build > auto fpc defaults for darwin');
 
-      DefaultPlatform^.Path := '/usr/local/bin/'
+      DefaultPlatform^.Path := '/usr/local/bin/';
       {$ELSEIF DEFINED(WINDOWS)}
       {TODO: Determine default fpc path for windows}
       if(VerboseLog) then
@@ -1287,7 +1287,7 @@ begin
    if(DefaultPlatform^.OptimizationLevels.n = 0) then begin
       DefaultPlatform^.OptimizationLevels.Add('none');
 
-      {$IF DEFINED(CPUX86_64) OR DEFINEDCPUX86_32)}
+      {$IF DEFINED(CPUX86_64) OR DEFINED(CPUX86_32)}
       DefaultPlatform^.OptimizationLevels.Add('sse');
       DefaultPlatform^.OptimizationLevels.Add('sse2');
       DefaultPlatform^.OptimizationLevels.Add('sse3');
@@ -1304,7 +1304,7 @@ begin
       if(VerboseLog) then
          log.v('build > auto lazarus defaults for darwin');
 
-      DefaultLazarus^.Path := '/Develope/lazarus';
+      DefaultLazarus^.Path := '/Developer/lazarus/';
       {$ELSEIF DEFINED(WINDOW)}
       DefaultLazarus^.Path := 'C:\lazarus\';
       {$ENDIF}
