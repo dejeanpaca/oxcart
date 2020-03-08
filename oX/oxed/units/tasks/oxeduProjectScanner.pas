@@ -121,7 +121,6 @@ begin
       exit(false);
 end;
 
-
 { oxedTScannerOnFileProceduresHelper }
 
 procedure oxedTScannerOnFileProceduresHelper.Call(var f: oxedTScannerFile);
