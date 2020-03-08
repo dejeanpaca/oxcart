@@ -11,16 +11,31 @@ INTERFACE
    USES
       uStd,
       {oX}
-      oxuTypes,
+      oxuTypes, oxuWindowTypes,
+      oxuProjection,
+      oxuSceneRender, oxuScene,
       {ui}
+      uiuWindowRender, uiuDraw,
       uiuWidget, uiWidgets, uiuRegisteredWidgets, wdguBase, wdguViewport;
 
 TYPE
+
+   { wdgTSceneRender }
+
    wdgTSceneRender = class(wdgTViewport)
+      {a renderer for the scene}
+      SceneRenderer: oxTSceneRenderer;
+
+      constructor Create(); override;
+      destructor Destroy(); override;
+
+      procedure Render(); override;
+
+      procedure CleanupRender();
    end;
 
    wdgTSceneRenderGlobal = class(specialize wdgTBase<wdgTSceneRender>)
-     Internal: uiTWidgetClass; static;
+      Internal: uiTWidgetClass; static;
    end;
 
 
@@ -39,6 +54,41 @@ end;
 procedure deinit();
 begin
    FreeObject(wdgSceneRender);
+end;
+
+{ wdgTSceneRender }
+
+constructor wdgTSceneRender.Create();
+begin
+   inherited;
+
+   SceneRenderer := oxSceneRender.Default;
+end;
+
+destructor wdgTSceneRender.Destroy();
+begin
+   inherited Destroy;
+
+   if(SceneRenderer <> oxSceneRender.Default) then
+      FreeObject(SceneRenderer);
+end;
+
+procedure wdgTSceneRender.Render();
+begin
+   if(oxScene = nil) then
+      exit;
+
+   SceneRenderer.Render(Projection);
+
+   CleanupRender();
+end;
+
+procedure wdgTSceneRender.CleanupRender();
+begin
+   oxTWindow(oxwParent).Projection.Apply(false);
+   uiWindowRender.Prepare(oxTWIndow(oxwParent));
+
+   uiDraw.Start();
 end;
 
 INITIALIZATION
