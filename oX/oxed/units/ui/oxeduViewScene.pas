@@ -26,11 +26,11 @@ begin
    wnd := oxedSceneWindows.LastSelectedWindow;
 
    if(wnd <> nil) and (wnd.ControlCamera) then begin
-      distance := wnd.Camera.vPos.Distance(vmvZero3f);
+      distance := wnd.wdg.SceneRender.Camera.vPos.Distance(vmvZero3f);
 
-      wnd.Camera.PitchYaw(pview[0], pview[1]);
+      wnd.wdg.SceneRender.Camera.PitchYaw(pview[0], pview[1]);
 
-      wnd.Camera.vPos := wnd.Camera.vView * -distance;
+      wnd.wdg.SceneRender.Camera.vPos := wnd.wdg.SceneRender.Camera.vView * -distance;
    end;
 end;
 

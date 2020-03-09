@@ -89,10 +89,11 @@ begin
 
       if(entity <> nil) then begin
          {set camera target}
-         wnd.Camera.vTarget := entity.vPosition;
+         wnd.wdg.SceneRender.Camera.vTarget := entity.vPosition;
 
          {set camera position}
-         wnd.Camera.vPos := wnd.Camera.vTarget - (wnd.Camera.vView * 10.0);
+         wnd.wdg.SceneRender.Camera.vPos :=
+            wnd.wdg.SceneRender.Camera.vTarget - (wnd.wdg.SceneRender.Camera.vView * 10.0);
       end;
    end;
 end;
