@@ -137,15 +137,17 @@ end;
 
 procedure oxedTGameViewWindow.Initialize();
 begin
-   inherited Initialize;
+   inherited;
 
    oxWindows.ExternalWindows.Dispose();
    oxWindows.ExternalWindows.Add(Self);
+
+   wdg.SceneRender.Enable(false);
 end;
 
 procedure oxedTGameViewWindow.OnActivate();
 begin
-   inherited OnActivate;
+   inherited;
 
    if(oxedLib.Settings <> nil) then
       oxedLib.Settings^.Focused := true;
@@ -153,7 +155,7 @@ end;
 
 procedure oxedTGameViewWindow.OnDeactivate();
 begin
-   inherited OnDeactivate();
+   inherited;
 
    if(oxedLib.Settings <> nil) then
       oxedLib.Settings^.Focused := false;
