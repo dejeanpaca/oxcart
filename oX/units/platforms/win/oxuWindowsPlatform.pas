@@ -70,7 +70,7 @@ TYPE
       procedure Minimize(wnd: oxTWindow); override;
       procedure Restore(wnd: oxTWindow); override;
 
-      function TranslateKey(k: appTKeyEvent): char; override;
+      function TranslateKey(const k: appTKeyEvent): char; override;
    end;
 
 IMPLEMENTATION
@@ -965,7 +965,7 @@ begin
    windows.ShowWindow(winosTWindow(wnd).wd.h, SW_RESTORE);
 end;
 
-function oxTWindowsPlatform.TranslateKey(k: appTKeyEvent): char;
+function oxTWindowsPlatform.TranslateKey(const k: appTKeyEvent): char;
 var
    charCode,
    diacritic: longword;
