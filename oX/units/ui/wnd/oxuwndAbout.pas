@@ -32,9 +32,14 @@ TYPE
    oxTAboutWindow = object(oxTWindowBase)
       Copyright: string;
       ShowBuiltWith: boolean;
+
+      LinkCount: loopint;
       Links: array[0..3] of uiTLink;
 
       constructor Create();
+
+      procedure AddLink(caption, link: string);
+      procedure ResetLinks();
 
       protected
       procedure AddWidgets(); virtual;
@@ -104,13 +109,34 @@ begin
 
    Copyright := 'Copyright (c) Dejan Boras';
 
-   Links[0].Caption := '=> Github';
-   Links[0].Link := 'https://github.com/dejeanpaca/oxcart';
-
-   Links[1].Caption := '=> Site';
-   Links[1].Link := 'https://dbx7.net/';
+   AddLink('=> Site', 'https://dbx7.net/');
+   AddLink('=> Github', 'https://github.com/dejeanpaca/oxcart');
 
    inherited;
+end;
+
+procedure oxTAboutWindow.AddLink(caption, link: string);
+begin
+   if(LinkCount > High(Links)) then
+      exit;
+
+   Links[LinkCount].Caption := caption;
+   Links[LinkCount].Link := link;
+
+   inc(LinkCount);
+end;
+
+procedure oxTAboutWindow.ResetLinks();
+var
+   i: loopint;
+
+begin
+   LinkCount := 0;
+
+   for i := 0 to High(Links) do begin
+      Links[i].Caption := '';
+      Links[i].Link := '';
+   end;
 end;
 
 {$IFDEF OX_FEATURE_CONSOLE}
