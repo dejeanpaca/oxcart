@@ -23,11 +23,11 @@ TYPE
       public
       ClearColor: TColor4f;
 
-      constructor Create; override;
+      constructor Create(); override;
    end;
 
 VAR
-   {current scene}
+   {current scene world}
    oxWorld: oxTWorld;
 
 IMPLEMENTATION
@@ -54,14 +54,14 @@ end;
 
 { oxTWorld }
 
-constructor oxTWorld.Create;
+constructor oxTWorld.Create();
 begin
    ClearColor := cBlue4f;
 end;
 
 INITIALIZATION
    {$IFNDEF OX_LIBRARY}
-   ox.Init.Add('ox.scene', @init, @deinit);
+   ox.Init.Add('ox.world', @init, @deinit);
    {$ENDIF}
 
    serialization := oxTSerialization.Create(oxTWorld, @instance);
