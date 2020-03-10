@@ -9,19 +9,19 @@ UNIT oxeduSceneWindow;
 INTERFACE
 
    USES
-      uStd, uColors, vmVector, uLog,
+      uStd, vmVector,
       {app}
       appuKeys, appuMouse, appuActionEvents,
       {ox}
-      oxuScene, oxuCamera, oxuCameraInput, oxuProjection, oxuProjectionType,
-      oxuWindowTypes, oxuRender, oxuRenderer, oxuSceneRender, oxuTimer, oxuEntity,
+      oxuScene, oxuCamera, oxuCameraInput,
+      oxuTimer, oxuEntity,
       {find a camera component}
       oxuCameraComponent,
       {ui}
-      uiuTypes, uiuWindowTypes, uiuWindow, uiuDraw, uiWidgets, uiuWindowRender,
+      uiuTypes, uiuWindowTypes, uiuWindow, uiWidgets,
       wdguLabel, wdguSceneRender,
       {oxed}
-      uOXED, oxeduSettings, oxeduWindow, oxeduMenubar, oxeduActions, oxeduProjectRunner, oxeduProject, oxeduSceneClone,
+      uOXED, oxeduSettings, oxeduWindow, oxeduActions, oxeduProjectRunner,
       oxeduEntities;
 
 TYPE
@@ -59,7 +59,6 @@ TYPE
       procedure Initialize(); override;
       procedure DeInitialize; override;
 
-      procedure CleanupRender();
       function Key(var k: appTKeyEvent): boolean; override;
       procedure Point(var e: appTMouseEvent; {%H-}x, {%H-}y: longint); override;
       procedure Update(); override;
@@ -153,14 +152,6 @@ begin
 
    if(index > -1) then
       oxedSceneWindows.List.Remove(index);
-end;
-
-procedure oxedTSceneWindow.CleanupRender();
-begin
-   oxTWindow(oxwParent).Projection.Apply(false);
-   uiWindowRender.Prepare(oxTWIndow(oxwParent));
-
-   uiDraw.Start();
 end;
 
 function oxedTSceneWindow.Key(var k: appTKeyEvent): boolean;

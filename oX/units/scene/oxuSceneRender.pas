@@ -70,7 +70,7 @@ TYPE
       {scenes set to automatically render per window}
       Scenes: array[0..oxcMAX_WINDOW] of oxTSceneRenderWindow;
 
-      constructor Create; virtual;
+      constructor Create(); virtual;
    end;
 
 VAR
@@ -92,7 +92,7 @@ end;
 
 { oxTSceneRender }
 
-constructor oxTSceneRender.Create;
+constructor oxTSceneRender.Create();
 begin
    RenderAutomatically := true;
 end;
