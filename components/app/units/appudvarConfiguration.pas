@@ -42,9 +42,8 @@ begin
 end;
 
 INITIALIZATION
-   appdvarConfiguration.DvarFile.Create();
+   appdvarConfiguration.DvarFile.Create(dvar.dvars);
    appdvarConfiguration.DvarFile.FileName := 'config.dvar';
-   appdvarConfiguration.DvarFile.dvg := @dvar.dvars;
    appdvarConfiguration.AutoLoad := true;
    appdvarConfiguration.AutoSave := true;
 

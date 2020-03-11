@@ -71,9 +71,8 @@ INITIALIZATION
    dvPackage.pNotify := @packageNotify;
    dvPackage.Properties := dvPackage.Properties + [dvarNOTIFY_READ, dvarNOTIFY_WRITE];
 
-   oxedProjectPackagesConfigurationFile.Create();
+   oxedProjectPackagesConfigurationFile.Create(dvGroup);
    oxedProjectPackagesConfigurationFile.FileName := OXED_PROJECT_PACKAGES_CONFIGURATION_FILE;
-   oxedProjectPackagesConfigurationFile.dvg := @dvGroup;
 
    oxedProjectManagement.OnLoadProject.Add(@load);
    oxedProjectManagement.OnSaveProject.Add(@save);

@@ -125,8 +125,7 @@ INITIALIZATION
    dvGroup.Add(dvFeature, 'feature', dtcSTRING, @stringValue, [dvarNOTIFY_WRITE]);
    dvFeature.pNotify := @dvFeatureNotify;
 
-   oxedProjectSettingsFile.Create();
-   oxedProjectSettingsFile.dvg := @dvGroup;
+   oxedProjectSettingsFile.Create(dvGroup);
    oxedProjectSettingsFile.FileName := OXED_PROJECT_SETTINGS_FILE;
 
    oxedProjectSettingsFile.BeforeLoad := @UpdateVars;
