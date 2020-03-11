@@ -156,9 +156,9 @@ begin
          oxedProjectManagement.OnPreOpen.Call();
 
          {TODO: Check if project settings loaded properly}
+         log.v('project > Loading settings from ' + oxedProjectSettingsFile.GetFn());
          oxedProjectSettingsFile.Load();
-         log.v('project > Loading project: ' + oxedProject.Name);
-         log.v('project > Loaded settings');
+         log.v('project > Loading: ' + oxedProject.Name);
          oxedProjectSessionFile.Load();
          log.v('project > Loaded session');
          oxedProject.RecreateTempDirectory();
