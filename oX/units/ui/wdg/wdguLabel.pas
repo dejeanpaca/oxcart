@@ -197,7 +197,7 @@ end;
 
 procedure wdgTLabel.MultilineConditional();
 begin
-   if StringUtils.IsMultiLine(Caption) then
+   if Caption.IsMultiLine() then
       Multiline();
 end;
 
