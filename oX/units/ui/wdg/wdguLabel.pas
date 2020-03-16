@@ -37,6 +37,7 @@ TYPE
 
       procedure GetComputedDimensions(out d: oxTDimensions); override;
       procedure Multiline();
+      procedure MultilineConditional();
    end;
 
    { wdgTLabelGlobal }
@@ -192,6 +193,12 @@ begin
    IsMultiline := true;
 
    AutoSize();
+end;
+
+procedure wdgTLabel.MultilineConditional();
+begin
+   if StringUtils.IsMultiLine(Caption) then
+      Multiline();
 end;
 
 function wdgTLabelGlobal.Add(const Caption: StdString;
