@@ -229,6 +229,11 @@ function GetKeyValue(const s: StdString; out key, value: StdString; const separa
 
 function GetAnsiStrings(const s: array of StdString): TAnsiStringArray;
 
+{check if the string has line ending characters in it}
+function IsMultiLine(const s: string): boolean;
+{check if the string has line ending characters in it}
+function IsMultiLine(const s: StdString): boolean;
+
 IMPLEMENTATION
 
 CONST
@@ -2159,6 +2164,16 @@ begin
 
    for i := 0 to Length(s) - 1 do
       Result[i] := s[i];
+end;
+
+function IsMultiLine(const s: string): boolean;
+begin
+   Result := Pos(LineEnding, s) > 0;
+end;
+
+function IsMultiLine(const s: StdString): boolean;
+begin
+   Result := Pos(LineEnding, s) > 0;
 end;
 
 { TPackedStrings }
