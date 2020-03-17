@@ -168,7 +168,7 @@ TYPE
       FileColor: TColor4ub; static;
 
       {get the file icon for a given file descriptor}
-      class function GetFileIcon(const f: TFileDescriptor): wdgTListGlyph; static;
+      class function GetFileIcon(const f: TFileDescriptor; opened: boolean = false): wdgTListGlyph; static;
    end;
 
    { wdgTFileGridGlobal }
@@ -237,7 +237,7 @@ end;
 
 function wdgTHierarchicalFileList.GetGlyph(index: loopint): wdgTListGlyph;
 begin
-   Result := wdgFileList.GetFileIcon(Files.List[index]);
+   Result := wdgFileList.GetFileIcon(Files.List[index], Files.List[index].IsDirectory() and Expanded(index));
 end;
 
 procedure wdgTHierarchicalFileList.Load();
@@ -871,13 +871,17 @@ begin
 end;
 
 { wdgTFileListGlobal }
-class function wdgTFileListGlobal.GetFileIcon(const f: TFileDescriptor): wdgTListGlyph;
+class function wdgTFileListGlobal.GetFileIcon(const f: TFileDescriptor; opened: boolean): wdgTListGlyph;
 begin
    if(f.IsFile()) then begin
       Result.Glyph := oxFileIcons.Get(ExtractFileExtNoDot(f.Name));
       Result.Color := wdgFileList.FileColor;
    end else begin
-      Result.Glyph := oxFileIcons.GetDirectory();
+      if(not opened) then
+         Result.Glyph := oxFileIcons.GetDirectory()
+      else
+         Result.Glyph := oxFileIcons.GetDirectoryOpen();
+
       Result.Color := wdgFileList.DirectoryColor;
    end;
 
