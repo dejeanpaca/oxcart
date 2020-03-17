@@ -26,8 +26,10 @@ TYPE
 
    oxTFileIcons = record
       Icons: oxTFileIconList;
+
       GenericFile,
-      GenericDirectory: oxTFileIcon;
+      GenericDirectory,
+      GenericDirectoryOpen: oxTFileIcon;
 
       procedure Add(tex: oxTTexture; const fileType: string);
 
@@ -35,11 +37,15 @@ TYPE
       procedure SetFile(tex: oxTTexture);
       {set generic directory icon}
       procedure SetDirectory(tex: oxTTexture);
+      {set generic directory icon}
+      procedure SetDirectoryOpen(tex: oxTTexture);
 
       {get generic file icon}
       function GetFile(): oxTTexture;
       {get generic directory icon}
       function GetDirectory(): oxTTexture;
+      {get generic directory open icon}
+      function GetDirectoryOpen(): oxTTexture;
 
       procedure DestroyIcon(var icon: oxTFileIcon);
 
@@ -88,6 +94,16 @@ begin
       tex.MarkUsed();
 end;
 
+procedure oxTFileIcons.SetDirectoryOpen(tex: oxTTexture);
+begin
+   oxResource.Destroy(GenericDirectoryOpen.Texture);
+
+   GenericDirectoryOpen.Texture := tex;
+
+   if(tex <> nil) then
+      tex.MarkUsed();
+end;
+
 function oxTFileIcons.GetFile(): oxTTexture;
 begin
    Result := GenericFile.Texture;
@@ -96,6 +112,11 @@ end;
 function oxTFileIcons.GetDirectory(): oxTTexture;
 begin
    Result := GenericDirectory.Texture;
+end;
+
+function oxTFileIcons.GetDirectoryOpen(): oxTTexture;
+begin
+   Result := GenericDirectoryOpen.Texture;
 end;
 
 procedure oxTFileIcons.DestroyIcon(var icon: oxTFileIcon);
@@ -132,8 +153,9 @@ begin
       oxFileIcons.DestroyIcon(oxFileIcons.Icons.List[i]);
    end;
 
-   oxFileIcons.DestroyIcon(oxFileIcons.GenericDirectory);
    oxFileIcons.DestroyIcon(oxFileIcons.GenericFile);
+   oxFileIcons.DestroyIcon(oxFileIcons.GenericDirectory);
+   oxFileIcons.DestroyIcon(oxFileIcons.GenericDirectoryOpen);
 
    oxFileIcons.Icons.Dispose();
 end;
