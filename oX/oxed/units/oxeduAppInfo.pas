@@ -10,8 +10,9 @@ INTERFACE
 
    USES
       uStd, uFileUtils,
+      uAppInfo,
       {oxed}
-      oxeduProject;
+      uOXED, oxeduProject;
 
 TYPE
 
@@ -20,6 +21,7 @@ TYPE
    oxedTAppInfo = record
       {recreate the app information include file}
       procedure Recreate(const where: StdString);
+      procedure GetAppInfo(out info: appTInfo);
 
       {gets a auto generated source file header with optionally closed comment tag}
       function GetSourceHeader(close: boolean = true): TAppendableString;
@@ -53,6 +55,23 @@ begin
    p.Add('appInfo.SetVersion(1, 0);' + LineEnding);
 
    FileUtils.WriteString(where, p);
+end;
+
+procedure oxedTAppInfo.GetAppInfo(out info: appTInfo);
+begin
+   appTInfo.Initialize(info);
+
+   info.SetName(oxedProject.Name);
+
+   if(oxedProject.ShortName <> '') then
+      appInfo.NameShort := oxedProject.ShortName;
+
+   info.SetOrganization(oxedProject.Organization);
+
+   if(oxedProject.OrganizationShort <> '') then
+      info.OrgShort := oxedProject.OrganizationShort;
+
+   appInfo.SetVersion(1, 0);
 end;
 
 function oxedTAppInfo.GetSourceHeader(close: boolean): TAppendableString;
