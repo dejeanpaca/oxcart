@@ -45,6 +45,8 @@ TYPE
       sVersion,
       Title: StdString;
 
+      class procedure Initialize(out info: appTInfo); static;
+
       procedure SetName(const s: StdString);
       procedure SetOrganization(const s: StdString);
       procedure SetName(const n, o: StdString);
@@ -59,6 +61,11 @@ VAR
    appInfo: appTInfo;
 
 IMPLEMENTATION
+
+class procedure appTInfo.Initialize(out info: appTInfo);
+begin
+   ZeroOut(info, SizeOf(info));
+end;
 
 procedure appTInfo.SetName(const s: StdString);
 begin
