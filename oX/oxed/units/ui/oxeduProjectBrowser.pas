@@ -19,7 +19,7 @@ INTERFACE
       wdguToolbar, wdguFileList, wdguLabel, wdguInputBox, wdguDivisor, oxuwndFileContextMenu,
       oxuFilePreviewWindow,
       {oxed}
-      uOXED, oxeduWindow, oxeduMenubar, oxeduIcons,
+      uOXED, oxeduWindow, oxeduMenubar, oxeduIcons, oxeduActions,
       oxeduProjectContextMenu, oxeduProject, oxeduProjectManagement;
 
 TYPE
@@ -289,6 +289,8 @@ begin
       wdg.Navigation.LoadCurrentEmpty();
       wdg.Files.LoadCurrentEmpty();
    end;
+
+   wdg.Workbar.AddButton(oxedIcons.Create($f4fe), oxedActions.OPEN_PROJECT_CONFIGURATION);
 
    wdg.Workbar.SetTarget();
 
