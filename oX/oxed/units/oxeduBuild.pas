@@ -13,7 +13,7 @@ INTERFACE
       {build}
       uFPCHelpers, uBuild, uBuildConfiguration, uBuildLibraries, uPasSourceHelper,
       {app}
-      uApp, appuActionEvents,
+      uApp, appuActionEvents, uAppInfo, appuPaths,
       {ox}
       oxuThreadTask, oxuFeatures, oxuRenderer,
       {oxed}
@@ -980,8 +980,18 @@ begin
 end;
 
 class procedure oxedTBuildGlobal.OpenProjectConfiguration();
-begin
+var
+   info: appTInfo;
+   path: StdString;
 
+begin
+   oxedAppInfo.GetAppInfo(info);
+   info.SetOrganization(oxedPROJECT_ORGANIZATION);
+
+   path := appPath.GetConfigurationPath(info);
+
+   if(path <> '') then
+      app.OpenFileManager(path);
 end;
 
 function oxedTBuildGlobal.SetupPlatform(): boolean;
