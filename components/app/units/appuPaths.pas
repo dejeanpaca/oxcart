@@ -43,8 +43,6 @@ TYPE
          {will not initialize the application}
          SkipInit: boolean;
 
-         {configuration prefix directory}
-         Prefix,
          {configuration path}
          Path,
          {preset configuration path}
@@ -55,6 +53,8 @@ TYPE
       function Get(c: appTPathType): StdString;
       {creates the configuration directory}
       function HomeConfigurationDir(const dir: StdString): StdString;
+      {creates the configuration directory}
+      function GetConfigurationPath(const info: appTInfo): StdString;
       {creates the configuration directory}
       function CreateConfiguration(): boolean;
       {get the executable path}
@@ -122,31 +122,37 @@ begin
    Result := createdPath;
 end;
 
+function appTPath.GetConfigurationPath(const info: appTInfo): StdString;
+var
+   name: StdString;
+
+begin
+   name := '.';
+
+   if(Configuration.UseOrganization and (appInfo.OrgShort <> '')) then
+      name := name + info.OrgShort + DirectorySeparator + info.NameShort
+   else
+      name := name + info.NameShort;
+
+   {determine configuration createdPath}
+   Result := appPath.Get(appPATH_CONFIG) + name;
+end;
+
 {create the configuration directory}
 function appTPath.CreateConfiguration(): boolean;
 var
-   createdPath,
-   name: StdString;
+   createdPath: StdString;
 
 begin
    if(not Configuration.Created) then begin
       if(Configuration.Preset = '') then begin
-         {determine name of the configuration directory}
-         if(Configuration.Path = '') then begin
-            name := '.';
-
-            if(configuration.prefix <> '') then
-               name := name + Configuration.Prefix + DirectorySeparator;
-
-            if(Configuration.UseOrganization and (appInfo.OrgShort <> '')) then
-               name := name + appInfo.OrgShort + DirectorySeparator + appInfo.NameShort
-            else
-               name := name + appInfo.NameShort;
-         end else
-            name := Configuration.Path;
-
-         {determine configuration createdPath}
-         createdPath := appPath.Get(appPATH_CONFIG) + name;
+         {determine name of the configuration directory from app info}
+         if(Configuration.Path = '') then
+            createdPath := GetConfigurationPath(appInfo)
+         else begin
+            {determine configuration createdPath}
+            createdPath := appPath.Get(appPATH_CONFIG) + Configuration.Path;
+         end;
       end else
          createdPath := Configuration.Preset;
 
