@@ -58,6 +58,12 @@ begin
    Workbar := wdgToolbar.Add();
    Workbar.AddSeparator();
 
+   btn := Workbar.AddButton(oxedIcons.Create($f121), oxedActions.RECODE);
+   btn^.Hint := 'Recode project';
+   btn^.Color.Assign(255, 102, 0, 255);
+
+   Workbar.AddSeparator();
+
    Buttons.ProjectSettings := Workbar.AddButton(oxedIcons.Create($f013), oxedwndProjectSettings.OpenWindowAction);
    Buttons.ProjectSettings^.Hint := 'Open project settings';
 
