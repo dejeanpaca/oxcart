@@ -16,10 +16,10 @@ INTERFACE
       oxuTypes,
       {ui}
       uiuControl, uiuWindow, uiWidgets, uiuWidgetWindow,
-      wdguWorkbar, wdguFileList, wdguLabel, wdguInputBox, wdguDivisor, oxuwndFileContextMenu,
+      wdguToolbar, wdguFileList, wdguLabel, wdguInputBox, wdguDivisor, oxuwndFileContextMenu,
       oxuFilePreviewWindow,
       {oxed}
-      uOXED, oxeduWindow, oxeduMenubar,
+      uOXED, oxeduWindow, oxeduMenubar, oxeduIcons,
       oxeduProjectContextMenu, oxeduProject, oxeduProjectManagement;
 
 TYPE
@@ -48,7 +48,7 @@ TYPE
 
    oxedTProjectBrowserWindow = class(oxedTWindow)
       wdg: record
-         Workbar: wdgTWorkbar;
+         Workbar: wdgTToolbar;
          Separator: wdgTDivisor;
          Search: wdgTInputBox;
          Navigation: wdgTOXEDProjectBrowserNavigate;
@@ -258,7 +258,7 @@ procedure oxedTProjectBrowserWindow.Initialize();
 begin
    inherited;
 
-   wdg.Workbar := wdgWorkbar.Add(Self);
+   wdg.Workbar := wdgToolbar.Add(Self);
    wdg.Workbar.ObscuresMaximization := uiCONTROL_MAXIMIZATION_OBSCURE_NONE;
 
    uiWidget.Create.Instance := wdgTOXEDProjectBrowserNavigate;
@@ -291,7 +291,9 @@ begin
    end;
 
    wdg.Workbar.SetTarget();
+
    wdg.Search := wdgInputBox.Add('', oxNullPoint, oxNullDimensions);
+   wdg.Search.SetBorder(0);
    wdg.Search.SetPlaceholder('Search');
 end;
 
@@ -328,8 +330,8 @@ begin
    wdg.Files.Move(wdg.Separator.RightOf(0), wdg.FilePath.BelowOf(0));
    wdg.Files.Resize(wdg.Separator.RemainingWidth(), wdg.FilePath.RemainingHeight());
 
-   wdg.Search.Resize(wdg.Workbar.Dimensions.w div 2, wdg.Workbar.Dimensions.h - 4);
-   wdg.Search.CenterVertically().MoveRightmost(2);
+   wdg.Search.Resize(wdg.Workbar.Dimensions.w div 2, wdg.Workbar.Dimensions.h);
+   wdg.Search.CenterVertically().MoveRightmost(0);
 end;
 
 procedure projectOpen();
