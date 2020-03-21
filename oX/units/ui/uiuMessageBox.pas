@@ -256,15 +256,19 @@ procedure MsgBoxWidgets(var wnd: uiTMessageBoxWindow; const say: string; style: 
 var
    i,
    nButtons,
-   w, x, y: loopint;
+   w,
+   lastW,
+   x,
+   y: loopint;
 
    labelWidget: wdgTLabel;
 
 procedure DetermineDimensions();
 begin
-   y := BTN_HEIGHT + wdgDEFAULT_SPACING;
-   w := ((wnd.Dimensions.w - 8) div nButtons) - 4;
-   x := wdgDEFAULT_SPACING;
+   y := BTN_HEIGHT - 1;
+   w := (wnd.Dimensions.w div nButtons);
+   lastW := w + (wnd.Dimensions.w mod nButtons);
+   x := 0;
 end;
 
 procedure AddButton(which, curButton: loopint);
@@ -272,8 +276,12 @@ var
    wdg: wdgTButton;
 
 begin
+   if(curButton = buttons - 1) then
+      w := lastW;
+
    wdg := wdgTButton(wdgButton.Add(ButtonDescriptors[which].sCaption,
      oxPoint(x, y), oxDimensions(w, BTN_HEIGHT), 0).SetID(ButtonDescriptors[which].wdgID^));
+   wdg.SetBorder(0);
 
   wnd.MessageBox.wdg.Buttons[curButton] := wdg;
   if(nButtons > 0) then begin
