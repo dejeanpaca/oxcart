@@ -31,6 +31,12 @@ VAR
       DeployTemplate: wdgTButton;
    end;
 
+procedure enableAndroidDeployWidgets(enabled: boolean);
+begin
+   wdg.ProjectFilesPath.Enable(enabled);
+   wdg.DeployTemplate.Enable(enabled);
+end;
+
 procedure deployTemplate();
 var
    path: StdString;
@@ -88,17 +94,11 @@ begin
 end;
 
 function manualFileManagementControl(cb: uiTWidget; what: loopint): loopint;
-var
-   enabled: boolean;
-
 begin
    Result := -1;
 
    if(what = wdgcCHECKBOX_TOGGLE) then begin
-      enabled := wdgTCheckbox(cb).Checked();
-
-      wdg.ProjectFilesPath.Enable(enabled);
-      wdg.DeployTemplate.Enable(enabled);
+      enableAndroidDeployWidgets(wdgTCheckbox(cb).Checked());
    end;
 end;
 
@@ -128,6 +128,8 @@ begin
    wdg.ProjectFilesPath := wdgInputBox.Add('');
 
    wdg.DeployTemplate := wdgButton.Add('Add android files to project').UseCallback(@deployTemplate);
+
+   enableAndroidDeployWidgets(oxedAndroidSettings.Project.ManualFileManagement);
 
    revertCallback();
 end;
