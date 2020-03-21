@@ -28,11 +28,11 @@ CONST
    wdgButtonSkinColorDescriptor: array[0..2] of uiTWidgetSkinColorDescriptor = (
        (
           Name: 'regular';
-          Color: (127, 127, 127, 255)
+          Color: (96, 96, 96, 255)
        ),
        (
           Name: 'regular_disabled';
-          Color: (32, 32, 32, 255)
+          Color: (48, 48, 48, 255)
        ),
        (
           Name: 'highlight';
@@ -187,7 +187,7 @@ begin
       renderProperties := renderProperties or CurvedFrameProperties;
    end;
 
-   if(not Hovering()) or (not Pressed) then
+   if((not Hovering()) or (not Pressed)) then
       renderProperties.Prop(wdgRENDER_BLOCK_BORDER);
 
    {if no textures present then render normally}

@@ -233,7 +233,6 @@ begin
       cTitleBtSymbols[4] := '>';
    end;
 
-
    { COLORS }
 
    with uiSkin.StandardSkin.Colors do begin
@@ -246,8 +245,8 @@ begin
       Highlight.Assign(127, 127, 255, 255);
       Focal.Assign(96, 96, 112, 255);
       Shadow := cBlack4ub;
-      Surface.Assign(48, 48, 48, 255);
-      LightSurface.Assign(80, 80, 80, 255);
+      Surface.Assign(32, 32, 32, 255);
+      LightSurface.Assign(42, 42, 42, 255);
       SelectedBorder.Assign(63, 127, 255, 255);
       Border.Assign(16, 16, 16, 255);
 
