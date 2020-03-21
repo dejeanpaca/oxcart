@@ -84,7 +84,7 @@ TYPE
       procedure SetUndocked();
       procedure Undock();
 
-      procedure OnPostRender; override;
+      procedure OnPostRender(); override;
       procedure OnRenderEdge();
 
       procedure OnAnyDrag();
@@ -695,16 +695,16 @@ begin
    newSize := trunc(d.w * ratio);
 
    if(not IsDockableArea(ofWnd)) then begin
-      ofWnd.Resize(d.w - newSize, ofWnd.Dimensions.h);
+      ofWnd.Resize(d.w - newSize, d.h);
       Move(ofWnd.Position.x, ofWnd.Position.y);
 
       ofWnd.Move(ofWnd.Position.x + newSize, ofWnd.Position.y);
-      Resize(newSize, ofWnd.Dimensions.h);
+      ResizeAdjusted(newSize, d.h);
    end else begin
-      Move(0, ofWnd.Dimensions.h - 1);
-      ResizeAdjusted(newSize, ofWnd.Dimensions.h);
+      Move(0, d.h - 1);
+      ResizeAdjusted(newSize, d.h);
 
-      uiTDockableArea(ofWnd).Fit(1, 0, ofWnd.Dimensions.w - newSize, ofwnd.Dimensions.h, Self);
+      uiTDockableArea(ofWnd).Fit(1, 0, d.w - newSize, d.h, Self);
    end;
 
    SetDocked();
@@ -721,15 +721,15 @@ begin
    newSize := trunc(d.w * ratio);
 
    if(not IsDockableArea(ofWnd)) then begin
-      ofWnd.Resize(d.w - newSize, ofWnd.Dimensions.h);
+      ofWnd.Resize(d.w - newSize, d.h);
       Move(ofWnd.Position.x + (d.w - newSize), ofWnd.Position.y);
 
-      Resize(newSize, ofWnd.Dimensions.h);
+      ResizeAdjusted(newSize, d.h);
    end else begin
-      Move(ofWnd.Dimensions.w - newSize, ofWnd.Dimensions.h - 1);
-      ResizeAdjusted(newSize, ofWnd.Dimensions.h);
+      Move(d.w - newSize, d.h - 1);
+      ResizeAdjusted(newSize, d.h);
 
-      uiTDockableArea(ofWnd).Fit(-1, 0, ofWnd.Dimensions.w - newSize, ofwnd.Dimensions.h, Self);
+      uiTDockableArea(ofWnd).Fit(-1, 0, d.w - newSize, d.h, Self);
    end;
 
    SetDocked();
@@ -753,9 +753,9 @@ begin
       ofWnd.Move(ofWnd.Position.x, ofWnd.Position.y - newSize);
    end else begin
       Move(0, ofWnd.Dimensions.h - 1);
-      ResizeAdjusted(ofWnd.Dimensions.w, newSize);
+      ResizeAdjusted(d.w, newSize);
 
-      uiTDockableArea(ofWnd).Fit(0, -1, ofWnd.Dimensions.w, ofwnd.Dimensions.h - newSize, Self);
+      uiTDockableArea(ofWnd).Fit(0, -1, d.w, d.h - newSize, Self);
    end;
 
    SetDocked();
@@ -778,9 +778,9 @@ begin
       ResizeAdjusted(d.w, newSize);
    end else begin
       Move(0, newSize - 1);
-      ResizeAdjusted(ofWnd.Dimensions.w, newSize);
+      ResizeAdjusted(d.w, newSize);
 
-      uiTDockableArea(ofWnd).Fit(0, 1, ofWnd.Dimensions.w, ofwnd.Dimensions.h - newSize, Self);
+      uiTDockableArea(ofWnd).Fit(0, 1, d.w, d.h - newSize, Self);
    end;
 
    SetDocked();
@@ -873,8 +873,8 @@ begin
             exit;
          {untab any window in the list}
          end else begin
-            {move to a central place}
             Resize(Dimensions);
+            {move to a central place}
             AutoCenter();
          end;
 
@@ -978,6 +978,7 @@ begin
       right := horizontal.FindRightOf(Position.x);
 
       Result := (left.n > 0) or (right.n > 0);
+
       if(not Result) then
          exit;
 
@@ -1083,7 +1084,7 @@ begin
    SetUndocked();
 end;
 
-procedure uiTDockableWindow.OnPostRender;
+procedure uiTDockableWindow.OnPostRender();
 begin
    OnRenderEdge();
 end;
