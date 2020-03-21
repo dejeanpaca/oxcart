@@ -261,7 +261,7 @@ begin
 end;
 
 begin
-   if(button = appmcLEFT) then begin
+   if(button.IsSet(appmcLEFT)) then begin
       if(Expandable(index) and expandedClicked()) then begin
          if(not Expanded(index)) then begin
             items := GetSubItems(index, Visible.List[index].Item);
