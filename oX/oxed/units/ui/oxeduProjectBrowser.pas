@@ -165,8 +165,10 @@ var
    origin: uiTWidgetWindowOrigin;
 
 begin
-   if(button <> appmcRIGHT) then
-      exit;
+   if(button <> appmcRIGHT) then begin
+      inherited ItemClicked(index, button);
+      Exit;
+   end;
 
    origin.SetPoint(GetAbsolutePointer(LastPointerPosition), Self);
 
