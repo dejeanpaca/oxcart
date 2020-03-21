@@ -97,9 +97,8 @@ function manualFileManagementControl(cb: uiTWidget; what: loopint): loopint;
 begin
    Result := -1;
 
-   if(what = wdgcCHECKBOX_TOGGLE) then begin
+   if(what = wdgcCHECKBOX_TOGGLE) then
       enableAndroidDeployWidgets(wdgTCheckbox(cb).Checked());
-   end;
 end;
 
 procedure PreAddTabs();

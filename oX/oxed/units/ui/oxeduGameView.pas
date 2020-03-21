@@ -53,7 +53,6 @@ VAR
    projectKey: oxTKeyGlobal;
    projectPointer: oxTPointerGlobal;
 
-
 procedure openGameView();
 begin
    oxedGameView.CreateWindow();
