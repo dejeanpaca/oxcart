@@ -454,7 +454,8 @@ end;
 
 class procedure uiTDockableArea.FitWindow(dockableWnd: uiTDockableWindow; ofsX, ofsY, newWidth, newHeight, dimW, dimH: loopint);
 var
-   ratioWidth, ratioHeight: single;
+   ratioWidth,
+   ratioHeight: single;
 
    newW, newH,
    pX, pY: loopint;
@@ -513,7 +514,8 @@ end;
 
 procedure uiTDockableArea.FitWindow(dockableWnd: uiTDockableWindow; ofsX, ofsY, newWidth, newHeight: longint);
 var
-   ratioWidth, ratioHeight: single;
+   ratioWidth,
+   ratioHeight: single;
 
    newW, newH,
    pX, pY: loopint;
@@ -952,7 +954,7 @@ end;
 
 procedure uiTDockableWindow.Undock();
 var
-   ratio: single;
+   ratio: double;
    offset: loopint;
 
    cur: uiTWindow;
@@ -1055,8 +1057,12 @@ begin
          cur := above.List[i];
          curD := cur.GetTotalDimensions();
 
-         cur.Move(cur.Position.x, round(totalHeight - ((totalHeight - cur.Position.y) * ratio)));
-         cur.ResizeAdjusted(curD.w, round(curD.h * ratio));
+         height := round(curD.h * ratio);
+         writeln(round((totalHeight - 1 - cur.Position.y) * ratio));
+         offset := cur.Position.y - round((totalHeight - 1 - cur.Position.y) * ratio);
+
+         cur.Move(cur.Position.x, offset);
+         cur.ResizeAdjusted(curD.w, height);
       end;
 
       for i := 0 to (below.n - 1) do begin
@@ -1065,7 +1071,7 @@ begin
 
          height := round(curD.h * ratio);
 
-         cur.Move(cur.Position.x, cur.Position.y + (height - 1 - cur.Position.y));
+         cur.Move(cur.Position.x, cur.Position.y + (height - curD.h));
          cur.ResizeAdjusted(curD.w, height);
       end;
 
