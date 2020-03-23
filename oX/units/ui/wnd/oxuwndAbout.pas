@@ -67,6 +67,7 @@ var
 begin
    {add the label}
    wdgLabel.Add(appInfo.GetVersionString(0));
+   wdgDivisor.Add('');
    wdgLabel.Add(ox.GetVersionString(0));
 
    if(Copyright <> '') then begin
