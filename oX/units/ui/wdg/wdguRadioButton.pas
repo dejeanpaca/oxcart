@@ -15,7 +15,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont, oxumPrimitive, oxuTexture, oxuTransform,
       {ui}
-      uiuWindowTypes, uiuWindow, uiuWidget, uiWidgets, uiuSkinTypes,
+      uiuWindowTypes, uiuWindow, uiuSkinTypes,
+      uiuWidget, uiWidgets, uiuRegisteredWidgets,
       wdguBase;
 
 TYPE
@@ -28,7 +29,7 @@ TYPE
       procedure Render(); override;
       function Key(var k: appTKeyEvent): boolean; override;
 
-      function SetGroup(g: longint): wdgTRadioButton; override;
+      function SetGroup(g: loopint): wdgTRadioButton; override;
 
       {set the check-box state}
       procedure Mark();
@@ -109,7 +110,7 @@ begin
    end;
 end;
 
-function wdgTRadioButton.SetGroup(g: longint): wdgTRadioButton;
+function wdgTRadioButton.SetGroup(g: loopint): wdgTRadioButton;
 begin
    Result := wdgTRadioButton(inherited SetGroup(g));
 end;
