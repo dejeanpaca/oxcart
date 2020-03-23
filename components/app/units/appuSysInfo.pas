@@ -124,12 +124,16 @@ end;
 begin
    if(not LoggedSystemInfo = true) and (GotSystemInfo) then begin
       log.Collapsed('System Information');
-      logString('System', appSI.SystemName);
-      logString('Device', appSI.SystemDeviceName);
+      if(appSI.System.Name <> '') then
+         logString('System', appSI.System.Name);
 
-      logString('Kernel', appSI.KernelVersion);
+      if(appSI.System.DeviceName <> '') then
+         logString('Device', appSI.System.DeviceName);
 
-      if(appSI.hasProcessorInfo) then begin
+      if(appSI.System.KernelVersion <> '') then
+         logString('Kernel', appSI.System.KernelVersion);
+
+      if(appSI.HasProcessorInfo) then begin
          log.Enter('CPU');
          log.i('Number of (cores):    ' + sf(appSI.nProcessors));
 
@@ -186,7 +190,7 @@ end;
 
 INITIALIZATION
    {set defaults}
-   appSI.systemName := 'unknown';
+   appSI.System.Name := 'unknown';
 
    app.InitializationProcs.Add('systeminformation', @Initialize);
 

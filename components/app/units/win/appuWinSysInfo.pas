@@ -37,7 +37,7 @@ var
 
 begin
    {system name}
-   appSI.SystemName := windowsVersion.GetString();
+   appSI.System.Name := windowsVersion.GetString();
 
    {get system information from windows}
    GetSystemInfo(@si);
