@@ -1,6 +1,6 @@
 {
-   appuSysInfo, provides system information
-   Copyright (C) 2011. Dejan Boras
+   oxuSysInfo, provides system information
+   Copyright (C) 2019. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}
