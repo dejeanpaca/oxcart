@@ -199,12 +199,7 @@ end;
 procedure onStart();
 begin
    projectKey := oxTKeyGlobal(oxLibReferences^.FindInstance('oxTKeyGlobal'));
-   if(projectKey = nil) then
-      log.e('Failed to get project global keys reference');
-
    projectPointer := oxTPointerGlobal(oxLibReferences^.FindInstance('oxTPointerGlobal'));
-   if(projectPointer = nil) then
-      log.e('Failed to get project global pointer reference');
 
    {set ox lib to focused if any of our windows is selected}
    if(oxedGameView.Instance <> nil) then

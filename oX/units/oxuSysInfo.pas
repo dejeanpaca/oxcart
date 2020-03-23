@@ -30,8 +30,6 @@ begin
 
    if(instance <> nil) then
       appSI := instance^
-   else
-      log.w('Could not find external system information instance');
 end;
 {$ENDIF}
 
