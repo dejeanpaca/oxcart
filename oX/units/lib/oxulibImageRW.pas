@@ -20,7 +20,7 @@ var
    f: imgPFile;
 
 begin
-   f := oxExternalGlobalInstances.FindInstancePtr('imgTFile');
+   f := oxExternalGlobalInstances^.FindInstancePtr('imgTFile');
 
    if(f <> nil) then begin
       imgFile.Readers := f^.Readers;

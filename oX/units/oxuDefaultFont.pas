@@ -42,7 +42,7 @@ var
    instance: oxPDefaultFontGlobal;
 
 begin
-   instance := oxExternalGlobalInstances.FindInstancePtr('oxTDefaultFontGlobal');
+   instance := oxExternalGlobalInstances^.FindInstancePtr('oxTDefaultFontGlobal');
 
    if(instance <> nil) then begin
       oxDefaultFont.Font := instance^.Font;

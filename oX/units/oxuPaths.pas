@@ -140,7 +140,7 @@ var
    ext: oxPPaths;
 
 begin
-   ext := oxExternalGlobalInstances.FindInstancePtr('oxTPaths');
+   ext := oxExternalGlobalInstances^.FindInstancePtr('oxTPaths');
    if(ext = nil) then
       exit;
 

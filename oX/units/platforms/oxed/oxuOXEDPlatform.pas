@@ -109,7 +109,7 @@ end;
 
 function TOXEDPlatform.Initialize(): boolean;
 begin
-   externalPlatform := oxExternalGlobalInstances.FindInstance('oxTPlatform');
+   externalPlatform := oxExternalGlobalInstances^.FindInstance('oxTPlatform');
 end;
 
 function TOXEDPlatform.DeInitialize(): boolean;

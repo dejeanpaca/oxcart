@@ -774,7 +774,7 @@ begin
    if(not IsDockableArea(ofWnd)) then begin
       ofWnd.ResizeAdjusted(d.w, d.h - newSize);
 
-      MoveAdjusted(ofWnd.Position.x, ofWnd.Position.y - ofWnd.Dimensions.h);
+      Move(ofWnd.Position.x, ofWnd.Position.y - ofWnd.GetTotalDimensions().h);
       ResizeAdjusted(d.w, newSize);
    end else begin
       Move(0, newSize - 1);

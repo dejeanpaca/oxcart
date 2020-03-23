@@ -24,8 +24,8 @@ TYPE
 
    oxTLibrary = class
       Name: string;
-      GlobalInstances: oxTGlobalInstances;
-      LibraryInstances: oxTGlobalInstances;
+      GlobalInstances: oxPGlobalInstances;
+      LibraryInstances: oxPGlobalInstances;
       {is the library in error state}
       ErrorState: boolean;
 
@@ -66,7 +66,7 @@ function ox_library_load(): oxTLibrary;
 begin
    stdlog.LogEndTimeDate := false;
    oxLibrary := oxTLibrary.Create();
-   oxLibrary.LibraryInstances := oxuGlobalInstances.oxGlobalInstances;
+   oxLibrary.LibraryInstances := @oxuGlobalInstances.oxGlobalInstances;
 
    result := oxLibrary;
 end;
@@ -104,7 +104,7 @@ begin
    consoleLog.LogEndTimeDate := false;
 
    if(GlobalInstances <> nil) then begin
-      GlobalInstances.CopyOverReferences(oxuGlobalInstances.oxGlobalInstances);
+      GlobalInstances^.CopyOverReferences(oxuGlobalInstances.oxGlobalInstances);
       oxExternalGlobalInstances := Self.GlobalInstances;
 
       oxRun.Initialize();

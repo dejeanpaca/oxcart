@@ -36,7 +36,7 @@ begin
       log.i('Loading scene (lib)');
       oxSceneLoader.LoadStart();
 
-      original := oxTScene(oxExternalGlobalInstances.FindInstance('oxTScene'));
+      original := oxTScene(oxExternalGlobalInstances^.FindInstance('oxTScene'));
       if(original <> nil) then begin
          oxCloneScene(original, scene, oxSerialization);
 

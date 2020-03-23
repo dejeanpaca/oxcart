@@ -40,7 +40,7 @@ var
    instance: oxPDefaultTextureGlobal;
 
 begin
-   instance := oxExternalGlobalInstances.FindInstancePtr('oxTDefaultTextureGlobal');
+   instance := oxExternalGlobalInstances^.FindInstancePtr('oxTDefaultTextureGlobal');
 
    if(instance <> nil) then
       oxDefaultTexture.Texture := instance^.Texture

@@ -42,7 +42,7 @@ TYPE
 
 VAR
    oxedLib: oxedTLibraryGlobal;
-   oxLibReferences: oxTGlobalInstances;
+   oxLibReferences: oxPGlobalInstances;
 
 IMPLEMENTATION
 
@@ -131,7 +131,7 @@ begin
    if(oxLib = nil) then
       exit('Library loaded, but did not return a proper object');
 
-   oxLib.GlobalInstances := oxGlobalInstances;
+   oxLib.GlobalInstances := @oxGlobalInstances;
    log.i('Library ' + path + ' loaded successfully: '  + oxLib.Name + ' (Elapsed: ' + startTime.ElapsedfToString() + 's)');
 
    appInfo := oxLib.GetAppInfo();
