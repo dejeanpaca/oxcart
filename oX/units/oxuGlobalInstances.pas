@@ -9,7 +9,7 @@ UNIT oxuGlobalInstances;
 INTERFACE
 
    USES
-      uStd;
+      uStd, uLog;
 
 TYPE
    oxTGlobalInstanceMethod = function(): TObject;
@@ -42,8 +42,11 @@ TYPE
    { oxTGlobalInstances }
 
    oxTGlobalInstances = object
+      Name: StdString;
       List: oxTGlobalInstancesList;
       OnReferenceChange: oxTGlobalInstancesReferenceChangeCallbacks;
+      {should we log instances we cannot find}
+      LogNotFound: boolean;
 
       constructor Create();
 
@@ -86,10 +89,17 @@ end;
 
 { oxTGlobalInstances }
 
-constructor oxTGlobalInstances.Create;
+constructor oxTGlobalInstances.Create();
 begin
    oxTGlobalInstancesList.Initialize(List);
    OnReferenceChange.Initialize(OnReferenceChange);
+   LogNotFound := true;
+
+   {$IFNDEF OX_LIBRARY}
+   Name := 'global';
+   {$ELSE}
+   Name := 'library';
+   {$ENDIF}
 end;
 
 function oxTGlobalInstances.Add(instanceType: TClass; location: pointer; method: oxTGlobalInstanceMethod): oxPGlobalInstance;
@@ -159,7 +169,9 @@ begin
         exit(i);
    end;
 
-   result := -1;
+   log.w('Could not find global reference ' + cName + ' in ' + Name);
+
+   Result := -1;
 end;
 
 function oxTGlobalInstances.FindInstance(const cName: StdString): TObject;
@@ -176,7 +188,9 @@ begin
       exit(TObject(instance^.Location^));
    end;
 
-   result := nil;
+   log.w('Could not find global reference ' + cName + ' in ' + Name);
+
+   Result := nil;
 end;
 
 function oxTGlobalInstances.FindInstancePtr(const typeName: StdString): pointer;
@@ -193,7 +207,7 @@ begin
       exit(instance^.Location);
    end;
 
-   result := nil;
+   Result := nil;
 end;
 
 procedure oxTGlobalInstances.CopyOver(target: oxTGlobalInstances);
