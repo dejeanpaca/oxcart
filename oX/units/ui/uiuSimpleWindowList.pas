@@ -23,6 +23,8 @@ TYPE
       function FindAbove(y: loopint): uiTSimpleWindowList;
       function FindBelow(y: loopint): uiTSimpleWindowList;
 
+      function GetLeftmostCoordinate(): loopint;
+
       {get total width (including non-client) of all windows}
       function GetTotalWidth(): loopint;
       {get total height (including non-client) of all windows}
@@ -93,6 +95,23 @@ begin
    for i := 0 to (n - 1) do begin
       if(List[i].Position.y < y) then
          Result.Add(List[i]);
+   end;
+end;
+
+function uiTSimpleWindowListHelper.GetLeftmostCoordinate(): loopint;
+var
+   i: loopint;
+
+begin
+   Result := 0;
+
+   if(n > 0) then begin
+      Result := List[0].Position.x;
+
+      for i := 1 to n - 1 do begin
+         if(List[i].Position.x < Result) then
+            Result := List[i].Position.x;
+      end;
    end;
 end;
 
