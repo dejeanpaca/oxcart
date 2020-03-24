@@ -15,7 +15,7 @@ INTERFACE
       {ox}
       oxuTypes,
       {ui}
-      uiuControl, uiuWindow, uiWidgets, uiuWidgetWindow,
+      uiuControl, uiuWindow, uiWidgets, uiuWidgetWindow, uiuFiles,
       wdguToolbar, wdguFileList, wdguLabel, wdguInputBox, wdguDivisor, oxuwndFileContextMenu,
       oxuFilePreviewWindow,
       {oxed}
@@ -257,6 +257,9 @@ end;
 { oxedTProjectBrowserWindow }
 
 procedure oxedTProjectBrowserWindow.Initialize();
+var
+   item: wdgPToolbarItem;
+
 begin
    inherited;
 
@@ -292,8 +295,13 @@ begin
       wdg.Files.LoadCurrentEmpty();
    end;
 
-   wdg.Workbar.AddButton(oxedIcons.Create($f07c), oxedActions.OPEN_PROJECT_DIRECTORY);
-   wdg.Workbar.AddButton(oxedIcons.Create($f4fe), oxedActions.OPEN_PROJECT_CONFIGURATION);
+   item := wdg.Workbar.AddButton(oxedIcons.Create($f07c), oxedActions.OPEN_PROJECT_DIRECTORY);
+   item^.Color := uiFiles.DirectoryColor;
+   item^.Hint := 'Open project directory';
+
+   item := wdg.Workbar.AddButton(oxedIcons.Create($f4fe), oxedActions.OPEN_PROJECT_CONFIGURATION);
+   item^.Hint := 'Open project configuration directory';
+   item^.Color := uiFiles.DirectoryColor;
 
    wdg.Workbar.SetTarget();
 
