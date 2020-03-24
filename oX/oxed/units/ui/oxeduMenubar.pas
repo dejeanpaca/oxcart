@@ -17,7 +17,7 @@ INTERFACE
       {ui}
       uiuContextMenu, oxuwndAbout, oxuwndSettings, oxuwndResourceInspector,
       {widgets}
-      uiWidgets, wdguMenubar, uiuWidget,
+      uiWidgets, wdguMenubar, uiuWidget, uiuFiles,
       {oxed}
       uOXED, oxeduActions, oxeduRecents, oxeduIcons, oxeduBuild, oxeduPlatform, oxuwndDVarEditor, oxeduTasks,
       oxeduProject, oxeduProjectManagement, oxeduProjectSettingsWindow, oxeduRunSettingsWindow, oxeduProjectRunner,
@@ -141,9 +141,13 @@ begin
 
    Editor := Bar.Add('Editor');
    item := Editor.AddItem('Open config directory', @oxed.OpenConfigDirectory);
+   item^.GlyphColor := uiFiles.DirectoryColor;
    oxedIcons.Create(item, $f07b);
+
    item := Editor.AddItem('Open logs', @oxed.OpenLogs);
+   item^.GlyphColor := uiFiles.DirectoryColor;
    oxedIcons.Create(item, $f03a);
+
    Editor.AddItem('DVar Editor', oxwndDVarEditor.OpenWindowAction);
    Editor.AddItem('Resource Inspector', oxwndResourceInspector.OpenWindowAction);
    Editor.AddSeparator();
@@ -216,8 +220,10 @@ begin
    item := Project.AddItem('Open Lazarus', oxedActions.OPEN_LAZARUS);
    oxedIcons.Create(item, $f1b0);
    item := Project.AddItem('Open Project Directory', oxedActions.OPEN_PROJECT_DIRECTORY);
+   item^.GlyphColor := uiFiles.DirectoryColor;
    oxedIcons.Create(item, $f07b);
    item := Project.AddItem('Open Project Configuration', oxedActions.OPEN_PROJECT_CONFIGURATION);
+   item^.GlyphColor := uiFiles.DirectoryColor;
    oxedIcons.Create(item, $f07b);
 
    { WINDOWS }
