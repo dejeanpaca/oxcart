@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont, oxuRender, oxuUI, oxuTexture, oxuResourcePool,
       {ui}
-      uiuTypes, uiuWindowTypes, uiuSkinTypes,
+      uiuTypes, uiuWindowTypes, uiuSkinTypes, uiuSkin,
       uiuWindow, uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuControl, uiuWidgetWindow,
       uiuDraw, uiuDrawUtilities,
       {wdg}
@@ -62,8 +62,10 @@ TYPE
       Callbacks: uiTWidgetCallback;
       {the associated key mapping, found automatically by the associated Action}
       Key: appPKeyMapping;
+
       {glyph for the menu entry}
       Glyph: oxTTexture;
+      GlyphColor: TColor4ub;
 
       {item properties}
       Properties: TBitSet;
@@ -530,9 +532,9 @@ begin
    size := r.h - 4;
 
    if(enabled) then
-      oxui.Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0)
+      oxui.Material.ApplyColor('color', item^.GlyphColor)
    else
-      oxui.Material.ApplyColor('color', 0.5, 0.5, 0.5, 1);
+      oxui.Material.ApplyColor('color', item^.GlyphColor.Darken(0.5));
 end;
 
 procedure RenderCheckbox();
@@ -758,6 +760,7 @@ begin
    {if we're adding an external sub-menu, then mark it so we do not dispose of it}
    if(existing.Sub <> nil) then
       Result^.Properties.Prop(uiCONTEXT_MENU_ITEM_EXTERNAL);
+
 end;
 
 function uiTContextMenu.AddItem(const caption: StdString; action: longword; callback: uiTContextMenuCallback): uiPContextMenuItem;
@@ -1005,6 +1008,7 @@ begin
 
    item.Caption := caption;
    item.Properties := uiCONTEXT_MENU_ITEM_ENABLED;
+   item.GlyphColor := uiSkin.StandardSkin.Colors.Text;
 
    if(InsertIndex < 0) then begin
       Items.Add(item);
