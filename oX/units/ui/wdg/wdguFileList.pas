@@ -939,7 +939,7 @@ INITIALIZATION
 
    wdgFileGrid.FileNameLines := 2;
 
-   wdgFileList.DirectoryColor.Assign(255, 206, 0, 255);
+   wdgFileList.DirectoryColor := uiFiles.DirectoryColor;
    wdgFileList.FileColor.Assign(255, 255, 255, 255);
 
 END.
