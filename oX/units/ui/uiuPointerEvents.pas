@@ -37,6 +37,7 @@ var
    m: appTMouseEvent;
    p,
    mv: oxTPoint;
+   pf: oxTPointf;
    uiwnd: uiTWindow = nil;
    pmSelect: uiTSelectInfo;
 
@@ -55,13 +56,26 @@ begin
 end;
 
 procedure MoveWindow();
+var
+   pf: oxTPointf;
+   distance: Single;
+
 begin
+   pf.Assign(p);
+
+   distance := pf.Distance(oxui.PointerCapture.Point);
+
    {move the window by relative coordinates}
    if(not oxui.PointerCapture.Moved) then begin
       oxui.PointerCapture.Moved := true;
-      oxui.PointerCapture.Wnd.OnStartDrag();
+
+      if(distance > 0.5) then begin
+         oxui.PointerCapture.Wnd.OnStartDrag();
+         Include(oxui.PointerCapture.Wnd.Properties, uiwndpMOVED);
+      end;
    end else
-      oxui.PointerCapture.Wnd.OnDrag();
+      if(distance > 0.5) then
+         oxui.PointerCapture.Wnd.OnDrag();
 
    oxui.PointerCapture.Wnd.MoveRelative(mv.x, mv.y);
 end;
@@ -110,16 +124,21 @@ begin
 
       oxui.WindowMove.Assign(p.x, p.y);
 
-      if(oxui.PointerCapture.WindowOperation = uiWINDOW_POINTER_MOVE) then
-         MoveWindow()
-      else
-         ResizeWindow();
+      if(mv.x <> 0) or (mv.y <> 0) then begin
+         if(oxui.PointerCapture.WindowOperation = uiWINDOW_POINTER_MOVE) then
+            MoveWindow()
+         else
+            ResizeWindow();
+      end;
    end;
 
    {let's see if the lock is released}
    if(m.Action.IsSet(appmcRELEASED) and m.Button.IsSet(appmcLEFT)) then begin
       if(oxui.PointerCapture.WindowOperation = uiWINDOW_POINTER_MOVE) then begin
-         oxui.PointerCapture.Wnd.OnStopDrag();
+         pf.Assign(p);
+
+         if(oxui.PointerCapture.Point.Distance(pf) > 0.5) then
+            oxui.PointerCapture.Wnd.OnStopDrag();
 
          {lock released}
          Include(oxui.PointerCapture.Wnd.Properties, uiwndpMOVED);
@@ -368,8 +387,6 @@ begin
       oxui.PointerCapture.WindowOperation := operation;
       oxui.PointerCapture.Wnd := wnd;
       oxui.PointerCapture.LockWindow();
-
-      Include(wnd.Properties, uiwndpMOVED);
    end else
       {if window not captured then send events to window}
       NotifyEvent();
