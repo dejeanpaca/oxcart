@@ -128,17 +128,14 @@ end;
 
 function winTWindowsOSGlobal.MessageBox(wParent: uiTWindow;
    const Title, Say: string; Style: uiTMessageBoxStyle; Buttons: longword): longword;
-{$IFDEF WINDOWS}
 var
    rslt: longword;
    uType: longword;
    wHNDL: HANDLE;
-{$ENDIF}
 
 begin
    Result := uimbcNONE;
 
-   {$IFDEF WINDOWS}
    uType := 0;
    {set the style}
    if(style = uimbsNOTIFICATION) then
@@ -179,7 +176,6 @@ begin
       IDIGNORE:   Result := uimbcIGNORE;
       IDABORT:    Result := uimbcABORT;
    end;
-   {$ENDIF}
 end;
 
 END.

@@ -27,7 +27,7 @@ VAR
 
 IMPLEMENTATION
 
-{ uiTWindowsPlatformComponent }
+{ uiTW)indowsPlatformComponent }
 
 function uiTWindowsPlatformComponent.GetSystemTheme(): StdString;
 var
@@ -38,10 +38,11 @@ begin
 
    if(OutRegistryDWord(HKEY_CURRENT_USER, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize',
       'AppsUseLightTheme', appsUseLightTheme)) then begin
+
       if(appsUseLightTheme > 0) then
          Result := 'light'
       else
-        Result := 'dark';
+         Result := 'dark';
    end;
 end;
 
