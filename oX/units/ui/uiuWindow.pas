@@ -279,11 +279,6 @@ TYPE
 
       procedure SetPointerCentered();
 
-      {find all windows lined up horizontally with us}
-      function FindHorizontalLineup(fitWithin: boolean = false): uiTSimpleWindowList;
-      {find all windows lined up horizontally with us}
-      function FindVerticalLineup(fitWithin: boolean = false): uiTSimpleWindowList;
-
       {find all windows of a given type}
       function FindType(wndType: uiTWindowClass): uiTSimpleWindowList;
       {find all windows of a given type recursively}
@@ -1854,62 +1849,6 @@ begin
    y := (oxwParent.Dimensions.h - 1 - RPosition.y) + (Dimensions.h / 2);
 
    appm.SetPosition(oxwParent, x, y);
-end;
-
-function uiTWindowHelper.FindHorizontalLineup(fitWithin: boolean): uiTSimpleWindowList;
-var
-   i: loopint;
-   source,
-   cur: uiTWindow;
-
-   d,
-   compareD: oxTDimensions;
-
-begin
-   Result.Initialize(Result);
-
-   source := uiTWindow(Parent);
-   d := GetTotalDimensions();
-
-   for i := 0 to (source.W.w.n - 1) do begin
-      cur := uiTWindow(source.W.w[i]);
-
-      if(cur <> nil) and (cur <> Self) and (cur.IsVisible()) then begin
-         compareD := cur.GetTotalDimensions();
-
-         if(not fitWithin) and (compareD.h = d.h) and (cur.Position.y = Position.y) then
-            Result.Add(cur)
-         else if(fitWithin) and (cur.Position.y <= Position.y) and (cur.Position.y - compareD.h >= Position.y - d.h) then
-            Result.Add(cur);
-      end;
-   end;
-end;
-
-function uiTWindowHelper.FindVerticalLineup(fitWithin: boolean): uiTSimpleWindowList;
-var
-   i: loopint;
-   source,
-   cur: uiTWindow;
-
-   d,
-   compareD: oxTDimensions;
-
-begin
-   Result.Initialize(Result);
-
-   source := uiTWindow(Parent);
-   d := GetTotalDimensions();
-   for i := 0 to (source.W.w.n - 1) do begin
-      cur := uiTWindow(source.W.w[i]);
-      compareD := cur.GetTotalDimensions();
-
-      if(cur <> nil) and (cur <> Self) and (cur.IsVisible()) then begin
-         if(not fitWithin) and (compareD.w = d.w) and (cur.Position.x = Position.x) then
-            Result.Add(cur)
-         else if(fitWithin) and (cur.Position.x >= Position.x) and (cur.Position.x + compareD.w <= Position.x + d.w) then
-            Result.Add(cur);
-      end;
-   end;
 end;
 
 function uiTWindowHelper.FindType(wndType: uiTWindowClass): uiTSimpleWindowList;

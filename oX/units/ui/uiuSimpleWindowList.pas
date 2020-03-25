@@ -10,6 +10,8 @@ INTERFACE
 
    USES
       uStd,
+      {ox}
+      oxuTypes,
       {ui}
       uiuWindow, uiuWindowTypes;
 
@@ -22,6 +24,9 @@ TYPE
 
       function FindAbove(y: loopint): uiTSimpleWindowList;
       function FindBelow(y: loopint): uiTSimpleWindowList;
+
+      function FindFirstLeftOf(x: loopint): uiTWindow;
+      function FindFirstRightOf(x: loopint): uiTWindow;
 
       function GetLeftmostCoordinate(): loopint;
 
@@ -41,6 +46,17 @@ TYPE
       function GetBelowHeightFrom(py: loopint): loopint;
    end;
 
+   { uiTWindowListHelpers }
+
+   uiTWindowListHelpers = record
+      {find all windows lined up horizontally with us}
+      function FindHorizontalLineup(wnd: uiTWindow; fitWithin: boolean = false): uiTSimpleWindowList;
+      {find all windows lined up horizontally with us}
+      function FindVerticalLineup(wnd: uiTWindow; fitWithin: boolean = false): uiTSimpleWindowList;
+   end;
+
+VAR
+   uiWindowList: uiTWindowListHelpers;
 
 IMPLEMENTATION
 
@@ -95,6 +111,49 @@ begin
    for i := 0 to (n - 1) do begin
       if(List[i].Position.y < y) then
          Result.Add(List[i]);
+   end;
+end;
+
+function uiTSimpleWindowListHelper.FindFirstLeftOf(x: loopint): uiTWindow;
+var
+   i: loopint;
+
+begin
+   Result := nil;
+
+   if(n > 0) then begin
+      if(List[0].Position.x < x) then
+         Result := List[0];
+
+      for i := 0 to (n - 1) do begin
+         if(Result <> nil) then
+            if(List[i].Position.x > Result.Position.x) and (List[i].Position.x < x) then
+               Result := List[i]
+         else if(List[i].Position.x < x) then
+            Result := List[i];
+      end;
+   end;
+end;
+
+function uiTSimpleWindowListHelper.FindFirstRightOf(x: loopint): uiTWindow;
+var
+   i: loopint;
+
+begin
+   Result := nil;
+
+   if(n > 0) then begin
+      if(List[0].Position.x > x) then
+         Result := List[0];
+
+      for i := 0 to (n - 1) do begin
+         if(Result <> nil) then
+            if(
+            List[i].Position.x < Result.Position.x) and (List[i].Position.x > x) then
+               Result := List[i]
+         else if(List[i].Position.x > x) then
+            Result := List[i];
+      end;
    end;
 end;
 
@@ -200,6 +259,64 @@ begin
 
       if(py - belowMost > Result) then
          Result := py - belowMost;
+   end;
+end;
+
+{ uiTWindowListHelpers }
+
+function uiTWindowListHelpers.FindHorizontalLineup(wnd: uiTWindow; fitWithin: boolean): uiTSimpleWindowList;
+var
+   i: loopint;
+   source,
+   cur: uiTWindow;
+
+   d,
+   compareD: oxTDimensions;
+
+begin
+   Result.Initialize(Result);
+
+   source := uiTWindow(wnd.Parent);
+   d := wnd.GetTotalDimensions();
+
+   for i := 0 to (source.W.w.n - 1) do begin
+      cur := uiTWindow(source.W.w[i]);
+
+      if(cur <> nil) and (cur <> wnd) and (cur.IsVisible()) then begin
+         compareD := cur.GetTotalDimensions();
+
+         if(not fitWithin) and (compareD.h = d.h) and (cur.Position.y = wnd.Position.y) then
+            Result.Add(cur)
+         else if(fitWithin) and (cur.Position.y <= wnd.Position.y) and (cur.Position.y - compareD.h >= wnd.Position.y - d.h) then
+            Result.Add(cur);
+      end;
+   end;
+end;
+
+function uiTWindowListHelpers.FindVerticalLineup(wnd: uiTWindow; fitWithin: boolean): uiTSimpleWindowList;
+var
+   i: loopint;
+   source,
+   cur: uiTWindow;
+
+   d,
+   compareD: oxTDimensions;
+
+begin
+   Result.Initialize(Result);
+
+   source := uiTWindow(wnd.Parent);
+   d := wnd.GetTotalDimensions();
+   for i := 0 to (source.W.w.n - 1) do begin
+      cur := uiTWindow(source.W.w[i]);
+      compareD := cur.GetTotalDimensions();
+
+      if(cur <> nil) and (cur <> wnd) and (cur.IsVisible()) then begin
+         if(not fitWithin) and (compareD.w = d.w) and (cur.Position.x = wnd.Position.x) then
+            Result.Add(cur)
+         else if(fitWithin) and (cur.Position.x >= wnd.Position.x) and (cur.Position.x + compareD.w <= wnd.Position.x + d.w) then
+            Result.Add(cur);
+      end;
    end;
 end;
 
