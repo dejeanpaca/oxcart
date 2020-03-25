@@ -957,89 +957,82 @@ var
    cur: uiTWindow;
    d: oxTDimensions;
 
+   {windows in a line up (horizontal or vertical)}
+   lineup,
+   {windows on one side of the lineup}
+   side,
+   {windows on the other side of the lineup}
+   other: uiTSimpleWindowList;
+
 function ProcessHorizontal(all: boolean = false): boolean;
 var
-   horizontal,
-   left,
-   right: uiTSimpleWindowList;
-
    i: loopint;
 
 begin
-   horizontal := uiWindowList.FindHorizontalLineup(Self, all);
+   uiWindowList.FindHorizontalLineup(Self, lineup, all);
 
-   if(horizontal.n > 0) then begin
-      left := horizontal.FindContactsLeft(Self);
-      right := horizontal.FindContactsRight(Self);
+   if(lineup.n > 0) then begin
+      lineup.FindContactsLeft(Self, side);
+      lineup.FindContactsRight(Self, other);
 
-      Result := (left.n > 0) or (right.n > 0);
+      Result := (side.n > 0) or (other.n > 0);
 
       if(Result) then begin
-         if(left.n > 0) then begin
-            for i := 0 to left.n - 1 do begin
-               cur := left.List[i];
+         if(side.n > 0) then begin
+            for i := 0 to side.n - 1 do begin
+               cur := side.List[i];
                cur.Resize(cur.Dimensions.w + d.w, cur.Dimensions.h);
             end;
-         end else if(right.n > 0) then begin
-            for i := 0 to right.n - 1 do begin
-               cur := right.List[i];
+         end else if(other.n > 0) then begin
+            for i := 0 to other.n - 1 do begin
+               cur := other.List[i];
                cur.Move(Position.x, cur.Position.y);
                cur.Resize(cur.Dimensions.w + d.w, cur.Dimensions.h);
             end;
          end;
       end;
-
-      left.Dispose();
-      right.Dispose();
    end else
       Result := false;
-
-   horizontal.Dispose();
 end;
 
 function ProcessVertical(all: boolean = false): boolean;
 var
-   vertical,
-   above,
-   below: uiTSimpleWindowList;
-
    i: loopint;
 
 begin
-   vertical := uiWindowList.FindVerticalLineup(Self, all);
+   uiWindowList.FindVerticalLineup(Self, lineup, all);
 
-   if(vertical.n > 0) then begin
-      above := vertical.FindContactsAbove(Self);
-      below := vertical.FindContactsBelow(Self);
+   if(lineup.n > 0) then begin
+      lineup.FindContactsAbove(Self, side);
+      lineup.FindContactsBelow(Self, other);
 
-      Result := (above.n > 0) or (below.n > 0);
+      Result := (side.n > 0) or (other.n > 0);
 
       if(Result) then begin
-         if(above.n > 0) then begin
-            for i := 0 to above.n - 1 do begin
-               cur := above.List[i];
+         if(side.n > 0) then begin
+            for i := 0 to side.n - 1 do begin
+               cur := side.List[i];
                cur.Resize(cur.Dimensions.w, cur.Dimensions.h + d.h);
             end;
-         end else if(below.n > 0) then begin
-            for i := 0 to below.n - 1 do begin
-               cur := below.List[i];
+         end else if(other.n > 0) then begin
+            for i := 0 to other.n - 1 do begin
+               cur := other.List[i];
                cur.Move(cur.Position.x, Position.y);
                cur.Resize(cur.Dimensions.w, cur.Dimensions.h + d.h);
             end;
          end;
       end;
-
-      above.Dispose();
-      below.Dispose();
    end else
       Result := false;
-
-   vertical.Dispose();
 end;
 
 begin
    if(Docked) and (not (uiwndpDESTRUCTION_IN_PROGRESS in Properties)) then begin
       d := GetTotalDimensions();
+
+      uiTSimpleWindowList.Initialize(lineup);
+      uiTSimpleWindowList.Initialize(side);
+      uiTSimpleWindowList.Initialize(other);
 
       if(not ProcessHorizontal(false)) then begin
          if(not ProcessVertical(false)) then begin
@@ -1048,6 +1041,9 @@ begin
             end;
          end;
       end;
+
+      side.Dispose();
+      other.Dispose();
    end;
 
    SetUndocked();
