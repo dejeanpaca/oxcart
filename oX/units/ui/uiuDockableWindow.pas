@@ -976,7 +976,7 @@ var
    width: loopint;
 
 begin
-   horizontal := FindHorizontalLineup(all);
+   horizontal := uiWindowList.FindHorizontalLineup(Self, all);
 
    if(horizontal.n > 0) then begin
       left := horizontal.FindLeftOf(Position.x);
@@ -1037,7 +1037,7 @@ var
    height: loopint;
 
 begin
-   vertical := FindVerticalLineup(all);
+   vertical := uiWindowList.FindVerticalLineup(Self, all);
    if(vertical.n > 0) then begin
       above := vertical.FindAbove(Position.y);
       below := vertical.FindBelow(Position.y);
