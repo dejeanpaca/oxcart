@@ -75,7 +75,7 @@ TYPE
       {tab to a dockable window, returns the dockable parent}
       function TabTo(ofWnd: uiTDockableWindow): uiTDockableWindow;
       {remove window from a tabbed parent back to the docking area}
-      procedure Untab();
+      procedure Float();
       {close tab window}
       procedure CloseTab();
 
@@ -124,8 +124,8 @@ TYPE
       procedure ResizeWindows();
       procedure RemoveTabWindow(ofWnd: uiTDockableWindow);
       procedure RemoveTabWindow(index: loopint);
-      procedure Untab(ofWnd: uiTDockableWindow);
-      procedure Untab(index: loopint);
+      procedure Float(ofWnd: uiTDockableWindow);
+      procedure Float(index: loopint);
       procedure CloseTabWindow(index: loopint);
       procedure SelectWindow(ofWnd: uiTDockableWindow);
 
@@ -145,7 +145,7 @@ TYPE
       {set the tabbed window to an appropriate size}
       procedure SizeWindow(ofWnd: uiTDockableWindow);
       {remove the specified tabbed window from list of tabs}
-      procedure Untab(ofWnd: uiTDockableWindow);
+      procedure Float(ofWnd: uiTDockableWindow);
       {select a window}
       procedure SelectWindow(ofWnd: uiTDockableWindow);
 
@@ -259,20 +259,20 @@ begin
    end;
 end;
 
-procedure wdgTDockableTabs.Untab(ofWnd: uiTDockableWindow);
+procedure wdgTDockableTabs.Float(ofWnd: uiTDockableWindow);
 var
    i: loopint;
 
 begin
    for i := 0 to Tabs.t.n - 1 do begin
       if(uiTDockableWindow(Tabs.t.List[i].External) = ofWnd) then begin
-         Untab(i);
+         Float(i);
          exit;
       end;
    end;
 end;
 
-procedure wdgTDockableTabs.Untab(index: loopint);
+procedure wdgTDockableTabs.Float(index: loopint);
 var
    ofWnd: uiTDockableWindow;
 
@@ -280,7 +280,7 @@ begin
    if(index > -1) and (index < Tabs.t.n) then begin
       ofWnd := uiTDockableWindow(Tabs.t.List[index].External);
 
-      ofWnd.Untab();
+      ofWnd.Float();
    end;
 end;
 
@@ -392,9 +392,9 @@ begin
    ofWnd.Resize(d);
 end;
 
-procedure uiTDockableTabWindow.Untab(ofWnd: uiTDockableWindow);
+procedure uiTDockableTabWindow.Float(ofWnd: uiTDockableWindow);
 begin
-   TabWidget.Untab(ofWnd);
+   TabWidget.Float(ofWnd);
 end;
 
 procedure uiTDockableTabWindow.SelectWindow(ofWnd: uiTDockableWindow);
@@ -845,7 +845,7 @@ begin
    tParent.Tab(Self);
 end;
 
-procedure uiTDockableWindow.Untab();
+procedure uiTDockableWindow.Float();
 var
    dockingArea: uiTDockableArea;
    tabWnd: uiTDockableTabWindow;
@@ -863,7 +863,7 @@ begin
 
          TabParent := nil;
 
-         {untab last window in the list}
+         {Float last window in the list}
          if(tabWnd.W.w.n = 0) then begin
             {we're the last window in the list}
             Move(tabWnd.Position);
@@ -874,7 +874,7 @@ begin
             uiWindow.DisposeQueue(uiTWindow(tabWnd));
 
             exit;
-         {untab any window in the list}
+         {Float any window in the list}
          end else begin
             Resize(Dimensions);
             {move to a central place}
@@ -883,9 +883,9 @@ begin
 
          SetUndocked();
 
-         {untab last window in list (which causes the below one to call automatically in next Untab())}
+         {Float last window in list (which causes the below one to call automatically in next Float())}
          if(tabWnd.W.w.n = 1) then
-            uiTDockableWindow(tabWnd.W.w[0]).Untab();
+            uiTDockableWindow(tabWnd.W.w[0]).Float();
 
          Self.Select();
       end;
@@ -909,9 +909,9 @@ begin
 
       Close();
 
-      {one window left, we'll untab the last one}
+      {one window left, we'll float the last one}
       if(TabParent.W.w.n = 1) then
-         uiTDockableWindow(TabParent.W.w[0]).Untab;
+         uiTDockableWindow(TabParent.W.w[0]).Float;
    end;
 end;
 

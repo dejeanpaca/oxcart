@@ -37,7 +37,7 @@ VAR
 
 IMPLEMENTATION
 
-procedure untabWindow(wdg: uiTWidget; {%H-}menu: TObject; {%H-}item: uiPContextMenuItem);
+procedure floatWindow(wdg: uiTWidget; {%H-}menu: TObject; {%H-}item: uiPContextMenuItem);
 var
    wnd: uiTDockableWindowContextMenuWindow;
    tabWidget: wdgTDockableTabs;
@@ -46,7 +46,7 @@ begin
    wnd := uiTDockableWindowContextMenuWindow(wdg.wnd);
    tabWidget := wnd.TabWidget;
 
-   tabWidget.Untab(wnd.TabIndex);
+   tabWidget.Float(wnd.TabIndex);
 end;
 
 procedure closeTab(wdg: uiTWidget; {%H-}menu: TObject; {%H-}item: uiPContextMenuItem);
@@ -65,7 +65,7 @@ procedure init();
 begin
    uiDockableWindowContextMenu.Menu := uiTContextMenu.Create('Dockable window');
 
-   uiDockableWindowContextMenu.Menu.AddItem('Untab', 0, @untabWindow);
+   uiDockableWindowContextMenu.Menu.AddItem('Float', 0, @floatWindow);
    uiDockableWindowContextMenu.Menu.AddItem('Close', 0, @closeTab);
 end;
 
