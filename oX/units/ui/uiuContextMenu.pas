@@ -532,9 +532,9 @@ begin
    size := r.h - 4;
 
    if(enabled) then
-      oxui.Material.ApplyColor('color', item^.GlyphColor)
+      uiDraw.Color(item^.GlyphColor)
    else
-      oxui.Material.ApplyColor('color', item^.GlyphColor.Darken(0.5));
+      uiDraw.Color(item^.GlyphColor.Darken(0.5));
 end;
 
 procedure RenderCheckbox();
@@ -560,7 +560,7 @@ begin
       PrepareGlyph();
 
       uiDrawUtilities.Glyph(r.x + 2, r.y - 1, size, size, item^.Glyph);
-      oxui.Material.ApplyTexture('texture', nil);
+      uiDraw.ClearTexture();
    end;
 
    if(item^.ItemType = uiCONTEXT_MENU_COMMAND) then begin
@@ -592,7 +592,7 @@ begin
       SetColorBlended(pSkin.Colors.Text);
       oxf.Stop();
    end else if (item^.ItemType = uiCONTEXT_MENU_SEPARATOR) then begin
-      oxui.Material.ApplyTexture('texture', nil);
+      uiDraw.ClearTexture();
       uiDrawUtilities.HorizontalDivisorSunken(wnd, r.x, r.y - (r.h div 2), r.x + r.w - 1, pSkin.Colors.Surface);
    end;
 end;

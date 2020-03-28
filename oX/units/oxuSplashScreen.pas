@@ -16,7 +16,7 @@ INTERFACE
       oxuMaterial, oxuFont, oxumPrimitive, oxuWindow, oxuTransform, oxuResourcePool, oxuPrimitives,
       oxuRun, oxuRunRoutines,
       {ui}
-      oxuUI, uiuWindow, uiuWindowRender;
+      oxuUI, uiuWindow, uiuWindowRender, uiuDraw;
 
 CONST
    oxSPLASH_SCREEN_DEFAULT_DISPLAY_TIME = 2000;
@@ -242,30 +242,28 @@ var
 begin
    uiWindowRender.Prepare(AssociatedWindow);
 
-   oxui.Material.Apply();
-
    if(Texture.Texture <> nil) then begin
       m := oxTransform.Matrix;
       oxTransform.Translate(AssociatedWindow.RPosition.x, AssociatedWindow.RPosition.y, 0);
       oxTransform.Apply();
 
       oxRender.TextureCoords(QuadTexCoords[0]);
-      oxui.Material.ApplyTexture('texture', Texture.Texture);
+      uiDraw.Texture(Texture.Texture);
 
       Quad.Render();
-      oxui.Material.ApplyTexture('texture', nil);
+
+      uiDraw.ClearTexture();
       oxTransform.Apply(m);
    end;
 
    dots := trunc((Timer.Cur() mod 1000) / 250);
 
-   oxui.Material.Apply();
    f := oxf.GetDefault();
 
    if(f.Valid()) then begin
       f.Start();
 
-      oxui.Material.ApplyColor('color', 1, 1, 1, 1.0);
+      uiDraw.Color(1, 1, 1, 1.0);
       oxRender.EnableBlend();
 
       w := f.GetWidth();

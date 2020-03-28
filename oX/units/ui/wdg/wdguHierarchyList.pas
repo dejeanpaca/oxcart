@@ -171,10 +171,10 @@ begin
 
       uiDraw.CorrectPoints(PVector3f(@triangle[0]), 3);
 
-      oxui.Material.ApplyTexture('texture', nil);
-      oxui.Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
+      uiDraw.ClearTexture();
+      uiDraw.Color(1.0, 1.0, 1.0, 1.0);
       oxRenderingUtilities.Triangle(triangle[0], triangle[1], triangle[2]);
-      oxui.Material.ApplyTexture('texture', f.Texture);
+      uiDraw.Texture(f.Texture);
       oxRender.BlendDefault();
    end;
 
@@ -194,7 +194,7 @@ begin
          oxRender.BlendDefault();
          SetColorBlended(glyph.Color);
          uiDrawUtilities.Glyph(r.x - height - padding - 4, r.y - padding, height, height, glyph.Glyph);
-         oxui.Material.ApplyTexture('texture', f.Texture);
+         uiDraw.Texture(f.Texture);
       end else
          f.WriteCentered(s, r, [oxfpCenterVertical]);
    end else

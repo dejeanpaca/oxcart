@@ -230,7 +230,7 @@ begin
       oxTransform.Apply();
 
       Quad.Render();
-      oxui.Material.ApplyTexture('texture', nil);
+      uiDraw.ClearTexture();
 
       oxTransform.Apply(m);
    end;
