@@ -383,7 +383,7 @@ end;
 
 procedure uiTDraw.Color(r, g, b, a: single);
 begin
-   oxui.Material.ApplyColor('color', TColor4f.Create(r, g, b, a));
+   oxui.Material.ApplyColor('color', r, g, b, a);
 end;
 
 procedure uiTDraw.Texture(tex: oxTTexture);
@@ -393,13 +393,12 @@ end;
 
 procedure uiTDraw.ClearTexture();
 begin
-   oxui.Material.SetTexture('texture', nil);
+   oxui.Material.ApplyTexture('texture', nil);
 end;
 
 procedure uiTDraw.Quad(tex: oxTTexture);
 begin
-   oxRenderingUtilities.QuadTexture(tex);
-   oxRenderingUtilities.QuadVertex(QuadVertices);
+   oxRenderUtilities.Quad(tex);
 end;
 
 END.

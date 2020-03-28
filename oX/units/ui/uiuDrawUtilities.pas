@@ -96,7 +96,7 @@ end;
 
 class procedure uiTDrawUtilities.Glyph(x, y, w, h: single; tex: oxTTexture);
 begin
-   oxRenderingUtilities.TexturedQuad(x + (w / 2), y - (h / 2), w / 2, h / 2, tex);
+   oxRenderUtilities.TexturedQuad(x + (w / 2), y - (h / 2), w / 2, h / 2, tex);
 end;
 
 END.

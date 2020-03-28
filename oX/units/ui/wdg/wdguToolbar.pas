@@ -302,7 +302,7 @@ begin
             oxTransform.RotateZ(rotation);
             oxTransform.Apply();
 
-            oxRenderingUtilities.TexturedQuad(0, 0, size / 2, size / 2, Items.List[i].Glyph);
+            oxRenderUtilities.TexturedQuad(0, 0, size / 2, size / 2, Items.List[i].Glyph);
 
             oxTransform.Apply(m);
          end

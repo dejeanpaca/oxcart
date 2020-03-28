@@ -140,7 +140,6 @@ var
 
 begin
    f := CachedFont;
-   SetFontColor(index);
 
    inc(r.x, GetHorizontalItemOffset(index));
 
@@ -170,15 +169,15 @@ begin
       end;
 
       uiDraw.CorrectPoints(PVector3f(@triangle[0]), 3);
-
       uiDraw.ClearTexture();
+      oxRender.DisableTextureCoords();
       uiDraw.Color(1.0, 1.0, 1.0, 1.0);
-      oxRenderingUtilities.Triangle(triangle[0], triangle[1], triangle[2]);
+      oxRenderUtilities.Triangle(triangle);
       uiDraw.Texture(f.Texture);
-      oxRender.BlendDefault();
    end;
 
    inc(r.x, width + ExpanderSeparationWidth);
+   SetFontColor(index);
 
    if(HasGlyphs) then begin
       glyph := GetGlyph(index);

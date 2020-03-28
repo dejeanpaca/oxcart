@@ -15,7 +15,6 @@ INTERFACE
       {ox}
       uOX, oxuRunRoutines,
       oxuPlatform, oxuTexture, oxuTextureGenerate, oxuTypes, oxuTransform, oxuRender,
-      oxuRenderUtilities,
       {ui}
       oxuUI, uiuTypes, uiuControl, uiuWindow, uiuWindowTypes, uiuDraw;
 
