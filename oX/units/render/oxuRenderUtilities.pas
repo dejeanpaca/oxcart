@@ -32,6 +32,7 @@ TYPE
       class procedure Triangle(const p1, p2, p3: TVector3f; const color: TColor4f); static;
 
       class procedure TexturedQuad(x, y, w, h: single; tex: oxTTexture); static;
+      class procedure QuadVertex(var v: TQuadVertices); static;
 
       class procedure StartQuad(id: oxTTexture); static;
       class procedure QuadTexture(id: oxTTexture); static;
@@ -208,10 +209,16 @@ begin
    vertex[3][0] := vertex[3][0] * w + x;
    vertex[3][1] := vertex[3][1] * h + y;
 
-   oxRender.Vertex(vertex[0]);
    oxRender.BlendDefault();
-   oxCurrentMaterial.ApplyTexture('texture', tex);
-   oxRender.TextureCoords(QuadTexCoords[0]);
+   QuadTexture(tex);
+
+   oxRender.Vertex(vertex[0]);
+   oxRender.Primitives(oxPRIMITIVE_TRIANGLES, 6, pword(@QuadIndicesus[0]));
+end;
+
+class procedure oxTRenderingUtilitiesGlobal.QuadVertex(var v: TQuadVertices);
+begin
+   oxRender.Vertex(v[0]);
    oxRender.Primitives(oxPRIMITIVE_TRIANGLES, 6, pword(@QuadIndicesus[0]));
 end;
 
