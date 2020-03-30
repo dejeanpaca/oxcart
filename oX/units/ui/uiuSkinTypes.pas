@@ -171,7 +171,8 @@ TYPE
       InputSurface,
       InputText,
       InputPlaceholder,
-      InputCursor: TColor4ub;
+      InputCursor,
+      Delete: TColor4ub;
    end;
 
    uiTSkin = class
