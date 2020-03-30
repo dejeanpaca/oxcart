@@ -16,7 +16,7 @@ INTERFACE
       {ox}
       oxuRunRoutines, oxuPlatform,
       {ui}
-      oxuUI, uiuBase, uiuTypes, uiuWidget, uiuContextMenu, uiuWidgetWindow, uiuMessageBox, uiuFiles;
+      oxuUI, uiuBase, uiuTypes, uiuWidget, uiuContextMenu, uiuWidgetWindow, uiuMessageBox, uiuFiles, uiuSkin;
 
 TYPE
    uiTFileContextMenuTarget = (
@@ -329,7 +329,8 @@ begin
    m.AddItem('Show in file manager', Events.SHOW_IN_FILE_MANAGER, @showInFileManager);
    m.AddItem('Open', Events.OPEN_FILE, @openFile);
    m.AddItem('Rename', Events.RENAME_FILE, @renameFile);
-   m.AddItem('Delete', Events.DELETE_FILE, @deleteFile);
+   item := m.AddItem('Delete', Events.DELETE_FILE, @deleteFile);
+   item^.GlyphColor := uiSkin.StandardSkin.Colors.Delete;
    m.AddItem('Create Directory', Events.CREATE_DIRECTORY, @createDirectory);
 
    item := m.AddCheckbox('Show hidden files', uiFiles.ShowHiddenFiles);

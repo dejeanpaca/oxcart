@@ -9,13 +9,13 @@ UNIT oxeduEntityMenu;
 INTERFACE
 
    USES
-      uStd, uLog,
+      uStd, uLog, uColors,
       {ox}
       oxuEntity, oxuScene,
       {entities}
       oxuCameraEntity, oxuLightEntity, oxuUIEntity, oxuPrimitiveModelEntities,
       {ui}
-      uiuContextMenu, uiuWidgetWindow, uiuWidget,
+      uiuContextMenu, uiuWidgetWindow, uiuWidget, uiuSkin,
       {oxed}
       uOXED, oxeduIcons;
 
@@ -134,6 +134,7 @@ begin
       item := CurrentMenu.AddItem('Rename', @RenameEntity);
       oxedIcons.Create(item, $f031);
       item := CurrentMenu.AddItem('Delete', @deleteEntity);
+      item^.GlyphColor := uiSkin.StandardSkin.Colors.Delete;
       oxedIcons.Create(item, $f00d);
 
       CurrentMenu.AddSeparator();

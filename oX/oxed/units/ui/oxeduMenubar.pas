@@ -17,7 +17,7 @@ INTERFACE
       {ui}
       uiuContextMenu, oxuwndAbout, oxuwndSettings, oxuwndResourceInspector,
       {widgets}
-      uiWidgets, wdguMenubar, uiuWidget, uiuFiles,
+      uiWidgets, wdguMenubar, uiuWidget, uiuFiles, uiuSkin,
       {oxed}
       uOXED, oxeduActions, oxeduRecents, oxeduIcons, oxeduBuild, oxeduPlatform, oxuwndDVarEditor, oxeduTasks,
       oxeduProject, oxeduProjectManagement, oxeduProjectSettingsWindow, oxeduRunSettingsWindow, oxeduProjectRunner,
@@ -299,7 +299,8 @@ begin
       end;
 
       Recents.AddSeparator();
-      Recents.AddItem('Clear all', CLEAR_RECENTS_EVENT);
+      item := Recents.AddItem('Clear all', CLEAR_RECENTS_EVENT);
+      item^.GlyphColor := uiSkin.StandardSkin.Colors.Delete;
    end else
       Recents.Disable();
 end;
