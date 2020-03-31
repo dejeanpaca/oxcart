@@ -148,10 +148,6 @@ TYPE
       {translate a key event into a character}
       function Translate(const k: appTKey): char;
 
-      {Return a platform translated character based on the key record. Useful if the platform translation code
-      returns characters for keys you might want to handle differently (tab, enter)}
-      function Translate(const k: appTKey; c: char): char;
-
       {KEYBOARD ROUTINES}
       {checks whether any of the SHIFT keys is being held or not}
       function Shift(): boolean;
@@ -481,34 +477,6 @@ begin
          else
             Result := '0';
    end;
-end;
-
-function appTKeyGlobal.Translate(const k: appTKey; c: char): char;
-var
-   shiftPressed: boolean = false;
-   isCaps: boolean = false;
-
-begin
-   Result := #0;
-
-   if not (((k.Code >= kcSTART_REMAP) and (k.Code <= kcEND_REMAP)) or (k.Code = kcSPACE)) then
-      exit(#0);
-
-   if(c <> #0) then begin
-      shiftPressed := k.State.IsSet(kmSHIFT);
-      isCaps := shiftPressed;
-
-      if(k.State.IsSet(kmCAPS)) then
-         isCaps := not isCaps;
-
-      Result := c;
-
-      if(not shiftPressed) then
-         Result := LowerCase(Result)
-      else
-         Result := UpCase(Result);
-   end else
-      Result := Translate(k);
 end;
 
 { KEYBOARD ROUTINES }

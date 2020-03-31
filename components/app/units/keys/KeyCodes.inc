@@ -105,11 +105,6 @@
    kcLBRACKET     = 100;
    kcRBRACKET     = 101;
 
-
-   { remap range }
-   kcSTART_REMAP  = kc0;
-   kcEND_REMAP    = kcRBRACKET;
-
    {NumPad keys}
    kcNUMENTER     = 110;
    kcNUM0         = 111;
