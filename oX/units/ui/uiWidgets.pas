@@ -980,11 +980,10 @@ end;
 
 procedure uiTWidgetHelper.AutoSize();
 begin
-   if(not DimensionsSet) then begin
-      AutoSetDimensions();
-
+   if(not DimensionsSet) then
+      AutoSetDimensions()
+   else
       uiWidget.LastRect.Assign(Position, Dimensions);
-   end;
 end;
 
 { DISPOSING }
@@ -1447,6 +1446,8 @@ begin
 
       Resize(d.w, d.h);
    end;
+
+   uiWidget.LastRect.Assign(Position, Dimensions);
 end;
 
 procedure uiTWidgetHelper.FillWindow();
