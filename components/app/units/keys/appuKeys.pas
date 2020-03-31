@@ -29,7 +29,7 @@ CONST
    {list of modifiers}
    kmMODIFIERS_MASK = kmSHIFT or kmCONTROL or kmALT or kmALTGR or kmCAPS or kmNUM or kmSCROLL;
 
-   {key modifiers which are not relevant for comparison}
+   {key modifiers which are not relevant for comparison (not to be used with characters)}
    kmCOMPARISON_IRRELEVANT = kmCAPS or kmNUM or kmSCROLL or kmDOWN;
 
    {key history size}
@@ -92,6 +92,7 @@ TYPE
       Key: appTKey;
 
       PlatformCode,
+      PlatformScanCode,
 	   DeviceType,
       DeviceID: longint;
    end;
@@ -283,6 +284,9 @@ begin
       s := s + 'EXTENDED+';
 
    if(extended) then begin
+      if(m.IsSet(kmCAPS)) then
+         s := s + 'CAPS+';
+
       if(m.IsSet(kmNUM)) then
          s := s + 'NUM+';
 
