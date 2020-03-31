@@ -30,7 +30,9 @@ CONST
    wdgHEIGHT_MAX_VERTICAL        = $0002;
 
    {default spacing for widgets}
-   wdgDEFAULT_SPACING: loopint = 5;
+   wdgDEFAULT_SPACING: loopint = 8;
+   wdgELEMENT_PADDING: loopint = 16;
+   wdgGRID_SIZE: loopint = 8;
 
 TYPE
    uiTWidgetEvents = (
@@ -204,6 +206,10 @@ TYPE
       function RemainingWidth(): loopint;
       {get remaining height (below)}
       function RemainingHeight(): loopint;
+
+      procedure FitToGrid(var d: oxTDimensions);
+      procedure FitWidthToGrid(var d: oxTDimensions);
+      procedure FitHeightToGrid(var d: oxTDimensions);
 
       protected
          {called when the font changes}
@@ -447,7 +453,7 @@ begin
    Exclude(Properties, wdgpENABLED);
 end;
 
-function uiTWidget.ISEnabled(): boolean;
+function uiTWidget.IsEnabled(): boolean;
 begin
    Result := wdgpENABLED in Properties;
 end;
@@ -618,6 +624,24 @@ end;
 function uiTWidget.RemainingHeight(): loopint;
 begin
    Result := BelowOf(0) + 1;
+end;
+
+procedure uiTWidget.FitToGrid(var d: oxTDimensions);
+begin
+   FitWidthToGrid(d);
+   FitHeightToGrid(d);
+end;
+
+procedure uiTWidget.FitWidthToGrid(var d: oxTDimensions);
+begin
+   if(d.w mod wdgGRID_SIZE > 0) then
+      d.w := d.w + (wdgGRID_SIZE - (d.w mod wdgGRID_SIZE));
+end;
+
+procedure uiTWidget.FitHeightToGrid(var d: oxTDimensions);
+begin
+   if(d.h mod wdgGRID_SIZE > 0) then
+      d.h := d.h + (wdgGRID_SIZE - (d.h mod wdgGRID_SIZE));
 end;
 
 procedure uiTWidget.FontChanged();
