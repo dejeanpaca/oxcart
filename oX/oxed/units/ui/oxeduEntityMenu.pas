@@ -41,8 +41,7 @@ TYPE
 
       function AddToList(func: oxedTEntityFunction): loopint;
 
-      function AddToMenu(const name: string; func: oxedTEntityFunction): uiPContextMenuItem;
-      function AddToMenu(const name: string; func: oxedTEntityFunction; menu: uiTContextMenu): uiPContextMenuItem;
+      function AddToMenu(const name: string; func: oxedTEntityFunction; menu: uiTContextMenu = nil): uiPContextMenuItem;
 
       procedure Open(entity: oxTEntity; const from: uiTWidgetWindowOrigin);
       procedure Open(scene: oxTScene; const from: uiTWidgetWindowOrigin);
@@ -69,17 +68,15 @@ begin
    result := EntityList.n - 1;
 end;
 
-function oxedTEntityMenuGlobal.AddToMenu(const name: string; func: oxedTEntityFunction): uiPContextMenuItem;
-begin
-   result := AddToMenu(name, func, Menus.Create);
-end;
-
 function oxedTEntityMenuGlobal.AddToMenu(const name: string; func: oxedTEntityFunction; menu: uiTContextMenu): uiPContextMenuItem;
 var
    item: uiPContextMenuItem;
 
 begin
-   item := menu.AddItem(name, 0, @oxedEntityMenu.MenuCallback);
+   if(menu = nil) then
+      menu := Menus.Create;
+
+   item := menu.AddItem(name, 0, @MenuCallback);
    item^.Index := oxedEntityMenu.AddToList(func);
 
    result := item;
@@ -190,10 +187,7 @@ end;
 
 function addItem(const name: string; func: oxedTEntityFunction; icon: longword = 0; menu: uiTContextMenu = nil): uiPContextMenuItem;
 begin
-   if(menu = nil) then
-      menu := oxedEntityMenu.Menus.Create;
-
-   Result := oxedEntityMenu.AddToMenu(name, func);
+   Result := oxedEntityMenu.AddToMenu(name, func, menu);
 
    if(icon <> 0) then
       oxedIcons.Create(Result, icon);
