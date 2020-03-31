@@ -14,10 +14,10 @@ USES
    {oX}
    oxuTypes,
    {ui}
-   uiuControl, uiuWindow, uiWidgets, uiuTypes, uiuWidget, uiuMessageBox,
+   uiuControl, uiuWindow, uiuTypes, uiuWidget, uiWidgets, uiuMessageBox,
    oxuwndBase,
    {widgets}
-   wdguInputBox, wdguButton, wdguTabs;
+   wdguInputBox, wdguButton, wdguTabs, wdguDivisor;
 
 TYPE
    oxTSettingsWindowStringFunction = function(): TAppendableString;
@@ -41,6 +41,7 @@ TYPE
          Cancel,
          RestoreDefaults,
          Revert: wdgTButton;
+         Divisor: wdgTDivisor;
       end;
 
       OnSave,
@@ -56,6 +57,8 @@ TYPE
       procedure AddCancelSaveButtons();
       procedure AddRestoreDefaultsButton();
       procedure AddRevertButton();
+      {add a divisor between buttons and tabs, should be called last to adjust everything}
+      procedure AddDivisor();
 
       procedure CreateWindow(); virtual;
 
@@ -107,7 +110,7 @@ begin
    {add the label}
    y := Window.Dimensions.h - wdgDEFAULT_SPACING;
 
-   Tabs := wdgTabs.Add(oxPoint(5, y), oxDimensions(Window.Dimensions.w - 10, Window.Dimensions.h - 40), true);
+   Tabs := wdgTabs.Add(oxPoint(5, y), oxDimensions(Window.Dimensions.w - 10, Window.Dimensions.h - 48), true);
 
    PreAddTabs.Call();
    OnAddTabs.Call();
@@ -167,6 +170,28 @@ begin
 
    if(wdg.RestoreDefaults = nil) then
       wdg.Revert.SetPosition(wdgPOSITION_HORIZONTAL_LEFT or wdgPOSITION_VERTICAL_BOTTOM);
+end;
+
+procedure oxTSettingsWindowBase.AddDivisor();
+var
+   reference: wdgTButton;
+   p: oxTPoint;
+
+begin
+   reference := wdg.Save;
+
+   if(reference = nil) then
+      reference := wdg.Cancel;
+
+   if(reference = nil) then
+      exit;
+
+   p := uiWidget.LastRect.AboveOf(0, 0, false);
+   p.y := p.y + wdgDEFAULT_SPACING;
+
+   wdg.Divisor := wdgDivisor.Add('', p);
+
+   Tabs.Resize(Tabs.Dimensions.w, Window.Dimensions.h - wdg.Divisor.Position.y - 1 - wdgDEFAULT_SPACING);
 end;
 
 procedure oxTSettingsWindowBase.CreateWindow();
