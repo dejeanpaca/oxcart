@@ -138,6 +138,8 @@ begin
 
       if(Caption <> '') then
          d.h := d.h + f.GetHeight();
+
+      FitHeightToGrid(d);
    end else begin
       SetHorizontalPadding(3);
       SetVerticalPadding(7);
@@ -148,6 +150,8 @@ begin
 
       if(Caption <> '') then
         d.w := d.w + f.GetHeight();
+
+      FitWidthToGrid(d);
    end;
 end;
 
