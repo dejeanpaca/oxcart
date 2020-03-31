@@ -46,7 +46,7 @@ INTERFACE
       oxeduViewScene, oxeduSceneView, oxeduProjectDialog, oxeduSceneEditTools,
       oxeduRunButtons, oxeduStatusInfo, oxeduSettingsWindow,
       oxeduProjectFeaturesWindow, oxeduProjectStatisticsWindow,
-      oxeduProjectActions,
+      oxeduProjectActions, oxeduEntityMenubar,
       {initialize keys last}
       oxeduKeys,
       {ui}
