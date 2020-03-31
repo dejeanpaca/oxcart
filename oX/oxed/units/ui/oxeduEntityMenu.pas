@@ -17,7 +17,8 @@ INTERFACE
       {ui}
       uiuContextMenu, uiuWidgetWindow, uiuWidget, uiuSkin,
       {oxed}
-      uOXED, oxeduIcons;
+      uOXED, oxeduIcons,
+      oxeduLightComponent;
 
 TYPE
    oxedTEntityList = specialize TSimpleList<oxedTEntityFunction>;
@@ -187,6 +188,22 @@ begin
    Result := oxEntity.New();
 end;
 
+function addItem(const name: string; func: oxedTEntityFunction; icon: longword = 0; menu: uiTContextMenu = nil): uiPContextMenuItem;
+begin
+   if(menu = nil) then
+      menu := oxedEntityMenu.Menus.Create;
+
+   Result := oxedEntityMenu.AddToMenu(name, func);
+
+   if(icon <> 0) then
+      oxedIcons.Create(Result, icon);
+end;
+
+function addPrimitiveItem(const name: string; func: oxedTEntityFunction; icon: longword = 0): uiPContextMenuItem;
+begin
+   Result := addItem(name, func, icon, oxedEntityMenu.Menus.Primitives);
+end;
+
 procedure init();
 var
    item: uiPContextMenuItem;
@@ -196,31 +213,26 @@ begin
 
    oxedEntityMenu.Menus.Create := uiTContextMenu.Create('Entity create menu');
 
-   item := oxedEntityMenu.AddToMenu('Empty', @newEntity);
+   addItem('Empty', @newEntity);
+   addItem('Camera', @oxCameraEntity.Default, $f03d);
 
-   item := oxedEntityMenu.AddToMenu('Camera', @oxCameraEntity.Default);
-   oxedIcons.Create(item, $f03d);
-   item := oxedEntityMenu.AddToMenu('Light', @oxLightEntity.Default);
-   oxedIcons.Create(item, $f0eb);
-   item := oxedEntityMenu.AddToMenu('UI', @oxUIEntity.Default);
-   oxedIcons.Create(item, $f0eb);
+   item := addItem('Light', @oxLightEntity.Default, $f0eb);
+   item^.GlyphColor := oxedLightThingie.Glyph^.Color;
+
+   item := addItem('UI', @oxUIEntity.Default, $f0eb);
 
    oxedEntityMenu.Menus.Primitives := oxedEntityMenu.Menus.Create.AddSub('Primitives');
 
-   item := oxedEntityMenu.AddToMenu('Plane', @oxPrimitiveModelEntities.Plane, oxedEntityMenu.Menus.Primitives);
-   oxedIcons.Create(item, $f0c8);
+   addPrimitiveItem('Plane', @oxPrimitiveModelEntities.Plane, $f0c8);
+   addPrimitiveItem('Cube', @oxPrimitiveModelEntities.Cube, $f1b2);
+   addPrimitiveItem('Sphere', @oxPrimitiveModelEntities.Sphere, $f111);
 
-   item := oxedEntityMenu.AddToMenu('Cube', @oxPrimitiveModelEntities.Cube, oxedEntityMenu.Menus.Primitives);
-   oxedIcons.Create(item, $f1b2);
-   item := oxedEntityMenu.AddToMenu('Sphere', @oxPrimitiveModelEntities.Sphere, oxedEntityMenu.Menus.Primitives);
-   oxedIcons.Create(item, $f111);
-
-   item := oxedEntityMenu.AddToMenu('Circle', @oxPrimitiveModelEntities.Circle, oxedEntityMenu.Menus.Primitives);
-   item := oxedEntityMenu.AddToMenu('Disk', @oxPrimitiveModelEntities.Disk, oxedEntityMenu.Menus.Primitives);
-   item := oxedEntityMenu.AddToMenu('Torus', @oxPrimitiveModelEntities.Torus, oxedEntityMenu.Menus.Primitives);
-   item := oxedEntityMenu.AddToMenu('Cylinder', @oxPrimitiveModelEntities.Cylinder, oxedEntityMenu.Menus.Primitives);
-   item := oxedEntityMenu.AddToMenu('Cone', @oxPrimitiveModelEntities.Cone, oxedEntityMenu.Menus.Primitives);
-
+   item := addPrimitiveItem('Circle', @oxPrimitiveModelEntities.Circle, 0);
+   oxedIcons.Create(item, 0, 'regular:61713');
+   addPrimitiveItem('Disk', @oxPrimitiveModelEntities.Disk, $f111);
+   addPrimitiveItem('Torus', @oxPrimitiveModelEntities.Torus);
+   addPrimitiveItem('Cylinder', @oxPrimitiveModelEntities.Cylinder);
+   addPrimitiveItem('Cone', @oxPrimitiveModelEntities.Cone, $f810);
 end;
 
 procedure deinit();
