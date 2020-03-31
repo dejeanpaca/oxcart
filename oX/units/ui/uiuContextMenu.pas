@@ -162,6 +162,8 @@ TYPE
       {get dimensions for the context menu}
       function GetDimensions(): oxTDimensions;
 
+      {find a submenu item index by its reference}
+      function FindIndexOfSub(menu: uiTContextMenu): loopint;
       {get a submenu item that has the specified context menu}
       function GetSub(menu: uiTContextMenu): uiPContextMenuItem;
       {find an item index by the associated action, returns -1 if nothing found}
@@ -737,7 +739,8 @@ begin
       ZeroOut(Items.List[index], SizeOf(Items.List[index]));
 
       InsertIndex := index;
-   end;
+   end else
+      InsertIndex := -1;
 end;
 
 procedure uiTContextMenu.InsertAfter(index: loopint);
@@ -932,6 +935,19 @@ begin
 
    if(Items.n > 1) then
       inc(Result.h, VERTICAL_SEPARATION * (Items.n - 1));
+end;
+
+function uiTContextMenu.FindIndexOfSub(menu: uiTContextMenu): loopint;
+var
+   i: loopint;
+
+begin
+   for i := 0 to (Items.n - 1) do begin
+      if(Items.List[i].Sub = menu) then
+         exit(i);
+   end;
+
+   Result := -1;
 end;
 
 function uiTContextMenu.GetSub(menu: uiTContextMenu): uiPContextMenuItem;
