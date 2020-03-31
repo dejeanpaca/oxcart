@@ -9,7 +9,7 @@ UNIT oxeduComponentGlyph;
 INTERFACE
 
    USES
-      uStd,
+      uStd, uColors,
       {ox}
       oxuComponent, oxuTexture, oxuDefaultTexture, oxuResourcePool,
       {oxed}
@@ -26,6 +26,7 @@ TYPE
       Code: loopint;
       {glyph texture associated with this entity}
       Texture: oxTTexture;
+      Color: TColor4ub;
 
       procedure Initialize(out glyph: oxedTComponentGlyph);
 
@@ -45,6 +46,7 @@ IMPLEMENTATION
 procedure oxedTComponentGlyph.Initialize(out glyph: oxedTComponentGlyph);
 begin
    ZeroPtr(@glyph, SizeOf(glyph));
+   glyph.Color := cWhite4ub;
 end;
 
 
