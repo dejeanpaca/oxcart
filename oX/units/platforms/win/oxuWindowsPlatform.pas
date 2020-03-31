@@ -234,11 +234,15 @@ begin
       key.State.Prop(kmDOWN);
 
    {set global modifiers}
-   if(key.Code = kcCAPSLOCK) then
-      appk.Modifiers.Prop(kmCAPS, key.IsPressed());
+   if(key.Code = kcCAPSLOCK) then begin
+      if(key.IsPressed()) then
+         appk.Modifiers.Toggle(kmCAPS);
+   end;
 
-   if(key.Code = kcNUMLOCK) then
-      appk.Modifiers.Prop(kmNUM, key.IsPressed());
+   if(key.Code = kcNUMLOCK) then begin
+      if(key.IsPressed()) then
+         appk.Modifiers.Toggle(kmNUM);
+   end;
 
    if(key.Code = kmSCROLL) then
       appk.Modifiers.Prop(kmSCROLL, key.IsPressed());
@@ -260,6 +264,7 @@ begin
       for i := 0 to (rCount - 1) do begin
          ev := appKeyEvents.Queue(key);
          appPKeyEvent(ev^.GetData())^.PlatformCode := WParam;
+         appPKeyEvent(ev^.GetData())^.PlatformScanCode := scanCode;
          ev^.wnd := wnd;
       end;
    end;
@@ -965,24 +970,43 @@ begin
    windows.ShowWindow(winosTWindow(wnd).wd.h, SW_RESTORE);
 end;
 
-function oxTWindowsPlatform.TranslateKey(const k: appTKeyEvent): char;
-var
-   charCode,
-   diacritic: longword;
-
+procedure CreateKeyState(const k: appTKeyEvent; out state: TKeyboardState);
 begin
-   charCode := 0;
-   diacritic := 0;
+   ZeroOut(state, SizeOf(state));
 
-   charCode := MapVirtualKeyA(k.PlatformCode, MAPVK_VK_TO_CHAR);
-   if(charCode <> 0) then begin
-      diacritic:= hi(charCode);
-      charCode := lo(charCode);
-
-      exit(char(charCode));
+   if(k.Key.State.IsSet(kmCAPS)) then begin
+      state[VK_CAPITAL] := $1;
    end;
 
-   Result := #0;
+   if(k.Key.State.IsSet(kmCONTROL)) then
+      state[VK_CONTROL] := $FF;
+
+   if(k.Key.State.IsSet(kmALT)) then
+      state[VK_MENU] := $FF;
+
+   if(k.Key.State.IsSet(kmSHIFT)) then
+      state[VK_SHIFT] := $FF;
+
+   state[k.PlatformCode] := $FF;
+end;
+
+function oxTWindowsPlatform.TranslateKey(const k: appTKeyEvent): char;
+var
+   keyState: TKeyboardState;
+   chars: word = 0;
+   count: loopint;
+
+begin
+   CreateKeyState(k, keyState);
+
+   count := ToAscii(k.PlatformCode, k.PlatformScanCode, @keyState[0], @chars, 0);
+
+   if(count = 2) then begin
+      Result := char(hi(chars))
+   end else if(count = 1) then
+      Result := char(lo(chars))
+   else
+      Result := #0;
 end;
 
 INITIALIZATION
