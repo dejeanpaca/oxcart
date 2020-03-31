@@ -57,6 +57,8 @@ begin
    AddCancelSaveButtons();
    AddRevertButton();
 
+   AddDivisor();
+
    uiWidget.ClearTarget();
 end;
 
