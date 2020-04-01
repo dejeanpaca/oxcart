@@ -11,7 +11,8 @@ INTERFACE
    USES
       uStd, vmVector, uLog,
       {ox}
-      oxuSerialization, oxuComponentDescriptors, oxuRenderComponent, oxuModel, oxuModelRender, oxuModelFile;
+      oxuSerialization, oxuComponentDescriptors, oxuRenderComponent, oxuEntity,
+      oxuModel, oxuModelRender, oxuModelFile;
 
 TYPE
 
@@ -24,14 +25,16 @@ TYPE
 
       constructor Create(); override;
 
-      procedure Render; override;
+      procedure Render(); override;
 
       procedure GetBoundingBox(out bbox: TBoundingBox); override;
 
-      procedure Deserialized; override;
+      procedure Deserialized(); override;
       procedure LoadResources(); override;
 
       function GetDescriptor(): oxPComponentDescriptor; override;
+
+      class function GetEntity(out component: oxTModelComponent): oxTEntity; static;
    end;
 
 IMPLEMENTATION
@@ -47,7 +50,7 @@ begin
    inherited Create;
 end;
 
-procedure oxTModelComponent.Render;
+procedure oxTModelComponent.Render();
 begin
    oxModelRender.Render(Model);
 end;
@@ -60,7 +63,7 @@ begin
       ZeroPtr(@bbox, SizeOf(bbox));
 end;
 
-procedure oxTModelComponent.Deserialized;
+procedure oxTModelComponent.Deserialized();
 begin
    inherited Deserialized;
 end;
@@ -74,6 +77,12 @@ end;
 function oxTModelComponent.GetDescriptor(): oxPComponentDescriptor;
 begin
    Result := @descriptor;
+end;
+
+class function oxTModelComponent.GetEntity(out component: oxTModelComponent): oxTEntity;
+begin
+   component := oxTModelComponent.Create();
+   Result := oxEntity.New('Model', component);
 end;
 
 function instance(): TObject;
