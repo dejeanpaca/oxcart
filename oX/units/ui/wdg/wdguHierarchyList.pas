@@ -109,6 +109,10 @@ VAR
 
 IMPLEMENTATION
 
+CONST
+   EXPANDER_RATIO = 0.5;
+   EXPANDER_RATIO_WIDTH = 0.7;
+
 { wdgTHierarchyList }
 
 constructor wdgTHierarchyList.Create();
@@ -149,7 +153,7 @@ begin
    triangle[0] := vmvZero3f;
 
    if(Expandable(index)) then begin
-      height := round(ItemHeight * 0.8);
+      height := round(ItemHeight * EXPANDER_RATIO);
       triangleOffset := (ItemHeight - height) div 2;
 
       pr := r;
@@ -291,7 +295,7 @@ end;
 
 function wdgTHierarchyList.GetExpanderWidth(): loopint;
 begin
-   Result := ItemHeight;
+   Result := round(ItemHeight * EXPANDER_RATIO_WIDTH);
 end;
 
 function wdgTHierarchyList.GetHorizontalItemOffset(index: loopint): loopint;
