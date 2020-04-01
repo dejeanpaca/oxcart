@@ -283,7 +283,7 @@ begin
    wdg.Name.Move(wdg.Name.Position.x, 20);
    wdg.Name.SetPosition(wdgPOSITION_VERTICAL_CENTER);
 
-   PositionVector(wdg.Transform.Dimensions.h - wdg.Transform.CachedFont.GetHeight() - wdgDEFAULT_SPACING, wdg.Position);
+   PositionVector(wdg.Transform.Dimensions.h, wdg.Position);
    PositionVector(wdg.Position.Lbl.BelowOf(), wdg.Rotation);
    PositionVector(wdg.Rotation.Lbl.BelowOf(), wdg.Scale);
 end;
@@ -320,8 +320,8 @@ var
    height: loopint;
 
 begin
-   v.Lbl.Move(0, y - 2);
-   height := 15;
+   v.Lbl.Move(wdgDEFAULT_SPACING, y - 2);
+   height := 20;
 
    parentW := wdg.Transform.Dimensions.w;
    spacing := 2;

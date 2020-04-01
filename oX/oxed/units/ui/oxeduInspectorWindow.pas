@@ -148,9 +148,9 @@ begin
       y := lastGroup.BelowOf(0);
    end;
 
-   Result.Separator := wdgDivisor.Add('', oxPoint(0, y));
+   Result.Separator := wdgDivisor.Add(caption, oxPoint(0, y));
 
-   Result.Wdg := wdgGroup.Add(caption, oxPoint(0, Result.Separator.BelowOf(0)), oxDimensions(Dimensions.w, 20));
+   Result.Wdg := wdgGroup.Add('', oxPoint(0, Result.Separator.BelowOf(0)), oxDimensions(Dimensions.w, 20));
    Result.Wdg.Transparent := true;
    Result.Wdg.RenderBorder := false;
 
@@ -168,8 +168,7 @@ begin
 
       for i := 0 to (wdg.Groups.n - 1) do begin
          {set size for current group}
-         size := wdg.Groups.List[i].Wdg.Widgets.GetTotalHeight() + wdgDEFAULT_SPACING * 2  + wdg.
-            Groups.List[i].Wdg.CachedFont.GetHeight();
+         size := wdg.Groups.List[i].Wdg.Widgets.GetTotalHeight() + wdgDEFAULT_SPACING;
 
          if(size < 20) then
             size := 20;
