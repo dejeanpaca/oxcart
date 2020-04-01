@@ -174,10 +174,9 @@ begin
    wdg.Save.Callback.Use(@Save);
    wdg.Revert.Callback.Use(@Revert);
 
-   uiWidget.ClearTarget();
-
    AddDivisor();
 
+   uiWidget.ClearTarget();
    Revert();
 end;
 
