@@ -191,7 +191,8 @@ begin
 
    wdg.Divisor := wdgDivisor.Add('', p);
 
-   Tabs.Resize(Tabs.Dimensions.w, Window.Dimensions.h - wdg.Divisor.Position.y - 1 - wdgDEFAULT_SPACING);
+   if(Tabs <> nil) then
+      Tabs.Resize(Tabs.Dimensions.w, Window.Dimensions.h - wdg.Divisor.Position.y - 1 - wdgDEFAULT_SPACING);
 end;
 
 procedure oxTSettingsWindowBase.CreateWindow();
