@@ -13,7 +13,7 @@ INTERFACE
       {ui}
       uiuDockableWindow, uiuWindow, uiuWindowTypes,
       {oxed}
-      uOXED, oxeduActions, oxeduSceneEdit, oxeduSceneHierarchy, oxeduMessagesWindow, oxeduProblemsWindow,
+      uOXED, oxeduActions, oxeduSceneEdit, oxeduSceneHierarchy, oxeduConsoleWindow, oxeduProblemsWindow,
       oxeduInspectorWindow, oxeduProjectBrowser, oxeduGameView, oxeduWindow;
 
 TYPE
@@ -63,8 +63,8 @@ begin
    {setup windows again}
    oxedSceneEdit.CreateWindow().Dock();
 
-   oxedMessagesWindow.CreateWindow().DockDown(oxed.DockableArea, 0.3);
-   oxedProjectBrowser.CreateWindow().TabTo(oxedMessagesWindow.Instance);
+   oxedConsoleWindow.CreateWindow().DockDown(oxed.DockableArea, 0.3);
+   oxedProjectBrowser.CreateWindow().TabTo(oxedConsoleWindow.Instance);
 
    oxedSceneHierarchy.CreateWindow().DockUp(
       oxedInspector.CreateWindow().DockRight(oxed.DockableArea, 0.2), 0.3);

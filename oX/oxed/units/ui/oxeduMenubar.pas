@@ -43,7 +43,7 @@ TYPE
 
       Items: record
          Recents,
-         ClearMessagesOnStart,
+         ClearConsoleOnStart,
          FocusGameViewOnStart,
          IncludeThirdPartyUnits: uiPContextMenuItem;
       end;
@@ -82,9 +82,9 @@ begin
    oxwndAbout.Open();
 end;
 
-procedure clearMessagesOnStartToggle();
+procedure clearConsoleOnStartToggle();
 begin
-   oxedSettings.ClearMessagesOnStart := oxedMenubar.Items.ClearMessagesOnStart^.IsChecked();
+   oxedSettings.ClearConsoleOnStart := oxedMenubar.Items.ClearConsoleOnStart^.IsChecked();
 end;
 
 procedure focusGameViewOnStartToggle();
@@ -152,8 +152,8 @@ begin
    Editor.AddItem('Resource Inspector', oxwndResourceInspector.OpenWindowAction);
    Editor.AddSeparator();
 
-   Items.ClearMessagesOnStart := Editor.AddCheckbox('Clear messages on start', oxedSettings.ClearMessagesOnStart);
-   Items.ClearMessagesOnStart^.Callbacks.Use(@clearMessagesOnStartToggle);
+   Items.ClearConsoleOnStart := Editor.AddCheckbox('Clear console on start', oxedSettings.ClearConsoleOnStart);
+   Items.ClearConsoleOnStart^.Callbacks.Use(@clearConsoleOnStartToggle);
 
    Items.FocusGameViewOnStart := Editor.AddCheckbox('Focus game view on start', oxedSettings.FocusGameViewOnStart);
    Items.FocusGameViewOnStart^.Callbacks.Use(@focusGameViewOnStartToggle);

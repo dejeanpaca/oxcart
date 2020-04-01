@@ -22,7 +22,7 @@ IMPLEMENTATION
 VAR
    wdg: record
       UnixLineEndings,
-      ClearMessagesOnStart,
+      ClearConsoleOnStart,
       FocusGameViewOnStart,
       BuildOnProjectOpen,
       RequireRebuildOnOpen,
@@ -34,7 +34,7 @@ VAR
 
 procedure saveCallback();
 begin
-   oxedSettings.ClearMessagesOnStart := wdg.ClearMessagesOnStart.Checked();
+   oxedSettings.ClearConsoleOnStart := wdg.ClearConsoleOnStart.Checked();
    oxedSettings.FocusGameViewOnStart := wdg.FocusGameViewOnStart.Checked();
    oxedSettings.BuildOnProjectOpen := wdg.BuildOnProjectOpen.Checked();
    oxedSettings.RequireRebuildOnOpen := wdg.RequireRebuildOnOpen.Checked();
@@ -51,7 +51,7 @@ end;
 
 procedure revertCallback();
 begin
-   wdg.ClearMessagesOnStart.Check(oxedSettings.ClearMessagesOnStart);
+   wdg.ClearConsoleOnStart.Check(oxedSettings.ClearConsoleOnStart);
    wdg.FocusGameViewOnStart.Check(oxedSettings.FocusGameViewOnStart);
    wdg.BuildOnProjectOpen.Check(oxedSettings.BuildOnProjectOpen);
    wdg.RequireRebuildOnOpen.Check(oxedSettings.RequireRebuildOnOpen);
@@ -75,7 +75,7 @@ begin
    wdgDivisor.Add('Editor settings');
 
    wdg.UnixLineEndings := wdgCheckbox.Add('Unix (linux) line ending ');
-   wdg.ClearMessagesOnStart := wdgCheckbox.Add('Clear messages on start ');
+   wdg.ClearConsoleOnStart := wdgCheckbox.Add('Clear console on start ');
    wdg.FocusGameViewOnStart := wdgCheckbox.Add('Focus game view on start ');
 
    wdg.HandleLibraryErrors := wdgCheckbox.Add('Handle library errors');
@@ -96,8 +96,8 @@ begin
    wdg.RequireRebuildOnOpen := wdgCheckbox.Add('Require rebuild on project open');
    wdg.RequireRebuildOnOpen.SetHint('To prevent any side-effects, a full rebuild is required when a project is opened to ensure built code matches editor/engine code.'#13'This can be skipped if you want to ensure this is the case yourself.');
 
-   wdg.ShowBuildOutput := wdgCheckbox.Add('Show build output in the messages window');
-   wdg.ShowBuildOutput.SetHint('Show lazarus and fpc build output in the messages window');
+   wdg.ShowBuildOutput := wdgCheckbox.Add('Show build output in the console window');
+   wdg.ShowBuildOutput.SetHint('Show lazarus and fpc build output in the console window');
 end;
 
 procedure init();

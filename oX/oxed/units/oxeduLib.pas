@@ -13,7 +13,7 @@ INTERFACE
       {ox}
       oxuDynlib, oxulibSettings, oxuGlobalInstances, oxuWindows,
       {oxed}
-      uOXED, oxeduProject, oxeduMessages;
+      uOXED, oxeduProject, oxeduConsole;
 
 TYPE
 
@@ -58,7 +58,7 @@ begin
    if(logMessage = '') then begin
       Result := true
    end else begin
-      oxedMessages.e(logMessage);
+      oxedConsole.e(logMessage);
 
       Result := false;
       Unload();

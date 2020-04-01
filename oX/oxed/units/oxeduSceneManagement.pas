@@ -13,7 +13,7 @@ INTERFACE
       {ox}
       uOX, oxuScene, oxuSceneManagement,
       {oxed}
-      uOXED, oxeduDefaultScene, oxeduMessages,
+      uOXED, oxeduDefaultScene, oxeduConsole,
       oxeduProject, oxeduProjectManagement,
       oxuSceneFile;
 
@@ -68,7 +68,7 @@ begin
    oxedSceneManagement.OnNewScene.Call();
 
    if(ox.Started) then
-      oxedMessages.i('scene > New');
+      oxedConsole.i('scene > New');
 end;
 
 class procedure oxedTSceneManagement.Save();
@@ -78,10 +78,10 @@ begin
 
    if(oxfScene.Write(oxedProject.ScenePath, oxScene) = 0) then begin
       oxedProject.SetLastScene(oxedProject.ScenePath);
-      oxedMessages.i('scene > Wrote ' + oxedProject.ScenePath);
+      oxedConsole.i('scene > Wrote ' + oxedProject.ScenePath);
       oxedProject.MarkModified();
    end else
-      oxedMessages.e('scene > Failed writing ' + oxedProject.ScenePath);
+      oxedConsole.e('scene > Failed writing ' + oxedProject.ScenePath);
 end;
 
 function oxedTSceneManagement.Open(const path: string): boolean;
@@ -99,7 +99,7 @@ begin
 
          oxSceneManagement.SetScene(scene);
          oxedProject.ScenePath := path;
-         oxedMessages.i('scene > Loaded: ' + path);
+         oxedConsole.i('scene > Loaded: ' + path);
          exit(true);
       end;
 

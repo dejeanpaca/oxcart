@@ -13,7 +13,7 @@ INTERFACE
       {ox}
       oxuEntity, oxuScene, oxuWorld, oxuSceneManagement, oxuSceneRender,
       {oxed}
-      oxeduProjectRunner, oxeduLib, oxeduMessages, oxeduScene, oxeduEntities;
+      oxeduProjectRunner, oxeduLib, oxeduScene, oxeduEntities;
 
 IMPLEMENTATION
 

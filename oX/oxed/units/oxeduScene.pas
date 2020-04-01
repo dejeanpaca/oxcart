@@ -13,7 +13,7 @@ INTERFACE
       {ox}
       uOX, oxuRunRoutines, oxuEntity, oxuSceneRender, oxuScene, oxuWorld,
       {oxed}
-      uOXED, oxeduThingies, oxeduMessages, oxeduEntities;
+      uOXED, oxeduThingies, oxeduEntities;
 
 TYPE
    { oxedTSceneGlobal }

@@ -17,7 +17,7 @@ INTERFACE
       oxuwndToast,
       {oxed}
       uOXED, oxeduSettings,
-      oxeduActions, oxeduBuild, oxeduMessages, oxeduProject;
+      oxeduActions, oxeduBuild, oxeduConsole, oxeduProject;
 
 TYPE
 
@@ -47,7 +47,7 @@ begin
       laz.Execute();
    except
       on e : Exception  do begin
-         oxedMessages.e('Failed to run Lazarus ' + e.ToString());
+         oxedConsole.e('Failed to run Lazarus ' + e.ToString());
       end;
    end;
 end;

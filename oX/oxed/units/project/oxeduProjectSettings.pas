@@ -13,7 +13,7 @@ INTERFACE
       uAppInfo,
       {oxed}
       uOXED, oxeduProject, oxeduPackage, oxeduProjectConfigurationFileHelper,
-      oxeduMessages, oxeduSettings;
+      oxeduConsole, oxeduSettings;
 
 CONST
    OXED_PROJECT_SETTINGS_FILE = 'settings.dvar';
@@ -54,19 +54,19 @@ procedure validateLoad();
 begin
    if(oxedProject.Name = '') then begin
       oxedProject.Name := 'project';
-      oxedMessages.w('Project name not valid, reset to default');
+      oxedConsole.w('Project name not valid, reset to default');
    end;
 
    if(oxedProject.Identifier = '') then begin
       oxedProject.SetIdentifier(oxedProject.Name);
 
-      oxedMessages.w('Project identifier not valid, reset to default');
+      oxedConsole.w('Project identifier not valid, reset to default');
    end;
 
    if(oxedProject.NormalizedIdentifier(oxedProject.Identifier) <> oxedProject.Identifier) then begin
       oxedProject.SetIdentifier(oxedProject.Name);
 
-      oxedMessages.w('Project identifier not valid, reset to default');
+      oxedConsole.w('Project identifier not valid, reset to default');
    end;
 
    if(oxedProject.LineEndings = '') then

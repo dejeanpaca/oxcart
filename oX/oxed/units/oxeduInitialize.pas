@@ -26,7 +26,7 @@ INTERFACE
       oxeduProjectScanner, oxeduPasScanner, oxeduStatisticsScanner,
       oxeduProjectPackages, oxeduProjectPackagesConfiguration,
       {additional}
-      oxeduBuildEvents, oxeduLazarus, oxeduMessages, oxeduProjectManagement,
+      oxeduBuildEvents, oxeduLazarus, oxeduConsole, oxeduProjectManagement,
       {components}
       oxeduCameraComponent, oxeduLightComponent, oxeduUIComponent,
       {platforms}
@@ -99,7 +99,7 @@ begin
    oxed.PostInit.iCall();
 
    if(oxPaths.List.n = 0) then
-      oxedMessages.w('oX asset path doesn''t seem set (set ' + OX_ASSET_PATH_ENV + ' environment variable or config)');
+      oxedConsole.w('oX asset path doesn''t seem set (set ' + OX_ASSET_PATH_ENV + ' environment variable or config)');
 
   oxed.Initialized := true;
 end;
