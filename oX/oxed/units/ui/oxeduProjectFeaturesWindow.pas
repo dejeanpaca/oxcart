@@ -68,8 +68,8 @@ begin
 
    AddCancelSaveButtons();
    wdg.Save.Callback.Use(@Save);
-   AddRevertButton();
    AddDivisor();
+   AddRevertButton();
    wdg.Revert.Callback.Use(@Revert);
    widgets.Separator := wdgDivisor.Add('', uiWidget.LastRect.AboveOf());
 

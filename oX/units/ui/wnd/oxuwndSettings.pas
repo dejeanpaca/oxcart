@@ -58,8 +58,6 @@ begin
    AddRevertButton();
 
    AddDivisor();
-
-   uiWidget.ClearTarget();
 end;
 
 {$IFDEF OX_FEATURE_CONSOLE}

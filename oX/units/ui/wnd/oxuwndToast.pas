@@ -210,8 +210,6 @@ begin
 
       Exclude(wdg.Properties, wdgpSELECTABLE);
    end;
-
-   uiWidget.ClearTarget();
 end;
 
 procedure oxTToastWindow.Show(const setTitle, setStatus: string; duration: longint);
