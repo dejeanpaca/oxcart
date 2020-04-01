@@ -73,7 +73,7 @@ begin
    wdgLabel.Add(oxRenderer.GetSummary(oxTWindow(Window.oxwParent)),
       uiWidget.LastRect.BelowOf(), oxNullDimensions);
 
-   btnClose := wdgButton.Add('Close', uiWidget.LastRect.BelowOf(), oxDimensions(80, 20), @Close);
+   btnClose := wdgButton.Add('Close', uiWidget.LastRect.BelowOf(), oxNullDimensions, @Close);
 
    Window.ContentAutoSize();
    Window.AutoCenter();

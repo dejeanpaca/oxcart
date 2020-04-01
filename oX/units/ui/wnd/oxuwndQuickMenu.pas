@@ -85,6 +85,8 @@ begin
       dim.w := 90;
       dim.h := ButtonHeight;
 
+      uiTWidget.FitToGrid(dim);
+
       y := ButtonSpacing;
 
       if(IncludeSettings) then begin
