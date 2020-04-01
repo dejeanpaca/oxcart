@@ -79,8 +79,10 @@ function oxwdgTResourceInspectorGrid.GetValue(index, column: loopint): StdString
 begin
    if(column = 0) then
       Result := oxResource.Pools.List[index].Name
+   else if(column = 1) then
+      Result := sf(oxResource.Pools.List[index].n)
    else
-      Result := sf(oxResource.Pools.List[index].n);
+      Result := oxResource.Pools.List[index].ClassName;
 end;
 
 function oxwdgTResourceInspectorGrid.GetItemCount(): loopint;
@@ -119,8 +121,9 @@ begin
 
    uiWidget.Create.Instance := oxwdgTResourceInspectorGrid;
    wdg.List := oxwdgTResourceInspectorGrid(wdgGrid.Add());
-   wdg.List.AddColumn('Name')^.Ratio := 0.3;
-   wdg.List.AddColumn('Count');
+   wdg.List.AddColumn('Name')^.Ratio := 0.5;
+   wdg.List.AddColumn('Count')^.Ratio := 0.2;
+   wdg.List.AddColumn('Type')^.Ratio := 0.3;
    wdg.List.Selectable := true;
 
    Resized();
