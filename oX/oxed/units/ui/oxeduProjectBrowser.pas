@@ -49,7 +49,6 @@ TYPE
    oxedTProjectBrowserWindow = class(oxedTWindow)
       wdg: record
          Workbar: wdgTToolbar;
-         Separator: wdgTDivisor;
          Search: wdgTInputBox;
          Navigation: wdgTOXEDProjectBrowserNavigate;
          Files: wdgTOXEDProjectBrowserFiles;
@@ -272,11 +271,7 @@ begin
    wdg.Navigation.Pattern := '*';
    wdg.Navigation.IncludeParentDirectoryLink := false;
    wdg.Navigation.DirectoriesOnly := true;
-   wdg.Navigation.SetBorder(1);
    wdg.Navigation.RootFile := 'Project';
-
-   wdg.Separator := wdgDivisor.Add('', oxNullPoint, true);
-   wdg.Separator.NoAutomaticSizing := true;
 
    wdg.FilePath := wdgLabel.Add('Path', oxNullPoint, oxNullDimensions);
    wdg.FilePath.SetPadding(4);
@@ -285,7 +280,6 @@ begin
    wdg.Files := wdgTOXEDProjectBrowserFiles(wdgFileGrid.Add(oxNullPoint, oxNullDimensions));
    wdg.Files.Callbacks.PathChange := @pathChange;
    wdg.Files.OddColored := true;
-   wdg.Files.SetBorder(1);
 
    wdg.Navigation.FileBrowser := wdg.Files;
    wdg.Files.FileNavigate := wdg.Navigation;
@@ -332,18 +326,13 @@ begin
    wdg.Navigation.Move(0, wdg.Workbar.BelowOf(0));
    wdg.Navigation.Resize(Dimensions.w div 5, wdg.Workbar.RemainingHeight());
 
-   wdg.Separator.Move(wdg.Navigation.RightOf(0), wdg.Workbar.BelowOf(0));
-   wdg.Separator.Resize(5, wdg.Workbar.RemainingHeight());
-   wdg.Separator.SetHorizontalPadding(2);
-   wdg.Separator.SetVerticalPadding(2);
-
-   wdg.FilePath.Move(wdg.Separator.RightOf(0), wdg.Workbar.BelowOf(0));
+   wdg.FilePath.Move(wdg.Navigation.RightOf(0), wdg.Workbar.BelowOf(0));
    wdg.FilePath.AutoSetDimensions(true);
 
-   wdg.Files.Move(wdg.Separator.RightOf(0), wdg.FilePath.BelowOf(0));
-   wdg.Files.Resize(wdg.Separator.RemainingWidth(), wdg.FilePath.RemainingHeight());
+   wdg.Files.Move(wdg.Navigation.RightOf(0), wdg.FilePath.BelowOf(0));
+   wdg.Files.Resize(wdg.Navigation.RemainingWidth(), wdg.FilePath.RemainingHeight());
 
-   wdg.Search.Resize(wdg.Workbar.Dimensions.w div 2, wdg.Workbar.Dimensions.h);
+   wdg.Search.Resize(wdg.Workbar.Dimensions.w div 2, wdg.Workbar.Dimensions.h - 2);
    wdg.Search.CenterVertically().MoveRightmost(0);
 end;
 
