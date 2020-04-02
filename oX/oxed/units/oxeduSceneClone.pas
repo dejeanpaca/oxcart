@@ -25,13 +25,13 @@ end;
 
 procedure onAfterInitialize();
 var
-   entitiesGlobal: oxTEntityGlobal = nil;
+   entitiesGlobal: oxPEntityGlobal = nil;
 
 begin
-   entitiesGlobal := oxTEntityGlobal(oxLibReferences^.FindInstance('oxTEntityGlobal'));
+   entitiesGlobal := oxLibReferences^.FindInstancePtr('oxTEntityGlobal');
 
    if(entitiesGlobal <> nil) then
-      oxedEntities.SetupHooks(entitiesGlobal);
+      oxedEntities.SetupHooks(entitiesGlobal^);
 end;
 
 
