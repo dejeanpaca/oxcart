@@ -136,7 +136,6 @@ begin
 
       {add widgets}
       AddWidgets();
-      uiWidget.ClearTarget();
    end;
 end;
 
