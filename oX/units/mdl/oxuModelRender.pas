@@ -24,6 +24,8 @@ TYPE
       procedure PrepareRender(const mesh: oxTMesh);
 
       {render mesh with the given mesh material}
+      procedure DrawPrimitives(const mesh: oxTMesh; startIndex, count: loopint);
+      {render mesh with the given mesh material}
       procedure RenderMesh(const mesh: oxTMesh; material: oxTMaterial; const pM: oxTMeshMaterial);
       {render mesh with the given material}
       procedure RenderMesh(const mesh: oxTMesh; material: oxTMaterial = nil);
@@ -51,12 +53,12 @@ end;
 
 procedure oxTModelRender.PrepareRender(const mesh: oxTMesh);
 begin
-   oxRender.Vertex(Mesh.Data.v[Mesh.Data.vertexOffset]);
+   oxRender.Vertex(Mesh.Data.v[Mesh.Data.VertexOffset]);
 
-   if(Mesh.Data.t <> nil) then begin
+   if(Mesh.Data.t <> nil) then
       oxRender.TextureCoords(Mesh.Data.t[0])
-   end else
-     oxRender.DisableTextureCoords();
+   else
+      oxRender.DisableTextureCoords();
 
    if(Mesh.Data.n <> nil) then begin
       oxRender.Normals(Mesh.Data.n[Mesh.Data.vertexOffset]);
@@ -69,21 +71,29 @@ begin
       oxRender.DisableColor();
 end;
 
+procedure oxTModelRender.DrawPrimitives(const mesh: oxTMesh; startIndex, count: loopint);
+begin
+   if(Mesh.Data.i <> nil) then
+      oxRender.Primitives(Mesh.Primitive, count, pword(@Mesh.Data.i[startIndex]))
+   else if(Mesh.Data.il <> nil) then
+      oxRender.Primitives(Mesh.Primitive, count, PDWord(@Mesh.Data.il[startIndex]))
+   else
+      oxRender.DrawArrays(Mesh.Primitive, mesh.Data.nVertices - mesh.Data.vertexOffset - mesh.Data.nVertexCutoff);
+end;
+
 procedure oxTModelRender.RenderMesh(const mesh: oxTMesh; material: oxTMaterial; const pM: oxTMeshMaterial);
 var
    currentMaterial: oxTMaterial;
 
 begin
    currentMaterial := pM.Material;
+
    if(currentMaterial = nil) then
       currentMaterial := GetMaterial(material);
 
    currentMaterial.Apply();
 
-   if(Mesh.Data.i <> nil) then
-      oxRender.Primitives(Mesh.Primitive, pM.IndiceCount, pword(@Mesh.Data.i[pM.StartIndice]))
-   else if(Mesh.Data.il <> nil) then
-      oxRender.Primitives(Mesh.Primitive, pM.IndiceCount, PDWord(@Mesh.Data.il[pM.StartIndice]))
+   DrawPrimitives(mesh, pM.StartIndice, pM.IndiceCount);
 end;
 
 procedure oxTModelRender.RenderMesh(const mesh: oxTMesh; material: oxTMaterial);
@@ -105,12 +115,7 @@ begin
       end else begin
          material.Apply();
 
-         if(Mesh.Data.i <> nil) then
-            oxRender.Primitives(Mesh.Primitive, Mesh.Data.nIndices, PWord(@Mesh.Data.i[0]))
-         else if(Mesh.Data.il <> nil) then
-            oxRender.Primitives(Mesh.Primitive, Mesh.Data.nIndices, PDWord(@Mesh.Data.il[0]))
-         else
-            oxRender.DrawArrays(Mesh.Primitive, (Mesh.Data.nVertices - Mesh.Data.vertexOffset - Mesh.Data.nVertexCutoff));
+         DrawPrimitives(mesh, 0, mesh.Data.nIndices);
      end;
 
      if(Mesh.Data.c <> nil) then
@@ -119,7 +124,6 @@ begin
      if(Mesh.CullFace <> oxCULL_FACE_DEFAULT) then
         oxRender.CullFace(oxCULL_FACE_DEFAULT);
   end;
-
 end;
 
 procedure oxTModelRender.Render(model: oxTModel);
