@@ -197,11 +197,6 @@ var
    w: uiTWidget;
 
 begin
-   if(HasAlpha) then
-      uiWidget.LastRect.SetDefault(250)
-   else
-      uiWidget.LastRect.SetDefault(220);
-
    wdgLabel.Add('R: ');
    wdg.ibR := wdgInputBox.Add(sf(SelectedColor[0]), uiWidget.LastRect.RightOf(), oxDimensions(60, 20));
    wdg.ibR.SetControlMethod(@colorValueControl);
