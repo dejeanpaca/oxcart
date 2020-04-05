@@ -14,8 +14,9 @@ PROGRAM primitives;
       appuKeys,
       {oX}
       oxuProjection, oxuKeyboardControl,
-      oxuWindowTypes, oxuWindows, oxuFont,
+      oxuWindowTypes, oxuWindows, oxuFont, oxuTypes,
       oxumPrimitive, oxuTexture, oxuTransform, oxuRender, oxuRenderer,
+      uiuUI,
       {test}
       uTestTools;
 
@@ -32,13 +33,6 @@ VAR
    texture: oxTTextureID;
    textureEnabled: boolean = false;
 
-procedure InitLights();
-begin
-   tt.setupDefaultLight();
-
-   oxRender.DepthTest(oxDEPTH_TEST_DEFAULT);
-end;
-
 procedure buildPrimitive();
 var
    errcode: longint;
@@ -47,19 +41,16 @@ begin
    primitive.Recycle();
 
    case selectedPrimitive of
-      0: errcode := primitive.Triangle();
-      1: errcode := primitive.Circle();
-      2: errcode := primitive.Disk();
-      3: errcode := primitive.Quad();
-      4: errcode := primitive.Cube(oxmPRIMITIVE_CUBE_METHOD_DEFAULT);
-      5: errcode := primitive.Sphere(oxmPRIMITIVE_SPHERE_METHOD_SIMPLE);
-      6: errcode := primitive.Cylinder();
-      7: errcode := primitive.Torus();
-      8: errcode := primitive.Cone();
+      0: primitive.Triangle();
+      1: primitive.Circle();
+      2: primitive.Disk();
+      3: primitive.Quad();
+      4: primitive.Cube(oxmPRIMITIVE_CUBE_METHOD_DEFAULT);
+      5: primitive.Sphere(oxmPRIMITIVE_SPHERE_METHOD_SIMPLE);
+      6: primitive.Cylinder();
+      7: primitive.Torus();
+      8: primitive.Cone();
    end;
-
-   if(errcode <> 0) then
-      log.e('Error(' + sf(errcode) + ') building primitive model ' + sf(selectedPrimitive));
 
    if(primitive.mesh.Data.nNormals = 0) then begin
       errcode := primitive.mesh.ComputeNormals(normalsType);
@@ -74,8 +65,6 @@ begin
    end;
 
    log.i('Using primitive model: ' + sf(longint(primitive.primitiveType)));
-
-   primitive.SetExternalTexture(texture);
 end;
 
 procedure previousPrimitive();
@@ -98,13 +87,13 @@ begin
    buildPrimitive()
 end;
 
-procedure Render(wnd: oxTWindow);
+procedure Render({%H-}wnd: oxTWindow);
 var
    m: TMatrix4f;
    normalsString: string = '';
 
 begin
-   oxRender.DepthTest(oxDEPTH_TEST_DEFAULT);
+   oxRender.DepthDefault();
 
    m := oxTransform.PerspectiveFrustum(75, 640 / 480, 0.5, 1000.0);
    oxRenderer.SetProjectionMatrix(m);
@@ -114,16 +103,12 @@ begin
    oxTransform.Apply();
 
    tt.RotateXYZ();
-   oxRender.Color4f(1.0, 1.0, 1.0, 1.0);
+   oxRender.Color(cWhite4f);
 
-   if(textureEnabled) then
-      oxRender.EnableTexture();
-
-   primitive.SetTexRender(textureEnabled);
-   primitive.cullFace := oxCULL_FACE_NONE;
+   primitive.Mesh.CullFace := oxCULL_FACE_NONE;
    primitive.Render();
 
-   m := oxTransform.OrthoFrustum(0, oxProjection.Dimensions.w, 0, oxProjection.Dimensions.h, -1.0, 1.0);
+   m := oxTransform.OrthoFrustum(0, oxProjection^.Dimensions.w, 0, oxProjection^.Dimensions.h, -1.0, 1.0);
    oxRenderer.SetProjectionMatrix(m);
 
    if(not primitiveNormals) then
@@ -136,42 +121,16 @@ begin
    oxf.Stop();
 end;
 
-function Perform(a: oxTDoAction): boolean;
+procedure run();
 begin
-   result := true;
-
-   case a of
-      oxDO_INITIALIZE: begin
-         oxWindows.onRender.Add(@Render);
-         oxProjection.ClearColor.Assign(0.1, 0.1, 0.25, 1.0);
-         InitLights();
-
-         {load texture}
-         tt.LoadTexture('textures' + DirectorySeparator + 'primitive.tga', texture);
-         primitive.SetTexture(texture);
-
-         {initialize primitive}
-         oxmPrimitive.defaults.sphereStacks := oxmPrimitive.defaults.sphereStacks * 2;
-         oxmPrimitive.defaults.sphereSlices := oxmPrimitive.defaults.sphereSlices * 2;
-
-         primitive.Init();
-         buildPrimitive();
-      end;
-
-      oxDO_RUN: begin
-         tt.dtRotateXYZ();
-      end;
-
-      oxDO_DEINITIALIZE: begin
-         primitive.Dispose();
-         texture.Delete();
-      end;
-   end;
+   tt.dtRotateXYZ();
 end;
 
-procedure Keyz(var key: appTKeyEvent; wnd: oxTWindow);
+function Keyz(oxui: uiTUI; var key: appTKeyEvent; wnd: oxTWindow): boolean;
 begin
-   case key.Key.KeyCode of
+   Result := true;
+
+   case key.Key.Code of
       kcLEFT:  previousPrimitive();
       kcRIGHT: nextPrimitive();
 
@@ -187,14 +146,38 @@ begin
          log.v('texturing: ' + sf(textureEnabled));
       end;
       else
-         tt.DefaultKeyUp(key, wnd);
+         Result := tt.DefaultKeyUp(oxui, key, wnd);
    end;
+end;
+
+procedure Initialize();
+begin
+   oxKey.UpRoutine := @Keyz;
+
+   oxWindows.OnRender.Add(@Render);
+   oxProjection^.ClearColor.Assign(0.1, 0.1, 0.25, 1.0);
+
+   {load texture}
+   tt.LoadTexture('textures' + DirectorySeparator + 'primitive.tga', texture);
+
+   {initialize primitive}
+   oxmPrimitive.Defaults.SphereStacks := oxmPrimitive.Defaults.sphereStacks * 2;
+   oxmPrimitive.Defaults.SphereSlices := oxmPrimitive.Defaults.sphereSlices * 2;
+
+   primitive.Init();
+   buildPrimitive();
+end;
+
+procedure deinitialize();
+begin
+   primitive.Dispose();
+   texture.Delete();
 end;
 
 BEGIN
    appInfo.setName('Primitives Test');
-   ox.DoRoutines.Add(@Perform);
-   oxKeyUpRoutine := @Keyz;
+   ox.OnInitialize.Add('initialize', @initialize, @deinitialize);
+   ox.OnRun.Add('run', @run);
 
    oxRun.Go();
 END.
