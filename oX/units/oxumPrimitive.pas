@@ -147,7 +147,7 @@ TYPE
    { oxTPrimitiveModelGlobal }
 
    oxTPrimitiveModelGlobal = record
-      defaults: record
+      Defaults: record
          CircleDivisions: longint;
          SphereStacks: longint;
          SphereSlices: longint;
@@ -172,7 +172,6 @@ TYPE
 
 VAR
    oxmPrimitive: oxTPrimitiveModelGlobal;
-
 
 IMPLEMENTATION
 
@@ -437,7 +436,7 @@ end;
 
 procedure oxTPrimitiveModel.Disk();
 begin
-   CircleDisk(1.0, oxmPrimitive.defaults.circleDivisions, oxmPRIMITIVE_DISK);
+   CircleDisk(1.0, oxmPrimitive.Defaults.circleDivisions, oxmPRIMITIVE_DISK);
 end;
 
 procedure oxTPrimitiveModel.InitCircle(r: single; d: longint);
@@ -459,7 +458,7 @@ end;
 
 procedure oxTPrimitiveModel.Circle();
 begin
-   CircleDisk(1.0, oxmPrimitive.defaults.circleDivisions, oxmPRIMITIVE_CIRCLE);
+   CircleDisk(1.0, oxmPrimitive.Defaults.circleDivisions, oxmPRIMITIVE_CIRCLE);
 end;
 
 { cube }
@@ -773,7 +772,7 @@ end;
 
 procedure oxTPrimitiveModel.Sphere(method: longint);
 begin
-   Sphere(1.0, oxmPrimitive.defaults.sphereStacks, oxmPrimitive.defaults.sphereSlices, method);
+   Sphere(1.0, oxmPrimitive.Defaults.sphereStacks, oxmPrimitive.Defaults.sphereSlices, method);
 end;
 
 procedure oxTPrimitiveModel.Cylinder();
