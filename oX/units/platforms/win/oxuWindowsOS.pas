@@ -9,7 +9,7 @@ UNIT oxuWindowsOS;
 INTERFACE
 
    USES
-      StringUtils, uLog, Windows,
+      uStd, StringUtils, uLog, Windows,
       {oX}
       oxuWindowTypes, uiuTypes, uiuWindowTypes;
 
@@ -77,11 +77,11 @@ TYPE
       {logs and returns an error, if any}
       function LogError(const prefix: string = ''): DWORD;
       {get a string representation of a windows error code}
-      class function FormatMessage(messsageID: DWORD; includeCode: boolean = true): string; static;
+      class function FormatMessage(messsageID: DWORD; includeCode: boolean = true): StdString; static;
       {get the last error code, and log it if silent is set to false}
       function GetLastError(silent: boolean = true): DWORD;
 
-      function MessageBox(wParent: uiTWindow; const Title, Say: string;
+      function MessageBox(wParent: uiTWindow; const Title, Say: StdString;
          Style: uiTMessageBoxStyle; Buttons: longword): longword;
    end;
 
@@ -103,18 +103,27 @@ begin
    end;
 end;
 
-class function winTWindowsOSGlobal.FormatMessage(messsageID: DWORD; includeCode: boolean = true): string;
+class function winTWindowsOSGlobal.FormatMessage(messsageID: DWORD; includeCode: boolean = true): StdString;
 var
+   len: loopint;
    buf: array[0..65535] of char;
 
+function copyMessage(): StdString;
 begin
-   windows.FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nil, messsageID, 0, @buf, Length(buf) - 1, nil);
+   if(len > 0) then
+      Result := Copy(PChar(@buf[0]), 1, len)
+   else
+      Result := '';
+end;
+
+begin
+   len := windows.FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nil, messsageID, 0, @buf, Length(buf) - 1, nil);
 
    {remove newlines which are returned for some reason}
    if(includeCode) then
-      Result := '(' + sf(messsageID) + ') ' + Copy(PChar(@buf[0]), 1, Length(PChar(@buf[0])))
+      Result := '(' + sf(messsageID) + ') ' + copyMessage()
    else
-      Result := Copy(PChar(@buf[0]), 1, Length(PChar(@buf[0])));
+      Result := copyMessage();
 end;
 
 function winTWindowsOSGlobal.GetLastError(silent: boolean): DWORD;
@@ -127,7 +136,7 @@ begin
 end;
 
 function winTWindowsOSGlobal.MessageBox(wParent: uiTWindow;
-   const Title, Say: string; Style: uiTMessageBoxStyle; Buttons: longword): longword;
+   const Title, Say: StdString; Style: uiTMessageBoxStyle; Buttons: longword): longword;
 var
    rslt: longword;
    uType: longword;
