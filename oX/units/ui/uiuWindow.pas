@@ -1627,9 +1627,10 @@ begin
    {add to target window}
    target.InsertWindow(Self);
 
-   Self.Parent := target;
    Self.oxwParent := target.oxwParent;
    Self.Level := target.Level + 1;
+
+   Self.SetParent(target);
 end;
 
 { WINDOW RENDERING }
