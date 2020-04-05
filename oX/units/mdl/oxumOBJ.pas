@@ -16,6 +16,9 @@ INTERFACE
 
 IMPLEMENTATION
 
+CONST
+     MAX_SUPPORTED_FACE_POINTS = 256;
+
 TYPE
    { TLoaderData }
 
@@ -24,7 +27,8 @@ TYPE
       Model: oxTModel;
       UnsupportedFaces,
       HasTris,
-      HasQuads: boolean;
+      HasQuads,
+      HasPolygons: boolean;
    end;
 
 VAR
@@ -188,6 +192,9 @@ begin
                   end else if(facePointCount = 4) then begin
                      inc(faceCount, 2);
                      ld.HasQuads := true;
+                  end else if(facePointCount < MAX_SUPPORTED_FACE_POINTS) then begin
+                     inc(faceCount, facePointCount - 2);
+                     ld.HasPolygons := true;
                   end else begin
                      data.SetError(eUNSUPPORTED, 'Unsupported face point count ' + sf(facePointCount) + ' (not triangle or quad) at line ' + sf(lineCount));
                      ld.UnsupportedFaces := true;
@@ -225,10 +232,10 @@ var
    indices: array of dword = nil;
 
    indiceStrings: array[0..2] of ShortString;
-   faceStrings: array[0..3] of ShortString;
+   faceStrings: array[0..MAX_SUPPORTED_FACE_POINTS] of ShortString;
 
    {currently read face}
-   face: array[0..3] of record
+   face: array[0..MAX_SUPPORTED_FACE_POINTS - 1] of record
       {vertex indice}
       v,
       {normal indice}
@@ -242,7 +249,8 @@ var
    iuvOffset,
    iCurrentOffset,
    i,
-   nIndices: loopint;
+   nIndices,
+   index: loopint;
 
    hasN,
    hasUV: boolean;
@@ -506,7 +514,7 @@ begin
                   setFacePoint(2, 2);
 
                   inc(currentFace);
-               end else begin
+               end else if(facePointCount = 4) then begin
                   {convert quads to tris}
                   setFacePoint(0, 0);
                   setFacePoint(1, 1);
@@ -516,6 +524,17 @@ begin
                   setFacePoint(2, 5);
 
                   inc(currentFace, 2);
+               end else begin
+                  for i := 2 to facePointCount - 1  do begin
+                     index := i - 2;
+
+                     {convert quads to tris}
+                     setFacePoint(index, 0);
+                     setFacePoint(index + 1, 1);
+                     setFacePoint(facePointCount - 1, 2);
+
+                     inc(currentFace);
+                  end;
                end;
             end else if(key = 'usemtl') then begin
                materialDone();
