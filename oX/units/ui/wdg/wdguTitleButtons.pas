@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont,
       {ui}
-      uiuWindow, uiuWindowTypes, uiuTypes, uiuSkinTypes,
+      uiuControl, uiuWindow, uiuWindowTypes, uiuTypes, uiuSkinTypes,
       uiuWidget, uiWidgets, uiuRegisteredWidgets, wdguBase;
 
 TYPE
@@ -33,6 +33,8 @@ TYPE
    { wdgTTitleButtons }
 
    wdgTTitleButtons = class(uiTWidget)
+      procedure Initialize(); override;
+
       procedure Point(var e: appTMouseEvent; x, {%H-}y: longint); override;
       procedure Render(); override;
       procedure Hover({%H-}x, {%H-}y: longint; what: uiTHoverEvent); override;
@@ -40,11 +42,15 @@ TYPE
 
       procedure SizeChanged(); override;
       procedure ParentSizeChange(); override;
+      procedure Update(); override;
 
    protected
       procedure FontChanged(); override;
 
    private
+      {previous parent of the window we're within}
+      PreviousWindowParent: uiTControl;
+
       Buttons: record
          n, {number of Buttons}
          h, {default height}
@@ -75,6 +81,13 @@ VAR
 IMPLEMENTATION
 
 {NOTE: the specific width is currently the same for any button}
+
+procedure wdgTTitleButtons.Initialize();
+begin
+   inherited Initialize();
+
+   PreviousWindowParent := wnd;
+end;
 
 procedure wdgTTitleButtons.Point(var e: appTMouseEvent; x, {%H-}y: longint);
 var
@@ -219,6 +232,16 @@ begin
    Calculate();
 end;
 
+procedure wdgTTitleButtons.Update();
+begin
+   inherited Update();
+
+   if(PreviousWindowParent <> uiTWindow(wnd).Parent) then begin
+      PreviousWindowParent := uiTWindow(wnd).Parent;
+      Calculate();
+   end;
+end;
+
 {calculate the properties of the title buttons}
 procedure wdgTTitleButtons.Calculate();
 var
@@ -227,6 +250,7 @@ var
    i,
    n,
    x,
+   y,
    totalWidth,
    titleHeight: loopint; {title height}
 
@@ -238,6 +262,7 @@ begin
 
    pSkin := uiTSkin(pWnd.Skin);
    if(pWnd.Frame <> uiwFRAME_STYLE_NONE) and (pSkin <> nil) then begin
+      SetVisibility(true);
       titleHeight := pWnd.GetTitleHeight();
 
       {get the dimensions of individual Buttons}
@@ -280,14 +305,14 @@ begin
       Dimensions.w := totalWidth;
 
       {need to determine the position of the widget}
-      Position.y := pWnd.Dimensions.h + (titleHeight + Buttons.h) div 2;
-      Position.x := pWnd.Dimensions.w - totalWidth - uiTWindow(wnd).GetFrameWidth() -
+      y := pWnd.Dimensions.h + (titleHeight + Buttons.h) div 2;
+      x := pWnd.Dimensions.w - totalWidth - uiTWindow(wnd).GetFrameWidth() -
          {move away from the b}
          loopint((round((Buttons.h)) div 4));
 
-      {update widgets relative position}
-      PositionUpdate();
-   end;
+      Move(x, y);
+   end else
+      SetVisibility(false);
 end;
 
 function wdgTTitleButtons.OnWhere(x: loopint): loopint;
