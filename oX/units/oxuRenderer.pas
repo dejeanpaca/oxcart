@@ -289,7 +289,7 @@ begin
       end;
    end;
 
-   result := -1;
+   Result := -1;
 end;
 
 procedure oxTRenderer.RemoveContext(context: loopint);

@@ -164,7 +164,7 @@ begin
    Result := nil;
 
    if(oxWindows.n > 0) then
-   for i := Low(oxWindows.w) to (oxWindows.n-1) do begin
+   for i := Low(oxWindows.w) to (oxWindows.n - 1) do begin
       if(oxWindows.w[i] <> nil) and (winosTWindow(oxWindows.w[i]).wd.h = w) then
          exit(oxWindows.w[i]);
    end;
