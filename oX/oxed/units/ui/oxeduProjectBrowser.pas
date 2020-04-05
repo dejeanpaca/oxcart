@@ -328,6 +328,7 @@ begin
 
    wdg.FilePath.Move(wdg.Navigation.RightOf(0), wdg.Workbar.BelowOf(0));
    wdg.FilePath.AutoSetDimensions(true);
+   wdg.FilePath.Resize(wdg.FilePath.Dimensions.w, round(wdg.FilePath.Dimensions.h * 1.2));
 
    wdg.Files.Move(wdg.Navigation.RightOf(0), wdg.FilePath.BelowOf(0));
    wdg.Files.Resize(wdg.Navigation.RemainingWidth(), wdg.FilePath.RemainingHeight());
