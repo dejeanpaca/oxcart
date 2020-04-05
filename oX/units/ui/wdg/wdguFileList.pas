@@ -513,6 +513,9 @@ begin
    ShowFileIcons := true;
    IncludeParentDirectoryLink := true;
 
+   ItemDimensions.Assign(64, 80);
+   MinimumItemDimensions.Assign(24, 24);
+
    FileAttributes := faAnyFile or faDirectory;
    Pattern := '*';
 
@@ -563,6 +566,7 @@ var
    f: oxTFont;
    height,
    padding,
+   textSize,
    fh: loopint;
    pf: PFileDescriptor;
    br: oxTRect;
@@ -582,7 +586,10 @@ begin
          glyph := wdgFileList.GetFileIcon(pf^);
 
          if(glyph.Glyph <> nil) and (glyph.Glyph.rId <> 0) then begin
-            height := r.h - (padding * 2);
+            if(r.h < r.w) then
+               height := r.h - (padding * 2)
+            else
+               height := r.w - (padding * 2);
 
             oxRender.BlendDefault();
             SetColorBlended(glyph.Color);
@@ -597,19 +604,27 @@ begin
       pf := GetFile(index, columnIndex);
       br := r;
 
+
       if(pf <> nil) then begin
          glyph := wdgFileList.GetFileIcon(pf^);
          padding := 2;
          fh := f.GetHeight();
 
          if(glyph.Glyph <> nil) and (glyph.Glyph.rId <> 0) then begin
-            height := r.h - (fh * wdgFileGrid.FileNameLines + fh div 2) - padding * 2;
+            textSize := (fh * wdgFileGrid.FileNameLines) + fh div 2;
+
+            if(r.h < r.w) then
+               height := r.h - (padding * 2)
+            else
+               height := r.w - (padding * 2);
+
+            height := height - textSize;
 
             oxRender.BlendDefault();
             SetColorBlended(glyph.Color);
-            uiDrawUtilities.Glyph(r.x + ((r.w - height) div 2), r.y - padding, height, height, glyph.Glyph);
+            uiDrawUtilities.Glyph(r.x + ((r.w - height) div 2), r.y - ((r.h - textSize - height) div 2), height, height, glyph.Glyph);
 
-            br.y := br.y - r.h + (fh * wdgFileGrid.FileNameLines) + fh div 2;
+            br.y := br.y - r.h + textSize - fh div 2;
          end;
       end;
 
