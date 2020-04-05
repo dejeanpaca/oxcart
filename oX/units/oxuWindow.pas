@@ -205,6 +205,11 @@ begin
          exit;
       end;
 
+      {create a thread rendering context}
+      wnd.ThreadRenderingContext := oxTRenderer(wnd.Renderer).GetContext(wnd, wnd.RenderingContext);
+      if(wnd.ErrorCode = 0) then
+         log.v('gl > Created thread render context');
+
       {success}
       wnd.oxProperties.Created := true;
       Result := true;
