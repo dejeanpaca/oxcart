@@ -61,60 +61,69 @@ TYPE
 IMPLEMENTATION
 
 class function uiRenderWidget.GetCurvedFrameProperties(pos: uiTControlGridPosition): TBitSet;
-var
-   edge: boolean = false;
-
 begin
    Result := wdgRENDER_CORNERS_ALL or wdgRENDER_LINES_ALL;
 
-   if(pos = [uiCONTROL_GRID_MIDDLE]) then begin
-      Result.Clear(wdgRENDER_CORNERS_ALL or wdgRENDER_LINE_BOTTOM);
+   {middle horizontal}
+   if(uiCONTROL_GRID_MIDDLE_HORIZONTAL in pos) or ((uiCONTROL_GRID_MIDDLE in pos)) then
+      Result.Clear(wdgRENDER_CORNERS_ALL);
+
+   {top | left}
+   if(pos = [uiCONTROL_GRID_TOP, uiCONTROL_GRID_LEFT]) then begin
+      Result.Clear(wdgRENDER_LINE_BOTTOM);
+      Result.Clear(wdgRENDER_CORNER_BL or wdgRENDER_CORNER_BR or wdgRENDER_CORNER_TR);
       exit;
    end;
 
-   if(pos = [uiCONTROL_GRID_MIDDLE, uiCONTROL_GRID_MIDDLE_HORIZONTAL]) or (pos = [uiCONTROL_GRID_MIDDLE_HORIZONTAL]) then begin
-      Result.Clear(wdgRENDER_CORNERS_ALL or wdgRENDER_LINE_RIGHT);
+   {top | middle horizontal}
+   if(pos = [uiCONTROL_GRID_TOP, uiCONTROL_GRID_MIDDLE_HORIZONTAL]) then begin
+      Result.Clear(wdgRENDER_LINE_BOTTOM or wdgRENDER_LINE_LEFT);
       exit;
    end;
 
-   if(uiCONTROL_GRID_TOP in pos) then begin
-      Result.Clear(wdgRENDER_CORNER_BL or wdgRENDER_CORNER_BR or wdgRENDER_LINE_BOTTOM);
-
-      if(uiCONTROL_GRID_MIDDLE in pos) then
-         Result.Clear(wdgRENDER_CORNER_TL or wdgRENDER_CORNER_TR or wdgRENDER_LINE_RIGHT);
-
-      edge := true;
+   {top | right}
+   if(pos = [uiCONTROL_GRID_TOP, uiCONTROL_GRID_RIGHT]) then begin
+      Result.Clear(wdgRENDER_LINE_BOTTOM or wdgRENDER_LINE_LEFT);
+      Result.Clear(wdgRENDER_CORNER_BL or wdgRENDER_CORNER_BR or wdgRENDER_CORNER_TL);
+      exit;
    end;
 
-   if(uiCONTROL_GRID_BOTTOM in pos) then begin
-      Result.Clear(wdgRENDER_CORNER_TL or wdgRENDER_CORNER_TR);
-
-      if(uiCONTROL_GRID_MIDDLE in pos) then
-         Result.Clear(wdgRENDER_CORNER_BL or wdgRENDER_CORNER_BR or wdgRENDER_LINE_RIGHT);
-
-      edge := true;
+   {middle | left}
+   if(pos = [uiCONTROL_GRID_MIDDLE, uiCONTROL_GRID_LEFT]) then begin
+      Result.Clear(wdgRENDER_LINE_BOTTOM);
+      exit;
    end;
 
-   if(uiCONTROL_GRID_LEFT in pos) then begin
-      Result.Clear(wdgRENDER_CORNER_TR or wdgRENDER_CORNER_BR or wdgRENDER_LINE_RIGHT);
-
-      if(uiCONTROL_GRID_MIDDLE in pos) then
-         Result.Clear(wdgRENDER_CORNER_TL or wdgRENDER_CORNER_BL or wdgRENDER_LINE_BOTTOM);
-
-      edge := true;
+   {middle | middle horizontal}
+   if(pos = [uiCONTROL_GRID_MIDDLE, uiCONTROL_GRID_MIDDLE_HORIZONTAL]) then begin
+      Result.Clear(wdgRENDER_LINE_BOTTOM or wdgRENDER_LINE_LEFT);
+      exit;
    end;
 
-   if(uiCONTROL_GRID_RIGHT in pos) then begin
-      Result.Clear(wdgRENDER_CORNER_TL or wdgRENDER_CORNER_BL);
-
-      if(uiCONTROL_GRID_MIDDLE in pos) then
-         Result.Clear(wdgRENDER_CORNER_TR or wdgRENDER_CORNER_BR or wdgRENDER_LINE_BOTTOM);
-
-      edge := true;
+   {middle | right}
+   if(pos = [uiCONTROL_GRID_MIDDLE, uiCONTROL_GRID_RIGHT]) then begin
+      Result.Clear(wdgRENDER_LINE_BOTTOM or wdgRENDER_LINE_LEFT);
+      exit;
    end;
 
-   if(not edge) then
-      Result.Clear(wdgRENDER_LINE_RIGHT or wdgRENDER_LINE_BOTTOM or wdgRENDER_CORNERS_ALL);
+   {bottom | left }
+   if(pos = [uiCONTROL_GRID_BOTTOM, uiCONTROL_GRID_LEFT]) then begin
+      Result.Clear(wdgRENDER_CORNER_BR or wdgRENDER_CORNER_TL or wdgRENDER_CORNER_TR);
+      exit;
+   end;
+
+   {bottom | middle horizontal}
+   if(pos = [uiCONTROL_GRID_BOTTOM, uiCONTROL_GRID_MIDDLE_HORIZONTAL]) then begin
+      Result.Clear(wdgRENDER_LINE_LEFT);
+      exit;
+   end;
+
+   {bottom | right}
+   if(pos = [uiCONTROL_GRID_BOTTOM, uiCONTROL_GRID_RIGHT]) then begin
+      Result.Clear(wdgRENDER_LINE_LEFT);
+      Result.Clear(wdgRENDER_CORNER_TR or wdgRENDER_CORNER_TL or wdgRENDER_CORNER_BL);
+      exit;
+   end;
 end;
 
 class procedure uiRenderWidget.CurvedFrame(x1, y1, x2, y2: loopint);
