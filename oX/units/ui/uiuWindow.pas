@@ -183,7 +183,7 @@ TYPE
       {compute dimensions required to fit all content (widgets)}
       function ContentDimensions(spacing: loopint = -1): oxTDimensions;
       {auto size to fit all content}
-      procedure ContentAutoSize();
+      procedure ContentAutoSize(offsetWidgets: boolean = true);
 
       {move widgets by offset}
       procedure MoveWidgetsOffset(x, y: loopint);
@@ -2029,7 +2029,7 @@ begin
    end;
 end;
 
-procedure uiTWindowHelper.ContentAutoSize();
+procedure uiTWindowHelper.ContentAutoSize(offsetWidgets: boolean = true);
 var
    d: oxTDimensions;
    offsetY: loopint;
@@ -2040,7 +2040,9 @@ begin
    offsetY := d.h - Dimensions.h;
 
    Resize(d);
-   MoveWidgetsOffset(0, offsetY);
+
+   if(offsetWidgets) then
+      MoveWidgetsOffset(0, offsetY);
 end;
 
 procedure uiTWindowHelper.MoveWidgetsOffset(x, y: loopint);
