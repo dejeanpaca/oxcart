@@ -22,9 +22,9 @@ TYPE
    TLoaderData = record
       MaterialCount: loopint;
       Model: oxTModel;
-      InconsistentFaces,
-      QuadWarn,
-      ConvertQuads: boolean;
+      UnsupportedFaces,
+      HasTris,
+      HasQuads: boolean;
    end;
 
 VAR
@@ -102,13 +102,26 @@ var
    key,
    value: StdString;
 
+   lineCount,
    vertexCount,
    normalCount,
    faceCount,
-   previousFacePointCount,
    facePointCount: loopint;
 
+   hasVertex,
+   hasFaces: Boolean;
+
    m: oxPMesh;
+
+   procedure reset();
+   begin
+      hasVertex := false;
+      hasFaces := false;
+      vertexCount := 0;
+      normalCount := 0;
+      faceCount := 0;
+      facePointCount := 0;
+   end;
 
    procedure meshDone();
    begin
@@ -117,40 +130,24 @@ var
          m^.SetNormals(normalCount);
          m^.Data.nFaces := faceCount;
 
-         if(not ld.InconsistentFaces) and m^.IsQuad() then begin
-            m^.Primitive := oxPRIMITIVE_QUADS;
-
-            if(not ld.QuadWarn) then begin
-               log.w('Quads will be converted to triangles for: ' + data.FileName);
-               ld.QuadWarn := true;
-            end;
-         end;
-
          m^.Data.nVertsPerFace := oxPrimitivePoints[loopint(m^.Primitive)];
          m^.SetIndices(faceCount * m^.Data.nVertsPerFace);
       end;
 
-      vertexCount := 0;
-      normalCount := 0;
-      faceCount := 0;
-
-      facePointCount := 0;
-      previousFacePointCount := 0;
+      reset();
 
       m := nil;
    end;
 
 begin
    m := nil;
-   vertexCount := 0;
-   normalCount := 0;
-   faceCount := 0;
 
-   facePointCount := 0;
-   previousFacePointCount := 0;
+   reset();
+   lineCount := 0;
 
    repeat
       data.f^.Readln(s);
+      inc(lineCount);
 
       GetKeyValue(s, key, value, ' ');
       if(key = 'mtllib') then begin
@@ -161,32 +158,39 @@ begin
 
             m := ld.Model.AddMesh();
             m^.Name := value;
+            m^.Primitive := oxPRIMITIVE_TRIANGLES;
          end else begin
             if(m <> nil) then begin
-               if(key = 'v') then
-                  inc(vertexCount)
-               else if(key = 'vn') then
-                  inc(normalCount)
-               else if(key = 'f') then begin
-                  inc(faceCount);
+               if(key = 'v') then begin
+                  inc(vertexCount);
+                  hasVertex := true;
 
-                  previousFacePointCount := facePointCount;
-                  facePointCount := CharacterCount(value, ' ');
+                  if(hasFaces) then
+                     data.SetError(eINVALID, 'Invalid (v) order');
+               end else if(key = 'vn') then begin
+                  inc(normalCount);
 
-                  if(previousFacePointCount <> 0) and (facePointCount <> previousFacePointCount) then begin
-                     if(not ld.InconsistentFaces) then begin
-                        ld.InconsistentFaces := true;
-                        log.w('Faces have inconsistent number of points ' + m^.Name);
-                        Break;
-                     end;
-                  end;
+                  if(hasFaces) then
+                     data.SetError(eINVALID, 'Invalid (vn) order');
+               end else if(key = 'f') then begin
+                  hasFaces := true;
 
-                  if(m^.Primitive <> oxPRIMITIVE_NONE) then begin
-                     {NOTE: we'll assume if 3 spaces we have triangles, otherwise quads}
-                     if(facePointCount = 3) then
-                        m^.Primitive := oxPRIMITIVE_TRIANGLES
-                     else if(facePointCount = 4) then
-                        m^.Primitive := oxPRIMITIVE_QUADS;
+                  if(not hasVertex) then
+                     data.SetError(eINVALID, 'Invalid (f) order');
+
+                  facePointCount := CharacterCount(value, ' ') + 1;
+
+                  {triangles}
+                  if(facePointCount = 3) then begin
+                     inc(faceCount);
+                     ld.HasTris := true;
+                  {quads}
+                  end else if(facePointCount = 4) then begin
+                     inc(faceCount, 2);
+                     ld.HasQuads := true;
+                  end else begin
+                     data.SetError(eUNSUPPORTED, 'Unsupported face point count ' + sf(facePointCount) + ' (not triangle or quad) at line ' + sf(lineCount));
+                     ld.UnsupportedFaces := true;
                   end;
                end else if(key = 'usemtl') then begin
                   inc(m^.Materials.n);
@@ -194,7 +198,6 @@ begin
             end;
          end;
       end;
-
    until data.f^.EOF() or (data.f^.Error <> 0);
 
    meshDone();
@@ -215,24 +218,37 @@ var
    normalIndex,
    previousFace,
    currentFace,
-   currentMaterial: loopint;
+   currentMaterial,
+   facePointCount,
+   vertsPerFace: loopint;
 
-   faces: array of dword = nil;
+   indices: array of dword = nil;
 
    indiceStrings: array[0..2] of ShortString;
    faceStrings: array[0..3] of ShortString;
+
+   {currently read face}
+   face: array[0..3] of record
+      {vertex indice}
+      v,
+      {normal indice}
+      n,
+      {uv indice}
+      uv: loopint;
+   end;
 
    ivOffset,
    inOffset,
    iuvOffset,
    iCurrentOffset,
    i,
-   nFaces: loopint;
+   nIndices: loopint;
 
    hasN,
    hasUV: boolean;
 
    newV: array of TVector3f;
+   newUV: array of TVector2f;
 
    procedure reset();
    begin
@@ -267,13 +283,14 @@ var
             m^.Primitive := oxPRIMITIVE_TRIANGLES;
 
          for z := 0 to m^.Data.nIndices - 1 do begin
-            m^.Data.i[z] := faces[ivOffset + z];
+            m^.Data.i[z] := indices[ivOffset + z];
          end;
 
-         if(hasN) then begin
+         if(hasN) and (m^.Data.n <> nil) then begin
             SetLength(newV, m^.Data.nVertices);
 
-            oxPrimitives.Reindex(@faces[inOffset], pdword(@faces[ivOffset]), m^.Data.nIndices, @m^.Data.n[0], @newV[0]);
+            oxPrimitives.Reindex(@indices[inOffset], pdword(@indices[ivOffset]), m^.Data.nIndices,
+               @m^.Data.n[0], PVector3f(@newV[0]));
             SetLength(m^.Data.n, 0);
 
             m^.Data.n := newV;
@@ -281,16 +298,15 @@ var
             newV := nil;
          end;
 
-         {TODO: Handle UV}
+         if(hasUV) and (m^.Data.t <> nil) then begin
+            SetLength(newUV, m^.Data.nVertices);
 
-         {convert quads to triangle if indicated to do so}
-         if(m^.IsQuad() and ld.ConvertQuads) then begin
-            if(not ld.QuadWarn) then begin
-               ld.QuadWarn := true;
-               log.v('Quads will be converted to triangles for ' + data.FileName);
-            end;
+            oxPrimitives.Reindex(@indices[iuvOffset], pdword(@indices[iuvOffset]), m^.Data.nIndices, @m^.Data.t[0], PVector2f(@newUV[0]));
+            SetLength(m^.Data.t, 0);
 
-            m^.QuadsToTriangles();
+            m^.Data.t := newUV;
+            m^.Data.nNormals := m^.Data.nVertices;
+            newUV := nil;
          end;
       end;
 
@@ -300,10 +316,10 @@ var
    procedure materialDone();
    begin
       if(pM <> nil) then begin
-         pM^.IndiceCount := (currentFace - previousFace) * m^.Data.nVertsPerFace;
+         pM^.IndiceCount := (currentFace - previousFace) * vertsPerFace;
 
          if(pM^.IndiceCount + pM^.StartIndice > m^.Data.nIndices) then begin
-            log.w('Invalid indice count or starting position for material: ' + materialName);
+            data.SetError('Invalid indice count or starting position for material: ' + materialName);
             pM^.IndiceCount := 0;
             pM^.StartIndice := 0;
          end;
@@ -314,8 +330,8 @@ var
 
    procedure cleanup();
    begin
-      nFaces := 0;
-      SetLength(faces, 0);
+      nIndices := 0;
+      SetLength(indices, 0);
    end;
 
    function getOffset(): loopint;
@@ -324,20 +340,42 @@ var
       inc(iCurrentOffset, m^.Data.nIndices);
    end;
 
-   procedure setIndice(const s: string; where: loopint);
+   function getIndice(const s: string): loopint; inline;
    var
       code,
       indice: loopint;
 
    begin
-      if(where < nFaces) then begin
-         Val(s, indice, code);
+      Val(s, indice, code);
 
-         if(code = 0) then
-           faces[where] := indice - 1
-         else
-           faces[where] := 0;
-      end;
+      if(code = 0) then
+         Result := indice - 1
+      else
+         Result := 0;
+   end;
+
+   procedure setIndice(which: loopint; offset: loopint); inline;
+   var
+      where: loopint;
+
+   begin
+      where := (currentFace * vertsPerFace) + offset;
+
+      if(where < nIndices) and (which >= 0) then
+         indices[where] := which
+      else
+         data.SetError(eINVALID, 'Failed to set indice because of miscalculation/invalid');
+   end;
+
+   procedure setFacePoint(source, where: loopint); inline;
+   begin
+      setIndice(face[source].v, ivOffset + where);
+
+      if(hasUV) then
+         setIndice(face[source].uv, iuvOffset + where);
+
+      if(hasN) then
+         setIndice(face[source].n, inOffset + where);
    end;
 
 begin
@@ -345,8 +383,9 @@ begin
    if(data.f^.Error <> 0) then
       exit;
 
-   nFaces := 0;
+   nIndices := 0;
    meshIndex := 0;
+
    indiceStrings[0] := '';
    indiceStrings[1] := '';
    indiceStrings[2] := '';
@@ -367,6 +406,7 @@ begin
 
    vertexIndex := 0;
    normalIndex := 0;
+   vertsPerFace := 0;
 
    hasUV := false;
    hasN := false;
@@ -378,6 +418,7 @@ begin
       data.f^.Readln(s);
 
       GetKeyValue(s, key, value, ' ');
+
       if(key = 'matlib') then
          loadMaterials(data, ld, value)
       else begin
@@ -387,6 +428,7 @@ begin
 
             if(meshIndex < ld.Model.Meshes.n) then begin
                m := @ld.Model.Meshes.List[meshIndex];
+               vertsPerFace := m^.Data.nVertsPerFace;
 
                if(m^.Materials.n > 0) then
                   m^.Materials.SetSize(m^.Materials.n);
@@ -418,8 +460,12 @@ begin
 
                inc(normalIndex);
             end else if(key = 'f') then begin
-               strExplode(value, ' ', faceStrings, m^.Data.nVertsPerFace);
+               facePointCount := CharacterCount(value, ' ') + 1;
 
+               {get individual face points as a string}
+               strExplode(value, ' ', faceStrings, facePointCount);
+
+               {initialize structure if we're at the first face}
                if(currentFace = 0) then begin
                   strExplode(faceStrings[0], '/', indiceStrings, 3);
 
@@ -434,25 +480,43 @@ begin
                   if(hasN) then
                     inOffset := getOffset();
 
-                  nFaces := iCurrentOffset;
-                  SetLength(faces, iCurrentOffset);
-                  ZeroPtr(@faces[0], SizeOf(faces[0]) * iCurrentOffset);
+                  nIndices := iCurrentOffset;
+                  SetLength(indices, iCurrentOffset);
                end;
 
-               for i := 0 to m^.Data.nVertsPerFace - 1 do begin
+               {get individual indices for each face point}
+               for i := 0 to facePointCount - 1 do begin
                   strExplode(faceStrings[i], '/', indiceStrings, 3);
 
-                  {vertex (always assume is present)}
-                  setIndice(indiceStrings[0], currentFace * m^.Data.nVertsPerFace + ivOffset + i);
+                  ZeroPtr(@face, SizeOf(face));
 
-                  if(hasUV) then
-                     setIndice(indiceStrings[1], currentFace * m^.Data.nVertsPerFace + iuvOffset + i);
+                  face[i].v := getIndice(indiceStrings[0]);
 
-                  if(hasN) then
-                     setIndice(indiceStrings[2], currentFace * m^.Data.nVertsPerFace + inOffset + i);
+                  if(indiceStrings[1] <> '') then
+                     face[i].uv := getIndice(indiceStrings[1]);
+
+                  if(indiceStrings[2] <> '') then
+                     face[i].n := getIndice(indiceStrings[2]);
                end;
 
-               inc(currentFace);
+               if(facePointCount = 3) then begin
+                  {we have a triangle}
+                  for i := 0 to 2 do begin
+                     setFacePoint(i, i);
+                  end;
+
+                  inc(currentFace);
+               end else begin
+                  {convert quads to tris}
+                  setFacePoint(0, 0);
+                  setFacePoint(1, 1);
+                  setFacePoint(3, 2);
+                  setFacePoint(3, 3);
+                  setFacePoint(1, 4);
+                  setFacePoint(2, 5);
+
+                  inc(currentFace, 2);
+               end;
             end else if(key = 'usemtl') then begin
                materialDone();
 
@@ -461,8 +525,9 @@ begin
                   pM := @m^.Materials.List[currentMaterial];
                   pM^.Material := ld.Model.Materials.FindByName(materialName);
 
-                  {get starting indice and number of faces for this material}
-                  pM^.StartIndice := currentFace * m^.Data.nVertsPerFace;
+                  {get starting indice}
+                  pM^.StartIndice := currentFace * vertsPerFace;
+
                   if(pM^.StartIndice > m^.Data.nIndices) then begin
                      log.w('Invalid indice starting position for material: ' + materialName);
                      pM^.StartIndice := 0;
@@ -479,6 +544,7 @@ begin
    until data.f^.EOF() or (data.f^.Error <> 0);
 
    materialDone();
+
    if(data.f^.Error = 0) then
       meshDone();
 
@@ -501,16 +567,19 @@ begin
    ZeroPtr(@loaderData, SizeOf(loaderData));
    options := oxPModelFileOptions(pData^.Options);
    loaderData.Model := options^.Model;
-   loaderData.ConvertQuads := options^.ConvertQuads;
 
    { scan pass }
    scan(pData^, loaderData);
 
    { we can't load this }
-   if(loaderData.InconsistentFaces) then begin
+   if(loaderData.UnsupportedFaces) then begin
+      pData^.SetError(eUNSUPPORTED, 'Unsupported face point count (not triangle or quad)');
       options^.Model.Validate();
       exit;
    end;
+
+   if(loaderData.HasQuads) then
+      log.w('Quads will be converted to triangles for: ' + pData^.FileName);
 
    { actually load the model }
    load(pData^, loaderData);
