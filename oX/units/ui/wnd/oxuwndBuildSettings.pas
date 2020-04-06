@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, StringUtils,
       {build}
-      uFPCHelpers, uBuild,
+      uFPCHelpers, uBuild, uBuildInstalls,
       {app}
       uApp,
       {ox}
@@ -74,13 +74,13 @@ begin
    wdgLabel.Add('Build system: ' + build.Tools.Build);
    wdgLabel.Add('Build mode:   ' + build.BuildMode);
 
-   wdgLabel.Add('FPC Used:     ' + build.GetPlatform()^.Name);
-   wdgLabel.Add('Lazarus Used: ' + build.GetLazarus()^.Name);
+   wdgLabel.Add('FPC Used:     ' + BuildInstalls.GetPlatform()^.Name);
+   wdgLabel.Add('Lazarus Used: ' + BuildInstalls.GetLazarus()^.Name);
 
    uiWidget.LastRect.GoBelow();
 
-   for i := 0 to build.Platforms.n - 1 do begin
-      platform := @build.Platforms.List[i];
+   for i := 0 to BuildInstalls.Platforms.n - 1 do begin
+      platform := @BuildInstalls.Platforms.List[i];
 
       if(i = 0) then
          wdgDivisor.Add('FPC Platform: Default')
@@ -95,8 +95,8 @@ begin
 
    uiWidget.LastRect.GoBelow();
 
-   for i := 0 to build.LazarusInstalls.n - 1 do begin
-      laz := @build.LazarusInstalls.List[i];
+   for i := 0 to BuildInstalls.Lazarus.n - 1 do begin
+      laz := @BuildInstalls.Lazarus.List[i];
 
       if(i = 0) then
          wdgDivisor.Add('Lazarus: Default')

@@ -9,8 +9,8 @@ UNIT oxeduLazarus;
 INTERFACE
 
    USES
-      process, sysutils,
-      uLog, uBuild,
+      process, sysutils, uLog,
+      uBuild, uBuildInstalls,
       {app}
       appuActionEvents,
       {oX}
@@ -72,11 +72,16 @@ begin
 end;
 
 class procedure oxedTLazarusGlobal.OpenLazarus();
+var
+   lazarus: PBuildLazarusInstall;
+
 begin
    if(oxedProjectValid()) then begin
+      lazarus := BuildInstalls.GetLazarus();
+
       if(laz = nil) then begin
          laz := TProcess.Create(nil);
-         laz.Executable := build.GetLazarusStartExecutable();
+         laz.Executable := BuildInstalls.GetLazarusStartExecutable();
       end;
 
       if(not laz.Running) then begin
@@ -84,9 +89,9 @@ begin
          laz.Parameters.Add('--no-splash-screen');
          laz.Parameters.Add('--force-new-instance');
 
-         if(build.GetLazarus()^.ConfigPath <> '') then begin
-            laz.Parameters.Add('--pcp=' + build.GetLazarus()^.ConfigPath);
-            log.w('Config path: ' + build.GetLazarus()^.ConfigPath);
+         if(BuildInstalls.GetLazarus()^.ConfigPath <> '') then begin
+            laz.Parameters.Add('--pcp=' + lazarus^.ConfigPath);
+            log.w('Config path: ' + lazarus^.ConfigPath);
          end;
 
          laz.Parameters.Add(oxedProject.TempPath + oxPROJECT_LIB_LPI);

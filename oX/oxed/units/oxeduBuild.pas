@@ -12,7 +12,7 @@ INTERFACE
       sysutils, uStd, uLog, uLPI, StringUtils, uTiming,
       uFileUtils, uFile, ufUtils,
       {build}
-      uFPCHelpers, uBuild, uBuildConfiguration, uBuildLibraries, uPasSourceHelper,
+      uFPCHelpers, uBuild, uBuildInstalls, uBuildExec, uBuildConfiguration, uBuildLibraries, uPasSourceHelper,
       {app}
       uApp, appuActionEvents,
       {ox}
@@ -647,13 +647,13 @@ begin
    if(not oxedBuild.Buildable(true)) then
       exit;
 
-   previousRedirect := build.Output.Redirect;
+   previousRedirect := BuildExec.Output.Redirect;
 
-   build.Output.Redirect := true;
+   BuildExec.Output.Redirect := true;
 
-   build.Laz(oxedBuild.WorkArea + whichLpi);
+   BuildExec.Laz(oxedBuild.WorkArea + whichLpi);
 
-   build.Output.Redirect := previousRedirect;
+   BuildExec.Output.Redirect := previousRedirect;
 end;
 
 procedure FailBuild(const reason: StdString);
@@ -740,8 +740,8 @@ begin
 
    if(IsLibrary()) then begin
       {check if used fpc version matches us}
-      if(pos(FPC_VERSION, build.CurrentPlatform^.Version) <> 1) then begin
-         oxedConsole.e('Library fpc version mismatch. Got ' + build.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
+      if(pos(FPC_VERSION, BuildInstalls.CurrentPlatform^.Version) <> 1) then begin
+         oxedConsole.e('Library fpc version mismatch. Got ' + BuildInstalls.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
          exit;
       end;
 
@@ -749,7 +749,7 @@ begin
    end else
       BuildLPI(oxPROJECT_MAIN_LPI);
 
-   if(build.Output.Success) then begin
+   if(Buildexec.Output.Success) then begin
       oxedConsole.k(modestring + ' success (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
 
       MoveExecutable();
@@ -778,8 +778,8 @@ begin
    if(BuildTarget <> OXED_BUILD_STANDALONE) then
       exit;
 
-   source := build.Output.ExecutableName;
-   destination := TargetPath + ExtractFileName(build.Output.ExecutableName);
+   source := BuildExec.Output.ExecutableName;
+   destination := TargetPath + ExtractFileName(BuildExec.Output.ExecutableName);
 
    {remove destination first}
    FileUtils.Erase(destination);
@@ -959,26 +959,26 @@ begin
    Result := false;
 
    if(IsLibrary()) then begin
-      platform := build.FindPlatform(build.BuiltWithTarget, build.BuiltWithVersion);
+      platform := BuildInstalls.FindPlatform(build.BuiltWithTarget, build.BuiltWithVersion);
 
       if(platform = nil) then begin
          oxedConsole.e('Failed to find suitable compiler for ' + build.BuiltWithTarget + ' and FPC ' + FPC_VERSION);
          exit(false);
       end;
 
-      build.SetPlatform(platform^.Name);
+      BuildInstalls.SetPlatform(platform^.Name);
 
-      laz := build.FindLazarusInstallForPlatform(platform);
+      laz := BuildInstalls.FindLazarusInstallForPlatform(platform);
 
       if(laz <> nil) then
-         build.SetLazarusInstall(laz^.Name)
+         BuildInstalls.SetLazarusInstall(laz^.Name)
       else begin
          log.w('Failed to find a lazarus install for fpc: ' + platform^.Name);
-         build.GetLazarus();
+         BuildInstalls.GetLazarus();
       end;
 
-      log.v('Using platform: ' + build.CurrentPlatform^.Name + ', fpc ' + build.CurrentPlatform^.Version);
-      log.v('Using lazbuild: ' + build.CurrentLazarus^.Name + ', at ' + build.CurrentLazarus^.Path);
+      log.v('Using platform: ' + BuildInstalls.CurrentPlatform^.Name + ', fpc ' + BuildInstalls.CurrentPlatform^.Version);
+      log.v('Using lazbuild: ' + BuildInstalls.CurrentLazarus^.Name + ', at ' + BuildInstalls.CurrentLazarus^.Path);
 
       exit(true);
    end;
