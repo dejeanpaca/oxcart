@@ -362,6 +362,11 @@ begin
    if(oxedProject.Session.DebugResources) then
       f.AddCustomOption('-dOX_RESOURCE_DEBUG');
 
+   {$IFDEF NO_THREADS}
+   if(oxedBuild.IsLibrary()) then
+      f.AddCustomOption('-dNO_THREADS');
+   {$ENDIF}
+
    {$IFOPT D+}
    oxedConsole.w('Including debug info');
    f.AddCustomOption('-g');
