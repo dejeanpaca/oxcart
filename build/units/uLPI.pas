@@ -9,7 +9,8 @@ UNIT uLPI;
 INTERFACE
 
    USES
-      sysutils, uStd, uLog, uBuild, uFileUtils, StringUtils, uSimpleParser,
+      sysutils, uStd, uLog, uFileUtils, StringUtils, uSimpleParser,
+      uBuild, uBuildExec,
       {LazUtils}
       uLazXMLUtils, Laz2_DOM, laz2_XMLRead, laz2_XMLWrite;
 
@@ -227,16 +228,16 @@ begin
       fn := source + '.lpr'
    else begin
       log.w('Cannot build from source because no files found for: ' + source);
-      build.Output.Success := false;
+      BuildExec.Output.Success := false;
       exit(false);
    end;
 
    lpi.Create(fn, @context);
 
    if(lpi.Error = 0) then
-      build.Laz(lpi.OutFileName);
+      BuildExec.Laz(lpi.OutFileName);
 
-   Result := build.Output.Success;
+   Result := BuildExec.Output.Success;
 end;
 
 { TLPIFile }

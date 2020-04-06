@@ -12,7 +12,8 @@ INTERFACE
 
    USES
       process, uStd, uLog, StringUtils, uFileUtils,
-      uBuild, uSimpleParser, uTest;
+      uSimpleParser, uTest,
+      uBuildExec;
 
 TYPE
 
@@ -211,37 +212,37 @@ begin
    {compile first}
    if(not UnitTests.NoBuild) then begin
       if(laz) then
-         build.Laz(fileName)
+         BuildExec.Laz(fileName)
       else
-         build.Pas(fileName);
+         BuildExec.Pas(fileName);
 
-      if(build.Output.ErrorDecription <> '') then
-         ErrorDescription := build.Output.ErrorDecription;
+      if(BuildExec.Output.ErrorDecription <> '') then
+         ErrorDescription := BuildExec.Output.ErrorDecription;
    end;
 
-   if(not build.Output.Success) then
+   if(not BuildExec.Output.Success) then
       exit();
 
    {run}
    p := TProcess.Create(nil);
 
-   p.Executable := build.Output.ExecutableName;
+   p.Executable := BuildExec.Output.ExecutableName;
 
-   if(build.Output.ExecutableName <> '') then begin
+   if(BuildExec.Output.ExecutableName <> '') then begin
       try
          p.Execute();
 
          repeat
          until (not p.Running);
 
-         log.i('Executed: ' + build.Output.ExecutableName);
+         log.i('Executed: ' + BuildExec.Output.ExecutableName);
 
          if(p.ExitStatus = 0) then
             Success := true
          else
             ErrorDescription := 'Failure: Test program returned a non-zero exit code.';
       except
-         ErrorDescription := 'Failed to execute test program: ' + build.Output.ExecutableName;
+         ErrorDescription := 'Failed to execute test program: ' + BuildExec.Output.ExecutableName;
       end;
    end else
       ErrorDescription := 'Could not determine executable name for ' + fileName;

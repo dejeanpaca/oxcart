@@ -11,7 +11,7 @@ INTERFACE
    USES
       sysutils, strutils,
       uStd, uLog, udvars, dvaruFile, uFileUtils, StringUtils,
-      uBuild, appuPaths;
+      uBuild, uBuildInstalls, appuPaths;
 
 TYPE
    { TBuildConfiguration }
@@ -83,16 +83,16 @@ VAR
 
 function getdvCurrentPlatform(): PBuildPlatform;
 begin
-   if(build.Platforms.n > 0) then
-      exit(build.Platforms.GetLast());
+   if(BuildInstalls.Platforms.n > 0) then
+      exit(BuildInstalls.Platforms.GetLast());
 
    Result := nil;
 end;
 
 function getdvCurrentLazInstall(): PBuildLazarusInstall;
 begin
-   if(build.LazarusInstalls.n > 0) then
-      exit(build.LazarusInstalls.GetLast());
+   if(BuildInstalls.Lazarus.n > 0) then
+      exit(BuildInstalls.Lazarus.GetLast());
 
    Result := nil;
 end;
@@ -355,14 +355,14 @@ begin
    currentMode := 'fpc';
 
    if(currentValue = 'default') then begin
-      currentPlatform := build.DefaultPlatform;
+      currentPlatform := BuildInstalls.DefaultPlatform;
       exit;
    end;
 
    platform.Initialize(platform);
    platform.Name := currentValue;
 
-   build.Platforms.Add(platform);
+   BuildInstalls.Platforms.Add(platform);
    currentPlatform := getdvCurrentPlatform();
 end;
 
@@ -374,14 +374,14 @@ begin
    currentMode := 'lazarus';
 
    if(currentValue = 'default') then begin
-      currentLazarus := build.DefaultLazarus;
+      currentLazarus := BuildInstalls.DefaultLazarus;
       exit;
    end;
 
    laz.Initialize(laz);
    laz.Name := currentValue;
 
-   build.LazarusInstalls.Add(laz);
+   BuildInstalls.Lazarus.Add(laz);
    currentLazarus := getdvCurrentLazInstall();
 end;
 
@@ -425,7 +425,7 @@ var
 
 begin
    if(currentMode = 'lazarus') and (currentLazarus <> nil) then begin
-      platform := build.Platforms.FindByName(currentValue);
+      platform := BuildInstalls.Platforms.FindByName(currentValue);
 
       if(platform <> nil) then begin
          {set the used fpc for the lazarus install}
