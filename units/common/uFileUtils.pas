@@ -188,6 +188,8 @@ TYPE
       class function Write(const fn: StdString; var data; size: fileint): longint; static;
       {write a file}
       class function WriteString(const fn: StdString; const data: StdString): longint; static;
+      {write a file}
+      class function WriteStrings(const fn: StdString; const data: TStringArray): fileint; static;
 
       {save specified memory to file}
       class function SaveMem(const fn: StdString; var m; size: int64): int64; static;
@@ -940,6 +942,58 @@ begin
       Result := Write(fn, (@data[1])^, Length(data))
    else
       Result := CreateFile(fn);
+end;
+
+class function TFileUtilsGlobal.WriteStrings(const fn: StdString; const data: TStringArray): fileint;
+var
+   f: file;
+   i,
+   size,
+   currentCount,
+   totalWritten: loopint;
+   error: loopint;
+
+procedure cleanup();
+begin
+   close(f);
+   ioErrorIgn();
+end;
+
+begin
+   totalWritten := 0;
+
+   error := FileRewrite(f, fn);
+   if(error <> 0) then
+      exit(-error);
+
+   for i := 0 to High(data) do begin
+      size := Length(data[i]);
+      currentCount := 0;
+
+      BlockWrite(f, data[i], size, currentCount);
+
+      if(currentCount <> size) then begin
+         error := ioerror();
+         cleanup();
+         exit(-error);
+      end;
+
+      error := ioerror();
+      if(error <> 0) then begin
+         cleanup();
+         exit(-error)
+      end;
+
+      inc(totalWritten, currentCount);
+   end;
+
+   Close(f);
+   error := ioerror();
+
+   if (ioerror() <> 0) then
+      Result := -error
+   else
+      Result := totalWritten;
 end;
 
 class function TFileUtilsGlobal.SaveMem(const fn: StdString; var m; size: int64): int64;
