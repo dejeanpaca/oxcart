@@ -76,6 +76,14 @@ TYPE
       BuildArch: oxedTPlatformArchitecture;
       BuildMechanism: oxedTBuildMechanism;
 
+      {properties of the current build task, determined based on Build* settings}
+      Props: record
+         {source file used for build}
+         Source,
+         {config file used to build the source (an lpi or fpc config file)}
+         ConfigFile: StdString;
+      end;
+
       Features: oxTFeaturePDescriptorList;
 
       {is there a task currently running}
@@ -152,6 +160,10 @@ TYPE
       function GetPlatformPath(const base: StdString): StdString;
       {get the target executable file name}
       function GetTargetExecutableFileName(): StdString;
+      {get lpi filename based on current target}
+      function GetFPCConfigFilename(): StdString;
+      {get lpi filename based on current target}
+      function GetLPIFilename(): StdString;
    end;
 
 VAR
@@ -436,7 +448,7 @@ begin
    f.AddCustomOption('-dOX_LIBRARY');
 end;
 
-function RecreateLPI(lib: boolean): boolean;
+function RecreateLPI(): boolean;
 var
    context: TLPIContext;
    fnTemp,
@@ -446,20 +458,15 @@ var
 begin
    ZeroOut(context, SizeOf(context));
 
-   if(lib) then
+   if(oxedBuild.IsLibrary()) then
       context.Loaded := @libLPILoaded
    else
       context.Loaded := @lpiLoaded;
 
    setupBuildUnits();
 
-   if(lib) then begin
-      source := oxPROJECT_LIB_SOURCE;
-      lpifn := oxPROJECT_LIB_LPI;
-   end else begin
-      source := oxPROJECT_MAIN_SOURCE;
-      lpifn := oxPROJECT_MAIN_LPI;
-   end;
+   source := oxedBuild.Props.Source;
+   lpifn := oxedBuild.GetLPIFilename();
 
    context.Target := ExtractAllNoExt(source);
 
@@ -476,12 +483,22 @@ begin
    Result := lpi.Error = 0;
 end;
 
-function RecreateFPCConfig(lib: boolean): boolean;
+function RecreateFPCConfig(): boolean;
 var
+   fn: StdString;
    config: TSimpleStringList;
 
 begin
-   Result := false;
+   TSimpleStringList.Initialize(config, 1024);
+
+   fn := oxedBuild.WorkArea + oxedBuild.Props.ConfigFile;
+
+   Result := BuildFPCConfiguration.WriteFile(config, fn);
+
+   if(not Result) then
+      log.e('Failed to write fpc config file for project: ' + fn)
+   else
+      log.v('Created fpc config file for project: ' + fn);
 end;
 
 function getSourceHeader(includeFunctional: boolean = true): TAppendableString;
@@ -592,11 +609,11 @@ begin
 
    p := u.BuildLibrary();
 
-   fn := oxedBuild.WorkArea + oxPROJECT_LIB_SOURCE + '.tmp';
+   fn := oxedBuild.WorkArea + oxedBuild.Props.Source + '.tmp';
 
    FileUtils.WriteString(fn, p);
 
-   target := oxedBuild.WorkArea + oxPROJECT_LIB_SOURCE;
+   target := oxedBuild.WorkArea + oxedBuild.Props.Source;
 
    if(CompareAndReplace(fn, target)) then
       log.v('Recreated ' + target);
@@ -608,10 +625,6 @@ begin
 end;
 
 class function oxedTBuildGlobal.Recreate(): boolean;
-var
-   configFile,
-   source: StdString;
-
 begin
    oxedProject.RecreateTempDirectory();
 
@@ -626,41 +639,23 @@ begin
       end;
    end;
 
-   {recreate library}
-   if(oxedBuild.IsLibrary()) then
-      source := oxPROJECT_LIB_SOURCE
-   else
-      source := oxPROJECT_MAIN_SOURCE;
-
-   if(oxedBuild.BuildMechanism = OXED_BUILD_VIA_FPC) then begin
-      if(oxedBuild.IsLibrary()) then
-         configFile := oxPROJECT_LIB_LPI
-      else
-         configFile := oxPROJECT_MAIN_LPI;
-   end else begin
-         if(oxedBuild.IsLibrary()) then
-            configFile := oxPROJECT_LIB_CFG
-         else
-            configFile := oxPROJECT_MAIN_CFG;
-   end;
 
    {recreate library}
-
-   if(ShouldRecreate(source)) then begin
+   if(ShouldRecreate(oxedBuild.Props.Source)) then begin
       if(oxedBuild.BuildTarget = OXED_BUILD_LIB) then
          RecreateLib()
       else
          RecreateProgram();
    end;
 
-   if(ShouldRecreate(configFile)) then begin
+   if(ShouldRecreate(oxedBuild.Props.ConfigFile)) then begin
       if(oxedBuild.BuildMechanism = OXED_BUILD_VIA_FPC) then begin
-         if(not RecreateFPCConfig(oxedbuild.IsLibrary())) then begin
+         if(not RecreateFPCConfig()) then begin
             oxedConsole.e('Failed to create project fpc config file.');
             exit(false);
          end;
       end else begin
-         if(not RecreateLPI(oxedBuild.IsLibrary())) then begin
+         if(not RecreateLPI()) then begin
             oxedConsole.e('Failed to create project library lpi file. lpi error: ' + sf(lpi.Error));
             exit(false);
          end;
@@ -670,7 +665,7 @@ begin
    Result := true;
 end;
 
-procedure BuildLPI(const whichLpi: string);
+procedure BuildLPI();
 var
    previousRedirect: boolean;
 
@@ -682,9 +677,14 @@ begin
 
    BuildExec.Output.Redirect := true;
 
-   BuildExec.Laz(oxedBuild.WorkArea + whichLpi);
+   BuildExec.Laz(oxedBuild.WorkArea + oxedBuild.Props.ConfigFile);
 
    BuildExec.Output.Redirect := previousRedirect;
+end;
+
+procedure BuildFPC();
+begin
+   {TODO: Create an pas build mechanism with provided fpc config file}
 end;
 
 procedure FailBuild(const reason: StdString);
@@ -775,12 +775,16 @@ begin
          oxedConsole.e('Library fpc version mismatch. Got ' + BuildInstalls.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
          exit;
       end;
+   end;
 
-      BuildLPI(oxPROJECT_LIB_LPI);
-   end else
-      BuildLPI(oxPROJECT_MAIN_LPI);
+   BuildExec.ResetOutput();
 
-   if(Buildexec.Output.Success) then begin
+   if(BuildMechanism = OXED_BUILD_VIA_FPC) then
+      BuildFPC()
+   else
+      BuildLPI();
+
+   if(BuildExec.Output.Success) then begin
       oxedConsole.k(modestring + ' success (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
 
       MoveExecutable();
@@ -935,6 +939,16 @@ begin
       BuildType := OXED_BUILD_TASK_REBUILD;
    end;
 
+   if(IsLibrary()) then
+      Props.Source := oxPROJECT_LIB_SOURCE
+   else
+      Props.Source := oxPROJECT_MAIN_SOURCE;
+
+   if(oxedBuild.BuildMechanism = OXED_BUILD_VIA_FPC) then
+      props.ConfigFile := GetFPCConfigFilename()
+   else
+      Props.ConfigFile := GetLPIFilename();
+
    TargetPath := GetTargetPath();
    WorkArea := GetWorkingAreaPath();
 
@@ -1046,6 +1060,22 @@ begin
       Result := Result + build.GetExecutableName(oxPROJECT_LIBRARY_NAME, true)
    else
       Result := Result + build.GetExecutableName(oxedProject.ShortName, false);
+end;
+
+function oxedTBuildGlobal.GetFPCConfigFilename(): StdString;
+begin
+   if(IsLibrary()) then
+      Result := oxPROJECT_LIB_FPC_CFG
+   else
+      Result := oxPROJECT_MAIN_FPC_CFG;
+end;
+
+function oxedTBuildGlobal.GetLPIFilename(): StdString;
+begin
+   if(IsLibrary()) then
+      Result := oxPROJECT_LIB_LPI
+   else
+      Result := oxPROJECT_MAIN_LPI;
 end;
 
 procedure CreateSourceFile(const fn: string);
