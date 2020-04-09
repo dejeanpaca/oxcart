@@ -9,7 +9,8 @@ UNIT oxeduPasScanner;
 INTERFACE
 
    USES
-      uLog, sysutils, Classes, uStd, StringUtils, uBuild,
+      uLog, sysutils, Classes, uStd, StringUtils,
+      uBuild, uBuildFPCConfig,
       {pas}
       PScanner, PParser, PasTree,
       {oxed}
@@ -140,9 +141,9 @@ begin
 
    {get command line parameters with room for one more}
    {$IF FPC_FULLVERSION >= 030200}
-   oxedPasScanner.FpcCommandLine := build.GetFPCCommandLine(1);
+   oxedPasScanner.FpcCommandLine := BuildFPCConfiguration.GetFPCCommandLine(1);
    {$ELSE}
-   oxedPasScanner.FpcCommandLineString := build.GetFPCCommandLineAsString();
+   oxedPasScanner.FpcCommandLineString := BuildFPCConfiguration.GetFPCCommandLineAsString();
    {$ENDIF}
 end;
 
