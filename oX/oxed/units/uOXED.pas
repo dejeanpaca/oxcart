@@ -35,8 +35,12 @@ CONST
 
    {project main lpi name}
    oxPROJECT_MAIN_LPI = 'project.lpi';
+   {project fpc config name}
+   oxPROJECT_MAIN_CFG = 'project.fpc.cfg';
    {project library lpi name}
    oxPROJECT_LIB_LPI = 'project_lib.lpi';
+   {project lib fpc config name}
+   oxPROJECT_LIB_CFG = 'project_lib.fpc.cfg';
    {editor library lpi name}
    oxPROJECT_EDITOR_LIB_LPI =  'editor_lib.lpi';
 
