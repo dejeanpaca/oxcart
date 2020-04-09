@@ -14,7 +14,8 @@ UNIT StringUtils;
 
 INTERFACE
 
-   USES uStd, sysutils;
+   USES
+      uStd, sysutils;
 
 CONST
    strWhitespace = [' ', #9];
