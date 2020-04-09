@@ -269,25 +269,12 @@ end;
 
 function TBuildSystem.GetFPCCommandLineAsString(): StdString;
 var
-   i: loopint;
-   c: TAppendableString;
+   args: TStringArray;
 
 begin
-   c := '';
+   args := GetFPCCommandLine();
 
-   for i := 0 to Units.n - 1 do begin
-      c.Add('-Fu' + Units.List[i], ' ');
-   end;
-
-   for i := 0 to Includes.n - 1 do begin
-      c.Add('-Fi' + Includes.List[i], ' ');
-   end;
-
-   for i := 0 to Symbols.n - 1 do begin
-      c.Add('-d' + Symbols.List[i], ' ');
-   end;
-
-   Result := c;
+   Result := args.GetSingleString(' ');
 end;
 
 function TBuildSystem.GetFPCCommandLine(emptyBefore: loopint = 0; emptyAfter: loopint = 0): TStringArray;
