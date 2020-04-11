@@ -21,9 +21,12 @@ TYPE
 
       class procedure Initialize(out buildConfig: TBuildFPCConfiguration); static;
 
-      {get current platform and settings as an fpc command line string}
-      function GetFPCCommandLineAsString(): StdString;
-      function GetFPCCommandLine(emptyBefore: loopint = 0; emptyAfter: loopint = 0): TStringArray;
+      {get fpc command line options as strings}
+      class function GetFPCCommandLineAsString(): StdString; static;
+      {get fpc command line options as strings}
+      class function GetFPCCommandLine(emptyBefore: loopint = 0; emptyAfter: loopint = 0): TStringArray; static;
+      {get fpc command line options for use with a config file}
+      class function GetFPCCommandLineForConfig(): TStringArray; static;
 
       {add a new config line}
       procedure Add(const s: StdString); inline;
@@ -40,17 +43,15 @@ TYPE
       class function WriteFile(what: TSimpleStringList; const fn: StdString): boolean; static;
    end;
 
-VAR
-   BuildFPCConfiguration: TBuildFPCConfiguration;
-
 IMPLEMENTATION
 
 class procedure TBuildFPCConfiguration.Initialize(out buildConfig: TBuildFPCConfiguration);
 begin
-   TSimpleStringList.Initialize(buildConfig.Config, 128);
+   ZeroOut(buildConfig, SizeOf(buildConfig));
+   TSimpleStringList.InitializeValues(buildConfig.Config, 128);
 end;
 
-function TBuildFPCConfiguration.GetFPCCommandLineAsString(): StdString;
+class function TBuildFPCConfiguration.GetFPCCommandLineAsString(): StdString;
 var
    args: TStringArray;
 
@@ -60,7 +61,7 @@ begin
    Result := args.GetSingleString(' ');
 end;
 
-function TBuildFPCConfiguration.GetFPCCommandLine(emptyBefore: loopint = 0; emptyAfter: loopint = 0): TStringArray;
+class function TBuildFPCConfiguration.GetFPCCommandLine(emptyBefore: loopint = 0; emptyAfter: loopint = 0): TStringArray;
 var
    count,
    i,
@@ -112,13 +113,32 @@ begin
    if(build.IncludeDebugInfo) then
       AddArgument('-g');
 
-   if(build.FPCOptions.UseConfig <> '') then
-      AddArgument('@' + build.FPCOptions.UseConfig);
+   Result := arguments;
+end;
 
-   if(build.FPCOptions.UseConfig <> '') then
+class function TBuildFPCConfiguration.GetFPCCommandLineForConfig(): TStringArray;
+var
+   index: loopint;
+
+procedure AddArgument(const s: StdString);
+begin
+   inc(index);
+   SetLength(Result, index);
+   Result[index - 1] := s;
+end;
+
+begin
+   Result := nil;
+   index := 0;
+
+   if(build.Options.Rebuild) then
+      AddArgument('-B');
+
+   if(build.FPCOptions.DontUseDefaultConfig) then
       AddArgument('-n');
 
-   Result := arguments;
+   if(build.FPCOptions.UseConfig <> '') then
+      AddArgument('@' + build.FPCOptions.UseConfig);
 end;
 
 procedure TBuildFPCConfiguration.Add(const s: StdString);
