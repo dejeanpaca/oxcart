@@ -141,9 +141,9 @@ begin
 
    {get command line parameters with room for one more}
    {$IF FPC_FULLVERSION >= 030200}
-   oxedPasScanner.FpcCommandLine := BuildFPCConfiguration.GetFPCCommandLine(1);
+   oxedPasScanner.FpcCommandLine := TBuildFPCConfiguration.GetFPCCommandLine(1);
    {$ELSE}
-   oxedPasScanner.FpcCommandLineString := BuildFPCConfiguration.GetFPCCommandLineAsString();
+   oxedPasScanner.FpcCommandLineString := TBuildFPCConfiguration.GetFPCCommandLineAsString();
    {$ENDIF}
 end;
 
