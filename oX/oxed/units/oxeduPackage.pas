@@ -36,6 +36,9 @@ TYPE
       function GetIdentifier(): StdString;
       function GetDisplayName(): StdString;
 
+      {do we have any source in package}
+      function IsEmpty(): boolean;
+
       procedure DisposeList();
 
       class procedure Init(out p: oxedTPackage); static;
@@ -81,6 +84,11 @@ begin
          Result := Id;
    end else
       Result := Path;
+end;
+
+function oxedTPackage.IsEmpty(): boolean;
+begin
+   Result := (Units.n = 0) and (IncludeFiles.n = 0);
 end;
 
 procedure oxedTPackage.DisposeList();
