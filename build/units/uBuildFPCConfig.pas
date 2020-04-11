@@ -81,16 +81,25 @@ begin
    inc(count, build.Includes.n);
    inc(count, build.Symbols.n);
 
+   if(build.Options.Rebuild) then
+      inc(count);
+
+   if(build.FPCOptions.UnitOutputDirectory <> '') then
+      inc(count);
+
+   if(build.TargetOS <> '') then
+      inc(count);
+
+   if(build.TargetCPU <> '') then
+      inc(count);
+
+   if(build.IncludeDebugInfo) then
+      inc(count);
+
    index := emptyBefore;
 
    arguments := nil;
    SetLength(arguments, count);
-
-   if(build.Options.Rebuild) then
-      AddArgument('-B');
-
-   if(build.FPCOptions.UnitOutputDirectory <> '') then
-      AddArgument('-FU' + build.FPCOptions.UnitOutputDirectory);
 
    for i := 0 to build.Units.n - 1 do begin
       AddArgument('-Fu' + build.Units.List[i]);
@@ -103,6 +112,12 @@ begin
    for i := 0 to build.Symbols.n - 1 do begin
       AddArgument('-d' + build.Symbols.List[i]);
    end;
+
+   if(build.Options.Rebuild) then
+      AddArgument('-B');
+
+   if(build.FPCOptions.UnitOutputDirectory <> '') then
+      AddArgument('-FU' + build.FPCOptions.UnitOutputDirectory);
 
    if(build.TargetOS <> '') then
       AddArgument('-T' + build.TargetOS);
