@@ -158,7 +158,7 @@ begin
 
    IncludeUnits(build.Units.List, build.Units.n);
    AddIncludes(build.Includes.List, build.Includes.n);
-   AddSymbols(build.Symbols.List, build.Includes.n);
+   AddSymbols(build.Symbols.List, build.Symbols.n);
 
    if(build.TargetOS <> '') then begin
       add('# target OS');
