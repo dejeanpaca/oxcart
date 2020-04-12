@@ -60,6 +60,10 @@ begin
       if(recreateProject) then begin
          if(not oxedBuild.Recreate()) then
             exit;
+
+         oxedBuild.BuildMechanism := OXED_BUILD_VIA_LAZ;
+         if(not oxedBuild.RecreateConfig()) then
+            exit;
       end;
 
       runLazarus();
@@ -68,7 +72,7 @@ end;
 
 procedure openLazarusAfterRecreate();
 begin
-   openLazarusRecreate(true);
+   openLazarusRecreate(false);
 end;
 
 class procedure oxedTLazarusGlobal.OpenLazarus();
