@@ -772,24 +772,26 @@ end;
 procedure BuildFPC();
 var
    i: loopint;
-   parameters: TStringArray;
+   parameters: TSimpleStringList;
 
 begin
    build.FPCOptions.UseConfig := oxedBuild.WorkArea + oxedBuild.Props.ConfigFile;
 
    parameters := TBuildFPCConfiguration.GetFPCCommandLineForConfig();
+   parameters.Add('-vewnhi');
+   parameters.Add('-l');
 
-   if(Length(parameters) > 0) then begin
+   if(parameters.n > 0) then begin
       log.Collapsed('FPC parameters for build');
 
-      for i := 0 to High(parameters) do begin
-         log.i(parameters[i]);
+      for i := 0 to parameters.n - 1 do begin
+         log.i(parameters.List[i]);
       end;
 
       log.Leave();
    end;
 
-   BuildExec.Pas(oxedBuild.WorkArea + oxedBuild.Props.Source, parameters);
+   BuildExec.Pas(oxedBuild.WorkArea + oxedBuild.Props.Source, @parameters);
 end;
 
 procedure FailBuild(const reason: StdString);
