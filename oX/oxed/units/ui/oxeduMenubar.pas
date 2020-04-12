@@ -196,6 +196,7 @@ begin
 
    Project.AddItem('Cleanup', oxedActions.CLEANUP);
    Project.AddItem('Rescan', oxedActions.RESCAN);
+   Project.AddItem('Recreate', oxedActions.RECREATE);
    Project.AddSeparator();
 
    item := Project.AddItem('Play (Run)', oxedActions.RUN_PLAY);
