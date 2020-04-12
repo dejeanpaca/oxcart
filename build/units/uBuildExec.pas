@@ -50,7 +50,7 @@ TYPE
       {retrieves the executable name from a lazarus project}
       function GetExecutableNameFromLPI(const path: StdString): StdString;
       {build an fpc program}
-      procedure Pas(const originalPath: StdString; fpcParameters: TStringArray = nil);
+      procedure Pas(const originalPath: StdString; fpcParameters: PSimpleStringList = nil);
       {used to report building failed for a process (laz or fpc)}
       procedure BuildingFailed(const p: TProcess);
 
@@ -199,13 +199,13 @@ begin
    Result := executableName;
 end;
 
-procedure TBuildSystemExec.Pas(const originalPath: StdString; fpcParameters: TStringArray = nil);
+procedure TBuildSystemExec.Pas(const originalPath: StdString; fpcParameters: PSimpleStringList = nil);
 var
    p: TProcess;
    path: StdString;
    i: loopint;
    platform: PBuildPlatform;
-   parameters: TStringArray;
+   parameters: TSimpleStringList;
 
 begin
    path := originalPath;
@@ -226,10 +226,10 @@ begin
       else
          parameters := TBuildFPCConfiguration.GetFPCCommandLineForConfig();
    end else
-      parameters := fpcParameters;
+      parameters := fpcParameters^;
 
-   for i := 0 to High(parameters) do begin
-      p.Parameters.Add(parameters[i]);
+   for i := 0 to parameters.n - 1 do begin
+      p.Parameters.Add(parameters.List[i]);
    end;
 
    p.Parameters.Add(path);
