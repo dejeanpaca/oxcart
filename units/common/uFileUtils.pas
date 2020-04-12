@@ -1009,6 +1009,10 @@ var
    size,
    stringCount,
    currentCount: loopint;
+   {$IFDEF UNIX}
+   lineEndingChar: Char = LineEnding;
+   {$ENDIF}
+
 begin
    stringCount := 0;
    {$IFDEF DEBUG}
@@ -1031,7 +1035,11 @@ begin
    inc(stringCount, currentCount);
 
    if(includeLineEnding) then begin
+      {$IFDEF UNIX}
+      BlockWrite(f, lineEndingChar, 1, currentCount);
+      {$ELSE}
       BlockWrite(f, LineEnding[1], Length(LineEnding), currentCount);
+      {$ENDIF}
 
       error := ioerror();
 
