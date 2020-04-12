@@ -349,13 +349,36 @@ begin
    Result := basePath + ExtractFilePath(unitFile.Path);
 end;
 
-procedure recreateSymbols(var f: TLPIFile);
+function getSymbols(): TSimpleStringList;
 var
    i: loopint;
 
 begin
+   TSimpleStringList.Initialize(Result);
+
+   Result.Add('-dOXED');
+   Result.Add('-dOX_NO_DEFAULT_FEATURES');
+
+   {$IFDEF OX_DEBUG}
+   Result.Add('-dOX_DEBUG');
+   Result.Add('-dDEBUG');
+   {$ENDIF}
+
+   if(oxedProject.Session.DebugResources) then
+      Result.Add('-dOX_RESOURCE_DEBUG');
+
+   {$IFDEF NO_THREADS}
+   if(oxedBuild.IsLibrary()) then
+      Result.Add('-dNO_THREADS');
+   {$ENDIF}
+
    for i := 0 to oxedBuild.Features.n - 1 do begin
-      f.AddCustomOption('-d' + oxedBuild.Features.List[i]^.Symbol);
+      Result.Add('-d' + oxedBuild.Features.List[i]^.Symbol);
+   end;
+
+   if(oxedBuild.IsLibrary()) then begin
+      Result.Add('-dLIBRARY');
+      Result.Add('-dOX_LIBRARY');
    end;
 end;
 
@@ -363,6 +386,7 @@ procedure lpiLoaded(var f: TLPIFile);
 var
    i: loopint;
    relativePath: string;
+   symbols: TSimpleStringList;
 
 procedure processPackage(var p: oxedTPackage; const path: StdString);
 var
@@ -381,29 +405,10 @@ begin
 end;
 
 begin
-   f.AddCustomOption('-dOXED');
-   f.AddCustomOption('-dOX_NO_DEFAULT_FEATURES');
-
-   {$IFDEF OX_DEBUG}
-   f.AddCustomOption('-dOX_DEBUG');
-   f.AddCustomOption('-dDEBUG');
-   {$ENDIF}
-
-   if(oxedProject.Session.DebugResources) then
-      f.AddCustomOption('-dOX_RESOURCE_DEBUG');
-
-   {$IFDEF NO_THREADS}
-   if(oxedBuild.IsLibrary()) then
-      f.AddCustomOption('-dNO_THREADS');
-   {$ENDIF}
-
    if(build.IncludeDebugInfo) then begin
       oxedConsole.w('Including debug info');
       f.AddCustomOption('-g');
    end;
-
-   if(oxed.UseHeapTrace) then
-      oxedConsole.w('OXED built with heaptrc included, running library may be unstable');
 
    f.SetTitle(oxedProject.Name);
    f.compiler.applyConventions := false;
@@ -416,13 +421,13 @@ begin
       end;
    end;
 
-   recreateSymbols(f);
-   f.SetValue(f.compiler.targetFilename, ExtractFileName(oxedBuild.GetTargetExecutableFileName()));
+   symbols := getSymbols();
 
-   if(oxedBuild.IsLibrary()) then begin
-      f.AddCustomOption('-dLIBRARY');
-      f.AddCustomOption('-dOX_LIBRARY');
+   for i := 0 to symbols.n - 1 do begin
+      f.AddCustomOption(symbols.List[i]);
    end;
+
+   f.SetValue(f.compiler.targetFilename, ExtractFileName(oxedBuild.GetTargetExecutableFileName()));
 end;
 
 VAR
@@ -525,9 +530,9 @@ end;
 
 function RecreateFPCConfig(): boolean;
 var
-   i: loopint;
    fn: StdString;
    config: TBuildFPCConfiguration;
+   symbols: TSimpleStringList;
 
 begin
    TBuildFPCConfiguration.Initialize(config);
@@ -537,30 +542,8 @@ begin
 
    config.Add('');
 
-   for i := 0 to oxedBuild.Features.n - 1 do begin
-      config.Add('-d' + oxedBuild.Features.List[i]^.Symbol);
-   end;
-
-   config.Add('-dOXED');
-   config.Add('-dOX_NO_DEFAULT_FEATURES');
-
-   {$IFDEF OX_DEBUG}
-   config.Add('-dOX_DEBUG');
-   config.Add('-dDEBUG');
-   {$ENDIF}
-
-   if(oxedProject.Session.DebugResources) then
-      config.Add('-dOX_RESOURCE_DEBUG');
-
-   {$IFDEF NO_THREADS}
-   if(oxedBuild.IsLibrary()) then
-      config.Add('-dNO_THREADS');
-   {$ENDIF}
-
-   if(oxedBuild.IsLibrary()) then begin
-      config.Add('-dLIBRARY');
-      config.Add('-dOX_LIBRARY');
-   end;
+   symbols := getSymbols();
+   config.Add(symbols);
 
    fn := oxedBuild.WorkArea + oxedBuild.Props.ConfigFile;
 
@@ -836,6 +819,9 @@ begin
 
    log.v('Building into: ' + TargetPath);
    log.v('Working area: ' + WorkArea);
+
+   if(oxed.UseHeapTrace) and (IsLibrary()) then
+      oxedConsole.w('OXED built with heaptrc included, running library may be unstable');
 
    assert(TargetPath <> '', 'Failed to set target path for build');
    assert(WorkArea <> '', 'Failed to set working area for build');
