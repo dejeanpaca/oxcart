@@ -338,6 +338,11 @@ begin
    Result := ExtractRelativepath(oxedBuild.WorkArea, basePath + ExtractFilePath(unitFile.Path));
 end;
 
+function getAbsolutePath(const basePath: StdString; const unitFile: oxedTPackageUnit): string;
+begin
+   Result := basePath + ExtractFilePath(unitFile.Path);
+end;
+
 procedure recreateSymbols(var f: TLPIFile);
 var
    i: loopint;
@@ -494,15 +499,20 @@ begin
    {TODO: Make sure to not include duplicate paths}
 
    config.Add('');
-   config.Add('#' + package.Name);
+   if(@package <> @oxedProject.MainPackage) then
+      config.Add('# Package: ' + package.Name)
+   else
+      config.Add('# Project: ' + package.Name);
+
+   config.Add('# Path: ' + path);
    config.Add('');
 
    for i := 0 to package.Units.n - 1 do begin;
-      config.Add('-Fu' + getRelativePath(path, package.Units.List[i]));
+      config.Add('-Fu' + getAbsolutePath(path, package.Units.List[i]));
    end;
 
    for i := 0 to package.IncludeFiles.n - 1 do begin;
-      config.Add('-Fi' + getRelativePath(path, package.IncludeFiles.List[i]));
+      config.Add('-Fi' + getAbsolutePath(path, package.IncludeFiles.List[i]));
    end;
 end;
 
@@ -1025,6 +1035,7 @@ begin
       BuildTarget := OXED_BUILD_STANDALONE;
 
    BuildType := taskType;
+
    build.Options.IsLibrary := IsLibrary();
 
    {determine if we need third party units}
