@@ -115,7 +115,9 @@ TYPE
       {recreate project files (force if you want to force an update)}
       class function Recreate(force: boolean = false): boolean; static;
       {recreate project config file (lpi or fpc config)}
-      class function RecreateConfig(force: boolean = false): boolean; static;
+      class function RecreateConfig(whatFor: oxedTBuildMechanism; force: boolean = false): boolean; static;
+      {recreate all project files (for laz or fpc)}
+      class function RecreateProjectFiles(whatFor: oxedTBuildMechanism): boolean; static;
       {run the build process}
       procedure RunBuild();
       {clean up resources at the end of a build}
@@ -730,10 +732,10 @@ begin
    Result := true;
 end;
 
-class function oxedTBuildGlobal.RecreateConfig(force: boolean): boolean;
+class function oxedTBuildGlobal.RecreateConfig(whatFor: oxedTBuildMechanism; force: boolean): boolean;
 begin
    if(force or ShouldRecreate(oxedBuild.Props.ConfigFile)) then begin
-      if(oxedBuild.BuildMechanism = OXED_BUILD_VIA_FPC) then begin
+      if(whatFor = OXED_BUILD_VIA_FPC) then begin
          if(not RecreateFPCConfig()) then begin
             oxedConsole.e('Failed to create project fpc config file.');
             exit(false);
@@ -747,6 +749,16 @@ begin
    end;
 
    Result := true;
+end;
+
+class function oxedTBuildGlobal.RecreateProjectFiles(whatFor: oxedTBuildMechanism): boolean;
+begin
+   Result := Recreate(true);
+
+   if(Result) then begin
+      oxedBuild.BuildMechanism := whatFor;
+      Result := RecreateConfig(whatFor, true);
+   end;
 end;
 
 procedure BuildLPI();
@@ -873,7 +885,7 @@ begin
       exit;
    end;
 
-   if(not RecreateConfig()) then begin
+   if(not RecreateConfig(BuildMechanism)) then begin
       FailBuild('Failed to recreate project config files');
       exit;
    end;
@@ -1028,14 +1040,10 @@ begin
    oxedBuild.Recreate(true);
 
    {recreate fpc config files}
-
-   oxedBuild.BuildMechanism := OXED_BUILD_VIA_FPC;
-   oxedBuild.RecreateConfig(true);
+   oxedBuild.RecreateConfig(OXED_BUILD_VIA_FPC, true);
 
    {recreate laz config files}
-
-   oxedBuild.BuildMechanism := OXED_BUILD_VIA_LAZ;
-   oxedBuild.RecreateConfig(true);
+   oxedBuild.RecreateConfig(OXED_BUILD_VIA_LAZ, true);
 end;
 
 procedure oxedTBuildGlobal.RunTask(taskType: oxedTBuildTaskType);
