@@ -54,6 +54,8 @@ TYPE
       protected
       procedure CreateTabsWidget();
       procedure DoneTabs();
+      procedure AddCloseButton();
+      procedure AddCancelButton(const caption: StdString = 'Cancel');
       procedure AddCancelSaveButtons();
       procedure AddRestoreDefaultsButton();
       procedure AddRevertButton();
@@ -123,16 +125,26 @@ begin
    Tabs.Done();
 end;
 
+procedure oxTSettingsWindowBase.AddCloseButton();
+begin
+   AddCancelButton('Close');
+end;
+
+procedure oxTSettingsWindowBase.AddCancelButton(const caption: StdString);
+begin
+   wdg.Cancel := wdgButton.Add(caption, oxNullPoint, oxDimensions(DefaultButtonWidth, 0), @Cancel);
+   wdg.Cancel.ResizeHeight(wdg.Cancel.GetComputedHeight());
+   wdg.Cancel.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT or wdgPOSITION_VERTICAL_BOTTOM);
+   wdg.Cancel.Callback.Use(@Cancel);
+   wdg.Cancel.SetButtonPosition([uiCONTROL_GRID_RIGHT]);
+end;
+
 procedure oxTSettingsWindowBase.AddCancelSaveButtons();
 var
    point: oxTPoint = (x: 0; y: 0);
 
 begin
-   wdg.Cancel := wdgButton.Add('Cancel', point, oxDimensions(DefaultButtonWidth, 0), @Cancel);
-   wdg.Cancel.ResizeHeight(wdg.Cancel.GetComputedHeight());
-   wdg.Cancel.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT or wdgPOSITION_VERTICAL_BOTTOM);
-   wdg.Cancel.Callback.Use(@Cancel);
-   wdg.Cancel.SetButtonPosition([uiCONTROL_GRID_RIGHT]);
+   AddCancelButton();
 
    wdg.Save := wdgButton.Add('Save', point, oxDimensions(DefaultButtonWidth, 0), @Save);
    wdg.Save.ResizeHeight(wdg.Save.GetComputedHeight());
