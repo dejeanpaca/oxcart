@@ -727,20 +727,11 @@ begin
 end;
 
 procedure BuildLPI();
-var
-   previousRedirect: boolean;
-
 begin
    if(not oxedBuild.Buildable(true)) then
       exit;
 
-   previousRedirect := BuildExec.Output.Redirect;
-
-   BuildExec.Output.Redirect := true;
-
    BuildExec.Laz(oxedBuild.WorkArea + oxedBuild.Props.ConfigFile);
-
-   BuildExec.Output.Redirect := previousRedirect;
 end;
 
 procedure BuildFPC();
@@ -770,6 +761,24 @@ procedure FailBuild(const reason: StdString);
 begin
    oxedBuild.DoneBuild();
    oxedConsole.e('Failed build: ' + reason);
+end;
+
+procedure ExecuteBuild();
+var
+   previousRedirect: boolean;
+
+begin
+   BuildExec.ResetOutput();
+
+   previousRedirect := BuildExec.Output.Redirect;
+   BuildExec.Output.Redirect := true;
+
+   if(oxedBuild.BuildMechanism = OXED_BUILD_VIA_FPC) then
+      BuildFPC()
+   else
+      BuildLPI();
+
+   BuildExec.Output.Redirect := previousRedirect;
 end;
 
 procedure oxedTBuildGlobal.RunBuild();
@@ -856,12 +865,7 @@ begin
       end;
    end;
 
-   BuildExec.ResetOutput();
-
-   if(BuildMechanism = OXED_BUILD_VIA_FPC) then
-      BuildFPC()
-   else
-      BuildLPI();
+   ExecuteBuild();
 
    if(BuildExec.Output.Success) then begin
       oxedConsole.k(modestring + ' success (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
