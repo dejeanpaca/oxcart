@@ -22,6 +22,7 @@ INTERFACE
       uOXED, oxeduUI,
       oxeduActions, oxeduRecents, oxeduIcons, oxeduBuild, oxeduPlatform, oxuwndDVarEditor, oxeduTasks,
       oxeduProject, oxeduProjectManagement, oxeduProjectSettingsWindow, oxeduRunSettingsWindow, oxeduProjectRunner,
+      oxeduProjectStatisticsWindow,
       oxeduSettings;
 
 TYPE
@@ -77,10 +78,6 @@ TYPE
       procedure DeInitialize; override;
    end;
 
-procedure openAbout();
-begin
-   oxwndAbout.Open();
-end;
 
 procedure clearConsoleOnStartToggle();
 begin
@@ -208,6 +205,7 @@ begin
    Project.AddSeparator();
    Build := Project.AddSub('Build');
    Project.AddItem('Run Settings', oxedwndRunSettings.OpenWindowAction);
+   Project.AddItem('Statistics', oxedwndProjectStatistics.OpenWindowAction);
    Project.AddSeparator();
    Items.IncludeThirdPartyUnits := Project.AddCheckbox('Include third party units', false);
    Project.AddItem('Rebuild third party units', oxedActions.REBUILD_THIRD_PARTY);
@@ -231,7 +229,7 @@ begin
    { HELP }
 
    menu := Bar.Add('Help');
-   item := menu.AddItem('About', @openAbout);
+   item := menu.AddItem('About', oxwndAbout.OpenWindowAction);
    oxedIcons.Create(item, $f129);
 
    Help := menu;
