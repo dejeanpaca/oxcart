@@ -359,7 +359,7 @@ begin
    end;
 end;
 
-procedure lpiLoadedCommon(var f: TLPIFile);
+procedure lpiLoaded(var f: TLPIFile);
 var
    i: loopint;
    relativePath: string;
@@ -418,11 +418,11 @@ begin
 
    recreateSymbols(f);
    f.SetValue(f.compiler.targetFilename, ExtractFileName(oxedBuild.GetTargetExecutableFileName()));
-end;
 
-procedure lpiLoaded(var f: TLPIFile);
-begin
-   lpiLoadedCommon(f);
+   if(oxedBuild.IsLibrary()) then begin
+      f.AddCustomOption('-dLIBRARY');
+      f.AddCustomOption('-dOX_LIBRARY');
+   end;
 end;
 
 VAR
@@ -451,14 +451,6 @@ begin
    build.Units := previousBuildUnits;
 end;
 
-procedure libLPILoaded(var f: TLPIFile);
-begin
-   lpiLoadedCommon(f);
-
-   f.AddCustomOption('-dLIBRARY');
-   f.AddCustomOption('-dOX_LIBRARY');
-end;
-
 function RecreateLPI(): boolean;
 var
    context: TLPIContext;
@@ -469,10 +461,7 @@ var
 begin
    ZeroOut(context, SizeOf(context));
 
-   if(oxedBuild.IsLibrary()) then
-      context.Loaded := @libLPILoaded
-   else
-      context.Loaded := @lpiLoaded;
+   context.Loaded := @lpiLoaded;
 
    setupBuildUnits();
 
