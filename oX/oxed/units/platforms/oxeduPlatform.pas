@@ -10,6 +10,7 @@ INTERFACE
 
    USES
       uStd, udvars,
+      uFPCHelpers,
       {ox}
       oxuRunRoutines,
       {oxed}
@@ -21,9 +22,9 @@ TYPE
 
    oxedTPlatformArchitecture = class
       Name,
-      Architecture,
+      Architecture: StdString;
       {matches fpc platform}
-      Platform: string;
+      Platform: TFPCPlatformString;
 
       PlatformObject: TObject;
 
