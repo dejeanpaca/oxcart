@@ -136,22 +136,9 @@ TYPE
    TSimpleDWordList = specialize TSimpleList<dword>;
    TSimpleQWordList = specialize TSimpleList<QWord>;
 
+   PSimpleStringList = ^TSimpleStringList;
    TSimpleStringList = specialize TSimpleList<StdString>;
    TSimpleAnsiStringList = specialize TSimpleList<ansistring>;
-
-   { TSimpleStringListHelper }
-
-   TSimpleStringListHelper = record helper for TSimpleStringList
-      function FindString(const s: StdString): loopint;
-      function FindLowercase(const s: StdString): loopint;
-   end;
-
-   { TSimpleAnsiStringListHelper }
-
-   TSimpleAnsiStringListHelper = record helper for TSimpleAnsiStringList
-      function FindString(const s: string): loopint;
-      function FindLowercase(const s: string): loopint;
-   end;
 
    TSimplePointerList = specialize TSimpleList<pointer>;
 
@@ -474,72 +461,6 @@ begin
       TObject(obj) := nil;
       ref.Free();
    end;
-end;
-
-{ TSimpleStringListHelper }
-
-function TSimpleStringListHelper.FindString(const s: StdString): loopint;
-var
-   i: loopint;
-
-begin
-   for i := 0 to n - 1 do begin
-      if(List[i] = s) then
-         exit(i);
-   end;
-
-   Result := -1;
-end;
-
-function TSimpleStringListHelper.FindLowercase(const s: StdString): loopint;
-var
-   i: loopint;
-   l: string;
-
-begin
-   if(n > 0) then begin
-      l := LowerCase(s);
-
-      for i := 0 to n - 1 do begin
-         if(LowerCase(List[i]) = l) then
-            exit(i);
-      end;
-   end;
-
-   Result := -1;
-end;
-
-{ TSimpleAnsiStringListHelper }
-
-function TSimpleAnsiStringListHelper.FindString(const s: string): loopint;
-var
-   i: loopint;
-
-begin
-   for i := 0 to n - 1 do begin
-      if(List[i] = s) then
-         exit(i);
-   end;
-
-   Result := -1;
-end;
-
-function TSimpleAnsiStringListHelper.FindLowercase(const s: string): loopint;
-var
-   i: loopint;
-   l: string;
-
-begin
-   if(n > 0) then begin
-      l := LowerCase(s);
-
-      for i := 0 to n - 1 do begin
-         if(LowerCase(List[i]) = l) then
-            exit(i);
-      end;
-   end;
-
-   Result := -1;
 end;
 
 { TBoolFunctionsHelper }

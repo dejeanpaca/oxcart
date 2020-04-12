@@ -35,6 +35,23 @@ TYPE
       function GetSingleString(): StdString;
    end;
 
+   { TSimpleStringListHelper }
+
+   TSimpleStringListHelper = record helper for TSimpleStringList
+      function FindString(const s: StdString): loopint;
+      function FindLowercase(const s: StdString): loopint;
+      function GetSingleString(separator: StdString): StdString;
+      function GetSingleString(): StdString;
+   end;
+
+   { TSimpleAnsiStringListHelper }
+
+   TSimpleAnsiStringListHelper = record helper for TSimpleAnsiStringList
+      function FindString(const s: string): loopint;
+      function FindLowercase(const s: string): loopint;
+   end;
+
+
    { TPackedStrings }
 
    TPackedStrings = record
@@ -2210,6 +2227,99 @@ begin
    for i := 0 to High(Self) do begin
       Result := Result + Self[i];
    end;
+end;
+
+{ TSimpleStringListHelper }
+
+function TSimpleStringListHelper.FindString(const s: StdString): loopint;
+var
+   i: loopint;
+
+begin
+   for i := 0 to n - 1 do begin
+      if(List[i] = s) then
+         exit(i);
+   end;
+
+   Result := -1;
+end;
+
+function TSimpleStringListHelper.FindLowercase(const s: StdString): loopint;
+var
+   i: loopint;
+   l: string;
+
+begin
+   if(n > 0) then begin
+      l := LowerCase(s);
+
+      for i := 0 to n - 1 do begin
+         if(LowerCase(List[i]) = l) then
+            exit(i);
+      end;
+   end;
+
+   Result := -1;
+end;
+
+function TSimpleStringListHelper.GetSingleString(separator: StdString): StdString;
+var
+   i: loopint;
+
+begin
+   Result := '';
+
+   for i := 0 to High(List) do begin
+      if(i < High(List)) then
+         Result := Result + List[i] + separator
+      else
+         Result := Result + List[i];
+   end;
+end;
+
+function TSimpleStringListHelper.GetSingleString(): StdString;
+var
+   i: loopint;
+
+begin
+   Result := '';
+
+   for i := 0 to High(List) do begin
+      Result := Result + List[i];
+   end;
+end;
+
+{ TSimpleAnsiStringListHelper }
+
+function TSimpleAnsiStringListHelper.FindString(const s: string): loopint;
+var
+   i: loopint;
+
+begin
+   for i := 0 to n - 1 do begin
+      if(List[i] = s) then
+         exit(i);
+   end;
+
+   Result := -1;
+end;
+
+function TSimpleAnsiStringListHelper.FindLowercase(const s: string): loopint;
+var
+   i: loopint;
+   l: string;
+
+begin
+   if(n > 0) then begin
+      l := LowerCase(s);
+
+      for i := 0 to n - 1 do begin
+         if(LowerCase(List[i]) = l) then
+            exit(i);
+      end;
+   end;
+
+   Result := -1;
 end;
 
 { TStdStringStringHelper }
