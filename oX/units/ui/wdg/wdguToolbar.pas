@@ -57,6 +57,8 @@ CONST
       Setup: nil
   );
 
+   WDG_TOOLBAR_ITEM_BUTTON_RATIO = 0.9;
+
 TYPE
    wdgTToolbarItemType = (
       WDG_TOOLBAR_ITEM_BUTTON,
@@ -278,7 +280,7 @@ begin
 
    for i := 0 to Items.n - 1 do begin
       if(Items.List[i].Typ = WDG_TOOLBAR_ITEM_BUTTON) and (Items.List[i].Glyph <> nil) and (Items.List[i].Glyph.rId <> 0) then begin
-         size := Items.List[i].Size;
+         size := round(Items.List[i].Size * WDG_TOOLBAR_ITEM_BUTTON_RATIO);
 
          if(not Vertical) then begin
             px := RPosition.x + Items.List[i].RelativePosition;
