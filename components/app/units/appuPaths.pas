@@ -9,7 +9,7 @@ UNIT appuPaths;
 INTERFACE
 
    USES
-      uStd,
+      uStd, uBitSet,
       {$IFDEF UNIX}BaseUnix,{$ENDIF}
       {$IFDEF WINDOWS}windows,{$ENDIF}
       sysutils, uFileUtils, StringUtils, ConsoleUtils,
