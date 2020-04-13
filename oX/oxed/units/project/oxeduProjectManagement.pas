@@ -45,9 +45,9 @@ TYPE
       {destroy current project}
       procedure Destroy();
       {create a new project}
-      class procedure New(); static;
+      procedure New();
       {save current project}
-      class procedure Save(); static;
+      procedure Save();
       {open project from file}
       function Open(const path: string): boolean;
    end;
@@ -73,20 +73,20 @@ begin
    end;
 end;
 
-class procedure oxedTProjectManagement.New();
+procedure oxedTProjectManagement.New();
 begin
-   oxedProjectManagement.Destroy();
+   Destroy();
 
    oxedProject := oxedTProject.Create();
-   oxedProjectManagement.Current := oxedProject;
+   Current := oxedProject;
 
-   oxedProjectManagement.OnNew.Call();
+   OnNew.Call();
 
    if(ox.Started) then
       oxedConsole.i('project > New');
 end;
 
-class procedure oxedTProjectManagement.Save();
+procedure oxedTProjectManagement.Save();
 begin
    if(oxedProject = nil) then
       exit;
@@ -108,10 +108,10 @@ begin
    log.v('project > Saved session');
 
    {save other project data}
-   oxedProjectManagement.OnSaveProject.Call();
+   OnSaveProject.Call();
    log.v('project > Saved data');
 
-   oxedProjectManagement.OnSaved.Call();
+   OnSaved.Call();
    log.v('project > On saved called');
 
    oxedProject.MarkModified(false);
@@ -153,7 +153,7 @@ begin
          SetCurrentDir(fn);
 
          {call any methods for setting up the new project}
-         oxedProjectManagement.OnPreOpen.Call();
+         OnPreOpen.Call();
 
          {TODO: Check if project settings loaded properly}
          log.v('project > Loading settings from ' + oxedProjectSettingsFile.GetFn());
@@ -164,7 +164,7 @@ begin
          oxedProject.RecreateTempDirectory();
 
          {load other project data}
-         oxedProjectManagement.OnLoadProject.Call();
+         OnLoadProject.Call();
          log.v('project > Loaded');
 
          OnOpen.Call();
