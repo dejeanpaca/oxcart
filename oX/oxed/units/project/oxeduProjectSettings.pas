@@ -12,7 +12,7 @@ INTERFACE
       sysutils, uStd, uLog, udvars, dvaruFile, uFileUtils,
       uAppInfo,
       {oxed}
-      uOXED, oxeduProject, oxeduPackage, oxeduProjectConfigurationFileHelper,
+      uOXED, oxeduProject, oxeduPackage, oxeduProjectConfigurationFileHelper, oxeduPlatform,
       oxeduConsole, oxeduSettings;
 
 CONST
@@ -34,10 +34,10 @@ VAR
    dvMainUnit,
    dvRunParameter,
    dvFeature,
-   dvLineEndings: TDVar;
+   dvLineEndings,
+   dvPlatformEnabled: TDVar;
 
    stringValue: StdString;
-
 
 procedure UpdateVars();
 begin
@@ -95,6 +95,29 @@ begin
    end;
 end;
 
+procedure dvPlatformEnabledNotify(var context: TDVarNotificationContext);
+var
+   i: loopint;
+   platform: oxedTPlatform;
+
+begin
+   if(context.What = DVAR_NOTIFICATION_READ) then begin
+      platform := oxedPlatforms.FindById(stringValue);
+
+      if(platform <> nil) and (platform.Id <> 'editor') then
+         oxedPlatforms.Enable(platform);
+   end else if(context.What = DVAR_NOTIFICATION_WRITE) then begin
+      context.Result := 0;
+
+      for i := 1 to oxedPlatforms.List.n - 1 do begin
+         platform := oxedPlatforms.List[i];
+
+         if(platform.Enabled) then
+            dvarPFileData(context.f)^.Write(context.Parent, dvPlatformEnabled, platform.Id);
+      end;
+   end;
+end;
+
 procedure dvMainUnitNotify(var context: TDVarNotificationContext);
 begin
    if(context.What = DVAR_NOTIFICATION_WRITE) then begin
@@ -124,6 +147,9 @@ INITIALIZATION
 
    dvGroup.Add(dvFeature, 'feature', dtcSTRING, @stringValue, [dvarNOTIFY_READ, dvarNOTIFY_WRITE]);
    dvFeature.pNotify := @dvFeatureNotify;
+
+   dvGroup.Add(dvPlatformEnabled, 'platform_enabled', dtcSTRING, @stringValue, [dvarNOTIFY_READ, dvarNOTIFY_WRITE]);
+   dvPlatformEnabled.pNotify := @dvPlatformEnabledNotify;
 
    oxedProjectSettingsFile.Create(dvGroup);
    oxedProjectSettingsFile.FileName := OXED_PROJECT_SETTINGS_FILE;
