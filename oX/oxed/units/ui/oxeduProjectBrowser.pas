@@ -9,7 +9,7 @@ UNIT oxeduProjectBrowser;
 INTERFACE
 
    USES
-      uStd,
+      uStd, uColors,
       {app}
       appuMouse, appuKeys, uApp,
       {ox}
@@ -296,6 +296,10 @@ begin
    item := wdg.Workbar.AddButton(oxedIcons.Create($f4fe), oxedActions.OPEN_PROJECT_CONFIGURATION);
    item^.Hint := 'Open project configuration directory';
    item^.Color := uiFiles.DirectoryColor;
+
+   item := wdg.Workbar.AddButton(oxedIcons.Create($f120), oxedActions.OPEN_PROJECT_TERMINAL);
+   item^.Hint := 'Open terminal for this project';
+   item^.Color.Assign(255, 44, 44, 255);
 
    wdg.Workbar.SetTarget();
 
