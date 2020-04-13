@@ -59,6 +59,7 @@ INTERFACE
       oxeduProjectTerminal,
       {platforms}
       oxeduwndAndroidSettings, oxeduwndAndroidGeneralSettings,
+      oxeduAndroidMenu,
       {$ENDIF}
       {plugins}
       {$INCLUDE ../plugins/oxed_plugins.inc};
