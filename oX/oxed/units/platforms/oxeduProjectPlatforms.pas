@@ -63,7 +63,20 @@ begin
    end;
 end;
 
+procedure disablePlatforms();
+var
+   i: loopint;
+
+begin
+   reset();
+
+   for i := 0 to oxedPlatforms.List.n - 1 do begin
+      oxedPlatforms.Disable(oxedPlatforms.List.List[i]);
+   end;
+end;
+
 INITIALIZATION
+   oxedProjectManagement.OnPreOpen.Add(@disablePlatforms);
    oxedProjectManagement.OnNew.Add(@reset);
    oxedProjectManagement.OnClosed.Add(@reset);
 
