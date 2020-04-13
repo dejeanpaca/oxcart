@@ -9,7 +9,7 @@ UNIT oxuX11Platform;
 INTERFACE
 
    USES
-      uStd, uLog, StringUtils,
+      uStd, uError, uLog, StringUtils,
       x, xlib, xutil, xkb, xkblib, cursorfont,
       {app}
       uAppInfo,
