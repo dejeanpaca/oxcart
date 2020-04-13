@@ -10,7 +10,10 @@ INTERFACE
 
    USES
       {app}
-      appuEvents, appuActionEvents;
+      appuEvents, appuActionEvents,
+      {oxed}
+      oxeduBuild,
+      oxeduAndroidPlatform;
 
 TYPE
 
@@ -31,7 +34,9 @@ IMPLEMENTATION
 
 procedure oxedTAndroidBuild.BuildToProject();
 begin
-
+   oxedBuild.BuildTarget := OXED_BUILD_LIB;
+   oxedBuild.BuildArch := oxedAndroidPlatform.Architectures.List[0];
+   oxedBuild.RecodeTask();
 end;
 
 procedure buildToProject();
