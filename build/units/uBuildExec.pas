@@ -65,10 +65,6 @@ TYPE
       {writes out output of a process}
       procedure LogOutput(const p: TProcess);
 
-      {run a command (abstraction over process.RunCommand)}
-      procedure RunCommand(const exename: StdString; const commands: TStringArray);
-      procedure RunCommandCurrentDir(const exename: StdString; const commands: TStringArray);
-
       {stores the output of a build process into the output structure}
       procedure StoreOutput(p: TProcess);
       procedure ResetOutput();
@@ -347,26 +343,6 @@ begin
       buffer[bufferRead] := #0;
       log.i(pchar(@buffer));
    end;
-end;
-
-procedure TBuildSystemExec.RunCommand(const exename: StdString; const commands: TStringArray);
-var
-   outputString: string = '';
-   ansiCommands: array of String;
-
-begin
-   ansiCommands := commands.GetAnsiStrings();
-
-   if(not process.RunCommand(exename, ansiCommands, outputString)) then
-      log.e('Failed to run process: ' + exename);
-
-   if(outputString <> '') then
-      console.i(outputString);
-end;
-
-procedure TBuildSystemExec.RunCommandCurrentDir(const exename: StdString; const commands: TStringArray);
-begin
-   RunCommand(IncludeTrailingPathDelimiterNonEmpty(GetCurrentDir()) + exename, commands);
 end;
 
 procedure TBuildSystemExec.StoreOutput(p: TProcess);
