@@ -813,6 +813,11 @@ begin
    if(not oxedProject.Valid()) then
       exit;
 
+   if(BuildArch <> nil) then
+      log.v('Building architecture: ' + BuildArch.Architecture)
+   else
+      log.v('Building architecture: default');
+
    log.v('Building into: ' + TargetPath);
    log.v('Working area: ' + WorkArea);
 
