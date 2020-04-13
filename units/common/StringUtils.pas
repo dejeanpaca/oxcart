@@ -33,6 +33,7 @@ TYPE
    TStringArrayHelper = type helper for TStringArray
       function GetSingleString(separator: StdString): StdString;
       function GetSingleString(): StdString;
+      function GetAnsiStrings(): TAnsiStringArray;
    end;
 
    { TSimpleStringListHelper }
@@ -42,6 +43,7 @@ TYPE
       function FindLowercase(const s: StdString): loopint;
       function GetSingleString(separator: StdString): StdString;
       function GetSingleString(): StdString;
+      function GetAnsiStrings(): TAnsiStringArray;
    end;
 
    { TSimpleAnsiStringListHelper }
@@ -265,8 +267,6 @@ procedure StringFromBytes(out s: StdString; size: loopint; const bytes);
 function GetKeyValue(const s: string; out key, value: string; const separator: char = '='): boolean;
 {get key value from a string}
 function GetKeyValue(const s: StdString; out key, value: StdString; const separator: char = '='): boolean;
-
-function GetAnsiStrings(const s: array of StdString): TAnsiStringArray;
 
 IMPLEMENTATION
 
@@ -2188,18 +2188,6 @@ begin
    Result := false;
 end;
 
-function GetAnsiStrings(const s: array of StdString): TAnsiStringArray;
-var
-   i: loopint;
-
-begin
-   Result := nil;
-   SetLength(Result, Length(s));
-
-   for i := 0 to Length(s) - 1 do
-      Result[i] := s[i];
-end;
-
 { TStringArrayHelper }
 
 function TStringArrayHelper.GetSingleString(separator: StdString): StdString;
@@ -2227,6 +2215,18 @@ begin
    for i := 0 to High(Self) do begin
       Result := Result + Self[i];
    end;
+end;
+
+function TStringArrayHelper.GetAnsiStrings(): TAnsiStringArray;
+var
+   i: loopint;
+
+begin
+   Result := nil;
+   SetLength(Result, Length(Self));
+
+   for i := 0 to Length(Self) - 1 do
+      Result[i] := Self[i];
 end;
 
 { TSimpleStringListHelper }
@@ -2286,6 +2286,19 @@ begin
 
    for i := 0 to n - 1 do begin
       Result := Result + List[i];
+   end;
+end;
+
+function TSimpleStringListHelper.GetAnsiStrings(): TAnsiStringArray;
+var
+   i: loopint;
+
+begin
+   Result := nil;
+   SetLength(Result, Self.n);
+
+   for i := 0 to n - 1 do begin
+      Result[i] := Self.List[i];
    end;
 end;
 
