@@ -17,7 +17,7 @@ UNIT uBuildExec;
 INTERFACE
 
    USES
-      sysutils, uStd, uLog, uSimpleParser, uFileUtils, ConsoleUtils,
+      sysutils, uStd, uError, uLog, uSimpleParser, uFileUtils, ConsoleUtils,
       classes, process, StreamIO,
       StringUtils,
       uBuild, uBuildInstalls, uBuildFPCConfig
@@ -66,8 +66,8 @@ TYPE
       procedure LogOutput(const p: TProcess);
 
       {run a command (abstraction over process.RunCommand)}
-      procedure RunCommand(const exename: StdString; const commands: array of StdString);
-      procedure RunCommandCurrentDir(const exename: StdString; const commands: array of StdString);
+      procedure RunCommand(const exename: StdString; const commands: TStringArray);
+      procedure RunCommandCurrentDir(const exename: StdString; const commands: TStringArray);
 
       {stores the output of a build process into the output structure}
       procedure StoreOutput(p: TProcess);
@@ -349,13 +349,13 @@ begin
    end;
 end;
 
-procedure TBuildSystemExec.RunCommand(const exename: StdString; const commands: array of StdString);
+procedure TBuildSystemExec.RunCommand(const exename: StdString; const commands: TStringArray);
 var
    outputString: string = '';
    ansiCommands: array of String;
 
 begin
-   ansiCommands := StringUtils.GetAnsiStrings(commands);
+   ansiCommands := commands.GetAnsiStrings();
 
    if(not process.RunCommand(exename, ansiCommands, outputString)) then
       log.e('Failed to run process: ' + exename);
@@ -364,7 +364,7 @@ begin
       console.i(outputString);
 end;
 
-procedure TBuildSystemExec.RunCommandCurrentDir(const exename: StdString; const commands: array of StdString);
+procedure TBuildSystemExec.RunCommandCurrentDir(const exename: StdString; const commands: TStringArray);
 begin
    RunCommand(IncludeTrailingPathDelimiterNonEmpty(GetCurrentDir()) + exename, commands);
 end;
