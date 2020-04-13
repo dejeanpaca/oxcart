@@ -86,12 +86,6 @@ begin
    wdg.ProjectFilesPath.Enable(wdg.ManualFileManagement.Checked());
 end;
 
-procedure InitSettings();
-begin
-   oxedwndProjectSettings.OnSave.Add(@saveCallback);
-   oxedwndProjectSettings.OnRevert.Add(@revertCallback);
-end;
-
 function manualFileManagementControl(cb: uiTWidget; what: loopint): loopint;
 begin
    Result := -1;
@@ -134,7 +128,8 @@ end;
 
 procedure init();
 begin
-   oxedwndProjectSettings.OnInit.Add(@InitSettings);
+   oxedwndProjectSettings.OnSave.Add(@saveCallback);
+   oxedwndProjectSettings.OnRevert.Add(@revertCallback);
    oxedwndProjectSettings.PostAddTabs.Add(@PreAddTabs);
 end;
 
