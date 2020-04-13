@@ -57,7 +57,7 @@ TYPE
      SplashImageEnd: longint;
 
      {list of procedures called when splash window is initialized}
-     OnInit: TProcedures; static;
+     OnOpen: TProcedures; static;
 
      constructor Create();
 
@@ -177,7 +177,7 @@ begin
    Window.Background.Color := BackgroundColor;
 
    if(Window <> nil) then
-      OnInit.Call();
+      OnOpen.Call();
 end;
 
 {$IFDEF OX_FEATURE_CONSOLE}
@@ -223,7 +223,7 @@ INITIALIZATION
    oxTSplashWindow.BuildInformation := {$I %FPCTarget%} + ' (fpc ' + {$INCLUDE %FPCVersion%} + ')';
    oxTSplashWindow.InformationOverImage := true;
 
-   TProcedures.Initialize(oxTSplashWindow.OnInit, 8);
+   TProcedures.Initialize(oxTSplashWindow.OnOpen, 8);
 
    { set dvars }
    ox.dvar.Add('splash', dvgSplash);
