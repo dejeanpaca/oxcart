@@ -63,12 +63,11 @@ var
 begin
    p := oxedTAndroidPlatform(oxedPlatforms.FindById('android'));
 
-   if(p <> nil) then
-      p.Enabled := wdg.Enabled.Checked();
-
    oxedAndroidSettings.Project.PackageName := wdg.PackageName.GetText();
    oxedAndroidSettings.Project.ManualFileManagement := wdg.ManualFileManagement.Checked();
    oxedAndroidSettings.Project.ProjectFilesPath := wdg.ProjectFilesPath.GetText();
+
+   oxedPlatforms.Enable(p, wdg.Enabled.Checked());
 end;
 
 procedure revertCallback();
