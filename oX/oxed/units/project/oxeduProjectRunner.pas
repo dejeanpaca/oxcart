@@ -9,7 +9,7 @@ UNIT oxeduProjectRunner;
 INTERFACE
 
    USES
-      sysutils, uStd, uTiming, uLog,
+      sysutils, uStd, uError, uTiming, uLog,
       {app}
       appuActionEvents,
       {ox}

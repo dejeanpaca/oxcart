@@ -9,7 +9,7 @@ UNIT oxuFile;
 INTERFACE
 
    USES
-     uStd, uLog,
+     uStd, uLog, uError,
      {files}
      uFile, {%H-}uFiles, uFileHandlers,
      {oX}

@@ -9,7 +9,7 @@ UNIT oxeduProjectScanner;
 INTERFACE
 
    USES
-      sysutils, uStd, uLog, StringUtils, uFileUtils, uBuild,
+      sysutils, uStd, uError, uLog, StringUtils, uFileUtils, uBuild,
       {app}
       appuActionEvents,
       {ox}

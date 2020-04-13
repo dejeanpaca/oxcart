@@ -9,7 +9,7 @@ UNIT uLPI;
 INTERFACE
 
    USES
-      sysutils, uStd, uLog, uFileUtils, StringUtils, uSimpleParser,
+      sysutils, uStd, uError, uLog, uFileUtils, StringUtils, uSimpleParser,
       uBuild,
       {LazUtils}
       uLazXMLUtils, Laz2_DOM, laz2_XMLRead, laz2_XMLWrite;

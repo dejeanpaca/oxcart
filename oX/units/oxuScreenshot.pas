@@ -10,7 +10,7 @@ INTERFACE
 
    USES
       sysutils,
-      uStd, uLog, StringUtils, uFileUtils,
+      uStd, uError, uLog, StringUtils, uFileUtils,
       {app}
       appuKeys, appuPaths,
       {oX}

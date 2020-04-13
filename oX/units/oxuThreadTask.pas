@@ -10,7 +10,7 @@ INTERFACE
 
    USES
       sysutils, classes,
-      uStd, uTiming, uLog,
+      uStd, uError, uTiming, uLog,
       appuEvents
       {$IFNDEF NO_THREADS}
       , oxuRun, uThreadUtils

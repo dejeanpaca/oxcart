@@ -8,7 +8,8 @@ UNIT uFile;
 
 INTERFACE
 
-   USES sysutils, StringUtils, uStd, uFileUtils, uThreads;
+   USES
+      sysutils, StringUtils, uStd, uError, uFileUtils, uThreads;
 
 CONST
    {invalid handle for a file}

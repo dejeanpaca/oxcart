@@ -9,7 +9,7 @@ UNIT oxeduPreviewGenerator;
 INTERFACE
 
    USES
-      sysutils, uStd, uLog,
+      sysutils, uStd, uError, uLog,
       {app}
       appuActionEvents,
       {ox}

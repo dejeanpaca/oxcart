@@ -10,7 +10,7 @@ INTERFACE
 
    USES
       {$INCLUDE usesgl.inc},
-      uStd, uLog, StringUtils, ParamUtils,
+      uStd, uError, uLog, StringUtils, ParamUtils,
       {ox}
       oxuTexture,
       {$IFDEF X11}GLX, oxuX11Platform{$ENDIF}
