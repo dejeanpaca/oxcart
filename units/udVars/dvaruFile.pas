@@ -211,6 +211,7 @@ begin
    if(not (dvarDO_NOT_SAVE in v.Properties)) then begin
       if(dvarNOTIFY_WRITE in v.Properties) then begin
          GetContext(context, @g, parent);
+         context.Parent := parent;
          context.DVar := @v;
 
          if(v.pNotify <> nil) then
@@ -238,9 +239,8 @@ end;
 
 function dvarTFileData.Write(const parent: StdString; var v: TDVar; const what: StdString): boolean;
 begin
-   if(not (dvarDO_NOT_SAVE in v.Properties)) then begin
+   if(not (dvarDO_NOT_SAVE in v.Properties)) then
       Parser.WriteLine(parent + v.Name + ' = ' + what);
-   end;
 
    Result := true;
 end;
