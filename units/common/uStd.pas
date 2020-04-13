@@ -286,21 +286,6 @@ function FileRewrite(out f: text; const fn: StdString): longint;
 {open file for reading}
 function FileRewrite(out f: file; const fn: StdString): longint;
 
-procedure ClearBit(var Value: QWord; Index: Byte);
-procedure SetBit(var Value: QWord; Index: Byte);
-procedure PutBit(var Value: QWord; Index: Byte; State: Boolean);
-function GetBit(Value: QWord; Index: Byte): Boolean;
-
-procedure ClearBit(var Value: DWord; Index: Byte);
-procedure SetBit(var Value: DWord; Index: Byte);
-procedure PutBit(var Value: DWord; Index: Byte; State: Boolean);
-function GetBit(Value: DWord; Index: Byte): Boolean;
-
-procedure ClearBit(var Value: word; Index: Byte);
-procedure SetBit(var Value: word; Index: Byte);
-procedure PutBit(var Value: word; Index: Byte; State: Boolean);
-function GetBit(Value: word; Index: Byte): Boolean;
-
 function GetUTF8EnvironmentVariable(const v: UTF8String): UTF8String;
 
 procedure UTF8Assign(var f: text; const fn: UTF8String);
@@ -965,72 +950,6 @@ begin
    Rewrite(f, 1);
 
    Result := ioerror();
-end;
-
-{ QWORD BIT OPERATIONS }
-
-procedure ClearBit(var Value: QWord; Index: Byte);
-begin
-   Value := Value and ((QWord(1) shl Index) xor High(QWord));
-end;
-
-procedure SetBit(var Value: QWord; Index: Byte);
-begin
-   Value:=  Value or (QWord(1) shl Index);
-end;
-
-procedure PutBit(var Value: QWord; Index: Byte; State: Boolean);
-begin
-   Value := (Value and ((QWord(1) shl Index) xor High(QWord))) or (QWord(State) shl Index);
-end;
-
-function GetBit(Value: QWord; Index: Byte): Boolean;
-begin
-   Result := ((Value shr Index) and 1) = 1;
-end;
-
-{ DWORD BIT OPERATIONS }
-
-procedure ClearBit(var Value: DWord; Index: Byte);
-begin
-   Value := Value and ((DWord(1) shl Index) xor High(DWord));
-end;
-
-procedure SetBit(var Value: DWord; Index: Byte);
-begin
-   Value:=  Value or (DWord(1) shl Index);
-end;
-
-procedure PutBit(var Value: DWord; Index: Byte; State: Boolean);
-begin
-   Value := (Value and ((DWord(1) shl Index) xor High(DWord))) or (DWord(State) shl Index);
-end;
-
-function GetBit(Value: DWord; Index: Byte): Boolean;
-begin
-   Result := ((Value shr Index) and 1) = 1;
-end;
-
-{ WORD BIT OPERATIONS }
-
-procedure ClearBit(var Value: word; Index: Byte);
-begin
-   Value := Value and ((Word(1) shl Index) xor High(Word));
-end;
-
-procedure SetBit(var Value: word; Index: Byte);
-begin
-   Value:=  Value or (Word(1) shl Index);
-end;
-
-procedure PutBit(var Value: word; Index: Byte; State: Boolean);
-begin
-   Value := (Value and ((Word(1) shl Index) xor High(Word))) or (Word(State) shl Index);
-end;
-
-function GetBit(Value: word; Index: Byte): Boolean;
-begin
-   Result := ((Value shr Index) and 1) = 1;
 end;
 
 function GetUTF8EnvironmentVariable(const v: UTF8String): UTF8String;
