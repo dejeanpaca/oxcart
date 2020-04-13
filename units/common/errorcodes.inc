@@ -37,39 +37,6 @@
    eCLOSE_FAIL                = 00029;
    eNOT_FOUND                 = 00030;
 
-{general error code names}
-   esNONE                     = 'eNONE';
-   esERR                      = 'eERR';
-   esNO_MEMORY                = 'eNO_MEMORY';
-   esUNABLE                   = 'eUNABLE';
-   esEXTERNAL                 = 'eEXTERNAL';
-   esUNEXPECTED               = 'eUNEXPECTED';
-   esFAIL                     = 'eFAIL';
-   esIO                       = 'eIO';
-   esWRITE                    = 'eWRITE';
-   esREAD                     = 'eREAD';
-   esHARDWARE_FAILURE         = 'eHARDWARE_FAILURE';
-   esMEMORY                   = 'eMEMORY';
-   esCANT_FREE                = 'eCANT_FREE';
-   esNIL                      = 'eNIL';
-   esNOT_NIL                  = 'eNOT_NIL';
-   esINVALID_ARG              = 'eINVALID_ARG';
-   esINVALID_ENV              = 'eINVALID_ENV';
-   esINVALID                  = 'eINVALID';
-   esCORRUPTED                = 'eCORRUPTED';
-   esUNSUPPORTED              = 'eUNSUPPORTED';
-   esNOT_INITIALIZED          = 'eNOT_INITIALIZED';
-   esINITIALIZED              = 'eINITIALIZED';
-   esINITIALIZATION_FAIL      = 'eINITIALIZATION_FAIL';
-   esDEINITIALIZATION_FAIL    = 'eDEINITIALIZATION_FAIL';
-   esEMPTY                    = 'eEMPTY';
-   esFULL                     = 'eFULL';
-   esNOT_OPEN                 = 'eNOT_OPEN';
-   esOPEN_FAIL                = 'eOPEN_FAIL';
-   esNOT_CLOSED               = 'eNOT_CLOSED';
-   esCLOSE_FAIL               = 'eCLOSE_FAIL';
-   esNOT_FOUND                = 'eNOT_FOUND';
-
 {run-time error codes}
    reFILE_NOT_FOUND           = 00002;
    rePATH_NOT_FOUND           = 00003;
@@ -89,23 +56,4 @@
    reRANGE_CHECK              = 00201;
    reSTACK_OVERFLOW           = 00202;
    reHEAP_OVERFLOW            = 00203;
-
-   resFILE_NOT_FOUND          = 'reFILE_NOT_FOUND';
-   resPATH_NOT_FOUND          = 'rePATH_NOT_FOUND';
-   resTOO_MANY_OPEN_FILES     = 'reTOO_MANY_OPEN_FILES';
-   resFILE_ACCESS_DENIED      = 'reFILE_ACCESS_DENIED';
-   resINVALID_FILE_HANDLE     = 'reINVALID_FILE_HANDLE';
-   resINVALID_DRIVE           = 'reINVALID_DRIVE';
-   resCANNOT_REMOVE_DIR       = 'reCANNOT_REMOVE_DIR';
-   resDISK_READ               = 'reDISK_READ';
-   resDISK_WRITE              = 'reDISK_WRITE';
-   resFILE_NOT_ASSIGNED       = 'reFILE_NOT_ASSIGNED';
-   resFILE_NOT_OPEN           = 'reFILE_NOT_OPEN';
-   resDISK_WRITE_PROTECTED    = 'reDISK_WRITE_PROTECTED';
-   resDRIVE_NOT_READY         = 'reDRIVE_NOT_READY';
-   resCRC                     = 'reCRC';
-   resDISK_SEEK               = 'reDISK_SEEK';
-   resRANGE_CHECK             = 'reRANGE_CHECK';
-   resSTACK_OVERFLOW          = 'reSTACK_OVERFLOW';
-   resHEAP_OVERFLOW           = 'reHEAP_OVERFLOW';
 

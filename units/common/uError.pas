@@ -11,6 +11,10 @@ INTERFACE
    USES
       sysutils, uStd;
 
+CONST
+   {error names constants}
+   {$INCLUDE errorcodenames.inc}
+
 {adds an error procedure}
 procedure eAddErrorProc(var newerrorproc: TErrorProc; var olderrorproc: TErrorProc);
 
