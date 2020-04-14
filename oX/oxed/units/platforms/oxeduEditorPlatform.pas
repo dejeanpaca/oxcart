@@ -16,19 +16,22 @@ INTERFACE
       uOXED, oxeduPlatform, oxeduPlatformConfiguration;
 
 TYPE
+   { oxedTEditorPlatformArchitecture }
+
+   oxedTEditorPlatformArchitecture = class(oxedTPlatformArchitecture)
+   end;
 
    { oxedTEditorPlatform }
 
    oxedTEditorPlatform = class(oxedTPlatform)
+      Architecture: oxedTEditorPlatformArchitecture;
       constructor Create(); override;
 
       procedure Load(); override;
    end;
 
-   { oxedTEditorPlatformArchitecture }
-
-   oxedTEditorPlatformArchitecture = class(oxedTPlatformArchitecture)
-   end;
+VAR
+   oxedEditorPlatform: oxedTEditorPlatform;
 
 IMPLEMENTATION
 
@@ -46,7 +49,8 @@ begin
    Enabled := true;
 
    Configuration := oxedTPlatformConfiguration.Create();
-   AddArchitecture(oxedTEditorPlatformArchitecture.Create('editor', 'editor'));
+   Architecture := oxedTEditorPlatformArchitecture.Create('editor', 'editor');
+   AddArchitecture(Architecture);
 end;
 
 procedure oxedTEditorPlatform.Load();
@@ -57,7 +61,8 @@ end;
 
 procedure init();
 begin
-   oxedPlatforms.Add(oxedTEditorPlatform.Create());
+   oxedEditorPlatform := oxedTEditorPlatform.Create();
+   oxedPlatforms.Add(oxedEditorPlatform);
 end;
 
 INITIALIZATION
