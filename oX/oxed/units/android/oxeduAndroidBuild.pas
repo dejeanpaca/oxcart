@@ -35,8 +35,7 @@ IMPLEMENTATION
 procedure oxedTAndroidBuild.BuildToProject();
 begin
    oxedBuild.BuildTarget := OXED_BUILD_LIB;
-   oxedBuild.BuildArch := oxedAndroidPlatform.Architectures.List[0];
-   oxedBuild.RecodeTask();
+   oxedBuild.StartTask(OXED_BUILD_TASK_RECODE, oxedAndroidPlatform.Architectures.List[0]);
 end;
 
 procedure buildToProject();
