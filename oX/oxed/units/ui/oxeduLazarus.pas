@@ -109,7 +109,7 @@ begin
       end;
 
       {first recreate files}
-      oxedBuild.RecreateEditorTask();
+      appActionEvents.Queue(oxedActions.RECREATE);
       openLazarusFlag := true;
    end else
       log.v('Cannot open lazarus. No valid project');

@@ -64,7 +64,7 @@ begin
 
    {build}
    mProject.AddKey('project.build', 'Build project', kcF9, kmSHIFT)^.
-     Action := oxedActions.BUILD;
+     Action := oxedActions.REBUILD;
    {recode}
    mProject.AddKey('project.recode', 'Recode project', kcF9, kmCONTROL)^.
      Action := oxedActions.RECODE;

@@ -66,7 +66,7 @@ TYPE
 
    oxedTBuildGlobal = record
       {called before build starts, to prepare everything}
-      OnPrepare: TProcedures;
+      OnPrepare,
       {called when build is done}
       OnDone: TProcedures;
 
@@ -126,17 +126,6 @@ TYPE
       procedure MoveExecutable();
       {copy required run-time libraries for this build}
       procedure CopyLibraries();
-
-      {run a rebuild in a task}
-      class procedure RebuildEditorTask(); static;
-      {run a recode in a task}
-      class procedure RecodeEditorTask(); static;
-      {run cleanup in a task}
-      class procedure CleanupEditorTask(); static;
-      {run recreate in a task}
-      class procedure RecreateEditorTask(); static;
-      {run cleanup in a task}
-      class procedure RebuildThirdPartyTask(); static;
 
       {run cleanup in a task}
       class procedure BuildStandaloneTask(arch: oxedTPlatformArchitecture); static;
@@ -953,30 +942,6 @@ begin
       oxedConsole.i('Seems to be already clean');
 end;
 
-class procedure oxedTBuildGlobal.RebuildEditorTask();
-begin
-   oxedBuild.StartTask(OXED_BUILD_TASK_REBUILD);
-end;
-
-class procedure oxedTBuildGlobal.RecodeEditorTask();
-begin
-   oxedBuild.StartTask(OXED_BUILD_TASK_RECODE);
-end;
-
-class procedure oxedTBuildGlobal.CleanupEditorTask();
-begin
-   oxedBuild.StartTask(OXED_BUILD_TASK_CLEANUP);
-end;
-
-class procedure oxedTBuildGlobal.RecreateEditorTask();
-begin
-   oxedBuild.StartTask(OXED_BUILD_TASK_RECREATE);
-end;
-
-class procedure oxedTBuildGlobal.RebuildThirdPartyTask();
-begin
-   oxedBuild.StartTask(OXED_BUILD_TASK_REBUILD_THIRD_PARTY);
-end;
 
 class procedure oxedTBuildGlobal.BuildStandaloneTask(arch: oxedTPlatformArchitecture);
 begin
@@ -1236,12 +1201,6 @@ INITIALIZATION
    TProcedures.InitializeValues(oxedBuild.OnDone);
 
    oxedBuild.BuildTarget := OXED_BUILD_LIB;
-
-   oxedActions.BUILD := appActionEvents.SetCallback(@oxedBuild.RebuildEditorTask);
-   oxedActions.RECODE := appActionEvents.SetCallback(@oxedBuild.RecodeEditorTask);
-   oxedActions.RECREATE := appActionEvents.SetCallback(@oxedBuild.RecreateEditorTask);
-   oxedActions.CLEANUP := appActionEvents.SetCallback(@oxedBuild.CleanupEditorTask);
-   oxedActions.REBUILD_THIRD_PARTY := appActionEvents.SetCallback(@oxedBuild.RebuildThirdPartyTask);
 
    oxedProjectScanner.OnDone.Add(@onScanDone);
 

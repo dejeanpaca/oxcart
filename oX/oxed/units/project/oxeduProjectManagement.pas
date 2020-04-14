@@ -171,7 +171,7 @@ begin
          oxedConsole.i('project > Opened ' + oxedProject.Name + ' (' + oxedProject.Identifier + ')');
 
          if(oxedSettings.BuildOnProjectOpen) then
-            appActionEvents.Queue(oxedActions.BUILD);
+            appActionEvents.Queue(oxedActions.REBUILD);
 
          exit(True);
       end else
