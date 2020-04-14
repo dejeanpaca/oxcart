@@ -18,8 +18,6 @@ TYPE
    { TBuildPlatform }
    {per platform configuration}
    TBuildPlatform = record
-      x64: boolean;
-
       Name,
       Path,
       ConfigPath,
