@@ -24,12 +24,18 @@ TYPE
       Executable,
       {fpc version}
       Version: StdString;
+
+      CPU,
+      OS: StdString;
       Platform: TFPCPlatformString;
+
       OptimizationLevels: TSimpleStringList;
 
       class procedure Initialize(out p: TBuildPlatform); static;
       function GetName(): StdString;
       function GetExecutablePath(): StdString;
+
+      procedure SetPlatform(newPlatform: TFPCPlatformString);
    end;
 
    TBuildPlatforms = specialize TSimpleList<TBuildPlatform>;
@@ -286,6 +292,12 @@ begin
       Result := build.GetExecutableName(Path + 'fpc')
    else
       Result := Path + Executable;
+end;
+
+procedure TBuildPlatform.SetPlatform(newPlatform: TFPCPlatformString);
+begin
+   Platform := newPlatform;
+   Platform.Separate(CPU, OS);
 end;
 
 { TBuildSystemInstalls }
