@@ -64,6 +64,7 @@ VAR
    dvFPC,
    dvLazarus,
    dvPlatform,
+   dvExecutable,
    dvPath,
    dvConfigPath,
    dvUseFPC,
@@ -396,6 +397,12 @@ begin
       currentLazarus^.Path := currentValue;
 end;
 
+procedure dvExecutableNotify(var {%H-}context: TDVarNotificationContext);
+begin
+   if(currentMode = 'fpc') and (currentPlatform <> nil) then
+      currentPlatform^.Executable := currentValue;
+end;
+
 procedure dvConfigPathNotify(var {%H-}context: TDVarNotificationContext);
 begin
    FileUtils.NormalizePathEx(currentValue);
@@ -472,6 +479,10 @@ INITIALIZATION
    { PATH }
    BuildConfiguration.dvgConfig.Add(dvPath, 'path', dtcSTRING, @currentValue);
    dvPath.pNotify := @dvPathNotify;
+
+   { EXECUTABLE }
+   BuildConfiguration.dvgConfig.Add(dvExecutable, 'executable', dtcSTRING, @currentValue);
+   dvExecutable.pNotify := @dvExecutableNotify;
 
    { CONFIG PATH }
    BuildConfiguration.dvgConfig.Add(dvConfigPath, 'config_path', dtcSTRING, @currentValue);
