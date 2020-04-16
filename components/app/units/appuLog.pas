@@ -41,10 +41,10 @@ begin
    {quit if already initialized}
    if(not stdlog.Flags.Initialized) then begin
       {create directory for logs}
-      log.Settings.Path := appPath.Configuration.Path + 'logs' + DirectorySeparator;
+      log.Settings.Path := appPath.Configuration.GetLocal() + 'logs' + DirectorySeparator;
 
       if(not FileUtils.CreateDirectory(log.Settings.Path)) then
-         log.Settings.Path := appPath.Configuration.Path;
+         log.Settings.Path := appPath.Configuration.GetLocal();
 
       {$IFNDEF NOLOG}
       {setup default log file}
