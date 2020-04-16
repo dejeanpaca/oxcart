@@ -5,8 +5,10 @@
 PROGRAM setup;
 
    USES
-      sysutils, uStd, StringUtils, uLog, uFileUtils, appuPaths, ParamUtils, uTiming,
-      uBuild, uBuildConfiguration, uLPI, uTest;
+      sysutils, uStd, StringUtils, uLog, uFileUtils, appuPaths,
+      ParamUtils, uTiming, uProcessHelpers,
+      uBuild, uBuildConfiguration, uBuildInstalls,  uBuildExec,
+      uLPI, uLPIBuild, uTest;
 
 TYPE
    TTool = record
@@ -54,20 +56,20 @@ end;
 
 procedure build_tool(var tool: TTool; pas: boolean);
 begin
-   build.ResetOutput();
+   BuildExec.ResetOutput();
 
    if can_build(tool.Name) then begin
       if pas then
-         build.PasTool(tool.Path)
+         BuildExec.PasTool(tool.Path)
       else begin
          if(FileUtils.Exists(tool.Path + '.lpi') > 0) then begin
-            build.LazTool(tool.Path);
+            BuildExec.LazTool(tool.Path);
          end else begin
             lpibuild.BuildFromPas(tool.Path);
          end;
       end;
 
-      if build.output.success then begin
+      if BuildExec.Output.Success then begin
          inc(build_count);
          log.k('SUCCESS: ' + tool.Name);
       end else begin
@@ -84,8 +86,8 @@ var
    i: longint;
 
 begin
-   log.v('FPC: ' + build.GetPlatform()^.Path);
-   log.v('Lazarus: ' + build.CurrentLazarus^.Path);
+   log.v('FPC: ' + BuildInstalls.GetPlatform()^.GetExecutablePath());
+   log.v('Lazarus: ' + BuildInstalls.CurrentLazarus^.Path);
    log.v('');
 
    for i := 0 to length(laz_tools) - 1 do begin
@@ -195,11 +197,11 @@ BEGIN
       if(SetCurrentDir(path)) then begin
          log.v('At: ' + GetCurrentDir());
 
-         build.Laz('setup');
+         BuildExec.Laz('setup');
          log.i();
 
-         if(build.Output.Success) then
-            build.RunCommandCurrentDir('setup', parameters.GetArray());
+         if(BuildExec.Output.Success) then
+            ProcessHelpers.RunCommandCurrentDir('setup', parameters.GetArray());
       end else
          log.e('Failed to change current working directory to: ' + path);
    end;
