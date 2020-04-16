@@ -1015,9 +1015,7 @@ var
 
 begin
    stringCount := 0;
-   {$IFDEF DEBUG}
    currentCount := 0;
-   {$ENDIF}
 
    size := Length(data);
 

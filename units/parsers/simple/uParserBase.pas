@@ -136,6 +136,8 @@ var
    additional: StdString;
 
 begin
+   Result := '';
+
    if(f.Error <> 0) or (ErrorCode <> 0) then begin
       additional := '';
 

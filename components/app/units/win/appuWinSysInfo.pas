@@ -62,6 +62,7 @@ begin
 
       cpuName := '';
       cpuVendor := '';
+      cpuIdentifier := '';
       dwMHZ := 0;
 
       if(regKey <> 0) then begin
