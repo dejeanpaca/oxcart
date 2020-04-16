@@ -40,6 +40,8 @@ TYPE
       Configuration: record
          {will the organization name be used for configuration directory}
          UseOrganization,
+         {use a local configuration directory}
+         UseLocal,
          {has the configuration directory been created}
          Created,
          {will not initialize the application}
@@ -47,16 +49,20 @@ TYPE
 
          {configuration path}
          Path,
+         {local configuration path}
+         Local,
          {preset configuration path}
-         Preset: StdString;
+         Preset,
+         {preset local configuration path}
+         PresetLocal: StdString;
       end;
 
       {return path for a specified constant, or nothing if not found}
       function Get(c: appTPathType): StdString;
       {creates the configuration directory}
-      function HomeConfigurationDir(const dir: StdString): StdString;
+      function HomeConfigurationDir(const dir: StdString; local: boolean = false): StdString;
       {creates the configuration directory}
-      function GetConfigurationPath(const info: appTInfo): StdString;
+      function GetConfigurationPath(const info: appTInfo; local: boolean = false): StdString;
       {creates the configuration directory}
       function CreateConfiguration(): boolean;
       {get the executable path}
@@ -110,19 +116,29 @@ begin
    Result := path;
 end;
 
-function appTPath.HomeConfigurationDir(const dir: StdString): StdString;
+function appTPath.HomeConfigurationDir(const dir: StdString; local: boolean): StdString;
 var
+   basePath,
    createdPath: StdString;
 
 begin
-   createdPath := appPath.Get(appPATH_CONFIG) + dir + DirectorySeparator;
+   {$IFDEF WINDOWS}
+   if(not local) then
+      basePath := appPath.Get(appPATH_CONFIG)
+   else
+      basePath := appPath.Get(appPATH_LOCAL);
+   {$ELSE}
+   basePath := appPath.Get(appPATH_CONFIG) + 'local' + DirectorySeparator;
+   {$ENDIF}
+
+   createdPath := basePath + dir + DirectorySeparator;
 
    CreateDir(createdPath);
 
    Result := createdPath;
 end;
 
-function appTPath.GetConfigurationPath(const info: appTInfo): StdString;
+function appTPath.GetConfigurationPath(const info: appTInfo; local: boolean): StdString;
 var
    name: StdString;
 
@@ -135,7 +151,17 @@ begin
       name := name + info.NameShort;
 
    {determine configuration createdPath}
-   Result := appPath.Get(appPATH_CONFIG) + name;
+   {$IFDEF WINDOWS}
+   if(not local) then
+      Result := appPath.Get(appPATH_CONFIG) + name
+   else
+      Result := appPath.Get(appPATH_LOCAL) + name;
+   {$ELSE}
+   if(not local) then
+      Result := appPath.Get(appPATH_CONFIG) + name
+   else
+      Result := apppath.Get(appPATH_LOCAL) + 'local' + DirectorySeparator + name;
+   {$ENDIF}
 end;
 
 {create the configuration directory}
@@ -147,20 +173,33 @@ begin
    if(not Configuration.Created) then begin
       if(Configuration.Preset = '') then begin
          {determine name of the configuration directory from app info}
-         if(Configuration.Path = '') then
-            createdPath := GetConfigurationPath(appInfo)
-         else begin
-            {determine configuration createdPath}
-            createdPath := appPath.Get(appPATH_CONFIG) + Configuration.Path;
-         end;
+         createdPath := GetConfigurationPath(appInfo)
       end else
          createdPath := Configuration.Preset;
 
       Configuration.Path := IncludeTrailingPathDelimiter(createdPath);
 
+      if(Configuration.UseLocal) then begin
+        if(Configuration.PresetLocal = '') then begin
+           {determine name of the configuration directory from app info}
+           createdPath := GetConfigurationPath(appInfo, true)
+        end else
+           createdPath := Configuration.Preset;
+
+        Configuration.Local := IncludeTrailingPathDelimiter(createdPath);
+
+        {create the local configuration directory}
+        if(Configuration.Local <> '') then begin
+          if(not FileUtils.DirectoryExists(Configuration.Local)) then begin
+             if(not ForceDirectories(Configuration.Local)) then
+                console.e('Failed to create local configuration directory: ' + Configuration.Local);
+           end;
+        end;
+      end;
+
       {create the configuration directory}
-      if(not FileUtils.DirectoryExists(createdPath)) then begin
-         if(ForceDirectories(createdPath)) then
+      if(not FileUtils.DirectoryExists(Configuration.Path))  then begin
+         if(ForceDirectories(Configuration.Path)) then
             Configuration.Created := true
       end else
          Configuration.Created := true;
@@ -168,7 +207,7 @@ begin
       if(not Configuration.Created) then begin
          Configuration.Path := '';
 
-         console.i('Failed to create configuration directory: ' + Configuration.Path);
+         console.e('Failed to create configuration directory: ' + Configuration.Path);
       end else begin
          console.i('Created configuration directory: ' + Configuration.Path);
       end;
@@ -265,6 +304,7 @@ end;
 
 INITIALIZATION
    appPath.Configuration.UseOrganization := true;
+   appPath.Configuration.UseLocal := true;
    app.InitializationProcs.Add('configuration', @initialize);
 
 END.
