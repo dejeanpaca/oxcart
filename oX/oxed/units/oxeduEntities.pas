@@ -27,7 +27,7 @@ TYPE
       OnComponentAdd,
       OnComponentRemove: oxTComponentCallbacks;
 
-      procedure SetupHooks(entities: oxTEntityGlobal);
+      procedure SetupHooks(var entities: oxTEntityGlobal);
    end;
 
 VAR
@@ -117,7 +117,7 @@ end;
 
 { oxedTEntities }
 
-procedure oxedTEntities.SetupHooks(entities: oxTEntityGlobal);
+procedure oxedTEntities.SetupHooks(var entities: oxTEntityGlobal);
 begin
    entities.OnCreate.Add(@entityCreate);
    entities.OnDestroy.Add(@entityDestroy);
