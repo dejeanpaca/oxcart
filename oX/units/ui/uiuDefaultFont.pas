@@ -84,6 +84,8 @@ begin
       uiDefaultFont.Path := instance^.Path;
       uiDefaultFont.Size := instance^.Size;
       uiDefaultFont.Font := instance^.Font;
+
+      oxui.SetDefaultFont(uiDefaultFont.Font);
    end;
 end;
 {$ENDIF}
