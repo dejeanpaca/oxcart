@@ -106,10 +106,7 @@ TYPE
       {removes tab at the specified index}
       procedure RemoveTabByNum(index: loopint);
 
-      {get height for the tabs widget}
-      function GetHeight(): loopint;
-      {get width for the tabs widget}
-      function GetWidth(): loopint;
+      function GetContainerDimensions(): oxTDimensions;
 
       {set the external reference}
       procedure SetReference(index: LongInt; ref: pointer);
@@ -515,8 +512,8 @@ end;
 procedure wdgTTabs.SetupContainer();
 begin
    if(Container <> nil) then begin
-      Container.Move(GetWidth(), GetHeight());
-      Container.Resize(Dimensions.w - GetWidth(), GetHeight() + 1);
+      Container.Move(SurfaceOffset.x, Dimensions.h - SurfaceOffset.y);
+      Container.Resize(GetContainerDimensions());
    end;
 end;
 
@@ -575,7 +572,7 @@ begin
 
    Recalculate();
 
-   uiWidget.LastRect.SetDefault(GetHeight());
+   uiWidget.LastRect.SetDefault(Dimensions.h - SurfaceOffset.y);
 end;
 
 procedure wdgTTabs.Done();
@@ -684,20 +681,11 @@ begin
    end;
 end;
 
-function wdgTTabs.GetHeight(): loopint;
+function wdgTTabs.GetContainerDimensions(): oxTDimensions;
 begin
-   if(not Vertical) then
-      Result := Dimensions.h - HeaderHeight
-   else
-      Result := Dimensions.h - 1;
-end;
-
-function wdgTTabs.GetWidth(): loopint;
-begin
-   if(not Vertical) then
-      Result := 0
-   else
-      Result := HeaderWidth;
+   {- 2 is here for the borders}
+   Result.w := SurfaceDimensions.w - 2;
+   Result.h := SurfaceDimensions.h - 2;
 end;
 
 procedure wdgTTabs.SetReference(index: LongInt; ref: pointer);
