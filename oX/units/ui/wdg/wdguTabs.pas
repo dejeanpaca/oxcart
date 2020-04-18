@@ -15,7 +15,7 @@ INTERFACE
       oxuFont, oxuTypes,
       {ui}
       uiuControl, uiuControls, uiuWindowTypes, uiuSkinTypes,
-      oxuUI, uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuDraw, uiuTypes,
+      oxuUI, uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuDraw, uiuTypes, uiuWidgetRender,
       wdguBase, wdguEmpty;
 
 TYPE
@@ -81,8 +81,10 @@ TYPE
       procedure RenderHorizontal();
       procedure RenderVertical();
       procedure Render(); override;
+      procedure RenderTabHeader(const r: oxTRect; tabIndex: loopint; tabPosition: uiTControlGridPosition);
 
-      procedure SetSelectedColor(associated: uiTControl = nil);
+      procedure GetHeaderColor(tabIndex: loopint; out usedColor: TColor4ub);
+      procedure GetSelectedColor(out usedColor: TColor4ub; associated: uiTControl = nil);
 
       {add a tab}
       function AddTab(const Title: StdString; const tabID: StdString = ''): wdgPTabEntry;
@@ -144,8 +146,7 @@ TYPE
       Internal: uiTWidgetClass; static;
 
       HeaderHeight,
-      HeaderWidth,
-      HeaderNonSelectedDecrease: loopint; static;
+      HeaderWidth: loopint; static;
 
       {adds a tabs widget to a window}
       function Add(const Pos: oxTPoint; const Dim: oxTDimensions; vertical: boolean = false): wdgTTabs;
@@ -302,15 +303,43 @@ begin
       RenderVertical();
 end;
 
-procedure wdgTTabs.SetSelectedColor(associated: uiTControl);
+procedure wdgTTabs.RenderTabHeader(const r: oxTRect; tabIndex: loopint; tabPosition: uiTControlGridPosition);
+var
+   renderProperties: TBitSet;
+   usedColor: TColor4ub;
+
 begin
+   GetHeaderColor(tabIndex, usedColor);
+
+   renderProperties := wdgRENDER_BLOCK_SURFACE or wdgRENDER_BLOCK_BORDER or wdgRENDER_CORNERS;
+
+   renderProperties := renderProperties or uiRenderWidget.GetCurvedFrameProperties(tabPosition);
+   uiRenderWidget.Box(r, usedColor, usedColor, renderProperties, uiTWindow(wnd).opacity);
+end;
+
+procedure wdgTTabs.GetHeaderColor(tabIndex: loopint; out usedColor: TColor4ub);
+begin
+   {fill the tab title surface}
+   if(Tabs.Selected <> tabIndex) then begin
+      if(Tabs.Highlighted <> tabIndex) then
+         usedColor := uiTSkin(uiTWindow(wnd).Skin).Colors.Surface.Darken(0.3)
+      else
+         usedColor := uiTSkin(uiTWindow(wnd).Skin).Colors.Focal;
+   end else
+      GetSelectedColor(usedColor, Tabs.t.List[tabIndex].AssociatedSelectedControl);
+end;
+
+procedure wdgTTabs.GetSelectedColor(out usedColor: TColor4ub; associated: uiTControl = nil);
+begin
+   usedColor := uiTSkin(uiTWindow(wnd).Skin).Colors.Surface.Darken(0.3);
+
    if(IsSelected()) then
-      SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Highlight)
+      usedColor := uiTSkin(uiTWindow(wnd).Skin).Colors.Highlight
    else begin
       if((associated <> nil) and (oxui.Select.IsIn(associated) > -1)) then
-         SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Highlight)
+         usedColor := uiTSkin(uiTWindow(wnd).Skin).Colors.Highlight
       else
-         SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Highlight.Darken(0.3));
+         usedColor := uiTSkin(uiTWindow(wnd).Skin).Colors.Highlight.Darken(0.3);
    end;
 end;
 
@@ -357,9 +386,7 @@ end;
 
 procedure wdgTTabs.RenderHorizontal();
 var
-   i,
-   x,
-   y: longint;
+   i: loopint;
 
    current: wdgPTabEntry;
 
@@ -389,32 +416,13 @@ begin
    {render tab titles}
    for i := 0 to (Tabs.t.n - 1) do begin
       current :=  @Tabs.t.List[i];
-      x := RPosition.x + current^.x;
-      y := RPosition.y;
+      r.x := RPosition.x + current^.x;
+      r.y := RPosition.y;
+      r.w := current^.TotalWidth;
+      r.h := current^.TotalHeight;
 
-      {draw the tab title border}
-      SetColor(pSkin.Colors.Border);
-
-      if(Tabs.Selected <> i) then begin
-         uiDraw.Rect(x, y - wdgTabs.HeaderNonSelectedDecrease, x + current^.TotalWidth - 1, y - HeaderHeight + 1)
-      end else
-         uiDraw.Rect(x, y, x + current^.TotalWidth - 1, y - HeaderHeight + 1);
-
-      {fill the tab title surface}
-      if(Tabs.Selected <> i) then begin
-         if(Tabs.Highlighted <> i) then
-            SetColor(pSkin.Colors.Surface.Darken(0.3))
-         else
-            SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Focal);
-
-         uiDraw.Box(x + 1, y - wdgTabs.HeaderNonSelectedDecrease - 1,
-            x + current^.TotalWidth - 2, y - HeaderHeight + 1);
-      end else begin
-         SetSelectedColor(current^.AssociatedSelectedControl);
-
-         uiDraw.Box(x + 1, y - 1, x + current^.TotalWidth - 2, y - HeaderHeight + 1);
-      end;
-   end;
+      RenderTabHeader(r, i, [uiCONTROL_GRID_TOP]);
+  end;
 
    {now render tab title text}
    f := CachedFont;
@@ -424,12 +432,7 @@ begin
       r.x := RPosition.x + current^.x;
       r.y := RPosition.y;
       r.w := current^.TotalWidth;
-
-      r.h := HeaderHeight;
-      if(Tabs.Selected <> i) then begin
-         dec(r.y, wdgTabs.HeaderNonSelectedDecrease);
-         dec(r.h, wdgTabs.HeaderNonSelectedDecrease);
-      end;
+      r.h := current^.TotalHeight;
 
       f.Start();
          if(Tabs.Selected <> i) then
@@ -445,9 +448,7 @@ end;
 
 procedure wdgTTabs.RenderVertical();
 var
-   i,
-   x,
-   y: loopint;
+   i: loopint;
 
    current: wdgPTabEntry;
 
@@ -477,32 +478,12 @@ begin
    {render tab titles}
    for i := 0 to (Tabs.t.n - 1) do begin
       current :=  @Tabs.t.List[i];
-      x := RPosition.x + current^.x;
-      y := RPosition.y - current^.y;
+      r.x := RPosition.x + current^.x;
+      r.y := RPosition.y - current^.y;
+      r.w := current^.TotalWidth;
+      r.h := current^.TotalHeight;
 
-      {draw the tab title border}
-      SetColor(pSkin.Colors.Border);
-
-      if(Tabs.Selected <> i) then begin
-         uiDraw.Rect(x + wdgTabs.HeaderNonSelectedDecrease, y,
-            x + current^.TotalWidth - 1, y - current^.TotalHeight + 1)
-      end else
-         uiDraw.Rect(x, y, x + current^.TotalWidth - 1, y - current^.TotalHeight + 1);
-
-      {fill the tab title surface}
-      if(Tabs.Selected <> i) then begin
-         if(Tabs.Highlighted <> i) then
-            SetColor(pSkin.Colors.Surface.Darken(0.3))
-         else
-            SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Focal);
-
-         uiDraw.Box(x + 1 + wdgTabs.HeaderNonSelectedDecrease, y - 1,
-            x + current^.TotalWidth - 2, y - current^.TotalHeight + 1)
-      end else begin
-         SetSelectedColor(current^.AssociatedSelectedControl);
-
-         uiDraw.Box(x + 1, y - 1, x + current^.TotalWidth - 2, y - current^.TotalHeight + 1);
-      end;
+      RenderTabHeader(r, i, [uiCONTROL_GRID_LEFT]);
    end;
 
    {now render tab title text}
@@ -512,12 +493,8 @@ begin
       current := @Tabs.t.List[i];
       r.x := RPosition.x + current^.x;
       r.y := RPosition.y - current^.y;
-
-      r.h := HeaderHeight;
-      if(Tabs.Selected <> i) then
-         dec(r.h, wdgTabs.HeaderNonSelectedDecrease);
-
       r.w := current^.TotalWidth;
+      r.h := current^.TotalHeight;
 
       f.Start();
          if(Tabs.Selected <> i) then
@@ -819,7 +796,6 @@ end;
 INITIALIZATION
    wdgTabs.HeaderHeight := 40;
    wdgTabs.HeaderWidth := 80;
-   wdgTabs.HeaderNonSelectedDecrease := 2;
 
    wdgTabs.internal.Register('widget.tabs', @init, @deinit);
 
