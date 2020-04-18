@@ -237,7 +237,6 @@ begin
    end;
 end;
 
-
 procedure oxedTSceneEditWindow.UpdateAxisBBoxes();
 var
    p: TVector3f;
