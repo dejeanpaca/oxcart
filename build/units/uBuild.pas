@@ -323,7 +323,8 @@ begin
 
       if(VerboseLog) then
          log.v('Auto tools path: ' + Tools.Path);
-   end;
+   end else
+      log.v('Tools path: ' + Tools.Path);
 
    if(ConfigPath <> 'default') or (Tools.Build = '') then begin
       Tools.Build := ConfigPath;
