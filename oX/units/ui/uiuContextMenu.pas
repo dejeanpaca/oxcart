@@ -218,6 +218,7 @@ IMPLEMENTATION
 
 CONST
    VERTICAL_SEPARATION = 0;
+   GLYPH_SIZE_RATIO = 0.85;
    PADDING_SIZE = 0;
    {border size when there is a border rendererd (for now always 1px)}
    BORDER_SIZE_DEFAULT = 2;
@@ -533,7 +534,7 @@ end;
 
 procedure PrepareGlyph();
 begin
-   size := r.h - 4;
+   size := round(GLYPH_SIZE_RATIO * r.h);
 
    if(enabled) then
       uiDraw.Color(item^.GlyphColor)
