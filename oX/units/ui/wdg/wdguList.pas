@@ -1530,7 +1530,7 @@ begin
    uWidth := UnusableWidth - PaddingLeft - PaddingRight;
 
    if(r.y - r.h + 1 < ContentYEnd) then begin
-      sRect.h := r.h - (ContentYEnd - (r.y - r.h) + 1);
+      sRect.h := r.h - (ContentYEnd - (r.y - r.h)) + 1;
 
       if(sRect.h < 0) then
          sRect.h := 0;
