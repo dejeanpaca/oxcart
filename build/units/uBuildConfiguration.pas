@@ -91,8 +91,7 @@ end;
 
 procedure TBuildConfiguration.LoadConfiguration();
 var
-   fn,
-   platform: StdString;
+   fn: StdString;
 
 begin
    build.AutoDeterminedConfigPath := false;
@@ -107,27 +106,8 @@ begin
    if(build.ConfigPath = 'default') then
       AutoDetermineConfigPath();
 
-   {$IFDEF WINDOWS}
-   platform := 'win';
-   {$ELSE}
-      {$IFDEF UNIX}
-         {$IFDEF DARWIN}
-         platform := 'darwin';
-         {$ELSE}
-         platform := 'unix';
-         {$ENDIF}
-      {$ELSE}
-      {$FATAL uBuild does not support this platform}
-      {$ENDIF}
-   {$ENDIF}
-
    {read general configuration}
    fn := build.ConfigPath + 'build.config';
-
-   if(FileUtils.Exists(fn) > 0) then
-      dvarf.ReadText(dvgConfig, fn);
-
-   fn := build.ConfigPath + 'build.' + platform + '.config';
 
    if(FileUtils.Exists(fn) > 0) then
       dvarf.ReadText(dvgConfig, fn);
