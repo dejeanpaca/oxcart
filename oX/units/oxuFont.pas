@@ -557,7 +557,7 @@ begin
    len := GetLength(s);
 
    if(oxfpCenterVertical in props) then
-      y := r.h div 2 - Height div 2
+      y := r.h div 2 - round(vScale[1] * Height) div 2
    else if(oxfpCenterTop in props) then
       y := r.h - round(h - vScale[1])
    else
@@ -570,7 +570,7 @@ begin
    else
       x := 0;
 
-   Write(r.x + x, r.y - r.h + 1 + y, s);
+   Write(r.x + x, r.y - r.h + y, s);
 end;
 
 procedure oxTFont.WriteCenteredCxt(const s: StdString; props: oxTFontPropertiesSet);
