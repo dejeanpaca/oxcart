@@ -15,7 +15,6 @@ INTERFACE
       windows, DX12.xinput;
 
 TYPE
-
    { appTXInputControllerHandler }
 
    appTXInputControllerHandler = object(appTControllerHandler)
@@ -31,6 +30,8 @@ TYPE
       procedure Reset(); virtual;
       procedure Run(); virtual;
 
+      function GetName(): StdString; virtual;
+
       private
          function Add(index: loopint): boolean;
    end;
@@ -40,17 +41,26 @@ TYPE
    appTXInputControllerDevice = class(appTControllerDevice)
       XInputIndex: loopint;
 
+      constructor Create(); override;
+
       procedure Initialize(index: loopint; var capabilities: TXINPUT_CAPABILITIES);
       procedure Run(); override;
       procedure DeInitialize(); override;
    end;
 
-IMPLEMENTATION
-
 VAR
    appXInputControllerHandler: appTXInputControllerHandler;
 
+IMPLEMENTATION
+
 { appTXInputControllerDevice }
+
+constructor appTXInputControllerDevice.Create();
+begin
+  inherited Create();
+
+  Handler := @appXInputControllerHandler;
+end;
 
 procedure appTXInputControllerDevice.Initialize(index: loopint; var capabilities: TXINPUT_CAPABILITIES);
 begin
@@ -109,6 +119,11 @@ end;
 procedure appTXInputControllerHandler.Run();
 begin
    inherited Run();
+end;
+
+function appTXInputControllerHandler.GetName(): StdString;
+begin
+   Result := 'XInput';
 end;
 
 function appTXInputControllerHandler.Add(index: loopint): boolean;

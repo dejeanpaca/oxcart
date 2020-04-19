@@ -160,7 +160,7 @@ TYPE
          Axes: array[0..appMAX_CONTROLLER_AXES - 1] of appiTAxisState;
       end;
 
-      Handler: TObject;
+      Handler: POObject;
 
       constructor Create(); virtual;
 
@@ -217,6 +217,9 @@ TYPE
       procedure RunControllers();
       {reinitialize all devices}
       procedure Reset(); virtual;
+
+      {get a displayable name for this handler}
+      function GetName(): StdString; virtual;
    end;
 
    appTControllerDeviceList = specialize TSimpleList<appTControllerDevice>;
@@ -249,6 +252,8 @@ TYPE
 
       procedure Add(device: appTControllerDevice);
       procedure Reset();
+
+      function GetByIndex(index: loopint): appTControllerDevice;
 
       function GetMappedFunction(const name: string): longint;
    end;
@@ -314,6 +319,14 @@ begin
    end;
 end;
 
+function appTControllers.GetByIndex(index: loopint): appTControllerDevice;
+begin
+   if(index >= 0) and (index < List.n) then
+      Result := List.List[index]
+   else
+      Result := nil;
+end;
+
 function appTControllers.GetMappedFunction(const name: string): longint;
 var
    i: loopint;
@@ -332,6 +345,7 @@ end;
 constructor appTControllerDevice.Create();
 begin
    Valid := true;
+   DeviceIndex := -1;
    DeadZone := 0.1;
    DeadZoneStretch := true;
    State.Keys.SetupKeys(appMAX_CONTROLLER_BUTTONS, @State.KeyProperties);
@@ -341,6 +355,8 @@ procedure appTControllerDevice.LogDevice();
 begin
    log.i('Button count: ' + sf(ButtonCount));
    log.i('Axis count: ' + sf(AxisCount));
+   log.i('Trigger count: ' + sf(TriggerCount));
+   log.i('Hat count: ' + sf(HatCount));
 end;
 
 procedure appTControllerDevice.DeInitialize();
@@ -427,6 +443,11 @@ end;
 
 procedure appTControllerHandler.Reset();
 begin
+end;
+
+function appTControllerHandler.GetName(): StdString;
+begin
+  Result := 'Unknown';
 end;
 
 procedure checkForDisconnected();
