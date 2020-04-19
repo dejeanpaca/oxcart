@@ -10,7 +10,8 @@
 PROGRAM lpitool;
 
    USES
-      sysutils, uBuild, appuLog, uLog, uStd, uLPI, ConsoleUtils, ParamUtils;
+      sysutils, appuLog, uLog, uStd, ConsoleUtils, ParamUtils,
+      uBuild, uBuildConfiguration, uLPI;
 
 VAR
    mode: TLPIMode = lpiMODE_NONE;
