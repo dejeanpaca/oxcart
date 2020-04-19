@@ -69,17 +69,14 @@ begin
    if(uiCONTROL_GRID_MIDDLE_HORIZONTAL in pos) or ((uiCONTROL_GRID_MIDDLE in pos)) then
       Result.Clear(wdgRENDER_CORNERS_ALL);
 
-   if(uiCONTROL_GRID_RIGHT in pos) then begin
-      Result.Clear(wdgRENDER_LINE_LEFT);
-      Result.Clear(wdgRENDER_CORNER_TL or wdgRENDER_CORNER_BL);
-   end;
+   if(uiCONTROL_GRID_RIGHT in pos) then
+      Result.Clear(wdgRENDER_LINE_LEFT or wdgRENDER_CORNER_TL or wdgRENDER_CORNER_BL);
 
-   if(uiCONTROL_GRID_LEFT in pos) then begin
+   if(uiCONTROL_GRID_LEFT in pos) then
       Result.Clear(wdgRENDER_CORNER_TR or wdgRENDER_CORNER_BR);
-   end;
 
    if(uiCONTROL_GRID_MIDDLE in pos) or (uiCONTROL_GRID_TOP in pos) then
-      Result.Clear(wdgRENDER_LINE_BOTTOM);
+      Result.Clear(wdgRENDER_LINE_BOTTOM or wdgRENDER_CORNER_BL or wdgRENDER_CORNER_BR);
 
    if(uiCONTROL_GRID_MIDDLE_HORIZONTAL in pos) then
       Result.Clear(wdgRENDER_LINE_LEFT);
