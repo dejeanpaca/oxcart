@@ -70,19 +70,37 @@ begin
          end else if(key = 'Ka') then begin {ambient}
             oxsSerialization.Deserialize(value, color);
          end else if(key = 'Kd') then begin {diffuse}
-            oxsSerialization.Deserialize(value, color);
             diffuse := cWhite4f;
+            oxsSerialization.Deserialize(value, color);
             diffuse.Assign(color);
-            m.SetColor('color', diffuse);
+
+            {$IFDEF OX_DEBUG}
+            if(m.GetShaderIndex('color') > -1) then
+            {$ENDIF}
+               m.SetColor('color', diffuse);
+
+            {$IFDEF OX_DEBUG}
+            if(m.GetShaderIndex('diffuse') > -1) then
+            {$ENDIF}
+               m.SetColor('diffuse', diffuse);
          end else if(key = 'Ks') then begin {specular}
             oxsSerialization.Deserialize(value, color);
+
+            {$IFDEF OX_DEBUG}
+            if(m.GetShaderIndex('specular') > -1) then
+            {$ENDIF}
+               m.SetColor('specular', color);
          end else if(key = 'd') then begin {dissolve (transparency)}
             Val(value, fValue, code);
 
             if(code <> 0) then begin
                diffuse[3] := fValue;
                m.SetColor('color', diffuse);
-               m.SetFloat('transparency', fValue);
+
+               {$IFDEF OX_DEBUG}
+               if(m.GetShaderIndex('transparency') > -1) then
+               {$ENDIF}
+                  m.SetFloat('transparency', fValue);
             end;
          end else if(key = 'Tr') then begin {transparency (1 - d)}
             Val(value, fValue, code);
@@ -90,7 +108,11 @@ begin
             if(code <> 0) then begin
                diffuse[3] := 1 - fValue;
                m.SetColor('color', diffuse);
-               m.SetFloat('transparency', 1 - fValue);
+
+               {$IFDEF OX_DEBUG}
+               if(m.GetShaderIndex('transparency') > -1) then
+               {$ENDIF}
+                  m.SetFloat('transparency', 1 - fValue);
             end;
          end;
       until matf.EOF() or (matf.Error <> 0);
