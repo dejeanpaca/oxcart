@@ -390,6 +390,8 @@ begin
    if(build.IncludeDebugInfo) then begin
       oxedConsole.w('Including debug info');
       f.AddCustomOption('-g');
+      f.AddCustomOption('-gl');
+      f.AddCustomOption('-Xg');
    end;
 
    f.SetTitle(oxedProject.Name);
@@ -740,8 +742,11 @@ begin
    parameters.Add('-vewnhi');
    parameters.Add('-l');
 
-   if(build.IncludeDebugInfo) then
+   if(build.IncludeDebugInfo) then begin
+      parameters.Add('-g');
       parameters.Add('-gl');
+      parameters.Add('-Xg');
+   end;
 
    if(oxedBuild.IsLibrary()) then begin
       parameters.Add('-Cg');
