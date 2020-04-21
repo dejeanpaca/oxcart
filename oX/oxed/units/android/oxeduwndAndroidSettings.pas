@@ -18,7 +18,7 @@ INTERFACE
       {oxed}
       uOXED, oxeduPlatform, oxeduProject,
       oxeduAndroidPlatform,  oxeduAndroidSettings, oxeduAndroidProjectFiles,
-      oxeduProjectSettingsWindow;
+      oxeduwndProjectSettings;
 
 IMPLEMENTATION
 

@@ -1,10 +1,10 @@
 {
-   oxeduProjectStatisticsWindow, project statistics window
+   oxeduwndProjectStatistics, project statistics window
    Copyright (C) 2019. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}
-UNIT oxeduProjectStatisticsWindow;
+UNIT oxeduwndProjectStatistics;
 
 INTERFACE
 

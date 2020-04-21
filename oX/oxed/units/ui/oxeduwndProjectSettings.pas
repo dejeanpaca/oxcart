@@ -1,10 +1,10 @@
 {
-   oxeduProjectSettingsWindow, project settings
+   oxeduwndProjectSettings, project settings
    Copyright (C) 2017. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}
-UNIT oxeduProjectSettingsWindow;
+UNIT oxeduwndProjectSettings;
 
 INTERFACE
 

@@ -18,7 +18,8 @@ INTERFACE
       uiuTypes, uiWidgets, uiuWidget,
       wdguLabel, wdguWorkbar, wdguCheckbox, wdguInputBox, wdguGroup, wdguButton,
       {oxed}
-      uOXED, oxeduWindow, oxeduInspectorWindow, oxeduProjectRunner, oxeduEntities;
+      uOXED, oxeduProjectRunner, oxeduEntities,
+      oxeduWindow, oxeduwndInspector;
 
 TYPE
 

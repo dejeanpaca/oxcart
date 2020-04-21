@@ -13,8 +13,8 @@ INTERFACE
       {ui}
       uiuDockableWindow, uiuWindow, uiuWindowTypes,
       {oxed}
-      uOXED, oxeduActions, oxeduSceneEdit, oxeduSceneHierarchy, oxeduConsoleWindow, oxeduProblemsWindow,
-      oxeduInspectorWindow, oxeduProjectBrowser, oxeduGameView, oxeduWindow;
+      uOXED, oxeduActions, oxeduSceneEdit, oxeduSceneHierarchy, oxeduwndConsole, oxeduwndProblems,
+      oxeduwndInspector, oxeduProjectBrowser, oxeduGameView, oxeduWindow;
 
 TYPE
 

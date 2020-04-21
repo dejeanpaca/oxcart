@@ -19,7 +19,7 @@ INTERFACE
       wdguLabel, wdguButton, wdguTabs, wdguCheckboxHierarchy, wdguDivisor, oxuwndFileDialog,
       {oxed}
       uOXED, oxeduProject, oxeduProjectPackages,
-      oxeduProjectSettingsWindow;
+      oxeduwndProjectSettings;
 
 TYPE
    { oxedwdgTPackagesList }

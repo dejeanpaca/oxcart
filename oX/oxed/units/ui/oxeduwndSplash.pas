@@ -1,14 +1,15 @@
 {
-   oxeduSplash, recents list for oxed
+   oxeduwndSplash, recents list for oxed
    Copyright (C) 2016. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}
-UNIT oxeduSplash;
+UNIT oxeduwndSplash;
 
 INTERFACE
 
-   USES uStd, oxeduRecents,
+   USES
+      uStd, oxeduRecents,
       {oX}
       oxuTypes, oxuwndSplash, oxuRunRoutines,
       {ui}

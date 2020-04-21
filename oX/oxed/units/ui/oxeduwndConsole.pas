@@ -1,10 +1,10 @@
 {
-   oxeduConsoleWindow, console window
+   oxeduwndConsole, console window
    Copyright (C) 2017. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}
-UNIT oxeduConsoleWindow;
+UNIT oxeduwndConsole;
 
 INTERFACE
 

@@ -1,10 +1,10 @@
 {
-   oxeduRunSettingsWindow, project settings
+   oxeduwndRunSettings, project settings
    Copyright (C) 2017. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}
-UNIT oxeduRunSettingsWindow;
+UNIT oxeduwndRunSettings;
 
 INTERFACE
 
