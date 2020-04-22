@@ -34,7 +34,6 @@ begin
       oxedEntities.SetupHooks(entitiesGlobal^);
 end;
 
-
 procedure onStart();
 var
    sceneRender: oxTSceneRender;
@@ -51,10 +50,8 @@ begin
 
       sceneRender := oxTSceneRender(oxLibReferences^.FindInstance('oxTSceneRender'));
 
-      if(sceneRender <> nil) then begin
+      if(sceneRender <> nil) then
          sceneRender.Scenes[0].Scene := oxScene;
-         oxedLib.oxWindows^.w[0].oxProperties.ApplyDefaultProjection := false;
-      end;
    end;
 end;
 
