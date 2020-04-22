@@ -16,6 +16,8 @@ INTERFACE
       uOX, oxuPaths, oxuRunRoutines,
       {oxed}
       uOXED, oxeduSettings, oxeduEntities,
+      {thingies}
+      oxeduThingies,
       {build}
       oxeduBuild, oxeduBuildEditor,
       oxeduPlatform,

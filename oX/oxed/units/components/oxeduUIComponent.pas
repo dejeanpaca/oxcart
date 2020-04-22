@@ -17,8 +17,9 @@ INTERFACE
 TYPE
    { oxedTUIEditRenderer }
 
-   oxedTUIEditRenderer = class(oxedTThingie)
+   oxedTUIEditRenderer = object(oxedTThingie)
       constructor Create();
+      procedure Initialize(); virtual;
    end;
 
 VAR
@@ -30,22 +31,17 @@ IMPLEMENTATION
 
 constructor oxedTUIEditRenderer.Create();
 begin
+   inherited;
    Name := 'UI';
-   oxedComponentGlyphs.Add(oxTUIComponent, '', $f03d);
-   Associate(oxTUIComponent);
+   Link(oxTUIComponent);
 end;
 
-procedure init();
+procedure oxedTUIEditRenderer.Initialize();
 begin
-   oxedUIEditRenderer := oxedTUIEditRenderer.Create();
-end;
-
-procedure deinit();
-begin
-   FreeObject(oxedUIEditRenderer);
+  oxedComponentGlyphs.Add(oxTUIComponent, '', $f03d);
 end;
 
 INITIALIZATION
-   oxedThingies.Init.Add('ui', @init, @deinit);
+   oxedUIEditRenderer.Create();
 
 END.

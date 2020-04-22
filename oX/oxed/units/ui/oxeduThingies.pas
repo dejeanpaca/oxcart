@@ -33,17 +33,26 @@ TYPE
       Component: oxedPComponent;
    end;
 
+   oxedPThingie = ^oxedTThingie;
+
    { oxedTThingie }
 
-   oxedTThingie = class
+   oxedTThingie = object
       {renderer name}
       Name: string;
       {associated component type}
       Component: oxedPComponent;
+      ComponentType: oxTComponentType;
       {render only when selected}
       Selected: boolean;
       {glyph for this thingie}
       Glyph: oxedPComponentGlyph;
+
+      Links: record
+         Next: oxedPThingie;
+      end;
+
+      constructor Create();
 
       {render}
       procedure Render(var {%H-}parameters: oxedTThingieRenderParameters); virtual;
@@ -51,11 +60,12 @@ TYPE
       procedure Initialize(); virtual;
       procedure Deinitialize(); virtual;
 
-      procedure Associate(componentType: oxTComponentType);
+      procedure Link(useComponentType: oxTComponentType);
+      procedure AssociateComponent();
    end;
 
    oxedTThingieRenderComponentPair = record
-      Renderer: oxedTThingie;
+      Renderer: oxedPThingie;
       Component: oxedPComponent;
       ComponentObject: oxTComponent;
    end;
@@ -75,15 +85,16 @@ TYPE
       {are the glyphs rendered in 3d}
       Glyphs3D: boolean;
 
-      {renderer initialization routines}
-      Init: oxTRunRoutines;
+      {linked list of thingies}
+      Start,
+      Last: oxedPThingie;
 
-      function Find(componentType: oxTComponentType): oxedTThingie;
+      function Find(componentType: oxTComponentType): oxedPThingie;
       function FindForEntity(entity: oxTEntity; exclude: oxTComponent = nil): oxedTThingieComponentPairs;
 
       procedure InitParams(out params: oxedTThingieRenderParameters);
 
-      procedure Initialize(Thingie: oxedTThingie);
+      procedure Initialize(var Thingie: oxedTThingie);
    end;
 
 VAR
@@ -103,7 +114,7 @@ begin
       params.Component := List[i].Component;
 
       if(List[i].Renderer <> nil) then
-         List[i].Renderer.Render(params);
+         List[i].Renderer^.Render(params);
    end;
 end;
 
@@ -117,7 +128,7 @@ begin
       params.Component := List[i].Component;
 
       if(List[i].Renderer <> nil) then
-         List[i].Renderer.RenderSelected(params);
+         List[i].Renderer^.RenderSelected(params);
    end;
 end;
 
@@ -128,13 +139,12 @@ begin
    ZeroOut(params, SizeOf(params));
 end;
 
-procedure oxedTThingiesGlobal.Initialize(Thingie: oxedTThingie);
+procedure oxedTThingiesGlobal.Initialize(var Thingie: oxedTThingie);
 begin
    Thingie.Initialize();
 end;
 
-
-function oxedTThingiesGlobal.Find(componentType: oxTComponentType): oxedTThingie;
+function oxedTThingiesGlobal.Find(componentType: oxTComponentType): oxedPThingie;
 var
    i: loopint;
 
@@ -142,7 +152,7 @@ begin
    if(componentType <> nil) then begin
       for i := 0 to (oxedComponents.List.n - 1) do begin
          if (oxedComponents.List[i].Component.ClassName = componentType.ClassName) then
-            exit(oxedTThingie(oxedComponents.List[i].Thingie));
+            exit(oxedPThingie(oxedComponents.List[i].Thingie));
       end;
    end;
 
@@ -171,6 +181,11 @@ end;
 
 { oxTThingie }
 
+constructor oxedTThingie.Create();
+begin
+
+end;
+
 procedure oxedTThingie.Render(var parameters: oxedTThingieRenderParameters);
 begin
 
@@ -190,22 +205,39 @@ begin
 
 end;
 
-procedure oxedTThingie.Associate(componentType: oxTComponentType);
+procedure oxedTThingie.Link(useComponentType: oxTComponentType);
 begin
-   Component := oxedComponents.Find(componentType);
+   ComponentType := useComponentType;
 
-   if(Component <> nil) then
-      Component^.Thingie := Self
+   if(oxedThingies.Start = nil) then
+      oxedThingies.Start := @Self
    else
-      log.w('Could not associate component ' + componentType.ClassName + ' with renderer ' + Self.ClassName);
+      oxedThingies.Last^.Links.Next := @Self;
+
+   oxedThingies.Last := @Self;
+end;
+
+procedure oxedTThingie.AssociateComponent();
+begin
+   if(Component <> nil) then
+      Component^.Thingie := @Self
+   else
+      log.w('Could not associate component ' + componentType.ClassName + ' with renderer ' + Name);
 end;
 
 procedure init();
 var
    i: loopint;
+   cur: oxedPThingie;
 
 begin
-   oxedThingies.Init.iCall();
+   cur := oxedThingies.Start;
+
+   if(cur <> nil) then repeat
+      cur^.AssociateComponent();
+
+      cur := cur^.Links.Next;
+   until cur = nil;
 
    for i := 0 to (oxedComponents.List.n - 1) do begin
       {$IFDEF DEBUG_EXTENDED}
@@ -217,25 +249,33 @@ begin
       {$ENDIF}
 
       if(oxedComponents.List[i].Thingie <> nil) then
-         oxedThingies.Initialize(oxedTThingie(oxedComponents.List[i].Thingie));
+         oxedThingies.Initialize(oxedPThingie(oxedComponents.List[i].Thingie)^);
    end;
+
+   cur := oxedThingies.Start;
+
+   if(cur <> nil) then repeat
+      cur^.Initialize();
+
+      cur := cur^.Links.Next;
+   until cur = nil;
 end;
 
 procedure deinit();
 var
-   i: loopint;
+   cur: oxedPThingie;
 
 begin
-   for i := 0 to (oxedComponents.List.n - 1) do begin
-      if(oxedComponents.List[i].Thingie <> nil) then
-         oxedTThingie(oxedComponents.List[i].Thingie).Deinitialize();
-   end;
+   cur := oxedThingies.Start;
 
-   oxedThingies.Init.dCall();
+   if(cur <> nil) then repeat
+      cur^.DeInitialize();
+
+      cur := cur^.Links.Next;
+   until cur = nil;
 end;
 
 INITIALIZATION
-   oxTRunRoutines.Initialize(oxedThingies.Init);
    oxedThingies.Glyphs3D := true;
 
    oxed.Init.Add('oxed.edit_renderers', @init, @deinit);

@@ -17,8 +17,9 @@ INTERFACE
 TYPE
    { oxedTCameraEditRenderer }
 
-   oxedTCameraEditRenderer = class(oxedTThingie)
+   oxedTCameraEditRenderer = object(oxedTThingie)
       constructor Create();
+      procedure Initialize(); virtual;
    end;
 
 VAR
@@ -30,22 +31,18 @@ IMPLEMENTATION
 
 constructor oxedTCameraEditRenderer.Create();
 begin
+   inherited;
+
    Name := 'Camera';
-   oxedComponentGlyphs.Add(oxTCameraComponent, '', $f03d);
-   Associate(oxTCameraComponent);
+   Link(oxTCameraComponent);
 end;
 
-procedure init();
+procedure oxedTCameraEditRenderer.Initialize();
 begin
-   oxedCameraEditRenderer := oxedTCameraEditRenderer.Create();
-end;
-
-procedure deinit();
-begin
-   FreeObject(oxedCameraEditRenderer);
+  oxedComponentGlyphs.Add(oxTCameraComponent, '', $f03d);
 end;
 
 INITIALIZATION
-   oxedThingies.Init.Add('camera', @init, @deinit);
+   oxedCameraEditRenderer.Create();
 
 END.
