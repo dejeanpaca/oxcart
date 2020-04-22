@@ -60,19 +60,18 @@ begin
    if(oxedStatusInfo.Wdg.Info <> nil) and (interval.Elapsed())  then begin
       heapStatus := GetHeapStatus;
 
-      status := getiecByteSizeHumanReadableSI(heapStatus.TotalFree) + ' / ' +
-         getiecByteSizeHumanReadableSI(heapStatus.TotalAllocated) + ' / ' +
-         getiecByteSizeHumanReadableSI(heapStatus.Unused) + ' / ' +
-         getiecByteSizeHumanReadableSI(heapStatus.TotalAddrSpace);
+      status := 'Heap total free: ' + getiecByteSizeHumanReadableSI(heapStatus.TotalFree) + #13 +
+         'Total allocated: ' + getiecByteSizeHumanReadableSI(heapStatus.TotalAllocated) + #13 +
+         'Total addressable space: ' + getiecByteSizeHumanReadableSI(heapStatus.TotalAddrSpace);
 
       if(oxedStatusInfo.Wdg.Info^.Caption <> status) then begin
-         oxedStatusInfo.Wdg.Info^.Hint := status;
+         oxedStatusInfo.Wdg.Info^.SetHint(status);
       end;
    end;
 end;
 
 INITIALIZATION
-   TTimerInterval.Initialize(interval);
+   TTimerInterval.Initialize(interval, 250);
 
    oxed.PostInit.Add('status_info', @initialize);
 
