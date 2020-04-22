@@ -11,11 +11,10 @@ INTERFACE
    USES
       uStd,
       {oX}
-      oxuTypes, oxuWindowTypes,
+      oxuTypes,
       oxuProjection, oxuCamera,
       oxuSceneRender, oxuScene,
       {ui}
-      uiuWindowRender, uiuDraw,
       uiuWidget, uiWidgets, uiuRegisteredWidgets, wdguBase, wdguViewport;
 
 TYPE
@@ -38,14 +37,11 @@ TYPE
       procedure Render(); override;
 
       procedure OnSceneRenderEnd(); virtual;
-
-      procedure CleanupRender();
    end;
 
    wdgTSceneRenderGlobal = class(specialize wdgTBase<wdgTSceneRender>)
       Internal: uiTWidgetClass; static;
    end;
-
 
 VAR
    wdgSceneRender: wdgTSceneRenderGlobal;
@@ -72,7 +68,6 @@ begin
 
    SceneRenderer := oxSceneRender.Default;
    RenderSceneCameras := true;
-   Projection.Initialize();
    Camera.Initialize();
 end;
 
@@ -91,13 +86,16 @@ var
    params: oxTSceneRenderParameters;
 
 begin
+   ProjectionStart();
+
    SceneRenderer.Scene := Scene;
 
    if(not RenderSceneCameras) then begin
       oxTSceneRenderParameters.Init(params, @Projection, @Camera);
       SceneRenderer.RenderCamera(params);
-   end else
+   end else begin
       SceneRenderer.Render(Projection);
+   end;
 
    OnSceneRenderEnd();
 
@@ -107,14 +105,6 @@ end;
 procedure wdgTSceneRender.OnSceneRenderEnd();
 begin
 
-end;
-
-procedure wdgTSceneRender.CleanupRender();
-begin
-   oxTWindow(oxwParent).Projection.Apply(false);
-   uiWindowRender.Prepare(oxTWIndow(oxwParent));
-
-   uiDraw.Start();
 end;
 
 INITIALIZATION
