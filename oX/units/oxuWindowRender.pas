@@ -25,16 +25,18 @@ TYPE
 
    { oxTWindowRender }
 
-   oxTWindowRender = record
+   oxTWindowRender = object
       {if true, the OnOverrideRender callbacks will be called and no rendering will be done by default}
       OverrideRender: Boolean;
+
+      constructor Create();
 
       {start rendering for a window (clear)}
       procedure StartRender(wnd: oxTWindow);
 
       {render window(s)}
-      procedure Window(wnd: oxTWindow);
-      procedure All();
+      procedure Window(wnd: oxTWindow); virtual;
+      procedure All(); virtual;
 
       {swaps the buffers for all windows}
       procedure SwapBuffers(wnd: oxTWindow);
@@ -43,15 +45,16 @@ TYPE
 
 VAR
    oxWindowRender: oxTWindowRender;
-   {$IFDEF OX_LIBRARY}
-   oxExternalWindows: oxPWindows;
-   {$ENDIF}
 
 IMPLEMENTATION
 
 procedure oxwRenderPost(wnd: oxTWindow);
 begin
    oxuiHooks.Render(wnd);
+end;
+
+constructor oxTWindowRender.Create();
+begin
 end;
 
 procedure oxTWindowRender.StartRender(wnd: oxTWindow);
@@ -86,8 +89,9 @@ var
    i: loopint;
 
 begin
-   for i := 0 to oxWindows.n - 1 do
+   for i := 0 to oxWindows.n - 1 do begin
       Window(oxWindows.w[i]);
+   end;
 end;
 
 procedure oxTWindowRender.SwapBuffers(wnd: oxTWindow);
@@ -107,6 +111,7 @@ begin
 end;
 
 INITIALIZATION
+   oxWindowRender.Create();
    oxGlobalInstances.Add('oxTWindowRender', @oxWindowRender);
 
 END.
