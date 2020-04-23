@@ -981,7 +981,7 @@ begin
             Next()
          else
             Previous();
-      end else begin
+      end else if(e.Value > 0) then begin
          if(not uiSettings.NaturalScroll) then
             Previous()
          else
