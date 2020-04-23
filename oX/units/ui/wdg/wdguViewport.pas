@@ -105,6 +105,7 @@ begin
 
    uiWindowRender.Prepare(oxTWindow(oxwParent));
    uiDraw.ScissorStackIndex := PreviousUIScissorStack;
+   Viewport.Changed := false;
 end;
 
 procedure wdgTViewport.UpdateViewport();

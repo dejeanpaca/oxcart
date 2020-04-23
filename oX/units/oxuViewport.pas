@@ -113,6 +113,7 @@ begin
       Position.y := newY;
 
       a.Calculate(Dimensions.w, Dimensions.h);
+      Changed := true;
    end;
 end;
 
@@ -128,6 +129,7 @@ begin
       Positionf.y := newY;
 
       a.Calculate(Dimensionsf.w, Dimensionsf.h);
+      Changed := true;
    end;
 end;
 
@@ -135,6 +137,7 @@ procedure oxTViewportHelper.SetOffset(offsetX, offsetY: longint);
 begin
    Offset.x := offsetX;
    Offset.y := offsetY;
+   Changed := true;
 end;
 
 procedure oxTViewportHelper.SetOffset(const p: oxTPoint);
