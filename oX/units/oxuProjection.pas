@@ -21,7 +21,7 @@ TYPE
    { oxTProjectionHelper }
 
    oxTProjectionHelper = record helper for oxTProjection
-      class procedure Create(out projection: oxTProjection); static;
+      class procedure Create(out projection: oxTProjection; withViewport: oxPViewport = nil); static;
 
       procedure Initialize(withViewport: oxPViewport);
       procedure Initialize(const source: oxTProjection);
@@ -81,11 +81,14 @@ IMPLEMENTATION
 VAR
    serialization: oxTSerialization;
 
-class procedure oxTProjectionHelper.Create(out projection: oxTProjection);
+class procedure oxTProjectionHelper.Create(out projection: oxTProjection; withViewport: oxPViewport = nil);
 begin
    ZeroPtr(@projection, SizeOf(projection));
 
-   projection.Initialize(oxViewport);
+   if(withViewport <> nil) then
+      projection.Initialize(withViewport)
+   else
+      projection.Initialize(oxViewport);
 end;
 
 procedure oxTProjectionHelper.Initialize(withViewport: oxPViewport);
