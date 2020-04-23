@@ -27,28 +27,30 @@ TYPE
    { uiTDrawComponent }
 
    uiTDraw = record
-     ScissorStackIndex: loopint;
-     ScissorStack: array[0..uiMAX_SCISSOR_STACK - 1] of uiTScissorStackElement;
+      UseScissoring: boolean;
 
-     procedure Box(x1, y1, x2, y2: single);
-     {draw box at the specified point and dimensions}
-     procedure Box(const p: oxTPoint; const d: oxTDimensions);
-     procedure Box(const r: oxTRect);
+      ScissorStackIndex: loopint;
+      ScissorStack: array[0..uiMAX_SCISSOR_STACK - 1] of uiTScissorStackElement;
 
-     procedure Line(x1, y1, x2, y2: single);
-     procedure HLine(x1, y1, x2: single);
-     procedure VLine(x1, y1, y2: single);
-     procedure Rect(x1, y1, x2, y2: single);
-     procedure Rect(const p: oxTPoint; const d: oxTDimensions);
-     procedure Rect(const r: oxTRect);
-     procedure Point(x1, y1: single);
-     procedure Points(var p: array of TVector2f);
+      procedure Box(x1, y1, x2, y2: single);
+      {draw box at the specified point and dimensions}
+      procedure Box(const p: oxTPoint; const d: oxTDimensions);
+      procedure Box(const r: oxTRect);
 
-     procedure CorrectPoints(p: PVector2f; count: loopint);
-     procedure CorrectPoints(p: PVector3f; count: loopint);
+      procedure Line(x1, y1, x2, y2: single);
+      procedure HLine(x1, y1, x2: single);
+      procedure VLine(x1, y1, y2: single);
+      procedure Rect(x1, y1, x2, y2: single);
+      procedure Rect(const p: oxTPoint; const d: oxTDimensions);
+      procedure Rect(const r: oxTRect);
+      procedure Point(x1, y1: single);
+      procedure Points(var p: array of TVector2f);
 
-     {start drawing}
-     procedure Start();
+      procedure CorrectPoints(p: PVector2f; count: loopint);
+      procedure CorrectPoints(p: PVector3f; count: loopint);
+
+      {start drawing}
+      procedure Start();
 
      {restrict drawing to specified point and dimensions}
      procedure ScissorNextLevel();
@@ -281,7 +283,9 @@ begin
    oxRender.DisableNormals();
    oxRender.PointSize(1.0);
    oxRender.LineWidth(1.0);
+
    oxRender.DisableScissor();
+   ScissorStackIndex := 0;
 
    oxTransform.Identity();
    oxTransform.Apply();
@@ -292,6 +296,9 @@ end;
 
 procedure uiTDraw.ScissorNextLevel();
 begin
+   if(not UseScissoring) then
+      exit;
+
    Inc(ScissorStackIndex);
 
    ScissorStack[ScissorStackIndex].IsSet := false;
@@ -304,6 +311,9 @@ var
    viewport: oxPViewport;
 
 begin
+   if(not UseScissoring) then
+      exit;
+
    if(incrementLevel) then
       ScissorNextLevel();
 
@@ -351,6 +361,9 @@ var
    r: uiTScissorStackElement;
 
 begin
+   if(not UseScissoring) then
+      exit;
+
    if(ScissorStackIndex > 0) then begin
       r := ScissorStack[ScissorStackIndex];
 
@@ -365,6 +378,9 @@ end;
 
 procedure uiTDraw.DoneScissor();
 begin
+   if(not UseScissoring) then
+      exit;
+
    assert(ScissorStackIndex > 0, 'uiDraw.DoneScissor called on an empty stack');
    dec(ScissorStackIndex);
 
@@ -400,5 +416,8 @@ procedure uiTDraw.Quad(tex: oxTTexture);
 begin
    oxRenderUtilities.Quad(tex);
 end;
+
+INITIALIZATION
+   uiDraw.UseScissoring := true;
 
 END.
