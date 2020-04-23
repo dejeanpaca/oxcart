@@ -12,7 +12,7 @@ INTERFACE
       uStd, uLog, StringUtils,
       {oX}
       uOX, oxuWindowTypes, oxuWindow, oxuUIHooks, oxuGlobalInstances,
-      oxuProjection, oxuRenderer, oxuWindowSettings,
+      oxuViewport, oxuRenderer, oxuWindowSettings,
       {$IFDEF OX_LIBRARY}
       oxuRenderers,
       {$ENDIF}
@@ -34,9 +34,6 @@ TYPE
       {window list}
       n: loopint;
       w: array[-1..oxcMAXIMUM_WINDOWS - 1] of oxTWindow;
-
-      {if true, the OnOverrideRender callbacks will be called and no rendering will be done by default}
-      OverrideRender: Boolean;
 
       {called when windows are being created}
       OnCreate,
@@ -81,20 +78,8 @@ TYPE
       {create windows}
       function Initialize(): boolean;
 
-      { RENDERING }
-      {start rendering for a window (clear)}
-      procedure StartRender(wnd: oxTWindow);
-
-      {render window(s)}
-      procedure Render(wnd: oxTWindow);
-      procedure Render();
-
       {set window as current}
       procedure SetCurrent(wnd: oxTWindow);
-
-      { BUFFERS }
-      {swaps the buffers for all windows}
-      procedure SwapBuffers();
    end;
 
 VAR
@@ -195,7 +180,7 @@ end;
 
 procedure oxTWindows.Setup(var wnd: oxTWindow; const settings: oxTWindowSettings; contextWindow: boolean = false);
 begin
-   wnd.Projection.Initialize();
+   wnd.Viewport.Initialize();
 
    if(not ox.LibraryMode) then
       settings.Load(wnd);
@@ -288,53 +273,10 @@ begin
    oxWindowSettings.AllocateCount := count;
 end;
 
-{ RENDERING }
-procedure oxTWindows.StartRender(wnd: oxTWindow);
-begin
-   if(wnd.oxProperties.ApplyDefaultProjection) then
-      wnd.Projection.Apply();
-end;
-
-{render window(s)}
-procedure oxTWindows.Render(wnd: oxTWindow);
-begin
-   if(not OverrideRender) then begin
-      StartRender(wnd);
-
-      OnRender.Call(wnd);
-      Internal.OnPostRender.Call(wnd);
-
-      {$IFNDEF OX_LIBRARY}
-      oxTRenderer(wnd.Renderer).SwapBuffers(wnd);
-      {$ENDIF}
-   end else
-      OnOverrideRender.Call(wnd);
-end;
-
-procedure oxTWindows.Render();
-var
-   i: loopint;
-
-begin
-   for i := 0 to n - 1 do
-      Render(w[i]);
-end;
-
 procedure oxTWindows.SetCurrent(wnd: oxTWindow);
 begin
    oxWindow.Current := wnd;
    oxTRenderer(wnd.Renderer).ContextCurrent(wnd.RenderingContext);
-end;
-
-{ BUFFERS }
-procedure oxTWindows.SwapBuffers();
-var
-   i: longint;
-
-begin
-   for i := 0 to (n - 1) do begin
-      oxTRenderer(w[i].Renderer).SwapBuffers(w[i]);
-   end;
 end;
 
 INITIALIZATION
