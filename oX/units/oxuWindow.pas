@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, uLog, StringUtils, uAppInfo,
       {oX}
-      uOX, oxuTypes, oxuProjection, oxuGlobalInstances,
+      uOX, oxuTypes, oxuViewport, oxuGlobalInstances,
       oxuWindowTypes, oxuPlatform, oxuUIHooks, oxuRenderer, oxuRender,
       {ui}
       uiuWindowTypes, uiuTypes;
@@ -43,8 +43,8 @@ TYPE
       procedure SetPosition(x, y: longint; system: boolean = true);
       procedure SetDimensions(w, h: longint; system: boolean = true);
 
-      procedure SetupProjection();
-      procedure SetProjectionOffset();
+      procedure SetupViewport();
+      procedure SetViewportOffset();
 
       procedure Maximize();
       procedure Minimize();
@@ -72,7 +72,7 @@ var
    title: string;
 
 begin
-   title             := oxEngineName;
+   title  := oxEngineName;
 
    if(appInfo.Title <> '') then
       title := appInfo.Title
@@ -105,7 +105,7 @@ end;
 
 procedure windowCreateCommon(wnd: oxTWindow);
 begin
-   oxProjection := @wnd.Projection;
+   oxViewport := @wnd.Viewport;
    oxUIHooks.Select(wnd);
 
    if(wnd.oxProperties.Fullscreen) then begin
@@ -365,7 +365,7 @@ begin
       if(oxProperties.Created) then
          oxUIHooks.SetPosition(self, oxPoint(x, y));
 
-      SetupProjection();
+      SetupViewport();
    end;
 end;
 
@@ -383,22 +383,22 @@ begin
       if(oxProperties.Created) then
          oxUIHooks.SetDimensions(self, oxTDimensions.Make(w, h));
 
-      SetupProjection();
+      SetupViewport();
    end;
 end;
 
-procedure oxTWindowHelper.SetupProjection();
+procedure oxTWindowHelper.SetupViewport();
 begin
-   Projection.SetViewport(Dimensions.w, Dimensions.h);
-   SetProjectionOffset();
+   Viewport.SetViewport(Dimensions.w, Dimensions.h);
+   SetViewportOffset();
 end;
 
-procedure oxTWindowHelper.SetProjectionOffset();
+procedure oxTWindowHelper.SetViewportOffset();
 begin
    if(ExternalWindow <> nil) then
-      Projection.SetOffset(ExternalWindow.RPosition.x, ExternalWindow.RPosition.y - (ExternalWindow.Dimensions.h - 1))
+      Viewport.SetOffset(ExternalWindow.RPosition.x, ExternalWindow.RPosition.y - (ExternalWindow.Dimensions.h - 1))
    else
-      Projection.SetOffset(0, 0);
+      Viewport.SetOffset(0, 0);
 end;
 
 procedure oxTWindowHelper.Maximize();

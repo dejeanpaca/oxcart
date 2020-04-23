@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, uColors, vmVector, uLog,
       {oX}
-      oxuAspect, oxuTypes;
+      oxuViewportType;
 
 TYPE
    {projection properties}
@@ -41,32 +41,12 @@ TYPE
    oxTProjection = record
       Name: StdString;
 
+      Viewport: oxPViewport;
+
       {is the projection ortographic}
-      IsOrtographic,
-      {is the projection enabled}
-      Enabled,
-      {update from source (window) when source is resized}
-      UpdateFromSource: boolean;
-
-      Position,
-      {offset the position}
-      Offset: oxTPoint;
-      Dimensions: oxTDimensions;
-
-      {is the projection relative}
-      Relative,
-      {always scissor when clearing}
-      ScissorOnClear: boolean;
-
-      {set position and dimensions}
-      Positionf: oxTPointf;
-      Dimensionsf: oxTDimensionsf;
-
-      ClearBits: TBitSet;
-      ClearColor: TColor4f;
+      IsOrtographic: boolean;
 
       p: oxTProjectionSettings;
-      a: oxTAspect;
       ProjectionMatrix: TMatrix4f;
    end;
 

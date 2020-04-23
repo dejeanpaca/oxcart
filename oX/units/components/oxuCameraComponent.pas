@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, vmVector,
       {ox}
-      oxuTransform, oxuProjectionType, oxuProjection,
+      oxuTransform, oxuProjectionType, oxuProjection, oxuViewport,
       oxuCamera, oxuEntity, oxuComponent, oxuComponentDescriptors, oxuSerialization;
 
 TYPE
@@ -60,7 +60,7 @@ begin
    inherited Create;
 
    Camera.Initialize();
-   Projection.Initialize();
+   Projection.Initialize(oxViewport);
    UseSceneProjection := true;
 end;
 

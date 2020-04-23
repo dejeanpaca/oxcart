@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, uLog,
       {oX}
-      oxuTypes, oxuProjectionType,
+      oxuTypes, oxuViewportType,
       {ui}
       uiuTypes, uiuWindowTypes;
 
@@ -49,7 +49,7 @@ TYPE
         {context window, used for gl context creation}
         Context,
         {apply the default render context}
-        ApplyDefaultProjection,
+        ApplyDefaultViewport,
         {is the screen fullscreen}
         Fullscreen,
         {is the fullscreen mode windowed}
@@ -76,8 +76,8 @@ TYPE
       RenderingContext,
       ThreadRenderingContext: loopint;
 
-      {context for this window}
-      Projection: oxTProjection;
+      {viewport for this window}
+      Viewport: oxTViewport;
 
       {error}
       ErrorDescription: TErrorString;
@@ -153,7 +153,7 @@ begin
 
    Properties := Properties + [uiwndpAUTO_CENTER, uiwndpVISIBLE];
 
-   oxProperties.ApplyDefaultProjection := true;
+   oxProperties.ApplyDefaultViewport := true;
 
    RenderingContext := -1;
    ThreadRenderingContext := -1;

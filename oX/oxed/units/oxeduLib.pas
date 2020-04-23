@@ -11,7 +11,8 @@ INTERFACE
    USES
       sysutils, dynlibs, uStd, uLog, uAppInfo, uFileUtils, uTiming,
       {ox}
-      oxuDynlib, oxulibSettings, oxuGlobalInstances, oxuWindows,
+      oxuDynlib, oxulibSettings, oxuGlobalInstances,
+      oxuWindows, oxuWindowRender,
       {oxed}
       uOXED, oxeduProject, oxeduConsole;
 
@@ -31,6 +32,7 @@ TYPE
       end;
 
       oxWindows: oxPWindows;
+      oxWindowRender: oxPWindowRender;
       Settings: oxPLibrarySettings;
 
       function Load(): boolean;
@@ -68,6 +70,7 @@ end;
 function oxedTLibraryGlobal.Unload(): boolean;
 begin
    oxWindows := nil;
+   oxWindowRender := nil;
 
    if(Lib <> 0) then begin
       oxLibReferences := nil;
