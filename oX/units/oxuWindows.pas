@@ -43,7 +43,7 @@ TYPE
       {called when window should be rendered}
       OnRender,
       {called when viewport changes for a window}
-      OnViewportChange,
+      OnViewportChanged,
       {called when overriden rendering should be done}
       OnOverrideRender: oxTWindowRoutines;
 
@@ -174,7 +174,7 @@ begin
    ExternalWindows.Initialize(ExternalWindows);
 
    OnRender.Initialize(OnRender);
-   OnViewportChange.Initialize(OnViewportChange);
+   OnViewportChanged.Initialize(OnViewportChanged);
    OnOverrideRender.Initialize(OnOverrideRender);
 end;
 

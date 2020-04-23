@@ -391,6 +391,7 @@ procedure oxTWindowHelper.SetupViewport();
 begin
    Viewport.SetViewport(Dimensions.w, Dimensions.h);
    SetViewportOffset();
+   Viewport.Changed := true;
 end;
 
 procedure oxTWindowHelper.SetViewportOffset();
