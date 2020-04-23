@@ -45,7 +45,7 @@ TYPE
        {get settings from another viewport}
        procedure From(const source: oxTViewport);
        {set viewport from window}
-       procedure UpdateFromWindow(wnd: oxTWindow);
+       procedure SetFromWindow(wnd: oxTWindow);
 
        procedure GetNormalizedPointerCoordinates(x, y: single; out n: TVector2f);
        procedure GetNormalizedPointerCoordinates(x, y, z: single; out n: TVector4f);
@@ -66,7 +66,6 @@ end;
 procedure oxTViewportHelper.Initialize();
 begin
    Enabled           := true;
-   UpdateFromSource  := true;
    ScissorOnClear    := true;
 
    ClearBits      := oxrBUFFER_CLEAR_DEFAULT;
@@ -178,11 +177,9 @@ begin
   Self := source;
 end;
 
-procedure oxTViewportHelper.UpdateFromWindow(wnd: oxTWindow);
+procedure oxTViewportHelper.SetFromWindow(wnd: oxTWindow);
 begin
-   if(UpdateFromSource) then begin
-      SetViewport(0, 0, wnd.Dimensions.w, wnd.Dimensions.h);
-   end;
+   SetViewport(0, 0, wnd.Dimensions.w, wnd.Dimensions.h);
 end;
 
 procedure oxTViewportHelper.GetNormalizedPointerCoordinates(x, y: single; out n: TVector2f);
