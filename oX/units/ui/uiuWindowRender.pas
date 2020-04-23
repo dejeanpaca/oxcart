@@ -12,8 +12,8 @@ INTERFACE
       uStd, uColors, vmVector,
       {oX}
       oxuTypes, oxuWindowTypes, oxuFont,
-      oxuPrimitives, oxuTransform, oxuTexture,
-      oxuRenderer, oxuRender,
+      oxuPrimitives, oxuTexture,
+      oxuRenderer, oxuRender, oxuProjectionType, oxuProjection,
       {ui}
       oxuUI, uiuTypes, uiuSkinTypes,
       uiuWindowTypes, uiuWidget, uiuDraw, uiuDrawUtilities, uiWidgets, uiuWindow;
@@ -28,6 +28,8 @@ TYPE
    { uiTWindowRenderGlobal }
 
    uiTWindowRenderGlobal = record
+      Projection: oxTProjection;
+
       { WINDOW RENDERING }
       {render an oX window}
       procedure Prepare(wnd: oxTWindow);
@@ -321,12 +323,11 @@ begin
 end;
 
 procedure uiTWindowRenderGlobal.Prepare(wnd: oxTWindow);
-var
-   m: TMatrix4f;
-
 begin
-   m := oxTTransform.OrthoFrustum(0 + 0.375, wnd.Dimensions.w + 0.375, 0 + 0.375, wnd.Dimensions.h + 0.375, -1.0, 1.0);
-   oxRenderer.SetProjectionMatrix(m);
+   oxTProjection.Create(Projection, @wnd.Viewport);
+
+   Projection.Ortho(0.375, wnd.Dimensions.w + 0.375, 0.375, wnd.Dimensions.h + 0.375, -1.0, 1.0);
+   Projection.Apply();
 
    uiDraw.Start();
 end;
