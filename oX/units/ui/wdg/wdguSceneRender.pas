@@ -70,7 +70,7 @@ begin
 
    SceneRenderer := oxSceneRender.Default;
    RenderSceneCameras := true;
-   oxTProjection.Create(Projection);
+   oxTProjection.Create(Projection, @Viewport);
    Camera.Initialize();
 end;
 
