@@ -219,6 +219,8 @@ end;
 
 procedure oxedTThingie.AssociateComponent();
 begin
+   Component := oxedComponents.Find(componentType);
+
    if(Component <> nil) then
       Component^.Thingie := @Self
    else
