@@ -9,7 +9,7 @@ UNIT oxuProjection;
 INTERFACE
 
    USES
-      uStd, uColors, vmVector, uLog,
+      sysutils, uStd, uColors, vmVector, uLog,
       {oX}
       oxuAspect, oxuProjectionType, oxuTypes,
       oxuViewportType, oxuViewport,
@@ -40,6 +40,7 @@ TYPE
       procedure SetZ(zNear, zFar: single);
 
       {set properties of ortographic projection}
+      procedure Ortho(size, zNear, zFar: single);
       procedure Ortho(zNear, zFar: single);
       procedure Ortho(l, r, b, t: single; zNear, zFar: single);
       procedure Ortho(w, h: single; zNear, zFar: single);
@@ -99,6 +100,7 @@ procedure oxTProjectionHelper.Initialize(withViewport: oxPViewport);
 begin
    Viewport := withViewport;
    p := oxDefaultPerspective;
+   UseViewportAspect := True;
 
    SetProjectionMatrix();
 end;
@@ -149,6 +151,18 @@ begin
       log.w('zNear value should not be 0 or less');
 end;
 
+procedure oxTProjectionHelper.Ortho(size, zNear, zFar: single);
+begin
+   p.Aspect := Viewport^.a.Aspect;
+   p.Size := size;
+   SetZ(zNear, zFar);
+   p.l := -size * p.Aspect;
+   p.r := size * p.Aspect;
+   p.b := size;
+   p.t := size;
+   UseViewportAspect := true;
+end;
+
 procedure oxTProjectionHelper.Ortho(zNear, zFar: single);
 begin
    if(Viewport <> nil) then
@@ -158,6 +172,7 @@ end;
 procedure oxTProjectionHelper.Ortho(l, r, b, t: single; zNear, zFar: single);
 begin
    p.IsOrtographic := true;
+   UseViewportAspect := false;
 
    p.l := l;
    p.r := r;
@@ -247,8 +262,14 @@ end;
 
 procedure oxTProjectionHelper.UpdateViewport();
 begin
-   if(not IsOrtographic) then
-      Perspective(p.FovY, Viewport^.a.Aspect, p.ZNear, p.ZFar);
+   if(UseViewportAspect) then begin
+      if(not IsOrtographic) then
+         Perspective(p.FovY, Viewport^.a.Aspect, p.ZNear, p.ZFar)
+      else begin
+         if(abs(p.Size) > TSingleHelper.Epsilon) then
+            Ortho(p.Size, p.ZNear, p.ZFar);
+      end;
+   end;
 end;
 
 function oxTProjectionHelper.Unproject(x, y, z: single; const view: TMatrix4f; out world: TVector3f): boolean;
