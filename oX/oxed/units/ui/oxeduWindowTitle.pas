@@ -10,7 +10,7 @@ INTERFACE
 
    USES
       {ox}
-      oxuWindow,
+      oxuWindow, uiuWindow,
       {oxed}
       uOXED, oxeduProject, oxeduProjectManagement;
 
