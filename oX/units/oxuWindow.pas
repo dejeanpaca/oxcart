@@ -444,7 +444,7 @@ begin
 
    if(oxProperties.Created) then begin
       if(not oxProperties.Context) and (oxProperties.Created) then begin
-         uiTWindow(Self).SetTitle(newTitle);
+         uiTWindow(Self).Title := newTitle;
          oxTPlatform(Platform).SetTitle(Self, newTitle);
       end;
    end;

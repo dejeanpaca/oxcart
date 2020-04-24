@@ -129,9 +129,6 @@ TYPE
       procedure Action({%H-}action: uiTWindowEvents); virtual;
 
       {set the window ID}
-      function SetTitle(const newTitle: StdString): uiTWindow; virtual;
-
-      {set the window ID}
       function SetID(const wID: uiTControlID): uiTWindow;
       {get color of the underlying parent surface}
       function GetSurfaceColor: TColor4ub; override;
@@ -197,13 +194,6 @@ end;
 procedure uiTWindow.Action(action: uiTWindowEvents);
 begin
 
-end;
-
-function uiTWindow.SetTitle(const newTitle: StdString): uiTWindow;
-begin
-   Title := newTitle;
-
-   Result := Self;
 end;
 
 function uiTWindow.SetID(const wID: uiTControlID): uiTWindow;
