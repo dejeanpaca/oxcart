@@ -84,7 +84,8 @@ begin
       oxedLib.oxWindowRender^.All();
 
       wdg.SceneRender.CleanupRender();
-   end;
+   end else
+      wdg.SceneRender.PerformRender();
 end;
 
 function oxedTGameViewWindow.Key(var k: appTKeyEvent): boolean;
