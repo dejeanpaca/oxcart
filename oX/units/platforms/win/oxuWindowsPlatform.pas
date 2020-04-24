@@ -13,7 +13,9 @@ INTERFACE
       {app}
       appuEvents, appuInputTypes, appuKeys, appuKeyEvents, appuMouse, appuMouseEvents,
       {oX}
-      oxuTypes, oxuWindowTypes, oxuWindow, oxuWindows, oxuPlatform, oxuPlatforms,
+      oxuTypes,
+      oxuWindowTypes, oxuWindow, oxuWindows, oxuWindowHelper,
+      oxuPlatform, oxuPlatforms,
       oxuWindowsOS, oxuRenderer,
       {ui}
       uiuTypes, uiuWindow, uiuWindowTypes,
@@ -135,10 +137,11 @@ var
 begin
    Result := nil;
 
-   if(oxWindows.n > 0) then
-   for i := Low(oxWindows.w) to (oxWindows.n - 1) do begin
-      if(oxWindows.w[i] <> nil) and (winosTWindow(oxWindows.w[i]).wd.h = w) then
-         exit(oxWindows.w[i]);
+   if(oxWindows.n > 0) then begin
+     for i := Low(oxWindows.w) to (oxWindows.n - 1) do begin
+        if(oxWindows.w[i] <> nil) and (winosTWindow(oxWindows.w[i]).wd.h = w) then
+           exit(oxWindows.w[i]);
+     end;
    end;
 end;
 

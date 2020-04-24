@@ -13,7 +13,8 @@ INTERFACE
    USES
       StringUtils,
       {oX}
-      uOX, oxuRunRoutines, oxuWindowTypes, oxuWindows, oxuWindow, oxuConsoleBackend;
+      uOX, oxuRunRoutines, oxuConsoleBackend,
+      oxuWindowTypes, oxuWindows, oxuWindow, oxuWindowHelper;
 
 IMPLEMENTATION
 
