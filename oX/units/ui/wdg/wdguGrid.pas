@@ -504,6 +504,7 @@ begin
       ComputeColumns();
       AdjustOffset();
       UpdateScrollbar();
+      SetupUnusableSize();
    end;
 end;
 
@@ -515,6 +516,7 @@ begin
    if(doUpdate) then begin
       AdjustOffset();
       UpdateScrollbar();
+      SetupUnusableSize();
    end;
 end;
 
