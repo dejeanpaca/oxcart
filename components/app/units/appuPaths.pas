@@ -67,7 +67,7 @@ TYPE
       {return path for a specified constant, or nothing if not found}
       function Get(c: appTPathType): StdString;
       {creates the configuration directory}
-      function HomeConfigurationDir(const dir: StdString; local: boolean = false): StdString;
+      function HomeConfigurationDir(const dir: StdString; {%H-}local: boolean = false): StdString;
       {creates the configuration directory}
       function GetConfigurationPath(const info: appTInfo; local: boolean = false): StdString;
       {creates the configuration directory}
