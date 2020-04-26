@@ -264,7 +264,7 @@ procedure MouseHandle();
 begin
    {set the event position}
    m.x   := event.xbutton.x;
-   m.y   := event.xbutton.y;
+   m.y   := wnd.Dimensions.h - 1 - event.xbutton.y;
 
    {set button state}
    SetMouseButtonState(event.xmotion.state);
