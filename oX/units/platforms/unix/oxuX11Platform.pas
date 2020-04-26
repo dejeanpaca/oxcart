@@ -87,16 +87,19 @@ TYPE
 
       procedure OutClientAreaCoordinates({%H-}wnd: oxTWindow; out x, y: single); override;
 
-      class procedure LogError(error: longint); static;
-      procedure xSetSizeHint(wnd: oxTWindow; flags: longint = PMinSize or PMaxSize);
+      procedure XSetSizeHint(wnd: oxTWindow; flags: longint = PMinSize or PMaxSize);
 
       procedure LoadCursor(var c: x.TCursor; shape: LongWord);
       procedure LoadCursor(cursorType: uiTCursorType); override;
       procedure SetCursor(cursor: TCursor);
       procedure SetCursor(cursorType: uiTCursorType); override;
 
+      class procedure LogError(error: longint); static;
       {get the last error}
       function GetError(doDumpCallStack: boolean = true): longint;
+
+      protected
+         function OpenDisplay(): boolean;
    end;
 
 VAR
@@ -138,37 +141,6 @@ begin
 
       DisplayNotOpenedLogged := true;
    end;
-end;
-
-function x11OpenDisplay(): boolean;
-begin
-   Result := false;
-
-   if(x11.DisplayOpened = false) then begin
-      x11.DPY := XOpenDisplay(nil);
-
-      if(x11.DPY <> nil) then begin
-         x11.Screen := DefaultScreenOfDisplay(x11.DPY);
-         x11.DisplayOpened := true;
-      end else begin
-         log.e('X11 > Cannot open X server display.');
-         exit;
-      end;
-   end;
-
-   Result := x11.DisplayOpened;
-end;
-
-{ x11TGlobal }
-
-function oxTX11Platform.GetError(doDumpCallStack: boolean): longint;
-begin
-   Result := LastError.error_code;
-
-   if(doDumpCallStack) and (Result <> 0) then
-      DumpCallStack(1);
-
-   LastError.error_code := 0;
 end;
 
 VAR
@@ -622,7 +594,7 @@ begin
 
       {disable resizing if indicated as so}
       if(not (uiwndpRESIZABLE in wnd.Properties)) then
-         xSetSizeHint(wnd);
+         XSetSizeHint(wnd);
 
       {window successfully created}
       Result := true;
@@ -662,7 +634,6 @@ begin
    Result := true;
 end;
 
-{ SWAP BUFFERS }
 procedure oxTX11Platform.Move(wnd: oxTWindow; x, y: longint);
 var
    error: longint;
@@ -679,7 +650,7 @@ var
 begin
    {make temporarily resizable}
    if(not (uiwndpRESIZABLE in wnd.Properties)) then
-      xSetSizeHint(wnd, 0);
+      XSetSizeHint(wnd, 0);
 
    {resize}
    error := XResizeWindow(DPY, x11TWindow(wnd).wd.h, w, h);
@@ -687,7 +658,7 @@ begin
 
    {restore default hint}
    if(not (uiwndpRESIZABLE in wnd.Properties)) then
-      xSetSizeHint(wnd);
+      XSetSizeHint(wnd);
 end;
 
 procedure oxTX11Platform.OutClientAreaCoordinates(wnd: oxTWindow; out x, y: single);
@@ -696,15 +667,7 @@ begin
    y := 0;
 end;
 
-class procedure oxTX11Platform.LogError(error: longint);
-begin
-   if(error = BadValue) then
-      log.e('X11 > returned bad value')
-   else if(error = BadWindow) then
-      log.w('X11 > XMoveResizeWindow returned bad window');
-end;
-
-procedure oxTX11Platform.xSetSizeHint(wnd: oxTWindow; flags: longint);
+procedure oxTX11Platform.XSetSizeHint(wnd: oxTWindow; flags: longint);
 var
    sizeHints: TXSizeHints;
 
@@ -819,7 +782,7 @@ begin
    PointerDriver := TX11PointerDriver.Create();
 
    {open the display for X11}
-   if(x11OpenDisplay()) then
+   if(OpenDisplay()) then
       Result := true
    else begin
       log.f('X11 > Fatal: Failed to open display.');
@@ -856,7 +819,7 @@ begin
    if(DPY <> nil) then begin
       XSetCloseDownMode(DPY, DestroyAll);
       XCloseDisplay(DPY);
-      x11.DPY := nil;
+      DPY := nil;
       DisplayOpened := false;
    end;
 
@@ -864,6 +827,41 @@ begin
 
    if(not Result) then
       log.e('X11 > Fatal: Failed to close display.');
+end;
+
+class procedure oxTX11Platform.LogError(error: longint);
+begin
+   if(error = BadValue) then
+      log.e('X11 > returned bad value')
+   else if(error = BadWindow) then
+      log.w('X11 > XMoveResizeWindow returned bad window');
+end;
+
+function oxTX11Platform.GetError(doDumpCallStack: boolean): longint;
+begin
+   Result := LastError.error_code;
+
+   if(doDumpCallStack) and (Result <> 0) then
+      DumpCallStack(1);
+
+   LastError.error_code := 0;
+end;
+
+function oxTX11Platform.OpenDisplay(): boolean;
+begin
+   if(DisplayOpened = false) then begin
+      DPY := XOpenDisplay(nil);
+
+      if(DPY <> nil) then begin
+         Screen := DefaultScreenOfDisplay(DPY);
+         DisplayOpened := true;
+      end else begin
+         log.e('X11 > Cannot open X server display.');
+         exit;
+      end;
+   end;
+
+   Result := DisplayOpened;
 end;
 
 { POINTER DRIVER }
