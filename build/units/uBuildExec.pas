@@ -36,7 +36,8 @@ TYPE
          ExitStatus: loopint;
          ExecutableName,
          ErrorDecription,
-         LastLine: StdString;
+         LastLine,
+         StdErr: StdString;
          OnLine: TProcedures;
       end;
 
@@ -215,6 +216,7 @@ begin
    p := GetToolProcess();
 
    p.Executable := platform^.GetExecutablePath();
+   log.v('Running: ' + p.Executable);
 
    if(fpcParameters = nil) then begin
       if(build.FPCOptions.UseConfig = '') then
@@ -256,7 +258,7 @@ begin
 end;
 
 procedure TBuildSystemExec.BuildingFailed(const p: TProcess);
-begin
+begin;
    Output.ErrorDecription := '';
    Output.Success := false;
 
@@ -265,12 +267,16 @@ begin
 
    if(p.ExitCode <> 0) then
       Output.ErrorDecription := 'tool returned exit code: ' + sf(p.ExitCode);
+
    if(p.ExitStatus <> 0) then
       Output.ErrorDecription := 'tool exited with status: ' + sf(p.ExitStatus);
 
    log.e('build > ' + Output.ErrorDecription);
 
    LogOutput(p);
+
+   if(Output.StdErr <> '') then
+      log.e(Output.StdErr);
 end;
 
 procedure TBuildSystemExec.CopyTool(const path: StdString);
@@ -338,6 +344,7 @@ begin
    {$IFDEF DEBUG}
    buffer[0] := #0;
    {$ENDIF}
+
    if(p.Output <> nil) and (p.Output.NumBytesAvailable > 0) then begin
       bufferRead := p.Output.Read(buffer{%H-}, Length(buffer));
       buffer[bufferRead] := #0;
@@ -347,11 +354,12 @@ end;
 
 procedure TBuildSystemExec.StoreOutput(p: TProcess);
 begin
+   Output.StdErr := '';
    Output.ExitCode := p.ExitCode;
 
    if(poUsePipes in p.Options) then begin
       if(not (poStderrToOutPut in p.Options)) and (p.Stderr <> nil) then
-         TProcessUtils.GetString(p.Stderr);
+        Output.StdErr := TProcessUtils.GetString(p.Stderr);
    end;
 end;
 
