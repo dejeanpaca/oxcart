@@ -51,8 +51,6 @@ begin
       Frames[dockable].FrameHeight := 0;
       Frames[dockable].FrameForm   := uiwFRAME_FORM_SIMPLE;
 
-      TitleButtonSpacing := 1;
-
       {window colors}
       Colors.cTitle := tvGetColor4ub(console.White, console.LightBlue);
       Colors.cTitleText := tvGetColor4ub(console.White, console.Transparent);
@@ -68,11 +66,6 @@ begin
       InactiveColors.cTitle := tvGetColor4ub(console.White, console.Blue);
       InactiveColors.cTitleText := tvGetColor4ub(console.White, console.Blue);
       InactiveColors.cTitleBt:= tvGetColor4ub(console.White, console.Blue);
-
-      {set up title text offset}
-      TitleTextOffset[0] := 0;
-      TitleTextOffset[1] := 0;
-      TitleTextOffset[2] := 0;
 
       {look and feel settings}
       TitleTextAlignment := uiwTITLE_ALIGNLEFT;

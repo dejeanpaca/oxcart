@@ -195,8 +195,6 @@ begin
       Frames[dockable].FrameHeight := 1;
       Frames[dockable].FrameForm   := uiwFRAME_FORM_SIMPLE;
 
-      TitleButtonSpacing := 1;
-
       {window colors}
       Colors.cTitle.Assign(84, 122, 201, 255);
       Colors.cTitleText  := cWhite4ub;
@@ -216,21 +214,16 @@ begin
       InactiveColors.cInnerFrame.Assign(0, 0, 0, 255);
       InactiveColors.cTitleBt.Assign(127, 127, 127, 255);
 
-      {set up title text offset}
-      TitleTextOffset[0] := 5;
-      TitleTextOffset[1] := 3;
-      TitleTextOffset[2] := 5;
-
       {look and feel settings}
       TitleTextAlignment := uiwTITLE_ALIGNLEFT;
       ShadowSize := 2;
 
       {title button symbols}
-      cTitleBtSymbols[0] := 'X';
-      cTitleBtSymbols[1] := '_';
-      cTitleBtSymbols[2] := '^';
-      cTitleBtSymbols[3] := '?';
-      cTitleBtSymbols[4] := '>';
+      TitleButtonSymbols[0] := 'X';
+      TitleButtonSymbols[1] := '_';
+      TitleButtonSymbols[2] := '^';
+      TitleButtonSymbols[3] := '?';
+      TitleButtonSymbols[4] := '>';
    end;
 
    { COLORS }
