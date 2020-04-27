@@ -219,11 +219,12 @@ begin
       ShadowSize := 2;
 
       {title button symbols}
-      TitleButtonSymbols[0] := 'X';
-      TitleButtonSymbols[1] := '_';
-      TitleButtonSymbols[2] := '^';
-      TitleButtonSymbols[3] := '?';
-      TitleButtonSymbols[4] := '>';
+      TitleButtonSymbols[uiwBUTTON_CLOSE] := 'X';
+      TitleButtonSymbols[uiwBUTTON_MINIMIZE] := '_';
+      TitleButtonSymbols[uiwBUTTON_MAXIMIZE] := '^';
+      TitleButtonSymbols[uiwBUTTON_RESTORE] := '^';
+      TitleButtonSymbols[uiwBUTTON_HELP] := '?';
+      TitleButtonSymbols[uiwBUTTON_TOTRAY] := '>';
    end;
 
    { COLORS }

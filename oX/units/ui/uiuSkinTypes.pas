@@ -60,6 +60,7 @@ TYPE
       InactiveColors: uiTWindowSkinColors;
 
       TitleButtonSymbols: array[0..uiwcBUTTON_MAX] of Char;
+      TitleButtonGlyphs: array[0..uiwcBUTTON_MAX] of oxTTexture;
 
       Textures: record
          Background: oxTTexture;
