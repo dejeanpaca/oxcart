@@ -87,8 +87,8 @@ begin
    attr.Add(None);
 
    {get a glx visual}
-   wnd.wd.visinfo := glXChooseVisual(x11.DPY, DefaultScreen(x11.DPY), @attr.List[0]);
-   if(wnd.wd.visinfo = nil) then begin
+   wnd.wd.VisInfo := glXChooseVisual(x11.DPY, DefaultScreen(x11.DPY), @attr.List[0]);
+   if(wnd.wd.VisInfo = nil) then begin
       wnd.CreateFail('glx > Error: Unable to find visual.');
       exit(false);
    end;
@@ -164,7 +164,7 @@ begin
       vi := glXGetVisualFromFBConfig(x11.DPY, wnd.fbConfig);
       wnd.wd.LastError := x11.GetError();
       if(vi <> nil) then begin
-         wnd.wd.visinfo := vi;
+         wnd.wd.VisInfo := vi;
 
          log.v('Chose visual config: ' + sf(vi^.visualid));
          exit(true);
@@ -287,7 +287,7 @@ begin
       Result := getContextAttribs(wnd, shareContext);
    end else begin
       method := 'CreateContext';
-      Result := glXCreateContext(x11.DPY, wnd.wd.visinfo, shareContext, true);
+      Result := glXCreateContext(x11.DPY, wnd.wd.VisInfo, shareContext, true);
    end;
 
    wnd.wd.LastError := x11.GetError();
