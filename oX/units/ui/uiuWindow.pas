@@ -1180,7 +1180,7 @@ begin
    data.Instance  := nil;
    data.MinimumInstanceType := nil;
    data.Frame     := uiwFRAME_STYLE_DEFAULT;
-   data.Buttons   := defaultButtons;
+   data.Buttons   := DefaultButtons;
    data.ZIndex    := uiwzcDefaultZIndex;
    data.Properties := DefaultProperties;
 
@@ -2179,10 +2179,10 @@ INITIALIZATION
       uiwndpCLOSE_SELECT,
       uiwndpDROP_SHADOW];
 
-   uiWindow.RootDefaultButtons    := 0;
+   uiWindow.RootDefaultButtons := 0;
    uiWindow.SizeBorder := 6;
 
-   uiWindow.RootDefaultProperties := uiWindow.defaultProperties;
+   uiWindow.RootDefaultProperties := uiWindow.DefaultProperties;
    uiWindow.RootDefaultProperties := uiWindow.RootDefaultProperties +
       [uiwndpQUIT_ON_CLOSE,
       uiwndpAUTO_CENTER];
