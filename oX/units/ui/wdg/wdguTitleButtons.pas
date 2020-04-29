@@ -16,7 +16,8 @@ INTERFACE
       oxuTypes, oxuFont,
       {ui}
       uiuControl, uiuWindow, uiuWindowTypes, uiuTypes, uiuSkinTypes,
-      uiuWidget, uiWidgets, uiuRegisteredWidgets, wdguBase;
+      uiuWidget, uiWidgets, uiuRegisteredWidgets, wdguBase,
+      uiuDraw, uiuDrawUtilities;
 
 TYPE
    { wdgTTitleButton }
@@ -155,6 +156,22 @@ var
 
    scale: single;
 
+procedure getRect(); inline;
+begin
+   r.x := x + Buttons.b[i].x;
+   r.y := y1;
+   r.w := Buttons.w;
+   r.h := Buttons.h;
+end;
+
+procedure setButtonColor();
+begin
+   if(not Buttons.b[i].Highlighted) then
+      pWnd.SetColorBlended(colors^.cTitleBt)
+   else
+      pWnd.SetColorBlended(colors^.cTitleBtHighlight);
+end;
+
 begin
    pWnd := uiTWindow(wnd);
    pSkin := uiTSkin(pWnd.Skin);
@@ -167,38 +184,47 @@ begin
    if(pWnd.Frame = uiwFRAME_STYLE_NONE) or (pSkin = nil) or (Buttons.n <= 0) then
       exit;
 
-   {set button color}
    SetColor(cWhite4ub);
 
    x  := RPosition.x;
    y1 := RPosition.y;
 
-   f := CachedFont;
-   f.Start();
-   scale := (Buttons.h) / f.GetHeight();
-   f.Scale(scale, scale);
+   {we have button glyphs}
+   if(pSkin.Window.TitleButtonGlyphs[0] <> nil) then begin
+      for i := 0 to (Buttons.n - 1) do begin
+         getRect();
 
-   {render all the Buttons}
-   for i := 0 to (Buttons.n - 1) do begin
-      r.x := x + Buttons.b[i].x;
-      r.y := y1;
-      r.w := Buttons.w;
-      r.h := Buttons.h;
+         if(r.x + r.w < wnd.RPosition.x) or (r.x + r.w > wnd.RPosition.x + wnd.Dimensions.w) then
+           continue;
 
-   if(r.x + r.w < wnd.RPosition.x) or (r.x + r.w > wnd.RPosition.x + wnd.Dimensions.w) then
-      continue;
+         setButtonColor();
 
-   if(not Buttons.b[i].Highlighted) then
-      pWnd.SetColorBlended(colors^.cTitleBt)
-   else
-      pWnd.SetColorBlended(colors^.cTitleBtHighlight);
+         uiDrawUtilities.Glyph(r, pSkin.Window.TitleButtonGlyphs[Buttons.b[i].Which]);
+      end;
 
-      f.WriteCentered(pSkin.Window.TitleButtonSymbols[Buttons.b[i].Which], r, oxfpCenterHV);
+      uiDraw.ClearTexture();
+   end else begin
+      f := CachedFont;
+      f.Start();
+      scale := (Buttons.h) / f.GetHeight();
+      f.Scale(scale, scale);
+
+      {render all the buttons}
+      for i := 0 to (Buttons.n - 1) do begin
+         getRect();
+
+         if(r.x + r.w < wnd.RPosition.x) or (r.x + r.w > wnd.RPosition.x + wnd.Dimensions.w) then
+           continue;
+
+         setButtonColor();
+
+         f.WriteCentered(pSkin.Window.TitleButtonSymbols[Buttons.b[i].Which], r, oxfpCenterHV);
+      end;
+
+      f.Scale(1, 1);
+
+      oxf.Stop();
    end;
-
-   f.Scale(1, 1);
-
-   oxf.Stop();
 end;
 
 procedure wdgTTitleButtons.Hover({%H-}x, {%H-}y: longint; what: uiTHoverEvent);
@@ -375,7 +401,7 @@ begin
 end;
 
 INITIALIZATION
-   wdgTitleButtons.ButtonSizeRatio := 0;
+   wdgTitleButtons.ButtonSizeRatio := 0.9;
    wdgTitleButtons.Internal.Register('widget.title_buttons', @init, @deinit);
 
 END.

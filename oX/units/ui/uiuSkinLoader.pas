@@ -11,7 +11,7 @@ INTERFACE
    USES
       uLog, StringUtils, uFile, uFileUtils,
       {ox}
-      oxuPaths, oxuTexture, oxuTextureGenerate,
+      oxuPaths, oxuTexture, oxuTextureGenerate, oxuGlyph, uiuTypes,
       {ui}
       uiuSkin, uiuSkinTypes;
 
@@ -39,6 +39,11 @@ begin
    windowPath := skin.ResourcePath + 'window' + DirectorySeparator;
 
    LoadTexture(windowPath + 'background.png', skin.Window.Textures.Background);
+
+   skin.Window.TitleButtonGlyphs[uiwBUTTON_CLOSE] := oxGlyphs.Load($f00d);
+   skin.Window.TitleButtonGlyphs[uiwBUTTON_MINIMIZE] := oxGlyphs.Load('regular:62161');
+   skin.Window.TitleButtonGlyphs[uiwBUTTON_MAXIMIZE] := oxGlyphs.Load('regular:62160');
+   skin.Window.TitleButtonGlyphs[uiwBUTTON_RESTORE] := oxGlyphs.Load($f2d2);
 end;
 
 class procedure uiTSkinLoader.LoadTexture(const fn: string; out tex: oxTTexture);
