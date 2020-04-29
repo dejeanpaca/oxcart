@@ -35,6 +35,7 @@ TYPE
    { oxTSceneRenderer }
    oxTSceneRenderer = class
       Scene: oxTScene;
+      Viewport: oxPViewport;
 
       constructor Create();
 
@@ -88,8 +89,9 @@ begin
    ZeroOut(p, SizeOf(p));
 
    if(setProjection <> nil) then
-      p.Viewport := setProjection^.Viewport
-   else
+      p.Viewport := setProjection^.Viewport;
+
+   if(p.Viewport = nil) then
       p.Viewport := oxViewport;
 
    p.Projection := setProjection;
@@ -129,13 +131,9 @@ begin
       exit;
 
    params.Camera := @camera.Camera;
-
-   {TODO: Properly use scene viewport to current camera}
-
-   if(camera.UseSceneProjection) then
-      params.Projection := params.Projection
-   else
-      params.Projection := @camera.Projection;
+   params.Projection := @camera.Projection;
+   params.Projection^.Viewport := Viewport;
+   params.Projection^.UpdateViewport();
 
    RenderCamera(params, entity);
 end;
