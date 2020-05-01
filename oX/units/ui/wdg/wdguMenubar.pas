@@ -491,7 +491,7 @@ begin
 end;
 
 INITIALIZATION
-   wdgMenubar.Internal.Register('widget.menubar', @init, @deinit);
+   wdgMenubar.Internal.Register('menubar', @init, @deinit);
 
    wdgMenubar.Color.Assign(28, 28, 36, 255);
    wdgMenubar.Height := MENUBAR_HEIGHT;

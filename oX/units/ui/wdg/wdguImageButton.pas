@@ -405,6 +405,6 @@ begin
 end;
 
 INITIALIZATION
-   wdgImageButton.Internal.Register('widget.image_button', @init, @deinit);
+   wdgImageButton.Internal.Register('image_button', @init, @deinit);
 
 END.

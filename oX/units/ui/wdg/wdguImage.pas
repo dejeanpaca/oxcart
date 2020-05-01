@@ -197,6 +197,6 @@ begin
 end;
 
 INITIALIZATION
-   wdgImage.Internal.Register('widget.image', @init, @deinit);
+   wdgImage.Internal.Register('image', @init, @deinit);
 
 END.

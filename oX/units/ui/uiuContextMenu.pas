@@ -1070,5 +1070,5 @@ INITIALIZATION
    uiContextMenu.BackgroundColor.Assign(48, 48, 48, 244);
    uiContextMenu.BorderColor.Assign(8, 8, 8, 255);
 
-   internalWidget.Register('widget.context_menu', @initializeWidget);
+   internalWidget.Register('context_menu', @initializeWidget);
 END.

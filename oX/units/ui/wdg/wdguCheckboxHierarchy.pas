@@ -111,6 +111,6 @@ begin
 end;
 
 INITIALIZATION
-   wdgCheckboxHierarchy.Internal.Register('widget.checkboxhierarchy', @init, @deinit);
+   wdgCheckboxHierarchy.Internal.Register('checkbox_hierarchy', @init, @deinit);
 
 END.

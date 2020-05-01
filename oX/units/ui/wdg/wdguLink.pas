@@ -65,7 +65,6 @@ TYPE
 
    wdgTLinkGlobal = class(specialize wdgTBase<wdgTLink>)
       Internal: uiTWidgetClass; static;
-      SkinDescriptor: uiTWidgetSkinDescriptor; static;
       DefaultColor: TColor4ub; static;
 
       function Add(const Caption: StdString; const Link: StdString;
@@ -161,7 +160,6 @@ end;
 
 procedure init();
 begin
-   wdgLink.Internal.skinDescriptor := @wdgLink.SkinDescriptor;
    wdgLink.Internal.Done(wdgTLink);
 
    wdgLink := wdgTLinkGlobal.Create(wdgLink.Internal);
@@ -174,9 +172,7 @@ end;
 
 INITIALIZATION
    wdgLink.DefaultColor := cBlue4ub;
-   wdgLink.Internal.Register('widget.link', @init, @deinit);
-
-   uiTWidgetSkinDescriptor.Initialize(wdgLink.SkinDescriptor, 'link');
-   wdgLink.SkinDescriptor.UseColors(wdgLinkSkinColorDescriptor);
+   wdgLink.Internal.Register('link', @init, @deinit);
+   wdgLink.Internal.SkinDescriptor.UseColors(wdgLinkSkinColorDescriptor);
 
 END.

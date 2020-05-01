@@ -39,6 +39,6 @@ begin
 end;
 
 INITIALIZATION
-   wdgEmpty.Internal.Register('widget.empty', @init, @deinit);
+   wdgEmpty.Internal.Register('empty', @init, @deinit);
 
 END.

@@ -174,7 +174,6 @@ TYPE
 
    wdgTInputBoxGlobal = class(specialize wdgTBase<wdgTInputBox>)
       Internal: uiTWidgetClass; static;
-      SkinDescriptor: uiTWidgetSkinDescriptor; static;
 
       {adds a input-box to a window}
       function Add(const Initial: StdString;
@@ -689,7 +688,6 @@ end;
 
 procedure init();
 begin
-   wdgInputBox.Internal.SkinDescriptor := @wdgInputBox.SkinDescriptor;
    wdgInputBox.Internal.Done(wdgTInputBox);
 
    wdgInputBox := wdgTInputBoxGlobal.Create(wdgInputBox.Internal);
@@ -701,10 +699,9 @@ begin
 end;
 
 INITIALIZATION
-   wdgInputBox.Internal.Register('widget.inputbox', @init, @deinit);
+   wdgInputBox.Internal.Register('inputbox', @init, @deinit);
 
-   uiTWidgetSkinDescriptor.Initialize(wdgInputBox.SkinDescriptor, 'input_box');
-   wdgInputBox.SkinDescriptor.UseColors(wdgInputSkinColorDescriptor);
-   wdgInputBox.SkinDescriptor.Setup := @setupSkin;
+   wdgInputBox.Internal.SkinDescriptor.UseColors(wdgInputSkinColorDescriptor);
+   wdgInputBox.Internal.SkinDescriptor.Setup := @setupSkin;
 
 END.

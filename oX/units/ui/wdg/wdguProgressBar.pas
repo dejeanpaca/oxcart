@@ -73,7 +73,6 @@ TYPE
    wdgTProgressBarStatics = class(wdgTProgressBarBase)
       public
       Internal: uiTWidgetClass; static;
-      SkinDescriptor: uiTWidgetSkinDescriptor; static;
 
       {adds a ProgressBar to a window}
       function Add(const Pos: oxTPoint; const Dim: oxTDimensions;
@@ -285,7 +284,7 @@ begin
 end;
 
 INITIALIZATION
-   wdgProgressBar.Internal.Register('widget.progressbar', @init, @deinit);
+   wdgProgressBar.Internal.Register('progressbar', @init, @deinit);
 
    uiTWidgetSkinDescriptor.Initialize(wdgProgressBar.SkinDescriptor, 'progressbar');
    wdgProgressBar.SkinDescriptor.UseColors(wdgProgressBarSkinColorDescriptor);

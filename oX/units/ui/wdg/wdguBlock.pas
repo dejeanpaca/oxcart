@@ -52,6 +52,6 @@ begin
 end;
 
 INITIALIZATION
-   wdgBlock.Internal.Register('widget.block', @init, @deinit);
+   wdgBlock.Internal.Register('block', @init, @deinit);
 
 END.

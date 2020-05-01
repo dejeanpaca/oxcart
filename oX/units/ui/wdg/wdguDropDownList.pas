@@ -353,8 +353,8 @@ begin
 end;
 
 INITIALIZATION
-   wdgDropDownList.Internal.Register('widget.drop_down_list', @init, @deinit);
-   wdgDropDownListMenu.Internal.Register('widget.drop_down_list_menu', @initMenu, @deinitMenu);
+   wdgDropDownList.Internal.Register('drop_down_list', @init, @deinit);
+   wdgDropDownListMenu.Internal.Register('drop_down_list_menu', @initMenu, @deinitMenu);
 
    wdgDropDownList.DropAreaWidth := 16;
 

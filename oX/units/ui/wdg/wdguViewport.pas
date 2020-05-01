@@ -141,6 +141,6 @@ begin
 end;
 
 INITIALIZATION
-   wdgViewport.Internal.Register('widget.viewport', @init, @deinit);
+   wdgViewport.Internal.Register('viewport', @init, @deinit);
 
 END.
