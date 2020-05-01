@@ -37,21 +37,6 @@ CONST
        )
     );
 
-   wdgScrollbarSkinDescriptor: uiTWidgetSkinDescriptor = (
-      Name: 'scrollbar';
-
-      nColors: Length(wdgScrollbarSkinColorDescriptor);
-      nImages: 0;
-      nBools: 0;
-      nStrings: 0;
-
-      Colors: @wdgScrollbarSkinColorDescriptor;
-      Images: nil;
-      Bools: nil;
-      Strings: nil;
-      Setup: nil
-   );
-
 TYPE
 
    { wdgTScrollbar }
@@ -137,6 +122,7 @@ TYPE
 
    wdgTScrollbarGlobal = class(specialize wdgTBase<wdgTScrollbar>)
       Internal: uiTWidgetClass; static;
+      SkinDescriptor: uiTWidgetSkinDescriptor; static;
 
       {minimum handle size}
       MinHandleSize,
@@ -689,7 +675,7 @@ end;
 
 procedure init();
 begin
-   wdgScrollbar.Internal.SkinDescriptor := @wdgScrollbarSkinDescriptor;
+   wdgScrollbar.Internal.SkinDescriptor := @wdgScrollbar.SkinDescriptor;
    wdgScrollbar.Internal.Done(wdgTScrollbar);
 
    wdgScrollbar := wdgTScrollbarGlobal.Create(wdgScrollbar.Internal);
@@ -707,5 +693,8 @@ INITIALIZATION
    wdgScrollbar.LightOpacity := 127;
 
    wdgScrollbar.Internal.Register('widget.scrollbar', @init, @deinit);
+   uiTWidgetSkinDescriptor.Initialize(wdgScrollbar.SkinDescriptor, 'scrollbar');
+   wdgScrollbar.SkinDescriptor.UseColors(wdgScrollbarSkinColorDescriptor);
+
 
 END.

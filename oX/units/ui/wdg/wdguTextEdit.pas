@@ -603,7 +603,7 @@ end;
 
 procedure init();
 begin
-   wdgTextEdit.Internal.SkinDescriptor := @wdgInputSkinDescriptor;
+   wdgTextEdit.Internal.SkinDescriptor := @wdgInputBox.SkinDescriptor;
    wdgTextEdit.Internal.Done(wdgTTextEdit);
 
    wdgTextEdit :=  wdgTTextEditGlobal.Create(wdgTextEdit.Internal);

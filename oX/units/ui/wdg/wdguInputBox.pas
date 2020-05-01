@@ -84,21 +84,6 @@ CONST
       )
    );
 
-   wdgInputSkinDescriptor: uiTWidgetSkinDescriptor = (
-      Name: 'input';
-
-      nColors: 9;
-      nImages: 0;
-      nBools: 0;
-      nStrings: 0;
-
-      Colors: @wdgInputSkinColorDescriptor;
-      Images: nil;
-      Bools: nil;
-      Strings: nil;
-      Setup: nil
-   );
-
 TYPE
    wdgTInputBoxType = (
       wdgINPUT_BOX_TYPE_NORMAL,
@@ -189,6 +174,7 @@ TYPE
 
    wdgTInputBoxGlobal = class(specialize wdgTBase<wdgTInputBox>)
       Internal: uiTWidgetClass; static;
+      SkinDescriptor: uiTWidgetSkinDescriptor; static;
 
       {adds a input-box to a window}
       function Add(const Initial: StdString;
@@ -703,7 +689,7 @@ end;
 
 procedure init();
 begin
-   wdgInputBox.Internal.SkinDescriptor := @wdgInputSkinDescriptor;
+   wdgInputBox.Internal.SkinDescriptor := @wdgInputBox.SkinDescriptor;
    wdgInputBox.Internal.Done(wdgTInputBox);
 
    wdgInputBox := wdgTInputBoxGlobal.Create(wdgInputBox.Internal);
@@ -716,6 +702,9 @@ end;
 
 INITIALIZATION
    wdgInputBox.Internal.Register('widget.inputbox', @init, @deinit);
-   wdgInputSkinDescriptor.Setup := @setupSkin;
+
+   uiTWidgetSkinDescriptor.Initialize(wdgInputBox.SkinDescriptor, 'input_box');
+   wdgInputBox.SkinDescriptor.UseColors(wdgInputSkinColorDescriptor);
+   wdgInputBox.SkinDescriptor.Setup := @setupSkin;
 
 END.

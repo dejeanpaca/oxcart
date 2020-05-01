@@ -40,21 +40,6 @@ CONST
        )
     );
 
-   wdgButtonSkinDescriptor: uiTWidgetSkinDescriptor = (
-      Name: 'button';
-
-      nColors: Length(wdgButtonSkinColorDescriptor);
-      nImages: 0;
-      nBools: 0;
-      nStrings: 0;
-
-      Colors: @wdgButtonSkinColorDescriptor;
-      Images: nil;
-      Bools: nil;
-      Strings: nil;
-      Setup: nil
-   );
-
 TYPE
    { wdgTButton }
 
@@ -95,6 +80,7 @@ TYPE
 
    wdgTButtonGlobal = class(specialize wdgTBase<wdgTButton>)
       Internal: uiTWidgetClass; static;
+      SkinDescriptor: uiTWidgetSkinDescriptor; static;
 
       function Add(const Caption: StdString;
                   const Pos: oxTPoint; const Dim: oxTDimensions;
@@ -346,7 +332,7 @@ end;
 
 procedure init();
 begin
-   wdgButton.Internal.SkinDescriptor := @wdgButtonSkinDescriptor;
+   wdgButton.Internal.SkinDescriptor := @wdgButton.SkinDescriptor;
    wdgButton.Internal.Done(wdgTButton);
 
    wdgButton := wdgTButtonGlobal.Create(wdgButton.Internal);
@@ -359,5 +345,8 @@ end;
 
 INITIALIZATION
    wdgButton.Internal.Register('widget.button', @init, @deinit);
+
+   uiTWidgetSkinDescriptor.Initialize(wdgButton.SkinDescriptor, 'button');
+   wdgButton.SkinDescriptor.UseColors(wdgButtonSkinColorDescriptor);
 
 END.
