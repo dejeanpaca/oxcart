@@ -11,7 +11,7 @@ INTERFACE
    USES
       uLog, StringUtils, uFile, uFileUtils,
       {ox}
-      oxuPaths, oxuTexture, oxuTextureGenerate, oxuGlyph, uiuTypes,
+      oxuPaths, oxuTexture, oxuTextureGenerate, oxuGlyphs, uiuTypes,
       {ui}
       uiuSkin, uiuSkinTypes;
 
