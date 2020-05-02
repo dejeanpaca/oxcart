@@ -33,6 +33,8 @@ TYPE
       function LoadTexture(const name: string; code: loopint; size: loopint): oxTTexture;
       function Load(const name: string; size: loopint = 0): oxTTexture;
       function Load(code: loopint; size: loopint = 0): oxTTexture;
+      function LoadGlyph(const name: string; size: loopint = 0): oxTGlyph;
+      function LoadGlyph(code: loopint; size: loopint = 0): oxTGlyph;
 
       {split path into source and name(the actual path in the source)}
       class procedure SplitSourceName(const path: string; out source, name: string); static;
@@ -79,6 +81,15 @@ var
 
    glyph: oxTFreetypeFontGlyphData;
 
+procedure storeGlyphData();
+begin
+   Result.Width := glyph.Width;
+   result.Height := glyph.Height;
+   Result.BearingX := glyph.BearingX;
+   Result.BearingY := glyph.BearingY;
+   Result.Advance := glyph.Advance;
+end;
+
 begin
    oxTGlyph.Init(Result);
 
@@ -114,9 +125,7 @@ begin
       else
          glyph := font.GetGlyphData(Name, Size);
 
-      Result.Advance := glyph.Advance;
-      Result.BearingX := glyph.BearingX;
-      Result.BearingY := glyph.BearingY;
+      storeGlyphData();
 
       exit();
    end;
@@ -139,10 +148,13 @@ begin
       font.AlphaType := oxFREETYPE_ALPHA_AVERAGE;
       font.MaxPixelValues := true;
 
+
       if(code <> 0) then
          glyph := font.CreateGlyphTexture(code, Result.Texture, Size)
       else
          glyph := font.CreateGlyphTexture(Name, Result.Texture, Size);
+
+      storeGlyphData();
 
       font.Square := monospaced;
       font.ExactSize := exactSize;
@@ -177,6 +189,16 @@ end;
 function oxTGlyphs.Load(code: loopint; size: loopint): oxTTexture;
 begin
    Result := LoadTexture('', code, size);
+end;
+
+function oxTGlyphs.LoadGlyph(const name: string; size: loopint): oxTGlyph;
+begin
+   result := LoadGlyph(name, 0, size);
+end;
+
+function oxTGlyphs.LoadGlyph(code: loopint; size: loopint): oxTGlyph;
+begin
+   result := LoadGlyph('', code, size);
 end;
 
 class procedure oxTGlyphs.SplitSourceName(const path: string; out source, name: string);
