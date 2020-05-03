@@ -85,6 +85,10 @@ begin
          glEnable(GL_TEXTURE_2D);
          glBindTexture(GL_TEXTURE_2D, tex.rId);
          glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+         if(tex.HasAlpha()) then begin
+            glEnable(GL_BLEND)
+         end;
       end else begin
          glDisable(GL_TEXTURE_2D);
          glDisableClientState(GL_TEXTURE_COORD_ARRAY);
