@@ -11,23 +11,23 @@ PROGRAM txt2passtr;
 VAR
    fileName: string;
    parseData: TParseData;
-   first: boolean = false;
+   first: boolean = true;
 
 function readFile(var d: TParseData): boolean;
 var
    ns: string;
 
 begin
-   result := true;
+   Result := true;
 
    ns := StringReplace(d.currentLine, '''', '''''', [rfReplaceAll]);
 
    if(not first) then
-      writeln('''' + ns + '''#10')
+      writeln('#10+  ''' + ns + '''')
    else
-      writeln('+''' + ns + '''#10');
+      writeln('''' + ns + '''');
 
-   first := true;
+   first := false;
 end;
 
 
@@ -46,8 +46,8 @@ BEGIN
 
    TParseData.Init(parseData);
    parseData.ReadMethod       := TParseMethod(@readFile);
-   parseData.readEmptyLines   := true;
-   parseData.stripWhitespace  := false;
+   parseData.ReadEmptyLines   := true;
+   parseData.StripWhitespace  := false;
 
    parseData.Read(fileName);
 END.
