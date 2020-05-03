@@ -147,7 +147,6 @@ begin
 
    {don't use scene widget or apply its viewport (project applies its own)}
    wdg.SceneRender.Enable(false);
-   wdg.SceneRender.Viewport.Enabled := false;
 end;
 
 procedure oxedTGameViewWindow.OnActivate();
