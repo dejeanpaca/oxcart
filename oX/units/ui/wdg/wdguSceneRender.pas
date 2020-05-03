@@ -101,7 +101,6 @@ begin
    oxTSceneRenderParameters.Init(params);
 
    Projection.UseViewport(Viewport);
-   Viewport.Changed := true;
 
    ProjectionStart();
 
