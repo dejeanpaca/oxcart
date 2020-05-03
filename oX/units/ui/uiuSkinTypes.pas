@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, uColors, StringUtils,
       {oX}
-      oxuTexture, uiuTypes, oxuResourcePool;
+      oxuTexture, uiuTypes, oxuResourcePool, oxuGlyph;
 
 TYPE
    { SKINS }
@@ -60,7 +60,7 @@ TYPE
       InactiveColors: uiTWindowSkinColors;
 
       TitleButtonSymbols: array[0..uiwcBUTTON_MAX] of Char;
-      TitleButtonGlyphs: array[0..uiwcBUTTON_MAX] of oxTTexture;
+      TitleButtonGlyphs: array[0..uiwcBUTTON_MAX] of oxTGlyph;
 
       Textures: record
          Background: oxTTexture;
