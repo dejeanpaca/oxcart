@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, uColors,
       {ox}
-      oxuTypes, oxuTexture, oxuRenderUtilities,
+      oxuTypes, oxuTexture, oxuRenderUtilities, oxuGlyph,
       {ui}
       uiuControl, uiuWindow, uiuWindowTypes,
       uiuDraw;
@@ -31,6 +31,7 @@ TYPE
 
       class procedure Glyph(x, y, w, h: single; tex: oxTTexture); static;
       class procedure Glyph(const r: oxTRect; tex: oxTTexture); static;
+      class procedure Glyph(const r: oxTRect; const g: oxTGlyph); static;
    end;
 
 VAR
@@ -103,7 +104,46 @@ end;
 
 class procedure uiTDrawUtilities.Glyph(const r: oxTRect; tex: oxTTexture);
 begin
-  Glyph(r.x, r.y, r.w, r.h, tex);
+   Glyph(r.x, r.y, r.w, r.h, tex);
+end;
+
+class procedure uiTDrawUtilities.Glyph(const r: oxTRect; const g: oxTGlyph);
+var
+   pr: oxTRect;
+   factorx,
+   factory: single;
+   bearingx,
+   bearingy: loopint;
+
+begin
+   if(g.Texture = nil) then
+      exit;
+
+   pr := r;
+   bearingx := 0;
+   bearingy := 0;
+
+
+   factorx := (1 / g.Texture.Width * r.w);
+   factory := (1 / g.Texture.Height * r.h);
+
+   if(g.BearingX <> 0) then begin
+      bearingx := round(factorx * g.BearingX);
+      inc(pr.x, bearingx);
+   end;
+
+   if(g.BearingY <> 0) then begin
+      bearingy := round(factory * (g.Height - g.BearingY + 1));
+      if(bearingy <> 0) then
+         dec(pr.y, bearingy div 2);
+   end;
+
+   if(g.Texture.Height <> g.Height) then begin
+      bearingy := round(factory * (g.Texture.Height - g.Height) / 2);
+      dec(pr.y, bearingy div 2);
+   end;
+
+   oxRenderUtilities.TexturedQuad(pr.x + (pr.w / 2), pr.y - (pr.h / 2), pr.w / 2, pr.h / 2, g.Texture);
 end;
 
 END.
