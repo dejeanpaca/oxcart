@@ -74,8 +74,10 @@ TYPE
       procedure UpdateViewport();
       procedure UseViewport(var v: oxTViewport);
 
-      {get normalized pointer coordinates}
+      {get world position for given pointer coordinates}
       function Unproject(x, y, z: single; const view: TMatrix4f; out world: TVector3f): boolean;
+      {get world position for given pointer coordinates for 2D (works only for straight ortho view, as Z is lost)}
+      function Unproject(x, y: single; const view: TMatrix4f; out world: TVector2f): boolean;
    end;
 
 VAR
@@ -305,6 +307,22 @@ begin
    world[2] := vout[2];
 
    Result := true;
+end;
+
+function oxTProjectionHelper.Unproject(x, y: single; const view: TMatrix4f; out world: TVector2f): boolean;
+var
+   world3: TVector3f;
+
+begin
+   world := vmvZero2f;
+
+   Result := Unproject(x, y, 0, view, world3);
+
+   if(Result) then begin
+      world[0] := world3[0];
+      world[1] := world3[1];
+   end else
+      world := vmvZero2f;
 end;
 
 INITIALIZATION
