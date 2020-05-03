@@ -32,14 +32,8 @@ TYPE
        Offset: oxTPoint;
        Dimensions: oxTDimensions;
 
-       {is the viewport relative}
-       Relative,
        {always scissor when clearing}
        ScissorOnClear: boolean;
-
-       {set position and dimensions}
-       Positionf: oxTPointf;
-       Dimensionsf: oxTDimensionsf;
 
        ClearBits: TBitSet;
        ClearColor: TColor4f;
