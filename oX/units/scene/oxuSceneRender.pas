@@ -188,6 +188,7 @@ begin
 
    oxTSceneRenderParameters.Init(params);
    params.Projection := @projection;
+   params.Viewport := Viewport;
 
    if(layers.n > 0) then begin
       for i := 0 to layers.n - 1 do begin
