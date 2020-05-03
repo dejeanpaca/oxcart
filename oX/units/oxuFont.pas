@@ -355,7 +355,7 @@ begin
 end;
 
 function oxTFont.Cache(const s: StdString; out v: TVector3f; out t: TVector2f; out indices: Word;
-  out actualLength: loopint; maxlen: longint = 0): boolean;
+   out actualLength: loopint; maxlen: longint = 0): boolean;
 var
    {length of string}
    len,
