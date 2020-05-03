@@ -72,6 +72,7 @@ TYPE
       procedure From(const source: oxTProjection);
 
       procedure UpdateViewport();
+      procedure UseViewport(var v: oxTViewport);
 
       {get normalized pointer coordinates}
       function Unproject(x, y, z: single; const view: TMatrix4f; out world: TVector3f): boolean;
@@ -270,6 +271,12 @@ begin
             Ortho(p.Size, p.ZNear, p.ZFar);
       end;
    end;
+end;
+
+procedure oxTProjectionHelper.UseViewport(var v: oxTViewport);
+begin
+   Viewport := @v;
+   UpdateViewport();
 end;
 
 function oxTProjectionHelper.Unproject(x, y, z: single; const view: TMatrix4f; out world: TVector3f): boolean;
