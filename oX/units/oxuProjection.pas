@@ -316,6 +316,15 @@ INITIALIZATION
    serialization.AddProperty('Name', @oxTProjection(nil^).Name, oxSerialization.Types.tString);
    serialization.AddProperty('IsOrtographic', @oxTProjection(nil^).IsOrtographic, oxSerialization.Types.Boolean);
 
+   serialization.AddProperty('FovY', @oxTProjection(nil^).p.FovY, oxSerialization.Types.Single);
+   serialization.AddProperty('Aspect', @oxTProjection(nil^).p.Aspect, oxSerialization.Types.Single);
+   serialization.AddProperty('ZNear', @oxTProjection(nil^).p.ZNear, oxSerialization.Types.Single);
+   serialization.AddProperty('ZFar', @oxTProjection(nil^).p.ZFar, oxSerialization.Types.Single);
+   serialization.AddProperty('Size', @oxTProjection(nil^).p.Size, oxSerialization.Types.Single);
+   serialization.AddProperty('Left', @oxTProjection(nil^).p.l, oxSerialization.Types.Single);
+   serialization.AddProperty('Right', @oxTProjection(nil^).p.r, oxSerialization.Types.Single);
+   serialization.AddProperty('Top', @oxTProjection(nil^).p.t, oxSerialization.Types.Single);
+   serialization.AddProperty('Bottom', @oxTProjection(nil^).p.b, oxSerialization.Types.Single);
 
 FINALIZATION
    FreeObject(serialization);
