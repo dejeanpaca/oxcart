@@ -316,10 +316,6 @@ INITIALIZATION
    serialization.AddProperty('Name', @oxTProjection(nil^).Name, oxSerialization.Types.tString);
    serialization.AddProperty('IsOrtographic', @oxTProjection(nil^).IsOrtographic, oxSerialization.Types.Boolean);
 
-   {TODO: Complete serialization
-    serialization.AddProperty('Position', @oxTProjection(nil^).Position, oxSerialization.Types.TPoint);
-    serialization.AddProperty('Offset', @oxTProjection(nil^).Offset, oxSerialization.Types.TPoint);
-    serialization.AddProperty('Dimensions', @oxTProjection(nil^).Dimensions, oxSerialization.Types.TDimensions);}
 
 FINALIZATION
    FreeObject(serialization);
