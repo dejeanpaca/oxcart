@@ -137,7 +137,7 @@ begin
       editRender.Entity := params.Entity;
       editRender.Camera := params.Camera;
       editRender.Projection := params.Projection;
-      editRender.Scene := Scene;
+      editRender.Scene := params.Scene;
       editRender.Window := Window;
 
       editorData.ComponentRenderers.Call(editRender);
@@ -200,7 +200,6 @@ begin
    Material.MarkPermanent();
 
    wdg.SceneRender.SceneRenderer := oxedTSceneEditRenderer.Create();
-   wdg.SceneRender.SceneRenderer.Scene := wdg.SceneRender.Scene;
    wdg.SceneRender.RenderSceneCameras := false;
 
    oxedTSceneEditRenderer(wdg.SceneRender.SceneRenderer).Material := Material;
