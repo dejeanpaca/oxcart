@@ -558,13 +558,6 @@ begin
       Result.Add('{$INCLUDE oxdefines.inc}');
 end;
 
-function GetComponentUses(): TAppendableString;
-begin
-   Result := '';
-   Result.Add('{components}');
-   Result.Add('oxuPrimitiveModelComponent, oxuCameraComponent');
-end;
-
 function isCMEM(): boolean;
 begin
    Result := oxed.UseCMEM;
@@ -594,8 +587,7 @@ begin
       Result.Add('{$IF NOT DECLARED(cmem)}cmem,{$ENDIF}');
    end;
 
-   Result.Add('{$INCLUDE oxappuses.inc},');
-   Result.Add(GetComponentUses());
+   Result.Add('{$INCLUDE oxappuses.inc}');
 
    if(oxedProject.MainUnit <> '') then begin
       Result := Result + ',';
