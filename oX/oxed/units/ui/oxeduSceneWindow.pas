@@ -51,7 +51,7 @@ TYPE
 
       wdg: record
          State: wdgTLabel;
-         SceneRender: wdgTSceneRender;
+         SceneRender: wdgTOXEDSceneWindowRender;
       end;
 
       constructor Create(); override;
@@ -134,7 +134,7 @@ begin
    oxedSceneWindows.List.Add(Self);
 
    uiWidget.Create.Instance := wdgTOXEDSceneWindowRender;
-   wdg.SceneRender := wdgSceneRender.Add();
+   wdg.SceneRender := wdgTOXEDSceneWindowRender(wdgSceneRender.Add());
    wdg.SceneRender.Scene := oxScene;
    {we want pointer and key events to propagate to the game}
    Exclude(wdg.SceneRender.Properties, wdgpSELECTABLE);

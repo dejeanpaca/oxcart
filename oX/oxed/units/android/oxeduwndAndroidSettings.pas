@@ -83,7 +83,7 @@ begin
       enableAndroidDeployWidgets(wdgTCheckbox(cb).Checked());
 end;
 
-procedure PreAddTabs();
+procedure addTabs();
 begin
    oxedwndProjectSettings.Tabs.AddTab('Android', 'android');
 
@@ -112,7 +112,7 @@ procedure init();
 begin
    oxedwndProjectSettings.OnSave.Add(@saveCallback);
    oxedwndProjectSettings.OnRevert.Add(@revertCallback);
-   oxedwndProjectSettings.PostAddTabs.Add(@PreAddTabs);
+   oxedwndProjectSettings.PostAddTabs.Add(@addTabs);
 end;
 
 INITIALIZATION

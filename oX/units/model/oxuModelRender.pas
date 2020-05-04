@@ -123,7 +123,7 @@ begin
 
      if(Mesh.CullFace <> oxCULL_FACE_DEFAULT) then
         oxRender.CullFace(oxCULL_FACE_DEFAULT);
-  end;
+   end;
 end;
 
 procedure oxTModelRender.Render(model: oxTModel);
