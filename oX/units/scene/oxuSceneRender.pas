@@ -214,16 +214,16 @@ var
 begin
    if(params.Entity.Renderable) then begin
       {backup matrix}
-      Matrix := params.Camera^.Transform.Matrix;
+      Matrix := params.Camera^.Matrix;
 
       {apply entity matrix to cam matrix}
-      params.Camera^.Transform.Matrix := params.Camera^.Transform.Matrix * params.Entity.Matrix;
+      params.Camera^.Matrix := params.Camera^.Matrix * params.Entity.Matrix;
 
       for i := 0 to (params.Entity.Components.n - 1) do begin
          component := params.Entity.Components.List[i];
 
          if(oxTSerializable.IsClass(component.ClassParent, oxTRenderComponent)) then begin
-            params.Camera^.Transform.Apply();
+            params.Camera^.Apply();
             oxTRenderComponent(component).Render();
          end;
       end;
@@ -231,7 +231,7 @@ begin
       RenderEntities(params.Entity.Children, params);
 
       {restore cam matrix}
-      params.Camera^.Transform.Matrix := Matrix;
+      params.Camera^.Matrix := Matrix;
    end;
 end;
 
