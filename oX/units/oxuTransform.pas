@@ -3,6 +3,7 @@
    Copyright (C) 2013. Dejan Boras
 
    NOTE: Rotation order is YZX
+   TODO: Maybe JustApply() should be part of oxTRenderer
 }
 
 {$INCLUDE oxdefines.inc}
@@ -38,6 +39,8 @@ TYPE
       procedure Apply(); virtual;
       {apply the specified matrix (will replace the Matrix property)}
       procedure Apply(const m: TMatrix4f); virtual;
+      {apply the specified matrix to the renderer without overriding this transform}
+      procedure JustApply(const {%H-}m: TMatrix4f); virtual;
 
       procedure Translate(x, y, z: single); virtual;
       procedure GetTranslateMatrix(x, y, z: single; out m: TMatrix4f); virtual;
@@ -140,6 +143,10 @@ procedure oxTTransform.Apply(const m: TMatrix4f);
 begin
    Matrix := m;
    Apply();
+end;
+
+procedure oxTTransform.JustApply(const m: TMatrix4f);
+begin
 end;
 
 procedure oxTTransform.Translate(x, y, z: single);
