@@ -26,6 +26,7 @@ TYPE
       procedure Deserialized(); virtual;
 
       class function IsClass(left, right: TClass): boolean; static;
+      class function IsClass(what: TClass; const name: string): boolean; static;
    end;
 
    oxTSerializableClass = class of oxTSerializable;
@@ -501,12 +502,43 @@ begin
 end;
 
 class function oxTSerializable.IsClass(left, right: TClass): boolean;
+{$IFNDEF OX_LIBRARY_SUPPORT}
+var
+   cur: TClass;
+{$ENDIF}
+
 begin
    {$IFDEF OX_LIBRARY_SUPPORT}
-   Result := left.ClassName = right.ClassName;
+   Result := IsClass(left, right.ClassName);
    {$ELSE}
-   Result := left.ClassType = right.ClassType;
+   cur := left;
+
+   repeat
+     if(cur = right) then
+        exit(true);
+
+     cur := cur.ClassParent;
+   until (cur = nil) or (cur = TObject);
+
+   Result := false;
    {$ENDIF}
+end;
+
+class function oxTSerializable.IsClass(what: TClass; const name: string): boolean;
+var
+   cur: TClass;
+
+begin
+   cur := what.ClassType;
+
+   repeat
+     if(cur.ClassName = name) then
+        exit(true);
+
+     cur := cur.ClassParent;
+   until (cur = nil) or (cur = TObject);
+
+   Result := false;
 end;
 
 { oxTSerializationProperty }
