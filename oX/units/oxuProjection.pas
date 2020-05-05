@@ -290,7 +290,8 @@ end;
 function oxTProjectionHelper.Unproject(x, y, z: single; const view: TMatrix4f; out world: TVector3f): boolean;
 var
    transform: TMatrix4f;
-   vin, vout: TVector4f;
+   vin,
+   vout: TVector4f;
 
 begin
    transform := ProjectionMatrix * view;
@@ -304,13 +305,9 @@ begin
       exit(false);
    end;
 
-   vout[0] := vout[0] / vout[3];
-   vout[1] := vout[1] / vout[3];
-   vout[2] := vout[2] / vout[3];
-
-   world[0] := vout[0];
-   world[1] := vout[1];
-   world[2] := vout[2];
+   world[0] := vout[0] / vout[3];
+   world[1] := vout[1] / vout[3];
+   world[2] := vout[2] / vout[3];
 
    Result := true;
 end;
@@ -322,7 +319,7 @@ var
 begin
    world := vmvZero2f;
 
-   Result := Unproject(x, y, 0, view, world3);
+   Result := Unproject(x, y, 0.0, view, world3);
 
    if(Result) then begin
       world[0] := world3[0];
