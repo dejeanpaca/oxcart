@@ -13,7 +13,8 @@ INTERFACE
       {app}
       appuKeys, appuMouse,
       {ox}
-      oxuTypes, oxuScene, oxuEntity, oxuFont, oxuRunRoutines,
+      oxuTypes, oxuScene, oxuEntity, oxuFont, oxuRunRoutines, oxuSerialization,
+
       {ui}
       uiuTypes, uiuWindow, uiWidgets, uiuWidgetWindow,
       wdguList, wdguHierarchyList, wdguInputBox, uiuWidget, uiuInputBoxOverlay,
@@ -137,7 +138,8 @@ begin
    if(wnd <> nil) and (wnd.wdg.Hierarchy <> nil) then begin
       index := wnd.wdg.Hierarchy.Find(entity.Parent);
 
-      wnd.wdg.Hierarchy.AddItem(index, entity);
+      if(index > -1) or oxTSerializable.IsClass(entity.Parent.ClassType, oxTScene) then
+         wnd.wdg.Hierarchy.AddItem(index, entity);
    end;
 end;
 
