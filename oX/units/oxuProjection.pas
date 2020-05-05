@@ -39,7 +39,7 @@ TYPE
       {set zNear and zFar properties}
       procedure SetZ(zNear, zFar: single);
 
-      {set properties of ortographic projection}
+      {set properties of orthographic projection}
       procedure Ortho(size, zNear, zFar: single);
       procedure Ortho(zNear, zFar: single);
       procedure Ortho(l, r, b, t: single; zNear, zFar: single);
@@ -121,7 +121,7 @@ end;
 
 procedure oxTProjectionHelper.GetProjectionMatrix(out m: TMatrix4f);
 begin
-   if(not p.IsOrtographic) then begin
+   if(not p.IsOrthographic) then begin
       {perspective}
       m := oxTTransform.PerspectiveFrustum(p.FovY, Viewport^.a.Aspect, p.ZNear, p.ZFar)
    end else
@@ -131,7 +131,7 @@ end;
 
 procedure oxTProjectionHelper.SetProjectionMatrix();
 begin
-   if(not p.IsOrtographic) then begin
+   if(not p.IsOrthographic) then begin
       if(Viewport <> nil) then
          {perspective}
          ProjectionMatrix := oxTTransform.PerspectiveFrustum(p.FovY, p.Aspect, p.ZNear, p.ZFar)
@@ -150,13 +150,13 @@ begin
    p.ZNear := zNear;
    p.ZFar := zFar;
 
-   if(zNear <= 0.0) and (not p.IsOrtographic) then
+   if(zNear <= 0.0) and (not p.IsOrthographic) then
       log.w('zNear value should not be 0 or less');
 end;
 
 procedure oxTProjectionHelper.Ortho(size, zNear, zFar: single);
 begin
-   p.IsOrtographic := true;
+   p.IsOrthographic := true;
    UseViewportAspect := true;
 
    p.Aspect := Viewport^.a.Aspect;
@@ -180,7 +180,7 @@ end;
 
 procedure oxTProjectionHelper.Ortho(l, r, b, t: single; zNear, zFar: single);
 begin
-   p.IsOrtographic := true;
+   p.IsOrthographic := true;
    UseViewportAspect := false;
 
    p.l := l;
@@ -238,7 +238,7 @@ end;
 procedure oxTProjectionHelper.Perspective(fovY, aspect, zNear, zFar: single);
 begin
    p.FovY := fovY;
-   p.IsOrtographic := false;
+   p.IsOrthographic := false;
    p.Aspect := aspect;
 
    SetZ(zNear, zFar);
@@ -272,7 +272,7 @@ end;
 procedure oxTProjectionHelper.UpdateViewport();
 begin
    if(UseViewportAspect) then begin
-      if(not p.IsOrtographic) then
+      if(not p.IsOrthographic) then
          Perspective(p.FovY, Viewport^.a.Aspect, p.ZNear, p.ZFar)
       else begin
          if(abs(p.Size) > TSingleHelper.Epsilon) then
@@ -338,7 +338,7 @@ INITIALIZATION
    serialization := oxTSerialization.CreateRecord('oxTProjection');
 
    serialization.AddProperty('Name', @oxTProjection(nil^).Name, oxSerialization.Types.tString);
-   serialization.AddProperty('IsOrtographic', @oxTProjection(nil^).p.IsOrtographic, oxSerialization.Types.Boolean);
+   serialization.AddProperty('IsOrthographic', @oxTProjection(nil^).p.IsOrthographic, oxSerialization.Types.Boolean);
 
    serialization.AddProperty('FovY', @oxTProjection(nil^).p.FovY, oxSerialization.Types.Single);
    serialization.AddProperty('Aspect', @oxTProjection(nil^).p.Aspect, oxSerialization.Types.Single);
