@@ -156,14 +156,20 @@ end;
 
 procedure oxTProjectionHelper.Ortho(size, zNear, zFar: single);
 begin
+   p.IsOrtographic := true;
+   UseViewportAspect := true;
+
    p.Aspect := Viewport^.a.Aspect;
    p.Size := size;
+
    SetZ(zNear, zFar);
+
    p.l := -size * p.Aspect;
    p.r := size * p.Aspect;
-   p.b := size;
+   p.b := -size;
    p.t := size;
-   UseViewportAspect := true;
+
+   SetProjectionMatrix();
 end;
 
 procedure oxTProjectionHelper.Ortho(zNear, zFar: single);
@@ -266,7 +272,7 @@ end;
 procedure oxTProjectionHelper.UpdateViewport();
 begin
    if(UseViewportAspect) then begin
-      if(not IsOrtographic) then
+      if(not p.IsOrtographic) then
          Perspective(p.FovY, Viewport^.a.Aspect, p.ZNear, p.ZFar)
       else begin
          if(abs(p.Size) > TSingleHelper.Epsilon) then
@@ -332,7 +338,7 @@ INITIALIZATION
    serialization := oxTSerialization.CreateRecord('oxTProjection');
 
    serialization.AddProperty('Name', @oxTProjection(nil^).Name, oxSerialization.Types.tString);
-   serialization.AddProperty('IsOrtographic', @oxTProjection(nil^).IsOrtographic, oxSerialization.Types.Boolean);
+   serialization.AddProperty('IsOrtographic', @oxTProjection(nil^).p.IsOrtographic, oxSerialization.Types.Boolean);
 
    serialization.AddProperty('FovY', @oxTProjection(nil^).p.FovY, oxSerialization.Types.Single);
    serialization.AddProperty('Aspect', @oxTProjection(nil^).p.Aspect, oxSerialization.Types.Single);
