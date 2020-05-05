@@ -24,7 +24,6 @@ TYPE
       Camera: oxTCamera;
 
       constructor Create(); override;
-      destructor Destroy(); override;
 
       procedure OnPositionChanged(); override;
       procedure OnRotationChanged(); override;
@@ -56,13 +55,6 @@ begin
 
    Camera.Initialize();
    Projection.Initialize(oxViewport);
-end;
-
-destructor oxTCameraComponent.Destroy();
-begin
-   inherited Destroy();
-
-   Camera.Dispose();
 end;
 
 procedure oxTCameraComponent.OnPositionChanged();

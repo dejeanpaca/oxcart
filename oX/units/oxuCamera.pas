@@ -11,7 +11,7 @@ INTERFACE
    USES
       Math, uStd, vmVector, vmMath,
       {ox}
-      oxuTransform, oxuSerialization, oxuProjectionType, oxuProjection;
+      oxuTransform, oxuSerialization, oxuProjectionType, oxuProjection, oxuRenderer;
 
 CONST
    oxvCameraPosition: TVector3  = (0.0, 0.0, 0.0);
@@ -33,11 +33,9 @@ TYPE
 
       {camera radius}
       Radius: single;
-
-      Transform: oxTTransform;
+      Matrix: TMatrix4f;
 
       procedure Initialize();
-      procedure Dispose();
 
       {reset camera to default values}
       procedure Reset();
@@ -225,20 +223,20 @@ begin
    mpos[1][3] := -vPos[1];
    mpos[2][3] := -vPos[2];
 
+   Matrix := m * mpos;
+
    if(apply) then
-      Transform.Apply(m * mpos)
-   else
-      Transform.Matrix := m * mpos;
+      oxTransform.JustApply(m);
 end;
 
 procedure oxTCamera.Apply(const m: TMatrix4f);
 begin
-   oxTransform.Apply(m);
+   oxTransform.JustApply(m)
 end;
 
 procedure oxTCamera.Apply();
 begin
-   oxTransform.Apply();
+   oxTransform.JustApply(Matrix);
 end;
 
 procedure oxTCamera.GetRay(length: single; out vS, vE: TVector3f);
@@ -249,7 +247,7 @@ end;
 
 procedure oxTCamera.GetPointerOrigin(x, y, z: single; out origin: TVector3f; const projection: oxTProjection);
 begin
-   projection.Unproject(x, y, z, Transform.Matrix, origin);
+   projection.Unproject(x, y, z, Matrix, origin);
 end;
 
 procedure oxTCamera.GetPointerOrigin(x, y: single; out origin: TVector3f; const projection: oxTProjection);
@@ -267,14 +265,7 @@ end;
 
 procedure oxTCamera.Initialize();
 begin
-   Transform := oxTTransform.Instance();
-
    Reset();
-end;
-
-procedure oxTCamera.Dispose();
-begin
-   FreeObject(Transform);
 end;
 
 procedure oxTCamera.Reset();
@@ -284,7 +275,7 @@ begin
    vUp    := oxvCameraUp;
    vRight := oxvCameraRight;
 
-   Transform.Identity();
+   Matrix := vmmUnit4;
 end;
 
 INITIALIZATION
