@@ -158,6 +158,9 @@ begin
 end;
 
 procedure oxTProjectionHelper.Ortho(size, zNear, zFar: single);
+var
+   s: single;
+
 begin
    p.IsOrthographic := true;
    UseViewportAspect := true;
@@ -167,10 +170,12 @@ begin
 
    SetZ(zNear, zFar);
 
-   p.l := -size * p.Aspect;
-   p.r := size * p.Aspect;
-   p.b := -size;
-   p.t := size;
+   s := size / 2;
+
+   p.l := -s * p.Aspect;
+   p.r := s * p.Aspect;
+   p.b := -s;
+   p.t := s;
 
    SetProjectionMatrix();
 end;
