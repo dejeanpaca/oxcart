@@ -302,6 +302,9 @@ function oxPoint(x, y: loopint): oxTPoint;
 {return an oxTDimensions record with the specified width and height}
 function oxDimensions(w, h: loopint): oxTDimensions;
 
+operator = (const a: oxTPoint; const b: oxTPoint): boolean;
+operator = (const a: oxTDimensions; const b: oxTDimensions): boolean;
+
 IMPLEMENTATION
 
 function oxPoint(x, y: loopint): oxTPoint;
@@ -314,6 +317,16 @@ function oxDimensions(w, h: loopint): oxTDimensions;
 begin
    Result.w := w;
    Result.h := h;
+end;
+
+operator = (const a: oxTPoint; const b: oxTPoint): boolean;
+begin
+   Result := (a.x = b.x) and (a.y = b.y);
+end;
+
+operator = (const a: oxTDimensions; const b: oxTDimensions): boolean;
+begin
+
 end;
 
 { oxTProgressIndicatorData }
