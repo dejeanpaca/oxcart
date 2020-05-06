@@ -95,6 +95,15 @@ TYPE
       procedure OnClose(); override;
 
       procedure OnActivate(); override;
+
+      {called when a window is docked}
+      procedure OnDocked(); virtual;
+      {called when a window is undocked}
+      procedure OnUndocked(); virtual;
+      {called when a window is tabbed}
+      procedure OnTabbed(); virtual;
+      {called when a window is floated (removed from tabs)}
+      procedure OnFloat(); virtual;
    end;
 
    { uiTDockableArea }
@@ -677,9 +686,6 @@ end;
 
 function uiTDockableWindow.Dock(const p: oxTPoint; const d: oxTDimensions): uiTDockableWindow;
 begin
-   if(not Docked) then
-      DockedProperties.Frame := Frame;
-
    Move(p);
    Resize(d);
 
@@ -843,6 +849,8 @@ begin
    end;
 
    tParent.Tab(Self);
+
+   Self.OnTabbed();
 end;
 
 procedure uiTDockableWindow.Float();
@@ -888,6 +896,7 @@ begin
             uiTDockableWindow(tabWnd.W.w[0]).Float();
 
          Self.Select();
+         Self.OnFloat();
       end;
    end;
 end;
@@ -924,9 +933,11 @@ begin
 
       Properties := Properties - [uiwndpRESIZABLE, uiwndpDROP_SHADOW];
       Properties := Properties + [uiwndpNO_ESCAPE_KEY];
-   end;
 
-   Docked := true;
+      Docked := true;
+
+      OnDocked();
+   end;
 end;
 
 procedure uiTDockableWindow.SetUndocked();
@@ -949,6 +960,8 @@ begin
          Include(Properties, uiwndpDROP_SHADOW)
       else
          Exclude(Properties, uiwndpNO_ESCAPE_KEY);
+
+      OnUndocked();
    end;
 end;
 
@@ -1239,6 +1252,26 @@ begin
 
    if(TabParent <> nil) then
       uiTDockableTabWindow(TabParent).SelectWindow(Self);
+end;
+
+procedure uiTDockableWindow.OnDocked();
+begin
+
+end;
+
+procedure uiTDockableWindow.OnUndocked();
+begin
+
+end;
+
+procedure uiTDockableWindow.OnTabbed();
+begin
+
+end;
+
+procedure uiTDockableWindow.OnFloat();
+begin
+
 end;
 
 INITIALIZATION
