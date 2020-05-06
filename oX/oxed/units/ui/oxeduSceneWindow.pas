@@ -130,7 +130,7 @@ procedure oxedTSceneWindow.Initialize();
 begin
    inherited;
 
-   Background.Typ := uiwBACKGROUND_NONE;
+   SetBackgroundType(uiwBACKGROUND_NONE);
    oxedSceneWindows.List.Add(Self);
 
    uiWidget.Create.Instance := wdgTOXEDSceneWindowRender;
