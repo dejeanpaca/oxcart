@@ -326,7 +326,7 @@ end;
 
 operator = (const a: oxTDimensions; const b: oxTDimensions): boolean;
 begin
-
+   Result := (a.w = b.w) and (a.h = b.h);
 end;
 
 { oxTProgressIndicatorData }
