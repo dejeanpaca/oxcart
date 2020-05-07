@@ -872,10 +872,12 @@ end;
 
 procedure oxTEntityGlobal.Remove(var entity: oxTEntity);
 begin
-   assert(entity.Parent <> nil, 'Tried to remove scene entity as a regular entity');
+   if(entity <> nil) then begin
+      assert(entity.Parent <> nil, 'Tried to remove scene entity as a regular entity');
 
-   entity.Parent.Remove(entity);
-   entity := nil;
+      entity.Parent.Remove(entity);
+      entity := nil;
+   end;
 end;
 
 constructor oxTEntityGlobal.Create();
