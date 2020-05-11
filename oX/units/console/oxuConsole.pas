@@ -743,7 +743,7 @@ INITIALIZATION
    oxConsole.StatusHeight  := 0;
    oxConsole.WindowZ       := 1000;
 
-   oxConsole.Colors.Background.Assign(32, 32, 32, 232);
+   oxConsole.Colors.Background.Assign(16, 16, 16, 244);
    oxConsole.Colors.StatusBackground.Assign(21, 21, 64, 255);
    oxConsole.Colors.InputBackground.Assign(5, 5, 13, 232);
    oxConsole.Colors.InputText := cWhite4ub;
