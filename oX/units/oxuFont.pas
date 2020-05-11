@@ -122,6 +122,9 @@ TYPE
       function Cache(const s: StdString; out v: TVector2f; out t: TVector2f; out indices: Word;
         out actualLength: loopint; maxlen: longint = 0): boolean;
 
+      {center cache and make it unit size}
+      procedure CenterUnit(var c: oxTFont2DCache);
+
       {write text using a font}
       procedure Write(x, y: single; const s: StdString);
       procedure WriteCentered(const s: StdString; const r: oxTRect);
@@ -559,6 +562,25 @@ begin
 
    Result := Cache(s, c, maxlen);
    actualLength := c.Length;
+end;
+
+procedure oxTFont.CenterUnit(var c: oxTFont2DCache);
+var
+   i: loopint;
+   w,
+   h: Single;
+
+begin
+   w := GetWidth();
+   h := GetHeight();
+
+   for i := 0 to (c.Length * 4) - 1 do begin
+      c.v[i][0] := c.v[i][0] / w;
+      c.v[i][1] := c.v[i][1] / h;
+
+      c.v[i][0] := c.v[i][0] - 0.5;
+      c.v[i][1] := c.v[i][1] - 0.5;
+   end;
 end;
 
 procedure oxTFont.Write(x, y: single; const s: StdString);
