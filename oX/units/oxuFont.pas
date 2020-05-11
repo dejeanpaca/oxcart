@@ -405,7 +405,7 @@ begin
 
    XGetMem(c.v, SizeOf(TVector2f) * c.BufferLength * 4);
    XGetMem(c.t, SizeOf(TVector2f) * c.BufferLength * 4);
-   XGetMem(c.t, SizeOf(PWord) * c.BufferLength * 6);
+   XGetMem(c.i, SizeOf(PWord) * c.BufferLength * 6);
 
    c.ExternalData := false;
 end;
