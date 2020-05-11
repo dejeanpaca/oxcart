@@ -25,11 +25,11 @@ TYPE
    { oxTFont2DCache }
 
    oxTFont2DCache = record
-      {NOTE: There are 6 vertices per character when you calculate buffer}
+      {NOTE: There are 6 indices per character, and 4 for vertex and texture coordinate when you calculate buffer}
 
       {length of the string}
       Length,
-      {length of the provided buffer in characters (makes sense only for external data)}
+      {length of the allocated buffer in characters}
       BufferLength: loopint;
       {indicates if the data (vertex and index) is external}
       ExternalData: Boolean;
@@ -114,6 +114,8 @@ TYPE
       {prepare for font writing and use the specified font}
       procedure Start();
 
+      {allocate a buffer for a cache}
+      procedure Allocate(const s: StdString; var c: oxTFont2DCache; maxlen: longint = 0);
       {cache a string into buffers}
       function Cache(const s: StdString; var c: oxTFont2DCache; maxlen: longint = 0): boolean;
       {cache a string into buffers}
@@ -392,6 +394,22 @@ begin
    end;
 end;
 
+procedure oxTFont.Allocate(const s: StdString; var c: oxTFont2DCache; maxlen: longint);
+begin
+   c.Length := Length(s);
+
+   if(c.Length > maxlen) then
+      c.Length := maxlen;
+
+   c.BufferLength := c.Length;
+
+   XGetMem(c.v, SizeOf(TVector2f) * c.BufferLength * 4);
+   XGetMem(c.t, SizeOf(TVector2f) * c.BufferLength * 4);
+   XGetMem(c.t, SizeOf(PWord) * c.BufferLength * 6);
+
+   c.ExternalData := false;
+end;
+
 function oxTFont.Cache(const s: StdString; var c: oxTFont2DCache; maxlen: longint): boolean;
 var
    {length of string}
@@ -532,7 +550,6 @@ var
 begin
    oxTFont2DCache.Initialize(c);
    c.ExternalData := true;
-   c.BufferLength := Length(v) div 6;
 
    c.v := @v;
    c.t := @t;
@@ -550,8 +567,8 @@ var
    py: single;
 
    v: array[0..16383] of TVector2f;
-   indices: array[0..24575] of Word;
    t: array[0..16383] of TVector2f;
+   indices: array[0..24575] of Word;
 
    m: TMatrix4f;
 
