@@ -130,6 +130,8 @@ TYPE
       procedure WriteInRect(const txt: StdString; const r: oxTRect; breakChars: boolean = true; multiline: boolean = true);
       procedure WriteInRect(const txt: StdString; const r: oxTRect; props: oxTFontPropertiesSet);
 
+      procedure RenderCache(var c: oxTFont2DCache);
+
       {scale a font}
       procedure Scale(x, y: single);
 
@@ -803,6 +805,15 @@ begin
 
       dec(y, GetHeight());
    end;
+end;
+
+procedure oxTFont.RenderCache(var c: oxTFont2DCache);
+begin
+   oxCurrentMaterial.ApplyTexture('texture', Texture);
+
+   oxRender.TextureCoords(c.t[0]);
+   oxRender.Vertex(c.v[0]);
+   oxRender.Primitives(oxPRIMITIVE_TRIANGLES, 6 * c.Length, c.i);
 end;
 
 procedure oxTFont.Scale(x, y: single);
