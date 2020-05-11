@@ -20,15 +20,20 @@ TYPE
 
    oxTTextComponent = class(oxTRenderComponent)
       public
+      Font: oxTFont;
       Text: StdString;
-      {buffered text}
-      Buffer: oxTFontBuffer;
+
+      {cached text}
+      Cache: oxTFont2DCache;
 
       constructor Create(); override;
 
       procedure Render(); override;
 
       procedure SetText(const newText: StdString);
+      procedure SetFont(const newFont: oxTFont);
+
+      procedure RebuildCache();
 
       procedure GetBoundingBox(out bbox: TBoundingBox); override;
       function GetDescriptor(): oxPComponentDescriptor; override;
@@ -47,18 +52,33 @@ VAR
 constructor oxTTextComponent.Create();
 begin
    inherited Create;
+   Font := oxFont.GetDefault();
 end;
 
 procedure oxTTextComponent.Render();
 begin
-   {TODO: Implement rendering}
+   if(Font <> nil) then
+      Font.RenderCache(Cache);
 end;
 
 procedure oxTTextComponent.SetText(const newText: StdString);
 begin
    Text := newText;
+   RebuildCache();
+end;
 
-   {TODO: Rebuild text buffer}
+procedure oxTTextComponent.SetFont(const newFont: oxTFont);
+begin
+   Font := newFont;
+   RebuildCache();
+end;
+
+procedure oxTTextComponent.RebuildCache();
+begin
+   if(Font <> nil) then begin
+      Font.Allocate(Text, Cache);
+      Font.Cache(Text, Cache);
+   end;
 end;
 
 procedure oxTTextComponent.GetBoundingBox(out bbox: TBoundingBox);
