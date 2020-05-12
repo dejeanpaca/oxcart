@@ -61,6 +61,8 @@ TYPE
    uiTWindowHelper = class helper for uiTWindow
       {get the base UI object}
       function GetUI(): uiTUI;
+      {checks if this is a top level ox window}
+      function IsOxw(): boolean;
 
       {select this window (bring to focus)}
       procedure Select();
@@ -488,7 +490,7 @@ begin
    wnd.oxwParent := createData.oxwParent;
 
    {set the base UI object if this is an oxTWindow}
-   if(wnd.oxwParent = wnd) or (wnd.oxwParent = nil) then
+   if(wnd.IsOxw()) then
       oxTWindow(wnd).UIBase := createData.UIBase;
 
    {setup properties}
@@ -1280,15 +1282,13 @@ begin
    Title := newTitle;
 
    {top level window}
-   if(oxwParent = nil) then begin
+   if(IsOxw()) then begin
       oxw := oxTWindow(Self);
       oxw.Viewport.Name := newTitle;
 
-      if(not oxw.oxProperties.Context) and (oxw.oxProperties.Created) then begin
+      if(not oxw.oxProperties.Context) and (oxw.oxProperties.Created) then
          oxTPlatform(oxw.Platform).SetTitle(oxw, newTitle);
-      end;
    end;
-
    Result := Self;
 end;
 
@@ -1349,6 +1349,11 @@ begin
       Result := uiTUI(oxTWindow(oxwParent).UIBase)
    else
       Result := uiTUI(oxTWindow(Self).UIBase);
+end;
+
+function uiTWindowHelper.IsOxw(): boolean;
+begin
+   Result := (oxwParent = nil) or (oxwParent = Self);
 end;
 
 procedure uiTWindowHelper.Select();
