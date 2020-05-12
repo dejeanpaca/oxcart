@@ -162,8 +162,7 @@ TYPE
 
    { wdgTFileListGlobal }
 
-   wdgTFileListGlobal = class(specialize wdgTBase<wdgTFileList>)
-      Internal: uiTWidgetClass; static;
+   wdgTFileListGlobal = object(specialize wdgTBase<wdgTFileList>)
       DirectoryColor,
       FileColor: TColor4ub; static;
 
@@ -173,18 +172,16 @@ TYPE
 
    { wdgTFileGridGlobal }
 
-   wdgTFileGridGlobal = class(specialize wdgTBase<wdgTFileGrid>)
-      Internal: uiTWidgetClass; static;
+   wdgTFileGridGlobal = object(specialize wdgTBase<wdgTFileGrid>)
       FileNameLines: loopint; static;
 
       protected
-         procedure OnAdd(wdg: wdgTFileGrid); override;
+         procedure OnAdd(wdg: wdgTFileGrid); virtual;
    end;
 
    { wdgTHierarchicalFileListGlobal }
 
-   wdgTHierarchicalFileListGlobal = class(specialize wdgTBase<wdgTHierarchicalFileList>)
-      Internal: uiTWidgetClass; static;
+   wdgTHierarchicalFileListGlobal = object(specialize wdgTBase<wdgTHierarchicalFileList>)
    end;
 
 VAR
@@ -916,47 +913,31 @@ end;
 procedure init();
 begin
    wdgFileList.Internal.Done(wdgTFileList);
-
-   wdgFileList := wdgTFileListGlobal.Create(wdgFileList.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgFileList);
 end;
 
 procedure initGrid();
 begin
    wdgFileGrid.Internal.Done(wdgTFileGrid);
-
-   wdgFileGrid := wdgTFileGridGlobal.Create(wdgFileGrid.Internal);
-end;
-
-procedure deinitGrid();
-begin
-   FreeObject(wdgFileGrid);
 end;
 
 procedure initHierarchical();
 begin
    wdgHierarchicalFileList.Internal.Done(wdgTHierarchicalFileList);
-
-   wdgHierarchicalFileList := wdgTHierarchicalFileListGlobal.Create(wdgHierarchicalFileList.Internal);
 end;
 
-procedure deinitHierarchical();
-begin
-   FreeObject(wdgHierarchicalFileList);
-end;
 
 INITIALIZATION
-   wdgFileList.Internal.Register('file_list', @init, @deinit);
-   wdgFileGrid.Internal.Register('file_grid', @initGrid, @deinitGrid);
-   wdgHierarchicalFileList.Internal.Register('hierarchical_file_list', @initHierarchical, @deinitHierarchical);
-
-   wdgFileGrid.FileNameLines := 2;
-
+   wdgFileList.Create();
+   wdgFileList.Internal.Register('file_list', @init);
+   wdgFileGrid.Internal.Register('file_grid', @initGrid);
    wdgFileList.DirectoryColor := uiFiles.DirectoryColor;
    wdgFileList.FileColor.Assign(255, 255, 255, 255);
+
+   wdgHierarchicalFileList.Create();
+   wdgHierarchicalFileList.Internal.Register('hierarchical_file_list', @initHierarchical);
+
+   wdgFileGrid.Create();
+   wdgFileGrid.FileNameLines := 2;
+
 
 END.

@@ -120,9 +120,7 @@ TYPE
 
    { wdgTScrollbarGlobal }
 
-   wdgTScrollbarGlobal = class(specialize wdgTBase<wdgTScrollbar>)
-      Internal: uiTWidgetClass; static;
-
+   wdgTScrollbarGlobal = object(specialize wdgTBase<wdgTScrollbar>)
       {minimum handle size}
       MinHandleSize,
       {default width}
@@ -675,13 +673,6 @@ end;
 procedure init();
 begin
    wdgScrollbar.Internal.Done(wdgTScrollbar);
-
-   wdgScrollbar := wdgTScrollbarGlobal.Create(wdgScrollbar.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgScrollbar);
 end;
 
 INITIALIZATION
@@ -690,7 +681,8 @@ INITIALIZATION
    wdgScrollbar.LightWidth := 10;
    wdgScrollbar.LightOpacity := 127;
 
-   wdgScrollbar.Internal.Register('scrollbar', @init, @deinit);
+   wdgScrollbar.Create();
+   wdgScrollbar.Internal.Register('scrollbar', @init);
    wdgScrollbar.Internal.SkinDescriptor.UseColors(wdgScrollbarSkinColorDescriptor);
 
 

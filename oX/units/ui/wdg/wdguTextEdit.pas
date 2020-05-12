@@ -101,8 +101,7 @@ TYPE
 
    { wdgTTextEditGlobal }
 
-   wdgTTextEditGlobal = class(specialize wdgTBase<wdgTTextEdit>)
-      Internal: uiTWidgetClass; static;
+   wdgTTextEditGlobal = object(specialize wdgTBase<wdgTTextEdit>)
    end;
 
 VAR
@@ -605,16 +604,10 @@ procedure init();
 begin
    wdgTextEdit.Internal.SkinDescriptor := wdgInputBox.Internal.SkinDescriptor;
    wdgTextEdit.Internal.Done(wdgTTextEdit);
-
-   wdgTextEdit :=  wdgTTextEditGlobal.Create(wdgTextEdit.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgTextEdit);
 end;
 
 INITIALIZATION
-   wdgTextEdit.Internal.Register('text_edit', @init, @deinit);
+   wdgTextEdit.Create();
+   wdgTextEdit.Internal.Register('text_edit', @init);
 
 END.

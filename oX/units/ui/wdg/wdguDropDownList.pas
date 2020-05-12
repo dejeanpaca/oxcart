@@ -84,15 +84,13 @@ TYPE
 
    { wdgTDropDownListGlobal }
 
-   wdgTDropDownListGlobal = class(specialize wdgTBase<wdgTDropDownList>)
-      Internal: uiTWidgetClass; static;
+   wdgTDropDownListGlobal = object(specialize wdgTBase<wdgTDropDownList>)
       DropAreaWidth: longint; static;
    end;
 
    { wdgTDropDownListMenuGlobal }
 
-   wdgTDropDownListMenuGlobal = class(specialize wdgTBase<wdgTDropDownListMenu>)
-      Internal: uiTWidgetClass; static;
+   wdgTDropDownListMenuGlobal = object(specialize wdgTBase<wdgTDropDownListMenu>)
    end;
 
 VAR
@@ -331,31 +329,19 @@ end;
 procedure init();
 begin
    wdgDropDownList.Internal.Done(wdgTDropDownList);
-
-   wdgDropDownList := wdgTDropDownListGlobal.Create(wdgDropDownList.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgDropDownList);
 end;
 
 procedure initMenu();
 begin
    wdgDropDownListMenu.Internal.Done(wdgTDropDownListMenu);
-
-   wdgDropDownListMenu := wdgTDropDownListMenuGlobal.Create(wdgDropDownListMenu.Internal);
-end;
-
-procedure deinitMenu();
-begin
-   FreeObject(wdgDropDownListMenu);
 end;
 
 INITIALIZATION
-   wdgDropDownList.Internal.Register('drop_down_list', @init, @deinit);
-   wdgDropDownListMenu.Internal.Register('drop_down_list_menu', @initMenu, @deinitMenu);
-
+   wdgDropDownList.Create();
+   wdgDropDownList.Internal.Register('drop_down_list', @init);
    wdgDropDownList.DropAreaWidth := 16;
+
+   wdgDropDownListMenu.Create();
+   wdgDropDownListMenu.Internal.Register('drop_down_list_menu', @initMenu);
 
 END.

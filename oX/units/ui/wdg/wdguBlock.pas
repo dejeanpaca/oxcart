@@ -22,8 +22,7 @@ TYPE
       procedure Render(); override;
    end;
 
-   wdgTBlockGlobal = class(specialize wdgTBase<wdgTBlock>)
-      Internal: uiTWidgetClass; static;
+   wdgTBlockGlobal = object(specialize wdgTBase<wdgTBlock>)
    end;
 
 VAR
@@ -42,16 +41,10 @@ end;
 procedure init();
 begin
    wdgBlock.Internal.Done(wdgTBlock);
-
-   wdgBlock := wdgTBlockGlobal.Create(wdgBlock.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgBlock);
 end;
 
 INITIALIZATION
-   wdgBlock.Internal.Register('block', @init, @deinit);
+   wdgBlock.Create();
+   wdgBlock.Internal.Register('block', @init);
 
 END.

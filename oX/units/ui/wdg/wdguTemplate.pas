@@ -20,13 +20,10 @@ TYPE
       {override any callbacks here, and expand the class}
    end;
 
-   wdgTTemplateGlobal = class(specialize wdgTBase<wdgTTemplate>)
-     Internal: uiTWidgetClass; static;
-
+   wdgTTemplateGlobal = object(specialize wdgTBase<wdgTTemplate>)
      {adds a template widget to a window}
      function Add(const Caption: StdString; const Pos: oxTPoint; const Dim: oxTDimensions): wdgTTemplate;
    end;
-
 
 VAR
    wdgTemplate: wdgTTemplateGlobal;
@@ -51,16 +48,10 @@ end;
 procedure init();
 begin
    wdgTemplate.internal.Done(wdgTTemplate);
-
-   wdgTemplate := wdgTTemplateGlobal.Create(wdgTemplate.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgTemplate);
 end;
 
 INITIALIZATION
-   wdgTemplate.Internal.Register('template', @init, @deinit);
+   wdgTemplate.Create();
+   wdgTemplate.Internal.Register('template', @init);
 
 END.

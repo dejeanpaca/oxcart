@@ -42,10 +42,7 @@ TYPE
 
    { wdgTLabelGlobal }
 
-   wdgTLabelGlobal = class(specialize wdgTBase<wdgTLabel>)
-      public
-         Internal: uiTWidgetClass; static;
-
+   wdgTLabelGlobal = object(specialize wdgTBase<wdgTLabel>)
       function Add(const Caption: StdString;
                  const Pos: oxTPoint; const Dim: oxTDimensions;
                  inrect: boolean = false): wdgTLabel;
@@ -238,16 +235,10 @@ procedure init();
 begin
    wdgLabel.Internal.NonSelectable := true;
    wdgLabel.Internal.Done(wdgTLabel);
-
-   wdgLabel := wdgTLabelGlobal.Create(wdgLabel.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgLabel);
 end;
 
 INITIALIZATION
-   wdgLabel.Internal.Register('label', @init, @deinit);
+   wdgLabel.Create();
+   wdgLabel.Internal.Register('label', @init);
 
 END.

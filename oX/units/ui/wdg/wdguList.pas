@@ -318,14 +318,12 @@ TYPE
 
    { wdgTListGlobal }
 
-   wdgTListGlobal = class(specialize wdgTBase<wdgTList>)
-      Internal: uiTWidgetClass; static;
+   wdgTListGlobal = object(specialize wdgTBase<wdgTList>)
    end;
 
    { wdgTStringListGlobal }
 
-   wdgTStringListGlobal = class(specialize wdgTBase<wdgTStringList>)
-      Internal: uiTWidgetClass; static;
+   wdgTStringListGlobal = object(specialize wdgTBase<wdgTStringList>)
    end;
 
 VAR
@@ -1564,29 +1562,18 @@ end;
 procedure init();
 begin
    wdgList.Internal.Done(wdgTList);
-
-   wdgList := wdgTListGlobal.Create(wdgList.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgList);
 end;
 
 procedure initString();
 begin
    wdgStringList.Internal.Done(wdgTStringList);
-
-   wdgStringList := wdgTStringListGlobal.Create(wdgStringList.Internal);
-end;
-
-procedure deinitString();
-begin
-   FreeObject(wdgStringList);
 end;
 
 INITIALIZATION
-   wdgList.Internal.Register('.list', @init, @deinit);
-   wdgStringList.Internal.Register('string_list', @initString, @deinitString);
+   wdgList.Create();
+   wdgStringList.Create();
+
+   wdgList.Internal.Register('.list', @init);
+   wdgStringList.Internal.Register('string_list', @initString);
 
 END.

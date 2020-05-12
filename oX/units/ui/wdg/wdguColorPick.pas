@@ -32,7 +32,6 @@ TYPE
    end;
 
    wdgTColorPickGlobal = class(specialize wdgTBase<wdgTColorPick>)
-      Internal: uiTWidgetClass; static;
    end;
 
 VAR
@@ -70,16 +69,10 @@ end;
 procedure init();
 begin
    wdgColorPick.Internal.Done(wdgTColorPick);
-
-   wdgColorPick := wdgTColorPickGlobal.Create(wdgColorPick.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgColorPick);
 end;
 
 INITIALIZATION
-   wdgColorPick.Internal.Register('color_pick', @init, @deinit);
+   wdgColorPick.Create();
+   wdgColorPick.Internal.Register('color_pick', @init);
 
 END.

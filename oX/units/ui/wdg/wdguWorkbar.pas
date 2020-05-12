@@ -49,9 +49,7 @@ TYPE
 
    { wdgTWorkbarGlobal }
 
-   wdgTWorkbarGlobal = class(specialize wdgTBase<wdgTWorkbar>)
-      Internal: uiTWidgetClass; static;
-
+   wdgTWorkbarGlobal = object(specialize wdgTBase<wdgTWorkbar>)
       {default height}
       Height: longint; static;
       Shadows: boolean; static;
@@ -59,7 +57,7 @@ TYPE
       function Add(wnd: uiTWindow): wdgTWorkbar;
 
       protected
-         procedure OnAdd(wdg: wdgTWorkbar); override;
+         procedure OnAdd(wdg: wdgTWorkbar); virtual;
    end;
 
 VAR
@@ -169,17 +167,11 @@ end;
 procedure init();
 begin
    wdgWorkbar.Internal.Done(wdgTWorkbar);
-
-   wdgWorkbar := wdgTWorkbarGlobal.Create(wdgWorkbar.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgWorkbar);
 end;
 
 INITIALIZATION
-   wdgWorkbar.Internal.Register('workbar', @init, @deinit);
+   wdgWorkbar.Create();
+   wdgWorkbar.Internal.Register('workbar', @init);
 
    wdgWorkbar.Height := wdgWORKBAR_HEIGHT;
    wdgWorkbar.Shadows := true;

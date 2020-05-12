@@ -172,9 +172,7 @@ TYPE
 
    { wdgTInputBoxGlobal }
 
-   wdgTInputBoxGlobal = class(specialize wdgTBase<wdgTInputBox>)
-      Internal: uiTWidgetClass; static;
-
+   wdgTInputBoxGlobal = object(specialize wdgTBase<wdgTInputBox>)
       {adds a input-box to a window}
       function Add(const Initial: StdString;
                   const Pos: oxTPoint; const Dim: oxTDimensions): wdgTInputBox;
@@ -184,7 +182,7 @@ TYPE
       {checks if a char is allowed for floating point numbers}
       class function IsFloat(c: char): boolean; static;
 
-      procedure OnAdd(wdg: wdgTInputBox); override;
+      procedure OnAdd(wdg: wdgTInputBox); virtual;
    end;
 
 VAR
@@ -689,18 +687,12 @@ end;
 procedure init();
 begin
    wdgInputBox.Internal.Done(wdgTInputBox);
-
-   wdgInputBox := wdgTInputBoxGlobal.Create(wdgInputBox.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgInputBox);
 end;
 
 INITIALIZATION
-   wdgInputBox.Internal.Register('inputbox', @init, @deinit);
+   wdgInputBox.Create();
 
+   wdgInputBox.Internal.Register('inputbox', @init);
    wdgInputBox.Internal.SkinDescriptor.UseColors(wdgInputSkinColorDescriptor);
    wdgInputBox.Internal.SkinDescriptor.Setup := @setupSkin;
 

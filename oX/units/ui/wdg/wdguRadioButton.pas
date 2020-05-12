@@ -37,9 +37,7 @@ TYPE
 
    { wdgTRadioButtonGlobal }
 
-   wdgTRadioButtonGlobal = class(specialize wdgTBase<wdgTRadioButton>)
-      Internal: uiTWidgetClass; static;
-
+   wdgTRadioButtonGlobal = object(specialize wdgTBase<wdgTRadioButton>)
       Diameter,
       CaptionSpace: longint; static;
       Inner,
@@ -170,20 +168,14 @@ end;
 procedure init();
 begin
    wdgRadioButton.Internal.Done(wdgTRadioButton);
-
-   wdgRadioButton := wdgTRadioButtonGlobal.Create(wdgRadioButton.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgRadioButton);
 end;
 
 INITIALIZATION
+   wdgRadioButton.Create();
    wdgRadioButton.SetSize(16, 16);
    wdgRadioButton.CaptionSpace := 4;
    wdgRadioButton.clrDisabled.Assign(96, 96, 96, 255);
 
-   wdgRadioButton.Internal.Register('radio_button', @init, @deinit);
+   wdgRadioButton.Internal.Register('radio_button', @init);
 
 END.

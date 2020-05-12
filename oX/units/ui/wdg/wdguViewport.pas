@@ -47,8 +47,7 @@ TYPE
       procedure RPositionChanged(); override;
    end;
 
-   wdgTViewportGlobal = class(specialize wdgTBase<wdgTViewport>)
-      Internal: uiTWidgetClass; static;
+   wdgTViewportGlobal = object(specialize wdgTBase<wdgTViewport>)
    end;
 
 VAR
@@ -59,13 +58,6 @@ IMPLEMENTATION
 procedure init();
 begin
    wdgViewport.internal.Done(wdgTViewport);
-
-   wdgViewport := wdgTViewportGlobal.Create(wdgViewport.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgViewport);
 end;
 
 { wdgTViewport }
@@ -147,6 +139,7 @@ begin
 end;
 
 INITIALIZATION
-   wdgViewport.Internal.Register('viewport', @init, @deinit);
+   wdgViewport.Create();
+   wdgViewport.Internal.Register('viewport', @init);
 
 END.

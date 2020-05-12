@@ -30,10 +30,7 @@ TYPE
       procedure Render(); override;
    end;
 
-   wdgTSliderGlobal = class(specialize wdgTBase<wdgTSlider>)
-     public
-     Internal: uiTWidgetClass; static;
-
+   wdgTSliderGlobal = object(specialize wdgTBase<wdgTSlider>)
      {adds a slider widget to a window}
      function Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTSlider;
    end;
@@ -78,16 +75,10 @@ end;
 procedure init();
 begin
    wdgSlider.Internal.Done(wdgTSlider);
-
-   wdgSlider := wdgTSliderGlobal.Create(wdgSlider.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgSlider);
 end;
 
 INITIALIZATION
-   wdgSlider.Internal.Register('slider', @init, @deinit);
+   wdgSlider.Create();
+   wdgSlider.Internal.Register('slider', @init);
 
 END.

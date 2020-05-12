@@ -63,9 +63,7 @@ TYPE
 
    { wdgTImageGlobal }
 
-   wdgTImageGlobal = class(specialize wdgTBase<wdgTImage>)
-      Internal: uiTWidgetClass; static;
-
+   wdgTImageGlobal = object(specialize wdgTBase<wdgTImage>)
       {adds a image to a window}
       function Add(const fn: StdString; const Pos: oxTPoint; const Dim: oxTDimensions): wdgTImage;
    end;
@@ -187,16 +185,10 @@ end;
 procedure init();
 begin
    wdgImage.Internal.Done(wdgTImage);
-
-   wdgImage := wdgTImageGlobal.Create(wdgImage.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgImage);
 end;
 
 INITIALIZATION
-   wdgImage.Internal.Register('image', @init, @deinit);
+   wdgImage.Create();
+   wdgImage.Internal.Register('image', @init);
 
 END.

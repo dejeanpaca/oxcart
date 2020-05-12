@@ -154,9 +154,7 @@ TYPE
 
    { wdgTToolbarGlobal }
 
-   wdgTToolbarGlobal = class(specialize wdgTBase<wdgTToolbar>)
-      Internal: uiTWidgetClass; static;
-
+   wdgTToolbarGlobal = object(specialize wdgTBase<wdgTToolbar>)
       {default height}
       Height: longint; static;
 
@@ -669,19 +667,13 @@ end;
 procedure init();
 begin
    wdgToolbar.Internal.Done(wdgTToolbar);
-
-   wdgToolbar := wdgTToolbarGlobal.Create(wdgToolbar.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgToolbar);
 end;
 
 INITIALIZATION
+   wdgToolbar.Create();
    wdgToolbar.Height := wdgWORKBAR_HEIGHT;
 
-   wdgToolbar.Internal.Register('toolbar', @init, @deinit);
+   wdgToolbar.Internal.Register('toolbar', @init);
    wdgToolbar.Internal.SkinDescriptor.UseColors(wdgToolbarSkinColorDescriptor);
 
 END.

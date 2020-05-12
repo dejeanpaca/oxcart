@@ -67,20 +67,14 @@ TYPE
       procedure Stop();
    end;
 
-   wdgTProgressBarBase = class(specialize wdgTBase<wdgTProgressBar>)
-   end;
-
-   wdgTProgressBarStatics = class(wdgTProgressBarBase)
-      public
-      Internal: uiTWidgetClass; static;
-
+   wdgTProgressBarBase = object(specialize wdgTBase<wdgTProgressBar>)
       {adds a ProgressBar to a window}
       function Add(const Pos: oxTPoint; const Dim: oxTDimensions;
                   max: longint = 100): wdgTProgressBar;
    end;
 
 VAR
-   wdgProgressBar: wdgTProgressBarStatics;
+   wdgProgressBar: wdgTProgressBarBase;
 
 IMPLEMENTATION
 
@@ -199,7 +193,7 @@ begin
    end;
 end;
 
-function wdgTProgressBarStatics.Add(const Pos: oxTPoint; const Dim: oxTDimensions;
+function wdgTProgressBarBase.Add(const Pos: oxTPoint; const Dim: oxTDimensions;
             max: longint = 100): wdgTProgressBar;
 
 begin
@@ -274,17 +268,11 @@ procedure init();
 begin
    wdgProgressBar.Internal.SkinDescriptor := @wdgProgressBarSkinDescriptor;
    wdgProgressBar.Internal.Done(wdgTProgressBar);
-
-   wdgProgressBar := wdgTProgressBarStatics.Create(wdgProgressBar.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgProgressBar);
 end;
 
 INITIALIZATION
-   wdgProgressBar.Internal.Register('progressbar', @init, @deinit);
+   wdgProgressBar.Create();
+   wdgProgressBar.Internal.Register('progressbar', @init);
 
    uiTWidgetSkinDescriptor.Initialize(wdgProgressBar.SkinDescriptor, 'progressbar');
    wdgProgressBar.SkinDescriptor.UseColors(wdgProgressBarSkinColorDescriptor);

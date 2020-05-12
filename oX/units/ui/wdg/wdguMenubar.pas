@@ -60,8 +60,7 @@ TYPE
 
    { wdgTMenubarGlobal }
 
-   wdgTMenubarGlobal = class(specialize wdgTBase<wdgTMenubar>)
-      Internal: uiTWidgetClass; static;
+   wdgTMenubarGlobal = object(specialize wdgTBase<wdgTMenubar>)
       Color: TColor4ub; static;
 
       {default height}
@@ -76,7 +75,7 @@ TYPE
       function Add(wnd: uiTWindow): wdgTMenubar;
 
       protected
-         procedure OnAdd(wdg: wdgTMenubar); override;
+         procedure OnAdd(wdg: wdgTMenubar); virtual;
    end;
 
 VAR
@@ -481,17 +480,11 @@ end;
 procedure init();
 begin
    wdgMenubar.Internal.Done(wdgTMenubar);
-
-   wdgMenubar := wdgTMenubarGlobal.Create(wdgMenubar.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgMenubar);
 end;
 
 INITIALIZATION
-   wdgMenubar.Internal.Register('menubar', @init, @deinit);
+   wdgMenubar.Create();
+   wdgMenubar.Internal.Register('menubar', @init);
 
    wdgMenubar.Color.Assign(28, 28, 36, 255);
    wdgMenubar.Height := MENUBAR_HEIGHT;
