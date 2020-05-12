@@ -164,14 +164,8 @@ begin
    wdg.AutoPosition();
 end;
 
-procedure init();
-begin
-   wdgWorkbar.Internal.Done(wdgTWorkbar);
-end;
-
 INITIALIZATION
-   wdgWorkbar.Create();
-   wdgWorkbar.Internal.Register('workbar', @init);
+   wdgWorkbar.Create('workbar');
 
    wdgWorkbar.Height := wdgWORKBAR_HEIGHT;
    wdgWorkbar.Shadows := true;

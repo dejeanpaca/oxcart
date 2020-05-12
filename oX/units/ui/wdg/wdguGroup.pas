@@ -126,15 +126,9 @@ begin
    Result := Add(Caption, oxNullPoint, oxNullDimensions);
 end;
 
-procedure init();
-begin
-   wdgGroup.Internal.NonSelectable := true;
-   wdgGroup.Internal.Done(wdgTGroup);
-end;
-
 INITIALIZATION
-   wdgGroup.Create();
-   wdgGroup.Internal.Register('group', @init);
+   wdgGroup.Create('group');
+   wdgGroup.Internal.NonSelectable := true;
    wdgGroup.Internal.SkinDescriptor.UseColors(wdgGroupSkinColorDescriptor);
 
 END.

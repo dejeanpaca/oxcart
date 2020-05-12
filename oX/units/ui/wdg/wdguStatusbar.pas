@@ -93,14 +93,8 @@ begin
    wdg.AutoPosition();
 end;
 
-procedure init();
-begin
-   wdgStatusbar.Internal.Done(wdgTStatusbar);
-end;
-
 INITIALIZATION
-   wdgStatusbar.Create();
-   wdgStatusbar.Internal.Register('statusbar', @init);
+   wdgStatusbar.Create('statusbar');
 
    wdgStatusbar.Height := wdgWORKBAR_HEIGHT;
    wdgStatusbar.Color.Assign(255, 127, 0, 255);

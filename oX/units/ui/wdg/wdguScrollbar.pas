@@ -670,19 +670,13 @@ begin
    Result := Add(Total, Visible, oxNullPoint, oxNullDimensions);
 end;
 
-procedure init();
-begin
-   wdgScrollbar.Internal.Done(wdgTScrollbar);
-end;
-
 INITIALIZATION
    wdgScrollbar.MinHandleSize := 16;
    wdgScrollbar.Width := 20;
    wdgScrollbar.LightWidth := 10;
    wdgScrollbar.LightOpacity := 127;
 
-   wdgScrollbar.Create();
-   wdgScrollbar.Internal.Register('scrollbar', @init);
+   wdgScrollbar.Create('scrollbar');
    wdgScrollbar.Internal.SkinDescriptor.UseColors(wdgScrollbarSkinColorDescriptor);
 
 

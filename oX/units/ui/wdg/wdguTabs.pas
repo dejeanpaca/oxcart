@@ -737,16 +737,10 @@ begin
    SurfaceDimensions.h := Dimensions.h - SurfaceOffset.y;
 end;
 
-procedure init();
-begin
-   wdgTabs.Internal.Done(wdgTTabs);
-end;
-
 INITIALIZATION
    wdgTabs.HeaderHeight := 40;
    wdgTabs.HeaderWidth := 80;
 
-   wdgTabs.Create();
-   wdgTabs.internal.Register('tabs', @init);
+   wdgTabs.Create('tabs');
 
 END.

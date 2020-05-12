@@ -375,21 +375,14 @@ begin
    Calculate();
 end;
 
-procedure init();
-begin
-   wdgTitleButtons.Internal.SelectOnAdd := false;
-   wdgTitleButtons.Internal.NonSelectable := true;
-
-   wdgTitleButtons.Internal.Done(wdgTTitleButtons);
-
-   uiWindow.OnCreate.Add(@wdgAdd);
-end;
-
 INITIALIZATION
+   uiWindow.OnCreate.Add(@wdgAdd);
+
    wdgTitleButtons.ButtonSizeRatio := 0.85;
    wdgTitleButtons.ButtonSpacingRatio := 0.15;
 
-   wdgTitleButtons.Create();
-   wdgTitleButtons.Internal.Register('title_buttons', @init);
+   wdgTitleButtons.Create('title_buttons');
+   wdgTitleButtons.Internal.SelectOnAdd := false;
+   wdgTitleButtons.Internal.NonSelectable := true;
 
 END.

@@ -309,22 +309,16 @@ begin
    Result := Add(Caption).Check(value);
 end;
 
-procedure init();
-begin
-   wdgCheckbox.Internal.Done(wdgTCheckbox);
-end;
-
 INITIALIZATION
    wdgCheckbox.Width := 18;
    wdgCheckbox.Height := 18;
    wdgCheckbox.LineWidth := 2.0;
 
-   wdgCheckbox.Create();
+   wdgCheckbox.Create('checkbox');
 
    wdgCheckbox.DisabledColor.Assign(96, 96, 96, 255);
    wdgCheckbox.CheckedColor.Assign(32, 91, 32, 255);
 
-   wdgCheckbox.Internal.Register('checkbox', @init);
    wdgCheckbox.Internal.SkinDescriptor.UseColors(wdgCheckboxSkinColorDescriptor);
 
 END.

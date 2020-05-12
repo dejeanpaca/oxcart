@@ -95,13 +95,7 @@ begin
    ExpanderSeparationWidth := 4 + ItemHeight;
 end;
 
-procedure init();
-begin
-   wdgCheckboxHierarchy.Internal.Done(wdgTCheckboxHierarchy);
-end;
-
 INITIALIZATION
-   wdgCheckboxHierarchy.Create();
-   wdgCheckboxHierarchy.Internal.Register('checkbox_hierarchy', @init);
+   wdgCheckboxHierarchy.Create('checkbox_hierarchy');
 
 END.

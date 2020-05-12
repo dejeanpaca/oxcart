@@ -193,14 +193,8 @@ begin
    Result := Add(Caption, uiWidget.LastRect.BelowOf());
 end;
 
-procedure init();
-begin
-   wdgDivisor.Internal.NonSelectable := true;
-   wdgDivisor.Internal.Done(wdgTDivisor);
-end;
-
 INITIALIZATION
-   wdgDivisor.Create();
-   wdgDivisor.Internal.Register('divisor', @init);
+   wdgDivisor.Create('divisor');
+   wdgDivisor.Internal.NonSelectable := true;
 
 END.

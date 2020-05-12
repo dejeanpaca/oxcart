@@ -55,11 +55,6 @@ VAR
 
 IMPLEMENTATION
 
-procedure init();
-begin
-   wdgViewport.internal.Done(wdgTViewport);
-end;
-
 { wdgTViewport }
 
 constructor wdgTViewport.Create();
@@ -139,7 +134,6 @@ begin
 end;
 
 INITIALIZATION
-   wdgViewport.Create();
-   wdgViewport.Internal.Register('viewport', @init);
+   wdgViewport.Create('viewport');
 
 END.

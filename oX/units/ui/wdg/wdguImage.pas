@@ -182,13 +182,7 @@ begin
    end;
 end;
 
-procedure init();
-begin
-   wdgImage.Internal.Done(wdgTImage);
-end;
-
 INITIALIZATION
-   wdgImage.Create();
-   wdgImage.Internal.Register('image', @init);
+   wdgImage.Create('image');
 
 END.

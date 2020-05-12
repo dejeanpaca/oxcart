@@ -25,13 +25,7 @@ VAR
 
 IMPLEMENTATION
 
-procedure init();
-begin
-   wdgEmpty.Internal.Done(uiTWidget);
-end;
-
 INITIALIZATION
-   wdgEmpty.Create();
-   wdgEmpty.Internal.Register('empty', @init);
+   wdgEmpty.Create('empty');
 
 END.

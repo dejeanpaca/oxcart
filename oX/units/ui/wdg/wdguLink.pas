@@ -157,15 +157,9 @@ begin
    end;
 end;
 
-procedure init();
-begin
-   wdgLink.Internal.Done(wdgTLink);
-end;
-
 INITIALIZATION
-   wdgLink.Create();
+   wdgLink.Create('link');
    wdgLink.DefaultColor := cBlue4ub;
-   wdgLink.Internal.Register('link', @init);
    wdgLink.Internal.SkinDescriptor.UseColors(wdgLinkSkinColorDescriptor);
 
 END.

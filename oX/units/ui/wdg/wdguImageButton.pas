@@ -40,21 +40,6 @@ CONST
       )
    );
 
-  wdgImageButtonSkinDescriptor: uiTWidgetSkinDescriptor = (
-     Name: 'image_button';
-
-     nColors: Length(wdgImageButtonSkinColorDescriptor);
-     nImages: 0;
-     nBools: 0;
-     nStrings: 0;
-
-     Colors: @wdgImageButtonSkinColorDescriptor;
-     Images: nil;
-     Bools: nil;
-     Strings: nil;
-     Setup: nil
-  );
-
 TYPE
    { wdgTImageButton }
 
@@ -388,15 +373,8 @@ begin
    Result.Callback.Use(callback);
 end;
 
-procedure init();
-begin
-   wdgImageButton.Internal.Instance := wdgTImageButton;
-   wdgImageButton.internal.SkinDescriptor := @wdgImageButtonSkinDescriptor;
-   wdgImageButton.internal.Done();
-end;
-
 INITIALIZATION
-   wdgImageButton.Create();
-   wdgImageButton.Internal.Register('image_button', @init);
+   wdgImageButton.Create('image_button');
+   wdgImageButton.Internal.SkinDescriptor.UseColors(wdgImageButtonSkinColorDescriptor);
 
 END.

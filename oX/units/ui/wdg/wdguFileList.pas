@@ -910,33 +910,14 @@ begin
    wdg.EnableGridMode();
 end;
 
-procedure init();
-begin
-   wdgFileList.Internal.Done(wdgTFileList);
-end;
-
-procedure initGrid();
-begin
-   wdgFileGrid.Internal.Done(wdgTFileGrid);
-end;
-
-procedure initHierarchical();
-begin
-   wdgHierarchicalFileList.Internal.Done(wdgTHierarchicalFileList);
-end;
-
-
 INITIALIZATION
-   wdgFileList.Create();
-   wdgFileList.Internal.Register('file_list', @init);
-   wdgFileGrid.Internal.Register('file_grid', @initGrid);
+   wdgFileList.Create('file_list');
    wdgFileList.DirectoryColor := uiFiles.DirectoryColor;
    wdgFileList.FileColor.Assign(255, 255, 255, 255);
 
-   wdgHierarchicalFileList.Create();
-   wdgHierarchicalFileList.Internal.Register('hierarchical_file_list', @initHierarchical);
+   wdgHierarchicalFileList.Create('hierarchical_file_list');
 
-   wdgFileGrid.Create();
+   wdgFileGrid.Create('file_grid');
    wdgFileGrid.FileNameLines := 2;
 
 

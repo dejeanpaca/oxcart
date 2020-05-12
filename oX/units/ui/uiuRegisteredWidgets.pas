@@ -16,12 +16,26 @@ INTERFACE
       uiuBase, uiuTypes, uiuWidget, uiuSkinTypes, uiuSkin, oxuUI;
 
 TYPE
+   { uiTWidgetInternal }
+
+   uiTWidgetInternal = record helper for uiTWidgetClass
+      {initialize a uiTWidgetClass record}
+      class procedure Init(out wc: uiTWidgetClass); static;
+
+      procedure Register(const name: string; classType: uiTWidgetClassType);
+      procedure UseInit(initProc: TProcedure; deinitProc: TProcedure = nil);
+   end;
 
    { uiTRegisteredWidgets }
 
    uiTRegisteredWidgets = record
       {dummy widget class}
       DummyWidgetClass: uiTWidgetClass;
+
+      Internals: record
+         s,
+         e: uiPWidgetClass;
+      end;
 
       {total number of widget types}
       nWidgetTypes,
@@ -31,26 +45,13 @@ TYPE
       WidgetClasses: uiTWidgetClasses;
 
       {registers a widget class}
-         procedure RegisterClass(var wc: uiTWidgetClass);
+      procedure RegisterClass(var wc: uiTWidgetClass);
 
       procedure SetupDefaultWidget(skin: uiTSkin);
 
       procedure Initialize();
       procedure DeInitialize();
    end;
-
-   { uiTWidgetInternal }
-
-   uiTWidgetInternal = record helper for uiTWidgetClass
-      {initialize a uiTWidgetClass record}
-      class procedure Init(out wc: uiTWidgetClass); static;
-      class procedure Init(out wc: uiTWidgetClass; const name: string); static;
-
-      procedure Register(const name: string; initProc: TProcedure; deinitProc: TProcedure = nil);
-      procedure Done(widgetClass: uiTWidgetClassType);
-      procedure Done();
-   end;
-
 
 VAR
    uiRegisteredWidgets: uiTRegisteredWidgets;
@@ -61,13 +62,43 @@ procedure InitDummyWidgetClass();
 begin
    ZeroOut(uiRegisteredWidgets.DummyWidgetClass, SizeOf(uiTWidgetClass));
 
-   uiRegisteredWidgets.DummyWidgetClass.sName := 'wdgDUMMY';
+   uiRegisteredWidgets.DummyWidgetClass.Name := 'wdgDUMMY';
    uiRegisteredWidgets.DummyWidgetClass.SelectOnAdd  := true;
    uiRegisteredWidgets.DummyWidgetClass.Instance := uiTWidget;
 
    uiTWidgetSkinDescriptor.Initialize(uiRegisteredWidgets.DummyWidgetClass.SkinDescriptor);
 end;
 
+{ uiTWidgetInternal }
+
+class procedure uiTWidgetInternal.Init(out wc: uiTWidgetClass);
+begin
+   wc := uiRegisteredWidgets.DummyWidgetClass;
+end;
+
+procedure uiTWidgetInternal.Register(const name: string; classType: uiTWidgetClassType);
+begin
+   Instance := classType;
+
+   Next := nil;
+
+   if(uiRegisteredWidgets.Internals.s = nil) then
+      uiRegisteredWidgets.Internals.s := @Self
+   else
+      uiRegisteredWidgets.Internals.e^.Next := @Self;
+
+   uiRegisteredWidgets.Internals.e := @Self;
+
+   inc(uiRegisteredWidgets.nWidgetTypes);
+
+   uiTWidgetSkinDescriptor.Initialize(SkinDescriptor, name);
+end;
+
+procedure uiTWidgetInternal.UseInit(initProc: TProcedure; deinitProc: TProcedure);
+begin
+   if(initProc <> nil) or (deinitProc <> nil) then
+      ui.WidgetInitializationProcs.Add(InitRoutines, Name, initProc, deinitProc);
+end;
 
 { uiTRegisteredWidgets }
 
@@ -77,7 +108,8 @@ var
    skin: uiTSkin;
 
 begin
-   assert(ReportedWidgetTypes < nWidgetTypes, 'uiWidgets > More classes registered than reported(' + sf(nWidgetTypes) + '). While registering: ' + wc.sName);
+   assert(ReportedWidgetTypes < nWidgetTypes, 'uiWidgets > More classes registered than reported(' +
+      sf(nWidgetTypes) + '). While registering: ' + wc.Name);
 
    inc(ReportedWidgetTypes);
    if(ReportedWidgetTypes <= nWidgetTypes) then begin
@@ -103,6 +135,9 @@ begin
 end;
 
 procedure uiTRegisteredWidgets.Initialize();
+var
+   cur: uiPWidgetClass;
+
 begin
    if(nWidgetTypes > 0) then begin
       {allocate memory for widget classes}
@@ -115,6 +150,13 @@ begin
 
       ZeroOut(WidgetClasses[0], int64(nWidgetTypes) * int64(SizeOf(uiPWidgetClass)));
    end;
+
+   cur := Internals.s;
+
+   if(cur <> nil) then repeat
+      RegisterClass(cur^);
+      cur := cur^.Next;
+   until cur = nil;
 end;
 
 procedure uiTRegisteredWidgets.DeInitialize();
@@ -124,43 +166,6 @@ begin
    WidgetClasses := nil;
 
    ReportedWidgetTypes := 0;
-end;
-
-{ uiTWidgetInternal }
-
-class procedure uiTWidgetInternal.Init(out wc: uiTWidgetClass);
-begin
-   wc := uiRegisteredWidgets.DummyWidgetClass;
-end;
-
-class procedure uiTWidgetInternal.Init(out wc: uiTWidgetClass; const name: string);
-begin
-   Init(wc);
-   wc.sName := name;
-end;
-
-procedure uiTWidgetInternal.Register(const name: string; initProc: TProcedure; deinitProc: TProcedure);
-begin
-   Init(self, CopyAfter(name, '.'));
-
-   if(initProc <> nil) then begin
-      ui.WidgetInitializationProcs.Add(InitRoutines, name, initProc, deinitProc);
-   end;
-
-   inc(uiRegisteredWidgets.nWidgetTypes);
-
-   uiTWidgetSkinDescriptor.Initialize(SkinDescriptor, name);
-end;
-
-procedure uiTWidgetInternal.Done(widgetClass: uiTWidgetClassType);
-begin
-   Self.Instance := widgetClass;
-   Done();
-end;
-
-procedure uiTWidgetInternal.Done();
-begin
-   uiRegisteredWidgets.RegisterClass(Self);
 end;
 
 procedure skinInitialize();

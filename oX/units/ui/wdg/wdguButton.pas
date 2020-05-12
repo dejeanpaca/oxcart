@@ -327,14 +327,8 @@ begin
    Result := Add(Caption, uiWidget.LastRect.BelowOf(), oxNullDimensions, ActionEvent);
 end;
 
-procedure init();
-begin
-   wdgButton.Internal.Done(wdgTButton);
-end;
-
 INITIALIZATION
-   wdgButton.Create();
-   wdgButton.Internal.Register('button', @init);
+   wdgButton.Create('button');
    wdgButton.Internal.SkinDescriptor.UseColors(wdgButtonSkinColorDescriptor);
 
 END.
