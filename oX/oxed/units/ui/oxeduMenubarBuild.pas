@@ -60,6 +60,7 @@ begin
    oxedMenubar.Project.FindByAction(oxedActions.RECODE)^.Enable(enable);
    oxedMenubar.Project.FindByAction(oxedActions.CLEANUP)^.Enable(enable);
    oxedMenubar.Project.FindByAction(oxedActions.RESCAN)^.Enable(enable);
+   oxedMenubar.Project.FindByAction(oxedActions.RECREATE)^.Enable(enable);
    oxedMenubar.Project.FindByAction(oxedActions.REBUILD_THIRD_PARTY)^.Enable(enable);
 
    oxedMenubar.Build.Enable(enable);
