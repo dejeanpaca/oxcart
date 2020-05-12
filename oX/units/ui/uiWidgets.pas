@@ -162,6 +162,7 @@ TYPE
       procedure SetDefault(height: longint);
 
       procedure GoLeft();
+      procedure GoZero();
       procedure GoBelow(spacing: loopint = -1);
 
       function AboveOf(xOffset: longint = 0; yOffset: longint = 0; spacing: boolean = true): oxTPoint;
@@ -339,6 +340,12 @@ end;
 procedure uiTWidgetLastRect.GoLeft();
 begin
    r.x := wdgDEFAULT_SPACING;
+   r.w := 0;
+end;
+
+procedure uiTWidgetLastRect.GoZero();
+begin
+   r.x := 0;
    r.w := 0;
 end;
 
