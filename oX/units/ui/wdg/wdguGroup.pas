@@ -17,6 +17,23 @@ INTERFACE
       uiuWidget, uiuWindow, uiWidgets, uiuWidgetRender, uiuRegisteredWidgets, uiuDraw,
       wdguBase;
 
+CONST
+  wdgscGROUP_BORDER = 0;
+  wdgscGROUP_SURFACE = 1;
+
+  {TODO: Setup skin, to pickup from default colors}
+
+  wdgGroupSkinColorDescriptor: array[0..1] of uiTWidgetSkinColorDescriptor = (
+      (
+         Name: 'border';
+         Color: (18, 18, 18, 255)
+      ),
+      (
+         Name: 'surface';
+         Color: (36, 36, 36, 255)
+      )
+   );
+
 TYPE
 
    { wdgTGroup }
@@ -65,13 +82,15 @@ begin
    fh := f.GetHeight();
 
    if(not Transparent) then begin
-      SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Surface);
+      SetColor(GetColor(wdgscGROUP_SURFACE));
       uiDraw.Box(RPosition, Dimensions);
    end;
 
    if(RenderBorder) then begin
-      SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Text);
-      uiRenderWidget.CurvedFrame(RPosition.x, RPosition.y - Dimensions.h + 1, RPosition.x + Dimensions.w - 1, RPosition.y - fh div 2);
+      SetColor(GetColor(wdgscGROUP_BORDER));
+
+      uiRenderWidget.CurvedFrame(RPosition.x, RPosition.y - Dimensions.h + 1,
+         RPosition.x + Dimensions.w - 1, RPosition.y - fh div 2);
    end;
 
    if(Caption <> '') then begin
@@ -85,6 +104,7 @@ begin
       end;
 
       SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.Text);
+
       f.Start();
          f.Write(RPosition.x + 8, RPosition.y - fh, Caption);
       oxf.Stop();
@@ -123,5 +143,6 @@ end;
 
 INITIALIZATION
    wdgGroup.Internal.Register('group', @init, @deinit);
+   wdgGroup.Internal.SkinDescriptor.UseColors(wdgGroupSkinColorDescriptor);
 
 END.
