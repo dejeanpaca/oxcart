@@ -160,8 +160,6 @@ begin
    if(oxProperties.Fullscreen) then
       exit;
 
-   oxPlatform.Maximize(Self);
-
    if(oxUIHooks <> nil) then
       oxUIHooks.Maximize(Self);
 end;
@@ -170,8 +168,6 @@ procedure oxTWindowHelper.Minimize();
 begin
    if(oxProperties.Fullscreen) then
       exit;
-
-   oxPlatform.Minimize(Self);
 
    if(oxUIHooks <> nil) then
       oxUIHooks.Minimize(Self);
@@ -183,8 +179,6 @@ begin
       LeaveFullscreen();
       exit;
    end;
-
-   oxPlatform.Restore(Self);
 
    if(oxUIHooks <> nil) then
       oxUIHooks.Restore(Self);

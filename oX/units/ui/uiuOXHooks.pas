@@ -77,18 +77,17 @@ end;
 
 procedure uiTOXHooks.Minimize(wnd: oxTWindow);
 begin
-   Include(wnd.Properties, uiwndpMINIMIZED);
+   uiTWindow(wnd).Minimize();
 end;
 
 procedure uiTOXHooks.Maximize(wnd: oxTWindow);
 begin
-   Exclude(wnd.Properties, uiwndpMINIMIZED);
-   Include(wnd.Properties, uiwndpMAXIMIZED);
+   uiTWindow(wnd).Maximize();
 end;
 
 procedure uiTOXHooks.Restore(wnd: oxTWindow);
 begin
-   wnd.Properties := wnd.Properties - [uiwndpMINIMIZED, uiwndpMAXIMIZED];
+   uiTWindow(wnd).Restore();
 end;
 
 procedure uiTOXHooks.InitializeWindow(wnd: oxTWindow);
