@@ -13,7 +13,7 @@ INTERFACE
       {app}
       appuEvents, appuInputTypes, appuKeys, appuKeyEvents, appuMouse, appuMouseEvents,
       {oX}
-      oxuTypes,
+      oxuTypes, oxuPaths,
       oxuWindowTypes, oxuWindow, oxuWindows, oxuWindowHelper,
       oxuPlatform, oxuPlatforms,
       oxuWindowsOS, oxuRenderer,
@@ -717,6 +717,8 @@ begin
       if(wnd.ErrorCode = 0) then
          wnd.CreateFail('Failed to create window due to error: ' + winos.FormatMessage(winosTWindow(wnd).wd.LastError));
    end;
+
+   wnd.SetIcon(oxPaths.Find(oxPaths.UI + 'window.ico'));
 
    {done}
    if(uiwndpVISIBLE in wnd.Properties) then
