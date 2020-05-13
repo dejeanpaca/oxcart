@@ -13,7 +13,7 @@ INTERFACE
       {oX}
       uOX, oxuTypes, oxuViewport, oxuGlobalInstances,
       oxuWindowTypes, oxuWindowHelper,
-       oxuPlatform, oxuUIHooks, oxuRenderer, oxuRender,
+      oxuPlatform, oxuUIHooks, oxuRenderer, oxuRender,
       {ui}
       uiuWindowTypes, uiuTypes;
 
@@ -46,7 +46,7 @@ var
    title: string;
 
 begin
-   title  := oxEngineName;
+   title := oxEngineName;
 
    if(appInfo.Title <> '') then
       title := appInfo.Title

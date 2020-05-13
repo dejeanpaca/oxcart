@@ -378,10 +378,11 @@ end;
 INITIALIZATION
    uiWindow.OnCreate.Add(@wdgAdd);
 
+   wdgTitleButtons.Create('title_buttons');
+
    wdgTitleButtons.ButtonSizeRatio := 0.85;
    wdgTitleButtons.ButtonSpacingRatio := 0.15;
 
-   wdgTitleButtons.Create('title_buttons');
    wdgTitleButtons.Internal.SelectOnAdd := false;
    wdgTitleButtons.Internal.NonSelectable := true;
 
