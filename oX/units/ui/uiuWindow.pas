@@ -63,6 +63,12 @@ TYPE
       function GetUI(): uiTUI;
       {checks if this is a top level ox window}
       function IsOxw(): boolean;
+      {get a platform for this oxw window}
+      function GetPlatform(): oxTPlatform;
+      {checks if this window is a ox window and ready to function (initialized and created)}
+      function IsOxwReady(): boolean;
+      {checks if this window is ready to function (initialized and created)}
+      function IsReady(): boolean;
 
       {select this window (bring to focus)}
       procedure Select();
@@ -227,8 +233,12 @@ TYPE
 
       {set window texture}
       procedure SetIcon(tex: oxTTexture);
-      {set window texture from file}
+      {set window icon from file}
       function SetIcon(const fn: string): loopint;
+      {set system icon from file}
+      function SetSystemIcon(const fn: string): loopint;
+      {set window icon texture from file}
+      function SetIconTexture(const fn: string): loopint;
       {dispose of the icon}
       procedure DisposeIcon();
 
@@ -1257,14 +1267,25 @@ begin
 end;
 
 function uiTWindowHelper.SetIcon(const fn: string): loopint;
+begin
+   if(not IsOxw()) then
+      Result := SetIconTexture(fn)
+   else
+      SetSystemIcon(fn);
+end;
+
+function uiTWindowHelper.SetSystemIcon(const fn: string): loopint;
+begin
+   Result := GetPlatform().SetSystemIcon(oxTWindow(Self), fn);
+end;
+
+function uiTWindowHelper.SetIconTexture(const fn: string): loopint;
 var
    tex: oxTTexture;
 
 begin
    Result := oxTextureGenerate.Generate(fn, tex);
    SetIcon(tex);
-
-   {TODO: Set system icon}
 end;
 
 procedure uiTWindowHelper.DisposeIcon();
@@ -1287,7 +1308,7 @@ begin
       oxw := oxTWindow(Self);
       oxw.Viewport.Name := newTitle;
 
-      if(not oxw.oxProperties.Context) and (oxw.oxProperties.Created) then
+      if(IsReady()) then
          oxTPlatform(oxw.Platform).SetTitle(oxw, newTitle);
    end;
    Result := Self;
@@ -1355,6 +1376,27 @@ end;
 function uiTWindowHelper.IsOxw(): boolean;
 begin
    Result := (oxwParent = nil) or (oxwParent = Self);
+end;
+
+function uiTWindowHelper.GetPlatform(): oxTPlatform;
+begin
+   Result := oxTPlatform(oxTWindow(Self).Platform);
+end;
+
+function uiTWindowHelper.IsOxwReady(): boolean;
+begin
+   if(IsOxw()) then
+      Result := (not oxTWindow(Self).oxProperties.Context) and oxTWindow(Self).oxProperties.Created
+   else
+      Result := false;
+end;
+
+function uiTWindowHelper.IsReady(): boolean;
+begin
+   Result := uiwndpINITIALIZED in Properties;
+
+   if(IsOxw()) then
+      Result := Result and (not oxTWindow(Self).oxProperties.Context) and oxTWindow(Self).oxProperties.Created;
 end;
 
 procedure uiTWindowHelper.Select();
