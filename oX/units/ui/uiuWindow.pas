@@ -1270,10 +1270,12 @@ end;
 
 function uiTWindowHelper.SetIcon(const fn: string): loopint;
 begin
-   if(not IsOxw()) then
-      Result := SetIconTexture(fn)
-   else
-      SetSystemIcon(fn);
+   if(fn <> '') then begin
+     if(not IsOxw()) then
+        Result := SetIconTexture(fn)
+     else
+        SetSystemIcon(fn);
+   end;
 end;
 
 function uiTWindowHelper.SetSystemIcon(const fn: string): loopint;
