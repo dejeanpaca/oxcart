@@ -52,7 +52,7 @@ begin
    if(IgnoreFileTypes.FindLowercase(lext) >= 0) or (ProjectIgnoreFileTypes.FindLowercase(lext) >= 0) then
      exit(true);
    {$ELSE}
-   if(IgnoreFileTypes.Find(ext) >= 0) or (ProjectIgnoreFileTypes.Find(ext) >= 0) then
+   if(IgnoreFileTypes.FindString(ext) >= 0) or (ProjectIgnoreFileTypes.FindString(ext) >= 0) then
      exit(true);
    {$ENDIF}
 
