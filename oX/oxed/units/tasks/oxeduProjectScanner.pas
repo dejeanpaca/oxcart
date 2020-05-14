@@ -103,9 +103,6 @@ begin
 
    if(oxedProjectScanner.Task.Terminated) then
       exit(false);
-
-   if(oxedProjectScanner.Task.Terminated) then
-      exit(false);
 end;
 
 function onDirectory(const fd: TFileTraverseData): boolean;
