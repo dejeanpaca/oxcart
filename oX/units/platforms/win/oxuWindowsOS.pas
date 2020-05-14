@@ -189,13 +189,17 @@ begin
    end;
 end;
 
-function winTWindowsOSGlobal.LoadIcon(const fn: StdString; w: windows.UINT; h: windows.UINT; flags: windows.UINT): HICON;
+function winTWindowsOSGlobal.LoadIcon(const fn: StdString; w: windows.UINT; h: windows.UINT; flags: windows.UINT): windows.HICON;
 begin
    if(w = 0) or (h = 0) then
       flags := flags or LR_DEFAULTSIZE;
 
-   Result := Windows.LoadImage(0, pchar(fn), IMAGE_ICON, 0, 0,
-      LR_LOADFROMFILE or flags);
+   Result := Windows.LoadImage(0, pchar(fn), IMAGE_ICON, 0, 0, LR_LOADFROMFILE or flags);
+
+   if(winos.GetLastError(true) <> 0) then begin
+      log.w('Failed to load icon: ' + fn);
+      Result := 0;
+   end;
 end;
 
 END.

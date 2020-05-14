@@ -1028,7 +1028,7 @@ end;
 function oxTWindowsPlatform.SetSystemIcon(wnd: oxTWindow; const fn: string): loopint;
 var
    icon,
-   smallIcon: HICON;
+   smallIcon: windows.HICON;
 
 begin
    Result := 0;
@@ -1037,10 +1037,10 @@ begin
    smallIcon := winos.LoadIcon(fn, 16, 16, LR_SHARED);
 
    if(icon <> 0) then
-      SendMessage(winosTWindow(wnd).wd.h, WM_SETICON, ICON_BIG, icon);
+      SendMessage(winosTWindow(wnd).wd.h, WM_SETICON, ICON_BIG, LPARAM(icon));
 
    if(smallIcon <> 0) then
-      SendMessage(winosTWindow(wnd).wd.h, WM_SETICON, ICON_SMALL, smallIcon);
+      SendMessage(winosTWindow(wnd).wd.h, WM_SETICON, ICON_SMALL, LPARAM(smallIcon));
 
    if(icon = 0) then
       Result := eFAIL;
