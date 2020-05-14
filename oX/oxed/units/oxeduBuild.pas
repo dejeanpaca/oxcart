@@ -788,7 +788,7 @@ procedure StandaloneSteps();
 begin
    oxedBuild.MoveExecutable();
    oxedBuild.CopyLibraries();
-   oxedBuildAssets.Deploy();
+   oxedBuildAssets.Deploy(oxedBuild.TargetPath);
 end;
 
 function createPath(const name, path: StdString): boolean;
