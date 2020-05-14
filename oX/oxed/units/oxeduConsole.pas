@@ -9,11 +9,11 @@ UNIT oxeduConsole;
 INTERFACE
 
    USES
-      uLog,
+      uLog, uStd, udvars,
       {ox}
       oxuRunRoutines, oxuConsoleBackend,
       {oxed}
-      uOXED;
+      uOXED, oxeduSettings;
 
 TYPE
    { oxedTConsole }
@@ -49,11 +49,16 @@ VAR
 
 IMPLEMENTATION
 
+VAR
+   consoleContentsSize: loopint = 1024;
+   dvConsoleContentsSize: TDVar;
+
 procedure init();
 begin
    console.Init(oxedConsole.con);
    oxedConsole.con.Name := 'oxed';
    oxedConsole.con.Initialize();
+   oxedConsole.con.SetContentsSize(consoleContentsSize);
 end;
 
 procedure deinit();
@@ -168,5 +173,7 @@ end;
 
 INITIALIZATION
    oxed.Init.Add('console', @init, @deinit);
+
+   dvgOXED.Add(dvConsoleContentsSize, 'console_contents_size', dtcSIZEINT, @consoleContentsSize);
 
 END.
