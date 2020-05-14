@@ -37,8 +37,8 @@ begin
 
    Configuration := oxedTPlatformConfiguration.Create();
 
-   AddArchitecture(oxedTPlatformArchitecture.Create('Windows x32', 'i386'));
-   AddArchitecture(oxedTPlatformArchitecture.Create('Windows x64', 'x86_64'));
+   AddArchitecture(oxedTPlatformArchitecture.Create('Windows x32', 'i386')).Platform := 'i386-win32';
+   AddArchitecture(oxedTPlatformArchitecture.Create('Windows x64', 'x86_64')).Platform := 'x86_64-win64';
 end;
 
 procedure init();

@@ -968,6 +968,10 @@ begin
 end;
 
 procedure oxedTBuildGlobal.RunTask();
+var
+   cpu,
+   os: TFPCPlatformString;
+
 begin
    if(not oxedBuild.Buildable(true)) or (not oxedProject.Valid()) then begin
       Reset();
@@ -980,11 +984,14 @@ begin
    build.Options.IsLibrary := IsLibrary();
 
    {determine if we need third party units}
-   oxedBuild.IncludeThirdParty := (not oxedProject.Session.ThirdPartyBuilt) or oxedProject.Session.IncludeThirdPartyUnits;
+   oxedBuild.IncludeThirdParty := (not oxedProject.Session.ThirdPartyBuilt) or
+      oxedProject.Session.IncludeThirdPartyUnits;
+
    log.v('Third party units included: ' + sf(oxedBuild.IncludeThirdParty));
 
    {rebuild instead of recode if initial build not done}
-   if(BuildType = OXED_BUILD_TASK_RECODE) and (not oxedProject.Session.InitialBuildDone) and (oxedSettings.RequireRebuildOnOpen) then begin
+   if(BuildType = OXED_BUILD_TASK_RECODE) and (not oxedProject.Session.InitialBuildDone) and
+   (oxedSettings.RequireRebuildOnOpen) then begin
       oxedConsole.i('Rebuild instead of recode on initial build');
       BuildType := OXED_BUILD_TASK_REBUILD;
    end;
@@ -1009,8 +1016,9 @@ begin
    build.IncludeDebugInfo := false;
    {$ENDIf}
 
-   build.TargetCPU := BuildArch.Architecture;
-   build.TargetOS := oxedTPlatform(BuildArch.PlatformObject).OS;
+   BuildArch.GetPlatformString().Separate(cpu, os);
+   build.TargetCPU := cpu;
+   build.TargetOS := os;
    build.FPCOptions.UnitOutputDirectory := oxedBuild.WorkArea  + 'lib';
 
    if(BuildType = OXED_BUILD_TASK_RECODE) then begin
@@ -1046,6 +1054,9 @@ begin
       Reset();
       exit;
    end;
+
+   if(taskType = OXED_BUILD_TASK_STANDALONE) then
+      BuildTarget := OXED_BUILD_STANDALONE;
 
    assert(BuildArch <> nil, 'Build architecture not set before StartTask()');
 
