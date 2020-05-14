@@ -304,12 +304,13 @@ begin
                continue;
          end;
 
-         Result.Add(feature);
+         if(feature^.IncludeByDefault) then
+            Result.Add(feature);
       end;
    end;
 
+   {in library mode, only include the renderer we need}
    if(lib) then begin
-      {only include renderer we need}
       feature := oxFeatures.Find(oxRenderer.Id);
       assert(feature <> nil, 'Renderer ' + oxRenderer.Id +  ' feature must never be nil');
       Result.Add(feature);

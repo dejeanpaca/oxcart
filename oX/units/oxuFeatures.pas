@@ -22,6 +22,8 @@ TYPE
       Description,
       Symbol: string;
 
+      IncludeByDefault: boolean;
+
       {platforms on which this feature is always excluded}
       ExcludedPlatforms: TStringArray;
       {platforms on which this feature is only included}
@@ -36,6 +38,8 @@ TYPE
       function IsExcluded(const platform: string): boolean;
       function IsIncluded(const platform: string): boolean;
       function IsEnabled(const platform: string): boolean;
+
+      class procedure Initialize(out f: oxTFeatureDescriptor); static;
    end;
 
    oxTFeatureList = specialize TSimpleList<oxTFeatureDescriptor>;
@@ -154,6 +158,12 @@ begin
    Result := true;
 end;
 
+class procedure oxTFeatureDescriptor.Initialize(out f: oxTFeatureDescriptor);
+begin
+   ZeroOut(f, SizeOf(f));
+   f.IncludeByDefault := true;
+end;
+
 { oxTFeaturesGlobal }
 
 function oxTFeaturesGlobal.Add(const name, description, symbol: string): oxPFeatureDescriptor;
@@ -161,7 +171,7 @@ var
    descriptor: oxTFeatureDescriptor;
 
 begin
-   ZeroOut(descriptor, SizeOf(descriptor));
+   oxTFeatureDescriptor.Initialize(descriptor);
 
    descriptor.Name := name;
    descriptor.Description := description;
@@ -232,11 +242,15 @@ INITIALIZATION
    oxFeatures.List.Initialize(oxFeatures.List);
 
    oxFeatures.Add('renderer.gl', 'OpenGL renderer', 'OX_RENDERER_GL');
+
    oxFeatures.Add('renderer.dx11', 'DirectX 11 renderer', 'OX_RENDERER_DX11')^.
-      SetIncludedPlatforms(['windows']);
+      SetIncludedPlatforms(['windows'])^.IncludeByDefault := false;
+
    oxFeatures.Add('renderer.console', 'Console renderer', 'OX_RENDERER_CONSOLE')^.
-      SetExcludedPlatforms(['android']);
-   oxFeatures.Add('renderer.vulkan', 'Vulkan renderer', 'OX_RENDERER_VULKAN');
+      SetExcludedPlatforms(['android'])^.IncludeByDefault := false;
+
+   oxFeatures.Add('renderer.vulkan', 'Vulkan renderer', 'OX_RENDERER_VULKAN')^.IncludeByDefault := false;
+
    oxFeatures.Add('feature.controllers', 'Controller support', 'OX_FEATURE_CONTROLLERS');
    oxFeatures.Add('feature.html_log', 'html log support', 'OX_FEATURE_HTML_LOG')^.
       SetDisabledPlatforms(['android']);
