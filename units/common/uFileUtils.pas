@@ -164,7 +164,7 @@ TYPE
       {erase a file, returns true if successful}
       class function Erase(const fn: StdString): boolean; static;
 
-      {copy a file from source to destination}
+      {copy a file from source to destination (returns file size on success, negative error code on failure)}
       class function Copy(const source, destination: StdString): longint; static;
       {copy a file from source to destination}
       class function CopyDirectory(const source, destination: StdString): longint; static;
