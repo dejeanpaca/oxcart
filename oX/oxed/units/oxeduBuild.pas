@@ -311,7 +311,7 @@ begin
 
    {in library mode, only include the renderer we need}
    if(lib) then begin
-      feature := oxFeatures.Find(oxRenderer.Id);
+      feature := oxFeatures.FindByName('renderer.' + oxRenderer.Id);
       assert(feature <> nil, 'Renderer ' + oxRenderer.Id +  ' feature must never be nil');
       Result.Add(feature);
    end;
@@ -910,16 +910,29 @@ begin
 end;
 
 procedure oxedTBuildGlobal.CopyLibraries();
+{$IFDEF WINDOWS}
+var
+   requireZlib: boolean;
+{$ENDIF}
+
 begin
    if(BuildTarget <> OXED_BUILD_STANDALONE) then
       exit;
 
    {$IFDEF WINDOWS}
    buildLibraries.Target := TargetPath;
+   requireZlib := false;
 
-   buildLibraries.CopyLibrary('oal_soft.dll', 'openal32.dll');
-   buildLibraries.CopyLibrary('freetype-6.dll', 'freetype.dll');
-   buildLibraries.CopyLibrary('zlib1.dll');
+   if(Features.FindByName('audio.al') <> nil) then
+      buildLibraries.CopyLibrary('oal_soft.dll', 'openal32.dll');
+
+   if(Features.FindByName('freetype') <> nil) then begin
+      buildLibraries.CopyLibrary('freetype-6.dll', 'freetype.dll');
+      requireZlib := true;
+   end;
+
+   if(requireZlib) then
+      buildLibraries.CopyLibrary('zlib1.dll');
    {$ENDIF}
 end;
 
