@@ -796,6 +796,9 @@ begin
 
    if(not oxedBuild.BuildOk) then
       exit;
+
+   {open target file path when done}
+   app.OpenFileManager(oxedBuild.TargetPath);
 end;
 
 function createPath(const name, path: StdString): boolean;
