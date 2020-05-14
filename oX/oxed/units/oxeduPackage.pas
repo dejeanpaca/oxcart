@@ -108,7 +108,7 @@ begin
 
    unitPath := ExtractFilePath(unitFile.Path);
 
-   if(UnitPaths.Find(unitPath) < 0) then
+   if(UnitPaths.FindString(unitPath) < 0) then
       UnitPaths.Add(unitPath);
 end;
 
@@ -121,7 +121,7 @@ begin
 
    includePath := ExtractFilePath(unitFile.Path);
 
-   if(IncludePaths.Find(includePath) < 0) then
+   if(IncludePaths.FindString(includePath) < 0) then
       IncludePaths.Add(includePath);
 end;
 
