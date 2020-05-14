@@ -44,6 +44,20 @@ TYPE
 
    oxTFeatureList = specialize TSimpleList<oxTFeatureDescriptor>;
 
+   { oxTFeatureListHelper }
+
+   oxTFeatureListHelper = record helper for oxTFeatureList
+      {find a feature by its name}
+      function FindByName(const name: string): oxPFeatureDescriptor;
+   end;
+
+   { oxTFeaturePDescriptorListHelper }
+
+   oxTFeaturePDescriptorListHelper = record helper for oxTFeaturePDescriptorList
+      {find a feature by its name}
+      function FindByName(const name: string): oxPFeatureDescriptor;
+   end;
+
    { oxTFeaturesGlobal }
 
    oxTFeaturesGlobal = record
@@ -56,13 +70,44 @@ TYPE
          platform: string; isLibrary: boolean = false): boolean;
 
       {find a feature by its name}
-      function Find(const name: string): oxPFeatureDescriptor;
+      function FindByName(const name: string): oxPFeatureDescriptor;
    end;
 
 VAR
    oxFeatures: oxTFeaturesGlobal;
 
 IMPLEMENTATION
+
+{ oxTFeatureListHelper }
+
+function oxTFeatureListHelper.FindByName(const name: string): oxPFeatureDescriptor;
+var
+   i: loopint;
+
+begin
+   for i := 0 to n - 1 do begin
+      if(List[i].Name = name) then
+         exit(@List[i]);
+   end;
+
+   Result := nil;
+end;
+
+{ oxTFeaturePDescriptorListHelper }
+
+function oxTFeaturePDescriptorListHelper.FindByName(const name: string): oxPFeatureDescriptor;
+var
+   i: loopint;
+
+begin
+   for i := 0 to n - 1 do begin
+      if(List[i]^.Name = name) then
+         exit(List[i]);
+   end;
+
+   Result := nil;
+end;
+
 
 { oxTFeatureDescriptor }
 
@@ -225,17 +270,9 @@ begin
       Result := false;
 end;
 
-function oxTFeaturesGlobal.Find(const name: string): oxPFeatureDescriptor;
-var
-   i: loopint;
-
+function oxTFeaturesGlobal.FindByName(const name: string): oxPFeatureDescriptor;
 begin
-   for i := 0 to List.n - 1 do begin
-      if(List.List[i].Name = name) then
-         exit(@List.List[i]);
-   end;
-
-   Result := nil
+   Result := List.FindByName(name);
 end;
 
 INITIALIZATION
