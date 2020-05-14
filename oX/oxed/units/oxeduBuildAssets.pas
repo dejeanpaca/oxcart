@@ -9,7 +9,7 @@ UNIT oxeduBuildAssets;
 INTERFACE
 
    USES
-      sysutils, uStd, uError, uLog, uFileUtils,
+      sysutils, uStd, uError, uLog, uFileUtils, StringUtils,
       {oxed}
       uOXED,
       oxeduProject, oxeduProjectScanner, oxeduAssets, oxeduPackage;
@@ -23,7 +23,12 @@ TYPE
 
       CurrentPackage: oxedPPackage;
       CurrentPath,
-      Target: StdString;
+      {target path}
+      Target,
+      {target path with the provided suffix}
+      CurrentTarget,
+      {use a suffix with the target path (if you want to override the target path)}
+      TargetSuffix: StdString;
 
       OnFile: oxedTProjectScannerFileProcedures;
 
@@ -44,6 +49,9 @@ var
    ext: StdString;
    f: oxedTScannerFile;
 
+   source,
+   target: StdString;
+
 begin
    Result := true;
 
@@ -55,7 +63,7 @@ begin
    f.Extension := ext;
 
    if(oxedAssets.ShouldIgnore(f.Extension)) then begin
-      log.v('Ignoring: ' + fd.f.Name);
+      consoleLog.v('Ignoring: ' + fd.f.Name);
       exit;
    end;
 
@@ -67,7 +75,21 @@ begin
    f.PackageFileName := ExtractRelativepath(f.PackagePath, f.FileName);
    f.ProjectFileName := oxedProject.GetPackageRelativePath(f.Package^) + f.PackageFileName;
 
-   log.v('Deploying: ' + fd.f.Name);
+   consoleLog.v('Deploying: ' + fd.f.Name);
+
+   source := f.PackagePath + f.PackageFileName;
+   target := oxedBuildAssets.CurrentTarget + f.PackageFileName;
+
+   log.i(source + ' .. ' + target);
+
+   {create directories required for target file, and quit if we fail}
+   if(not sysutils.ForceDirectories(ExtractFilePath(target))) then
+      Result := false;
+
+   if(FileUtils.Copy(source, target) < 0) then begin
+      log.e('Failed to copy source file (' + source + ') to target (' + target + ')');
+      Result := false;
+   end;
 
    oxedBuildAssets.OnFile.Call(f);
 end;
@@ -102,15 +124,22 @@ var
    i: loopint;
 
 begin
-   Target := useTarget;
+   Target := IncludeTrailingPathDelimiter(useTarget);
    log.i('Deploying asset files to ' + useTarget);
 
    try
-      DeployPackage(oxedProject.MainPackage);
+      {deploy assets from ox, but only those in the data directory}
+      TargetSuffix := 'data';
 
+      DeployPackage(oxedAssets.oxDataPackage);
+
+      {deploy assets from packages}
       for i := 0 to oxedProject.Packages.n - 1 do begin
          DeployPackage(oxedProject.Packages.List[i]);
       end;
+
+      {deploy assets from project}
+      DeployPackage(oxedProject.MainPackage);
    except
       on e: Exception do begin
          log.e('Asset deployment failed running');
@@ -128,8 +157,15 @@ begin
    CurrentPackage := @p;
    CurrentPath := oxedProject.GetPackagePath(p);
 
+   if(TargetSuffix = '') then
+      CurrentTarget := Target
+   else
+      CurrentTarget := IncludeTrailingPathDelimiter(Target + TargetSuffix);
+
    log.v('Deploying package: ' + CurrentPath);
    Walker.Run(oxedBuildAssets.CurrentPath);
+
+   TargetSuffix := '';
 end;
 
 procedure init();

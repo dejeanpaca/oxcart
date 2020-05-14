@@ -1,6 +1,8 @@
 {
    oxeduAssets, oxed asset management
    Copyright (C) 2020. Dejan Boras
+
+   TODO: Ignore oX data files which are not used
 }
 
 {$INCLUDE oxdefines.inc}
@@ -20,7 +22,8 @@ TYPE
    { oxedTAssets }
 
    oxedTAssets = record
-      oxPackage: oxedTPackage;
+      {a package containing oX data (assets)}
+      oxDataPackage: oxedTPackage;
 
       {ignore these file types when building (don't copy over)}
       IgnoreFileTypes,
@@ -58,8 +61,8 @@ end;
 
 procedure init();
 begin
-   oxedAssets.oxPackage.Id := 'ox';
-   oxedAssets.oxPackage.Path := oxPaths.BasePath;
+   oxedAssets.oxDataPackage.Id := 'ox';
+   oxedAssets.oxDataPackage.Path := oxPaths.BasePath + 'data' + DirectorySeparator;
 end;
 
 INITIALIZATION
@@ -75,5 +78,6 @@ INITIALIZATION
    oxedAssets.IgnoreFileTypes.Add('.blend');
    oxedAssets.IgnoreFileTypes.Add('.temp');
    oxedAssets.IgnoreFileTypes.Add('.tmp');
+   oxedAssets.IgnoreFileTypes.Add('.md');
 
 END.
