@@ -17,6 +17,9 @@ INTERFACE
       {oxed}
       uOXED, oxeduPackage;
 
+CONST
+   OX_NO_ASSETS_FILE = '.noassets';
+
 TYPE
 
    { oxedTAssetsIgnorePaths }
@@ -135,6 +138,7 @@ INITIALIZATION
    oxedAssets.Ignore.FileTypes.Add('.temp');
    oxedAssets.Ignore.FileTypes.Add('.tmp');
    oxedAssets.Ignore.FileTypes.Add('.md');
+   oxedAssets.Ignore.FileTypes.Add(OX_NO_ASSETS_FILE);
 
    oxedAssets.Ignore.Directories.Add('backup');
 
