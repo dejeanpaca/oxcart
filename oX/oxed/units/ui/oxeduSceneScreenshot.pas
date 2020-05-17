@@ -11,12 +11,13 @@ INTERFACE
    USES
       sysutils, uLog, appuKeys, uFileUtils,
       uImage,
+      appuActionEvents,
       {ox}
       oxuRunRoutines, oxuWindowTypes, oxuScreenshot, oxuGlobalKeys, oxeduSceneWindow,
       {ui}
       uiuWindowTypes, uiuWindow,
       {oxed}
-      uOXED, oxeduProject;
+      uOXED, oxeduProject, oxeduActions;
 
 TYPE
    oxedTSceneScreenshot = record
@@ -39,7 +40,7 @@ var
 begin
    sceneWnd := oxedSceneWindows.LastSelectedWindow;
 
-   if(sceneWnd <> nil) and (sceneWnd.IsSelected()) then begin
+   if(sceneWnd <> nil) then begin
       if(not oxedProjectValid()) then
          exit;
 
@@ -57,6 +58,11 @@ begin
    end;
 end;
 
+procedure takeScreenshot();
+begin
+   gkHandler(nil);
+end;
+
 CONST
    {global key to capture screenshots}
    gkHandlerKey: oxTGlobalKeyHandler = (
@@ -72,6 +78,7 @@ CONST
 procedure initialize();
 begin
    gkHandlerKey.Key := oxedSceneScreenshot.CaptureKey;
+   oxedActions.SCENE_SCREENSHOT := appActionEvents.SetCallback(@takeScreenshot);
 
    oxGlobalKeys.Hook(gkHandlerKey);
 end;
