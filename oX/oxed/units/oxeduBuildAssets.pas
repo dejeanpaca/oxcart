@@ -97,6 +97,9 @@ begin
 end;
 
 function onDirectory(const fd: TFileTraverseData): boolean;
+var
+   name: StdString;
+
 begin
    Result := true;
 
@@ -107,6 +110,11 @@ begin
    {ignore project temporary directory}
    if(fd.f.Name = oxedProject.Path + oxPROJECT_TEMP_DIRECTORY) then
       exit(false);
+
+   name := ExtractFileName(fd.f.Name);
+
+   if(oxedAssets.ShouldIgnoreDirectory(name)) then
+      exit(False);
 end;
 
 { oxedTBuildAssets }
