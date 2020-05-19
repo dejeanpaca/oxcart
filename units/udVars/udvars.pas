@@ -741,6 +741,13 @@ begin
          Assign(s);
          exit(true);
       end;
+      dtcENUM, dtcSET: begin
+         val(s, unsigned, code);
+         if(code = 0) then begin
+            Assign(unsigned);
+            exit(true);
+         end;
+      end;
       else
          Result := false;
    end;
@@ -771,6 +778,10 @@ begin
          dtcANSISTRING: Result   := StdString(ansistring(variable^));
          dtcWIDESTRING: Result   := StdString(UTF8Encode(widestring(variable^)));
          dtcUTF8STRING: Result   := StdString(variable^);
+
+         dtcENUM, dtcSET:
+            Result := sf(longword(variable^));
+
          else
             Result := '';
       end;
