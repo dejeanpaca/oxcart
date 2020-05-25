@@ -35,6 +35,7 @@
    dtcSIZEINT         = dtcINT64;
    {$ENDIF}
 
+   dtcLOOPINT = dtcSIZEINT;
 
    dtcBOOL            = $0B;
    dtcCHAR            = $0C;
@@ -59,7 +60,7 @@
    dtcCOMP            = $1C;
    dtcCURRENCY        = $1D;
    dtcSET             = $1E;
-   dtcFILE            = $1F;
+   dtcENUM            = $1F;
    dtcDATE            = $20;
    dtcTIME            = $21;
    dtcDATETIME        = $22;
@@ -164,8 +165,8 @@
    8, {dtcCOMP, ?}
    10, {dtcEXTENDED, ?}
    8, {dtcCURRENCY, ?}
-   0, {dtcSET}
-   0, {dtcFILE}
+   SizeOf(TNilSet), {dtcSET}
+   SizeOf(TNilEnum), {dtcENUM}
    0, {dtcDATE, ?}
    0, {dtcTIME, ?}
    0, {dtcDATETIME, ?}
