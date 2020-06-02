@@ -46,12 +46,13 @@ var
    btnOk: wdgTButton;
 
 begin
-   wdgLabel.Add('Controller: ' + controller.GetName() + ' (' + appPControllerHandler(Controller.Handler)^.GetName() + ')');
+   wdgLabel.Add('Controller: ' + controller.GetName() +
+      ' (' + appPControllerHandler(Controller.Handler)^.GetName() + ')');
+
    wdgDivisor.Add('');
-   wdgLabel.Add('Buttons: ' + sf(controller.ButtonCount));
-   wdgLabel.Add('Axes: ' + sf(controller.AxisCount));
-   wdgLabel.Add('Triggers: ' + sf(controller.TriggerCount));
-   wdgLabel.Add('Hats: ' + sf(controller.HatCount));
+
+   wdgLabel.Add('Buttons: ' + sf(controller.ButtonCount) + ' / Axes: ' + sf(controller.AxisCount) +
+      ' / Triggers: ' + sf(controller.TriggerCount) + ' / Hats: ' + sf(controller.HatCount));
 
    {add a cancel button}
    btnOk := wdgButton.Add('Close', uiWidget.LastRect.BelowOf(), oxNullDimensions, @Close);
