@@ -563,6 +563,8 @@ begin
 
    wnd.Initialize();
 
+   Include(wnd.Properties, uiwndpINITIALIZED);
+
    {update}
    wnd.UpdatePositions();
 
@@ -729,6 +731,8 @@ begin
    {deinitialize the window}
    wnd.Notification(uiWINDOW_DESTROY);
    wnd.DeInitialize();
+
+   Exclude(wnd.Properties, uiwndpINITIALIZED);
 
    {remove our parent, if it was for some reason destroyed before us}
    wnd.Parent := nil;
