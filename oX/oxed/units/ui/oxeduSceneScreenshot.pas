@@ -40,22 +40,20 @@ var
 begin
    sceneWnd := oxedSceneWindows.LastSelectedWindow;
 
-   if(sceneWnd <> nil) then begin
-      if(not oxedProjectValid()) then
-         exit;
+   if(sceneWnd = nil) or (not oxedProjectValid()) then
+      exit;
 
-      path := oxedProject.Path + 'screenshots' + DirectorySeparator;
-      FileUtils.CreateDirectory(path);
+   path := oxedProject.Path + 'screenshots' + DirectorySeparator;
+   FileUtils.CreateDirectory(path);
 
-      name := oxScreenshot.GetScreenshotName();
-      path := path + name + '.tga';
+   name := oxScreenshot.GetScreenshotName();
+   path := path + name + '.tga';
 
-      oxScreenshot.Make(image, oxTWindow(sceneWnd.oxwParent),
-         sceneWnd.RPosition.x, sceneWnd.RPosition.y - sceneWnd.Dimensions.h + 1, sceneWnd.Dimensions.w, sceneWnd.Dimensions.h);
+   oxScreenshot.Make(image, oxTWindow(sceneWnd.oxwParent),
+      sceneWnd.RPosition.x, sceneWnd.RPosition.y - sceneWnd.Dimensions.h + 1, sceneWnd.Dimensions.w, sceneWnd.Dimensions.h);
 
-      if(oxScreenshot.Save(path, image) = 0) then
-         log.v('Took screenshot from: ' + oxedSceneWindows.LastSelectedWindow.Title + ' into ' + path);
-   end;
+   if(oxScreenshot.Save(path, image) = 0) then
+      log.v('Took screenshot from: ' + oxedSceneWindows.LastSelectedWindow.Title + ' into ' + path);
 end;
 
 procedure takeScreenshot();
