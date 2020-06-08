@@ -20,7 +20,7 @@ INTERFACE
       oxuFilePreviewWindow,
       {oxed}
       uOXED, oxeduWindow, oxeduMenubar, oxeduIcons, oxeduActions,
-      oxeduProjectContextMenu, oxeduProject, oxeduProjectManagement;
+      oxeduProjectContextMenu, oxeduProject, oxeduProjectManagement, oxeduInspectFile;
 
 TYPE
    { wdgTOXEDProjectBrowserNavigate }
