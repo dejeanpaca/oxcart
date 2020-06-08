@@ -20,7 +20,8 @@ UNIT uAppInfo;
 
 INTERFACE
 
-   USES uStd, StringUtils;
+   USES
+      uStd, StringUtils;
 
 CONST
    { version string properties }
@@ -51,6 +52,7 @@ TYPE
       procedure SetOrganization(const s: StdString);
       procedure SetName(const n, o: StdString);
       procedure SetVersion(major: longword; minor: longint = -1; fix: longint = -1; revision: longint = -1);
+      procedure SetVersion(const v: array of loopint);
       procedure SetVersion(const v: StdString);
       function GetVersionString(properties: longword = 0): StdString;
 
@@ -103,6 +105,36 @@ begin
          Version[3] := revision;
          VersionFields := 4;
       end;
+   end;
+end;
+
+procedure appTInfo.SetVersion(const v: array of loopint);
+var
+   major,
+   minor,
+   fix,
+   revision: loopint;
+
+begin
+   major := -1;
+   minor := -1;
+   fix := -1;
+   revision := -1;
+
+   if(Length(v) > 0) then begin
+     if(high(v) >= 0) then
+        major := v[0];
+
+     if(high(v) >= 1) then
+        minor := v[1];
+
+     if(high(v) >= 2) then
+        fix := v[2];
+
+     if(high(v) >= 3) then
+        revision := v[3];
+
+     SetVersion(major, minor, fix, revision);
    end;
 end;
 
