@@ -20,7 +20,8 @@ INTERFACE
       oxuFilePreviewWindow,
       {oxed}
       uOXED, oxeduWindow, oxeduMenubar, oxeduIcons, oxeduActions,
-      oxeduProjectContextMenu, oxeduProject, oxeduProjectManagement, oxeduInspectFile;
+      oxeduProjectContextMenu, oxeduProject, oxeduProjectManagement,
+      oxeduwndInspector, oxeduInspectFile;
 
 TYPE
    { wdgTOXEDProjectBrowserNavigate }
@@ -122,12 +123,19 @@ begin
    end;
 end;
 
+procedure SetInspector(const fn: StdString);
+begin
+   oxedInspectFile.Open(fn);
+end;
+
 procedure wdgTOXEDProjectBrowserFiles.FileClicked(index: loopint; button: TBitSet);
 var
    origin: uiTWidgetWindowOrigin;
 
 begin
    if(button <> appmcRIGHT) then begin
+      SetInspector(GetFilePath(index));
+
       inherited FileClicked(index, button);
       exit;
    end;
