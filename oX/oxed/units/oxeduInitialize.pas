@@ -60,6 +60,8 @@ INTERFACE
       oxeduPluginsUI,
       oxeduProjectTerminal,
       oxeduwndCompilerSettings,
+      {inspectors}
+      oxeduGenericFileInspector,
       {platforms}
       oxeduwndAndroidSettings, oxeduwndAndroidGeneralSettings,
       oxeduAndroidMenu,
