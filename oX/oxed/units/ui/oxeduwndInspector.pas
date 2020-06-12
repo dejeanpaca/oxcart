@@ -79,6 +79,8 @@ TYPE
       function GetInspector(inspectorType: oxedTInspectorClass): oxedTInspector;
       {close any active inspector}
       procedure Close();
+
+      function GetWindow(out wnd: oxedTInspectorWindow): boolean;
    end;
 
 VAR
@@ -271,10 +273,17 @@ begin
    Result := nil;
 end;
 
-procedure oxedTInspectorEdit.Close;
+procedure oxedTInspectorEdit.Close();
 begin
    if(Instance <> nil) then
       oxedTInspectorWindow(Instance).Open(nil);
+end;
+
+function oxedTInspectorEdit.GetWindow(out wnd: oxedTInspectorWindow): boolean;
+begin
+   wnd := oxedTInspectorWindow(oxedInspector.Instance);
+
+   Result := wnd <> nil;
 end;
 
 procedure OnProjectChange();
