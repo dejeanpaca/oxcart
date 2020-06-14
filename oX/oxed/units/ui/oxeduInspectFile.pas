@@ -21,10 +21,6 @@ TYPE
    { oxedTInspectFile }
 
    oxedTInspectFile = class(oxedTInspector)
-      wdg: record
-
-      end;
-
       procedure SetFile(const {%H-}fn: StdString); virtual;
 
       {associate this inspector with an extension}
