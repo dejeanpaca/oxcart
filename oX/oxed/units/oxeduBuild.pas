@@ -737,17 +737,22 @@ begin
    build.FPCOptions.UseConfig := oxedBuild.WorkArea + oxedBuild.Props.ConfigFile;
 
    parameters := TBuildFPCConfiguration.GetFPCCommandLineForConfig();
+   {optimization level}
    parameters.Add('-O1');
+   {verbosity level}
    parameters.Add('-vewnhi');
+   {output FPC logo}
    parameters.Add('-l');
 
    if(build.IncludeDebugInfo) then begin
+      {include debug information}
       parameters.Add('-g');
       parameters.Add('-gl');
       parameters.Add('-Xg');
    end;
 
    if(oxedBuild.IsLibrary()) then begin
+      {set position independent code}
       parameters.Add('-Cg');
    end;
 
