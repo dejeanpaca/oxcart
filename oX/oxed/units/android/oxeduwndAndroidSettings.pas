@@ -37,6 +37,12 @@ begin
    wdg.DeployTemplate.Enable(enabled);
 end;
 
+procedure enableAndroidWidgets(enabled: boolean);
+begin
+   wdg.PackageName.Enable(enabled);
+   enableAndroidDeployWidgets(enabled and wdg.ManualFileManagement.Checked());
+end;
+
 procedure deployTemplate();
 var
    path: StdString;
@@ -75,6 +81,14 @@ begin
    wdg.ProjectFilesPath.Enable(wdg.ManualFileManagement.Checked());
 end;
 
+function enableControl(cb: uiTWidget; what: loopint): loopint;
+begin
+   Result := -1;
+
+   if(what = wdgcCHECKBOX_TOGGLE) then
+      enableAndroidWidgets(wdgTCheckbox(cb).Checked());
+end;
+
 function manualFileManagementControl(cb: uiTWidget; what: loopint): loopint;
 begin
    Result := -1;
@@ -88,6 +102,7 @@ begin
    oxedwndProjectSettings.Tabs.AddTab('Android', 'android');
 
    wdg.Enabled := wdgCheckbox.Add('Enabled').Check(oxedAndroidPlatform.Enabled);
+   wdg.Enabled.SetControlMethod(@enableControl);
 
    wdgDivisor.Add('Android settings');
 
@@ -105,7 +120,7 @@ begin
 
    wdg.DeployTemplate := wdgButton.Add('Add android files to project').UseCallback(@deployTemplate);
 
-   enableAndroidDeployWidgets(oxedAndroidSettings.Project.ManualFileManagement);
+   enableAndroidWidgets(oxedAndroidPlatform.Enabled);
 end;
 
 procedure init();
