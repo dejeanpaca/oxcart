@@ -162,6 +162,8 @@ var
    renderProperties: longword;
    pwnd: uiTWindow;
 
+   clr: TColor4ub;
+
 procedure RenderBlock(borderOnly: boolean);
 var
    props: longword;
@@ -199,14 +201,18 @@ begin
    {render check if the checkbox is marked}
    if(checked) then begin
       if(enabled) then
-         source.SetColor(wdgCheckbox.CheckedColor)
+         clr := wdgCheckbox.CheckedColor
       else
-         source.SetColor(wdgCheckbox.DisabledColor);
+         clr := wdgCheckbox.DisabledColor;
+
+      {draw a checkmark}
+      source.SetColor(clr);
 
       oxRender.LineWidth(wdgCheckbox.LineWidth);
-      {draw a checkmark}
-      uiDraw.Line(x1 + 2, y2 + 5, x1 + 5, y2 + 1);
-      uiDraw.Line(x1 + 5, y2 + 1, x2 - 3, y1 - 2);
+
+      uiDraw.Line(x1 + 3, y2 + 7, x1 + 7, y2 + 3);
+      uiDraw.Line(x1 + 7, y2 + 3, x2 - 3, y1 - 2);
+
       oxRender.LineWidth(1.0);
    end;
 end;
@@ -317,7 +323,7 @@ INITIALIZATION
    wdgCheckbox.Create('checkbox');
 
    wdgCheckbox.DisabledColor.Assign(96, 96, 96, 255);
-   wdgCheckbox.CheckedColor.Assign(32, 91, 32, 255);
+   wdgCheckbox.CheckedColor.Assign(32, 160, 32, 255);
 
    wdgCheckbox.Internal.SkinDescriptor.UseColors(wdgCheckboxSkinColorDescriptor);
 
