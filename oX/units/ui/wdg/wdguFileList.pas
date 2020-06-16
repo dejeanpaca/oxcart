@@ -52,7 +52,6 @@ TYPE
 
       function GetValue(index, column: loopint): StdString; override;
       function GetFile(index, column: loopint): PFileDescriptor;
-      function GetModifiedTime(givenTime: longint; full: boolean = false): StdString;
       function GetFilePath(index: loopint): StdString;
 
       {find everything in the given path}
@@ -675,7 +674,7 @@ begin
       Result := getiecByteSizeHumanReadableSI(Files.List[index].Size, 1, ' ')
    else if(column = 3) then begin
       {time}
-      Result := GetModifiedTime(Files.List[index].Time);
+      Result := uiTFiles.GetModifiedTime(Files.List[index].Time, Today);
    end else
       Result := '';
 end;
@@ -695,22 +694,6 @@ begin
    end;
 
    exit(@Files.List[index]);
-end;
-
-function wdgTFileList.GetModifiedTime(givenTime: longint; full: boolean): StdString;
-var
-   time: TDateTime;
-
-begin
-   time := FileDateToDateTime(givenTime);
-
-   if(not full) then begin
-      if(not Today.MatchingDay(time)) then
-         Result := DateToStr(time)
-      else
-         Result := TimeToStr(time);
-   end else
-      Result := DateTimeToStr(time);
 end;
 
 function wdgTFileList.GetFilePath(index: loopint): StdString;
@@ -879,7 +862,7 @@ begin
    if(index > -1) then
       SetHint('Name: ' + Files.List[index].Name + #13 +
          'Size: ' + getiecByteSizeHumanReadable(Files.List[index].Size) + #13 +
-         'Modified time: ' + GetModifiedTime(Files.List[index].Time, true))
+         'Modified time: ' + uiTFiles.GetModifiedTime(Files.List[index].Time, Today, true))
    else
       SetHint('');
 end;
