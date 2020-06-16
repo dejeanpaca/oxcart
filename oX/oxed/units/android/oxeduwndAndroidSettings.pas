@@ -40,6 +40,7 @@ end;
 procedure enableAndroidWidgets(enabled: boolean);
 begin
    wdg.PackageName.Enable(enabled);
+   wdg.ManualFileManagement.Enable(enabled);
    enableAndroidDeployWidgets(enabled and wdg.ManualFileManagement.Checked());
 end;
 
