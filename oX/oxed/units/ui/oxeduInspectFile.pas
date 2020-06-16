@@ -10,6 +10,7 @@ INTERFACE
 
    USES
       uStd, StringUtils,
+      uFileUtils,
       {ui}
       uiWidgets,
       wdguLabel,
@@ -21,7 +22,7 @@ TYPE
    { oxedTInspectFile }
 
    oxedTInspectFile = class(oxedTInspector)
-      procedure SetFile(const {%H-}fn: StdString); virtual;
+      procedure SetFile(const {%H-}fn: StdString; fd: PFileDescriptor); virtual;
 
       {associate this inspector with an extension}
       procedure Associate(const extension: StdString);
@@ -44,7 +45,7 @@ TYPE
 
       function FindInspectorByExtension(const ext: StdString): oxedTInspectFile;
 
-      procedure Open(const fn: StdString);
+      procedure Open(const fn: StdString; fd: PFileDescriptor = nil);
       {associate an inspector with an extension}
       procedure Associate(const extension: StdString; inspector: oxedTInspectFile);
    end;
@@ -81,7 +82,7 @@ begin
    Result := nil;
 end;
 
-procedure oxedTInspectFileGlobal.Open(const fn: StdString);
+procedure oxedTInspectFileGlobal.Open(const fn: StdString; fd: PFileDescriptor);
 var
    wnd: oxedTInspectorWindow;
    inspector: oxedTInspectFile;
@@ -99,13 +100,14 @@ begin
          inspector := GenericInspector;
 
       if(inspector <> nil) then begin
-         writeln('got inspector: ', inspector.ClassName);
          wnd.Open(inspector);
-         inspector.SetFile(fn);
-      end else
-         wnd.Open(nil);
-   end else
-      wnd.Open(nil);
+         inspector.SetFile(fn, fd);
+
+         exit;
+      end;
+   end;
+
+   wnd.Open(nil);
 end;
 
 procedure oxedTInspectFileGlobal.Associate(const extension: StdString; inspector: oxedTInspectFile);
@@ -121,7 +123,7 @@ end;
 
 { oxedTInspectFile }
 
-procedure oxedTInspectFile.SetFile(const fn: StdString);
+procedure oxedTInspectFile.SetFile(const fn: StdString; fd: PFileDescriptor);
 begin
 end;
 

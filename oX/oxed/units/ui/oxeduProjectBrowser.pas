@@ -43,6 +43,7 @@ TYPE
 
       procedure FileDoubleClicked(index: loopint; button: TBitSet); override;
       procedure FileClicked(index: loopint; button: TBitSet = appmcLEFT); override;
+      procedure ItemCleared(); override;
    end;
 
    { oxedTProjectBrowserWindow }
@@ -133,7 +134,7 @@ var
    origin: uiTWidgetWindowOrigin;
 
 begin
-   if(button <> appmcRIGHT) then begin
+   if(not button.IsSet(appmcRIGHT)) then begin
       SetInspector(GetFilePath(index));
 
       inherited FileClicked(index, button);
@@ -144,6 +145,13 @@ begin
 
    origin.SetControl(Self);
    openContext(Self, origin, index);
+end;
+
+procedure wdgTOXEDProjectBrowserFiles.ItemCleared();
+begin
+   inherited;
+
+   SetInspector('');
 end;
 
 { wdgTProjectBrowserNavigate }
