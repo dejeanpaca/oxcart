@@ -22,7 +22,7 @@ TYPE
    { oxedTInspectFile }
 
    oxedTInspectFile = class(oxedTInspector)
-      procedure SetFile(const {%H-}fn: StdString; fd: PFileDescriptor); virtual;
+      procedure SetFile(const {%H-}fn: StdString; {%H-}fd: PFileDescriptor); virtual;
 
       {associate this inspector with an extension}
       procedure Associate(const extension: StdString);

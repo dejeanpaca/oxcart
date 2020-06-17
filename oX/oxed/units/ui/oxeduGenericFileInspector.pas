@@ -157,20 +157,19 @@ begin
    inspector.wdg.Header.Resize(wnd.Dimensions.w, 32);
 
    wdg.Name.Resize(wnd.Dimensions.w - wdgDEFAULT_SPACING * 2, inspector.wdg.Header.Dimensions.h - 10);
-   wdg.Name.Move(wdg.Name.Position.x, 20);
    wdg.Name.SetPosition(wdgPOSITION_VERTICAL_CENTER);
 
    if(wdg.Attributes.Caption <> '') then begin
       wdg.Attributes.Move(wdgDEFAULT_SPACING, wdg.Information.Dimensions.h);
       wdg.Attributes.SetSize(wdgWIDTH_MAX_HORIZONTAL);
 
-      wdg.Size.MoveBelow(wdg.Attributes);
+      wdg.Size.MoveBelow(wdg.Attributes, 0);
    end else
       wdg.Size.Move(wdgDEFAULT_SPACING, wdg.Information.Dimensions.h);
 
    wdg.Size.SetSize(wdgWIDTH_MAX_HORIZONTAL);
 
-   wdg.Time.MoveBelow(wdg.Size);
+   wdg.Time.MoveBelow(wdg.Size, 0);
    wdg.Time.SetSize(wdgWIDTH_MAX_HORIZONTAL);
 end;
 
