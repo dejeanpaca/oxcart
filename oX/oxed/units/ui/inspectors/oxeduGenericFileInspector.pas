@@ -11,10 +11,12 @@ INTERFACE
    USES
       sysutils, uStd, uFileUtils,
       uBinarySize,
+      {ox}
+      oxuFileIcons,
       {ui}
       uiuFiles,
       uiWidgets, uiuWidget,
-      wdguLabel, wdguWorkbar, wdguGroup,
+      wdguLabel, wdguWorkbar, wdguGroup, wdguImage, wdguFileList, wdguList,
       {oxed}
       uOXED, oxeduWindow, oxeduwndInspector,
       oxeduInspectFile;
@@ -26,6 +28,7 @@ TYPE
    oxedTGenericFileInspector = class(oxedTInspectFile)
       wdg: record
          Information: wdgTGroup;
+         Icon: wdgTImage;
          Name,
          Size,
          Time,
@@ -63,6 +66,7 @@ var
    inspector: oxedTInspectorWindow;
    fileDescriptor: TFileDescriptor;
    attributes: TAppendableString = '';
+   icon: wdgTListGlyph;
 
 begin
    inspector := oxedTInspectorWindow(oxedInspector.Instance);
@@ -71,14 +75,18 @@ begin
       wdg.Name.Enable(true);
       wdg.Name.SetCaption(fn);
 
+      wdg.Icon.SetVisible();
+
       if(fd = nil) then begin
          FileUtils.GetFileInfo(fn, fileDescriptor);
          fd := @fileDescriptor;
       end;
 
-      if(fd^.IsDirectory()) then
-         attributes.Add('directory', ',');
+      icon := wdgFileList.GetFileIcon(fd^, false);
+      wdg.Icon.SetImage(icon.Glyph);
+      wdg.Icon.Color := icon.Color;
 
+      attributes := '';
       if(fd^.IsHidden()) then
          attributes.Add('hidden');
 
@@ -97,10 +105,10 @@ begin
       wdg.Attributes.SetCaption(attributes);
       wdg.Attributes.SetVisibility(attributes <> '');
 
-      wdg.Size.SetCaption('Size: ' + getiecByteSizeHumanReadable(fd^.Size));
-
       if(not fd^.IsDirectory()) then
-         wdg.Size.SetVisible();
+         wdg.Size.SetCaption('Size: ' + getiecByteSizeHumanReadable(fd^.Size));
+
+      wdg.Size.SetVisibility(not fd^.IsDirectory());
 
       wdg.Time.SetCaption('Time: ' + uiTFiles.GetModifiedTime(fd^.Time, 0, true));
    end else begin
@@ -108,6 +116,7 @@ begin
       wdg.Name.SetCaption('');
       wdg.Size.SetInvisible();
       wdg.Size.SetCaption('');
+      wdg.Icon.SetInvisible();
    end;
 
    SizeChanged(inspector);
@@ -127,6 +136,7 @@ begin
    uiWidget.PushTarget();
    inspector.wdg.Header.SetTarget();
 
+   wdg.Icon := wdgImage.Add();
    wdg.Name := wdgLabel.Add('');
 
    uiWidget.PopTarget();
@@ -150,27 +160,33 @@ end;
 procedure oxedTGenericFileInspector.SizeChanged(wnd: oxedTWindow);
 var
    inspector: oxedTInspectorWindow;
+   h: loopint;
 
 begin
    inspector := oxedTInspectorWindow(wnd);
    inspector.wdg.Header.Move(0, wnd.Dimensions.h - 1);
    inspector.wdg.Header.Resize(wnd.Dimensions.w, 32);
 
-   wdg.Name.Resize(wnd.Dimensions.w - wdgDEFAULT_SPACING * 2, inspector.wdg.Header.Dimensions.h - 10);
-   wdg.Name.Move(wdg.Name.Position.x, 20);
+   h := round(inspector.wdg.Header.Dimensions.h * 0.85);
+   wdg.Icon.Resize(h, h);
+   wdg.Icon.Move(wdgDEFAULT_SPACING, 20);
+   wdg.Icon.SetPosition(wdgPOSITION_VERTICAL_CENTER);
+
+   wdg.Name.MoveRightOf(wdg.Icon);
    wdg.Name.SetPosition(wdgPOSITION_VERTICAL_CENTER);
+   wdg.Name.AutoSetDimensions(true);
 
    if(wdg.Attributes.Caption <> '') then begin
       wdg.Attributes.Move(wdgDEFAULT_SPACING, wdg.Information.Dimensions.h);
       wdg.Attributes.SetSize(wdgWIDTH_MAX_HORIZONTAL);
 
-      wdg.Size.MoveBelow(wdg.Attributes);
+      wdg.Size.MoveBelow(wdg.Attributes, 0);
    end else
       wdg.Size.Move(wdgDEFAULT_SPACING, wdg.Information.Dimensions.h);
 
    wdg.Size.SetSize(wdgWIDTH_MAX_HORIZONTAL);
 
-   wdg.Time.MoveBelow(wdg.Size);
+   wdg.Time.Move(uiWidget.LastRect.BelowOf(0, 0, false));
    wdg.Time.SetSize(wdgWIDTH_MAX_HORIZONTAL);
 end;
 
