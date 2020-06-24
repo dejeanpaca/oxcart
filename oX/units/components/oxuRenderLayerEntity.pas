@@ -17,7 +17,7 @@ TYPE
    { oxTRenderLayerEntity }
 
    oxTRenderLayerEntity = record
-      class function Default(): oxTEntity; static;
+      class function Default(const renderLayer: StdString; const name: StdString = ''): oxTEntity; static;
    end;
 
 VAR
@@ -25,21 +25,23 @@ VAR
 
 IMPLEMENTATION
 
-function getEntity(out component: oxTRenderLayerComponent): oxTEntity;
+function getEntity(const renderLayer: StdString; out component: oxTRenderLayerComponent): oxTEntity;
 begin
    component := oxTRenderLayerComponent.Create();
+   component.Name := renderLayer;
 
    Result := oxEntity.New('RenderLayer', component);
 end;
 
 { oxTRenderLayerEntity }
 
-class function oxTRenderLayerEntity.Default(): oxTEntity;
+class function oxTRenderLayerEntity.Default(const renderLayer: StdString; const name: StdString): oxTEntity;
 var
    component: oxTRenderLayerComponent;
 
 begin
-   Result := getEntity(component);
+   Result := getEntity(renderLayer, component);
+   Result.Name := name;
 end;
 
 END.
