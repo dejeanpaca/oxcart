@@ -166,7 +166,8 @@ INTERFACE
 
       {loaders}
       oxuMaterialLoader,
-      oxuShaderFileReader;
+      oxuShaderFileReader,
+      oxu9PatchFileReader;
 
 IMPLEMENTATION
 
