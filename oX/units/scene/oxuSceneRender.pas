@@ -82,8 +82,9 @@ TYPE
       Renderer: oxTSceneRenderer;
    end;
 
-TYPE
-   oxTSceneRender = class
+   oxPSceneRender = ^oxTSceneRender;
+
+   oxTSceneRender = object
       public
       RenderAutomatically: boolean;
       {automatically apply scene change}
@@ -94,7 +95,9 @@ TYPE
       {scenes set to automatically render per window}
       Scenes: array[0..oxcMAX_WINDOW] of oxTSceneRenderWindow;
 
-      constructor Create(); virtual;
+      RenderOrder: oxTSceneRenderOrder;
+
+      constructor Create();
    end;
 
 VAR
@@ -233,6 +236,9 @@ begin
    if(layers.n > 0) then begin
       {TODO: Render layers by given params.RenderOrder}
 
+      if(params.RenderOrder <> nil) then begin
+      end;
+
       for i := 0 to layers.n - 1 do begin
          RenderLayer(oxTRenderLayerComponent(layers.List[i]), params, cameras);
       end;
@@ -347,11 +353,6 @@ begin
    FreeObject(oxSceneRender.Default);
 end;
 
-function instanceGlobal(): TObject;
-begin
-   Result := oxTSceneRender.Create();
-end;
-
 procedure change();
 begin
    if(oxSceneRender.AutoApplyChange) then
@@ -359,7 +360,8 @@ begin
 end;
 
 INITIALIZATION
-   oxGlobalInstances.Add(oxTSceneRender, @oxSceneRender, @instanceGlobal);
+   oxSceneRender.Create();
+   oxGlobalInstances.Add('oxTSceneRender', @oxSceneRender);
 
    ox.Init.Add('ox.scene_render', @init, @deinit);
    oxSceneManagement.OnSceneChange.Add(@change);
