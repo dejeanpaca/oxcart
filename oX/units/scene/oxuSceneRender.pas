@@ -33,7 +33,7 @@ TYPE
    oxTSceneRenderOrder = record
       List: oxTSceneRenderOrderEntryList;
 
-      procedure Initialize(out order: oxTSceneRenderOrder);
+      class procedure Initialize(out order: oxTSceneRenderOrder); static;
 
       {sort entries in this order by index}
       procedure Sort();
@@ -52,7 +52,6 @@ TYPE
       Camera: oxPCamera;
       Entity: oxTEntity;
 
-      {TODO: Set the given order}
       RenderOrder: oxPSceneRenderOrder;
 
       class procedure Init(out p: oxTSceneRenderParameters;
@@ -88,9 +87,9 @@ TYPE
       public
       RenderAutomatically: boolean;
       {automatically apply scene change}
-      AutoApplyChange: boolean; static;
+      AutoApplyChange: boolean;
 
-      Default: oxTSceneRenderer; static;
+      Default: oxTSceneRenderer;
 
       {scenes set to automatically render per window}
       Scenes: array[0..oxcMAX_WINDOW] of oxTSceneRenderWindow;
@@ -108,7 +107,7 @@ IMPLEMENTATION
 
 { oxTSceneRenderOrder }
 
-procedure oxTSceneRenderOrder.Initialize(out order: oxTSceneRenderOrder);
+class procedure oxTSceneRenderOrder.Initialize(out order: oxTSceneRenderOrder);
 begin
    ZeroOut(order, SizeOf(order));
    oxTSceneRenderOrderEntryList.InitializeValues(order.List, 64);
@@ -157,6 +156,12 @@ end;
 constructor oxTSceneRender.Create();
 begin
    RenderAutomatically := true;
+
+   oxTSceneRenderOrder.Initialize(RenderOrder);
+
+   RenderOrder.Add('skybox');
+   RenderOrder.Add('scene');
+   RenderOrder.Add('post-process');
 end;
 
 { oxTSceneRenderer }
@@ -234,13 +239,12 @@ begin
    {$ENDIF}
 
    if(layers.n > 0) then begin
-      {TODO: Render layers by given params.RenderOrder}
-
       if(params.RenderOrder <> nil) then begin
-      end;
-
-      for i := 0 to layers.n - 1 do begin
-         RenderLayer(oxTRenderLayerComponent(layers.List[i]), params, cameras);
+         {TODO: Render layers by given params.RenderOrder}
+      end else begin
+         for i := 0 to layers.n - 1 do begin
+            RenderLayer(oxTRenderLayerComponent(layers.List[i]), params, cameras);
+         end;
       end;
    end else begin
       for i := 0 to (cameras.n - 1) do begin
@@ -335,6 +339,7 @@ begin
    if(sceneWindow.Scene <> nil) then begin
       oxTSceneRenderParameters.Init(params);
       params.Scene := sceneWindow.Scene;
+      params.RenderOrder := @oxSceneRender.RenderOrder;
 
       renderer.Render(params);
    end;
