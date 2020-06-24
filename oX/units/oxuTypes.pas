@@ -63,6 +63,8 @@ TYPE
       function IsPositive(): boolean;
 
       function ToString(): StdString;
+      {get dimensions from string}
+      function FromString(const wd: StdString): boolean;
    end;
 
    { oxTDimensionsf }
@@ -806,6 +808,32 @@ end;
 function oxTDimensions.ToString(): StdString;
 begin
    Result := sf(w) + 'x' + sf(h);
+end;
+
+function oxTDimensions.FromString(const wd: StdString): boolean;
+var
+   wString,
+   hString: StdString;
+   code: loopint;
+
+begin
+   if(Pos('x', wd) > 0) then begin
+      wString := Copy(wd, 1, pos('x', wd) - 1);
+      hString := Copy(wd, pos('x', wd) + 1, Length(wd));
+
+      if(wString <> '') and (hString <> '') then begin
+         val(wString, w, code);
+
+         if(code = 0) then begin
+            val(hString, h, code);
+
+            if(code = 0) then
+               exit(true);
+         end;
+      end;
+   end;
+
+   Result := false;
 end;
 
 END.
