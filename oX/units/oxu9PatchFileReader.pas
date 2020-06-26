@@ -123,6 +123,10 @@ begin
 
    {TODO: Do some validation}
 
+   rows[0].middle.h := rows[0].left.h;
+   rows[1].middle.h := rows[1].left.h;
+   rows[2].middle.h := rows[2].left.h;
+
    patch := oxT9Patch.Create();
 
    patch.Texture := texture;
