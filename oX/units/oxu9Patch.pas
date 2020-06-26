@@ -57,6 +57,9 @@ TYPE
          Center: TQuadTextureCoords;
       end;
 
+      {loaded texture}
+      Texture: oxTTexture;
+
       {compute a 9-patch from the given sizes}
       procedure Compute(cornerSize, xSize, ySize: loopint);
 
@@ -67,6 +70,8 @@ TYPE
 
       {render patch with the given texture}
       procedure Render(width, height: single; tex: oxTTexture);
+      {render patch with the given texture}
+      procedure Render(width, height: single);
 
       {render patch with the given texture}
       class procedure Render(tex: oxTTexture; var buffer: oxTBuffered9Patch); static;
@@ -205,20 +210,27 @@ var
    buffer: oxTBuffered9Patch;
 
 begin
-   BuildBuffer(width, height, buffer);
+   if(tex <> nil) then begin
+      BuildBuffer(width, height, buffer);
 
-   Render(tex, buffer);
+      Render(tex, buffer);
+   end;
+end;
+
+procedure oxT9Patch.Render(width, height: single);
+begin
+   Render(width, height, Texture);
 end;
 
 class procedure oxT9Patch.Render(tex: oxTTexture; var buffer: oxTBuffered9Patch);
 begin
-   oxCurrentMaterial.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
-   oxCurrentMaterial.ApplyTexture('texture', tex);
+    oxCurrentMaterial.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
+    oxCurrentMaterial.ApplyTexture('texture', tex);
 
-   oxRender.TextureCoords(buffer.TexCoords[0]);
-   oxRender.Vertex(buffer.Vertex[0]);
+    oxRender.TextureCoords(buffer.TexCoords[0]);
+    oxRender.Vertex(buffer.Vertex[0]);
 
-   oxRender.Primitives(oxPRIMITIVE_TRIANGLES, ox9PATCH_QUADS * QUAD_INDICES, pword(@buffer.Indices[0]));
+    oxRender.Primitives(oxPRIMITIVE_TRIANGLES, ox9PATCH_QUADS * QUAD_INDICES, pword(@buffer.Indices[0]));
 end;
 
 END.
