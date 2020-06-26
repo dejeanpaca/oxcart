@@ -197,6 +197,8 @@ TYPE
       function GetVariableCountRecursive(): longint;
 
       procedure Notify(what: loopint);
+
+      function ConstructPath(const parent: StdString): StdString;
    end;
 
    { TDVarGlobal }
@@ -535,6 +537,14 @@ begin
 
       pNotify(context);
    end;
+end;
+
+function TDVarGroup.ConstructPath(const parent: StdString): StdString;
+begin
+   if(Name <> '') then
+      Result := parent + Name + '.'
+   else
+      Result := parent;
 end;
 
 operator := (a: TDVarQuick): TDVar;
