@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, uLog, StringUtils,
       {oX}
-      uOX, oxuWindowTypes, oxuWindow, oxuUIHooks, oxuGlobalInstances,
+      uOX, oxuWindowTypes, oxuWindow, oxuGlobalInstances,
       oxuViewport, oxuRenderer, oxuWindowSettings,
       {$IFDEF OX_LIBRARY}
       oxuRenderers,
@@ -90,10 +90,6 @@ VAR
 
 IMPLEMENTATION
 
-procedure oxwRenderPost(wnd: oxTWindow);
-begin
-   oxuiHooks.Render(wnd);
-end;
 
 function oxTWindows.Initialize(): boolean;
 var
@@ -169,7 +165,6 @@ begin
    AllowScreenSaver := false;
 
    Internal.OnPostRender.Initialize(internal.OnPostRender);
-   Internal.OnPostRender.Add(@oxwRenderPost);
 
    ExternalWindows.Initialize(ExternalWindows);
 
