@@ -164,7 +164,7 @@ begin
    MaxWindowAllocate := 1;
    AllowScreenSaver := false;
 
-   Internal.OnPostRender.Initialize(internal.OnPostRender);
+   Internal.OnPostRender.Initialize(Internal.OnPostRender);
 
    ExternalWindows.Initialize(ExternalWindows);
 
