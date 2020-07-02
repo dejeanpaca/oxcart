@@ -23,7 +23,7 @@ INTERFACE
       oxeduPlatform, oxeduTasks, oxeduSettings,
       oxeduAppInfo,oxeduProjectScanner,
       {build}
-      oxeduBuildAssets;
+      oxeduBuildLog, oxeduBuildAssets;
 
 CONST
    OXED_BUILD_3RDPARTY_PATH = '3rdparty';
@@ -1039,6 +1039,9 @@ begin
       Reset();
       exit;
    end;
+
+   {start off empty}
+   oxedBuildLog.Reset();
 
    {we start off assuming things are fine}
    BuildOk := true;
