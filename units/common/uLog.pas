@@ -154,6 +154,9 @@ TYPE
       {quickly initialize and open a log file}
       procedure QuickOpen(const {%H-}fn, {%H-}logh: StdString; {%H-}mode: longint; var {%H-}newHandler: TLogHandler);
 
+      {reset the log file to an empty state}
+      procedure Reset();
+
       {log string with specified priority}
       procedure s({%H-}priority: longint; const {%H-}logString: StdString);
       {flush log file}
@@ -626,6 +629,12 @@ begin
    Initialize(fn, logh, mode);
    Open();
    {$ENDIF}
+end;
+
+procedure TLog.Reset();
+begin
+   Close();
+   Open();
 end;
 
 procedure TLog.s(priority: longint; const logString: StdString);
