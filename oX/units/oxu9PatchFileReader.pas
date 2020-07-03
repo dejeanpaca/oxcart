@@ -80,6 +80,10 @@ var
 begin
    texture := nil;
 
+   row.left := oxNullDimensions;
+   row.middle := oxNullDimensions;
+   row.right := oxNullDimensions;
+
    {top}
    if(not breakdown()) then begin
       data.SetError(eINVALID, 'Failed to process top row');
