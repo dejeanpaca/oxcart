@@ -36,8 +36,8 @@ end;
 INITIALIZATION
    log.Init(extlog);
 
-   oldLogCallback := appLog.setupCallback;
-   appLog.setupCallback := @SetupLog;
+   oldLogCallback := appLog.SetupCallback;
+   appLog.SetupCallback := @SetupLog;
 
 FINALIZATION
    extlog.Close();
