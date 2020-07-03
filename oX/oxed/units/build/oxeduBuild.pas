@@ -173,13 +173,13 @@ begin
    Result := fUtils.CompareAndReplace(source, target);
 
    if(fUtils.ReplaceResult = fCOMPARE_AND_REPLACE_NO_CHANGE) then
-      log.v('No change for ' + target + ', from: ' + source)
+      oxedBuildLog.v('No change for ' + target + ', from: ' + source)
    else if(fUtils.ReplaceResult = fCOMPARE_AND_REPLACE_UPDATE) then
-      log.v('Updated ' + target + ', from: ' + source)
+      oxedBuildLog.v('Updated ' + target + ', from: ' + source)
    else if(fUtils.ReplaceResult = fCOMPARE_AND_REPLACE_CREATE) then
-      log.v('Created ' + target + ', from: ' + source)
+      oxedBuildLog.v('Created ' + target + ', from: ' + source)
    else if(fUtils.ReplaceResult = fCOMPARE_AND_REPLACE_NO_SOURCE) then
-      log.e('Update from file not found: ' + source);
+      oxedBuildLog.e('Update from file not found: ' + source);
 end;
 
 
@@ -539,9 +539,9 @@ begin
    Result := config.WriteFile(fn);
 
    if(not Result) then
-      log.e('Failed to write fpc config file for project: ' + fn)
+      oxedBuildLog.e('Failed to write fpc config file for project: ' + fn)
    else
-      log.v('Created fpc config file for project: ' + fn);
+      oxedBuildLog.v('Created fpc config file for project: ' + fn);
 end;
 
 function getSourceHeader(includeFunctional: boolean = true): TAppendableString;
@@ -568,7 +568,7 @@ end;
 function isCMEM(): boolean;
 begin
    Result := oxed.UseCMEM;
-   log.v('Using cmem: ' + sf(Result));
+   oxedBuildLog.v('Using cmem: ' + sf(Result));
 end;
 
 function GetUsesString(): TAppendableString;
@@ -653,7 +653,7 @@ begin
    target := oxedBuild.WorkArea + oxedBuild.Props.Source;
 
    if(CompareAndReplace(fn, target)) then
-      log.v('Recreated ' + target);
+      oxedBuildLog.v('Recreated ' + target);
 end;
 
 function ShouldRecreate(const fn: string): boolean;
@@ -757,13 +757,13 @@ begin
    end;
 
    if(parameters.n > 0) then begin
-      log.Collapsed('FPC parameters for build');
+      oxedBuildLog.Collapsed('FPC parameters for build');
 
       for i := 0 to parameters.n - 1 do begin
-         log.i(parameters.List[i]);
+         oxedBuildLog.i(parameters.List[i]);
       end;
 
-      log.Leave();
+      oxedBuildLog.Leave();
    end;
 
    BuildExec.Pas(oxedBuild.WorkArea + oxedBuild.Props.Source, @parameters);
@@ -810,7 +810,7 @@ function createPath(const name, path: StdString): boolean;
 begin
    if(not FileUtils.DirectoryExists(path)) then begin
       if(ForceDirectories(path)) then begin
-         log.v('Created ' + name + ' path: ' + path)
+         oxedBuildLog.v('Created ' + name + ' path: ' + path)
       end else begin
          oxedBuild.Fail('Failed to create ' + name + ' path: ' + path);
          exit(false);
@@ -826,9 +826,9 @@ var
    targetString: string;
 
 begin
-   log.v('Building platform: ' + BuildArch.GetPlatformString());
-   log.v('Building into: ' + TargetPath);
-   log.v('Working area: ' + WorkArea);
+   oxedBuildLog.v('Building platform: ' + BuildArch.GetPlatformString());
+   oxedBuildLog.v('Building into: ' + TargetPath);
+   oxedBuildLog.v('Working area: ' + WorkArea);
 
    if(oxed.UseHeapTrace) and (IsLibrary()) then
       oxedConsole.w('OXED built with heaptrc included, running library may be unstable');
@@ -930,7 +930,7 @@ begin
 
    {move the file}
    if(RenameFile(source, destination)) then begin
-      log.v('Moving: ' + source + ' to ' + destination);
+      oxedBuildLog.v('Moving: ' + source + ' to ' + destination);
       Result := true;
    end else
       Fail('Failed to move: ' + source + ' to ' + destination);
@@ -1017,7 +1017,7 @@ end;
 
 procedure RecreateAll();
 begin
-   log.i('Recreating project files');
+   oxedBuildLog.i('Recreating project files');
 
    {recreate general files}
    oxedBuild.Recreate(true);
@@ -1041,7 +1041,7 @@ begin
    end;
 
    {start off empty}
-   oxedBuildLog.Reset();
+   oxedBuildLog.Log.Reset();
 
    {we start off assuming things are fine}
    BuildOk := true;
@@ -1054,7 +1054,7 @@ begin
    oxedBuild.IncludeThirdParty := (not oxedProject.Session.ThirdPartyBuilt) or
       oxedProject.Session.IncludeThirdPartyUnits;
 
-   log.v('Third party units included: ' + sf(oxedBuild.IncludeThirdParty));
+   oxedBuildLog.v('Third party units included: ' + sf(oxedBuild.IncludeThirdParty));
 
    {rebuild instead of recode if initial build not done}
    if(BuildType = OXED_BUILD_TASK_RECODE) and (not oxedProject.Session.InitialBuildDone) and
@@ -1106,7 +1106,7 @@ begin
    end;
 
    Reset();
-   log.v('oxed > Build task done');
+   oxedBuildLog.v('oxed > Build task done');
 end;
 
 procedure oxedTBuildGlobal.StartTask(taskType: oxedTBuildTaskType; architecture: oxedTPlatformArchitecture);
@@ -1168,12 +1168,12 @@ begin
       if(laz <> nil) then
          BuildInstalls.SetLazarusInstall(laz^.Name)
       else begin
-         log.w('Failed to find a lazarus install for fpc: ' + platform^.Name);
+         oxedBuildLog.w('Failed to find a lazarus install for fpc: ' + platform^.Name);
          BuildInstalls.GetLazarus();
       end;
 
-      log.v('Using platform: ' + BuildInstalls.CurrentPlatform^.Name + ', fpc ' + BuildInstalls.CurrentPlatform^.Version);
-      log.v('Using lazbuild: ' + BuildInstalls.CurrentLazarus^.Name + ', at ' + BuildInstalls.CurrentLazarus^.Path);
+      oxedBuildLog.v('Using platform: ' + BuildInstalls.CurrentPlatform^.Name + ', fpc ' + BuildInstalls.CurrentPlatform^.Version);
+      oxedBuildLog.v('Using lazbuild: ' + BuildInstalls.CurrentLazarus^.Name + ', at ' + BuildInstalls.CurrentLazarus^.Path);
 
       exit(true);
    end;
@@ -1262,7 +1262,7 @@ end;
 procedure onScanDone();
 begin
    if(oxedBuild.RunAfterScan) then begin
-      log.v('Run build after scan');
+      oxedBuildLog.v('Run build after scan');
       oxedBuild.StartTask(oxedBuild.RunAfterScanTaskType);
    end;
 end;

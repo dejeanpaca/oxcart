@@ -11,7 +11,7 @@ INTERFACE
    USES
       sysutils, uStd, uError, uLog, uFileUtils, StringUtils,
       {oxed}
-      uOXED,
+      uOXED, oxeduBuildLog,
       oxeduProject, oxeduProjectScanner, oxeduAssets, oxeduPackage, oxeduConsole;
 
 TYPE
@@ -77,7 +77,7 @@ begin
    f.PackageFileName := ExtractRelativepath(f.PackagePath, f.FileName);
    f.ProjectFileName := oxedProject.GetPackageRelativePath(f.Package^) + f.PackageFileName;
 
-   consoleLog.v('Deploying: ' + fd.f.Name);
+   oxedBuildLog.v('Deploying: ' + fd.f.Name);
 
    source := f.PackagePath + f.PackageFileName;
    target := oxedBuildAssets.CurrentTarget + f.PackageFileName;
@@ -87,7 +87,7 @@ begin
       Result := false;
 
    if(FileUtils.Copy(source, target) < 0) then begin
-      oxedConsole.ne('Failed to copy source file (' + source + ') to target (' + target + ')');
+      oxedBuildLog.e('Failed to copy source file (' + source + ') to target (' + target + ')');
       Result := false;
    end;
 
@@ -140,7 +140,7 @@ var
 
 begin
    Target := IncludeTrailingPathDelimiter(useTarget);
-   oxedConsole.ni('Deploying asset files to ' + useTarget);
+   oxedBuildLog.i('Deploying asset files to ' + useTarget);
 
    FileCount := 0;
 
@@ -159,14 +159,14 @@ begin
       DeployPackage(oxedProject.MainPackage);
    except
       on e: Exception do begin
-         oxedConsole.ne('Asset deployment failed running');
-         oxedConsole.ne(DumpExceptionCallStack(e));
+         oxedBuildLog.e('Asset deployment failed running');
+         oxedBuildLog.e(DumpExceptionCallStack(e));
       end;
    end;
 
    CurrentPackage := nil;
 
-   oxedConsole.ni('Done assets deploy (files: ' + sf(FileCount) + ')');
+   oxedBuildLog.i('Done assets deploy (files: ' + sf(FileCount) + ')');
 end;
 
 procedure oxedTBuildAssets.DeployPackage(var p: oxedTPackage);
@@ -179,7 +179,7 @@ begin
    else
       CurrentTarget := IncludeTrailingPathDelimiter(Target + TargetSuffix);
 
-   oxedConsole.nv('Deploying package: ' + CurrentPath);
+   oxedBuildLog.v('Deploying package: ' + CurrentPath);
    Walker.Run(oxedBuildAssets.CurrentPath);
 
    TargetSuffix := '';
