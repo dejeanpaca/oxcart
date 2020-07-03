@@ -12,10 +12,9 @@ INTERFACE
       uLog, StringUtils,
       uAppInfo, appuLog,
       {oxed}
-      oxeduConsole;
+      oxeduConsole, uBuildExec;
 
 TYPE
-
    { oxedTBuildLog }
 
    oxedTBuildLog = record
@@ -52,6 +51,7 @@ begin
          log.v('Build log at ' + oxedBuildLog.Log.FileName);
 
       oxedBuildLog.Log.ChainLog := @consoleLog;
+      BuildExec.log := @oxedBuildLog.Log;
    end;
 
    {call the old log callback}
@@ -118,6 +118,7 @@ INITIALIZATION
 
    oldLogCallback := appLog.SetupCallback;
    appLog.SetupCallback := @SetupLog;
+
 
 FINALIZATION
    oxedBuildLog.Log.Close();
