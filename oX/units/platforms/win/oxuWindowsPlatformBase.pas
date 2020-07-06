@@ -47,7 +47,7 @@ IMPLEMENTATION
 function oxTWindowsPlatformBase.MessageBox(wParent: uiTWindow; const Title, Say: StdString;
    Style: uiTMessageBoxStyle; Buttons: longword): longword;
 begin
-   result := winos.MessageBox(wParent, Title, Say, Style, Buttons);
+   Result := winos.MessageBox(wParent, Title, Say, Style, Buttons);
 end;
 
 procedure oxTWindowsPlatformBase.LoadCursor(var c: HCURSOR; cursorName: {$IFDEF UNICODE}PWideChar{$ELSE}PAnsiChar{$ENDIF});
