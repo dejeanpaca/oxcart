@@ -123,11 +123,13 @@ begin
    Init.iCall();
 
    for i := 0 to (n - 1) do begin
-      log.Collapsed(list[i].Name);
+      if(List[i].Id <> 'nil') then begin
+         log.Collapsed(List[i].Name);
+            List[i].Initialize();
+            Log.i('Initialized');
+         log.Leave();
+      end else
          List[i].Initialize();
-         Log.i('Initialized');
-
-      log.Leave();
    end;
 
    Log.Leave();
