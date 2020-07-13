@@ -34,9 +34,9 @@ TYPE
       procedure OnInitialize(); override;
 
       function SetupWindow(wnd: oxTWindow): boolean; override;
-      function DeInitWindow(wnd: oxTWindow): boolean; override;
+      function DeInitWindow({%H-}wnd: oxTWindow): boolean; override;
 
-      procedure SwapBuffers(wnd: oxTWindow); override;
+      procedure SwapBuffers({%H-}wnd: oxTWindow); override;
       procedure Clear({%H-}clearBits: longword); override;
   end;
    
