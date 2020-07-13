@@ -14,8 +14,12 @@ INTERFACE
       oxuTypes, oxuAspect;
 
 TYPE
-
     oxPViewport = ^oxTViewport;
+
+    oxTOnViewportChangeCallback = procedure(viewport: oxPViewport);
+
+    {routine called when a viewport changes}
+    oxTOnViewportChangeCallbacks = specialize TSimpleList<oxTOnViewportChangeCallback>;
 
     { oxTViewport }
 
@@ -39,6 +43,9 @@ TYPE
        ClearColor: TColor4f;
 
        a: oxTAspect;
+
+      {called when viewport changes}
+      OnChange: oxTOnViewportChangeCallbacks;
     end;
 
     oxTRelativeViewport = record

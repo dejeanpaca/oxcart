@@ -69,9 +69,6 @@ begin
    if(not OverrideRender) then begin
       StartRender(wnd);
 
-      if(wnd.Viewport.Changed) then
-         oxWindows.OnViewportChanged.Call(wnd);
-
       oxWindows.OnRender.Call(wnd);
       oxWindows.Internal.OnPostRender.Call(wnd);
 
@@ -79,7 +76,7 @@ begin
       oxTRenderer(wnd.Renderer).SwapBuffers(wnd);
       {$ENDIF}
 
-      wnd.Viewport.Changed := false;
+      wnd.Viewport.Done();
    end else
       oxWindows.OnOverrideRender.Call(wnd);
 end;
