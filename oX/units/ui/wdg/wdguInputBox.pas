@@ -216,8 +216,8 @@ begin
       if(IsEnabled()) then begin
          surfaceColor := GetColor(wdgscINPUT_SURFACE);
 
-         if (IsSelected()) and (Hovering()) then
-            borderColor := GetColor(wdgscINPUT_BORDER);
+         if(IsSelected()) and (Hovering()) then
+            borderColor := GetColor(wdgscINPUT_BORDER_SELECTED);
       end else
          surfaceColor := GetColor(wdgscINPUT_SURFACE_DISABLED);
 
