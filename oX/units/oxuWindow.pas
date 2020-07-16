@@ -136,7 +136,7 @@ begin
    renderer.SetupData(wnd);
 
    log.Enter('Window: ' + wnd.Title(* + ' (' + uiwGetIDString(wnd.w.wID) + ')'*));
-      log.i('Size: ' + sf(wnd.Dimensions.w) + 'x' + sf(wnd.Dimensions.h));
+      log.i('Requested Size: ' + sf(wnd.Dimensions.w) + 'x' + sf(wnd.Dimensions.h));
 
       if(wnd.RenderSettings.DoubleBuffer) then
          s := 'double buffer'
@@ -168,7 +168,6 @@ begin
       log.Leave();
 
       oxTRenderer(wnd.Renderer).LogWindow(wnd);
-   log.Leave();
 
    {create window only if it is not already created}
    if(not wnd.oxProperties.Created) then begin
@@ -176,6 +175,7 @@ begin
          if(wnd.ErrorCode = eNONE) then
             wnd.ErrorCode := eFAIL;
 
+         log.Leave();
          exit;
       end;
 
@@ -200,6 +200,8 @@ begin
 
    if(Result) then
       windowCreateFinalize(wnd);
+
+   log.Leave();
 end;
 
 function oxTWindowGlobal.CreateWindow(wnd: oxTWindow; externalWindow: TObject): boolean;
