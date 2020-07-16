@@ -80,7 +80,6 @@ begin
    end else
       exit(False);
 
-   tvGlobal.LogDC();
    tvGlobal.LogModes();
 
    if(tvGlobal.ModeCount > 0) then begin
@@ -100,7 +99,7 @@ end;
 
 procedure oxTConsoleRenderer.SwapBuffers(wnd: oxTWindow);
 begin
-   Video.UpdateScreen(false);
+   tvCurrent.Update();
 end;
 
 procedure oxTConsoleRenderer.Clear(clearBits: longword);
