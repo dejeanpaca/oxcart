@@ -9,7 +9,7 @@ UNIT uBuildInstalls;
 INTERFACE
 
    USES
-      process, sysutils, uLog, uProcessHelpers,
+      process, sysutils, uLog, uProcessHelpers, uFileUtils,
       uStd, uFPCHelpers, uBuild;
 
 TYPE
@@ -566,6 +566,11 @@ begin
 end;
 
 procedure TBuildSystemInstalls.SetupDefaults();
+{$IFDEF WINDOWS}
+var
+   fn: StdString;
+{$ENDIF}
+
 begin
    if(DefaultPlatform^.Path = '') then begin
       {$IF DEFINED(LINUX)}
@@ -579,7 +584,16 @@ begin
 
       DefaultPlatform^.Path := '/usr/local/bin/';
       {$ELSEIF DEFINED(WINDOWS)}
-      {TODO: Determine default fpc path for windows}
+      fn := 'C:\lazarus\fpc\' + FPC_VERSION + '\bin\' + build.BuiltWithTarget + DirectorySeparator;
+
+      if FileUtils.Exists(fn) <= 0 then begin
+         fn := 'C:\fpc\' + FPC_VERSION + '\bin\' + build.BuiltWithTarget + DirectorySeparator;
+
+         if FileUtils.Exists(fn) > 0 then
+            DefaultPlatform^.Path := fn;
+      end else
+         DefaultPlatform^.Path := fn;
+
       if(build.VerboseLog) then
          log.v('build > auto fpc defaults for windows');
       {$ENDIF}
