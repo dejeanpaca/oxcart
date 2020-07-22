@@ -40,8 +40,8 @@ begin
 
       {setup console log}
       extlog.QuickOpen(appLog.fileName, '', logcREWRITE, loghOXConsole);
-      extlog.chainLog := stdlog.chainLog;
-      stdlog.chainLog := @extlog;
+      extlog.ChainLog := stdlog.ChainLog;
+      stdlog.ChainLog := @extlog;
    end;
 
    {call the old log callback}
@@ -84,6 +84,5 @@ INITIALIZATION
 
    loghOXConsole.Create();
 
-   oldLogCallback := appLog.SetupCallback;
-   appLog.SetupCallback := @SetupLog;
+   oldLogCallback := appLog.UseSetupCallback(@SetupLog);
 END.

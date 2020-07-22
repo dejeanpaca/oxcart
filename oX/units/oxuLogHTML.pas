@@ -24,8 +24,8 @@ begin
    if(not extlog.Flags.Initialized) then begin
       {setup html log}
       extlog.QuickOpen(appLog.fileName, appInfo.GetVersionString(), logcREWRITE, loghHTML);
-      extlog.chainLog := stdlog.chainLog;
-      stdlog.chainLog := @extlog;
+      extlog.ChainLog := stdlog.ChainLog;
+      stdlog.ChainLog := @extlog;
    end;
 
    {call the old log callback}
@@ -36,8 +36,7 @@ end;
 INITIALIZATION
    log.Init(extlog);
 
-   oldLogCallback := appLog.SetupCallback;
-   appLog.SetupCallback := @SetupLog;
+   oldLogCallback := appLog.UseSetupCallback(@SetupLog);
 
 FINALIZATION
    extlog.Close();
