@@ -12,8 +12,22 @@ INTERFACE
       sysutils,
       uStd, uLog, StringUtils;
 
+TYPE
+
+   { THTMLLogHandler }
+
+   THTMLLogHandler = object(TStandardLogHandler)
+      constructor Create();
+
+      procedure Start(logf: PLog); virtual;
+      procedure Close(log: PLog); virtual;
+      procedure Writeln(logf: PLog; priority: longint; const s: StdString); virtual;
+      procedure EnterSection(log: PLog; const s: StdString; collapsed: boolean); virtual;
+      procedure LeaveSection(log: PLog); virtual;
+   end;
+
 VAR
-   loghHTML: TLogHandler;
+   loghHTML: THTMLLogHandler;
 
 IMPLEMENTATION
 
@@ -58,12 +72,40 @@ begin
       '"','&quot;', [rfReplaceAll]);
 end;
 
-procedure hopen(logFile: PLog);
+procedure hclose(logf: PLog);
 begin
-   log.handler.Standard.open(logFile);
+   logf^.HandlerWritelnRaw(htmlEnd);
+   log.handler.standard.close(logf);
 end;
 
-procedure hstart(logf: PLog);
+procedure hEnterSection(logf: PLog; const s: StdString; collapsed: boolean);
+begin
+   logf^.HandlerWritelnRaw('<div class="sectionenclosure">');
+   logf^.HandlerWritelnRaw('<div class="sectiontitle">' + encode(s) + '</div>');
+
+   if(not collapsed) then
+      logf^.HandlerWritelnRaw('<div class="section">')
+   else
+      logf^.HandlerWritelnRaw('<div class="section" hidden="true">');
+end;
+
+procedure hLeaveSection(logf: PLog);
+begin
+   logf^.HandlerWritelnRaw('</div></div>');
+end;
+
+{ THTMLLogHandler }
+
+constructor THTMLLogHandler.Create();
+begin
+   inherited;
+
+   Name := 'html';
+   FileExtension := 'html';
+   NoHeader := true;
+end;
+
+procedure THTMLLogHandler.Start(logf: PLog);
 begin
    logf^.HandlerWritelnRaw(htmlHeader);
    logf^.HandlerWritelnRaw('<title>' + logf^.LogHeader + '</title>');
@@ -71,7 +113,14 @@ begin
    logf^.HandlerWritelnRaw(htmlBody);
 end;
 
-procedure hwriteln(logf: PLog; priority: longint; const s: StdString);
+procedure THTMLLogHandler.Close(log: PLog);
+begin
+   log^.HandlerWritelnRaw(htmlEnd);
+
+   inherited Close(log);
+end;
+
+procedure THTMLLogHandler.Writeln(logf: PLog; priority: longint; const s: StdString);
 var
    td: TDateTime;
    buf: TSimpleAnsiStringBuffer;
@@ -97,42 +146,24 @@ begin
    logf^.HandlerWritelnRaw(buf.Get());
 end;
 
-procedure hclose(logf: PLog);
+procedure THTMLLogHandler.EnterSection(log: PLog; const s: StdString; collapsed: boolean);
 begin
-   logf^.HandlerWritelnRaw(htmlEnd);
-   log.handler.standard.close(logf);
-end;
-
-procedure hEnterSection(logf: PLog; const s: StdString; collapsed: boolean);
-begin
-   logf^.HandlerWritelnRaw('<div class="sectionenclosure">');
-   logf^.HandlerWritelnRaw('<div class="sectiontitle">' + encode(s) + '</div>');
+   log^.HandlerWritelnRaw('<div class="sectionenclosure">');
+   log^.HandlerWritelnRaw('<div class="sectiontitle">' + encode(s) + '</div>');
 
    if(not collapsed) then
-      logf^.HandlerWritelnRaw('<div class="section">')
+      log^.HandlerWritelnRaw('<div class="section">')
    else
-      logf^.HandlerWritelnRaw('<div class="section" hidden="true">');
+      log^.HandlerWritelnRaw('<div class="section" hidden="true">');
 end;
 
-procedure hLeaveSection(logf: PLog);
+procedure THTMLLogHandler.LeaveSection(log: PLog);
 begin
-   logf^.HandlerWritelnRaw('</div></div>');
+   log^.HandlerWritelnRaw('</div></div>');
 end;
 
 INITIALIZATION
    {use the standard log handler for most operations}
-   loghHTML                := log.handler.Standard;
-   loghHTML.Name           := 'html';
-   loghHTML.fileExtension  := 'html';
-   loghHTML.open           := @hopen;
-   loghHTML.start          := @hstart;
-   loghHTML.writeln        := @hwriteln;
-   loghHTML.close          := @hclose;
-   loghHTML.enterSection   := @hEnterSection;
-   loghHTML.leaveSection   := @hLeaveSection;
-   {nothing should be output to the file by default }
-   loghHTML.noHeader       := true;
+   loghHTML.Create();
 
-   log.handler.pDefault := @loghHTML;
 END.
-

@@ -70,25 +70,29 @@ TYPE
       VerboseEnabled: boolean;
    end;
 
-
    {a log handler}
-   TLogHandler = record
+
+   { TLogHandler }
+
+   TLogHandler = object
       Name,
       FileExtension: StdString;
       NeedOpen,
       NoHeader: boolean;
 
-      init: procedure(log: PLog);
-      dispose: procedure(log: PLog);
-      open: procedure(log: PLog);
-      start: procedure(log: PLog);
-      close: procedure(log: PLog);
-      flush: procedure(log: PLog);
-      writeln: procedure(log: PLog; priority: longint; const s: StdString);
-      writelnraw: procedure(log: PLog; const s: StdString);
-      enterSection: procedure(log: PLog; const s: StdString; collapsed: boolean);
-      leaveSection: procedure(log: PLog);
-      del: procedure(log: PLog);
+      constructor Create();
+
+      procedure Init({%H-}log: PLog); virtual;
+      procedure Dispose({%H-}log: PLog); virtual;
+      procedure Open({%H-}log: PLog); virtual;
+      procedure Start({%H-}log: PLog); virtual;
+      procedure Close({%H-}log: PLog); virtual;
+      procedure Flush({%H-}log: PLog); virtual;
+      procedure Writeln({%H-}log: PLog; {%H-}priority: longint; const {%H-}s: StdString); virtual;
+      procedure WritelnRaw({%H-}log: PLog; const {%H-}s: StdString); virtual;
+      procedure EnterSection({%H-}log: PLog; const {%H-}s: StdString; {%H-}collapsed: boolean); virtual;
+      procedure LeaveSection({%H-}log: PLog); virtual;
+      procedure Del({%H-}log: PLog); virtual;
    end;
 
    {a log file}
@@ -192,6 +196,40 @@ TYPE
       procedure HandlerWritelnRaw(const {%H-}logString: StdString);
    end;
 
+   { TDummyLogHandler }
+
+   TDummyLogHandler = object(TLogHandler)
+      constructor Create();
+   end;
+
+   { TStandardLogHandler }
+
+   TStandardLogHandler = object(TLogHandler)
+      constructor Create();
+
+      procedure Init(log: PLog); virtual;
+      procedure Dispose(log: PLog); virtual;
+      procedure Open(log: PLog); virtual;
+      procedure Close(log: PLog); virtual;
+      procedure Flush(log: PLog); virtual;
+      procedure Writeln(logf: PLog; priority: longint; const s: StdString); virtual;
+      procedure WritelnRaw(log: PLog; const s: StdString); virtual;
+      procedure EnterSection(log: PLog; const s: StdString; collapsed: boolean); virtual;
+      procedure Del(log: PLog); virtual;
+
+      { STANDARD LOG HANDLER }
+      function StdError(var log: TLog): longint;
+   end;
+
+   { TConsoleLogHandler }
+
+   TConsoleLogHandler = object(TLogHandler)
+      constructor Create();
+
+      procedure Writeln(log: PLog; priority: longint; const s: StdString); virtual;
+      procedure WritelnRaw(log: PLog; const s: StdString); virtual;
+      procedure EnterSection(log: PLog; const s: StdString; collapsed: boolean); virtual;
+   end;
 
    { TLogUtils }
 
@@ -201,8 +239,8 @@ TYPE
 
       Handler: record
          Dummy: TLogHandler; {dummy log handler}
-         Standard: TLogHandler; {standard log handler}
-         Console: TLogHandler; {console log handler}
+         Standard: TStandardLogHandler; {standard log handler}
+         Console: TConsoleLogHandler; {console log handler}
          pDefault: PLogHandler; {default log handler}
       end;
 
@@ -210,8 +248,6 @@ TYPE
 
       {initialize a TLog record}
       procedure Init(out logFile: TLog);
-      {initialize a TLogHandler record}
-      procedure Init(out h: TLogHandler);
 
       {creates a TLog on the heap and returns a pointer to it}
       function Make(): PLog;
@@ -243,12 +279,317 @@ TYPE
 
 VAR
    {standard logs}
-   stdlog: TLog;
+   stdlog,
    consoleLog: TLog;
 
    log: TLogUtils;
 
 IMPLEMENTATION
+
+{ TLogHandler }
+
+constructor TLogHandler.Create();
+begin
+
+end;
+
+procedure TLogHandler.Init(log: PLog);
+begin
+end;
+
+procedure TLogHandler.Dispose(log: PLog);
+begin
+
+end;
+
+procedure TLogHandler.Open(log: PLog);
+begin
+
+end;
+
+procedure TLogHandler.Start(log: PLog);
+begin
+
+end;
+
+procedure TLogHandler.Close(log: PLog);
+begin
+
+end;
+
+procedure TLogHandler.Flush(log: PLog);
+begin
+
+end;
+
+procedure TLogHandler.Writeln(log: PLog; priority: longint; const s: StdString);
+begin
+
+end;
+
+procedure TLogHandler.WritelnRaw(log: PLog; const s: StdString);
+begin
+
+end;
+
+procedure TLogHandler.EnterSection(log: PLog; const s: StdString; collapsed: boolean);
+begin
+
+end;
+
+procedure TLogHandler.LeaveSection(log: PLog);
+begin
+
+end;
+
+procedure TLogHandler.Del(log: PLog);
+begin
+
+end;
+
+{ TDummyLogHandler }
+
+constructor TDummyLogHandler.Create();
+begin
+   Name := 'dummy';
+end;
+
+{ TStandardLogHandler }
+
+VAR
+   tabstr: StdString = #9#9#9#9#9 + #9#9#9#9#9 + #9#9#9#9#9 + #9#9#9#9#9;
+   spacestr: StdString = '                                 ';
+
+
+constructor TStandardLogHandler.Create();
+begin
+   Name := 'standard';
+   FileExtension := 'log';
+   NeedOpen := true;
+end;
+
+procedure TStandardLogHandler.Init(log: PLog);
+begin
+   {get memory for the file}
+   new(log^.Fl);
+
+   if(log^.Fl <> nil) then begin
+      {assign the filename to the file}
+      UTF8Assign(log^.Fl^, log^.FileName);
+   end else
+      log^.Error := logeNO_MEMORY;
+end;
+
+procedure TStandardLogHandler.Dispose(log: PLog);
+begin
+   if(log^.Fl <> nil) then
+      system.Dispose(log^.Fl);
+
+   log^.Fl := nil;
+end;
+
+procedure TStandardLogHandler.Open(log: PLog);
+label
+   repeatopen;
+
+begin
+   {jump here to try to open the file again, and who said labels are not good
+   | other method could have been used but this one is simple}
+repeatopen:
+
+   {open the file in the correct mode.
+   If the file cannot be appended try rewriting it}
+   if(log^.FileMode = logcAPPEND)then begin
+      append(log^.Fl^);
+
+      if(StdError(log^) <> 0) then begin
+         log^.Flags.AppendFailed := true;
+         log^.FileMode := logcREWRITE;
+         goto repeatopen;
+      end;
+   end else if(log^.FileMode = logcREWRITE)then begin
+      rewrite(log^.Fl^);
+
+      if(StdError(log^) <> 0) then
+         log^.SetErrorState(logeIO);
+   end else begin
+      log^.FileMode := logcREWRITE;
+      goto repeatopen;
+   end;
+end;
+
+procedure TStandardLogHandler.Close(log: PLog);
+begin
+   system.close(log^.Fl^);
+   IOResult();
+end;
+
+procedure TStandardLogHandler.Flush(log: PLog);
+begin
+   {$IFDEF LOG_THREAD_SAFE}
+   EnterCriticalSection(log^.LogCS);
+   {$ENDIF}
+
+   if(log^.Ok()) then begin
+      system.flush(log^.Fl^);
+      StdError(log^);
+   end;
+
+   {$IFDEF LOG_THREAD_SAFE}
+   LeaveCriticalSection(log^.LogCS);
+   {$ENDIF}
+end;
+
+procedure TStandardLogHandler.Writeln(logf: PLog; priority: longint; const s: StdString);
+var
+   timeString: StdString = '';
+
+begin
+   {$IFDEF LOG_THREAD_SAFE}
+   EnterCriticalSection(logf^.LogCS);
+   {$ENDIF}
+
+   if(logf^.Ok()) then begin
+      if(s <> '') then begin
+         {construct a time string}
+         if(log.Settings.LogTime) then begin
+            timeString := utf8string(TimeToStr(Now()));
+         end;
+
+         if(priority >= 0) and (priority <= logcPRIORITY_MAX) then
+            timeString := timeString + ' ' + logcPriorityCharacters[priority] + '> ';
+
+         {add tabs to signify a section}
+         if(logf^.SectionLevel > 0) then
+            system.writeln(logf^.Fl^, timeString + copy(tabstr, 1, logf^.SectionLevel) + s)
+         else
+         {level 0 section needs no tabs}
+            system.writeln(logf^.Fl^, timeString + s);
+      end else
+         system.writeln(logf^.Fl^);
+
+      {check for errors}
+      StdError(logf^);
+   end;
+   {$IFDEF LOG_THREAD_SAFE}
+   LeaveCriticalSection(logf^.LogCS);
+   {$ENDIF}
+end;
+
+procedure TStandardLogHandler.WritelnRaw(log: PLog; const s: StdString);
+begin
+   {$IFDEF LOG_THREAD_SAFE}
+   EnterCriticalSection(log^.LogCS);
+   {$ENDIF}
+
+   if(log^.Ok()) then begin
+      system.writeln(log^.Fl^, s);
+      StdError(log^);
+   end;
+
+   {$IFDEF LOG_THREAD_SAFE}
+   LeaveCriticalSection(log^.LogCS);
+   {$ENDIF}
+end;
+
+procedure TStandardLogHandler.EnterSection(log: PLog; const s: StdString; collapsed: boolean);
+begin
+   log^.HandlerWriteln(logcINFO, s, collapsed);
+end;
+
+procedure TStandardLogHandler.Del(log: PLog);
+begin
+   erase(log^.Fl^);
+   StdError(log^);
+end;
+
+function TStandardLogHandler.StdError(var log: TLog): longint;
+begin
+   log.IoError := IOResult();
+
+   if(log.IoError <> 0) then
+      log.SetErrorState(logeIO);
+
+   Result := log.IoError;
+end;
+
+{ TConsoleLogHandler }
+
+VAR
+   consoleColors: array[0..logcPRIORITY_MAX] of longint = (
+      console.LightGray, {logcINFO}
+      console.Yellow, {logcWARNING}
+      console.LightRed, {logcERROR}
+      console.DarkGray, {logcVERBOSE}
+      console.Red, {logcFATAL}
+      console.Cyan, {logcDEBUG}
+      console.LightGreen {logcOK}
+   );
+
+constructor TConsoleLogHandler.Create();
+begin
+   Name := 'console';
+   NeedOpen := false;
+end;
+
+procedure TConsoleLogHandler.Writeln(log: PLog; priority: longint; const s: StdString);
+var
+   timeString: StdString = '';
+
+begin
+   {$IFDEF LOG_THREAD_SAFE}
+   EnterCriticalSection(log^.LogCS);
+   {$ENDIF}
+
+   if(log^.Ok() {$IFDEF WINDOWS}and IsConsole{$ENDIF}) then begin
+      if(s <> '') then begin
+         {construct a time string}
+         if(uLog.log.Settings.LogTime) then
+            timeString := TimeToStr(Now());
+
+         if(priority >= 0) and (priority <= logcPRIORITY_MAX) then begin
+            if(priority <> logcINFO) then
+               console.TextColor(consoleColors[priority]);
+
+            timeString := timeString + ' ';
+         end;
+
+         {add tabs to signify a section}
+         if(log^.SectionLevel > 0) then begin
+            system.writeln(timeString + copy(spacestr, 1, log^.SectionLevel * 2) + s)
+         end else
+         {level 0 section needs no tabs}
+            system.writeln(timeString + s);
+
+         if(priority <> logcINFO) then
+            console.ResetDefault();
+      end else
+         system.writeln();
+   end;
+
+   {$IFDEF LOG_THREAD_SAFE}
+   LeaveCriticalSection(log^.LogCS);
+   {$ENDIF}
+end;
+
+procedure TConsoleLogHandler.WritelnRaw(log: PLog; const s: StdString);
+begin
+   {$IFDEF LOG_THREAD_SAFE}
+   EnterCriticalSection(log^.LogCS);
+   {$ENDIF}
+
+   if(log^.Ok() {$IFDEF WINDOWS}and IsConsole{$ENDIF}) then
+      system.writeln(s);
+
+   {$IFDEF LOG_THREAD_SAFE}
+   LeaveCriticalSection(log^.LogCS);
+   {$ENDIF}
+end;
+
+procedure TConsoleLogHandler.EnterSection(log: PLog; const s: StdString; collapsed: boolean);
+begin
+   log^.HandlerWriteln(logcINFO, s, collapsed);
+end;
 
 { TLogUtils }
 
@@ -263,11 +604,6 @@ begin
 
    logFile.VerboseEnabled := log.Settings.VerboseEnabled;
    logFile.LogEndTimeDate := log.Settings.EndTimeDate;
-end;
-
-procedure TLogUtils.Init(out h: TLogHandler);
-begin
-   ZeroOut(h, SizeOf(h));
 end;
 
 function TLogUtils.Make(): PLog;
@@ -775,282 +1111,6 @@ begin
    {$ENDIF}
 end;
 
-{ DUMMY LOG HANDLER}
-{$PUSH}{$HINTS OFF}
-procedure dummyproc(log: PLog);
-begin
-   if(log <> nil) then;
-end;
-
-procedure dummystringproc(log: PLog; const s: StdString);
-begin
-end;
-
-procedure dummywriteln(log: PLog; priority: longint; const s: StdString);
-begin
-end;
-
-procedure dummyEnter(log: PLog; const s: StdString; collapsed: boolean);
-begin
-end;
-
-procedure dummyLeave(log: PLog);
-begin
-end;
-
-{$POP}
-
-{ STANDARD LOG HANDLER }
-function stderror(var log: TLog): longint;
-begin
-   log.IoError := IOResult();
-
-   if(log.IoError <> 0) then
-      log.SetErrorState(logeIO);
-
-   result := log.IoError;
-end;
-
-procedure stdopen(log: PLog);
-label
-   repeatopen;
-
-begin
-   {jump here to try to open the file again, and who said labels are not good
-   | other method could have been used but this one is simple}
-repeatopen:
-
-   {open the file in the correct mode.
-   If the file cannot be appended try rewriting it}
-   if(log^.FileMode = logcAPPEND)then begin
-      append(log^.Fl^);
-
-      if(stderror(log^) <> 0) then begin
-         log^.Flags.AppendFailed := true;
-         log^.FileMode := logcREWRITE;
-         goto repeatopen;
-      end;
-   end else if(log^.FileMode = logcREWRITE)then begin
-      rewrite(log^.Fl^);
-
-      if(stderror(log^) <> 0) then
-         log^.SetErrorState(logeIO);
-   end else begin
-      log^.FileMode := logcREWRITE;
-      goto repeatopen;
-   end;
-end;
-
-procedure stdinit(log: PLog);
-begin
-   {get memory for the file}
-   new(log^.Fl);
-
-   if(log^.Fl <> nil) then begin
-      {assign the filename to the file}
-      UTF8Assign(log^.Fl^, log^.FileName);
-   end else
-      log^.Error := logeNO_MEMORY;
-end;
-
-procedure stddispose(log: PLog);
-begin
-   if(log^.Fl <> nil) then
-      dispose(log^.Fl);
-
-   log^.Fl := nil;
-end;
-
-procedure stdclose(log: PLog);
-begin
-   close(log^.Fl^);
-   IOResult();
-end;
-
-VAR
-   tabstr: StdString = #9#9#9#9#9 + #9#9#9#9#9 + #9#9#9#9#9 + #9#9#9#9#9;
-   spacestr: StdString = '                                 ';
-
-procedure stdwriteln(logFile: PLog; priority: longint; const s: StdString);
-var
-   timeString: StdString = '';
-
-begin
-   {$IFDEF LOG_THREAD_SAFE}
-   EnterCriticalSection(logFile^.LogCS);
-   {$ENDIF}
-
-   if(logFile^.Ok()) then begin
-      if(s <> '') then begin
-         {construct a time string}
-         if(log.Settings.LogTime) then begin
-            timeString := utf8string(TimeToStr(Now()));
-         end;
-
-         if(priority >= 0) and (priority <= logcPRIORITY_MAX) then
-            timeString := timeString + ' ' + logcPriorityCharacters[priority] + '> ';
-
-         {add tabs to signify a section}
-         if(logFile^.SectionLevel > 0) then
-            writeln(logFile^.Fl^, timeString + copy(tabstr, 1, logFile^.SectionLevel) + s)
-         else
-         {level 0 section needs no tabs}
-            writeln(logFile^.Fl^, timeString + s);
-      end else
-         writeln(logFile^.Fl^);
-
-      {check for errors}
-      stderror(logFile^);
-   end;
-   {$IFDEF LOG_THREAD_SAFE}
-   LeaveCriticalSection(logFile^.LogCS);
-   {$ENDIF}
-end;
-
-procedure stdwritelnraw(log: PLog; const s: StdString);
-begin
-   {$IFDEF LOG_THREAD_SAFE}
-   EnterCriticalSection(log^.LogCS);
-   {$ENDIF}
-
-   if(log^.Ok()) then begin
-      writeln(log^.Fl^, s);
-      stderror(log^);
-   end;
-
-   {$IFDEF LOG_THREAD_SAFE}
-   LeaveCriticalSection(log^.LogCS);
-   {$ENDIF}
-end;
-
-procedure stdflush(log: PLog);
-begin
-   {$IFDEF LOG_THREAD_SAFE}
-   EnterCriticalSection(log^.LogCS);
-   {$ENDIF}
-
-   if(log^.Ok()) then begin
-      flush(log^.Fl^);
-      stderror(log^);
-   end;
-
-   {$IFDEF LOG_THREAD_SAFE}
-   LeaveCriticalSection(log^.LogCS);
-   {$ENDIF}
-end;
-
-procedure stddel(log: PLog);
-begin
-   erase(log^.Fl^);
-   stderror(log^);
-end;
-
-VAR
-   consoleColors: array[0..logcPRIORITY_MAX] of longint = (
-      console.LightGray, {logcINFO}
-      console.Yellow, {logcWARNING}
-      console.LightRed, {logcERROR}
-      console.DarkGray, {logcVERBOSE}
-      console.Red, {logcFATAL}
-      console.Cyan, {logcDEBUG}
-      console.LightGreen {logcOK}
-   );
-
-procedure consoleWriteln(logFile: PLog; priority: longint; const s: StdString);
-var
-   timeString: StdString = '';
-
-begin
-   {$IFDEF LOG_THREAD_SAFE}
-   EnterCriticalSection(logFile^.LogCS);
-   {$ENDIF}
-
-   if(logFile^.Ok() {$IFDEF WINDOWS}and IsConsole{$ENDIF}) then begin
-      if(s <> '') then begin
-         {construct a time string}
-         if(log.Settings.LogTime) then
-            timeString := TimeToStr(Now());
-
-         if(priority >= 0) and (priority <= logcPRIORITY_MAX) then begin
-            if(priority <> logcINFO) then
-               console.TextColor(consoleColors[priority]);
-
-            timeString := timeString + ' ';
-         end;
-
-         {add tabs to signify a section}
-         if(logFile^.SectionLevel > 0) then begin
-            writeln(timeString + copy(spacestr, 1, logFile^.SectionLevel * 2) + s)
-         end else
-         {level 0 section needs no tabs}
-            writeln(timeString + s);
-
-         if(priority <> logcINFO) then
-            console.ResetDefault();
-      end else
-         writeln();
-   end;
-
-   {$IFDEF LOG_THREAD_SAFE}
-   LeaveCriticalSection(logFile^.LogCS);
-   {$ENDIF}
-end;
-
-procedure consoleWritelnRaw(log: PLog; const s: StdString);
-begin
-   {$IFDEF LOG_THREAD_SAFE}
-   EnterCriticalSection(log^.LogCS);
-   {$ENDIF}
-
-   if(log^.Ok() {$IFDEF WINDOWS}and IsConsole{$ENDIF}) then
-      writeln(s);
-
-   {$IFDEF LOG_THREAD_SAFE}
-   LeaveCriticalSection(log^.LogCS);
-   {$ENDIF}
-end;
-
-
-procedure stdEnter(log: PLog; const s: StdString; {%H-}collapsed: boolean);
-begin
-   log^.HandlerWriteln(logcINFO, s, true);
-end;
-
-procedure consoleEnter(log: PLog; const s: StdString; {%H-}collapsed: boolean);
-begin
-   log^.HandlerWriteln(logcINFO, s, true);
-end;
-
-procedure initStdHandler();
-begin
-   log.Handler.Standard               := log.Handler.Dummy;
-   log.Handler.Standard.Name          := 'standard';
-   log.Handler.Standard.FileExtension := 'log';
-   log.Handler.Standard.NeedOpen      := true;
-
-   log.Handler.Standard.open          := @stdopen;
-   log.Handler.Standard.close         := @stdclose;
-   log.Handler.Standard.init          := @stdinit;
-   log.Handler.Standard.dispose       := @stddispose;
-   log.Handler.Standard.writeln       := @stdwriteln;
-   log.Handler.Standard.writelnraw    := @stdwritelnraw;
-   log.Handler.Standard.flush         := @stdflush;
-   log.Handler.Standard.enterSection  := @stdEnter;
-
-   log.Handler.pDefault := @log.Handler.Standard;
-end;
-
-procedure initConsoleHandler();
-begin
-   log.Handler.Console              := log.Handler.Dummy;
-   log.Handler.Console.Name         := 'console';
-   log.Handler.Console.NeedOpen     := false;
-
-   log.Handler.Console.writeln     := @consoleWriteln;
-   log.Handler.Console.writelnraw  := @consoleWritelnRaw;
-   log.Handler.Console.enterSection:= @consoleEnter;
-end;
-
 { INITIALIZE }
 
 procedure Init();
@@ -1066,27 +1126,12 @@ begin
    log.Settings.FlushOnWrite              := true;
    log.Settings.VerboseEnabled            := true;
 
-   {initiale the dummy handler}
-   log.Handler.Dummy.Name             := 'dummy';
-   log.Handler.Dummy.FileExtension    := '';
-   log.Handler.Dummy.NeedOpen         := false;
-   log.Handler.Dummy.NoHeader         := false;
+   {initialize handlers}
+   log.Handler.Dummy.Create();
+   log.Handler.Standard.Create();
+   log.Handler.Console.Create();
 
-   log.Handler.Dummy.open             := @dummyproc;
-   log.Handler.Dummy.start            := @dummyproc;
-   log.Handler.Dummy.close            := @dummyproc;
-   log.Handler.Dummy.init             := @dummyproc;
-   log.Handler.Dummy.dispose          := @dummyproc;
-   log.Handler.Dummy.writeln          := @dummywriteln;
-   log.Handler.Dummy.writelnraw       := @dummystringproc;
-   log.Handler.Dummy.flush            := @dummyproc;
-   log.Handler.Dummy.del              := @dummyproc;
-   log.Handler.Dummy.enterSection     := @dummyEnter;
-   log.Handler.Dummy.leaveSection     := @dummyLeave;
-
-   {initialize other handlers}
-   initStdHandler();
-   initConsoleHandler();
+   log.Handler.pDefault := @log.Handler.Standard;
 end;
 
 INITIALIZATION

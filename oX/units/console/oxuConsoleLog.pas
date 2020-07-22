@@ -14,8 +14,18 @@ INTERFACE
       {ox}
       uOX, oxuConsoleBackend, oxuConsole;
 
+TYPE
+
+   { oxTConsoleLogHandler }
+
+   oxTConsoleLogHandler = object(TLogHandler)
+      constructor Create();
+
+      procedure Writeln(log: PLog; priority: longint; const s: StdString); virtual;
+   end;
+
 VAR
-   loghOXConsole: TLogHandler;
+   loghOXConsole: oxTConsoleLogHandler;
 
 IMPLEMENTATION
 
@@ -39,10 +49,19 @@ begin
       oldLogCallback();
 end;
 
-procedure hwriteln({%H-}logf: PLog; priority: longint; const s: StdString);
+{ oxTConsoleLogHandler }
+
+constructor oxTConsoleLogHandler.Create();
+begin
+   Name := 'ox.console';
+   FileExtension := '';
+   NoHeader := true;
+end;
+
+procedure oxTConsoleLogHandler.Writeln(log: PLog; priority: longint; const s: StdString);
 begin
    {if log file is closing we probably already have no buffer}
-   if(oxConsole.Console.Contents.a > 0) and (not logf^.Flags.Closing) then begin
+   if(ox.Initialized) and (oxConsole.Console.Contents.a > 0) and (not log^.Flags.Closing) then begin
       if(priority = logcINFO) then
          oxConsole.Console.i(s)
       else if(priority = logcWARNING) then
@@ -60,25 +79,10 @@ begin
    end;
 end;
 
-{output nothing to the console until oX is initialized, then use the actual handler method}
-procedure hwritelnPreInit(logf: PLog; priority: longint; const s: StdString);
-begin
-   if(ox.Initialized) then begin
-      loghOXConsole.writeln := @hwriteln;
-      hwriteln(logf, priority, s);
-   end;
-end;
-
 INITIALIZATION
    log.Init(extlog);
 
-   {use the standard log handler for most operations}
-   loghOXConsole := log.handler.Dummy;
-   loghOXConsole.Name           := 'ox.console';
-   loghOXConsole.fileExtension  := '';
-   loghOXConsole.writeln        := @hwritelnPreInit;
-   {nothing should be output to the file by default }
-   loghOXConsole.noHeader       := true;
+   loghOXConsole.Create();
 
    oldLogCallback := appLog.SetupCallback;
    appLog.SetupCallback := @SetupLog;
