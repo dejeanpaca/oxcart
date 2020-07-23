@@ -166,6 +166,8 @@ TYPE
       procedure s({%H-}priority: longint; const {%H-}logString: StdString);
       {flush log file}
       procedure Flush();
+      {flush log file}
+      procedure FlushChain();
 
       {log information}
       procedure i(const {%H-}logString: StdString);
@@ -285,6 +287,9 @@ VAR
    log: TLogUtils;
 
 IMPLEMENTATION
+
+VAR
+   oldExitProc: pointer;
 
 { TLogHandler }
 
@@ -984,6 +989,16 @@ begin
    {$ENDIF}
 end;
 
+procedure TLog.FlushChain();
+begin
+   {$IFNDEF NOLOG}
+   h^.Flush(@Self);
+
+   if(ChainLog <> nil) then
+      ChainLog^.FlushChain();
+   {$ENDIF}
+end;
+
 procedure TLog.i(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
@@ -1130,6 +1145,12 @@ begin
    log.Handler.pDefault := @log.Handler.Standard;
 end;
 
+procedure RuntimeError();
+begin
+   stdlog.FlushChain();
+   ExitProc := oldExitProc;
+end;
+
 INITIALIZATION
    consoleColors[0] := ConsoleUtils.console.InitialTextColor;
    {$IFNDEF NOLOG}
@@ -1147,6 +1168,10 @@ INITIALIZATION
    if(IsConsole) then
       writeln('Logging support disabled');
    {$ENDIF}
+
+   {store the old exit proc and set the new one}
+   oldExitProc := ExitProc;
+   ExitProc := @RunTimeError;
 
 FINALIZATION
    {$IFNDEF NOLOG}
