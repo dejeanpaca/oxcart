@@ -192,7 +192,7 @@ TYPE
       procedure Leave();
 
       {handler writing}
-      procedure HandlerWriteln({%H-}priority: longint; const {%H-}logString: StdString; {%H-}nochainlog: boolean);
+      procedure HandlerWriteln({%H-}priority: longint; const {%H-}logString: StdString; {%H-}noChainLog: boolean);
       procedure HandlerWritelnRaw(const {%H-}logString: StdString);
    end;
 
@@ -214,7 +214,7 @@ TYPE
       procedure Flush(log: PLog); virtual;
       procedure Writeln(logf: PLog; priority: longint; const s: StdString); virtual;
       procedure WritelnRaw(log: PLog; const s: StdString); virtual;
-      procedure EnterSection(log: PLog; const s: StdString; collapsed: boolean); virtual;
+      procedure EnterSection(log: PLog; const s: StdString; {%H-}collapsed: boolean); virtual;
       procedure Del(log: PLog); virtual;
 
       { STANDARD LOG HANDLER }
@@ -228,7 +228,7 @@ TYPE
 
       procedure Writeln(log: PLog; priority: longint; const s: StdString); virtual;
       procedure WritelnRaw(log: PLog; const s: StdString); virtual;
-      procedure EnterSection(log: PLog; const s: StdString; collapsed: boolean); virtual;
+      procedure EnterSection(log: PLog; const s: StdString; {%H-}collapsed: boolean); virtual;
    end;
 
    { TLogUtils }
@@ -494,7 +494,7 @@ end;
 
 procedure TStandardLogHandler.EnterSection(log: PLog; const s: StdString; collapsed: boolean);
 begin
-   log^.HandlerWriteln(logcINFO, s, collapsed);
+   log^.HandlerWriteln(logcINFO, s, true);
 end;
 
 procedure TStandardLogHandler.Del(log: PLog);
@@ -588,7 +588,7 @@ end;
 
 procedure TConsoleLogHandler.EnterSection(log: PLog; const s: StdString; collapsed: boolean);
 begin
-   log^.HandlerWriteln(logcINFO, s, collapsed);
+   log^.HandlerWriteln(logcINFO, s, true);
 end;
 
 { TLogUtils }
@@ -612,10 +612,11 @@ var
 
 begin
    new(log);
+
    if(log <> nil) then
       Init(log^);
 
-   result := log;
+   Result := log;
 end;
 
 procedure TLogUtils.Dispose(var logFile: PLog);
@@ -631,7 +632,7 @@ end;
 
 function TLogUtils.Ok(): boolean; inline;
 begin
-   result := stdlog.Ok();
+   Result := stdlog.Ok();
 end;
 
 procedure TLogUtils.InitStd(const fn, logh: StdString; mode: longint);
@@ -759,7 +760,7 @@ begin
       if(log.Settings.UseHandlerFileExtension) then
          FileName := ExtractAllNoExt(FileName) + '.' + h^.FileExtension;
 
-      h^.init(@self);
+      h^.Init(@self);
 
       if(Error = 0) then begin
          Flags.Initialized := true;
@@ -777,7 +778,7 @@ begin
       ChainLog^.Dispose();
 
    FileName := '';
-   h^.dispose(@self);
+   h^.Dispose(@self);
 end;
 
 
@@ -800,13 +801,13 @@ begin
       end;
 
       if(Flags.Initialized) then begin
-         h^.open(@self);
+         h^.Open(@self);
 
          if(not Flags.Error) then begin
             Flags.Opened := true;
             Flags.Ok := true;
 
-            h^.start(@self);
+            h^.Start(@self);
 
             {write down the log header(if one exists)}
             if(LogHeader <> '') and (not h^.noheader) then begin
@@ -855,7 +856,7 @@ begin
       Flush();
 
       {close the file and set the state}
-      h^.close(@self);
+      h^.Close(@self);
 
       Flags.Opened := false;
       Flags.Ok := false;
@@ -890,7 +891,7 @@ begin
       end;
 
        {erase the file}
-       h^.del(@self);
+       h^.Del(@self);
    end;
    {$ENDIF}
 end;
@@ -926,13 +927,13 @@ begin
    EnterCriticalSection(LogCS);
    {$ENDIF}
 
-   result := Flags.Ok;
+   Result := Flags.Ok;
 
    {$IFDEF LOG_THREAD_SAFE}
    LeaveCriticalSection(LogCS);
    {$ENDIF}
    {$ELSE}
-   result := false;
+   Result := false;
    {$ENDIF}
 end;
 
@@ -984,7 +985,7 @@ end;
 procedure TLog.Flush();
 begin
    {$IFNDEF NOLOG}
-   h^.flush(@self);
+   h^.Flush(@self);
    {$ENDIF}
 end;
 
@@ -1049,7 +1050,7 @@ procedure TLog.Enter(const title: StdString; collapsed: boolean);
 begin
    {$IFNDEF NOLOG}
    if(Flags.Initialized) then begin
-      h^.enterSection(@self, title, collapsed);
+      h^.EnterSection(@self, title, collapsed);
       inc(SectionLevel);
       assert(SectionLevel < logcMAX_SECTIONS, 'Too many log sections, increase logcMAX_SECTIONS.');
    end;
@@ -1073,7 +1074,7 @@ procedure TLog.Leave();
 begin
    {$IFNDEF NOLOG}
    if(SectionLevel > 0) then begin
-      h^.leaveSection(@self);
+      h^.LeaveSection(@self);
       dec(SectionLevel);
 
       if(ChainLog <> nil) then
@@ -1084,17 +1085,17 @@ end;
 
 { HANDLER }
 
-procedure TLog.HandlerWriteln(priority: longint; const logString: StdString; nochainlog: boolean);
+procedure TLog.HandlerWriteln(priority: longint; const logString: StdString; noChainLog: boolean);
 begin
    {$IFNDEF NOLOG}
    if(Flags.Ok) then begin
-      h^.writeln(@self, priority, logString);
+      h^.Writeln(@self, priority, logString);
 
       if(flushOnWrite) then
-         h^.flush(@self);
+         h^.Flush(@self);
    end;
 
-   if(ChainLog <> nil) and (not nochainlog) then
+   if(ChainLog <> nil) and (not noChainLog) then
       ChainLog^.HandlerWriteln(priority, logString, false);
    {$ENDIF}
 end;
@@ -1103,10 +1104,10 @@ procedure TLog.HandlerWritelnRaw(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
    if(Flags.Ok) then begin
-      h^.writelnraw(@self, logString);
+      h^.WritelnRaw(@self, logString);
 
       if(flushOnWrite) then
-         h^.flush(@self);
+         h^.Flush(@self);
    end;
    {$ENDIF}
 end;
@@ -1141,9 +1142,9 @@ INITIALIZATION
    log.Init(stdlog);
    {standard log closes all chained logs by default}
    stdlog.Flags.CloseChained := true;
-   log.Init(consoleLog);
 
-   {setup html log}
+   {setup console log}
+   log.Init(consoleLog);
    consoleLog.QuickOpen('console', '', logcREWRITE, log.Handler.Console);
    consoleLog.LogEndTimeDate := false;
    stdlog.ChainLog := @consoleLog;
