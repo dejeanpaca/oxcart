@@ -607,16 +607,11 @@ begin
 end;
 
 function TLogUtils.Make(): PLog;
-var
-   log: PLog = nil;
-
 begin
-   new(log);
+   new(Result);
 
-   if(log <> nil) then
-      Init(log^);
-
-   Result := log;
+   if(Result <> nil) then
+      Init(Result^);
 end;
 
 procedure TLogUtils.Dispose(var logFile: PLog);
