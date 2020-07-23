@@ -16,7 +16,6 @@ IMPLEMENTATION
 VAR
    oldExitProc: pointer;
 
-
 procedure RunTimeErrorDisplay(addr: pointer);
 var
    s: StdString;
@@ -51,6 +50,10 @@ begin
       log.e('Exception object ' + obj.ClassName + ' is not of class Exception.');
       log.e(DumpExceptionCallStack(addr, frameCount, frames));
    end;
+
+   ExceptProc := @oldExceptProc;
+   if(oldExceptProc <> nil) then
+      oldExceptProc(obj, addr, frameCount, frames);
 end;
 
 
@@ -59,6 +62,7 @@ INITIALIZATION
    oldExitProc := ExitProc;
    ExitProc := @RunTimeError;
 
+   oldExceptProc := @ExceptProc;
    ExceptProc := @UnhandledException;
 
 END.
