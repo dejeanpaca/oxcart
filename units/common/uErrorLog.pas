@@ -56,7 +56,6 @@ begin
       oldExceptProc(obj, addr, frameCount, frames);
 end;
 
-
 INITIALIZATION
    {store the old exit proc and set the new one}
    oldExitProc := ExitProc;
