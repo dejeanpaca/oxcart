@@ -656,10 +656,7 @@ begin
 
    if(column = 0) then begin
       {name}
-      if(Files.List[index].Name <> '..') then
-         Result := Files.List[index].Name
-      else
-         Result := '..';
+      Result := Files.List[index].Name
    end else if(column = 1) then begin
       {type}
       if(Files.List[index].IsFile()) then begin
@@ -706,10 +703,13 @@ begin
    if(index > -1) then begin
       path := CurrentPath;
 
-      if(CurrentPath <> '') then
-         path := IncludeTrailingPathDelimiter(CurrentPath);
+      if(not Files.List[index].IsSpecialDirectory()) then begin
+         if(CurrentPath <> '') then
+            path := IncludeTrailingPathDelimiter(CurrentPath);
 
-      Result := Path + Files.List[index].Name;
+         Result := path + Files.List[index].Name
+      end else
+         Result := CurrentPath;
    end;
 end;
 
@@ -882,7 +882,7 @@ begin
       Result.Color := wdgFileList.DirectoryColor;
    end;
 
-   if(f.IsHidden() or (f.IsDirectory() and ((f.Name = '..') or (f.Name = '.')))) then
+   if f.IsHidden() or (f.IsSpecialDirectory()) then
       Result.Color := Result.Color.Darken(0.2);
 end;
 
