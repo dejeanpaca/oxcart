@@ -21,6 +21,8 @@ CONST
 
 TYPE
    uiTHintsGlobal = record
+      SurfaceColor: TColor4ub;
+
       Padding: longint;
       {wait time before showing a hint, in miliseconds}
       WaitTime: longword;
@@ -72,16 +74,20 @@ begin
       if(p.y - d.h < 0) then
          p.y := d.h - 1 + HINT_SEPARATION;
 
-      p.x := p.x + 4;
-      p.y := p.y - 4;
+      {render a shadow}
+      p.x := p.x + 2;
+      p.y := p.y - 2;
 
-      uiRenderWidget.Box(p, d, uiTSkin(uiTWindow(oxw).Skin).Colors.Shadow, uiTSkin(uiTWindow(oxw).Skin).Colors.Shadow, wdgRENDER_BLOCK_ALL, 0.5);
+      cSurface := uiTSkin(uiTWindow(oxw).Skin).Colors.Shadow;
 
-      p.x := p.x - 4;
-      p.y := p.y + 4;
+      uiRenderWidget.Box(p, d, cSurface, cSurface, wdgRENDER_BLOCK_ALL, 0.25);
 
-      cSurface := uiTSkin(uiTWindow(oxw).Skin).Colors.Surface;
-      uiRenderWidget.Box(p, d, cSurface, uiTSkin(uiTWindow(oxw).Skin).Colors.Highlight, wdgRENDER_BLOCK_ALL, 0.75);
+      {render hint surface}
+      p.x := p.x - 2;
+      p.y := p.y + 2;
+
+      cSurface := uiHints.SurfaceColor;
+      uiRenderWidget.Box(p, d, cSurface, cSurface, wdgRENDER_BLOCK_ALL, 0.9);
 
       r.Assign(p, d);
 
@@ -100,6 +106,7 @@ end;
 INITIALIZATION
    uiHints.WaitTime := uiHINTS_DEFAULT_WAIT_TIME;
    uiHints.Padding := HINT_PADDING;
+   uiHints.SurfaceColor := cBlack4ub;
 
    uiWindow.OxwPostRender.Add(@renderHint);
 
