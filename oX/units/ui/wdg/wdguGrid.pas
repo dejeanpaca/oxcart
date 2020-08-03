@@ -97,6 +97,9 @@ TYPE
       {get the column number frol SelectedGridItem}
       function GetColumnFromSelected(): loopint;
 
+      {get selected item depending on mode}
+      function GetSelectedItem(): loopint;
+
       {enable showing of header (update will also update offsets, scrollbar, ... )}
       procedure EnableHeader(doUpdate: boolean = true);
       {disable showing of header (update will also update offsets, scrollbar, ... )}
@@ -493,6 +496,14 @@ begin
    result := SelectedGridItem mod ItemsPerRow();
 end;
 
+function wdgTGrid.GetSelectedItem(): loopint;
+begin
+   if(GridMode) then
+      Result := SelectedGridItem
+   else
+      Result := SelectedItem;
+end;
+
 procedure wdgTGrid.EnableHeader(doUpdate: boolean);
 begin
    HeaderHeight := ColumnTitleHeight + HeaderSeparatorHeight;
@@ -648,10 +659,7 @@ begin
 
    SelectedGridItem := LastGridItemUnderPointer;
 
-   if(GridMode) then
-      GridItemClicked(SelectedGridItem, button)
-   else
-      GridItemClicked(SelectedItem, button);
+   GridItemClicked(GetSelectedItem(), button)
 end;
 
 procedure wdgTGrid.ItemDoubleClicked(index: loopint; button: TBitSet);
@@ -660,10 +668,7 @@ begin
 
    SelectedGridItem := LastGridItemUnderPointer;
 
-   if(GridMode) then
-      GridItemDoubleClicked(SelectedGridItem, button)
-   else
-      GridItemDoubleClicked(SelectedItem, button);
+   GridItemDoubleClicked(GetSelectedItem(), button)
 end;
 
 procedure wdgTGrid.GridItemClicked(index: loopint; button: TBitSet);
