@@ -73,6 +73,9 @@ TYPE
 
       function Key(var k: appTKeyEvent): boolean; override;
 
+      {get the path of the currently selected item (or current path)}
+      function GetSelectedPath(): StdString;
+
       {go to the parent directory}
       procedure GoUp();
 
@@ -804,6 +807,19 @@ begin
          Result := true;
       end;
    end;
+end;
+
+function wdgTFileList.GetSelectedPath(): StdString;
+var
+   selected: loopint;
+
+begin
+   selected := GetSelectedItem();
+
+   if(selected > -1) then
+      Result := IncludeTrailingPathDelimiter(CurrentPath) + Files[selected].Name
+   else
+      Result := CurrentPath;
 end;
 
 procedure wdgTFileList.GoUp();
