@@ -344,7 +344,6 @@ end;
 function TBuildPlatform.Load(): boolean;
 var
    fn: StdString;
-   v: StdString;
 
 
 begin
@@ -352,15 +351,17 @@ begin
 
    fn := GetExecutablePath();
 
-   if TBuildPlatform.Execute(fn, '-iW', v) then
-      log.v('Found executable for ' + GetName() + ' at ' + fn + ' (version: ' + v + ')')
-   else begin
+   if(fn = '') then begin
       log.w('Cannot find executable for ' + GetName() + ' at ' + fn);
       exit(False);
    end;
 
-   if not ReadVersion() then
+   if ReadVersion() then
+      log.v('Found executable for ' + GetName() + ' at ' + fn + ' (version: ' + Version + ')')
+   else begin
+      log.w('Cannot read version for ' + GetName() + ' at ' + fn);
       exit(False);
+   end;
 
    Result := true;
 end;
@@ -681,8 +682,7 @@ end;
 function TBuildSystemInstalls.AddPlatformFromExecutable(const cpu, os: StdString; const path: StdString;
    const executable: StdString): PBuildPlatform;
 var
-   fn,
-   v: StdString;
+   fn: StdString;
    platformName: TFPCPlatformString;
    p: TBuildPlatform;
 
@@ -695,10 +695,6 @@ begin
          fn := IncludeTrailingPathDelimiter(path) + build.GetExecutableName(executable)
       else
          fn := IncludeTrailingPathDelimiter(path) + build.GetExecutableName('fpc');
-
-      {check if we found anything}
-      if not TBuildPlatform.Execute(fn, '-iW', v) then
-         fn := '';
    end else begin
      if executable <> '' then
         fn := FindFPCPathFromDefaults(executable)
@@ -711,6 +707,7 @@ begin
 
       platformName := cpu + '-' + os;
       p.Platform := platformName;
+      p.Name := platformName;
       p.OS := os;
       p.CPU := cpu;
       p.Path := IncludeTrailingPathDelimiter(fn);
@@ -718,16 +715,16 @@ begin
       if executable <> '' then
          p.Executable := build.GetExecutableName(executable);
 
-      p.Load();
+      if(p.Load()) then
+         Platforms.Add(p);
 
-      Platforms.Add(p);
+      Result := Platforms.GetLast();
    end;
 end;
 
 function TBuildSystemInstalls.FindFPCPathFromDefaults(const executable: StdString): StdString;
 var
-   fn,
-   v: StdString;
+   fn: StdString;
 
 begin
    Result := '';
@@ -739,13 +736,15 @@ begin
    {$ELSEIF DEFINED(WINDOWS)}
    fn := 'C:\lazarus\fpc\' + FPC_VERSION + '\bin\' + build.BuiltWithTarget + DirectorySeparator;
 
-   if not TBuildPlatform.Execute(fn + build.GetExecutableName(executable), '-iW', v) then
-      fn := 'C:\fpc\' + FPC_VERSION + '\bin\' + build.BuiltWithTarget + DirectorySeparator;
+   if not FileExists(fn + build.GetExecutableName(executable)) then
+      fn := 'C:\fpc\' + FPC_VERSION + '\bin\' + build.BuiltWithTarget + DirectorySeparator
+   else
+      exit(fn);
    {$ENDIF}
 
    Result := fn;
 
-   if not TBuildPlatform.Execute(fn + build.GetExecutableName(executable), '-iW', v) then
+   if not FileExists(fn + build.GetExecutableName(executable)) then
       fn := '';
 end;
 
