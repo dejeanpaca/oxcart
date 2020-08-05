@@ -11,23 +11,26 @@ INTERFACE
 	USES uStd, uLog, StringUtils,
      {$INCLUDE usesglext.inc},
      windows, oxuWindowsOS, oxuRenderer,
-     oxuOGL, oxuglExtensions
+     oxuOGL, oxuglExtensions, oxuglRendererPlatform, oxuglRenderer
      {$IFNDEF GLES}
      ,oxuWGL
      {$ENDIF};
 
 TYPE
-   { oxwglTGlobal }
+   { oxglTPlatformWGL }
 
-   oxwglTGlobal = record
-      function PreInitWIndow(wnd: oglTWindow): boolean;
+   oxglTPlatformWGL = object(oxglTPlatform)
+      function PreInitWindow(wnd: oglTWindow): boolean; virtual;
 
-      procedure SwapBuffers(wnd: oglTWindow);
-      function GetContext(wnd: oglTWindow; shareContext: HGLRC): HGLRC;
+      procedure SwapBuffers(wnd: oglTWindow); virtual;
+      function GetContext(wnd: oglTWindow; shareContext: HGLRC): HGLRC; virtual;
+      function ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
+      function ClearContext(wnd: oglTWindow): boolean; virtual;
+      function DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
    end;
 
 VAR
-   oxwgl: oxwglTGlobal;
+   oxwgl: oxglTPlatformWGL;
 
 IMPLEMENTATION
 
@@ -278,7 +281,9 @@ begin
       wnd.wd.LastError := winos.GetLastError();
 end;
 
-function oxwglTGlobal.PreInitWIndow(wnd: oglTWindow): boolean;
+{ oxglTPlatformWGL }
+
+function oxglTPlatformWGL.PreInitWindow(wnd: oglTWindow): boolean;
 var
    pFormat: longint;
 
@@ -328,13 +333,13 @@ begin
    Result := true;
 end;
 
-procedure oxwglTGlobal.SwapBuffers(wnd: oglTWindow);
+procedure oxglTPlatformWGL.SwapBuffers(wnd: oglTWindow);
 begin
    if(not windows.SwapBuffers(wnd.wd.dc)) and (wnd.wd.dc <> 0) then
       winos.LogError('SwapBuffers');
 end;
 
-function oxwglTGlobal.GetContext(wnd: oglTWindow; shareContext: HGLRC): HGLRC;
+function oxglTPlatformWGL.GetContext(wnd: oglTWindow; shareContext: HGLRC): HGLRC;
 var
    extContext: boolean = false;
    requiresContext: boolean = false;
@@ -366,5 +371,33 @@ begin
    if(wnd.wd.LastError <> 0) then
       log.e('gl > (' + method + ') Failed getting rendering context ' + winos.FormatMessage(wnd.wd.LastError));
 end;
+
+function oxglTPlatformWGL.ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean;
+begin
+   Result := wglMakeCurrent(wnd.wd.dc, context);
+
+   if(not Result) then
+      wnd.wd.LastError := winos.LogError('wglMakeCurrent');
+end;
+
+function oxglTPlatformWGL.ClearContext(wnd: oglTWindow): boolean;
+begin
+   Result := wglMakeCurrent(0, 0);
+
+   if(not Result) then
+      wnd.wd.LastError := winos.LogError('wglMakeCurrent')
+end;
+
+function oxglTPlatformWGL.DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean;
+begin
+   Result := wglDeleteContext(context);
+
+   if(not Result) then
+      wnd.wd.LastError := winos.LogError('wglDeleteContext');
+end;
+
+INITIALIZATION
+   oxwgl.Create();
+   oxglTRenderer.glPlatform := @oxwgl;
 
 END.

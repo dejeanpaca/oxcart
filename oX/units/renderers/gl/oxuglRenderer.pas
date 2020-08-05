@@ -18,9 +18,9 @@ INTERFACE
       {ox}
       uOX, oxuRunRoutines, oxuWindowTypes, oxuTypes, oxuRenderer, oxuRenderers, oxuWindows,
       {renderer.gl}
-      oxuOGL, oxuglExtensions, oxuglInfo,
+      oxuOGL, oxuglExtensions, oxuglInfo, oxuglRendererPlatform,
       {platform specific}
-      {$IFDEF WINDOWS}windows, oxuglRendererWin, oxuWindowsPlatform, oxuWindowsOS{$ENDIF}
+      {$IFDEF WINDOWS}windows, oxuWindowsPlatform{$ENDIF}
       {$IFDEF X11}GLX, oxuX11Platform, oxuglRendererX11{$ENDIF}
       {$IFDEF COCOA}oxuglCocoa, oxuCocoaPlatform, oxuglRendererCocoa{$ENDIF};
 
@@ -28,6 +28,8 @@ TYPE
    { oxglTRenderer }
 
    oxglTRenderer = class(oxTRenderer)
+      glPlatform: oxglPPlatform; static;
+
       glRenderingContexts: array[0..oxMAXIMUM_RENDER_CONTEXT] of oglTRenderingContext;
       {$IFDEF OX_LIBRARY_SUPPORT}
       pExtensions: oglPExtensions;
@@ -223,15 +225,7 @@ end;
 
 function oxglTRenderer.PreInitWindow(wnd: oxTWindow): boolean;
 begin
-   {$IF defined(WINDOWS)}
-   Result := oxwgl.PreInitWindow(oglTWindow(wnd));
-   {$ELSEIF defined(X11)}
-   Result := oxglx.PreInitWindow(oglTWindow(wnd));
-   {$ELSEIF defined(COCOA)}
-   Result := oxglCocoa.PreInitWIndow(oglTWindow(wnd));
-   {$ELSE}
-   Result := false;
-   {$ENDIF}
+   Result := glPlatform^.PreInitWindow(oglTWindow(wnd));
 end;
 
 procedure oxglTRenderer.LogWindow(window: oxTWindow);
@@ -246,17 +240,7 @@ end;
 
 procedure oxglTRenderer.SwapBuffers(wnd: oxTWindow);
 begin
-   {$IFDEF WINDOWS}
-   oxwgl.SwapBuffers(oglTWindow(wnd));
-   {$ENDIF}
-
-   {$IFDEF X11}
-   oxglx.SwapBuffers(oglTWindow(wnd));
-   {$ENDIF}
-
-   {$IFDEF COCOA}
-   oxglCocoa.SwapBuffers(oglTWindow(wnd));
-   {$ENDIF}
+   glPlatform^.SwapBuffers(oglTWindow(wnd));
 end;
 
 function oxglTRenderer.GetContext(wnd: oxTWindow; shareContext: loopint): loopint;
@@ -273,17 +257,7 @@ begin
    if(shareContext > -1) then
       shareRC := glRenderingContexts[shareContext];
 
-   {$IFDEF WINDOWS}
-   rc := oxwgl.GetContext(oglTWindow(wnd), shareRC);
-   {$ENDIF}
-
-   {$IFDEF X11}
-   rc := oxglx.GetContext(oglTWindow(wnd), shareRC);
-   {$ENDIF}
-
-   {$IFDEF COCOA}
-   rc := oxglCocoa.GetContext(oglTWindow(wnd), shareRC);
-   {$ENDIF}
+   rc := glPlatform^.GetContext(oglTWindow(wnd), shareRC);
 
    if(ogl.ValidRC(rc)) then begin
       Result := AddRenderingContext(wnd);
@@ -308,10 +282,8 @@ begin
       wnd := oglTWindow(RenderingContexts[context].Window);
       log.v('gl > Set render context ' + sf(context) +  ' current');
 
-      {$IFDEF WINDOWS}
-      if(not wglMakeCurrent(wnd.wd.dc, glRenderingContexts[context])) then
-         wnd.wd.LastError := winos.LogError('wglMakeCurrent');
-      {$ENDIF}
+      glPlatform^.ContextCurrent(wnd, glRenderingContexts[context]);
+
       {$IFDEF X11}
       glXMakeCurrent(x11.DPY, wnd.wd.h, glRenderingContexts[context]);
       wnd.wd.LastError := x11.GetError();
@@ -332,10 +304,7 @@ begin
    if(context >= 0) then begin
       wnd := oglTWindow(RenderingContexts[context].Window);
 
-      {$IFDEF WINDOWS}
-      if(not wglMakeCurrent(0, 0)) then
-         wnd.wd.LastError := winos.LogError('wglMakeCurrent');
-      {$ENDIF}
+      glPlatform^.ClearContext(wnd);
 
       {$IFDEF X11}
       glXMakeCurrent(x11.DPY, 0, nil);
@@ -367,11 +336,7 @@ begin
    RemoveContext(context);
 
    if(ogl.ValidRC(rc)) then begin
-      {$IFDEF WINDOWS}
-      Result := wglDeleteContext(rc);
-      if(not Result) then
-         wnd.wd.LastError := winos.LogError('wglDeleteContext');
-      {$ENDIF}
+      glPlatform^.DestroyContext(wnd, rc);
 
       {$IFDEF X11}
       glXDestroyContext(x11.DPY, rc);
