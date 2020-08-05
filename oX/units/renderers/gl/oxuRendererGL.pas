@@ -17,7 +17,7 @@ INTERFACE
       uStd,
       oxuglRenderer,
       {$IFDEF WINDOWS}
-      oxuglRendererWin,
+      oxuglRendererWin, oxuWindowsPlatform,
       {$ENDIF}
       oxuglTextureComponent,
       oxuglTextureGenerate,
@@ -34,7 +34,11 @@ INTERFACE
 
 IMPLEMENTATION
 
+VAR
+   PlatformInstance: TClass;
+
 INITIALIZATION
-   Pass();
+   {$INCLUDE ../../ox_default_platform_instance.inc}
+   oxglTRenderer.glSystemPlatform := PlatformInstance;
 
 END.
