@@ -21,6 +21,9 @@ INTERFACE
      uiuBase;
 
 TYPE
+
+   { oxTInitializationGlobal }
+
    oxTInitializationGlobal = record
       ErrorDescription: string;
       Started,
@@ -35,6 +38,8 @@ TYPE
       procedure Deinitialize();
 
       procedure LogInformation();
+
+      function RaiseError(const description: string = ''; error: loopint = oxeGENERAL): loopint;
    end;
 
 VAR
@@ -62,6 +67,18 @@ begin
    log.Flush();
 end;
 
+function oxTInitializationGlobal.RaiseError(const description: string; error: loopint): loopint;
+begin
+   ErrorDescription := description;
+
+   if(ox.Error = 0) and (error <> 0) then
+      ox.Error := error;
+
+   Result := error;
+
+   ox.InitializationFailed := true;
+end;
+
 function oxTInitializationGlobal.InitializePlatforms(): boolean;
 begin
    if(oxPlatforms.Initialize()) then
@@ -84,8 +101,9 @@ begin
 end;
 
 begin
-   result := eERR;
+   Result := eERR;
    GlobalStartTime := Time();
+   ox.InitializationFailed := false;
 
    {initialize app}
    {$IFDEF OX_LIBRARY}
@@ -123,10 +141,9 @@ begin
 
    {call pre-initialization routines}
    ox.PreInit.iCall();
-   if(ox.Error <> 0) then begin
-      ErrorDescription := 'Pre-initialization step failed';
-      exit(oxeGENERAL);
-   end;
+
+   if(ox.Error <> 0) then
+      exit(RaiseError('Pre-initialization step failed'));
 
    log.i('Called pre-initialization routines');
 
@@ -157,17 +174,17 @@ begin
 
    {create a test window and gather information}
    if(oxContextWindow.Require) then begin
-      if(not oxContextWindow.Create()) then begin
-         ErrorDescription := 'Failed to create context window';
-         exit;
-      end;
+      if(not oxContextWindow.Create()) then
+         exit(RaiseError('Failed to create context window'));
    end;
    {$ENDIF}
 
    {create windows}
    if(not oxWindows.Initialize()) then begin
-      ErrorDescription := 'Failed to create windows';
-      exit;
+      RaiseError('Failed to create windows');
+      {we'll still let the renderer do anything it needs to in case of initialization failure}
+      oxRenderer.AfterInitialize();
+      exit(oxeGENERAL);
    end;
 
    {finish renderer initialization}
@@ -189,9 +206,9 @@ begin
 
    {call base initialization routines}
    ox.BaseInit.iCall();
+
    if(ox.Error <> 0) then begin
-      ErrorDescription := 'Base initialization failed';
-      exit(oxeGENERAL);
+      RaiseError('Base initialization failed');
    end;
 
    log.i('Base initialization done (Elapsed: ' + elapsedTime.ElapsedfToString() + 's)');
@@ -207,8 +224,7 @@ begin
    {call initialization routines}
    ox.Init.iCall();
    if(ox.Error <> 0) then begin
-      ErrorDescription := 'Initialization failed';
-      exit(oxeGENERAL);
+      exit(RaiseError('Initialization failed'));
    end;
 
    log.i('Called all initialization routines (elapsed: ' + elapsedTime.ElapsedfToString() + 's)');
@@ -222,7 +238,7 @@ begin
 
    ox.Initialized := true;
 
-   result := eNONE;
+   Result := eNONE;
 end;
 
 procedure oxTInitializationGlobal.Initialize();
@@ -257,7 +273,7 @@ begin
    end;
 end;
 
-procedure oxTInitializationGlobal.DeInitialize();
+procedure oxTInitializationGlobal.Deinitialize();
 var
    startTime: TDateTime;
 
