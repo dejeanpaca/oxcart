@@ -364,15 +364,15 @@ end;
 
 function TFileDescriptor.IsHidden(): boolean;
 begin
-   {$IFDEF UNIX}
+   {$IF DEFINED(UNIX)}
    if(Name <> '') then
       Result := (Name[1] = '.') and (Name <> '..') and (Name <> '.')
    else
       Result := '';
-   {$ENDIF}
-
-   {$IFDEF WINDOWS}
+   {$ELSEIF DEFINED(WINDOWS)}
    Result := Attr and faHiddenWindows > 0;
+   {$ELSE}
+   Result := false;
    {$ENDIF}
 end;
 
@@ -1201,11 +1201,17 @@ end;
 
 class function TFileUtilsGlobal.IsHiddenFile(f: TRawbyteSearchRec): boolean;
 begin
-   Result := (f.Name[1] = '.') and (f.Name <> '..') and (f.Name <> '.');
-
-   {$IFDEF WINDOWS}
-   Result := Result or (f.Attr and faHiddenWindows > 0);
+   {$IF DEFINED(UNIX)}
+   if(Name <> '') then
+      Result := (f.Name[1] = '.') and (f.Name <> '..') and (f.Name <> '.')
+   else
+      Result := '';
+   {$ELSEIF DEFINED(WINDOWS)}
+   Result := f.Attr and faHiddenWindows > 0;
+   {$ELSE}
+   Result := false;
    {$ENDIF}
+
 end;
 
 class function TFileUtilsGlobal.FindAll(const path: StdString; attr: longint; out list: TFileDescriptorList; properties: TBitSet): longint;
