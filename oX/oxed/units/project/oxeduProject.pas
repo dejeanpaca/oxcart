@@ -187,8 +187,14 @@ end;
 
 procedure oxedTProject.RecreateTempDirectory();
 begin
-  if(not FileUtils.DirectoryExists(oxedProject.TempPath)) then
-     CreateDir(oxedProject.TempPath);
+  if(not FileUtils.DirectoryExists(oxedProject.TempPath)) then begin
+     if(not CreateDir(oxedProject.TempPath)) then
+        exit;
+
+     {$IFDEF WINDOWS}
+     FileUtils.HideFile(oxedProject.TempPath);
+     {$ENDIF}
+  end;
 end;
 
 procedure oxedTProject.SetLastScene(const newPath: StdString);
