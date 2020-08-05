@@ -20,7 +20,9 @@ CONST
    ogleVERSION_UNSUPPORTED   = 2;
 
 procedure oglGetInformation(wnd: oglTWindow);
+{$IFNDEF OX_LIBRARY}
 procedure oglLogInformation(wnd: oglTWindow);
+{$ENDIF}
 function oglVersionCheck(wnd: oglTWindow): longint;
 
 IMPLEMENTATION
@@ -92,6 +94,7 @@ begin
    {$ENDIF}
 end;
 
+{$IFNDEF OX_LIBRARY}
 procedure oglLogInformation(wnd: oglTWindow);
 begin
    log.Collapsed('OpenGL Information');
@@ -119,6 +122,7 @@ begin
 
    oglExtensions.Log(wnd);
 end;
+{$ENDIF}
 
 function oglVersionCheck(wnd: oglTWindow): longint;
 begin
