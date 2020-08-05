@@ -221,6 +221,8 @@ TYPE
       {get information about a file}
       procedure GetFileInfo(const fn: string; out f: TFileDescriptor);
       procedure GetFileInfo(const fn: StdString; out f: TFileDescriptor);
+
+      function HideFile(const fn: StdString): boolean;
    end;
 
    PDirectoryCopierData = ^TDirectoryCopierData;
@@ -1445,6 +1447,25 @@ begin
       TFileDescriptor.Initialize(f);
 
    FindClose(searchRec);
+end;
+
+function TFileUtilsGlobal.HideFile(const fn: StdString): boolean;
+var
+   attr: longint;
+
+begin
+   {$IFDEF WINDOWS}
+   attr := FileGetAttr(fn);
+
+   if(attr <> -1) then begin
+      attr := attr or faHiddenWindows;
+
+      if(FileSetAttr(fn, attr) <> -1) then
+         exit(true);
+   end;
+   {$ENDIF}
+
+   Result := false;
 end;
 
 { TFileTraverse }
