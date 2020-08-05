@@ -16,8 +16,9 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uLog, uStd, uColors, StringUtils, uImage, vmVector,
       {ox}
-      uOX, oxuRunRoutines, oxuWindowTypes, oxuTypes, oxuRenderer, oxuRenderers, oxuOGL, oxuglExtensions,
-      oxuglInfo,
+      uOX, oxuRunRoutines, oxuWindowTypes, oxuTypes, oxuRenderer, oxuRenderers, oxuWindows,
+      {renderer.gl}
+      oxuOGL, oxuglExtensions, oxuglInfo,
       {platform specific}
       {$IFDEF WINDOWS}windows, oxuglRendererWin, oxuWindowsPlatform, oxuWindowsOS{$ENDIF}
       {$IFDEF X11}GLX, oxuX11Platform, oxuglRendererX11{$ENDIF}
@@ -31,6 +32,8 @@ TYPE
       {$IFDEF OX_LIBRARY_SUPPORT}
       pExtensions: oglPExtensions;
       {$ENDIF}
+
+      procedure AfterInitialize(); override;
 
       procedure OnInitialize(); override;
       procedure OnDeInitialize(); override;
@@ -77,6 +80,17 @@ VAR
 IMPLEMENTATION
 
 { oxglTRenderer }
+
+procedure oxglTRenderer.AfterInitialize();
+begin
+   log.Collapsed('OpenGL');
+
+   inherited AfterInitialize();
+
+   oglLogInformation(oglTWindow(oxWindows.w[0]));
+
+   log.Leave();
+end;
 
 procedure oxglTRenderer.OnInitialize();
 begin
