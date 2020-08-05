@@ -67,7 +67,6 @@ end;
 procedure oxedTGenericFileInspector.SetFile(const fn: StdString; fd: PFileDescriptor);
 var
    inspector: oxedTInspectorWindow;
-   fileDescriptor: TFileDescriptor;
    attributes: TAppendableString = '';
    icon: wdgTListGlyph;
 
@@ -79,11 +78,6 @@ begin
       wdg.Name.SetCaption(fn);
 
       wdg.Icon.SetVisible();
-
-      if(fd = nil) then begin
-         FileUtils.GetFileInfo(fn, fileDescriptor);
-         fd := @fileDescriptor;
-      end;
 
       icon := wdgFileList.GetFileIcon(fd^, false);
       wdg.Icon.SetImage(icon.Glyph);

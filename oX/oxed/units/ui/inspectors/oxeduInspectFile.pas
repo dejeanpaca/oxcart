@@ -86,6 +86,7 @@ procedure oxedTInspectFileGlobal.Open(const fn: StdString; fd: PFileDescriptor);
 var
    wnd: oxedTInspectorWindow;
    inspector: oxedTInspectFile;
+   fileDescriptor: TFileDescriptor;
 
 begin
    if(not oxedInspector.GetWindow(wnd)) then
@@ -101,6 +102,12 @@ begin
 
       if(inspector <> nil) then begin
          wnd.Open(inspector);
+
+         if(fd = nil) then begin
+            FileUtils.GetFileInfo(fn, fileDescriptor);
+            fd := @fileDescriptor;
+         end;
+
          inspector.SetFile(fn, fd);
 
          exit;
