@@ -10,7 +10,7 @@ INTERFACE
 
    USES
       {$INCLUDE usesgl.inc},
-      uLog, {$IFNDEF OX_LIBRARY}StringUtils,{$ENDIF}
+      uLog,
       {ox}
       oxuOGL, oxuglExtensions, oxuRenderer;
 
