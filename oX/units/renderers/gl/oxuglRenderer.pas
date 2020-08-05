@@ -19,7 +19,10 @@ INTERFACE
       {ox}
       uOX, oxuRunRoutines, oxuWindowTypes, oxuTypes, oxuRenderer, oxuRenderers, oxuWindows,
       {renderer.gl}
-      oxuOGL, oxuglExtensions, oxuglInfo, oxuglRendererPlatform
+      oxuOGL, oxuglExtensions, oxuglInfo, oxuglRendererPlatform,
+      {$IFNDEF OX_LIBRARY}
+      oxuglLog
+      {$ENDIF}
       {platform specific}
       {$IFDEF X11}, GLX, oxuX11Platform, oxuglRendererX11{$ENDIF}
       {$IFDEF COCOA}, oxuglCocoa, oxuCocoaPlatform, oxuglRendererCocoa{$ENDIF};
