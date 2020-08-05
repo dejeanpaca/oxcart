@@ -57,7 +57,13 @@ var
    time: TDateTime;
 
 begin
-   time := FileDateToDateTime(givenTime);
+   try
+      time := FileDateToDateTime(givenTime);
+   except
+      on e: EConvertError do begin
+         exit('');
+      end;
+   end;
 
    if(today = 0) then
       today := Date();
