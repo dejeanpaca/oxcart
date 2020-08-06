@@ -134,16 +134,16 @@ TYPE
          procedure ItemClicked(index: loopint; button: TBitSet = appmcLEFT); override;
          procedure ItemDoubleClicked(index: loopint; button: TBitSet); override;
 
-         procedure GridItemClicked({%H-}index: loopint; {%H-}button: TBitSet = appmcLEFT); virtual;
-         procedure GridItemDoubleClicked({%H-}index: loopint; {%H-}button: TBitSet); virtual;
+         procedure GridItemClicked(index: loopint; button: TBitSet = appmcLEFT); virtual;
+         procedure GridItemDoubleClicked(index: loopint; button: TBitSet); virtual;
+
+         procedure OnHover(index: loopint); override;
+         procedure OnGridHover(index: loopint); virtual;
 
          function GetItemUnderPointer(x, y: loopint; out offs: loopint): loopint; override;
 
          procedure PositionChanged; override;
          procedure SizeChanged; override;
-
-         procedure OnHover({%H-}index: loopint); override;
-         procedure OnGridHover({%H-}index: loopint); virtual;
 
          procedure NavigationMoved(); override;
          procedure InternalItemsChanged(); override;
@@ -671,6 +671,9 @@ begin
    GridItemDoubleClicked(GetSelectedItem(), button)
 end;
 
+{$PUSH}
+{$WARN 5024 off : Parameter "$1" not used}
+
 procedure wdgTGrid.GridItemClicked(index: loopint; button: TBitSet);
 begin
 
@@ -680,6 +683,18 @@ procedure wdgTGrid.GridItemDoubleClicked(index: loopint; button: TBitSet);
 begin
 
 end;
+
+procedure wdgTGrid.OnHover(index: loopint);
+begin
+   OnGridHover(LastGridItemUnderPointer);
+end;
+
+procedure wdgTGrid.OnGridHover(index: loopint);
+begin
+
+end;
+
+{$POP}
 
 function wdgTGrid.GetItemUnderPointer(x, y: loopint; out offs: loopint): loopint;
 var
@@ -720,15 +735,6 @@ begin
    inherited;
 
    Assigned();
-end;
-
-procedure wdgTGrid.OnHover(index: loopint);
-begin
-   OnGridHover(LastGridItemUnderPointer);
-end;
-
-procedure wdgTGrid.OnGridHover(index: loopint);
-begin
 end;
 
 procedure wdgTGrid.NavigationMoved();

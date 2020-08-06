@@ -7,7 +7,7 @@
    {$DEFINE LOG_THREAD_SAFE}
 {$ENDIF}
 
-{$MODE OBJFPC}{$H+}{$I-}{$GOTO+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT uLog;
 
 INTERFACE
@@ -82,17 +82,17 @@ TYPE
 
       constructor Create();
 
-      procedure Init({%H-}log: PLog); virtual;
-      procedure Dispose({%H-}log: PLog); virtual;
-      procedure Open({%H-}log: PLog); virtual;
-      procedure Start({%H-}log: PLog); virtual;
-      procedure Close({%H-}log: PLog); virtual;
-      procedure Flush({%H-}log: PLog); virtual;
-      procedure Writeln({%H-}log: PLog; {%H-}priority: longint; const {%H-}s: StdString); virtual;
-      procedure WritelnRaw({%H-}log: PLog; const {%H-}s: StdString); virtual;
-      procedure EnterSection({%H-}log: PLog; const {%H-}s: StdString; {%H-}collapsed: boolean); virtual;
-      procedure LeaveSection({%H-}log: PLog); virtual;
-      procedure Del({%H-}log: PLog); virtual;
+      procedure Init(log: PLog); virtual;
+      procedure Dispose(log: PLog); virtual;
+      procedure Open(log: PLog); virtual;
+      procedure Start(log: PLog); virtual;
+      procedure Close(log: PLog); virtual;
+      procedure Flush(log: PLog); virtual;
+      procedure Writeln(log: PLog; priority: longint; const s: StdString); virtual;
+      procedure WritelnRaw(log: PLog; const s: StdString); virtual;
+      procedure EnterSection(log: PLog; const s: StdString; collapsed: boolean); virtual;
+      procedure LeaveSection(log: PLog); virtual;
+      procedure Del(log: PLog); virtual;
    end;
 
    {a log file}
@@ -138,7 +138,7 @@ TYPE
       ChainLog: PLog;
 
       {initializes the log file, the second one reserves memory}
-      function Initialize(const {%H-}fn, {%H-}logh: StdString; {%H-}mode: longint): boolean;
+      function Initialize(const fn, logh: StdString; mode: longint): boolean;
       {disposes a TLog record}
       procedure Dispose();
       {opens the log file}
@@ -293,6 +293,9 @@ VAR
 
 { TLogHandler }
 
+{$PUSH}
+{$WARN 5024 off : Parameter "$1" not used}
+
 constructor TLogHandler.Create();
 begin
 
@@ -351,6 +354,8 @@ procedure TLogHandler.Del(log: PLog);
 begin
 
 end;
+
+{$POP}
 
 { TDummyLogHandler }
 
@@ -769,6 +774,9 @@ begin
    end;
    {$ELSE}
    h := @log.Handler.Dummy;
+   FileName   := fn;
+   LogHeader  := logh;
+   FileMode   := mode;
    {$ENDIF}
 end;
 
