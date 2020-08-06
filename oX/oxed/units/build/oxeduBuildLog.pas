@@ -64,43 +64,43 @@ end;
 procedure oxedTBuildLog.e(const what: string);
 begin
    Log.e(what);
-   oxedConsole.ne(what);
+   oxedConsole.con.e(what);
 end;
 
 procedure oxedTBuildLog.k(const what: string);
 begin
    Log.k(what);
-   oxedConsole.nk(what);
+   oxedConsole.con.k(what);
 end;
 
 procedure oxedTBuildLog.w(const what: string);
 begin
    Log.w(what);
-   oxedConsole.nw(what);
+   oxedConsole.con.w(what);
 end;
 
 procedure oxedTBuildLog.f(const what: string);
 begin
    Log.f(what);
-   oxedConsole.nf(what);
+   oxedConsole.con.f(what);
 end;
 
 procedure oxedTBuildLog.i(const what: string);
 begin
    Log.i(what);
-   oxedConsole.ni(what);
+   oxedConsole.con.i(what);
 end;
 
 procedure oxedTBuildLog.d(const what: string);
 begin
    Log.d(what);
-   oxedConsole.nd(what);
+   oxedConsole.con.d(what);
 end;
 
 procedure oxedTBuildLog.v(const what: string);
 begin
    Log.v(what);
-   oxedConsole.nv(what);
+   oxedConsole.con.v(what);
 end;
 
 procedure oxedTBuildLog.Collapsed(const what: string);
