@@ -183,24 +183,6 @@ begin
 end;
 
 procedure oxglxTGlobal.OnInitialize();
-begin
-   oxglx.InitGLX();
-end;
-
-function oxglxTGlobal.PreInitWindow(wnd: oglTWindow): boolean;
-var
-   requiresContext: Boolean;
-
-begin
-   requiresContext := ogl.ContextRequired(wnd.glDefault);
-
-   if(not requiresContext) then
-      Result := chooseVisual(wnd)
-   else
-      Result := chooseVisualFB(wnd);
-end;
-
-function oxglxTGlobal.ClearContext(wnd: oglTWindow): boolean;
 var
    errorBase: longint      = 0;
    eventBase: longint      = 0;
@@ -224,6 +206,19 @@ begin
       log.i('glx > Version: ' + sf(major) + '.' + sf(minor))
    else
       log.e('glx > Failed to retrieve version: ' + sf(major) + '.' + sf(minor));
+end;
+
+function oxglxTGlobal.PreInitWindow(wnd: oglTWindow): boolean;
+var
+   requiresContext: Boolean;
+
+begin
+   requiresContext := ogl.ContextRequired(wnd.glDefault);
+
+   if(not requiresContext) then
+      Result := chooseVisual(wnd)
+   else
+      Result := chooseVisualFB(wnd);
 end;
 
 procedure oxglxTGlobal.SwapBuffers(wnd: oglTWindow);
@@ -325,7 +320,7 @@ end;
 
 function oxglxTGlobal.DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean;
 begin
-   glXDestroyContext(x11.DPY, rc);
+   glXDestroyContext(x11.DPY, context);
    wnd.wd.LastError := x11.GetError();
    Result := wnd.wd.LastError = 0;
 end;
