@@ -11,7 +11,10 @@ INTERFACE
    USES
       x, xlib, xutil, GLX,
       uStd, uLog, StringUtils,
-      oxuRenderer, oxuX11Platform, oxuWindowTypes, oxuOGL, oxuglExtensions, oxuGLX;
+      oxuRenderer, oxuWindowTypes,
+      {renderer.gl}
+      oxuOGL, oxuglExtensions, oxuglRendererPlatform, oxuglRenderer,
+      oxuX11Platform, oxuGLX;
 
 CONST
    glxSupported: boolean      = false;
@@ -19,15 +22,18 @@ CONST
 TYPE
    { oxglxTGlobal }
 
-   oxglxTGlobal = record
+   oxglxTGlobal = object(oxglTPlatform)
       Major,
       Minor: longint;
 
-      procedure InitGLX();
-      function PreInitWindow(wnd: oglTWindow): boolean;
-      procedure SwapBuffers(wnd: oglTWindow);
+      procedure OnInitialize(); virtual;
+      function PreInitWindow(wnd: oglTWindow): boolean; virtual;
+      procedure SwapBuffers(wnd: oglTWindow); virtual;
 
-      function GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext = default(oglTRenderingContext)): oglTRenderingContext;
+      function GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext = default(oglTRenderingContext)): oglTRenderingContext; virtual;
+      function ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
+      function ClearContext(wnd: oglTWindow): boolean; virtual;
+      function DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
    end;
 
 VAR
@@ -176,6 +182,11 @@ begin
    Result := false;
 end;
 
+procedure oxglxTGlobal.OnInitialize();
+begin
+   oxglx.InitGLX();
+end;
+
 function oxglxTGlobal.PreInitWindow(wnd: oglTWindow): boolean;
 var
    requiresContext: Boolean;
@@ -189,7 +200,7 @@ begin
       Result := chooseVisualFB(wnd);
 end;
 
-procedure oxglxTGlobal.InitGLX();
+function oxglxTGlobal.ClearContext(wnd: oglTWindow): boolean;
 var
    errorBase: longint      = 0;
    eventBase: longint      = 0;
@@ -297,5 +308,31 @@ begin
    else
       log.v('gl > (' + method + ') Got rendering context');
 end;
+
+function oxglxTGlobal.ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean;
+begin
+   glXMakeCurrent(x11.DPY, wnd.wd.h, context);
+   wnd.wd.LastError := x11.GetError();
+   Result := wnd.wd.LastError = 0;
+end;
+
+function oxglxTGlobal.ClearContext(wnd: oglTWindow): boolean;
+begin
+   glXMakeCurrent(x11.DPY, 0, nil);
+   wnd.wd.LastError := x11.GetError();
+   Result := wnd.wd.LastError = 0;
+end;
+
+function oxglxTGlobal.DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean;
+begin
+   glXDestroyContext(x11.DPY, rc);
+   wnd.wd.LastError := x11.GetError();
+   Result := wnd.wd.LastError = 0;
+end;
+
+
+INITIALIZATION
+   oxglx.Create();
+   oxglTRenderer.glPlatform := @oxglx;
 
 END.

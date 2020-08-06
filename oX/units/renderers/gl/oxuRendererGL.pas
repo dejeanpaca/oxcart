@@ -16,8 +16,12 @@ INTERFACE
    USES
       uStd,
       oxuglRenderer,
-      {$IFDEF WINDOWS}
+      {$IF DEFINED(WINDOWS)}
       oxuglRendererWin, oxuWindowsPlatform,
+      {$ELSEIF DEFINED(X11)}
+      oxuglRendererX11, oxuX11Platform,
+      {$ELSEIF DEFINED(COCOA)}
+      oxuglRendererCocoa, oxuCocoaPlatform,
       {$ENDIF}
       oxuglTextureComponent,
       oxuglTextureGenerate,
