@@ -17,7 +17,7 @@ INTERFACE
       {widgets}
       wdguToolbar,
       {oxed}
-      uOXED, oxeduToolbar, oxeduActions, oxeduSceneEdit, oxeduEntities, oxeduDefaultScene, oxeduScene;
+      uOXED, oxeduActions, oxeduSceneEdit, oxeduEntities, oxeduDefaultScene, oxeduScene;
 
 
 IMPLEMENTATION
@@ -38,30 +38,25 @@ end;
 procedure selectButton(button: wdgPToolbarItem);
 begin
    if(button <> nil) then begin
-      oxedToolbar.Buttons.Translate^.Activate(false);
-      oxedToolbar.Buttons.Rotate^.Activate(false);
-      oxedToolbar.Buttons.Scale^.Activate(false);
-
       button^.Activate(true);
+
+      {TODO: Highlight selected tool}
    end;
 end;
 
 procedure selectTranslate();
 begin
    selectTool(OXED_SCENE_EDIT_TOOL_TRANSLATE);
-   selectButton(oxedToolbar.Buttons.Translate);
 end;
 
 procedure selectRotate();
 begin
    selectTool(OXED_SCENE_EDIT_TOOL_ROTATE);
-   selectButton(oxedToolbar.Buttons.Rotate);
 end;
 
 procedure selectScale();
 begin
    selectTool(OXED_SCENE_EDIT_TOOL_SCALE);
-   selectButton(oxedToolbar.Buttons.Scale);
 end;
 
 procedure clearScene();
