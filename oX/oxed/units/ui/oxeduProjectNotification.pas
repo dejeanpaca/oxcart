@@ -9,6 +9,7 @@ UNIT oxeduProjectNotification;
 INTERFACE
 
    USES
+      uStd,
       {ox}
       oxuWindow,
       {oxed}

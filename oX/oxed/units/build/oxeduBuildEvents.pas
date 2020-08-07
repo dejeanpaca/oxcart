@@ -9,6 +9,8 @@ UNIT oxeduBuildEvents;
 INTERFACE
 
    USES
+      uStd,
+      {app}
       appuActionEvents,
       {oxed}
       oxeduActions, oxeduBuild, oxeduProjectManagement;

@@ -9,6 +9,7 @@ UNIT oxeduWindowTitle;
 INTERFACE
 
    USES
+      uStd,
       {ox}
       oxuWindow, uiuWindow,
       {oxed}
