@@ -292,9 +292,9 @@ procedure oglTRender.Primitives(primitive: oxTPrimitives; count: longint; indice
 begin
    if(primitive <> oxPRIMITIVE_NONE) then
       {$IFNDEF GLES}
-      glDrawElements(oglPrimitiveTranslate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, indices);
+      glDrawElements(oglPrimitiveTranslate[GLenum(primitive)], count, GL_UNSIGNED_INT, indices);
       {$ELSE}
-      glDrawElements(oglPrimitiveTranslate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, PGLvoid(indices));
+      glDrawElements(oglPrimitiveTranslate[GLenum(primitive)], count, GL_UNSIGNED_INT, PGLvoid(indices));
       {$ENDIF}
 
    {$IFDEF DEBUG}LastUsedIndices := indices;{$ENDIF}
