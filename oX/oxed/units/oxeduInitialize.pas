@@ -51,8 +51,6 @@ INTERFACE
       oxeduRunButtons, oxeduStatusInfo, oxeduwndSettings,
       oxeduwndProjectFeatures, oxeduwndProjectStatistics,
       oxeduProjectActions, oxeduEntityMenubar,
-      {initialize keys last}
-      oxeduKeys,
       {ui}
       oxeduWindowTitle, oxeduProjectNotification,
       oxuStandardFilePreviewers, oxeduSceneScreenshot, oxeduPreviewGenerator,
@@ -65,12 +63,11 @@ INTERFACE
       {platforms}
       oxeduwndAndroidSettings, oxeduwndAndroidGeneralSettings,
       oxeduAndroidMenu,
+      {initialize keys last}
+      oxeduKeys,
       {$ENDIF}
       {plugins}
       {$INCLUDE ../plugins/oxed_plugins.inc};
-
-procedure oxedInitialize();
-procedure oxedDeinitialize();
 
 IMPLEMENTATION
 
@@ -78,7 +75,6 @@ IMPLEMENTATION
 procedure SetupWorkspace();
 begin
    oxedSettings.OnLoad();
-   oxedKeyMappings.Initialize();
 
    oxedMenubar.Initialize();
    oxedWorkbar.Initialize();
@@ -87,7 +83,7 @@ begin
 end;
 {$ENDIF}
 
-procedure oxedInitialize();
+procedure initialize();
 begin
    {$IFNDEF NO_UI}
    oxwndAbout.ShowBuiltWith := true;
@@ -111,7 +107,7 @@ begin
   oxed.Initialized := true;
 end;
 
-procedure oxedDeInitialize();
+procedure deinitialize();
 begin
    oxed.Deinitializing := true;
 
@@ -141,7 +137,7 @@ begin
 end;
 
 INITIALIZATION
-   ox.OnInitialize.Add('oxed.init', @oxedInitialize, @oxedDeInitialize);
+   ox.OnInitialize.Add('oxed.init', @initialize, @deinitialize);
    ox.OnStart.Add('oxed.start', @onStart);
 
 END.
