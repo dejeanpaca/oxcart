@@ -9,7 +9,8 @@ UNIT uOX;
 INTERFACE
 
    USES
-      uStd, uAppInfo, udvars, oxuRunRoutines, uError;
+      uStd, uLog, udvars, uError,
+      uAppInfo, oxuRunRoutines;
 
 CONST
    oxEngineName = 'oX';
@@ -75,12 +76,14 @@ TYPE
 
       function GetVersionString(properties: longword = 0): string;
       function GetErrorDescription(errcode: longint): string;
+
+      class function IsType(what, whatType: TClass): boolean; static;
+      class function IsType(what: TObject; whatType: TClass): boolean; static;
+      class procedure assert(expression: boolean; const description: string); static;
    end;
 
 VAR
    ox: oxTGlobal;
-
-{ VERSION }
 
 IMPLEMENTATION
 
@@ -111,6 +114,62 @@ begin
    end;
 
    exit(uError.GetErrorCodeString(errcode));
+end;
+
+class function oxTGlobal.IsType(what, whatType: TClass): boolean;
+var
+   cur: TClass;
+
+begin
+   cur := what.ClassType;
+
+   repeat
+     {$IFDEF OX_LIBRARY_SUPPORT}
+     if(cur.ClassName = whatType.ClassName) then
+        exit(true);
+     {$ELSE}
+     if(cur = whatType) then
+        exit(true);
+     {$ENDIF}
+
+     cur := cur.ClassParent;
+   until (cur = nil) or (cur = TObject);
+
+   Result := false;
+end;
+
+class function oxTGlobal.IsType(what: TObject; whatType: TClass): boolean;
+var
+   cur: TClass;
+
+begin
+   cur := what.ClassType;
+
+   repeat
+     {$IFDEF OX_LIBRARY_SUPPORT}
+     if(cur.ClassName = whatType.ClassName) then
+        exit(true);
+     {$ELSE}
+     if(cur = whatType) then
+        exit(true);
+     {$ENDIF}
+
+     cur := cur.ClassParent;
+   until (cur = nil) or (cur = TObject);
+
+   Result := false;
+end;
+
+class procedure oxTGlobal.assert(expression: boolean; const description: string);
+begin
+   {$IFNDEF OX_LIBRARY}
+   system.Assert(expression, description);
+   {$ELSE}
+   {$IFOPT C+}
+   if (not expression) then
+      log.e('Assertion failed: ' + description);
+   {$ENDIF}
+   {$ENDIF}
 end;
 
 INITIALIZATION
