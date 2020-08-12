@@ -44,7 +44,9 @@ TYPE
          MaxTextureStackDepth: GLuint;
       end;
 
+     {get required version}
      function GetRequiredVersion(): oglTVersion;
+     {get expected (default/target) version}
      function GetExpectedVersion(): oglTVersion;
    end;
 

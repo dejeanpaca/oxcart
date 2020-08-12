@@ -154,6 +154,9 @@ TYPE
       function GetSummary(): TStringArray; virtual;
       {selects this renderer for use}
       procedure Use(); virtual;
+
+      {TODO: Separate screenshot functionality into a renderer component}
+
       {capture a screenshot of the given window}
       procedure Screenshot({%H-}wnd: oxTWindow; {%H-}image: imgTImage; {%H-}x, {%H-}y, {%H-}w, {%H-}h: loopint); virtual;
    end;

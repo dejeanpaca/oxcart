@@ -10,12 +10,12 @@ INTERFACE
 
    USES
       {$INCLUDE usesgl.inc},
-      uStd, sysutils, uSimpleParser, StringUtils, uFiles, uLog,
+      sysutils, uStd, uLog, uSimpleParser, StringUtils, uFiles,
       {ox}
-      uOX, oxuRunRoutines, oxuFile, oxuWindow,
+      uOX, oxuRunRoutines, oxuFile,
       oxuShader, oxuShaderLoader,
       {gl}
-      oxuglRenderer, oxuglShader, oxuOGL, oxuglRendererInfo;
+      oxuglRenderer, oxuglShader, oxuglRendererInfo;
 
 TYPE
    { oxglTShaderLoader }

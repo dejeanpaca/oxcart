@@ -42,8 +42,6 @@ TYPE
       procedure LogRenderers();
       procedure SetRenderer();
 
-      procedure Instance();
-
       procedure Initialize();
       procedure DeInitialize();
 
@@ -108,10 +106,6 @@ begin
       else
          SelectRenderer(list[0]);
    end;
-end;
-
-procedure oxTRenderers.Instance();
-begin
 end;
 
 procedure oxTRenderers.Initialize();
