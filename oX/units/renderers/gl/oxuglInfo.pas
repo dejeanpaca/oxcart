@@ -26,11 +26,6 @@ function oglVersionCheck(): longint;
 IMPLEMENTATION
 
 procedure oglGetInformation();
-{$IFNDEF OX_LIBRARY}
-var
-   renderer: oxTRenderer;
-{$ENDIF}
-
 begin
    {$IFNDEF OX_LIBRARY}
    renderer := oxRenderer;
@@ -80,15 +75,14 @@ begin
    oglExtensions.Get();
 
    {$IFNDEF GLES}
-   renderer.Properties.Textures.Npot := oglExtensions.Supported(cGL_ARB_texture_non_power_of_two);
+   oxRenderer.Properties.Textures.Npot := oglExtensions.Supported(cGL_ARB_texture_non_power_of_two);
    {$ELSE}
-   renderer.Properties.Textures.Npot := false;
-   renderer.Properties.Textures.WarnedNpot := true;
+   oxRenderer.Properties.Textures.Npot := false;
+   oxRenderer.Properties.Textures.WarnedNpot := true;
    {$ENDIF}
 
    {$ELSE}
-   wnd.Info := oglTWindow(wnd.ExternalWindow.oxwParent).Info;
-   oglExtensions.Get(wnd);
+   oglExtensions.Get();
    {$ENDIF}
 end;
 

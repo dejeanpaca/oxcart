@@ -32,6 +32,7 @@ TYPE
       glRenderingContexts: array[0..oxMAXIMUM_RENDER_CONTEXT] of oglTRenderingContext;
       {$IFDEF OX_LIBRARY_SUPPORT}
       pExtensions: oglPExtensions;
+      pInfo: oxglPRendererInfo;
       {$ENDIF}
 
       procedure AfterInitialize(); override;
@@ -43,9 +44,6 @@ TYPE
       function SetupWindow(wnd: oxTWindow): boolean; override;
       function PreInitWindow({%H-}wnd: oxTWindow): boolean; override;
       function InitWindow(wnd: oxTWindow): boolean; override;
-      {$IFDEF OX_LIBRARY}
-      function InitWindowLibrary(wnd: oxTWindow): boolean; override;
-      {$ENDIF}
       function ContextWindowRequired(): boolean; override;
 
       {rendering}
@@ -130,10 +128,6 @@ begin
       exit(False);
    end;
 
-   {$IFDEF OX_LIBRARY}
-   if(wnd.ExternalWindow <> nil) then
-      oglTWindow(wnd).Info := oglTWindow(wnd.ExternalWindow).Info;
-   {$ENDIF}
 
    {bind rendering context to the window}
    ContextCurrent(wnd.RenderingContext);
@@ -144,31 +138,11 @@ begin
    Result := true;
 end;
 
-{$IFDEF OX_LIBRARY}
-function oxglTRenderer.InitWindowLibrary(wnd: oxTWindow): boolean;
-var
-   glwnd,
-   xglwnd: oglTWindow;
-
-begin
-   if(wnd.ExternalWindow <> nil) then begin
-      xglwnd := oglTWindow(wnd.ExternalWindow.oxwParent);
-      glwnd := oglTWindow(wnd);
-
-      glwnd.Info := xglwnd.Info;
-      glwnd.gl := xglwnd.gl;
-      glwnd.glProperties := xglwnd.glProperties;
-      glwnd.Limits := xglwnd.Limits;
-   end;
-
-   Result := true;
-end;
-{$ENDIF}
-
 function oxglTRenderer.SetupWindow(wnd: oxTWindow): boolean;
 begin
    {$IFDEF OX_LIBRARY_SUPPORT}
    oglExtensions.pExternal := pExtensions;
+   pInfo := @oxglRendererInfo;
    {$ENDIF}
 
    if(ox.LibraryMode) then begin
@@ -189,6 +163,10 @@ begin
       log.w('gl > Errors while getting information');
       exit(false);
    end;
+
+   {$IFDEF OX_LIBRARY}
+   oxglRendererInfo := pInfo^;
+   {$ENDIF}
 
    if(not ox.LibraryMode) then begin
       {check if versions match}
