@@ -27,10 +27,6 @@ TYPE
    { oglTWindow }
 
    oglTWindow = class({$IFDEF WINDOWS}winosTWindow{$ENDIF}{$IFDEF X11}x11TWindow{$ENDIF}{$IFDEF COCOA}cocoaTWindow{$ENDIF})
-      gl,
-      glDefault,
-      glRequired: oglTSettings;
-
       {$IFDEF X11}
       fbConfig: TGLXFBConfig;
       glxAttribs: TXAttrIntSimpleList;
@@ -61,18 +57,18 @@ end;
 
 function oglTWindow.Downgrade32(): boolean;
 begin
-   if(glRequired.Version.RequiresContextAttribs()) then begin
+   if(oxglRendererInfo.Version.RequiresContextAttribs()) then begin
       RaiseError(eERR, 'gl > gl 3.2+ not supported (WGL_ARB_create_context_profile extension misisng)');
       Result := false;
    end else begin
-      gl.Version.Major := 3;
-      gl.Version.Minor := 1;
-      gl.Version.Profile := oglPROFILE_COMPATIBILITY;
+      oglDefaultVersion.Major := 3;
+      oglDefaultVersion.Minor := 1;
+      oglDefaultVersion.Profile := oglPROFILE_COMPATIBILITY;
 
       {downgrade version}
       if(not oxglRendererInfo.Properties.Warned32NotSupported) then begin
          oxglRendererInfo.Properties.Warned32NotSupported := true;
-         log.w('gl > gl 3.2+ not supported, will downgrade to ' + gl.GetString());
+         log.w('gl > gl 3.2+ not supported, will downgrade to ' + oglDefaultVersion.GetString());
       end;
    end;
 

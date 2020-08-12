@@ -44,16 +44,11 @@ TYPE
 
       class function GetProfileFromString(const profileString: string): oglTProfile; static;
       class function GetProfileString(p: oglTProfile): string; static;
-   end;
-
-   { oglTSettings }
-
-   oglTSettings = record
-      {target version}
-      Version: oglTVersion;
 
       function GetString(): string;
    end;
+
+   { oglTVersion }
 
    oxglTTextureFilter = record
       min,
@@ -76,7 +71,7 @@ TYPE
       class procedure InitializePre(); static;
       class procedure ActivateRenderingContext(); static;
 
-      class function ContextRequired(const {%H-}settings: oglTSettings): boolean; static;
+      class function ContextRequired(const {%H-}v: oglTVersion): boolean; static;
 
       { INFORMATION }
       {get a string from OpenGL}
@@ -128,34 +123,28 @@ CONST
 
    oglRenderingContextNull: oglTRenderingContext = {$IFDEF WINDOWS}0{$ENDIF}{$IFDEF X11}nil{$ENDIF}{$IFDEF COCOA}nil{$ENDIF};
 
-   {settings which we expect}
-   oglDefaultSettings: oglTSettings = (
-      Version: (
-         Major:      {$IFNDEF GLES}1{$ELSE}1{$ENDIF};
-         Minor:      {$IFNDEF GLES}5{$ELSE}1{$ENDIF};
-         Revision:   0;
-         Profile:    oglPROFILE_COMPATIBILITY;
-      );
+   {version which we expect}
+   oglDefaultVersion: oglTVersion = (
+      Major:      {$IFNDEF GLES}1{$ELSE}1{$ENDIF};
+      Minor:      {$IFNDEF GLES}5{$ELSE}1{$ENDIF};
+      Revision:   0;
+      Profile:    oglPROFILE_COMPATIBILITY;
    );
 
-   {minimum settings we support}
-   oglRequiredSettings: oglTSettings = (
-      Version: (
-         Major:         {$IFNDEF GLES}1{$ELSE}1{$ENDIF};
-         Minor:         {$IFNDEF GLES}2{$ELSE}1{$ENDIF};
-         Revision:      0; {revision is not checked as requirement}
-         Profile:       oglPROFILE_COMPATIBILITY;
-      );
+   {minimum version we support}
+   oglRequiredVersion: oglTVersion = (
+      Major:         {$IFNDEF GLES}1{$ELSE}1{$ENDIF};
+      Minor:         {$IFNDEF GLES}2{$ELSE}1{$ENDIF};
+      Revision:      0; {revision is not checked as requirement}
+      Profile:       oglPROFILE_COMPATIBILITY;
    );
 
-   {required settings for the context window}
-   oglContextSettings: oglTSettings = (
-      Version: (
-         Major:         1;
-         Minor:         2;
-         Revision:      0;
-         Profile:       oglPROFILE_COMPATIBILITY;
-      );
+   {required version for the context window}
+   oglContextVersion: oglTVersion = (
+      Major:         1;
+      Minor:         2;
+      Revision:      0;
+      Profile:       oglPROFILE_COMPATIBILITY;
    );
 
 VAR
@@ -205,17 +194,15 @@ begin
       Result := '';
 end;
 
-{ oglTSettings }
-
-function oglTSettings.GetString(): string;
+function oglTVersion.GetString(): string;
 var
    profileString: string = '';
 
 begin
-   if(Version.Major >= 3) then
-      profileString := ' (' + oglTVersion.GetProfileString(Version.Profile) + ')';
+   if(Major >= 3) then
+      profileString := ' (' + GetProfileString(Profile) + ')';
 
-   Result := Version.ToString() + profileString;
+   Result := ToString() + profileString;
 end;
 
 { ERROR HANDLING }
@@ -298,14 +285,14 @@ begin
    {$ENDIF}
 end;
 
-class function oglTGlobal.ContextRequired(const settings: oglTSettings): boolean;
+class function oglTGlobal.ContextRequired(const v: oglTVersion): boolean;
 begin
    {$IFDEF GLES}
    Result := false;
    {$ELSE}
-   Result := ((settings.version.Major >= 3) and (settings.Version.Profile <> oglPROFILE_COMPATIBILITY))
-      or ((settings.version.Major > 3) and (settings.Version.Profile = oglPROFILE_COMPATIBILITY))
-      or ((settings.version.Major >= 3) and (settings.version.Minor >= 2) and (settings.Version.Profile = oglPROFILE_COMPATIBILITY));
+   Result := ((v.Major >= 3) and (v.Profile <> oglPROFILE_COMPATIBILITY))
+      or ((v.Major > 3) and (v.Profile = oglPROFILE_COMPATIBILITY))
+      or ((v.Major >= 3) and (v.Minor >= 2) and (v.Profile = oglPROFILE_COMPATIBILITY));
    {$ENDIF}
 end;
 
@@ -493,11 +480,11 @@ begin
       ogl.GetVersion(params[0], major, minor, revision, profile);
 
       if(major <> 0) then begin;
-         oglDefaultSettings.Version.Major := major;
-         oglDefaultSettings.Version.Minor := minor;
-         oglDefaultSettings.Version.Profile := profile;
+         oglDefaultVersion.Major := major;
+         oglDefaultVersion.Minor := minor;
+         oglDefaultVersion.Profile := profile;
 
-         log.v('gl version set to: ' + oglDefaultSettings.GetString());
+         log.v('gl version set to: ' + oglDefaultVersion.GetString());
          exit(true);
       end else
          log.e('Invalid gl version specified: ' + params[0]);

@@ -43,17 +43,12 @@ begin
 end;
 
 procedure oglLogInformation();
-var
-   v: oglTSettings;
-
 begin
-   v.Version := oxglRendererInfo.Version;
-
    log.Collapsed('Information');
       log.i('Renderer: ' + oxglRendererInfo.Renderer);
       log.i('Vendor: ' + oxglRendererInfo.Vendor);
 
-      log.i('Version: ' + v.GetString() + ' ' + sf(oxglRendererInfo.iVersion) +
+      log.i('Version: ' + oxglRendererInfo.Version.GetString() + ' ' + sf(oxglRendererInfo.iVersion) +
          ' (original: ' + oxglRendererInfo.sVersion + ')');
 
       if(oxglRendererInfo.Version.Major > 1) then
