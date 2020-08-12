@@ -10,7 +10,7 @@ INTERFACE
 
    USES
       {$INCLUDE usesgl.inc},
-      uStd, uError, uLog, StringUtils, ParamUtils,
+      uStd, uError, uLog, StringUtils,
       {ox}
       oxuTexture,
       {$IFDEF X11}GLX, oxuX11Platform{$ENDIF}
@@ -462,37 +462,5 @@ begin
    glEnable(GL_CULL_FACE);
    glCullFace(GL_BACK);
 end;
-
-VAR
-   paramHandler: TParameterHandler;
-
-function processParam(const {%H-}paramKey: StdString; var params: array of StdString; n: longint): boolean;
-var
-   major,
-   minor,
-   revision: longword;
-   profile: oglTProfile;
-
-begin
-   Result := false;
-
-   if(n = 1) then begin
-      ogl.GetVersion(params[0], major, minor, revision, profile);
-
-      if(major <> 0) then begin;
-         oglDefaultVersion.Major := major;
-         oglDefaultVersion.Minor := minor;
-         oglDefaultVersion.Profile := profile;
-
-         log.v('gl version set to: ' + oglDefaultVersion.GetString());
-         exit(true);
-      end else
-         log.e('Invalid gl version specified: ' + params[0]);
-   end else
-      log.e('Did not specify ' + paramHandler.ParamKey + ' parameter value');
-end;
-
-INITIALIZATION
-   parameters.AddHandler(paramHandler, 'gl.version', '-gl.version', @processParam);
 
 END.
