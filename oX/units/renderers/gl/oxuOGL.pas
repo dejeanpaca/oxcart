@@ -39,8 +39,11 @@ TYPE
       Revision: longword;
       Profile: oglTProfile;
 
-      function GetVersionString(): string;
+      function ToString(): string;
       function RequiresContextAttribs(): boolean;
+
+      class function GetProfileFromString(const profileString: string): oglTProfile; static;
+      class function GetProfileString(p: oglTProfile): string; static;
    end;
 
    { oglTSettings }
@@ -49,58 +52,7 @@ TYPE
       {target version}
       Version: oglTVersion;
 
-      class function GetProfileFromString(const profileString: string): oglTProfile; static;
-      class function GetProfileString(p: oglTProfile): string; static;
       function GetString(): string;
-   end;
-
-   {$IFDEF X11}
-   {glx attributes array}
-   TXAttrIntSimpleList = specialize TSimpleList<XAttrInt>;
-   {$ENDIF}
-
-   { oglTWindow }
-
-   oglTWindow = class({$IFDEF WINDOWS}winosTWindow{$ENDIF}{$IFDEF X11}x11TWindow{$ENDIF}{$IFDEF COCOA}cocoaTWindow{$ENDIF})
-      gl,
-      glDefault,
-      glRequired: oglTSettings;
-
-      {$IFDEF X11}
-      fbConfig: TGLXFBConfig;
-      glxAttribs: TXAttrIntSimpleList;
-      {$ENDIF}
-
-      glProperties: record
-         Warned32NotSupported: boolean;
-      end;
-
-      Info: record
-         Renderer,
-         Vendor,
-         Version: string;
-         iVersion: longword;
-
-         GLSL: record
-            Version: string;
-            Major,
-            Minor,
-            Compact: longword;
-         end;
-      end;
-
-      Limits: record
-         MaxTextureSize,
-         MaxLights,
-         MaxClipPlanes,
-         MaxProjectionStackDepth,
-         MaxModelViewStackDepth,
-         MaxTextureStackDepth: GLuint;
-      end;
-
-      constructor Create(); override;
-
-      function Downgrade32(): boolean;
    end;
 
    oxglTTextureFilter = record
@@ -176,6 +128,7 @@ CONST
 
    oglRenderingContextNull: oglTRenderingContext = {$IFDEF WINDOWS}0{$ENDIF}{$IFDEF X11}nil{$ENDIF}{$IFDEF COCOA}nil{$ENDIF};
 
+   {settings which we expect}
    oglDefaultSettings: oglTSettings = (
       Version: (
          Major:      {$IFNDEF GLES}1{$ELSE}1{$ENDIF};
@@ -185,6 +138,7 @@ CONST
       );
    );
 
+   {minimum settings we support}
    oglRequiredSettings: oglTSettings = (
       Version: (
          Major:         {$IFNDEF GLES}1{$ELSE}1{$ENDIF};
@@ -194,6 +148,7 @@ CONST
       );
    );
 
+   {required settings for the context window}
    oglContextSettings: oglTSettings = (
       Version: (
          Major:         1;
@@ -209,43 +164,19 @@ VAR
 
 IMPLEMENTATION
 
-{ oglTWindow }
+{ oglTVersion }
 
-constructor oglTWindow.Create();
+function oglTVersion.ToString(): string;
 begin
-   inherited;
-
-   glDefault := oglDefaultSettings;
-   glRequired := oglRequiredSettings;
-
-   {$IFDEF X11}
-   glxAttribs.Initialize(glxAttribs);
-   {$ENDIF}
+   Result := sf(Major) + '.' + sf(Minor);
 end;
 
-function oglTWindow.Downgrade32(): boolean;
+function oglTVersion.RequiresContextAttribs(): boolean;
 begin
-   if(glRequired.Version.RequiresContextAttribs()) then begin
-      RaiseError(eERR, 'gl > gl 3.2+ not supported (WGL_ARB_create_context_profile extension misisng)');
-      Result := false;
-   end else begin
-      gl.Version.Major := 3;
-      gl.Version.Minor := 1;
-      gl.Version.Profile := oglPROFILE_COMPATIBILITY;
-
-      {downgrade version}
-      if(not glProperties.Warned32NotSupported) then begin
-         glProperties.Warned32NotSupported := true;
-         log.w('gl > gl 3.2+ not supported, will downgrade to ' + gl.GetString());
-      end;
-   end;
-
-   Result := true;
+   Result := (Major > 3) or ((Major = 3) and (Minor > 1));
 end;
 
-{ oglTSettings }
-
-class function oglTSettings.GetProfileFromString(const profileString: string): oglTProfile;
+class function oglTVersion.GetProfileFromString(const profileString: string): oglTProfile;
 var
    lProfile: string;
 
@@ -262,7 +193,7 @@ begin
       Result := oglPROFILE_UNKNOWN;
 end;
 
-class function oglTSettings.GetProfileString(p: oglTProfile): string; static;
+class function oglTVersion.GetProfileString(p: oglTProfile): string; static;
 begin
    if(p = oglPROFILE_ANY) then
       Result := 'any'
@@ -274,27 +205,17 @@ begin
       Result := '';
 end;
 
+{ oglTSettings }
+
 function oglTSettings.GetString(): string;
 var
    profileString: string = '';
 
 begin
    if(Version.Major >= 3) then
-      profileString := ' (' + GetProfileString(Version.Profile) + ')';
+      profileString := ' (' + oglTVersion.GetProfileString(Version.Profile) + ')';
 
-   Result := Version.GetVersionString() + profileString;
-end;
-
-{ oxoglTVersion }
-
-function oglTVersion.GetVersionString(): string;
-begin
-   Result := sf(Major) + '.' + sf(Minor);
-end;
-
-function oglTVersion.RequiresContextAttribs: boolean;
-begin
-   Result := (Major > 3) or ((Major = 3) and (Minor > 1));
+   Result := Version.ToString() + profileString;
 end;
 
 { ERROR HANDLING }

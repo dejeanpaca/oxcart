@@ -12,19 +12,20 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uLog,
       {ox}
-      oxuOGL, oxuglExtensions, oxuRenderer;
+      oxuOGL, oxuRenderer,
+      oxuglExtensions, oxuglRendererInfo;
 
 CONST
    ogleVERSION_OK            = 0;
    ogleVERSION_LOWER         = 1;
    ogleVERSION_UNSUPPORTED   = 2;
 
-procedure oglGetInformation(wnd: oglTWindow);
-function oglVersionCheck(wnd: oglTWindow): longint;
+procedure oglGetInformation();
+function oglVersionCheck(): longint;
 
 IMPLEMENTATION
 
-procedure oglGetInformation(wnd: oglTWindow);
+procedure oglGetInformation();
 {$IFNDEF OX_LIBRARY}
 var
    renderer: oxTRenderer;
@@ -32,51 +33,51 @@ var
 
 begin
    {$IFNDEF OX_LIBRARY}
-   renderer := oxTRenderer(wnd.Renderer);
+   renderer := oxRenderer;
 
    {get basic information}
-   wnd.Info.Renderer := ogl.GetString(GL_RENDERER);
-   wnd.Info.Vendor   := ogl.GetString(GL_VENDOR);
-   wnd.Info.Version  := ogl.GetString(GL_VERSION);
+   oxglRendererInfo.Renderer := ogl.GetString(GL_RENDERER);
+   oxglRendererInfo.Vendor   := ogl.GetString(GL_VENDOR);
+   oxglRendererInfo.sVersion  := ogl.GetString(GL_VERSION);
 
    {try to figure out the OpenGL version}
-   ogl.GetVersion(wnd.gl.Version.Major,
-      wnd.gl.Version.Minor,
-      wnd.gl.Version.Revision,
-      wnd.gl.Version.Profile);
+   ogl.GetVersion(oxglRendererInfo.Version.Major,
+      oxglRendererInfo.Version.Minor,
+      oxglRendererInfo.Version.Revision,
+      oxglRendererInfo.Version.Profile);
 
-   wnd.Info.iVersion := wnd.gl.Version.Major * 100 + wnd.gl.Version.Minor * 10;
+   oxglRendererInfo.iVersion := oxglRendererInfo.Version.Major * 100 + oxglRendererInfo.Version.Minor * 10;
 
    {get other information}
-   glGetIntegerv(GL_MAX_TEXTURE_SIZE,  @wnd.Limits.MaxTextureSize);
-   glGetIntegerv(GL_MAX_LIGHTS,        @wnd.Limits.MaxLights);
-   glGetIntegerv(GL_MAX_CLIP_PLANES,   @wnd.Limits.MaxClipPlanes);
+   glGetIntegerv(GL_MAX_TEXTURE_SIZE,  @oxglRendererInfo.Limits.MaxTextureSize);
+   glGetIntegerv(GL_MAX_LIGHTS,        @oxglRendererInfo.Limits.MaxLights);
+   glGetIntegerv(GL_MAX_CLIP_PLANES,   @oxglRendererInfo.Limits.MaxClipPlanes);
 
-   glGetIntegerv(GL_MAX_PROJECTION_STACK_DEPTH, @wnd.Limits.MaxProjectionStackDepth);
-   glGetIntegerv(GL_MAX_MODELVIEW_STACK_DEPTH,  @wnd.Limits.MaxModelViewStackDepth);
-   glGetIntegerv(GL_MAX_TEXTURE_STACK_DEPTH,    @wnd.Limits.maxTextureStackDepth);
+   glGetIntegerv(GL_MAX_PROJECTION_STACK_DEPTH, @oxglRendererInfo.Limits.MaxProjectionStackDepth);
+   glGetIntegerv(GL_MAX_MODELVIEW_STACK_DEPTH,  @oxglRendererInfo.Limits.MaxModelViewStackDepth);
+   glGetIntegerv(GL_MAX_TEXTURE_STACK_DEPTH,    @oxglRendererInfo.Limits.maxTextureStackDepth);
 
-   wnd.Info.GLSL.Version := 'none';
-   wnd.Info.GLSL.Major := 0;
-   wnd.Info.GLSL.Minor := 0;
-   wnd.Info.GLSL.Compact := 0;
+   oxglRendererInfo.GLSL.Version := 'none';
+   oxglRendererInfo.GLSL.Major := 0;
+   oxglRendererInfo.GLSL.Minor := 0;
+   oxglRendererInfo.GLSL.Compact := 0;
 
    {get shader information}
-   if(wnd.gl.Version.Major > 1) then begin
+   if(oxglRendererInfo.Version.Major > 1) then begin
       {$IFNDEF GLES}
       {get GLSL version}
-      wnd.Info.GLSL.Version := ogl.GetString(GL_SHADING_LANGUAGE_VERSION);
+      oxglRendererInfo.GLSL.Version := ogl.GetString(GL_SHADING_LANGUAGE_VERSION);
 
       {get version in numerical form}
-      if(wnd.Info.GLSL.Version <> '') then
-         ogl.GetGLSLVersion(wnd.Info.GLSL.Version, wnd.Info.GLSL.Major, wnd.Info.GLSL.Minor, wnd.Info.GLSL.Compact);
+      if(oxglRendererInfo.GLSL.Version <> '') then
+         ogl.GetGLSLVersion(oxglRendererInfo.GLSL.Version, oxglRendererInfo.GLSL.Major, oxglRendererInfo.GLSL.Minor, oxglRendererInfo.GLSL.Compact);
 
-      if(wnd.Info.GLSL.Compact = 0) then
+      if(oxglRendererInfo.GLSL.Compact = 0) then
          log.w('Failed to get/parse GLSL version');
       {$ENDIF}
    end;
 
-   oglExtensions.Get(wnd);
+   oglExtensions.Get();
 
    {$IFNDEF GLES}
    renderer.Properties.Textures.Npot := oglExtensions.Supported(cGL_ARB_texture_non_power_of_two);
@@ -91,16 +92,25 @@ begin
    {$ENDIF}
 end;
 
-function oglVersionCheck(wnd: oglTWindow): longint;
+function oglVersionCheck(): longint;
+var
+   required,
+   default,
+   v: oglTSettings;
+
 begin
-   if(ogl.CompareVersions(wnd.gl.Version, wnd.glRequired.Version) < 0) then begin
-      log.e('OpenGL version ' + wnd.gl.GetString() + ' is lower than required ' + wnd.glRequired.GetString());
+   required := oxglRendererInfo.GetRequiredSettings();
+   default := oxglRendererInfo.GetExpectedSettings();
+   v.Version := oxglRendererInfo.Version;
+
+   if(ogl.CompareVersions(v.Version, required.Version) < 0) then begin
+      log.e('OpenGL version ' + v.GetString() + ' is lower than required ' + required.GetString());
 
       exit(ogleVERSION_UNSUPPORTED);
    end;
 
-   if(ogl.CompareVersions(wnd.gl.Version, wnd.glDefault.Version) < 0) then begin
-      log.w('OpenGL version ' + wnd.gl.GetString() + ' is lower than targeted ' + wnd.glDefault.GetString());
+   if(ogl.CompareVersions(oxglRendererInfo.Version, default.Version) < 0) then begin
+      log.w('OpenGL version ' + v.GetString() + ' is lower than targeted ' + default.GetString());
 
       exit(ogleVERSION_LOWER);
    end;

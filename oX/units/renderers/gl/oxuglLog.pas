@@ -11,11 +11,11 @@ INTERFACE
    USES
       uStd, uLog, StringUtils,
       {ox}
-      oxuWindowTypes, oxuRenderer,
+      oxuRenderer,
       {renderer.gl}
-      oxuOGL, oxuglExtensions;
+      oxuOGL, oxuglExtensions, oxuglRendererInfo;
 
-procedure oglLogInformation(wnd: oglTWindow);
+procedure oglLogInformation();
 
 IMPLEMENTATION
 
@@ -42,28 +42,33 @@ begin
    log.Leave();
 end;
 
-procedure oglLogInformation(wnd: oglTWindow);
+procedure oglLogInformation();
+var
+   v: oglTSettings;
+
 begin
+   v.Version := oxglRendererInfo.Version;
+
    log.Collapsed('Information');
-      log.i('Renderer: ' + wnd.Info.Renderer);
-      log.i('Vendor: ' + wnd.Info.Vendor);
+      log.i('Renderer: ' + oxglRendererInfo.Renderer);
+      log.i('Vendor: ' + oxglRendererInfo.Vendor);
 
-      log.i('Version: ' + wnd.gl.GetString() + ' ' + sf(wnd.Info.iVersion) +
-         ' (original: ' + wnd.Info.Version + ')');
+      log.i('Version: ' + v.GetString() + ' ' + sf(oxglRendererInfo.iVersion) +
+         ' (original: ' + oxglRendererInfo.sVersion + ')');
 
-      if(wnd.gl.Version.Major > 1) then
-         log.i('GLSL Version: ' + sf(wnd.Info.GLSL.Compact) + ' (original: ' + wnd.Info.GLSL.Version + ')');
+      if(oxglRendererInfo.Version.Major > 1) then
+         log.i('GLSL Version: ' + sf(oxglRendererInfo.GLSL.Compact) + ' (original: ' + oxglRendererInfo.GLSL.Version + ')');
 
       log.Enter('Capabilities');
-      log.i('Maximum Texture Size: ' + sf(wnd.Limits.MaxTextureSize) + 'x' + sf(wnd.Limits.MaxTextureSize));
-      log.i('Maximum Lights: ' + sf(wnd.Limits.MaxLights));
-      log.i('Maximum Clip Planes: ' + sf(wnd.Limits.MaxClipPlanes));
-      log.i('Supports non power of two textures: ' + sf(oxTRenderer(wnd.Renderer).Properties.Textures.Npot));
+      log.i('Maximum Texture Size: ' + sf(oxglRendererInfo.Limits.MaxTextureSize) + 'x' + sf(oxglRendererInfo.Limits.MaxTextureSize));
+      log.i('Maximum Lights: ' + sf(oxglRendererInfo.Limits.MaxLights));
+      log.i('Maximum Clip Planes: ' + sf(oxglRendererInfo.Limits.MaxClipPlanes));
+      log.i('Supports non power of two textures: ' + sf(oxRenderer.Properties.Textures.Npot));
       log.Leave();
       log.Enter('Stack depths');
-      log.i('Projection Stack: ' + sf(wnd.Limits.MaxProjectionStackDepth));
-      log.i('ModelView Stack: ' + sf(wnd.Limits.MaxModelViewStackDepth));
-      log.i('Texture Stack: ' + sf(wnd.Limits.MaxTextureStackDepth));
+      log.i('Projection Stack: ' + sf(oxglRendererInfo.Limits.MaxProjectionStackDepth));
+      log.i('ModelView Stack: ' + sf(oxglRendererInfo.Limits.MaxModelViewStackDepth));
+      log.i('Texture Stack: ' + sf(oxglRendererInfo.Limits.MaxTextureStackDepth));
       log.Leave();
    log.Leave();
 
