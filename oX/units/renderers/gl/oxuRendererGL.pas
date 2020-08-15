@@ -34,7 +34,8 @@ INTERFACE
       oxuglMaterial,
       {$IF (NOT DEFINED(OX_LIBRARY)) AND (NOT DEFINED(GLES))}oxuglDebugOutput,{$ENDIF}
       oxuglFP,
-      oxuglFPShaders;
+      oxuglFPShaders,
+      oxuglParams;
 
 IMPLEMENTATION
 

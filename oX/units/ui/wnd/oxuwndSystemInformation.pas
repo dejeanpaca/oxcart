@@ -17,7 +17,7 @@ USES
    {$IFDEF OX_FEATURE_CONSOLE}
    oxuConsoleBackend,
    {$ENDIF}
-   oxuWindowTypes, oxuwndBase,
+   oxuwndBase,
    {ui}
    uiuControl, uiuWindow, uiWidgets, uiuWidget,
    {widgets}
@@ -70,8 +70,7 @@ begin
    end;
 
    wdgDivisor.Add('Renderer Information');
-   wdgLabel.Add(oxRenderer.GetSummary(oxTWindow(Window.oxwParent)),
-      uiWidget.LastRect.BelowOf(), oxNullDimensions);
+   wdgLabel.Add(oxRenderer.GetSummary(), uiWidget.LastRect.BelowOf(), oxNullDimensions);
 
    btnClose := wdgButton.Add('Close', uiWidget.LastRect.BelowOf(), oxNullDimensions, @Close);
 

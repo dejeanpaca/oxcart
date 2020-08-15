@@ -17,9 +17,9 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uLog, uStd, uColors, StringUtils, uImage, vmVector,
       {ox}
-      uOX, oxuRunRoutines, oxuWindowTypes, oxuTypes, oxuRenderer, oxuRenderers, oxuWindows,
+      uOX, oxuRunRoutines, oxuWindowTypes, oxuTypes, oxuRenderer, oxuRenderers,
       {renderer.gl}
-      oxuOGL, oxuglExtensions, oxuglInfo, oxuglRendererPlatform
+      oxuOGL, oxuglExtensions, oxuglInfo, oxuglRendererPlatform, oxuglRendererInfo, oxuglWindow
       {$IFNDEF OX_LIBRARY}, oxuglLog{$ENDIF};
 
 TYPE
@@ -32,6 +32,7 @@ TYPE
       glRenderingContexts: array[0..oxMAXIMUM_RENDER_CONTEXT] of oglTRenderingContext;
       {$IFDEF OX_LIBRARY_SUPPORT}
       pExtensions: oglPExtensions;
+      pInfo: oxglPRendererInfo;
       {$ENDIF}
 
       procedure AfterInitialize(); override;
@@ -40,14 +41,9 @@ TYPE
       procedure OnDeInitialize(); override;
 
       {windows}
-      procedure SetupData(wnd: oxTWindow); override;
       function SetupWindow(wnd: oxTWindow): boolean; override;
       function PreInitWindow({%H-}wnd: oxTWindow): boolean; override;
       function InitWindow(wnd: oxTWindow): boolean; override;
-      {$IFDEF OX_LIBRARY}
-      function InitWindowLibrary(wnd: oxTWindow): boolean; override;
-      {$ENDIF}
-      procedure LogWindow(window: oxTWindow); override;
       function ContextWindowRequired(): boolean; override;
 
       {rendering}
@@ -70,7 +66,7 @@ TYPE
 
       constructor Create(); override;
 
-      function GetSummary(wnd: oxTWindow): TStringArray; override;
+      function GetSummary(): TStringArray; override;
 
       procedure Screenshot({%H-}wnd: oxTWindow; {%H-}image: imgTImage; x, y: loopint; w, h: loopint); override;
   end;
@@ -89,7 +85,7 @@ begin
    inherited AfterInitialize();
 
    {$IFNDEF OX_LIBRARY}
-   oglLogInformation(oglTWindow(oxWindows.w[0]));
+   oglLogInformation();
    {$ENDIF}
 
    log.Leave();
@@ -108,6 +104,8 @@ begin
    ogl.InitializePre();
 
    glPlatform^.OnInitialize();
+
+   log.i('Target version: ' + oglDefaultVersion.GetString());
 end;
 
 procedure oxglTRenderer.OnDeInitialize();
@@ -130,10 +128,6 @@ begin
       exit(False);
    end;
 
-   {$IFDEF OX_LIBRARY}
-   if(wnd.ExternalWindow <> nil) then
-      oglTWindow(wnd).Info := oglTWindow(wnd.ExternalWindow).Info;
-   {$ENDIF}
 
    {bind rendering context to the window}
    ContextCurrent(wnd.RenderingContext);
@@ -144,46 +138,11 @@ begin
    Result := true;
 end;
 
-{$IFDEF OX_LIBRARY}
-function oxglTRenderer.InitWindowLibrary(wnd: oxTWindow): boolean;
-var
-   glwnd,
-   xglwnd: oglTWindow;
-
-begin
-   if(wnd.ExternalWindow <> nil) then begin
-      xglwnd := oglTWindow(wnd.ExternalWindow.oxwParent);
-      glwnd := oglTWindow(wnd);
-
-      glwnd.Info := xglwnd.Info;
-      glwnd.gl := xglwnd.gl;
-      glwnd.glDefault := xglwnd.glDefault;
-      glwnd.glRequired := xglwnd.glRequired;
-      glwnd.glProperties := xglwnd.glProperties;
-      glwnd.Limits := xglwnd.Limits;
-   end;
-
-   Result := true;
-end;
-{$ENDIF}
-
-procedure oxglTRenderer.SetupData(wnd: oxTWindow);
-begin
-   if(not wnd.oxProperties.Context) then begin
-      oglTWindow(wnd).glDefault := oglDefaultSettings;
-      oglTWindow(wnd).glRequired := oglRequiredSettings;
-   end else begin
-      oglTWindow(wnd).glDefault := oglContextSettings;
-      oglTWindow(wnd).glRequired := oglContextSettings;
-   end;
-
-   oglTWindow(wnd).gl := oglTWindow(wnd).glDefault;
-end;
-
 function oxglTRenderer.SetupWindow(wnd: oxTWindow): boolean;
 begin
    {$IFDEF OX_LIBRARY_SUPPORT}
    oglExtensions.pExternal := pExtensions;
+   pInfo := @oxglRendererInfo;
    {$ENDIF}
 
    if(ox.LibraryMode) then begin
@@ -199,18 +158,22 @@ begin
       log.w('gl > Errors while setting up state');
 
    {get information from OpenGL}
-   oglGetInformation(oglTWindow(wnd));
+   oglGetInformation();
    if(ogl.eRaise() <> 0) then begin
       log.w('gl > Errors while getting information');
       exit(false);
    end;
 
+   {$IFDEF OX_LIBRARY}
+   oxglRendererInfo := pInfo^;
+   {$ENDIF}
+
    if(not ox.LibraryMode) then begin
       {check if versions match}
-      if(oglVersionCheck(oglTWindow(wnd)) = ogleVERSION_UNSUPPORTED) then begin
+      if(oglVersionCheck() = ogleVERSION_UNSUPPORTED) then begin
          wnd.RaiseError(eUNSUPPORTED, 'Got OpenGL version ' +
-            oglTWindow(wnd).gl.GetString() + ' which is unsupported, minimum required ' +
-            oglTWindow(wnd).glRequired.GetString());
+            oxglRendererInfo.Version.GetString() + ' which is unsupported, minimum required ' +
+            oxglRendererInfo.GetRequiredVersion().GetString());
       end;
    end;
 
@@ -222,14 +185,9 @@ begin
    Result := glPlatform^.PreInitWindow(oglTWindow(wnd));
 end;
 
-procedure oxglTRenderer.LogWindow(window: oxTWindow);
-begin
-   log.i('OpenGL Target: ' + oglTWindow(window).gl.GetString());
-end;
-
 function oxglTRenderer.ContextWindowRequired(): boolean;
 begin
-   Result := ogl.ContextRequired(oglDefaultSettings);
+   Result := ogl.ContextRequired(oglDefaultVersion);
 end;
 
 procedure oxglTRenderer.SwapBuffers(wnd: oxTWindow);
@@ -388,15 +346,15 @@ begin
    Id := 'gl';
 end;
 
-function oxglTRenderer.GetSummary(wnd: oxTWindow): TStringArray;
+function oxglTRenderer.GetSummary(): TStringArray;
 var
    list: array[0..3] of StdString;
 
 begin
-   list[0] := 'Vendor: ' + oglTWindow(wnd).Info.Vendor;
-   list[1] := 'Renderer: ' + oglTWindow(wnd).Info.Renderer;
-   list[2] := 'OpenGL: ' + oglTWindow(wnd).Info.Version;
-   list[3] := 'GLSL Version: ' + oglTWindow(wnd).Info.GLSL.Version;
+   list[0] := 'Vendor: ' + oxglRendererInfo.Vendor;
+   list[1] := 'Renderer: ' + oxglRendererInfo.Renderer;
+   list[2] := 'OpenGL: ' + oxglRendererInfo.sVersion;
+   list[3] := 'GLSL Version: ' + oxglRendererInfo.GLSL.Version;
 
    Result := list;
 end;

@@ -10,10 +10,12 @@ INTERFACE
 
    USES
       {$INCLUDE usesgl.inc},
-      uStd, sysutils, uSimpleParser, StringUtils, uFiles, uLog,
+      sysutils, uStd, uLog, uSimpleParser, StringUtils, uFiles,
       {ox}
-      uOX, oxuRunRoutines, oxuFile, oxuWindow,
-      oxuShader, oxuShaderLoader, oxuglRenderer, oxuglShader, oxuOGL;
+      uOX, oxuRunRoutines, oxuFile,
+      oxuShader, oxuShaderLoader,
+      {gl}
+      oxuglRenderer, oxuglShader, oxuglRendererInfo;
 
 TYPE
    { oxglTShaderLoader }
@@ -139,7 +141,7 @@ begin
    ZeroOut(parseOptions, SizeOf(parseOptions));
    parseOptions.Shader := oxglTShader(shader);
    parseOptions.Path := path;
-   parseOptions.glslVersion := oglTWindow(oxWindow.Current).Info.GLSL.Compact;
+   parseOptions.GLSLVersion := oxglRendererInfo.GLSL.Compact;
    parseOptions.Data := @data;
 
    TParseData.Init(parseData);

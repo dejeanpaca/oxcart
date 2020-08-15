@@ -13,7 +13,7 @@ INTERFACE
       {app}
       appuKeys, appuMouse,
       {oX}
-      oxuTypes, uiuTypes;
+      uOX, oxuTypes, uiuTypes;
 
 TYPE
    { uiTControl }
@@ -276,7 +276,7 @@ begin
    cur := Parent;
 
    repeat
-     if(cur.IsType(parentType)) then
+     if(ox.IsType(cur, parentType)) then
         exit(cur);
 
      cur := cur.Parent;
@@ -286,37 +286,13 @@ begin
 end;
 
 function uiTControl.IsType(whatType: uiTControlClass): boolean;
-var
-   cur: TClass;
-
 begin
-   cur := wnd.ClassType;
-
-   repeat
-     if(cur = whatType) then
-        exit(true);
-
-     cur := cur.ClassParent;
-   until (cur = nil) or (cur = TObject);
-
-   Result := false;
+   Result := ox.IsType(Self, whatType);
 end;
 
 class function uiTControl.IsType(control, whatType: uiTControlClass): boolean;
-var
-   cur: TClass;
-
 begin
-   cur := control.ClassType;
-
-   repeat
-     if(cur = whatType) then
-        exit(true);
-
-     cur := cur.ClassParent;
-   until (cur = nil) or (cur = TObject);
-
-   Result := false;
+   Result := ox.IsType(control, whatType);
 end;
 
 procedure uiTControl.SetAbsolute(var p: oxTPoint);

@@ -18,10 +18,9 @@ USES
    oxuConsoleBackend,
    {$ENDIF}
    oxuRenderer,
-   oxuWindowTypes, oxuwndBase,
    {ui}
    uiuControl, uiuWindow, uiWidgets, uiuWidget, uiuTypes,
-   oxuwndSystemInformation,
+   oxuwndBase, oxuwndSystemInformation,
    {widgets}
    wdguLabel, wdguButton, wdguDivisor, wdguLink;
 
@@ -96,8 +95,7 @@ begin
    wdgLabel.Add('Memory: ' + appSI.GetMemorySize());
 
    wdgDivisor.Add('Renderer Information');
-   wdgLabel.Add(oxRenderer.GetSummary(oxTWindow(Window.oxwParent)),
-      uiWidget.LastRect.BelowOf(), oxNullDimensions);
+   wdgLabel.Add(oxRenderer.GetSummary(), uiWidget.LastRect.BelowOf(), oxNullDimensions);
 
    {add a cancel button}
    btnOk := wdgButton.Add('Ok', uiWidget.LastRect.BelowOf(), oxDimensions(80, 20), @Close);

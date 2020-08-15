@@ -10,12 +10,10 @@ INTERFACE
 
    USES
       {$INCLUDE usesgl.inc},
-      uStd, uLog, StringUtils,
+      uStd, uLog, StringUtils
       {$IFNDEF OX_LIBRARY}
-      ustrList,
-      {$ENDIF}
-      {oX}
-      oxuWindowTypes;
+      , ustrList
+      {$ENDIF};
 
 TYPE
    oglPExtensionDescriptor = ^oglTExtensionDescriptor;
@@ -38,7 +36,7 @@ TYPE
    { oglTExtensions }
 
    oglTExtensions = record
-      GetPlatformSpecific: oxTWindowRoutine;
+      GetPlatformSpecific: TProcedure;
       PlatformSpecific: oglPExtensionDescriptor;
       nPlatformSpecific: loopint;
 
@@ -48,7 +46,7 @@ TYPE
       pExternal: oglPExtensions;
       {$ENDIF}
 
-      procedure Get({%H-}wnd: oxTWindow);
+      procedure Get();
       function PlatformSupported(i: loopint): boolean;
       function Supported(i: loopint): boolean;
       function FindDescriptor(const ext: string): loopint;
@@ -75,7 +73,7 @@ begin
       oglcExtensionDescriptors[id].Present := true;
 end;
 
-procedure oglTExtensions.Get(wnd: oxTWindow);
+procedure oglTExtensions.Get();
 {$IFNDEF OX_LIBRARY}
 var
    exts: pChar;
@@ -90,7 +88,7 @@ begin
    strList.ProcessSpaceSeparated(exts, @GetExts);
 
    if(GetPlatformSpecific <> nil) then begin
-      GetPlatformSpecific(wnd);
+      GetPlatformSpecific();
    end;
    {$ELSE}
    pExtensions := pExternal^.pExtensions;

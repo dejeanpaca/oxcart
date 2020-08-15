@@ -9,8 +9,11 @@ UNIT oxeduKeys;
 INTERFACE
 
    USES
+      uStd,
+      {app}
       appuKeys, appuKeyMappings, appuActionEvents,
-      oxeduActions;
+      {oxed}
+      uOXED, oxeduActions;
 
 TYPE
    { oxedTKeyMappings }
@@ -98,5 +101,13 @@ begin
 
    appKeyMappings.Validate();
 end;
+
+procedure initialize();
+begin
+   oxedKeyMappings.Initialize();
+end;
+
+INITIALIZATION
+   oxed.Init.Add('oxed.keymaps', @initialize);
 
 END.
