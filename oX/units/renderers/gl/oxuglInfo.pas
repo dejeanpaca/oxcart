@@ -28,8 +28,6 @@ IMPLEMENTATION
 procedure oglGetInformation();
 begin
    {$IFNDEF OX_LIBRARY}
-   renderer := oxRenderer;
-
    {get basic information}
    oxglRendererInfo.Renderer := ogl.GetString(GL_RENDERER);
    oxglRendererInfo.Vendor   := ogl.GetString(GL_VENDOR);

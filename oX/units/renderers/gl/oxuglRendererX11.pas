@@ -13,7 +13,7 @@ INTERFACE
       uStd, uLog, StringUtils,
       oxuRenderer, oxuWindowTypes,
       {renderer.gl}
-      oxuOGL, oxuglExtensions, oxuglRendererPlatform, oxuglRenderer,
+      oxuOGL, oxuglExtensions, oxuglRendererPlatform, oxuglRenderer, oxuglWindow,
       oxuX11Platform, oxuGLX;
 
 CONST
@@ -213,7 +213,7 @@ var
    requiresContext: Boolean;
 
 begin
-   requiresContext := ogl.ContextRequired(wnd.glDefault);
+   requiresContext := ogl.ContextRequired(oglDefaultVersion);
 
    if(not requiresContext) then
       Result := chooseVisual(wnd)
@@ -247,8 +247,8 @@ begin
          exit(nil);
    end;
 
-   attr.Add(GLX_CONTEXT_MAJOR_VERSION_ARB,   wnd.gl.Version.Major);
-   attr.Add(GLX_CONTEXT_MINOR_VERSION_ARB,   wnd.gl.Version.Minor);
+   attr.Add(GLX_CONTEXT_MAJOR_VERSION_ARB,   oglDefaultVersion.Major);
+   attr.Add(GLX_CONTEXT_MINOR_VERSION_ARB,   oglDefaultVersion.Minor);
 
    contextFlags := 0;
    {$IFDEF OX_DEBUG}
@@ -260,13 +260,13 @@ begin
       attr.add(GLX_CONTEXT_FLAGS_ARB, contextFlags);
 
    if(extContext) then begin
-      if(wnd.gl.Version.Profile = oglPROFILE_ANY) then begin
+      if(oglDefaultVersion.Profile = oglPROFILE_ANY) then begin
          log.v('gl > Using any profile');
          attr.Add(GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB or GLX_CONTEXT_CORE_PROFILE_BIT_ARB);
-      end else if(wnd.gl.Version.Profile = oglPROFILE_COMPATIBILITY) then begin
+      end else if(oglDefaultVersion.Profile = oglPROFILE_COMPATIBILITY) then begin
          log.v('gl > Using compatibility profile');
          attr.Add(GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB);
-      end else if(wnd.gl.Version.Profile = oglPROFILE_CORE) then begin
+      end else if(oglDefaultVersion.Profile = oglPROFILE_CORE) then begin
          log.v('gl > Using core profile');
          attr.Add(GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_CORE_PROFILE_BIT_ARB);
       end;
@@ -285,7 +285,7 @@ var
 
 begin
    {requires new context creation for opengl 3.0 and higher}
-   requiresContext := ogl.ContextRequired(wnd.glDefault);
+   requiresContext := ogl.ContextRequired(oglDefaultVersion);
    extContextProfile := oglExtensions.PlatformSupported(cGLX_ARB_create_context_profile);
 
    if(requiresContext) and (extContextProfile) then begin
