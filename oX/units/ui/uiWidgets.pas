@@ -13,7 +13,7 @@ INTERFACE
       {oX}
       oxuRunRoutines, oxuTypes, oxuUI, oxuWindows, oxuWindow, oxuWindowTypes, oxuFont,
       {ui}
-      uiuTypes, uiuWindowTypes, uiuBase, uiuUI,
+      uiuTypes, uiuWindowTypes, uiuBase, uiuUI, uiuCursor,
       uiuSkin, uiuSkinTypes, uiuDraw,
       uiuControl, uiuWidget, uiuRegisteredWidgets;
 
@@ -97,6 +97,8 @@ TYPE
       procedure LockPointer();
       procedure LockPointer(x, y: single);
       procedure UnlockPointer();
+
+      procedure SetCursorType(newCursorType: uiTCursorType);
 
       {returns position of a widget if it exists, -1 if not}
       function Exists(const wdg: uiTWidget): longint;
@@ -1309,6 +1311,17 @@ procedure uiTWidgetHelper.UnlockPointer();
 begin
    if(GetUI().PointerCapture.Typ = uiPOINTER_CAPTURE_WIDGET) then begin
       GetUI().PointerCapture.Clear();
+   end;
+end;
+
+procedure uiTWidgetHelper.SetCursorType(newCursorType: uiTCursorType);
+begin
+   if(CursorType <> newCursorType) then begin
+      CursorType := newCursorType;
+
+      {if selected and hovering over the widget, set the cursor type}
+      if (wdgpHOVERING in Properties) then
+         uiCursor.SetCursorType(CursorType);
    end;
 end;
 
