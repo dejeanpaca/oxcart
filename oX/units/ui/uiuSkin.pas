@@ -13,8 +13,7 @@ INTERFACE
       {oX}
       oxuRunRoutines, oxuPlatform,
       {ui}
-      uiuTypes, uiuSkinTypes,
-      uiuBase, uiuPlatform;
+      uiuTypes, uiuSkinTypes, uiuBase, uiuPlatform;
 
 CONST
    {window rendering constants}

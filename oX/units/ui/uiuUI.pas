@@ -9,14 +9,13 @@ UNIT uiuUI;
 INTERFACE
 
    USES
-      uStd, uLog, uTiming, udvars,
+      uStd, uTiming, udvars,
       {app}
       appuMouse,
       {oX}
-      uOX, oxuWindow, oxuWindows, oxuRenderer, oxuRenderers, oxuTypes, oxuResourcePool,
-      oxuShader, oxuMaterial, oxuFont,
+      uOX, oxuWindow, oxuTypes, oxuResourcePool, oxuMaterial, oxuFont,
       {ui}
-      uiuTypes, uiuControl, uiuWindowTypes, uiuSkinTypes, uiuWidget, uiuBase, uiuSkin;
+      uiuTypes, uiuControl, uiuWindowTypes, uiuSkinTypes, uiuWidget, uiuSkin;
 
 TYPE
    uiTSelectArray = array[0..uiMAXIMUM_LEVELS - 1] of uiTControl;
