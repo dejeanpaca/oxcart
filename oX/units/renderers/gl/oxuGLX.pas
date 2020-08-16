@@ -9,12 +9,11 @@ UNIT oxuGLX;
 INTERFACE
 
    USES
-     {$INCLUDE usesgl.inc},
-     uLog, StringUtils, ustrList,
-     xlib, GLX,
-     {oX}
-     oxuWindowTypes,
-     oxuOGL, oxuglExtensions, oxuX11Platform;
+      {$INCLUDE usesgl.inc},
+      uLog, StringUtils, ustrList,
+      xlib,
+      {oX}
+      oxuglExtensions, oxuX11Platform;
 
 CONST
    cGLX_ARB_create_context                    = 0;
