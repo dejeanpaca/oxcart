@@ -214,6 +214,8 @@ function CopyTo(const s: string): string;
 {copy until the specified character is found and delete from string}
 function CopyTo(const s: string; c: char): string;
 
+{copy until given chars and delete from string}
+function CopyToDel(var s: string; const chars: array of char): string;
 {copy until white space and delete from string}
 function CopyToDel(var s: string): string;
 {copy until the specified character is found and delete from string}
@@ -1568,6 +1570,36 @@ begin
       Result := copy(s, 1, i - 1);
    end else
       Result := '';
+end;
+
+function CopyToDel(var s: string; const chars: array of char): string;
+var
+   i,
+   c,
+   slen: longint;
+
+begin
+   if(High(chars) = 0) then
+      exit(s);
+
+   slen := length(s);
+   Result := '';
+
+   if(slen > 0) then begin
+      i := 1;
+
+      while (i <= slen) do begin
+         for c := 0 to high(chars) do begin
+            if(s[i] = chars[c]) then begin
+               Result := copy(s, 1, i - 1);
+               delete(s, 1, i);
+               exit;
+            end;
+         end;
+
+         inc(i);
+      end;
+   end;
 end;
 
 function CopyToDel(var s: string): string;
