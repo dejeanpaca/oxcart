@@ -526,7 +526,7 @@ begin
    h := r.Bottom - r.Top;
 
    {try to center the window on screen}
-   if(uiwndpAUTO_CENTER in wnd.Properties) then begin
+   if(uiwndpAUTO_CENTER in wnd.Properties) and (not wnd.oxProperties.Context) then begin
       wnd.GetPlatform().GetCenterPosition(wnd, wnd.Position);
 
       r.Left := wnd.Position.x;
@@ -902,7 +902,7 @@ begin
       exit(false);
 
    if(not wnd.oxProperties.WindowedFullscreen) then begin
-      Result := Fullscreen(wnd.Dimensions.w, wnd.Dimensions.h, wnd.RenderSettings.ColorBits);
+      Result := Fullscreen(wnd.Dimensions.w, wnd.Dimensions.h, oxTRenderer(wnd.Renderer).Settings.ColorBits);
 
       if(not Result) then
          LeaveFullscreen(wnd);

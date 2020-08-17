@@ -38,6 +38,7 @@ function buildPFD(wnd: oglTWindow; out pfd: PIXELFORMATDESCRIPTOR): boolean;
 var
    objType,
    dwFlags: dword;
+   renderer: oxTRenderer;
 
 begin
    {build required pixel format}
@@ -47,6 +48,8 @@ begin
    pfd.nVersion := 1;
 
    objType := GetObjectType(wnd.wd.dc);
+
+   renderer := oxTRenderer(wnd.Renderer);
 
    if(objType = 0) then begin
       if(winos.LogError('Failed to get dc object type') <> 0) then begin
@@ -62,24 +65,26 @@ begin
    else
       dwFlags := dwFlags or PFD_DRAW_TO_WINDOW;
 
-   if(wnd.RenderSettings.DoubleBuffer) then
+   if(renderer.Settings.DoubleBuffer) then
       dwFlags := dwFlags or PFD_DOUBLEBUFFER;
-   if(wnd.RenderSettings.Software) then
+
+   if(renderer.Settings.Software) then
       dwFlags := dwFlags or PFD_SUPPORT_GDI;
-   if(wnd.RenderSettings.Stereo) then
+
+   if(renderer.Settings.Stereo) then
       dwFlags := dwFlags or PFD_STEREO;
 
    pfd.dwFlags       := dwFlags;
    pfd.iPixelType    := PFD_TYPE_RGBA;
-   pfd.cColorBits    := wnd.RenderSettings.ColorBits;
-   pfd.cDepthBits    := wnd.RenderSettings.DepthBits;
+   pfd.cColorBits    := renderer.Settings.ColorBits;
+   pfd.cDepthBits    := renderer.Settings.DepthBits;
    pfd.iLayerType    := PFD_MAIN_PLANE;
-   pfd.cStencilBits  := wnd.RenderSettings.StencilBits;
+   pfd.cStencilBits  := renderer.Settings.StencilBits;
 
-   if(wnd.RenderSettings.Layer = 0) then
+   if(renderer.Settings.Layer = 0) then
       pfd.iLayerType := PFD_MAIN_PLANE
    else begin
-      if(wnd.RenderSettings.Layer > 0) then
+      if(renderer.Settings.Layer > 0) then
          pfd.iLayerType := PFD_OVERLAY_PLANE
       else
          pfd.iLayerType := Byte(PFD_UNDERLAY_PLANE);
@@ -131,35 +136,37 @@ var
    vals: specialize TSimpleList<GLint>;
    pixelFormats: array[0..1023] of longint;
    nFormats: dword = 0;
+   renderer: oxTRenderer;
 
 begin
+   renderer := oxTRenderer(wnd.Renderer);
    vals.Initialize(vals);
 
    vals.Add(WGL_DRAW_TO_WINDOW_ARB, 1);
    vals.Add(WGL_SUPPORT_OPENGL_ARB, 1);
    vals.Add(WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB);
 
-   if(wnd.RenderSettings.DoubleBuffer) then
+   if(renderer.Settings.DoubleBuffer) then
       vals.Add(WGL_DOUBLE_BUFFER_ARB, 1);
 
    vals.Add(WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB);
 
-   vals.Add(WGL_COLOR_BITS_ARB, wnd.RenderSettings.ColorBits);
-   vals.Add(WGL_DEPTH_BITS_ARB, wnd.RenderSettings.DepthBits);
+   vals.Add(WGL_COLOR_BITS_ARB, renderer.Settings.ColorBits);
+   vals.Add(WGL_DEPTH_BITS_ARB, renderer.Settings.DepthBits);
 
-   vals.Add(WGL_STENCIL_BITS_ARB, wnd.RenderSettings.StencilBits);
-   vals.Add(WGL_ACCUM_BITS_ARB, wnd.RenderSettings.AccumBits);
+   vals.Add(WGL_STENCIL_BITS_ARB, renderer.Settings.StencilBits);
+   vals.Add(WGL_ACCUM_BITS_ARB, renderer.Settings.AccumBits);
 
-   if(wnd.RenderSettings.ColorBits = 32) or (wnd.RenderSettings.ColorBits = 24) then begin
+   if(renderer.Settings.ColorBits = 32) or (renderer.Settings.ColorBits = 24) then begin
       vals.Add(WGL_RED_BITS_ARB, 8);
       vals.Add(WGL_GREEN_BITS_ARB, 8);
       vals.Add(WGL_BLUE_BITS_ARB, 8);
 
-      if(wnd.RenderSettings.ColorBits = 32) then
+      if(renderer.Settings.ColorBits = 32) then
          vals.Add(WGL_ALPHA_BITS_ARB, 8)
       else
          vals.Add(WGL_ALPHA_BITS_ARB, 0);
-   end else if(wnd.RenderSettings.ColorBits = 16) then begin
+   end else if(renderer.Settings.ColorBits = 16) then begin
       vals.Add(WGL_RED_BITS_ARB, 5);
       vals.Add(WGL_GREEN_BITS_ARB, 6);
       vals.Add(WGL_BLUE_BITS_ARB, 5);

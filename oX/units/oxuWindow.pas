@@ -59,7 +59,6 @@ begin
    wnd.Platform := oxPlatform;
 
    wnd.Title := title;
-   wnd.RenderSettings := oxRenderer.WindowSettings;
 
    if(not contextWindow) then
       oxUIHooks.InitializeWindow(wnd);
@@ -80,15 +79,18 @@ end;
 procedure windowCreateCommon(wnd: oxTWindow);
 begin
    oxViewport := @wnd.Viewport;
-   oxUIHooks.Select(wnd);
 
-   if(wnd.oxProperties.Fullscreen) then begin
-      wnd.oxProperties.Fullscreen := false;
-      wnd.Fullscreen();
+   if(not wnd.oxProperties.Context) then begin
+      oxUIHooks.Select(wnd);
+
+      if(wnd.oxProperties.Fullscreen) then begin
+         wnd.oxProperties.Fullscreen := false;
+         wnd.Fullscreen();
+      end;
+
+      if(not wnd.oxProperties.Context) then
+         oxUIHooks.UpdatePosition(wnd);
    end;
-
-   if(not wnd.oxProperties.Context) then
-      oxUIHooks.UpdatePosition(wnd);
 end;
 
 {create a window which is only part of an external window (e.g. running in a library)}
@@ -105,7 +107,6 @@ begin
    wnd.oxwExternal := oxw;
 
    renderer := oxTRenderer(wnd.Renderer);
-   wnd.RenderSettings := oxw.RenderSettings;
 
    renderer.SetupData(wnd);
 
@@ -138,31 +139,31 @@ begin
    log.Enter('Window: ' + wnd.Title(* + ' (' + uiwGetIDString(wnd.w.wID) + ')'*));
       log.i('Requested Size: ' + sf(wnd.Dimensions.w) + 'x' + sf(wnd.Dimensions.h));
 
-      if(wnd.RenderSettings.DoubleBuffer) then
+      if(renderer.Settings.DoubleBuffer) then
          s := 'double buffer'
       else
          s := 'single buffer';
 
-      if(wnd.RenderSettings.Software) then
+      if(renderer.Settings.Software) then
          s := s + ', software rendered';
 
-      if(wnd.RenderSettings.Stereo) then
+      if(renderer.Settings.Stereo) then
          s := s + ', stereo';
 
-      if(wnd.RenderSettings.VSync) then
+      if(renderer.Settings.VSync) then
          s := s + ', vsync';
 
       log.Enter('Properties >');
-         log.i('Color: '    + sf(wnd.RenderSettings.ColorBits));
+         log.i('Color: '    + sf(renderer.Settings.ColorBits));
 
-         if(wnd.RenderSettings.DepthBits > 0) then
-            log.i('Depth: '    + sf(wnd.RenderSettings.DepthBits));
+         if(renderer.Settings.DepthBits > 0) then
+            log.i('Depth: '    + sf(renderer.Settings.DepthBits));
 
-         if(wnd.RenderSettings.StencilBits > 0) then
-            log.i('Stencil: '  + sf(wnd.RenderSettings.StencilBits));
+         if(renderer.Settings.StencilBits > 0) then
+            log.i('Stencil: '  + sf(renderer.Settings.StencilBits));
 
-         if(wnd.RenderSettings.AccumBits > 0) then
-            log.i('Accum: '    + sf(wnd.RenderSettings.AccumBits));
+         if(renderer.Settings.AccumBits > 0) then
+            log.i('Accum: '    + sf(renderer.Settings.AccumBits));
 
          log.i('Flags: ' + s);
       log.Leave();
@@ -181,11 +182,13 @@ begin
 
       {create a thread rendering context}
       {$IFNDEF NO_THREADS}
-      if(oxTRenderer(wnd.Renderer).Properties.SupportsThreading) then begin
-         wnd.ThreadRenderingContext := oxTRenderer(wnd.Renderer).GetContext(wnd, wnd.RenderingContext);
+      if(not wnd.oxProperties.Context) then begin
+         if(oxTRenderer(wnd.Renderer).Properties.SupportsThreading) then begin
+            wnd.ThreadRenderingContext := oxTRenderer(wnd.Renderer).GetContext(wnd, wnd.RenderingContext);
 
-        if(wnd.ErrorCode = 0) then
-           log.v('Created thread render context');
+            if(wnd.ErrorCode = 0) then
+               log.v('Created thread render context');
+         end;
       end;
       {$ENDIF}
 

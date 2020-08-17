@@ -46,6 +46,7 @@ TYPE
       procedure DeInitialize();
 
       procedure Startup();
+      procedure PostContext();
 
       procedure Register(renderer: oxTRenderer);
       procedure SelectRenderer(renderer: oxTRenderer);
@@ -157,6 +158,18 @@ procedure oxTRenderers.Startup();
 begin
    StartRoutines.Call();
    oxRenderer.StartRoutines.Call();
+end;
+
+procedure oxTRenderers.PostContext();
+var
+   i: loopint;
+
+begin
+   for i := 0 to (n - 1) do begin
+      {switch current settings to target settings}
+      List[i].Settings := List[i].TargetSettings;
+      List[i].PostContext();
+   end;
 end;
 
 procedure oxTRenderers.Register(renderer: oxTRenderer);

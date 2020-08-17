@@ -11,7 +11,8 @@ INTERFACE
    USES
       uStd, uColors, uLog, uImage, uComponentProvider, StringUtils, vmVector,
       {oX}
-      uOX, oxuTypes, oxuWindowTypes, oxuGlobalInstances, oxuPlatform, oxuRunRoutines;
+      uOX, oxuTypes, oxuWindowTypes, oxuGlobalInstances, oxuPlatform, oxuRunRoutines,
+      oxuRendererSettings;
 
 TYPE
    { oxTRendererProperites }
@@ -66,8 +67,12 @@ TYPE
 
          RenderingContexts: array[0..oxMAXIMUM_RENDER_CONTEXT] of oxTRendererRenderingContext;
 
-         WindowSettings,
-         ContextWindowSettings: oxTWindowRenderSettings;
+         {current renderer settings}
+         Settings,
+         {target settings}
+         TargetSettings,
+         {context window settings}
+         ContextSettings: oxTRendererSettings;
 
          {$IFDEF OX_LIBRARY_SUPPORT}
          ExternalRenderer: oxTRenderer;
@@ -89,6 +94,9 @@ TYPE
       procedure OnInitialize(); virtual;
       {deinitialize the renderer}
       procedure OnDeInitialize(); virtual;
+
+      {called post context window creation}
+      procedure PostContext(); virtual;
 
       { WINDOWS SETUP }
 
@@ -185,8 +193,9 @@ end;
 constructor oxTRenderer.Create();
 begin
    WindowInstance := oxTWindow;
-   WindowSettings := oxrDefaultWindowSettings;
-   ContextWindowSettings := oxrContextWindowSettings;
+   TargetSettings := oxrTargetSettings;
+   ContextSettings := oxrContextSettings;
+   Settings := ContextSettings;
    PlatformInstance := oxTPlatform;
 
    {$IFNDEF NO_THREADS}
@@ -275,6 +284,11 @@ begin
 end;
 
 procedure oxTRenderer.OnDeInitialize();
+begin
+
+end;
+
+procedure oxTRenderer.PostContext();
 begin
 
 end;

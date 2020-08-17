@@ -23,7 +23,7 @@ TYPE
       Require: boolean;
       ID: uiTControlID;
 
-      procedure Required();
+      function Required(): boolean;
       function Create(var wnd: oxTWindow): boolean;
       function Create(): boolean;
       procedure Destroy();
@@ -37,9 +37,10 @@ IMPLEMENTATION
 
 { CONTEXT WINDOW }
 
-procedure oxTContextWindowGlobal.Required();
+function oxTContextWindowGlobal.Required(): boolean;
 begin
    Require := oxRenderer.ContextWindowRequired();
+   Result := Require;
 end;
 
 function oxTContextWindowGlobal.Create(var wnd: oxTWindow): boolean;
@@ -51,9 +52,9 @@ begin
    log.Collapsed('Context Window');
 
    oxWindows.Setup(wnd, oxWindowSettings.w[-1], true);
+   oxWindow.Current := wnd;
    wnd.ID := ID;
-   wnd.Title   := 'oX Context';
-   wnd.RenderSettings := oxRenderer.ContextWindowSettings;
+   wnd.Title := 'oX Context';
    wnd.Properties := wnd.Properties - [uiwndpVISIBLE];
    wnd.oxProperties.Context := true;
 
@@ -62,10 +63,10 @@ begin
 
    log.Leave();
 
-   if(wnd.errorCode = 0) then
+   if(wnd.ErrorCode = 0) then
       Result := true
    else
-      oxWindows.LastErrorDescription := wnd.errorDescription;
+      oxWindows.LastErrorDescription := wnd.ErrorDescription;
 end;
 
 function oxTContextWindowGlobal.Create(): boolean;

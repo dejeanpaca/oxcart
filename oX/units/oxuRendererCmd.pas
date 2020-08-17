@@ -9,7 +9,7 @@ UNIT oxuRendererCmd;
 INTERFACE
 
    USES
-      uStd, uLog, ParamUtils, oxuWindowTypes;
+      uStd, uLog, ParamUtils, oxuRendererSettings;
 
 IMPLEMENTATION
 
@@ -21,7 +21,7 @@ begin
    Result := true;
 
    if(n = 0) then
-      oxrDefaultWindowSettings.Software := true;
+      oxrTargetSettings.Software := true;
 end;
 
 INITIALIZATION
