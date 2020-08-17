@@ -19,21 +19,17 @@ VAR
 
 function processParam(const {%H-}paramKey: StdString; var params: array of StdString; n: longint): boolean;
 var
-   major,
-   minor,
-   revision: longword;
-   profile: oglTProfile;
+   v: oglTVersion;
 
 begin
    Result := false;
+   v := oglDefaultVersion;
 
    if(n = 1) then begin
-      ogl.GetVersion(params[0], major, minor, revision, profile);
+      ogl.GetVersion(params[0], v.major, v.minor, v.revision, v.profile);
 
-      if(major <> 0) then begin;
-         oglDefaultVersion.Major := major;
-         oglDefaultVersion.Minor := minor;
-         oglDefaultVersion.Profile := profile;
+      if(v.Major <> 0) then begin;
+         oglDefaultVersion := v;
 
          log.v('gl version set to: ' + oglDefaultVersion.GetString());
          exit(true);
