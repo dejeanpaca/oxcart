@@ -354,7 +354,6 @@ begin
       ver := CopyToDel(ver);
 
    xver  := CopyToDel(ver, separators);
-   writeln('xver: ', xver);
    val(xver, version, code);
 
    if(code = 0) then
