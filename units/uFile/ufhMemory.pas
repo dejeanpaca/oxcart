@@ -45,7 +45,7 @@ begin
    {$IFNDEF DFILE_QND}
    if(f.ExtData <> nil) then begin
    {$ENDIF}
-      move((f.ExtData + f.fPosition)^, buf, count);
+      move((f.extData + f.fPosition)^, {%H-}buf, count);
       Result := count;
    {$IFNDEF DFILE_QND}
    end else begin
