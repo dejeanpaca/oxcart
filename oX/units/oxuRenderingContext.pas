@@ -11,15 +11,18 @@ INTERFACE
    USES
       uStd,
       {oX}
-      oxuViewportType, oxuProjectionType;
+      oxuWindowTypes, oxuViewportType, oxuProjectionType;
 
 TYPE
+   oxPRenderingContext = ^oxTRenderingContext;
+
    oxTRenderingContext = record
       Name: StdString;
 
       Viewport: oxPViewport;
       Projection: oxPProjection;
       Camera: pointer;
+      Window: oxTWindow;
    end;
 
 THREADVAR

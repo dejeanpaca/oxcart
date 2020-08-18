@@ -12,7 +12,7 @@ INTERFACE
       uStd,
       {oX}
       uOX, oxuWindowTypes, oxuWindow, oxuGlobalInstances,
-      oxuViewport, oxuRenderer,
+      oxuViewport, oxuRenderer, oxuRenderingContext,
       oxuWindows, oxuUIHooks,
       {$IFDEF OX_LIBRARY}
       oxuRenderers,
@@ -58,9 +58,19 @@ begin
 end;
 
 procedure oxTWindowRender.StartRender(wnd: oxTWindow);
+var
+   rc: oxPRenderingContext;
+
 begin
    if(wnd.oxProperties.ApplyDefaultViewport) then
       wnd.Viewport.Apply();
+
+   rc := @oxRenderingContext;
+
+   rc^.Viewport := @wnd.Viewport;
+   rc^.Window := wnd;
+   rc^.Camera := nil;
+   rc^.Name := wnd.Title;
 end;
 
 {All window(s)}
