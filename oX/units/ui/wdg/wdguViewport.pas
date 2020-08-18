@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, uColors,
       {oX}
-      oxuTypes, oxuViewportType, oxuViewport, oxuWindowTypes,
+      oxuTypes, oxuViewportType, oxuViewport, oxuRenderingContext, oxuWindowTypes,
       {ui}
       uiuWindowRender, uiuDraw,
       uiuWidget, uiWidgets, uiuRegisteredWidgets, wdguBase;
@@ -87,7 +87,7 @@ end;
 procedure wdgTViewport.ProjectionStart();
 begin
    PreviousUIScissorStack := uiDraw.ScissorStackIndex;
-   PreviousViewport := oxViewport;
+   PreviousViewport := oxRenderingContext.Viewport;
    Viewport.Apply(AlwaysClear);
 end;
 

@@ -14,7 +14,7 @@ INTERFACE
       oxuAspect, oxuProjectionType, oxuTypes,
       oxuViewportType, oxuViewport,
       oxuSerialization,
-      oxuRenderer, oxuRender, oxuTransform;
+      oxuRenderer, oxuRender, oxuRenderingContext, oxuTransform;
 
 TYPE
 
@@ -83,10 +83,6 @@ TYPE
       function GetDescription(): StdString;
    end;
 
-VAR
-   oxDefaultProjection: oxTProjection;
-   oxProjection: oxPProjection;
-
 IMPLEMENTATION
 
 VAR
@@ -99,7 +95,7 @@ begin
    if(withViewport <> nil) then
       projection.Initialize(withViewport)
    else
-      projection.Initialize(oxViewport);
+      projection.Initialize(oxRenderingContext.Viewport);
 end;
 
 procedure oxTProjectionHelper.Initialize(withViewport: oxPViewport);
@@ -119,7 +115,7 @@ end;
 procedure oxTProjectionHelper.Apply();
 begin
    Projection();
-   oxProjection := @Self;
+   oxRenderingContext.Projection := @Self;
 end;
 
 procedure oxTProjectionHelper.GetProjectionMatrix(out m: TMatrix4f);
@@ -350,9 +346,6 @@ begin
 end;
 
 INITIALIZATION
-   oxTProjection.Create(oxDefaultProjection);
-   oxProjection := @oxDefaultProjection;
-
    serialization := oxTSerialization.CreateRecord('oxTProjection');
 
    serialization.AddProperty('Name', @oxTProjection(nil^).Name, oxSerialization.Types.tString);

@@ -11,9 +11,10 @@ INTERFACE
    USES
       uStd, uLog, StringUtils, uAppInfo,
       {oX}
-      uOX, oxuTypes, oxuViewport, oxuGlobalInstances,
+      uOX, oxuTypes, oxuGlobalInstances,
       oxuWindowTypes, oxuWindowHelper,
-      oxuPlatform, oxuUIHooks, oxuRenderer, oxuRender,
+      oxuPlatform, oxuUIHooks,
+      oxuRenderer, oxuRender, oxuRenderingContext,
       {ui}
       uiuWindowTypes, uiuTypes;
 
@@ -78,7 +79,7 @@ end;
 
 procedure windowCreateCommon(wnd: oxTWindow);
 begin
-   oxViewport := @wnd.Viewport;
+   oxRenderingContext.Viewport := @wnd.Viewport;
 
    if(not wnd.oxProperties.Context) then begin
       oxUIHooks.Select(wnd);
