@@ -78,7 +78,7 @@ TYPE
       pData: pointer;
       bData: pbyte; {buffer data}
       pHandler: PFileHandler;
-      handlerProps: longword;
+      HandlerProps: longword;
 
       LineEndings: TLineEndingType;
       LineEndingChars: StdString;
@@ -335,7 +335,7 @@ end;
 
 function TFileHandler.Seek(var f: TFile; pos: fileint): fileint;
 begin
-   Result := 0;
+   Result := pos;
 end;
 
 procedure TFileHandler.Destroy(var f: TFile);
