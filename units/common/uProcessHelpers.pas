@@ -143,7 +143,7 @@ begin
       ReadLn(f, s);
 
       if(stripEndLine) then
-         StringUtils.stripEndLine(s);
+         StringUtils.StripEndLine(s);
 
       Result.Add(s);
 
