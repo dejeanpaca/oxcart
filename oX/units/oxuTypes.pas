@@ -298,6 +298,7 @@ CONST
 VAR
    oxNullPoint: oxTPoint;
    oxNullDimensions: oxTDimensions;
+   oxNullRect: oxTRect;
 
 {return an oxTPoint record with the specified coordinates}
 function oxPoint(x, y: loopint): oxTPoint;
