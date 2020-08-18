@@ -3,7 +3,7 @@
    Copyright (c) 2012. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuFile;
 
 INTERFACE
@@ -115,8 +115,8 @@ procedure logIo(var f: TFile; const what: StdString = 'unknown');
 begin
    log.e('File IO error: ' + f.fn);
 
-   if(f.ioError <> 0) then
-      log.e('(' + what + ') error: ' + f.GetErrorString() + ', io: ' + getRunTimeErrorString(f.ioError))
+   if(f.IoError <> 0) then
+      log.e('(' + what + ') error: ' + f.GetErrorString() + ', io: ' + getRunTimeErrorString(f.IoError))
    else
       log.e('(' + what + ') error: ' + f.GetErrorString());
 end;

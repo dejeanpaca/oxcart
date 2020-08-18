@@ -3,7 +3,7 @@
    Copyright (C) Dejan Boras 2018.
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}{$MODESWITCH TYPEHELPERS}
+{$INCLUDE oxheader.inc}
 UNIT uThreads;
 
 INTERFACE
