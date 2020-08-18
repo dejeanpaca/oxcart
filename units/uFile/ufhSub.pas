@@ -3,42 +3,31 @@
    Copyright (C) 2011. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxheader.inc}
 UNIT ufhSub;
 
 INTERFACE
 
    USES uStd, StringUtils, uFileUtils, uFile;
 
+TYPE
+
+   { TSubFileHandler }
+
+   TSubFileHandler = object(TFileHandler)
+      constructor Create();
+
+      function Read(var f: TFile; out buf; count: fileint): fileint; virtual;
+      function Write(var f: TFile; const buf; count: fileint): fileint; virtual;
+      function Seek(var f: TFile; pos: fileint): fileint; virtual;
+      procedure Flush(var f: TFile); virtual;
+   end;
+
 VAR
    subfHandler: TFileHandler;
    subSubFileHandler: TFileSubHandler;
 
 IMPLEMENTATION
-
-
-function subRead(var f: TFile; out buf; count: fileint): fileint;
-begin
-   f.pSub^.Read(buf, count);
-   if(f.error = 0) then
-      Result := count
-   else
-      Result := -1;
-end;
-
-function subWrite(var f: TFile; var buf; count: fileint): fileint;
-begin
-   f.pSub^.Write(buf, count);
-   if(f.error = 0) then
-      Result := count
-   else
-      Result := -1;
-end;
-
-procedure subSeek(var f: TFile; pos: fileint);
-begin
-   f.pSub^.Seek(f.fOffset + pos);
-end;
 
 procedure subfOpen(var f: TFile; var fn: TFile; pos, size: fileint);
 begin
@@ -61,22 +50,55 @@ begin
    f.fOffset      := pos;
 end;
 
-procedure subFlush(var f: TFile);
+{ TSubFileHandler }
+
+constructor TSubFileHandler.Create();
+begin
+   Name := 'sub';
+   DoReadUp := false;
+   UseBuffering := false;
+end;
+
+function TSubFileHandler.Read(var f: TFile; out buf; count: fileint): fileint;
+begin
+   f.pSub^.Read(buf, count);
+
+   if(f.error = 0) then
+      Result := count
+   else
+      Result := -1;
+end;
+
+function TSubFileHandler.Write(var f: TFile; const buf; count: fileint): fileint;
+begin
+   f.pSub^.Write(buf, count);
+
+   if(f.error = 0) then
+      Result := count
+   else
+      Result := -1;
+end;
+
+function TSubFileHandler.Seek(var f: TFile; pos: fileint): fileint;
+begin
+   Result := f.pSub^.Seek(f.fOffset + pos);
+
+   if(Result > 0) then
+      Result := Result - f.fOffset;
+end;
+
+procedure TSubFileHandler.Flush(var f: TFile);
 begin
    f.pSub^.Flush();
 end;
 
 INITIALIZATION
    {sub file handler}
-   subfHandler                := fFile.DummyHandler;
-   subfHandler.Name           := 'sub';
-   subfHandler.read           := fTReadFunc     (@subRead);
-   subfHandler.write          := fTWriteFunc    (@subWrite);
-   subfHandler.seek           := fTSeekProc     (@subSeek);
-   subfHandler.flush          := fTFileProcedure(@subFlush);
+   subfHandler.Create();
 
-   subSubFileHandler.handler  := @subfHandler;
-   subSubFileHandler.open     := @subfOpen;
-   subSubFileHandler.new      := @subfNew;
+   subSubFileHandler.Handler  := @subfHandler;
+   subSubFileHandler.Open     := @subfOpen;
+   subSubFileHandler.New      := @subfNew;
+
    fFile.Handlers.Sub := @subSubFileHandler;
 END.

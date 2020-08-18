@@ -3,7 +3,7 @@
    Copyright (C) 2007. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT uFile;
 
 INTERFACE
@@ -48,36 +48,13 @@ TYPE
       fSEEK_CUR, {seek from the current position}
       fSEEK_END {seek from end}
    );
-   {routine types used by the file handler}
-   fTFileProcedure   = procedure(var f);
-   fTReadFunc        = function (var f; out buf; count: fileint): fileint;
-   fTWriteFunc       = function (var f; const buf; count: fileint): fileint;
-   fTSeekProc        = function(var f; pos: fileint): fileint;
+
 
    {a custom file handler}
    PFileHandler = ^TFileHandler;
-   TFileHandler = record
-      Name: StdString;
-
-      make:    fTFileProcedure;
-      dispose: fTFileProcedure;
-      open:    fTFileProcedure;
-      new:     fTFileProcedure;
-      read:    fTReadFunc;
-      write:   fTWriteFunc;
-      seek:    fTSeekProc;
-      close:   fTFileProcedure;
-      flush:   fTFileProcedure;
-      onbufferset: fTFileProcedure;
-
-      useBuffering,
-      doReadUp: boolean;
-   end;
+   PFile = ^TFile;
 
    fTHandle = int64;
-
-   {a pointer to file}
-   PFile = ^TFile;
 
    { TFile }
 
@@ -87,7 +64,7 @@ TYPE
       fType,
       fNew: longword;
       Error,
-      ioError: longint;
+      IoError: longint;
 
       fSize, {size of the file}
       fSizeLimit, {max limit to which the file can grow}
@@ -107,7 +84,7 @@ TYPE
       LineEndingChars: StdString;
 
       {extra data}
-      extData: pointer;
+      ExtData: pointer;
       Handle: fTHandle;
       HandleID: longint;
       pSub: PFile;
@@ -137,7 +114,7 @@ TYPE
 
       {FILE HANDLER}
       {assign a file handler to a file}
-      procedure AssignHandler(var handler: TFileHandler);
+      procedure AssignHandler(var handler);
 
       {read an entire file into memory once it is opened, only works for reading mode}
       procedure ReadUp();
@@ -198,6 +175,31 @@ TYPE
       function WriteAnsiString(const s: ansistring): fileint;
    end;
 
+   {routine types used by the file handler}
+
+   { TFileHandler }
+
+   TFileHandler = object
+      Name: StdString;
+
+      UseBuffering,
+      DoReadUp: boolean;
+
+      constructor Create();
+
+      procedure Make(var f: TFile); virtual;
+      procedure Dispose(var f: TFile); virtual;
+      procedure Open(var f: TFile); virtual;
+      procedure New(var f: TFile); virtual;
+      function Read(var f: TFile; out buf; count: fileint): fileint; virtual;
+      function Write(var f: TFile; const buf; count: fileint): fileint; virtual;
+      function Seek(var f: TFile; pos: fileint): fileint; virtual;
+      procedure Destroy(var f: TFile); virtual;
+      procedure Close(var f: TFile); virtual;
+      procedure Flush(var f: TFile); virtual;
+      procedure OnBufferSet(var f: TFile); virtual;
+   end;
+
 
 {$IFNDEF FILE_NOFS}
    PVFileSystem = ^TVFileSystem;
@@ -214,21 +216,21 @@ TYPE
    {specific handlers}
    PFileStdHandler = ^TFileStdHandler;
    TFileStdHandler = record
-      handler: PFileHandler;
+      Handler: PFileHandler;
    end;
 
    PFileMemHandler = ^TFileMemHandler;
    TFileMemHandler = record
-      handler: PFileHandler;
-      open: procedure(var f: TFile; mem: pointer; size: fileint);
-      new: procedure(var f: TFile; size: fileint);
+      Handler: PFileHandler;
+      Open: procedure(var f: TFile; mem: pointer; size: fileint);
+      New: procedure(var f: TFile; size: fileint);
    end;
 
    PFileSubHandler = ^TFileSubHandler;
    TFileSubHandler = record
-      handler: PFileHandler;
-      open: procedure(var f: TFile; var fn: TFile; pos, size: fileint);
-      new: procedure(var f: TFile; var fn: TFile; pos, size: fileint);
+      Handler: PFileHandler;
+      Open: procedure(var f: TFile; var fn: TFile; pos, size: fileint);
+      New: procedure(var f: TFile; var fn: TFile; pos, size: fileint);
    end;
 
    { TFileGlobal }
@@ -292,6 +294,72 @@ IMPLEMENTATION
 THREADVAR
    SharedBuffer: Pointer;
 
+{ TFileHandler }
+
+{$PUSH}{$WARN 5024 off : Parameter "$1" not used}
+
+constructor TFileHandler.Create();
+begin
+   Name := 'unknown';
+end;
+
+procedure TFileHandler.Make(var f: TFile);
+begin
+
+end;
+
+procedure TFileHandler.Dispose(var f: TFile);
+begin
+
+end;
+
+procedure TFileHandler.Open(var f: TFile);
+begin
+
+end;
+
+procedure TFileHandler.New(var f: TFile);
+begin
+
+end;
+
+function TFileHandler.Read(var f: TFile; out buf; count: fileint): fileint;
+begin
+   Result := 0;
+end;
+
+function TFileHandler.Write(var f: TFile; const buf; count: fileint): fileint;
+begin
+   Result := 0;
+end;
+
+function TFileHandler.Seek(var f: TFile; pos: fileint): fileint;
+begin
+   Result := 0;
+end;
+
+procedure TFileHandler.Destroy(var f: TFile);
+begin
+
+end;
+
+procedure TFileHandler.Close(var f: TFile);
+begin
+
+end;
+
+procedure TFileHandler.Flush(var f: TFile);
+begin
+
+end;
+
+procedure TFileHandler.OnBufferSet(var f: TFile);
+begin
+
+end;
+
+{$POP}
+
 {ERROR HANDLING}
 
 class procedure TFileGlobal.ErrorReset();
@@ -323,26 +391,26 @@ end;
 procedure TFile.ErrorIgnore();
 begin
    error    := 0;
-   ioError  := 0;
+   IoError  := 0;
    IOResult();
 end;
 
 function TFile.GetIOError(): longint;
 begin
-   ioError := IOResult;
+   IoError := IOResult;
 
-   if(ioError = 0) then
+   if(IoError = 0) then
       exit(0)
    else
       error := eIO;
 
-   Result := ioError;
+   Result := IoError;
 end;
 
 procedure TFile.ErrorReset();
 begin
    error    := 0;
-   ioError  := 0;
+   IoError  := 0;
 end;
 
 function TFile.GetErrorString(): StdString;
@@ -383,7 +451,7 @@ end;
 procedure TFile.HandlerDispose();
 begin
    if(pHandler <> nil) and (pData <> nil) then begin
-      pHandler^.Dispose(Self);
+      pHandler^.Destroy(Self);
       pData := nil;
    end;
 end;
@@ -401,12 +469,12 @@ begin
 end;
 
 {assign a file handler to a file}
-procedure TFile.AssignHandler(var handler: TFileHandler);
+procedure TFile.AssignHandler(var handler);
 begin
    HandlerDispose();
 
    pHandler := @handler;
-   handler.make(Self);
+   TFileHandler(handler).Make(Self);
 end;
 
 {read an entire file into memory once it is opened, only works for reading mode}
@@ -445,8 +513,7 @@ begin
    SeekStart();
 
    if(pHandler <> nil) then
-      if(pHandler^.close <> nil) then
-         pHandler^.close(Self);
+      pHandler^.Close(Self);
 
    HandlerDispose();
 end;
@@ -515,7 +582,7 @@ begin
       if(SharedBuffer = nil) then
          GetMem(SharedBuffer, fFile.AutoSetBufferSize);
 
-      ExternalBuffer(SharedBuffer, ffile.AutoSetBufferSize);
+      ExternalBuffer(SharedBuffer, fFile.AutoSetBufferSize);
    end else begin
       if(fFile.AutoSetBuffer) then
          Buffer(fFile.AutoSetBufferSize);
@@ -701,7 +768,7 @@ begin
    Result := -1;
 
    if(position <= fSize) then begin
-      Result := pHandler^.seek(Self, position);
+      Result := pHandler^.Seek(Self, position);
 
       if(error = 0) then begin
          fPosition   := position;
@@ -720,6 +787,8 @@ begin
       else
          Result := -1;
    end;
+
+   system.writeln('SeekResult: ', Result);
 end;
 
 procedure TFile.SeekStart();
@@ -879,44 +948,12 @@ begin
 end;
 
 {DUMMY FILE HANDLER}
-{$PUSH}{$HINTS OFF}
-
-{these 'dumb' routines don't need to use any parameters}
-procedure dmbProc (var f);
-begin
-end;
-
-function  dmbRead (var f; var buf; count: fileint): fileint;
-begin
-   Result := 0;
-end;
-
-function  dmbWrite(var f; var buf; count: fileint): fileint;
-begin
-   Result := 0;
-end;
-
-function  dmbSeek(var f; pos: fileint): fileint;
-begin
-   Result := 0;
-end;
-{$POP}
 
 procedure InitFileHandlers();
 begin
    {dummy file handler}
+   fFile.DummyHandler.Create();
    fFile.DummyHandler.Name          := 'Dummy';
-   fFile.DummyHandler.make          := @dmbProc;
-   fFile.DummyHandler.dispose       := @dmbProc;
-   fFile.DummyHandler.open          := @dmbProc;
-   fFile.DummyHandler.new           := @dmbProc;
-   fFile.DummyHandler.read          := ftReadFunc     (@dmbRead);
-   fFile.DummyHandler.write         := ftWriteFunc    (@dmbWrite);
-   fFile.DummyHandler.Seek          := ftSeekProc     (@dmbSeek);
-   fFile.DummyHandler.close         := @dmbProc;
-   fFile.DummyHandler.onbufferset   := @dmbProc;
-   fFile.DummyHandler.useBuffering  := true;
-   fFile.DummyHandler.doReadUp      := true;
 end;
 
 { FILESYSTEM }

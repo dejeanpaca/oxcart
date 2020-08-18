@@ -3,12 +3,24 @@
    Copyright (C) 2011. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxheader.inc}
 UNIT ufhMemory;
 
 INTERFACE
 
    USES uStd, uFileUtils, uFile, StringUtils;
+
+TYPE
+
+   { TMemoryFileHandler }
+
+   TMemoryFileHandler = object(TFileHandler)
+      constructor Create();
+
+      function Read(var f: TFile; out buf; count: fileint): fileint; virtual;
+      function Write(var f: TFile; const buf; count: fileint): fileint; virtual;
+      procedure Destroy(var f: TFile); virtual;
+   end;
 
 VAR
    memFileHandler: TFileHandler;
@@ -19,8 +31,17 @@ IMPLEMENTATION
 CONST
    PROP_EXTERNAL = 0001;
 
-{MEMORY FILE HANDLER}
-function memRead(var f: TFile; var buf; count: fileint): fileint;
+{ TMemoryFileHandler }
+
+constructor TMemoryFileHandler.Create();
+begin
+   inherited;
+   Name := 'memory';
+   UseBuffering := false;
+   DoReadUp := false;
+end;
+
+function TMemoryFileHandler.Read(var f: TFile; out buf; count: fileint): fileint;
 begin
    {$IFNDEF DFILE_QND}
    if(f.extData <> nil) then begin
@@ -33,7 +54,7 @@ begin
    {$ENDIF}
 end;
 
-function memWrite(var f: TFile; var buf; count: fileint): fileint;
+function TMemoryFileHandler.Write(var f: TFile; const buf; count: fileint): fileint;
 begin
    {$IFNDEF DFILE_QND}
    if(f.extData <> nil) then begin
@@ -46,7 +67,7 @@ begin
    {$ENDIF}
 end;
 
-procedure memDispose(var f: TFile);
+procedure TMemoryFileHandler.Destroy(var f: TFile);
 begin
    if(f.extData <> nil) then begin
       if(f.handlerProps and PROP_EXTERNAL > 0) then begin
@@ -79,16 +100,11 @@ end;
 
 INITIALIZATION
    {memory file handler}
-   memFileHandler                := fFile.DummyHandler;
-   memFileHandler.read           := fTReadFunc     (@memRead);
-   memFileHandler.write          := fTWriteFunc    (@memWrite);
-   memFileHandler.dispose        := fTFileProcedure(@memDispose);
-   memFileHandler.useBuffering   := false;
-   memFileHandler.doReadUp       := false;
+   memFileHandler.Create();
 
-   memMemFileHandler.handler     := @memFileHandler;
-   memMemFileHandler.open        := @memfOpen;
-   memMemFileHandler.new         := @memfNew;
+   memMemFileHandler.Handler := @memFileHandler;
+   memMemFileHandler.Open    := @memfOpen;
+   memMemFileHandler.New     := @memfNew;
    fFile.Handlers.Mem := @memMemFileHandler;
 END.
 
