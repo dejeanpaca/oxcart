@@ -222,6 +222,7 @@ TYPE
    PFileMemHandler = ^TFileMemHandler;
    TFileMemHandler = record
       Handler: PFileHandler;
+
       Open: procedure(var f: TFile; mem: pointer; size: fileint);
       New: procedure(var f: TFile; size: fileint);
    end;
@@ -229,6 +230,7 @@ TYPE
    PFileSubHandler = ^TFileSubHandler;
    TFileSubHandler = record
       Handler: PFileHandler;
+
       Open: procedure(var f: TFile; var fn: TFile; pos, size: fileint);
       New: procedure(var f: TFile; var fn: TFile; pos, size: fileint);
    end;
