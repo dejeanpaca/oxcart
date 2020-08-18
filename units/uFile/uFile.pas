@@ -209,7 +209,7 @@ TYPE
       OpenFile: function(var f: TFile; const fn: StdString): boolean;
       NewFile: function(var f: TFile; const fn: StdString): boolean;
 
-      next: PVFileSystem;
+      Next: PVFileSystem;
    end;
 {$ENDIF}
 
@@ -956,10 +956,10 @@ begin
    fFile.DummyHandler.Name          := 'Dummy';
 end;
 
-{ FILESYSTEM }
+{ FileSystem }
 {$IFNDEF FILE_NOFS}
 VAR
-   filesystem: record
+   FileSystem: record
       s,
       e: PVFileSystem;
    end;
@@ -971,14 +971,14 @@ end;
 
 procedure TFileGlobal.fsAdd(var fs: TVFileSystem);
 begin
-   fs.next := nil;
+   fs.Next := nil;
 
-   if(filesystem.s = nil) then
-      filesystem.s := @fs
+   if(FileSystem.s = nil) then
+      FileSystem.s := @fs
    else
-      filesystem.e^.next := @filesystem.s;
+      FileSystem.e^.Next := @FileSystem.s;
 
-   filesystem.e := @fs;
+   FileSystem.e := @fs;
 end;
 
 function TFileGlobal.fsExists(const fn: StdString): fileint;
@@ -987,14 +987,14 @@ var
    res: fileint;
 
 begin
-   cur := filesystem.s;
+   cur := FileSystem.s;
 
    if(cur <> nil) then repeat
       res := cur^.FileInFS(fn);
       if(res > -1) then
          exit(res);
 
-      cur := cur^.next;
+      cur := cur^.Next;
    until (cur = nil);
 
    Result := -1;
@@ -1005,12 +1005,13 @@ var
    cur: PVFileSystem;
 
 begin
-   cur := filesystem.s;
+   cur := FileSystem.s;
+
    if(cur <> nil) then repeat
       if(cur^.FileInFS(fn) > -1) then
          exit(cur^.OpenFile(f, fn));
 
-      cur := cur^.next;
+      cur := cur^.Next;
    until (cur = nil);
 
    Result := false;
