@@ -293,13 +293,60 @@ function FileRewrite(out f: text; const fn: StdString): longint;
 {open file for reading}
 function FileRewrite(out f: file; const fn: StdString): longint;
 
+{$IFDEF OX_UTF8_SUPPORT}
 function GetUTF8EnvironmentVariable(const v: UTF8String): UTF8String;
 
 procedure UTF8Assign(var f: text; const fn: UTF8String);
 procedure UTF8Assign(var f: file; const fn: UTF8String);
 function UTF8Lower(const s: UTF8String): UTF8String;
+{$ENDIF}
 
 IMPLEMENTATION
+
+{ TLineEndingTypeHelper }
+
+function TLineEndingTypeHelper.GetChars(): string;
+begin
+   if(Self = PLATFORM_LINE_ENDINGS) then
+      Result := LineEnding
+   else if(Self = UNIX_LINE_ENDINGS) then
+      Result := UnixLineEnding
+   else
+      Result := WindowsLineEnding;
+end;
+
+function TLineEndingTypeHelper.GetFromName(const name: string): TLineEndingType;
+begin
+   if(name = 'crlf') or (name = 'windows') then
+      Result := WINDOWS_LINE_ENDINGS
+   else if(name = 'lf') or (name = 'unix') then
+      Result := UNIX_LINE_ENDINGS
+   else
+      Result := PLATFORM_LINE_ENDINGS;
+end;
+
+function TLineEndingTypeHelper.GetName(): string;
+begin
+   if(Self = WINDOWS_LINE_ENDINGS) then
+      Result := 'crlf'
+   else if(Self = UNIX_LINE_ENDINGS) then
+      Result := 'lf'
+   else
+      Result := '';
+end;
+
+function TLineEndingTypeHelper.ValidName(const name: string): boolean;
+var
+   i: loopint;
+
+begin
+   for i := 0 to high(LineEndingNames) do begin
+      if(name = LineEndingNames[i]) then
+         exit(true);
+   end;
+
+   Result := false;
+end;
 
 procedure Pass();
 begin
@@ -958,6 +1005,8 @@ begin
    Result := ioerror();
 end;
 
+{$IFDEF OX_UTF8_SUPPORT}
+
 function GetUTF8EnvironmentVariable(const v: UTF8String): UTF8String;
 begin
    {$IFDEF WINDOWS}
@@ -982,48 +1031,7 @@ begin
    Result := UTF8Encode(UnicodeLowerCase(UTF8Decode(s)));
 end;
 
-function TLineEndingTypeHelper.GetChars(): string;
-begin
-   if(Self = PLATFORM_LINE_ENDINGS) then
-      Result := LineEnding
-   else if(Self = UNIX_LINE_ENDINGS) then
-      Result := UnixLineEnding
-   else
-      Result := WindowsLineEnding;
-end;
-
-function TLineEndingTypeHelper.GetFromName(const name: string): TLineEndingType;
-begin
-   if(name = 'crlf') or (name = 'windows') then
-      Result := WINDOWS_LINE_ENDINGS
-   else if(name = 'lf') or (name = 'unix') then
-      Result := UNIX_LINE_ENDINGS
-   else
-      Result := PLATFORM_LINE_ENDINGS;
-end;
-
-function TLineEndingTypeHelper.GetName(): string;
-begin
-   if(Self = WINDOWS_LINE_ENDINGS) then
-      Result := 'crlf'
-   else if(Self = UNIX_LINE_ENDINGS) then
-      Result := 'lf'
-   else
-      Result := '';
-end;
-
-function TLineEndingTypeHelper.ValidName(const name: string): boolean;
-var
-   i: loopint;
-
-begin
-   for i := 0 to high(LineEndingNames) do begin
-      if(name = LineEndingNames[i]) then
-         exit(true);
-   end;
-
-   Result := false;
-end;
+{$ENDIF}
 
 INITIALIZATION
    GlobalStartTime := Time;
