@@ -11,11 +11,13 @@ INTERFACE
    USES uStd;
 
 TYPE
+   PSingleComponent = ^TSingleComponent;
+   PComponentProvider = ^TComponentProvider;
+
    {a single component return function}
    TComponentReturn = function(): TObject;
 
    {holds description of the provider of a single component}
-   PSingleComponent = ^TSingleComponent;
    TSingleComponent = record
       Name: string;
       Return: function(): TObject;
