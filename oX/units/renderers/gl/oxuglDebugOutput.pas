@@ -18,13 +18,6 @@ INTERFACE
       {gl}
       oxuglRenderer, oxuOGL, oxuglExtensions;
 
-TYPE
-
-   { oxglTDebugOutputGlobal }
-
-   oxglTDebugOutputGlobal = record
-   end;
-
 IMPLEMENTATION
 
 Threadvar
@@ -105,7 +98,7 @@ end;
 
 INITIALIZATION
    {$IFNDEF OX_LIBRARY}
-   ox.PreInit.Add('ox.gl.debug_output', @init);
+   ox.PreInit.Add('gl.debug_output', @init);
    {$ENDIF}
 
 END.

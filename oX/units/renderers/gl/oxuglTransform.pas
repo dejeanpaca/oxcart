@@ -52,7 +52,7 @@ end;
 
 function componentReturn(): TObject;
 begin
-   result := oxglTTransform.Create();
+   Result := oxglTTransform.Create();
 end;
 
 procedure init();
@@ -61,6 +61,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add('ox.gl.transform', @init);
+   ox.PreInit.Add('gl.transform', @init);
 
 END.

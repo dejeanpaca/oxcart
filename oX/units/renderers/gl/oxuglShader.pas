@@ -72,7 +72,7 @@ IMPLEMENTATION
 
 function componentReturn(): TObject;
 begin
-   result := oxglTShader.Create();
+   Result := oxglTShader.Create();
 end;
 
 { oxglTShaderObject }
@@ -308,6 +308,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add('ox.gl.shader', @init);
+   ox.PreInit.Add('gl.shader', @init);
 
 END.

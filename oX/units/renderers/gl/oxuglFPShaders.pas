@@ -137,6 +137,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add('ox.gl.render', @preinit);
+   ox.PreInit.Add('gl.render', @preinit);
 
 END.

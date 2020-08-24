@@ -51,6 +51,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add('ox.gl.fos', @init);
+   ox.PreInit.Add('gl.fixed_pipeline', @init);
 
 END.

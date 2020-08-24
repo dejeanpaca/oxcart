@@ -84,7 +84,7 @@ var
 procedure storeGlyphData();
 begin
    Result.Width := glyph.Width;
-   result.Height := glyph.Height;
+   Result.Height := glyph.Height;
    Result.BearingX := glyph.BearingX;
    Result.BearingY := glyph.BearingY;
    Result.Advance := glyph.Advance;
@@ -193,12 +193,12 @@ end;
 
 function oxTGlyphs.LoadGlyph(const name: string; size: loopint): oxTGlyph;
 begin
-   result := LoadGlyph(name, 0, size);
+   Result := LoadGlyph(name, 0, size);
 end;
 
 function oxTGlyphs.LoadGlyph(code: loopint; size: loopint): oxTGlyph;
 begin
-   result := LoadGlyph('', code, size);
+   Result := LoadGlyph('', code, size);
 end;
 
 class procedure oxTGlyphs.SplitSourceName(const path: string; out source, name: string);

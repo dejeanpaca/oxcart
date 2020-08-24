@@ -326,7 +326,7 @@ end;
 
 function componentReturn(): TObject;
 begin
-   result := oglRender;
+   Result := oglRender;
 end;
 
 VAR
@@ -363,6 +363,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add('ox.gl.render', @init, @deinit);
+   ox.PreInit.Add('gl.render', @init, @deinit);
 
 END.

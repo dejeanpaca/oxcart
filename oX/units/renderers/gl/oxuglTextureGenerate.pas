@@ -138,6 +138,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add('ox.gl.texture_generate', @init, @deinit);
+   ox.PreInit.Add('gl.texture_generate', @init, @deinit);
 
 END.
