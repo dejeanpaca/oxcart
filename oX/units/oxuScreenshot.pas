@@ -14,7 +14,8 @@ INTERFACE
       {app}
       appuKeys, appuPaths,
       {oX}
-      uOX, oxuRunRoutines, oxuRenderer, oxuWindowTypes, oxuWindow, oxuGlobalKeys,
+      uOX, oxuRunRoutines, oxuRenderer, oxuRendererScreenshot,
+      oxuWindowTypes, oxuWindow, oxuGlobalKeys,
       {dImage}
       uImage, imguRW, imguOperations;
 
@@ -30,16 +31,16 @@ TYPE
       GetScreenshotName: oxTScreenshotNameRoutine;
 
       {makes a screenshot}
-      function Make(var image: imgTImage; wnd: oxTWindow = nil): longint;
-      function Make(var image: imgTImage; wnd: oxTWindow; x, y, w, h: loopint): longint;
-      function CallRenderer(var image: imgTImage; wnd: oxTWindow; x, y, w, h: loopint): longint;
+      function Make(var image: imgTImage; wnd: oxTWindow = nil): loopint;
+      function Make(var image: imgTImage; wnd: oxTWindow; x, y, w, h: loopint): loopint;
+      function CallRenderer(var image: imgTImage; wnd: oxTWindow; x, y, w, h: loopint): loopint;
 
       {saves the captures screenshot}
-      function Save(const fn: string; var img: imgTImage): longint;
+      function Save(const fn: string; var img: imgTImage): loopint;
 
       {captures and saves the screenshot}
-      function Get(const fn: string; wnd: oxTWindow = nil): longint;
-      function Get(wnd: oxTWindow = nil): longint;
+      function Get(const fn: string; wnd: oxTWindow = nil): loopint;
+      function Get(wnd: oxTWindow = nil): loopint;
    end;
 
 VAR
@@ -47,12 +48,12 @@ VAR
 
 IMPLEMENTATION
 
-function oxTScreenshot.Make(var image: imgTImage; wnd: oxTWindow = nil): longint;
+function oxTScreenshot.Make(var image: imgTImage; wnd: oxTWindow = nil): loopint;
 begin
    Result := Make(image, wnd, 0, 0, wnd.Dimensions.w, wnd.Dimensions.h);
 end;
 
-function oxTScreenshot.Make(var image: imgTImage; wnd: oxTWindow; x, y, w, h: loopint): longint;
+function oxTScreenshot.Make(var image: imgTImage; wnd: oxTWindow; x, y, w, h: loopint): loopint;
 begin
    Result := CallRenderer(image, wnd, x, y, w, h);
 
@@ -60,12 +61,18 @@ begin
       log.w('Failed to take screenshot: ' + GetErrorCodeString(Result));
 end;
 
-function oxTScreenshot.CallRenderer(var image: imgTImage; wnd: oxTWindow; x, y, w, h: loopint): longint;
+function oxTScreenshot.CallRenderer(var image: imgTImage; wnd: oxTWindow; x, y, w, h: loopint): loopint;
 var
-   errorCode: longint;
+   errorCode: loopint;
+   screenshotComponent: oxTRendererScreenshotComponent;
 
 begin
    Result := eNONE;
+
+   screenshotComponent := oxTRendererScreenshotComponent(oxRenderer.GetComponent('screenshot'));
+
+   if(screenshotComponent = nil) then
+      exit(eUNSUPPORTED);
 
    {free the previous image}
    img.Dispose(image);
@@ -88,11 +95,12 @@ begin
    image.Origin     := imgcORIGIN_BL;
 
    image.Calculate();
+
    if(image.Allocate() = 0) then begin
       if(wnd = nil) then
          wnd := oxWindow.Current;
 
-      oxRenderer.Screenshot(wnd, image, x, y, w, h);
+      screenshotComponent.Grab(wnd, image, x, y, w, h);
 
       {get the image to TGA pixel format}
       errorCode := imgOperations.Transform(image, PIXF_BGR);
@@ -103,9 +111,9 @@ begin
       Result := oxeIMAGE;
 end;
 
-function oxTScreenshot.Save(const fn: string; var img: imgTImage): longint;
+function oxTScreenshot.Save(const fn: string; var img: imgTImage): loopint;
 var
-   imgError: longint;
+   imgError: loopint;
 
 begin
    Result := eNONE;
@@ -122,10 +130,10 @@ begin
    end;
 end;
 
-function oxTScreenshot.Get(const fn: string; wnd: oxTWindow = nil): longint;
+function oxTScreenshot.Get(const fn: string; wnd: oxTWindow = nil): loopint;
 var
    image: imgTImage = nil;
-   errorCode: longint;
+   errorCode: loopint;
 
 begin
    errorCode := Make(image, wnd);
@@ -140,7 +148,7 @@ begin
    img.Dispose(image);
 end;
 
-function oxTScreenshot.Get(wnd: oxTWindow = nil): longint;
+function oxTScreenshot.Get(wnd: oxTWindow = nil): loopint;
 var
    fn,
    name: string;
