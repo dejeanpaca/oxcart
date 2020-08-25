@@ -283,7 +283,7 @@ begin
    p := FindComponent(componentName);
 
    if(p <> nil) then
-      result := p^.return()
+      result := p^.Return()
    else
       result := nil;
 end;
@@ -292,11 +292,10 @@ function oxTPlatform.FindComponent(const componentName: StdString): PSingleCompo
 begin
    Result := Components.FindComponent(componentName);
 
-   if(Result = nil) then begin
+   if(Result = nil) then
       log.w('Requested component <' + componentName + '> not found for platform ' + Name);
-      writeln('Requested component <' + componentName + '> not found for platform ' + Name);
-   end;
 end;
+
 VAR
    grPlatform: oxPGlobalInstance;
 
