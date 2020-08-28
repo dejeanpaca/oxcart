@@ -15,6 +15,9 @@ TYPE
    TQuaternion       = TVector4;
    TQuaternion2d     = TVector4d;
 
+CONST
+   vmqZero: TQuaternion = (0.0, 0.0, 0.0, 0.0);
+
 {create a quaternion from a axis and angle}
 function vmqFromAxisAngle(const axis: TVector3; degree: single): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 {create a rotation matrix out of a quaternion}
@@ -30,10 +33,10 @@ procedure vmqFromMatrixAlt(const m: TMatrix4; var qt: TQuaternion); {$IFDEF VM_I
 {Return a spherical linear interpolation(SLERP) of two quaternions, taking t into account}
 function vmqSLERP(var q1, q2: TQuaternion; t: single): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 {calculate a quaternion from Euler angle representation}
-procedure vmqFromEuler(roll, pitch, yaw: single; var q: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
+procedure vmqFromEuler(roll, pitch, yaw: single; out q: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
 {returns the three Euler angles from a quaternion as a vector}
 function vmqToEuler(var q: TQuaternion): TVector3;
-procedure vmqToEuler(var q: TQuaternion; var v: TVector3);
+procedure vmqToEuler(var q: TQuaternion; out v: TVector3);
 
 {calculate the magnitude of a quaternion}
 function vmqMagnitude(var q: TQuaternion): single; {$IFDEF VM_INLINE}inline;{$ENDIF}
@@ -229,7 +232,7 @@ begin
       Result := q1;
 end;
 
-procedure vmqFromEuler(roll, pitch, yaw: single; var q: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
+procedure vmqFromEuler(roll, pitch, yaw: single; out q: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
 var
    cr, cp, cy, sr, sp, sy, cpcy, spsy: single; {trig identities}
    
@@ -288,7 +291,7 @@ begin
    vmqToEuler[2] := arctan2(r21, r11)*vmcToDeg;
 end;
 
-procedure vmqToEuler(var q: TQuaternion; var v: TVector3);
+procedure vmqToEuler(var q: TQuaternion; out v: TVector3);
 var
    r11, r21, r31, r32, r33, r12, r13,
    q00, q11, q22, q33,
