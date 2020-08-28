@@ -499,8 +499,8 @@ begin
          loadMaterials(data, ld, value)
       else begin
          if(key = 'o') then begin
-            if(m <> nil) then
-               meshDone();
+            materialDone();
+            meshDone();
 
             if(meshIndex < ld.Model.Meshes.n) then begin
                m := @ld.Model.Meshes.List[meshIndex];
