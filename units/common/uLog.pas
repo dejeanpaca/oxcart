@@ -1015,6 +1015,7 @@ begin
          vtQWord:       logString := logString + sf(args[index].VQWord^);
          vtBoolean:     logString := logString + sf(args[index].VBoolean);
          vtAnsiString:  logString := logString + AnsiString(args[index].VAnsiString^);
+         vtWideString:  logString := logString + UTF8Encode(WideString(args[index].VWideString^));
          vtString:      logString := logString + args[index].VString^; {shortstring}
          vtChar:        logString := logString + args[index].VChar;
          vtPointer:     logString := logString + addr2str(args[index].VPointer);
