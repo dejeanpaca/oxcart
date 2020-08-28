@@ -86,14 +86,16 @@ var
    currentMaterial: oxTMaterial;
 
 begin
-   currentMaterial := pM.Material;
+   if(pM.IndiceCount > 0) then begin
+      currentMaterial := pM.Material;
 
-   if(currentMaterial = nil) then
-      currentMaterial := GetMaterial(material);
+      if(currentMaterial = nil) then
+         currentMaterial := GetMaterial(material);
 
-   currentMaterial.Apply();
+      currentMaterial.Apply();
 
-   DrawPrimitives(mesh, pM.StartIndice, pM.IndiceCount);
+      DrawPrimitives(mesh, pM.StartIndice, pM.IndiceCount);
+   end;
 end;
 
 procedure oxTModelRender.RenderMesh(const mesh: oxTMesh; material: oxTMaterial);
