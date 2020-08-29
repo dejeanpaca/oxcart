@@ -1,19 +1,29 @@
 {
    vmQuaternions, quaternion mathematics & operations
    Copyright (C) 2007. Dejan Boras
+
+   Some of this was adapted from http://www.opengl-tutorial.org/assets/faq_quaternions/index.html#Q60
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 UNIT vmQuaternions;
 
 INTERFACE
 
-   USES vmVector, Math, vmMath;
-   
+   USES
+      uStd, StringUtils,
+      vmVector, Math, vmMath;
+
 TYPE
    {Quaternion type, xyz vector, and w scalar, basicaly a vector with 4 elements}
    TQuaternion       = TVector4;
-   TQuaternion2d     = TVector4d;
+   TQuaternion2d     = TVector2d;
+
+   { TQuaternionHelper }
+
+   TQuaternionHelper = type helper for TQuaternion
+      function ToString(decimals: loopint = -1; const separator: string = ','): string;
+   end;
 
 CONST
    vmqZero: TQuaternion = (0.0, 0.0, 0.0, 0.0);
@@ -21,9 +31,11 @@ CONST
 
 {create a quaternion from a axis and angle}
 function vmqFromAxisAngle(const axis: TVector3; degree: single): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
+{get axis and angle from a quaternion}
+procedure vmqToAxisAngle(const q: TQuaternion; out axis: TVector3; out angle: single); {$IFDEF VM_INLINE}inline;{$ENDIF}
 {create a rotation matrix out of a quaternion}
-procedure vmqToMatrix(const qt: TQuaternion; var m: TMatrix4);
-procedure vmqToMatrix(const qt: TQuaternion; var m: TMatrix3);
+procedure vmqToMatrix(const qt: TQuaternion; out m: TMatrix4);
+procedure vmqToMatrix(const qt: TQuaternion; out m: TMatrix3);
 {create a quaternion out of a 4x4 matrix}
 procedure vmqFromMatrix(const m: TMatrix3; var qt: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
 procedure vmqFromMatrix(const m: TMatrix4; var qt: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
@@ -34,7 +46,7 @@ procedure vmqFromMatrixAlt(const m: TMatrix4; var qt: TQuaternion); {$IFDEF VM_I
 {Return a spherical linear interpolation(SLERP) of two quaternions, taking t into account}
 function vmqSLERP(var q1, q2: TQuaternion; t: single): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 {calculate a quaternion from Euler angle representation}
-procedure vmqFromEuler(roll, pitch, yaw: single; out q: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
+procedure vmqFromEuler(pitch, yaw, roll: single; out q: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
 {calculate a quaternion from Euler angle representation}
 procedure vmqFromEuler(const v: TVector3f; out q: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
 {calculate a quaternion from Euler angle representation in degrees}
@@ -84,23 +96,41 @@ IMPLEMENTATION
 
 function vmqFromAxisAngle(const axis: TVector3; degree: single): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 var
-   theta,
-   res: single;
-   
-begin
-   theta := ((degree / 180) * vmcPI);
-   res   := sin(theta / 2.0);
+   sin_a,
+   cos_a: single;
 
-   vmqFromAxisAngle[0] := (axis[0] * res); {x}
-   vmqFromAxisAngle[1] := (axis[1] * res); {y}
-   vmqFromAxisAngle[2] := (axis[2] * res); {z}
-   vmqFromAxisAngle[3] := cos(theta / 2.0);{w}
+begin
+   sin_a := sin(degree * 0.5);
+   cos_a := cos(degree * 0.5);
+
+   Result[0] := axis[0] * sin_a; {x}
+   Result[1] := axis[1] * sin_a; {y}
+   Result[2] := axis[2] * sin_a; {z}
+   Result[3] := cos_a; {w}
 end;
 
-procedure vmqToMatrix(const qt: TQuaternion; var m: TMatrix4); {$IFDEF VM_INLINE}inline;{$ENDIF}
+procedure vmqToAxisAngle(const q: TQuaternion; out axis: TVector3; out angle: single);
+var
+   cos_a,
+   sin_a: single;
+
+begin
+   cos_a := q[3];
+   angle := ArcCos(cos_a) * 2;
+   sin_a := Sqrt(1.0 - cos_a * cos_a);
+
+   if(Abs(sin_a) < 0.00005) then
+      sin_a := 1;
+
+   axis[0] := q[0] / sin_a;
+   axis[1] := q[1] / sin_a;
+   axis[2] := q[2] / sin_a;
+end;
+
+procedure vmqToMatrix(const qt: TQuaternion; out m: TMatrix4); {$IFDEF VM_INLINE}inline;{$ENDIF}
 var
    yy, xx, zz, xy, wz, xz, wx, wy, yz: single;
-   
+
 begin
    {small speedup, saves 6 multiplication operations}
    xx := qt[0] * qt[0];
@@ -116,32 +146,30 @@ begin
 
 	{The matrix will be filled with data from the quaternion}
 
-   {row 0}	
-	m[0][ 0] := 1.0 - 2.0 * (yy + zz);
-	m[0][ 1] := 2.0 * (xy - wz);
-	m[0][ 2] := 2.0 * (xz + wy);
-	m[0][ 3] := 0.0;
-	
-	{row 1}
-	m[1][ 0] := 2.0 * (xy + wz);
-	m[1][ 1] := 1.0 - 2.0 * (xx + zz);
-	m[1][ 2] := 2.0 * (yz - wx);
-	m[1][ 3] := 0.0;
+   m[0, 0] := 1.0 - 2.0 * (yy + zz);
+   m[1, 0] :=       2.0 * (xy - wz);
+   m[2, 0] :=       2.0 * (xz + wy);
 
-   {row 2}
-	m[2][ 0] := 2.0 * (xz - wy);
-	m[2][ 1] := 2.0 * (yz + wx);
-	m[2][ 2] := 1.0 - 2.0 * (xx + yy);
-	m[2][ 3] := 0.0;
-   
-	{row 3}
-	m[3][ 0] := 0.0;
-	m[3][ 1] := 0.0;
-	m[3][ 2] := 0.0;
-	m[3][ 3] := 1.0;
+   m[0, 1] :=       2.0 * (xy + wz);
+   m[1, 1] := 1.0 - 2.0 * (xx + zz);
+   m[2, 1] :=       2.0 * (yz - wx);
+
+   m[0, 2] :=       2.0 * (xz - wy);
+   m[1, 2] :=       2.0 * (yz + wx);
+   m[2, 2] := 1 -   2.0 * (xx + yy);
+
+   m[3, 0] := 0.0;
+   m[3, 1] := 0.0;
+   m[3, 2] := 0.0;
+
+   m[0, 3] := 0.0;
+   m[1, 3] := 0.0;
+   m[2, 3] := 0.0;
+
+   m[3, 3] := 1.0;
 end;
 
-procedure vmqToMatrix(const qt: TQuaternion; var m: TMatrix3);
+procedure vmqToMatrix(const qt: TQuaternion; out m: TMatrix3);
 var
    yy, xx, zz, xy, wz, xz, wx, wy, yz: single;
 
@@ -196,11 +224,11 @@ procedure vmqFromMatrixAlt(const m: TMatrix4; var qt: TQuaternion); {$IFDEF VM_I
 function vmqSLERP(var q1, q2: TQuaternion; t: single): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 var
    dotp, scale1, scale2, theta, sintheta: single;
-   
+
 begin
    {based on the equation: q = (((q2.q1)^-1)^t)q1
    we will calculate the interpolated quaternion}
-		
+
    {check if the two quaternions are the same}
    if(CompareDWord(q1, q2, sizeof(TQuaternion) div 4)  <> 0) then begin
       {calculate the dot product of the two quaternions, basically the same
@@ -210,9 +238,9 @@ begin
       {if the dotp is less then 0, then the angle is greater than 90 deg}
       if(dotp < 0.0) then begin
 		   {negate q2 and the dotp}
-		   q2[0] := -q2[0]; 
-         q2[1] := -q2[1]; 
-         q2[2] := -q2[2]; 
+		   q2[0] := -q2[0];
+         q2[1] := -q2[1];
+         q2[2] := -q2[2];
          q2[3] := -q2[3];
 		   dotp := -dotp;
 	   end;
@@ -239,30 +267,17 @@ begin
       Result := q1;
 end;
 
-procedure vmqFromEuler(roll, pitch, yaw: single; out q: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
+procedure vmqFromEuler(pitch, yaw, roll: single; out q: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
 var
-   cr, cp, cy, sr, sp, sy, cpcy, spsy: single; {trig identities}
-   
+   qx, qy, qz, qt: TQuaternion;
+
 begin
-   {cosinus}
-   cr := cos(roll / 2);
-   cp := cos(pitch / 2);
-   cy := cos(yaw / 2);
+   qx := vmqFromAxisAngle(vmvLeft, pitch);
+   qy := vmqFromAxisAngle(vmvUp, yaw);
+   qz := vmqFromAxisAngle(vmvForward, roll);
 
-   {sinus}
-   sr := sin(roll / 2);
-   sp := sin(pitch / 2);
-   sy := sin(yaw / 2);
-
-   {calculate and store multiplications result, small speedup}
-   cpcy := cp * cy;
-   spsy := sp * sy;
-   
-   {calculate the quaternion}
-   q[0] := sr * cpcy - cr * spsy; {x}
-   q[1] := cr * sp * cy + sr * cp * sy; {y}
-   q[2] := cr * cp * sy - sr * sp * cy; {z}
-   q[3] := cr * cpcy + sr * spsy; {w}   
+   qt := vmqMul(qx, qy);
+   q := vmqMul(qt, qz);
 end;
 
 procedure vmqFromEuler(const v: TVector3f; out q: TQuaternion);
@@ -289,69 +304,17 @@ end;
 
 function vmqToEuler(var q: TQuaternion): TVector3;
 var
-   r11, r21, r31, r32, r33, r12, r13,
-   q00, q11, q22, q33,
-   tmp: single{double};
+   rm: TMatrix4f;
 
 begin
-   q00 := q[3] * q[3];
-   q11 := q[0] * q[0];
-   q22 := q[1] * q[1];
-   q33 := q[2] * q[2];
+   vmqToMatrix(q, rm);
 
-   r11 := q00 + q11 - q22 - q33;
-   r21 := 2 * (q[0] + q[1] + q[3] * q[2]);
-   r31 := 2 * (q[0] * q[2] - q[3] * q[1]);
-   r32 := 2 * (q[1] * q[2] + q[3] * q[0]);
-   r33 := q00 - q11 - q22 + q33;
-   
-   tmp := abs(r31);
-   if(tmp > 0.999999) then begin
-      r12 := 2 * (q[0] * q[1] - q[3] * q[2]);
-      r13 := 2 * (q[0] * q[2] + q[3] * q[1]);
-      
-      vmqToEuler[0] := 0.0 * vmcToDeg;
-      vmqToEuler[1] := (-(vmcPI/2) * 131/tmp) * vmcToDeg;
-      vmqToEuler[2] := arctan2(-r12, -r31*r13) * vmcToDeg;
-   end;
-
-   vmqToEuler[0] := arctan2(r32, r33)*vmcToDeg;
-   vmqToEuler[1] := arcsin(-r31)*vmcToDeg;
-   vmqToEuler[2] := arctan2(r21, r11)*vmcToDeg;
+   Result := rm.RotationToEuler();
 end;
 
 procedure vmqToEuler(var q: TQuaternion; out v: TVector3);
-var
-   r11, r21, r31, r32, r33, r12, r13,
-   q00, q11, q22, q33,
-   tmp: single{double};
-
 begin
-   q00 := q[3] * q[3];
-   q11 := q[0] * q[0];
-   q22 := q[1] * q[1];
-   q33 := q[2] * q[2];
-
-   r11 := q00 + q11 - q22 - q33;
-   r21 := 2 * (q[0] + q[1] + q[3] * q[2]);
-   r31 := 2 * (q[0] * q[2] - q[3] * q[1]);
-   r32 := 2 * (q[1] * q[2] + q[3] * q[0]);
-   r33 := q00 - q11 - q22 + q33;
-
-   tmp := abs(r31);
-
-   if(tmp > 0.999999) then begin
-      r12 := 2 * (q[0] * q[1] - q[3] * q[2]);
-      r13 := 2 * (q[0] * q[2] + q[3] * q[1]);
-
-      v[0] := 0.0 * vmcToDeg;
-      v[1] := (-(vmcPI/2) * 131/tmp) * vmcToDeg;
-      v[2] := arctan2(-r12, -r31 * r13) * vmcToDeg;
-   end;
-
-   v[0] := arctan2(r32, r33) * vmcToDeg;
-   v[1] := arcsin(-r31) * vmcToDeg;
-   v[2] := arctan2(r21, r11) * vmcToDeg;
+   v := vmqToEuler(q);
 end;
 
 procedure vmqToEulerDeg(var q: TQuaternion; out v: TVector3);
@@ -397,39 +360,26 @@ end;
 
 function vmqMul(const q1, q2: TQuaternion): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 var
-   vq1,
-   vq2,
-   tv1,
-   tv2,
-   tv3: TVector3;
-   q3: TQuaternion;
-   
+   w1, w2,
+   x1, x2,
+   y1, y2,
+   z1, z2: single;
+
 begin
-   vq1[0] := q1[0];
-   vq1[1] := q1[1];
-   vq1[2] := q1[2];
+   w1 := q1[3];
+   x1 := q1[0];
+   y1 := q1[1];
+   z1 := q1[2];
 
-   vq2[0] := q2[0];
-   vq2[1] := q2[1];
-   vq2[2] := q2[2];
+   w2 := q2[3];
+   x2 := q2[0];
+   y2 := q2[1];
+   z2 := q2[2];
 
-   tv1 := vq1;
-   q3[3] := (q1[3] * q2[3]) - tv1.Dot(vq2);
-   tv1 := tv1.Cross(vq2);
-   
-   tv2[0] := q1[3] * q2[0];
-   tv2[1] := q1[3] * q2[1];
-   tv2[2] := q1[3] * q2[2];
-
-   tv3[0] := q2[3] * q1[0];
-   tv3[1] := q2[3] * q1[1];
-   tv3[2] := q2[3] * q1[2];
-   
-   q3[0] := tv1[0] + tv2[0] + tv3[0];
-   q3[1] := tv1[1] + tv2[1] + tv3[1];
-   q3[0] := tv2[0] + tv2[0] + tv3[0];
-   
-   exit(q3);
+   Result[3] := w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2;
+   Result[0] := w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2;
+   Result[1] := w1 * y2 + y1 * w2 + z1 * x2 - x1 * z2;
+   Result[2] := w1 * z2 + z1 * w2 + x1 * y2 - y1 * x2;
 end;
 
 function vmqConjugate(const q: TQuaternion): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
@@ -485,39 +435,26 @@ end;
 
 operator * (const q1, q2: TQuaternion) : TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 var
-   vq1,
-   vq2,
-   tv1,
-   tv2,
-   tv3: TVector3;
-   q3: TQuaternion;
-   
+   w1, w2,
+   x1, x2,
+   y1, y2,
+   z1, z2: single;
+
 begin
-   vq1[0]   := q1[0];
-   vq1[1]   := q1[1];
-   vq1[2]   := q1[2];
+   w1 := q1[3];
+   x1 := q1[0];
+   y1 := q1[1];
+   z1 := q1[2];
 
-   vq2[0]   := q2[0];
-   vq2[1]   := q2[1];
-   vq2[2]   := q2[2];
+   w2 := q2[3];
+   x2 := q2[0];
+   y2 := q2[1];
+   z2 := q2[2];
 
-   tv1      := vq1;
-   q3[3]    := (q1[3] * q2[3]) - tv1.Dot(vq2);
-   tv1      := tv1.Cross(vq2);
-   
-   tv2[0]   := q1[3] * q2[0];
-   tv2[1]   := q1[3] * q2[1];
-   tv2[2]   := q1[3] * q2[2];
-
-   tv3[0]   := q2[3] * q1[0];
-   tv3[1]   := q2[3] * q1[1];
-   tv3[2]   := q2[3] * q1[2];
-   
-   q3[0]    := tv1[0] + tv2[0] + tv3[0];
-   q3[1]    := tv1[1] + tv2[1] + tv3[1];
-   q3[0]    := tv2[0] + tv2[0] + tv3[0];
-   
-   exit(q3);
+   Result[3] := w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2;
+   Result[0] := w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2;
+   Result[1] := w1 * y2 + y1 * w2 + z1 * x2 - x1 * z2;
+   Result[2] := w1 * z2 + z1 * w2 + x1 * y2 - y1 * x2;
 end;
 
 operator * (const q: TQuaternion; s: single): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
@@ -567,5 +504,19 @@ begin
    Result[2] :=   q[3]*v[2] + q[1]*v[0] - q[0]*v[1];
    Result[3] := -(q[0]*v[0] + q[1]*v[1] + q[2]*v[2]);
 end;
+
+{ TQuaternionHelper }
+
+function TQuaternionHelper.ToString(decimals: loopint; const separator: string): string;
+begin
+   if(decimals > -1) then
+      Result := sf(Self[0], decimals) + separator + sf(Self[1], decimals) + separator + sf(Self[2], decimals) + separator + sf(Self[3], decimals)
+   else
+      Result := sf(Self[0]) + separator + sf(Self[1]) + separator + sf(Self[2]) + separator + sf(Self[3]);
+end;
+
+{ TQuaternionHelper }
+
+
 
 END.
