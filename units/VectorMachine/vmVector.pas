@@ -475,7 +475,7 @@ CONST
    );
 
    vmBBoxZero: TBoundingBox = (
-      (0, 0, 0), 
+      (0, 0, 0),
       (0, 0, 0)
    );
 
@@ -1949,11 +1949,13 @@ var
    mag: single;
 
 begin
-	mag := sqrt(Self[0] * Self[0] +
-               Self[1] * Self[1]);
+	mag := sqrt(
+      Self[0] * Self[0] +
+      Self[1] * Self[1]
+   );
 
    {$IFNDEF NO_SAFE_NORMALIZATION}
-   if(Magnitude <> 0.0) then begin
+   if(mag <> 0.0) then begin
    {$ENDIF}
       Self[0] := Self[0] / single(mag);
       Self[1] := Self[1] / single(mag);
@@ -1967,8 +1969,10 @@ var
    mag: single;
 
 begin
-	mag := sqrt(Self[0] * Self[0] +
-               Self[1] * Self[1]);
+	mag := sqrt(
+      Self[0] * Self[0] +
+      Self[1] * Self[1]
+   );
 
    {$IFNDEF VM_NO_SAFE_NORMALIZATION}
    if(mag <> 0.0) then begin
@@ -1983,8 +1987,10 @@ end;
 
 function TVector2Helper.Magnitude(): single;
 begin
-	Result := sqrt(Self[0] * Self[0] +
-                  Self[1] * Self[1]);
+	Result := sqrt(
+      Self[0] * Self[0] +
+      Self[1] * Self[1]
+   );
 end;
 
 procedure TVector2Helper.Negative();
@@ -2017,8 +2023,9 @@ end;
 
 function TVector2Helper.Equal(v: TVector2; epsilon: single): boolean;
 begin
-   Result := (abs(Self[0] - v[0]) < epsilon)
-         and (abs(Self[1] - v[1]) < epsilon);
+   Result :=
+      (abs(Self[0] - v[0]) < epsilon) and
+      (abs(Self[1] - v[1]) < epsilon);
 end;
 
 procedure TVector2Helper.Assign(x, y: single);
@@ -2048,9 +2055,11 @@ var
    mag: single;
 
 begin
-	mag := sqrt(Self[0] * Self[0] +
-               Self[1] * Self[1] +
-               Self[2] * Self[2]);
+	mag := sqrt(
+      Self[0] * Self[0] +
+      Self[1] * Self[1] +
+      Self[2] * Self[2]
+   );
 
    {$IFNDEF NO_SAFE_NORMALIZATION}
    if(mag <> 0.0) then begin
@@ -2068,9 +2077,11 @@ var
    mag: single;
 
 begin
-	mag := sqrt(Self[0] * Self[0] +
-               Self[1] * Self[1] +
-               Self[2] * Self[2]);
+	mag := sqrt(
+      Self[0] * Self[0] +
+      Self[1] * Self[1] +
+      Self[2] * Self[2]
+   );
 
    {$IFNDEF NO_SAFE_NORMALIZATION}
    if(mag <> 0.0) then begin
@@ -2086,9 +2097,11 @@ end;
 
 function TVector3Helper.Magnitude(): single;
 begin
-	Result := sqrt(Self[0] * Self[0] +
-                  Self[1] * Self[1] +
-                  Self[2] * Self[2]);
+	Result := sqrt(
+      Self[0] * Self[0] +
+      Self[1] * Self[1] +
+      Self[2] * Self[2]
+   );
 end;
 
 procedure TVector3Helper.Negative();
@@ -2133,9 +2146,10 @@ end;
 
 function TVector3Helper.Equal(v: TVector3; epsilon: single): boolean;
 begin
-   Result := (abs(Self[0] - v[0]) < epsilon)
-         and (abs(Self[1] - v[1]) < epsilon)
-         and (abs(Self[2] - v[2]) < epsilon);
+   Result :=
+      (abs(Self[0] - v[0]) < epsilon) and
+      (abs(Self[1] - v[1]) < epsilon) and
+      (abs(Self[2] - v[2]) < epsilon);
 end;
 
 procedure TVector3Helper.Assign(x, y, z: single);
@@ -2160,7 +2174,6 @@ begin
    Result[2] := z;
 end;
 
-
 { TVector4Helper }
 
 procedure TVector4Helper.Normalize();
@@ -2168,10 +2181,12 @@ var
    mag: single;
 
 begin
-	mag := sqrt(Self[0] * Self[0] +
-               Self[1] * Self[1] +
-               Self[2] * Self[2] +
-               Self[3] * Self[3]);
+	mag := sqrt(
+      Self[0] * Self[0] +
+      Self[1] * Self[1] +
+      Self[2] * Self[2] +
+      Self[3] * Self[3]
+   );
 
    {$IFNDEF NO_SAFE_NORMALIZATION}
    if(mag <> 0.0) then begin
@@ -2190,10 +2205,12 @@ var
    mag: single;
 
 begin
-	mag := sqrt(Self[0] * Self[0] +
-               Self[1] * Self[1] +
-               Self[2] * Self[2] +
-               Self[3] * Self[3]);
+	mag := sqrt(
+      Self[0] * Self[0] +
+      Self[1] * Self[1] +
+      Self[2] * Self[2] +
+      Self[3] * Self[3]
+   );
 
    {$IFNDEF NO_SAFE_NORMALIZATION}
    if(mag <> 0.0) then begin
@@ -2210,10 +2227,12 @@ end;
 
 function TVector4Helper.Magnitude(): single;
 begin
-	Result := sqrt(Self[0] * Self[0] +
-                  Self[1] * Self[1] +
-                  Self[2] * Self[2] +
-                  Self[3] * Self[3]);
+	Result := sqrt(
+      Self[0] * Self[0] +
+      Self[1] * Self[1] +
+      Self[2] * Self[2] +
+      Self[3] * Self[3]
+   );
 end;
 
 procedure TVector4Helper.Negative();
@@ -2250,10 +2269,11 @@ end;
 
 function TVector4Helper.Equal(v: TVector4; epsilon: single): boolean;
 begin
-   Result := (abs(Self[0] - v[0]) < epsilon)
-        and (abs(Self[1] - v[1]) < epsilon)
-        and (abs(Self[2] - v[2]) < epsilon)
-        and (abs(Self[3] - v[3]) < epsilon);
+   Result :=
+        (abs(Self[0] - v[0]) < epsilon) and
+        (abs(Self[1] - v[1]) < epsilon) and
+        (abs(Self[2] - v[2]) < epsilon) and
+        (abs(Self[3] - v[3]) < epsilon);
 end;
 
 procedure TVector4Helper.Assign(x, y, z, w: single);
@@ -2267,7 +2287,8 @@ end;
 function TVector4Helper.ToString(decimals: loopint; const separator: string): string;
 begin
    if(decimals > -1) then
-      Result := sf(Self[0], decimals) + separator + sf(Self[1], decimals) + separator + sf(Self[2], decimals) + separator + sf(Self[3], decimals)
+      Result := sf(Self[0], decimals) + separator + sf(Self[1], decimals) + separator +
+         sf(Self[2], decimals) + separator + sf(Self[3], decimals)
    else
       Result := sf(Self[0]) + separator + sf(Self[1]) + separator + sf(Self[2]) + separator + sf(Self[3]);
 end;
@@ -2279,7 +2300,6 @@ begin
    Result[2] := z;
    Result[3] := w;
 end;
-
 
 { TVector2iHelper }
 
@@ -2294,7 +2314,6 @@ function TVector3iHelper.ToString(const separator: string): string;
 begin
    Result := sf(Self[0]) + separator + sf(Self[1]) + separator + sf(Self[2]);
 end;
-
 
 { TVector4iHelper }
 
@@ -2370,79 +2389,96 @@ begin
 
    determinant := 1 / determinant;
 
-   Result[0,0] := determinant * (Self[1,1] * (Self[2,2] * Self[3,3] - Self[2,3] * Self[3,2]) +
-                                 Self[1,2] * (Self[2,3] * Self[3,1] - Self[2,1] * Self[3,3]) +
-                                 Self[1,3] * (Self[2,1] * Self[3,2] - Self[2,2] * Self[3,1]));
+   Result[0,0] := determinant *
+      (Self[1,1] * (Self[2,2] * Self[3,3] - Self[2,3] * Self[3,2]) +
+       Self[1,2] * (Self[2,3] * Self[3,1] - Self[2,1] * Self[3,3]) +
+       Self[1,3] * (Self[2,1] * Self[3,2] - Self[2,2] * Self[3,1]));
 
-   Result[0,1] := determinant * (Self[2,1] * (Self[0,2] * Self[3,3] - Self[0,3] * Self[3,2]) +
-                                 Self[2,2] * (Self[0,3] * Self[3,1] - Self[0,1] * Self[3,3]) +
-                                 Self[2,3] * (Self[0,1] * Self[3,2] - Self[0,2] * Self[3,1]));
+   Result[0,1] := determinant *
+      (Self[2,1] * (Self[0,2] * Self[3,3] - Self[0,3] * Self[3,2]) +
+       Self[2,2] * (Self[0,3] * Self[3,1] - Self[0,1] * Self[3,3]) +
+       Self[2,3] * (Self[0,1] * Self[3,2] - Self[0,2] * Self[3,1]));
 
-   Result[0,2] := determinant * (Self[3,1] * (Self[0,2] * Self[1,3] - Self[0,3] * Self[1,2]) +
-                                 Self[3,2] * (Self[0,3] * Self[1,1] - Self[0,1] * Self[1,3]) +
-                                 Self[3,3] * (Self[0,1] * Self[1,2] - Self[0,2] * Self[1,1]));
+   Result[0,2] := determinant *
+      (Self[3,1] * (Self[0,2] * Self[1,3] - Self[0,3] * Self[1,2]) +
+       Self[3,2] * (Self[0,3] * Self[1,1] - Self[0,1] * Self[1,3]) +
+       Self[3,3] * (Self[0,1] * Self[1,2] - Self[0,2] * Self[1,1]));
 
-   Result[0,3] := determinant * (Self[0,1] * (Self[1,3] * Self[2,2] - Self[1,2] * Self[2,3]) +
-                                 Self[0,2] * (Self[1,1] * Self[2,3] - Self[1,3] * Self[2,1]) +
-                                 Self[0,3] * (Self[1,2] * Self[2,1] - Self[1,1] * Self[2,2]));
+   Result[0,3] := determinant *
+      (Self[0,1] * (Self[1,3] * Self[2,2] - Self[1,2] * Self[2,3]) +
+       Self[0,2] * (Self[1,1] * Self[2,3] - Self[1,3] * Self[2,1]) +
+       Self[0,3] * (Self[1,2] * Self[2,1] - Self[1,1] * Self[2,2]));
 
-   Result[1,0] := determinant * (Self[1,2] * (Self[2,0] * Self[3,3] - Self[2,3] * Self[3,0]) +
-                                 Self[1,3] * (Self[2,2] * Self[3,0] - Self[2,0] * Self[3,2]) +
-                                 Self[1,0] * (Self[2,3] * Self[3,2] - Self[2,2] * Self[3,3]));
+   Result[1,0] := determinant *
+      (Self[1,2] * (Self[2,0] * Self[3,3] - Self[2,3] * Self[3,0]) +
+       Self[1,3] * (Self[2,2] * Self[3,0] - Self[2,0] * Self[3,2]) +
+       Self[1,0] * (Self[2,3] * Self[3,2] - Self[2,2] * Self[3,3]));
 
-   Result[1,1] := determinant * (Self[2,2] * (Self[0,0] * Self[3,3] - Self[0,3] * Self[3,0]) +
-                                 Self[2,3] * (Self[0,2] * Self[3,0] - Self[0,0] * Self[3,2]) +
-                                 Self[2,0] * (Self[0,3] * Self[3,2] - Self[0,2] * Self[3,3]));
+   Result[1,1] := determinant *
+      (Self[2,2] * (Self[0,0] * Self[3,3] - Self[0,3] * Self[3,0]) +
+       Self[2,3] * (Self[0,2] * Self[3,0] - Self[0,0] * Self[3,2]) +
+       Self[2,0] * (Self[0,3] * Self[3,2] - Self[0,2] * Self[3,3]));
 
-   Result[1,2] := determinant * (Self[3,2] * (Self[0,0] * Self[1,3] - Self[0,3] * Self[1,0]) +
-                                 Self[3,3] * (Self[0,2] * Self[1,0] - Self[0,0] * Self[1,2]) +
-                                 Self[3,0] * (Self[0,3] * Self[1,2] - Self[0,2] * Self[1,3]));
+   Result[1,2] := determinant *
+      (Self[3,2] * (Self[0,0] * Self[1,3] - Self[0,3] * Self[1,0]) +
+       Self[3,3] * (Self[0,2] * Self[1,0] - Self[0,0] * Self[1,2]) +
+       Self[3,0] * (Self[0,3] * Self[1,2] - Self[0,2] * Self[1,3]));
 
-   Result[1,3] := determinant * (Self[0,2] * (Self[1,3] * Self[2,0] - Self[1,0] * Self[2,3]) +
-                                 Self[0,3] * (Self[1,0] * Self[2,2] - Self[1,2] * Self[2,0]) +
-                                 Self[0,0] * (Self[1,2] * Self[2,3] - Self[1,3] * Self[2,2]));
+   Result[1,3] := determinant *
+      (Self[0,2] * (Self[1,3] * Self[2,0] - Self[1,0] * Self[2,3]) +
+       Self[0,3] * (Self[1,0] * Self[2,2] - Self[1,2] * Self[2,0]) +
+       Self[0,0] * (Self[1,2] * Self[2,3] - Self[1,3] * Self[2,2]));
 
-   Result[2,0] := determinant * (Self[1,3] * (Self[2,0] * Self[3,1] - Self[2,1] * Self[3,0]) +
-                                 Self[1,0] * (Self[2,1] * Self[3,3] - Self[2,3] * Self[3,1]) +
-                                 Self[1,1] * (Self[2,3] * Self[3,0] - Self[2,0] * Self[3,3]));
+   Result[2,0] := determinant *
+      (Self[1,3] * (Self[2,0] * Self[3,1] - Self[2,1] * Self[3,0]) +
+       Self[1,0] * (Self[2,1] * Self[3,3] - Self[2,3] * Self[3,1]) +
+       Self[1,1] * (Self[2,3] * Self[3,0] - Self[2,0] * Self[3,3]));
 
-   Result[2,1] := determinant * (Self[2,3] * (Self[0,0] * Self[3,1] - Self[0,1] * Self[3,0]) +
-                                 Self[2,0] * (Self[0,1] * Self[3,3] - Self[0,3] * Self[3,1]) +
-                                 Self[2,1] * (Self[0,3] * Self[3,0] - Self[0,0] * Self[3,3]));
+   Result[2,1] := determinant *
+      (Self[2,3] * (Self[0,0] * Self[3,1] - Self[0,1] * Self[3,0]) +
+       Self[2,0] * (Self[0,1] * Self[3,3] - Self[0,3] * Self[3,1]) +
+       Self[2,1] * (Self[0,3] * Self[3,0] - Self[0,0] * Self[3,3]));
 
-   Result[2,2] := determinant * (Self[3,3] * (Self[0,0] * Self[1,1] - Self[0,1] * Self[1,0]) +
-                                 Self[3,0] * (Self[0,1] * Self[1,3] - Self[0,3] * Self[1,1]) +
-                                 Self[3,1] * (Self[0,3] * Self[1,0] - Self[0,0] * Self[1,3]));
+   Result[2,2] := determinant *
+      (Self[3,3] * (Self[0,0] * Self[1,1] - Self[0,1] * Self[1,0]) +
+       Self[3,0] * (Self[0,1] * Self[1,3] - Self[0,3] * Self[1,1]) +
+       Self[3,1] * (Self[0,3] * Self[1,0] - Self[0,0] * Self[1,3]));
 
-   Result[2,3] := determinant * (Self[0,3] * (Self[1,1] * Self[2,0] - Self[1,0] * Self[2,1]) +
-                                 Self[0,0] * (Self[1,3] * Self[2,1] - Self[1,1] * Self[2,3]) +
-                                 Self[0,1] * (Self[1,0] * Self[2,3] - Self[1,3] * Self[2,0]));
+   Result[2,3] := determinant *
+      (Self[0,3] * (Self[1,1] * Self[2,0] - Self[1,0] * Self[2,1]) +
+       Self[0,0] * (Self[1,3] * Self[2,1] - Self[1,1] * Self[2,3]) +
+       Self[0,1] * (Self[1,0] * Self[2,3] - Self[1,3] * Self[2,0]));
 
-   Result[3,0] := determinant * (Self[1,0] * (Self[2,2] * Self[3,1] - Self[2,1] * Self[3,2]) +
-                                 Self[1,1] * (Self[2,0] * Self[3,2] - Self[2,2] * Self[3,0]) +
-                                 Self[1,2] * (Self[2,1] * Self[3,0] - Self[2,0] * Self[3,1]));
+   Result[3,0] := determinant *
+      (Self[1,0] * (Self[2,2] * Self[3,1] - Self[2,1] * Self[3,2]) +
+       Self[1,1] * (Self[2,0] * Self[3,2] - Self[2,2] * Self[3,0]) +
+       Self[1,2] * (Self[2,1] * Self[3,0] - Self[2,0] * Self[3,1]));
 
-   Result[3,1] := determinant * (Self[2,0] * (Self[0,2] * Self[3,1] - Self[0,1] * Self[3,2]) +
-                                 Self[2,1] * (Self[0,0] * Self[3,2] - Self[0,2] * Self[3,0]) +
-                                 Self[2,2] * (Self[0,1] * Self[3,0] - Self[0,0] * Self[3,1]));
+   Result[3,1] := determinant *
+      (Self[2,0] * (Self[0,2] * Self[3,1] - Self[0,1] * Self[3,2]) +
+       Self[2,1] * (Self[0,0] * Self[3,2] - Self[0,2] * Self[3,0]) +
+       Self[2,2] * (Self[0,1] * Self[3,0] - Self[0,0] * Self[3,1]));
 
-   Result[3,2] := determinant * (Self[3,0] * (Self[0,2] * Self[1,1] - Self[0,1] * Self[1,2]) +
-                                 Self[3,1] * (Self[0,0] * Self[1,2] - Self[0,2] * Self[1,0]) +
-                                 Self[3,2] * (Self[0,1] * Self[1,0] - Self[0,0] * Self[1,1]));
+   Result[3,2] := determinant *
+      (Self[3,0] * (Self[0,2] * Self[1,1] - Self[0,1] * Self[1,2]) +
+       Self[3,1] * (Self[0,0] * Self[1,2] - Self[0,2] * Self[1,0]) +
+       Self[3,2] * (Self[0,1] * Self[1,0] - Self[0,0] * Self[1,1]));
 
-   Result[3,3] := determinant * (Self[0,0] * (Self[1,1] * Self[2,2] - Self[1,2] * Self[2,1]) +
-                                 Self[0,1] * (Self[1,2] * Self[2,0] - Self[1,0] * Self[2,2]) +
-                                 Self[0,2] * (Self[1,0] * Self[2,1] - Self[1,1] * Self[2,0]));
+   Result[3,3] := determinant *
+      (Self[0,0] * (Self[1,1] * Self[2,2] - Self[1,2] * Self[2,1]) +
+       Self[0,1] * (Self[1,2] * Self[2,0] - Self[1,0] * Self[2,2]) +
+       Self[0,2] * (Self[1,0] * Self[2,1] - Self[1,1] * Self[2,0]));
 end;
 
 function TMatrix4Helper.GetDeterminant(): single;
 begin
-   Result := (Self[0,0] * Self[1,1] - Self[0,1] * Self[1,0]) * (Self[2,2] * Self[3,3] - Self[2,3] * Self[3,2]) -
-             (Self[0,0] * Self[1,2] - Self[0,2] * Self[1,0]) * (Self[2,1] * Self[3,3] - Self[2,3] * Self[3,1]) +
-             (Self[0,0] * Self[1,3] - Self[0,3] * Self[1,0]) * (Self[2,1] * Self[3,2] - Self[2,2] * Self[3,1]) +
-             (Self[0,1] * Self[1,2] - Self[0,2] * Self[1,1]) * (Self[2,0] * Self[3,3] - Self[2,3] * Self[3,0]) -
-             (Self[0,1] * Self[1,3] - Self[0,3] * Self[1,1]) * (Self[2,0] * Self[3,2] - Self[2,2] * Self[3,0]) +
-             (Self[0,2] * Self[1,3] - Self[0,3] * Self[1,2]) * (Self[2,0] * Self[3,1] - Self[2,1] * Self[3,0]);
+   Result :=
+      (Self[0,0] * Self[1,1] - Self[0,1] * Self[1,0]) * (Self[2,2] * Self[3,3] - Self[2,3] * Self[3,2]) -
+      (Self[0,0] * Self[1,2] - Self[0,2] * Self[1,0]) * (Self[2,1] * Self[3,3] - Self[2,3] * Self[3,1]) +
+      (Self[0,0] * Self[1,3] - Self[0,3] * Self[1,0]) * (Self[2,1] * Self[3,2] - Self[2,2] * Self[3,1]) +
+      (Self[0,1] * Self[1,2] - Self[0,2] * Self[1,1]) * (Self[2,0] * Self[3,3] - Self[2,3] * Self[3,0]) -
+      (Self[0,1] * Self[1,3] - Self[0,3] * Self[1,1]) * (Self[2,0] * Self[3,2] - Self[2,2] * Self[3,0]) +
+      (Self[0,2] * Self[1,3] - Self[0,3] * Self[1,2]) * (Self[2,0] * Self[3,1] - Self[2,1] * Self[3,0]);
 end;
 
 function TMatrix4Helper.RotationToEuler(): TVector3;
