@@ -23,6 +23,8 @@ TYPE
 
    TQuaternionHelper = type helper for TQuaternion
       function ToString(decimals: loopint = -1; const separator: string = ','): string;
+      procedure ToRotationMatrix(out m: TMatrix4f);
+      procedure ToRotationMatrix(out m: TMatrix3f);
    end;
 
 CONST
@@ -33,9 +35,6 @@ CONST
 function vmqFromAxisAngle(const axis: TVector3; degree: single): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 {get axis and angle from a quaternion}
 procedure vmqToAxisAngle(const q: TQuaternion; out axis: TVector3; out angle: single); {$IFDEF VM_INLINE}inline;{$ENDIF}
-{create a rotation matrix out of a quaternion}
-procedure vmqToMatrix(const qt: TQuaternion; out m: TMatrix4);
-procedure vmqToMatrix(const qt: TQuaternion; out m: TMatrix3);
 {create a quaternion out of a 4x4 matrix}
 procedure vmqFromMatrix(const m: TMatrix3; var qt: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
 procedure vmqFromMatrix(const m: TMatrix4; var qt: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
@@ -125,83 +124,6 @@ begin
    axis[0] := q[0] / sin_a;
    axis[1] := q[1] / sin_a;
    axis[2] := q[2] / sin_a;
-end;
-
-procedure vmqToMatrix(const qt: TQuaternion; out m: TMatrix4); {$IFDEF VM_INLINE}inline;{$ENDIF}
-var
-   yy, xx, zz, xy, wz, xz, wx, wy, yz: single;
-
-begin
-   {small speedup, saves 6 multiplication operations}
-   xx := qt[0] * qt[0];
-   yy := qt[1] * qt[1];
-   zz := qt[2] * qt[2];
-
-   xy := qt[0] * qt[1];
-   wz := qt[3] * qt[2];
-   xz := qt[0] * qt[2];
-   wx := qt[3] * qt[0];
-   wy := qt[3] * qt[1];
-   yz := qt[1] * qt[2];
-
-	{The matrix will be filled with data from the quaternion}
-
-   m[0, 0] := 1.0 - 2.0 * (yy + zz);
-   m[1, 0] :=       2.0 * (xy - wz);
-   m[2, 0] :=       2.0 * (xz + wy);
-
-   m[0, 1] :=       2.0 * (xy + wz);
-   m[1, 1] := 1.0 - 2.0 * (xx + zz);
-   m[2, 1] :=       2.0 * (yz - wx);
-
-   m[0, 2] :=       2.0 * (xz - wy);
-   m[1, 2] :=       2.0 * (yz + wx);
-   m[2, 2] := 1 -   2.0 * (xx + yy);
-
-   m[3, 0] := 0.0;
-   m[3, 1] := 0.0;
-   m[3, 2] := 0.0;
-
-   m[0, 3] := 0.0;
-   m[1, 3] := 0.0;
-   m[2, 3] := 0.0;
-
-   m[3, 3] := 1.0;
-end;
-
-procedure vmqToMatrix(const qt: TQuaternion; out m: TMatrix3);
-var
-   yy, xx, zz, xy, wz, xz, wx, wy, yz: single;
-
-begin
-   {small speedup, saves 6 multiplication operations}
-   xx := qt[0] * qt[0];
-   yy := qt[1] * qt[1];
-   zz := qt[2] * qt[2];
-
-   xy := qt[0] * qt[1];
-   wz := qt[3] * qt[2];
-   xz := qt[0] * qt[2];
-   wx := qt[3] * qt[0];
-   wy := qt[3] * qt[1];
-   yz := qt[1] * qt[2];
-
-	{The matrix will be filled with data from the quaternion}
-
-   {row 0}
-	m[0][ 0] := 1.0 - 2.0 * (yy + zz);
-	m[0][ 1] := 2.0 * (xy - wz);
-	m[0][ 2] := 2.0 * (xz + wy);
-
-	{row 1}
-	m[1][ 0] := 2.0 * (xy + wz);
-	m[1][ 1] := 1.0 - 2.0 * (xx + zz);
-	m[1][ 2] := 2.0 * (yz - wx);
-
-   {row 2}
-	m[2][ 0] := 2.0 * (xz - wy);
-	m[2][ 1] := 2.0 * (yz + wx);
-	m[2][ 2] := 1.0 - 2.0 * (xx + yy);
 end;
 
 procedure vmqFromMatrix(const m: TMatrix3; var qt: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
@@ -307,7 +229,7 @@ var
    rm: TMatrix4f;
 
 begin
-   vmqToMatrix(q, rm);
+   q.ToRotationMatrix(rm);
 
    Result := rm.RotationToEuler();
 end;
@@ -515,8 +437,78 @@ begin
       Result := sf(Self[0]) + separator + sf(Self[1]) + separator + sf(Self[2]) + separator + sf(Self[3]);
 end;
 
-{ TQuaternionHelper }
+procedure TQuaternionHelper.ToRotationMatrix(out m: TMatrix4f);
+var
+   yy, xx, zz, xy, wz, xz, wx, wy, yz: single;
 
+begin
+   {small speedup, saves 6 multiplication operations}
+   xx := Self[0] * Self[0];
+   yy := Self[1] * Self[1];
+   zz := Self[2] * Self[2];
 
+   xy := Self[0] * Self[1];
+   wz := Self[3] * Self[2];
+   xz := Self[0] * Self[2];
+   wx := Self[3] * Self[0];
+   wy := Self[3] * Self[1];
+   yz := Self[1] * Self[2];
+
+	{The matrix will be filled with data from the quaternion}
+
+   m[0, 0] := 1.0 - 2.0 * (yy + zz);
+   m[1, 0] :=       2.0 * (xy - wz);
+   m[2, 0] :=       2.0 * (xz + wy);
+
+   m[0, 1] :=       2.0 * (xy + wz);
+   m[1, 1] := 1.0 - 2.0 * (xx + zz);
+   m[2, 1] :=       2.0 * (yz - wx);
+
+   m[0, 2] :=       2.0 * (xz - wy);
+   m[1, 2] :=       2.0 * (yz + wx);
+   m[2, 2] := 1 -   2.0 * (xx + yy);
+
+   m[3, 0] := 0.0;
+   m[3, 1] := 0.0;
+   m[3, 2] := 0.0;
+
+   m[0, 3] := 0.0;
+   m[1, 3] := 0.0;
+   m[2, 3] := 0.0;
+
+   m[3, 3] := 1.0;
+end;
+
+procedure TQuaternionHelper.ToRotationMatrix(out m: TMatrix3f);
+var
+   yy, xx, zz, xy, wz, xz, wx, wy, yz: single;
+
+begin
+   {small speedup, saves 6 multiplication operations}
+   xx := Self[0] * Self[0];
+   yy := Self[1] * Self[1];
+   zz := Self[2] * Self[2];
+
+   xy := Self[0] * Self[1];
+   wz := Self[3] * Self[2];
+   xz := Self[0] * Self[2];
+   wx := Self[3] * Self[0];
+   wy := Self[3] * Self[1];
+   yz := Self[1] * Self[2];
+
+	{The matrix will be filled with data from the quaternion}
+
+   m[0, 0] := 1.0 - 2.0 * (yy + zz);
+   m[1, 0] :=       2.0 * (xy - wz);
+   m[2, 0] :=       2.0 * (xz + wy);
+
+   m[0, 1] :=       2.0 * (xy + wz);
+   m[1, 1] := 1.0 - 2.0 * (xx + zz);
+   m[2, 1] :=       2.0 * (yz - wx);
+
+   m[0, 2] :=       2.0 * (xz - wy);
+   m[1, 2] :=       2.0 * (yz + wx);
+   m[2, 2] := 1 -   2.0 * (xx + yy);
+end;
 
 END.
