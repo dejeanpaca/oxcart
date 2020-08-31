@@ -72,10 +72,17 @@ TYPE
       {called when build is done}
       OnDone: TProcedures;
 
+      {current build task type}
       BuildType: oxedTBuildTaskType;
+      {current build target}
       BuildTarget: oxedTBuildTarget;
+      {current build start}
       BuildStart: TDateTime;
-      BuildArch: oxedTPlatformArchitecture;
+      {current build architecture}
+      BuildArch,
+      {previously used build architecture}
+      PreviousBuildArch: oxedTPlatformArchitecture;
+      {current build mechanism}
       BuildMechanism: oxedTBuildMechanism;
       {is the last build ok}
       BuildOk: boolean;
@@ -144,6 +151,9 @@ TYPE
 
       {setup the required build platform}
       function SetupPlatform(): boolean;
+      {setup the required build platform}
+      function SetupFPCPlatform(): boolean;
+
       {get target path for current target}
       function GetTargetPath(): StdString;
       {get path for the working area}
@@ -1051,6 +1061,9 @@ begin
    {start off empty}
    oxedBuildLog.Log.Reset();
 
+   if(not SetupFPCPlatform()) then
+      exit;
+
    {we start off assuming things are fine}
    BuildOk := true;
    BuildStart := Now;
@@ -1155,36 +1168,54 @@ end;
 
 function oxedTBuildGlobal.SetupPlatform(): boolean;
 var
-   platform: PBuildPlatform;
    laz: PBuildLazarusInstall;
+
+begin
+   Result := SetupFPCPlatform();
+
+   if(Result) then begin
+      laz := BuildInstalls.FindLazarusInstallForPlatform(BuildInstalls.CurrentPlatform);
+
+      if(laz <> nil) then
+         BuildInstalls.SetLazarusInstall(laz^.Name)
+      else begin
+         log.w('Failed to find a lazarus install for fpc: ' + BuildInstalls.CurrentPlatform^.Name);
+         BuildInstalls.GetLazarus();
+         exit(false);
+      end;
+
+      log.v('Using lazbuild: ' + BuildInstalls.CurrentLazarus^.Name + ', at ' + BuildInstalls.CurrentLazarus^.Path);
+      exit(true);
+   end;
+end;
+
+function oxedTBuildGlobal.SetupFPCPlatform(): boolean;
+var
+   platform: PBuildPlatform;
 
 begin
    Result := false;
 
    if(IsLibrary()) then begin
-      platform := BuildInstalls.FindPlatform(build.BuiltWithTarget, build.BuiltWithVersion);
+      if(PreviousBuildArch <> BuildArch) then begin
+         platform := BuildInstalls.FindPlatform(BuildArch.GetPlatformString(), Build.BuiltWithVersion);
 
-      if(platform = nil) then begin
-         log.e('Failed to find suitable compiler for ' + build.BuiltWithTarget + ' and FPC ' + FPC_VERSION);
-         exit(false);
+         if(platform = nil) then begin
+            log.e('Failed to find suitable compiler for ' + BuildArch.GetPlatformString() + ' and FPC ' + Build.BuiltWithVersion);
+            exit(false);
+         end;
+
+         BuildInstalls.SetPlatform(platform^.Name);
+
+         log.v('Using platform: ' + BuildInstalls.CurrentPlatform^.Name + ', fpc ' + BuildInstalls.CurrentPlatform^.Version);
+
+         PreviousBuildArch := BuildArch;
+         exit(true);
       end;
-
-      BuildInstalls.SetPlatform(platform^.Name);
-
-      laz := BuildInstalls.FindLazarusInstallForPlatform(platform);
-
-      if(laz <> nil) then
-         BuildInstalls.SetLazarusInstall(laz^.Name)
-      else begin
-         log.w('Failed to find a lazarus install for fpc: ' + platform^.Name);
-         BuildInstalls.GetLazarus();
-      end;
-
-      log.v('Using platform: ' + BuildInstalls.CurrentPlatform^.Name + ', fpc ' + BuildInstalls.CurrentPlatform^.Version);
-      log.v('Using lazbuild: ' + BuildInstalls.CurrentLazarus^.Name + ', at ' + BuildInstalls.CurrentLazarus^.Path);
-
-      exit(true);
    end;
+
+   PreviousBuildArch := BuildArch;
+   exit(true);
 end;
 
 function oxedTBuildGlobal.GetTargetPath(): StdString;
@@ -1244,11 +1275,13 @@ end;
 
 procedure oxedTBuildGlobal.Reset();
 begin
+   PreviousBuildArch := nil;
    BuildOk := false;
    BuildType := OXED_BUILD_TASK_RECODE;
    BuildTarget := OXED_BUILD_LIB;
    BuildArch := oxedEditorPlatform.Architecture;
    BuildMechanism := OXED_BUILD_VIA_FPC;
+   SetupFPCPlatform();
 end;
 
 procedure CreateSourceFile(const fn: string);
