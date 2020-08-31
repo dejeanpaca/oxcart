@@ -44,13 +44,13 @@ begin
    Name := 'Editor';
    Id := 'editor';
    GlyphName := 'brands:61820';
-   OS := FPC_TARGETOS;
+   OS := LowerCase(FPC_TARGETOS);
 
    {editor platform is always enabled}
    Enabled := true;
 
    Configuration := oxedTPlatformConfiguration.Create();
-   Architecture := oxedTEditorPlatformArchitecture.Create('editor', FPC_TARGETCPU);
+   Architecture := oxedTEditorPlatformArchitecture.Create('editor', LowerCase(FPC_TARGETCPU));
    AddArchitecture(Architecture);
 end;
 
