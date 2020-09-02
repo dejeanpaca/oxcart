@@ -186,9 +186,7 @@ VAR
    appk: appTKeyGlobal;
 
    {remap codes}
-   {$IFNDEF ANDROID}
    {$INCLUDE ./kRemapCodes.inc}
-   {$ENDIF}
 
 operator = (const a: appTKey; const b: appTKey): boolean;
 

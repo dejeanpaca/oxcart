@@ -14,4 +14,7 @@
 {$IFDEF DARWIN}
    {$INCLUDE klRemapCodes.inc}
 {$ENDIF}
+{$IFDEF ANDROID}
+   {$INCLUDE ../android/kRemapCodes.inc}
+{$ENDIF}
 );
