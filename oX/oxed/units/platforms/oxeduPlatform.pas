@@ -27,6 +27,13 @@ TYPE
       e.g. when the OS differs per platform (win32, win64)}
       Platform: StdString;
 
+      {default cpu type}
+      DefaultCPUType,
+      {default fpu type}
+      DefaultFPUType,
+      {default fpu type}
+      BinUtilsPrefix: StdString;
+
       PlatformObject: TObject;
 
       constructor Create(const newName, newArch: StdString); virtual;
