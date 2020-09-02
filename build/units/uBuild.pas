@@ -60,10 +60,12 @@ TYPE
       OptimizationLevel: loopint;
 
       FPCOptions: record
-         {where to output units}
-         UnitOutputDirectory,
+         {where to output units (-FU)}
+         UnitOutputPath,
          {what fpc config to use for building}
-         UseConfig: StdString;
+         UseConfig,
+         {compiler utilities path (-FF)}
+         CompilerUtilitiesPath: StdString;
          {don't use default fpc config file}
          DontUseDefaultConfig: Boolean;
       end;
@@ -345,8 +347,9 @@ begin
    IncludeDebugInfo := false;
    OptimizationLevel := 0;
 
-   FPCOptions.UnitOutputDirectory := '';
+   FPCOptions.UnitOutputPath := '';
    FPCOptions.UseConfig := '';
+   FPCOptions.CompilerUtilitiesPath := '';
    FPCOptions.DontUseDefaultConfig := false;
 
    Options.IsLibrary := false;

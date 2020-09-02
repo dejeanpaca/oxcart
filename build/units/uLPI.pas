@@ -639,8 +639,8 @@ begin
       units := build.GetIncludesPath(absoluteDestination, build.Units);
       includes := build.GetIncludesPath(absoluteDestination, build.Includes);
 
-      if(build.FPCOptions.UnitOutputDirectory <> '') then
-         f.SetUnitOutputDirectory(build.FPCOptions.UnitOutputDirectory);
+      if(build.FPCOptions.UnitOutputPath <> '') then
+         f.SetUnitOutputDirectory(build.FPCOptions.UnitOutputPath);
 
       f.SetValue(f.project.general.title, target);
       f.SetValue(f.project.units.unit0Filename, target + ExtractFileExt(source));

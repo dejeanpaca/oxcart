@@ -95,8 +95,11 @@ begin
    if(build.Options.Rebuild) then
       AddArgument('-B');
 
-   if(build.FPCOptions.UnitOutputDirectory <> '') then
-      AddArgument('-FU' + build.FPCOptions.UnitOutputDirectory);
+   if(build.FPCOptions.UnitOutputPath <> '') then
+      AddArgument('-FU' + build.FPCOptions.UnitOutputPath);
+
+   if(build.FPCOptions.CompilerUtilitiesPath <> '') then
+      AddArgument('-FD' + build.FPCOptions.CompilerUtilitiesPath);
 
    if(build.TargetOS <> '') then
       AddArgument('-T' + build.TargetOS);
@@ -148,8 +151,11 @@ begin
 
    add('# unit output directory');
 
-   if(build.FPCOptions.UnitOutputDirectory <> '') then
-      add('-FU' + build.FPCOptions.UnitOutputDirectory);
+   if(build.FPCOptions.UnitOutputPath <> '') then
+      add('-FU' + build.FPCOptions.UnitOutputPath);
+
+   if(build.FPCOptions.CompilerUtilitiesPath <> '') then
+      add('-FD' + build.FPCOptions.CompilerUtilitiesPath);
 
    IncludeUnits(build.Units.List, build.Units.n);
    AddIncludes(build.Includes.List, build.Includes.n);
