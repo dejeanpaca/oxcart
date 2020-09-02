@@ -9,7 +9,17 @@ UNIT ulogAndroid;
 INTERFACE
 
    USES
-      uLog;
+      uStd, uLog;
+
+TYPE
+
+   { TAndroidLogHandler }
+
+   TAndroidLogHandler = object(TLogHandler)
+      constructor Create();
+      procedure Writeln(log: PLog; priority: longint; const s: StdString); virtual;
+      procedure WritelnRaw(log: PLog; const s: StdString); virtual;
+   end;
 
 VAR
    loghAndroid: TLogHandler;
@@ -23,23 +33,32 @@ CONST
       ANDROID_LOG_ERROR, {logcERROR}
       ANDROID_LOG_VERBOSE, {logcVERBOSE}
       ANDROID_LOG_FATAL, {logcFATAL}
-      ANDROID_LOG_DEBUG {logcDEBUG}
+      ANDROID_LOG_DEBUG, {logcDEBUG}
+      ANDROID_LOG_INFO {logcOK}
    );
 
-procedure hwriteln(logf: PLog; priority: longint; const s: StdString);
+{ TAndroidLogHandler }
+
+constructor TAndroidLogHandler.Create();
 begin
-   SysLogWrite(androidPriorities[priority], S);
+   inherited;
+   Name := 'android';
+   FileExtension := '';
+   NoHeader := true;
+   NeedOpen := false;
+end;
+
+procedure TAndroidLogHandler.Writeln(log: PLog; priority: longint; const s: StdString);
+begin
+   SysLogWrite(androidPriorities[priority], PAnsiChar(S));
+end;
+
+procedure TAndroidLogHandler.WritelnRaw(log: PLog; const s: StdString);
+begin
+   SysLogWrite(ANDROID_LOG_INFO, PAnsiChar(S));
 end;
 
 INITIALIZATION
-   {use the standard log handler for most operations}
-   loghAndroid                := log.handler.Dummy;
-   loghAndroid.Name           := 'android';
-   loghAndroid.FileExtension  := '';
-   loghAndroid.writeln        := @hwriteln;
-
-   {nothing should be output to the file by default }
-   loghAndroid.NoHeader       := true;
-
    log.Handler.pDefault := @loghAndroid;
+
 END.
