@@ -69,6 +69,8 @@ TYPE
    oxedTBuildGlobal = record
       {called before build starts, to prepare everything}
       OnPrepare,
+      {called when build is starting to run, to setup additional build options}
+      OnStartRun,
       {called when build is done}
       OnDone: TProcedures;
 
@@ -406,6 +408,7 @@ end;
 begin
    if(build.IncludeDebugInfo) then begin
       oxedBuildLog.w('Including debug info');
+
       f.AddCustomOption('-g');
       f.AddCustomOption('-gl');
       f.AddCustomOption('-Xg');
@@ -675,8 +678,8 @@ class function oxedTBuildGlobal.Recreate(force: boolean): boolean;
 begin
    oxedProject.RecreateTempDirectory();
 
-   if(not FileUtils.CreateDirectory(build.FPCOptions.UnitOutputDirectory)) then begin
-      oxedBuildLog.e('Failed to create unit output directory: ' + build.FPCOptions.UnitOutputDirectory);
+   if(not FileUtils.CreateDirectory(build.FPCOptions.UnitOutputPath)) then begin
+      oxedBuildLog.e('Failed to create unit output directory: ' + build.FPCOptions.UnitOutputPath);
       exit(false);
    end;
 
@@ -742,8 +745,11 @@ procedure BuildFPC();
 var
    i: loopint;
    parameters: TSimpleStringList;
+   arch: oxedTPlatformArchitecture;
 
 begin
+   arch := oxedBuild.BuildArch;
+
    build.FPCOptions.UseConfig := oxedBuild.WorkArea + oxedBuild.Props.ConfigFile;
 
    parameters := TBuildFPCConfiguration.GetFPCCommandLineForConfig();
@@ -768,6 +774,15 @@ begin
    parameters.Add('-Co'); {Overflow}
    parameters.Add('-Ct'); {Stack check}
    parameters.Add('-Sa'); {Assertions}
+
+   if(arch.DefaultCPUType <> '') then
+      parameters.Add('-Cp' + arch.DefaultCPUType);
+
+   if(arch.DefaultFPUType <> '') then
+      parameters.Add('-Cf' + arch.DefaultFPUType);
+
+   if(arch.BinUtilsPrefix <> '') then
+      parameters.Add('-XP' + arch.BinUtilsPrefix);
 
    if(oxedBuild.IsLibrary()) then begin
       {set position independent code}
@@ -844,6 +859,8 @@ var
    targetString: string;
 
 begin
+   OnStartRun.Call();
+
    oxedBuildLog.v('Building platform: ' + BuildArch.GetPlatformString());
    oxedBuildLog.v('Building into: ' + TargetPath);
    oxedBuildLog.v('Working area: ' + WorkArea);
@@ -1107,7 +1124,7 @@ begin
    BuildArch.GetPlatformString().Separate(cpu, os);
    build.TargetCPU := cpu;
    build.TargetOS := os;
-   build.FPCOptions.UnitOutputDirectory := oxedBuild.WorkArea  + 'lib';
+   build.FPCOptions.UnitOutputPath := oxedBuild.WorkArea  + 'lib';
 
    if(BuildType = OXED_BUILD_TASK_RECODE) then begin
       build.Options.Rebuild := false;
@@ -1207,10 +1224,9 @@ begin
 
          BuildInstalls.SetPlatform(platform^.Name);
 
-         log.v('Using platform: ' + BuildInstalls.CurrentPlatform^.Name + ', fpc ' + BuildInstalls.CurrentPlatform^.Version);
-
-         PreviousBuildArch := BuildArch;
-         exit(true);
+         log.v('Using platform: ' + BuildInstalls.CurrentPlatform^.Name +
+            ', fpc ' + BuildInstalls.CurrentPlatform^.Version +
+            ', location: ' + BuildInstalls.CurrentPlatform^.GetExecutablePath());
       end;
    end;
 
@@ -1311,6 +1327,7 @@ end;
 INITIALIZATION
    oxed.Init.Add('build', @oxedTBuildGlobal.Initialize, @oxedTBuildGlobal.Deinitialize);
 
+   TProcedures.InitializeValues(oxedBuild.OnStartRun);
    TProcedures.InitializeValues(oxedBuild.OnPrepare);
    TProcedures.InitializeValues(oxedBuild.OnDone);
 
