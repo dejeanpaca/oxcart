@@ -79,8 +79,8 @@ TYPE
 
       Units,
       Includes,
-      Symbols: TSimpleStringList;
-
+      Symbols,
+      Libraries,
       OptimizationLevels: TSimpleStringList;
 
       OnInitializeStart,
@@ -352,6 +352,8 @@ begin
    FPCOptions.CompilerUtilitiesPath := '';
    FPCOptions.DontUseDefaultConfig := false;
 
+   Libraries.Dispose();
+
    Options.IsLibrary := false;
    Options.Rebuild := false;
 end;
@@ -403,10 +405,11 @@ INITIALIZATION
 
    build.ConfigPath := 'default';
 
-   build.Units.Initialize(build.Units);
-   build.Includes.Initialize(build.Includes);
-   build.Symbols.Initialize(build.Symbols);
-   build.OptimizationLevels.Initialize(build.OptimizationLevels);
+   TSimpleStringList.Initialize(build.Units);
+   TSimpleStringList.Initialize(build.Includes);
+   TSimpleStringList.Initialize(build.Symbols);
+   TSimpleStringList.Initialize(build.OptimizationLevels);
+   TSimpleStringList.Initialize(build.Libraries);
 
    parameters.AddHandler(paramHandler, 'build', '--build-verbose', @processParam);
 
