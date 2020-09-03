@@ -11,13 +11,14 @@ UNIT oxeduAndroidBuild;
 INTERFACE
 
    USES
-      uStd, StringUtils, uFileUtils,
+      sysutils, uStd, StringUtils, uFileUtils,
       {app}
       appuEvents, appuActionEvents,
       {build}
       uBuildInstalls, uBuild,
       {oxed}
-      uOXED, oxeduBuild, oxeduAndroidPlatform, oxeduAndroidSettings;
+      uOXED, oxeduBuild, oxeduBuildLog,
+      oxeduAndroidPlatform, oxeduAndroidSettings;
 
 TYPE
 
@@ -98,6 +99,7 @@ procedure buildFinish();
 var
    arch: oxedTAndroidPlatformArchitecture;
    source,
+   appPath,
    targetPath: StdString;
 
 begin
@@ -110,11 +112,22 @@ begin
    source := oxedBuild.GetTargetExecutableFileName();
    targetPath := oxedAndroidSettings.GetProjectFilesPath();
 
-   targetPath := IncludeTrailingPathDelimiterNonEmpty(targetPath) + ReplaceDirSeparatorsf('app\libs\') +
-      arch.LibTarget + DirSep + 'libmain.so';
+   appPath := IncludeTrailingPathDelimiterNonEmpty(targetPath) + 'app';
 
-   if(FileUtils.Copy(source, targetPath) <= 0) then
-      oxedBuild.Fail('Failed to copy library from "' + source + '" to "' + targetPath + '"');
+   if(FileUtils.DirectoryExists(appPath)) then begin
+     targetPath := appPath + DirSep + 'libs' + DirSep + arch.LibTarget;
+
+     if(ForceDirectories(targetPath)) then begin
+         targetPath := targetPath + DirSep + 'libmain.so';
+
+         if(FileUtils.Copy(source, targetPath) > 0) then
+            oxedBuildLog.k('Copied library from "' + source + '" to "' + targetPath + '"')
+         else
+            oxedBuild.Fail('Failed to copy library from "' + source + '" to "' + targetPath + '"');
+     end else
+        oxedBuild.Fail('Cannot create libs directory at: ' + targetPath);
+   end else
+      oxedBuild.Fail('Cannot find android project app path at: ' + appPath);
 end;
 
 procedure init();
