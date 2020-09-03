@@ -12,7 +12,8 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uStd, uError, uLog, StringUtils,
       {ox}
-      oxuTexture,
+      oxuTexture
+      {$IFNDEF ANDROID},{$ENDIF}
       {$IFDEF X11}GLX, oxuX11Platform{$ENDIF}
       {$IFDEF WINDOWS}windows, oxuWindowsOS{$ENDIF}
       {$IFDEF COCOA}CocoaAll, oxuCocoaPlatform{$ENDIF};
@@ -29,7 +30,11 @@ TYPE
       oglPROFILE_UNKNOWN
    );
 
-   oglTRenderingContext = {$IFDEF WINDOWS}HGLRC{$ENDIF}{$IFDEF COCOA}NSOpenGLContext{$ENDIF}{$IFDEF X11}GLXContext{$ENDIF};
+   oglTRenderingContext =
+      {$IF DEFINED(WINDOWS)}HGLRC
+      {$ELSEIF DEFINED(COCOA)}NSOpenGLContext
+      {$ELSEIF DEFINED(X11)}GLXContext
+      {$ELSE}loopint{$ENDIF};
 
    { oglTVersion }
 
@@ -121,7 +126,11 @@ CONST
       )
    );
 
-   oglRenderingContextNull: oglTRenderingContext = {$IFDEF WINDOWS}0{$ENDIF}{$IFDEF X11}nil{$ENDIF}{$IFDEF COCOA}nil{$ENDIF};
+   oglRenderingContextNull: oglTRenderingContext =
+      {$IF DEFINED(WINDOWS)}0
+      {$ELSEIF DEFINED(X11)}nil
+      {$ELSEIF DEFINED(COCOA)}nil
+      {$ELSE}0{$ENDIF};
 
    {version which we expect}
    oglDefaultVersion: oglTVersion = (
@@ -455,7 +464,7 @@ begin
    {$ELSEIF defined(COCOA)}
    Result := rc <> nil;
    {$ELSE}
-   Result := false;
+   Result := rc <> 0;
    {$ENDIF}
 end;
 
