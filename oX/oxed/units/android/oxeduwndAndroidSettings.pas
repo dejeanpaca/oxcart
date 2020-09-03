@@ -16,7 +16,8 @@ INTERFACE
       uiWidgets, uiuWidget,
       wdguCheckbox, wdguDivisor, wdguInputBox, wdguLabel, wdguButton, wdguDropDownList,
       {oxed}
-      uOXED, oxeduPlatform, oxeduProject, oxeduwndProjectSettings,
+      uOXED, oxeduPlatform,
+      oxeduProject, oxeduwndProjectSettings,
       oxeduAndroidPlatform,  oxeduAndroidSettings, oxeduAndroidProjectFiles, oxeduAndroid;
 
 IMPLEMENTATION
@@ -70,6 +71,7 @@ begin
    oxedAndroidSettings.Project.PackageName := wdg.PackageName.GetText();
    oxedAndroidSettings.Project.ManualFileManagement := wdg.ManualFileManagement.Checked();
    oxedAndroidSettings.Project.ProjectFilesPath := wdg.ProjectFilesPath.GetText();
+   oxedAndroidSettings.Project.EmulatorCPUType := oxedTAndroidCPUType(wdg.EmulatorCPUType.CurrentItem);
 
    oxedPlatforms.Enable(oxedAndroidPlatform, wdg.Enabled.Checked());
 end;
@@ -82,6 +84,8 @@ begin
    wdg.ManualFileManagement.Check(oxedAndroidSettings.Project.ManualFileManagement);
    wdg.ProjectFilesPath.SetText(oxedAndroidSettings.Project.ProjectFilesPath);
    wdg.ProjectFilesPath.Enable(wdg.ManualFileManagement.Checked());
+
+   wdg.EmulatorCPUType.SelectItem(loopint(oxedAndroidSettings.GetCPUType()));
 end;
 
 function enableControl(cb: uiTWidget; what: loopint): loopint;

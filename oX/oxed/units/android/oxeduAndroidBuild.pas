@@ -36,9 +36,14 @@ IMPLEMENTATION
 { oxedTAndroidBuild }
 
 procedure oxedTAndroidBuild.BuildToProject();
+var
+   cpuType: loopint;
+
 begin
+   cpuType := loopint(oxedAndroidSettings.GetCPUType());
+
    oxedBuild.BuildTarget := OXED_BUILD_LIB;
-   oxedBuild.StartTask(OXED_BUILD_TASK_RECODE, oxedAndroidPlatform.Architectures.List[0]);
+   oxedBuild.StartTask(OXED_BUILD_TASK_RECODE, oxedAndroidPlatform.Architectures.List[cpuType]);
 end;
 
 procedure oxedTAndroidBuild.Initialize();
