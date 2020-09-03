@@ -6,13 +6,7 @@
 {$INCLUDE oxheader.inc}
 UNIT StringUtils;
 
-{$IF DEFINED(WINDOWS)}
-   {$IFDEF CPU64}
-      {$DEFINE EXCLUDE_EXTENDED}
-   {$ENDIF}
-{$ELSEIF DEFINED(ANDROID)}
-   {$DEFINE EXCLUDE_EXTENDED}
-{$ENDIF}
+{$INCLUDE oxtypesdefines.inc}
 
 INTERFACE
 
@@ -131,8 +125,12 @@ function sf(value: extended): string; inline;
 function sf(value: comp; dec: longint): string; inline;
 function sf(value: comp): string; inline;
 {$ENDIF}
+
+{$IFNDEF EXCLUDE_CURRENCY}
 function sf(value: currency; dec: longint): string; inline;
 function sf(value: currency): string; inline;
+{$ENDIF}
+
 function sf(value: boolean): string; inline;
 function sf(value: pointer): string; inline;
 
@@ -386,6 +384,8 @@ end;
 
 {$ENDIF}
 
+{$IFNDEF EXCLUDE_CURRENCY}
+
 function sf(value: currency; dec: longint): string;
 begin
    str(value : 0 : dec, Result);
@@ -395,6 +395,8 @@ function sf(value: currency): string;
 begin
    str(value, Result);
 end;
+
+{$ENDIF}
 
 function sf(value: boolean): string; inline;
 begin
