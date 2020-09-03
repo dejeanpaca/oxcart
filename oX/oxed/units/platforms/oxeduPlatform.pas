@@ -34,6 +34,13 @@ TYPE
       {default fpu type}
       BinUtilsPrefix: StdString;
 
+      {extension for the resulting executable}
+      ExecutableExtension,
+      {extension for the resulting library}
+      LibraryExtension,
+      {prefix for the resulting library}
+      LibraryPrefix: StdString;
+
       PlatformObject: TObject;
 
       constructor Create(const newName, newArch: StdString); virtual;

@@ -57,6 +57,10 @@ var
 
       {complete lib path}
       a.LibPath := archPath + DirSep + 'usr' + DirSep + 'lib';
+
+      {set extensions}
+      a.LibraryExtension := '.so';
+      a.LibraryPrefix := 'lib';
    end;
 
 begin
