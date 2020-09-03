@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, uLog, uFileUtils, StringUtils, uBuild,
       {oxed}
-      oxeduAndroidSettings;
+      oxeduProject, oxeduAndroidSettings;
 
 TYPE
    { oxedTAndroidProjectFiles }
@@ -19,6 +19,8 @@ TYPE
    oxedTAndroidProjectFiles = record
       {deploys project files to the configured project files path}
       procedure Deploy(const destination: StdString = '');
+      {replace values in files with project values}
+      procedure UpdateValues(const destination: StdString = '');
    end;
 
 VAR
@@ -55,6 +57,24 @@ begin
    log.i('Deploying android project files to: ' + path);
 
    FileUtils.CopyDirectory(source, path);
+end;
+
+procedure oxedTAndroidProjectFiles.UpdateValues(const destination: StdString);
+var
+   dest: StdString;
+   kv: array[0..2] of TStringPair;
+
+begin
+   dest := IncludeTrailingPathDelimiterNonEmpty(destination);
+
+   kv[0].Assign('$APP_NAME', oxedProject.Name);
+   kv[1].Assign('$PACKAGE_ID', oxedAndroidSettings.Project.PackageName);
+   kv[2].Assign('$TARGET_SDK_VERSION', sf(oxedAndroidSettings.Project.TargetVersion));
+
+   FileUtils.ReplaceInFile(dest + 'settings.gradle', kv);
+   FileUtils.ReplaceInFile(dest + 'app' + DirSep + 'build.gradle', kv);
+   FileUtils.ReplaceInFile(dest + ReplaceDirSeparatorsf('app\src\main\AndroidManifest.xml'), kv);
+   FileUtils.ReplaceInFile(dest + ReplaceDirSeparatorsf('app\src\main\res\values\strings.xml'), kv);
 end;
 
 END.

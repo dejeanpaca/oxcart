@@ -62,6 +62,7 @@ begin
    end;
 
    oxedAndroidProjectFiles.Deploy(path);
+   oxedAndroidProjectFiles.UpdateValues(path);
 end;
 
 procedure saveCallback();
