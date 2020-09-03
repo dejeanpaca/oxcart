@@ -296,11 +296,12 @@ INITIALIZATION
    oxFeatures.Add('audio', 'Audio support', 'OX_FEATURE_AUDIO');
 
    oxFeatures.Add('audio.al', 'OpenAL audio support', 'OX_FEATURE_AL_AUDIO')^.
-      SetDisabledPlatforms(['android']);
+      SetExcludedPlatforms(['android']);
 
    oxFeatures.Add('ui', 'UI support', 'OX_FEATURE_UI');
 
-   oxFeatures.Add('freetype', 'Freetype font loading support', 'OX_FEATURE_FREETYPE');
+   oxFeatures.Add('freetype', 'Freetype font loading support', 'OX_FEATURE_FREETYPE')^.
+      SetExcludedPlatforms(['android']);
 
    oxFeatures.Add('console', 'in-engine console', 'OX_FEATURE_CONSOLE')^.
       SetDisabledPlatforms(['android']);
