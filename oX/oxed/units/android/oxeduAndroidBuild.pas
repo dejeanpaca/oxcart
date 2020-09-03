@@ -110,9 +110,7 @@ begin
 
    {copy built library to the target folder}
    source := oxedBuild.GetTargetExecutableFileName();
-   targetPath := oxedAndroidSettings.GetProjectFilesPath();
-
-   appPath := IncludeTrailingPathDelimiterNonEmpty(targetPath) + 'app';
+   appPath := oxedAndroidSettings.GetAppPath();
 
    if(FileUtils.DirectoryExists(appPath)) then begin
      targetPath := appPath + DirSep + 'libs' + DirSep + arch.LibTarget;
