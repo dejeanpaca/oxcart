@@ -21,6 +21,7 @@ TYPE
 
 CONST
    EmptyShortString: string[1] = '';
+   DirSep = DirectorySeparator;
 
    {memory allocation alignment in bytes}
    dcMemoryBlockAlignment: longint  = 16;
