@@ -754,7 +754,7 @@ begin
       dtcENUM, dtcSET: begin
          val(s, unsigned, code);
          if(code = 0) then begin
-            Assign(unsigned);
+            longword(variable^) := unsigned;
             exit(true);
          end;
       end;
