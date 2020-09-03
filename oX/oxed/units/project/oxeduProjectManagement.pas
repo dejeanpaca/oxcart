@@ -39,6 +39,8 @@ TYPE
       OnOverwritten,
       {called when the project is being loaded}
       OnLoadProject,
+      {called when the project is done being loaded}
+      OnLoadedProject,
       {called when the project is being saved}
       OnSaveProject: TProcedures;
 
@@ -179,6 +181,8 @@ begin
          OnOpen.Call();
          oxedConsole.i('project > Opened ' + oxedProject.Name + ' (' + oxedProject.Identifier + ')');
 
+         OnLoadedProject.Call();
+
          if(oxedSettings.BuildOnProjectOpen) then
             appActionEvents.Queue(oxedActions.REBUILD);
 
@@ -200,6 +204,7 @@ INITIALIZATION
    TProcedures.InitializeValues(oxedProjectManagement.OnSaved);
    TProcedures.InitializeValues(oxedProjectManagement.OnOverwritten);
    TProcedures.InitializeValues(oxedProjectManagement.OnLoadProject);
+   TProcedures.InitializeValues(oxedProjectManagement.OnLoadedProject);
    TProcedures.InitializeValues(oxedProjectManagement.OnSaveProject);
 
 END.
