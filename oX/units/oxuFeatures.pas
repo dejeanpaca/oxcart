@@ -289,19 +289,30 @@ INITIALIZATION
    oxFeatures.Add('renderer.vulkan', 'Vulkan renderer', 'OX_RENDERER_VULKAN')^.IncludeByDefault := false;
 
    oxFeatures.Add('controllers', 'Controller support', 'OX_FEATURE_CONTROLLERS');
+
    oxFeatures.Add('html_log', 'html log support', 'OX_FEATURE_HTML_LOG')^.
       SetDisabledPlatforms(['android']);
+
    oxFeatures.Add('audio', 'Audio support', 'OX_FEATURE_AUDIO');
-   oxFeatures.Add('audio.al', 'OpenAL audio support', 'OX_FEATURE_AL_AUDIO');
+
+   oxFeatures.Add('audio.al', 'OpenAL audio support', 'OX_FEATURE_AL_AUDIO')^.
+      SetDisabledPlatforms(['android']);
+
    oxFeatures.Add('ui', 'UI support', 'OX_FEATURE_UI');
+
    oxFeatures.Add('freetype', 'Freetype font loading support', 'OX_FEATURE_FREETYPE');
+
    oxFeatures.Add('console', 'in-engine console', 'OX_FEATURE_CONSOLE')^.
       SetDisabledPlatforms(['android']);
+
    oxFeatures.Add('wnd.about', 'About window', 'OX_FEATURE_WND_ABOUT')^.
       SetDisabledPlatforms(['library', 'android']);
+
    oxFeatures.Add('wnd.settings', 'Settings window', 'OX_FEATURE_WND_SETTINGS')^.
       SetDisabledPlatforms(['library', 'android']);
+
    oxFeatures.Add('scene', 'Scene support', 'OX_FEATURE_SCENE');
+
    oxFeatures.Add('models', 'Model support', 'OX_FEATURE_MODELS');
 
 END.
