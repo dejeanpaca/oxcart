@@ -9,7 +9,7 @@ UNIT oxeduAndroidBuild;
 INTERFACE
 
    USES
-      StringUtils,
+      uStd, StringUtils,
       {app}
       appuEvents, appuActionEvents,
       {build}
@@ -72,7 +72,11 @@ begin
    arch := oxedTAndroidPlatformArchitecture(oxedBuild.BuildArch);
 
    build.FPCOptions.CompilerUtilitiesPath := IncludeTrailingPathDelimiterNonEmpty(oxedAndroidSettings.GetNDKPath()) +
-      'toolchains' +  DirectorySeparator + arch.ToolChainPath + DirectorySeparator;
+      'toolchains' +  DirSep + arch.ToolChainPath + DirSep;
+
+   if(arch.LibPath <> '') then
+      build.Libraries.Add(IncludeTrailingPathDelimiterNonEmpty(oxedAndroidSettings.GetNDKPath()) +
+      'platforms' + DirSep + 'android-' + sf(oxedAndroidSettings.Project.TargetVersion) + DirSep + 'arch-' + arch.LibPath + DirSep);
 end;
 
 procedure init();
