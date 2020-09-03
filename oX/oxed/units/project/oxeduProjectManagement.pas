@@ -102,6 +102,8 @@ begin
       {$ENDIF}
    end;
 
+   oxedProject.RecreateSessionDirectory();
+
    SetCurrentDir(oxedProject.Path);
 
    log.v('project > Saving: ' + oxedProject.Name);
@@ -163,8 +165,11 @@ begin
          log.v('project > Loading settings from ' + oxedProjectSettingsFile.GetFn());
          oxedProjectSettingsFile.Load();
          log.v('project > Loading: ' + oxedProject.Name);
+
          oxedProjectSessionFile.Load();
          log.v('project > Loaded session');
+         oxedProject.RecreateSessionDirectory();
+
          oxedProject.RecreateTempDirectory();
 
          {load other project data}

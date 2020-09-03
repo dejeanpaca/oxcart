@@ -45,6 +45,8 @@ TYPE
       ScenePath,
       {path to the temporary directory}
       TempPath,
+      {path to the session directory (session configuration)}
+      SessionPath,
       {last used scene}
       LastScene,
       {project organization}
@@ -99,6 +101,7 @@ TYPE
       function GetLibraryPath(includePath: boolean = true): StdString;
 
       procedure RecreateTempDirectory();
+      procedure RecreateSessionDirectory();
 
       {set the last scene path}
       procedure SetLastScene(const newPath: StdString);
@@ -110,6 +113,7 @@ TYPE
       function Valid(): boolean;
 
       function GetConfigFilePath(const fn: StdString): StdString;
+      function GetSessionFilePath(const fn: StdString): StdString;
       function GetTempFilePath(const fn: StdString): StdString;
 
       procedure AddPackage(const packageId: string);
@@ -156,6 +160,7 @@ begin
    log.v('Project path set to: ' + Path);
    ConfigPath := IncludeTrailingPathDelimiter(Path + oxPROJECT_DIRECTORY);
    TempPath := IncludeTrailingPathDelimiter(Path + oxPROJECT_TEMP_DIRECTORY);
+   SessionPath := IncludeTrailingPathDelimiter(Path + oxPROJECT_SESSION_DIRECTORY);
 end;
 
 procedure oxedTProject.SetIdentifier(const newIdentifier: StdString);
@@ -193,6 +198,19 @@ begin
 
      {$IFDEF WINDOWS}
      FileUtils.HideFile(oxedProject.TempPath);
+     writeln('Hidden: ', oxedProject.TempPath);
+     {$ENDIF}
+  end;
+end;
+
+procedure oxedTProject.RecreateSessionDirectory();
+begin
+  if(not FileUtils.DirectoryExists(oxedProject.SessionPath)) then begin
+     if(not CreateDir(oxedProject.SessionPath)) then
+        exit;
+
+     {$IFDEF WINDOWS}
+     FileUtils.HideFile(oxedProject.SessionPath);
      {$ENDIF}
   end;
 end;
@@ -220,6 +238,11 @@ end;
 function oxedTProject.GetConfigFilePath(const fn: StdString): StdString;
 begin
    Result := ConfigPath + fn;
+end;
+
+function oxedTProject.GetSessionFilePath(const fn: StdString): StdString;
+begin
+   Result := SessionPath + fn;
 end;
 
 function oxedTProject.GetTempFilePath(const fn: StdString): StdString;
