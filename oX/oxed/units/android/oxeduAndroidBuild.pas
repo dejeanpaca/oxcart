@@ -1,6 +1,8 @@
 {
    oxeduAndroidBuild
    Copyright (C) 2020. Dejan Boras
+
+   TODO: Fail build if missing ndk, sdk, or android project files
 }
 
 {$INCLUDE oxdefines.inc}
@@ -9,7 +11,7 @@ UNIT oxeduAndroidBuild;
 INTERFACE
 
    USES
-      uStd, StringUtils,
+      uStd, StringUtils, uFileUtils,
       {app}
       appuEvents, appuActionEvents,
       {build}
@@ -66,15 +68,23 @@ begin
    oxedAndroidBuild.BuildToProject();
 end;
 
+function isAndroidBuild(): oxedTAndroidPlatformArchitecture;
+begin
+   if(oxedBuild.BuildArch.PlatformObject <> oxedAndroidPlatform) then
+      exit(nil);
+
+   Result := oxedTAndroidPlatformArchitecture(oxedBuild.BuildArch);
+end;
+
 procedure buildStartRun();
 var
    arch: oxedTAndroidPlatformArchitecture;
 
 begin
-   if(oxedBuild.BuildArch.PlatformObject <> oxedAndroidPlatform) then
-      exit;
+   arch := isAndroidBuild();
 
-   arch := oxedTAndroidPlatformArchitecture(oxedBuild.BuildArch);
+   if(arch = nil) then
+      exit;
 
    build.FPCOptions.CompilerUtilitiesPath := IncludeTrailingPathDelimiterNonEmpty(oxedAndroidSettings.GetNDKPath()) +
       'toolchains' +  DirSep + arch.ToolChainPath + DirSep;
@@ -82,6 +92,29 @@ begin
    if(arch.LibPath <> '') then
       build.Libraries.Add(IncludeTrailingPathDelimiterNonEmpty(oxedAndroidSettings.GetNDKPath()) +
       'platforms' + DirSep + 'android-' + sf(oxedAndroidSettings.Project.TargetVersion) + DirSep + 'arch-' + arch.LibPath + DirSep);
+end;
+
+procedure buildFinish();
+var
+   arch: oxedTAndroidPlatformArchitecture;
+   source,
+   targetPath: StdString;
+
+begin
+   arch := isAndroidBuild();
+
+   if(arch = nil) then
+      exit;
+
+   {copy built library to the target folder}
+   source := oxedBuild.GetTargetExecutableFileName();
+   targetPath := oxedAndroidSettings.GetProjectFilesPath();
+
+   targetPath := IncludeTrailingPathDelimiterNonEmpty(targetPath) + ReplaceDirSeparatorsf('app\libs\') +
+      arch.LibTarget + DirSep + 'libmain.so';
+
+   if(FileUtils.Copy(source, targetPath) <= 0) then
+      oxedBuild.Fail('Failed to copy library from "' + source + '" to "' + targetPath + '"');
 end;
 
 procedure init();
@@ -92,6 +125,7 @@ end;
 INITIALIZATION
    oxedAndroidBuild.BUILD_TO_PROJECT_ACTION := appActionEvents.SetCallback(@buildToProject);
    oxedBuild.OnStartRun.Add(@buildStartRun);
+   oxedBuild.OnFinish.Add(@buildFinish);
    oxed.Init.Add('platform.android.build', @init);
 
 END.

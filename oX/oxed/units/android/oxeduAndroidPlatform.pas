@@ -28,8 +28,13 @@ TYPE
    end;
 
    oxedTAndroidPlatformArchitecture = class(oxedTPlatformArchitecture)
+      {toolchain path within the ndk (only the distinct part for this arch) }
       ToolChainPath,
-      LibPath: StdString;
+      {path in the ndk where we link to libraries (only the distinct part for this arch)}
+      LibPath,
+      {target folder for libraries within android project files for this architecture
+      (only folder name for the arch, not the whole path)}
+      LibTarget: StdString;
    end;
 
 VAR
@@ -87,6 +92,7 @@ begin
    arch.DefaultCPUType := 'armv7a';
    arch.BinUtilsPrefix := 'arm-linux-androideabi-';
    arch.ToolChainPath := 'arm-linux-androideabi-4.9';
+   arch.LibTarget := 'armeabi-v7a';
    completeArch(arch, 'arm');
 
    {aarch64}
@@ -94,6 +100,7 @@ begin
       AddArchitecture(oxedTAndroidPlatformArchitecture.Create('Android Arm x64', 'aarch64')));
    arch.BinUtilsPrefix := 'aarch64-linux-android-';
    arch.ToolChainPath := 'aarch64-linux-android-4.9';
+   arch.LibTarget := 'arm64-v8a';
    completeArch(arch, 'arm64');
 
    {x86}
@@ -102,6 +109,7 @@ begin
    arch.BinUtilsPrefix := 'i686-linux-android-';
    arch.ToolChainPath := 'arm-linux-androideabi-4.9';
    arch.ToolChainPath := 'x86-4.9';
+   arch.LibTarget := 'x86';
    completeArch(arch, 'x86');
 
    {x86-64}
@@ -109,6 +117,7 @@ begin
       AddArchitecture(oxedTAndroidPlatformArchitecture.Create('Android X86 x64', 'x86_64')));
    arch.BinUtilsPrefix := 'x86_64-linux-android-';
    arch.ToolChainPath := 'x86_64-4.9';
+   arch.LibTarget := 'x86_64';
    completeArch(arch, 'x86_64');
 end;
 
