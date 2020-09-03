@@ -24,10 +24,12 @@ CONST
    oxPROJECT_SESSION_DIRECTORY = '.oxsession';
    {project main source name}
    oxPROJECT_MAIN_SOURCE = 'project.pas';
+   {project library name}
+   oxPROJECT_LIBRARY_NAME = 'project';
    {project library source name}
-   oxPROJECT_LIB_SOURCE = 'project_lib.pas';
+   oxPROJECT_LIB_SOURCE = 'project.pas';
    {editor library source name}
-   oxPROJECT_EDITOR_LIB_SOURCE = 'editor_lib.pas';
+   oxPROJECT_EDITOR_LIB_SOURCE = 'editor.pas';
 
    {oxed project organization while running in the editor}
    oxedPROJECT_ORGANIZATION = 'oxed_projects';
@@ -40,14 +42,11 @@ CONST
    {project fpc config name}
    oxPROJECT_MAIN_FPC_CFG = 'project.fpc.cfg';
    {project library lpi name}
-   oxPROJECT_LIB_LPI = 'project_lib.lpi';
+   oxPROJECT_LIB_LPI = 'project.lpi';
    {project lib fpc config name}
-   oxPROJECT_LIB_FPC_CFG = 'project_lib.fpc.cfg';
+   oxPROJECT_LIB_FPC_CFG = 'project.fpc.cfg';
    {editor library lpi name}
-   oxPROJECT_EDITOR_LIB_LPI =  'editor_lib.lpi';
-
-   {project library name}
-   oxPROJECT_LIBRARY_NAME = 'project_lib';
+   oxPROJECT_EDITOR_LIB_LPI =  'editor.lpi';
 
    {window title used when a project is loaded}
    oxedPROJECT_WINDOW_TITLE  = 'OXED';
