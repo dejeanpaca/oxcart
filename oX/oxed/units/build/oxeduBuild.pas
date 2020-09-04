@@ -74,7 +74,9 @@ TYPE
       {called when build is finishing}
       OnFinish,
       {called when build is done}
-      OnDone: TProcedures;
+      OnDone,
+      {called when the build has failed}
+      OnFailed: TProcedures;
 
       {current build task type}
       BuildType: oxedTBuildTaskType;
@@ -90,6 +92,7 @@ TYPE
       BuildMechanism: oxedTBuildMechanism;
       {is the last build ok}
       BuildOk,
+      BuildFailed,
       {is it intended to run within the editor (yes, in case it is library and editor arch)}
       InEditor: boolean;
 
@@ -228,6 +231,9 @@ begin
    inherited;
 
    oxedBuild.OnDone.Call();
+
+   if(oxedBuild.BuildFailed) then
+      oxedBuild.OnFailed.Call();
 end;
 
 procedure buildInitialize();
@@ -1104,6 +1110,7 @@ begin
 
    {we start off assuming things are fine}
    BuildOk := true;
+   BuildFailed := false;
    BuildStart := Now;
 
    build.ResetOptions();
@@ -1309,6 +1316,7 @@ procedure oxedTBuildGlobal.Fail(const reason: StdString);
 begin
    DoneBuild();
    BuildOk := false;
+   BuildFailed := true;
    oxedBuildLog.e('Failed build: ' + reason);
 end;
 
@@ -1316,6 +1324,7 @@ procedure oxedTBuildGlobal.Reset();
 begin
    PreviousBuildArch := nil;
    BuildOk := false;
+   BuildFailed := false;
    InEditor := false;
    BuildType := OXED_BUILD_TASK_RECODE;
    BuildTarget := OXED_BUILD_LIB;
@@ -1354,6 +1363,7 @@ INITIALIZATION
    TProcedures.InitializeValues(oxedBuild.OnStartRun);
    TProcedures.InitializeValues(oxedBuild.OnFinish);
    TProcedures.InitializeValues(oxedBuild.OnPrepare);
+   TProcedures.InitializeValues(oxedBuild.OnFailed);
    TProcedures.InitializeValues(oxedBuild.OnDone);
 
    oxedBuild.BuildTarget := OXED_BUILD_LIB;
