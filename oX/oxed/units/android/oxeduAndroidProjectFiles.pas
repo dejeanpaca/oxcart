@@ -67,6 +67,8 @@ var
 begin
    dest := IncludeTrailingPathDelimiterNonEmpty(destination);
 
+   ZeroOut(kv, SizeOf(kv));
+
    kv[0].Assign('$APP_NAME', oxedProject.Name);
    kv[1].Assign('$PACKAGE_ID', oxedAndroidSettings.Project.PackageName);
    kv[2].Assign('$TARGET_SDK_VERSION', sf(oxedAndroidSettings.Project.TargetVersion));
