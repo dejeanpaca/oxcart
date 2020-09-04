@@ -10,7 +10,7 @@ INTERFACE
 
    USES
       uStd, uLog, StringUtils, uImage,
-      uFileHandlers, uFile, uFiles;
+      uFileHandlers, uFile;
 
 TYPE
    palPFileData = ^palTFileData;
