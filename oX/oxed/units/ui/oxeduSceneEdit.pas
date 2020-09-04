@@ -9,7 +9,7 @@ UNIT oxeduSceneEdit;
 INTERFACE
 
    USES
-      uStd, vmVector, vmCollision, uColors,
+      uStd, vmVector, vmCollision, vmQuaternions, uColors,
       {app}
       appuMouse, appuActionEvents, appuKeys,
       {ox}
@@ -293,7 +293,7 @@ begin
    distanceScale := GetDistanceScale(p);
 
    Transform.vPosition := p;
-   Transform.vRotation := rotation;
+   vmqFromEuler(rotation, Transform.vRotation);
    Transform.vScale.Assign(distanceScale, distanceScale, distanceScale);
    Transform.SetupMatrix();
 
@@ -390,7 +390,7 @@ begin
    entity.GetWorldRotation(rotation);
 
    Transform.vPosition := p;
-   Transform.vRotation := rotation;
+   vmqFromEuler(rotation, Transform.vRotation);
 
    distance := camera^.vPos.Distance(p);
    if(not oxedThingies.Glyphs3D) then

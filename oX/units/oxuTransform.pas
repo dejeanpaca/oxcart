@@ -12,7 +12,7 @@ UNIT oxuTransform;
 INTERFACE
 
    USES
-      Math, uStd, vmVector, uComponentProvider,
+      Math, uStd, vmVector, vmQuaternions, uComponentProvider,
       {oX}
       oxuRenderer, oxuRenderers, oxuSerialization;
 
@@ -22,8 +22,8 @@ TYPE
    oxTTransform = class(oxTSerializable)
       public
       vPosition,
-      vScale,
-      vRotation: TVector3f;
+      vScale: TVector3f;
+      vRotation: TQuaternion;
 
       Matrix,
       RotationMatrix: TMatrix4f;
@@ -56,8 +56,6 @@ TYPE
       procedure GetRotationMatrixY(w: single; out m: TMatrix4f); virtual;
       procedure GetRotationMatrixZ(w: single; out m: TMatrix4f); virtual;
 
-      procedure ClampRotation();
-
       procedure Scale(x, y, z: single); virtual;
       procedure GetScaleMatrix(x, y, z: single; out m: TMatrix4f); virtual;
       procedure Scale(s: single);
@@ -74,7 +72,6 @@ TYPE
       procedure GetEulerYZX(out v: TVector3f; var m: TMatrix4f);
       procedure GetEulerXYZ(out v: TVector3f; var m: TMatrix4f);
       procedure GetEuler(var x, y, z: single);
-      procedure GetEuler();
 
       {get a perspective frustum matrix}
       class function PerspectiveFrustum(l, r, b, t, n, f: single): TMatrix4f; static;
@@ -108,7 +105,7 @@ begin
    Matrix := vmmUnit4;
    RotationMatrix := vmmUnit4;
 
-   vRotation := vmvZero3f;
+   vRotation := vmqIdentity;
    vPosition := vmvZero3f;
    vScale := vmvOne3f;
 end;
@@ -116,14 +113,17 @@ end;
 procedure oxTTransform.SetupMatrix();
 var
    m: TMatrix4f;
+   v: TVector3f;
 
 begin
-   GetRotationMatrixY(vRotation[1], RotationMatrix);
+   vmqToEulerDeg(vRotation, v);
 
-   GetRotationMatrixZ(vRotation[2], m);
+   GetRotationMatrixY(v[1], RotationMatrix);
+
+   GetRotationMatrixZ(v[2], m);
    RotationMatrix := RotationMatrix * m;
 
-   GetRotationMatrixX(vRotation[0], m);
+   GetRotationMatrixX(v[0], m);
    RotationMatrix := RotationMatrix * m;
 
    Matrix := vmmUnit4;
@@ -176,7 +176,7 @@ end;
 
 procedure oxTTransform.Rotate(const angles: TVector3f);
 begin
-   vRotation := angles;
+   vmqFromEulerDeg(angles, vRotation);
 
    RotateY(angles[1]);
    RotateZ(angles[2]);
@@ -358,36 +358,6 @@ begin
    m[1][1] := cosw;
 end;
 
-procedure oxTTransform.ClampRotation();
-var
-   count: loopint;
-
-begin
-   if(vRotation[0] >= 360.0) then begin
-      count := abs(round(vRotation[0] / 360));
-      vRotation[0] := vRotation[0] - (count * 360);
-   end else if(vRotation[0] <= -360.0) then begin
-      count := abs(round(vRotation[0] / 360));
-      vRotation[0] := vRotation[0] + (count * 360);
-   end;
-
-   if(vRotation[1] >= 360.0) then begin
-      count := abs(round(vRotation[1] / 360));
-      vRotation[1] := vRotation[1] - (count * 360);
-   end else if(vRotation[1] <= -360.0) then begin
-      count := abs(round(vRotation[1] / 360));
-      vRotation[1] := vRotation[1] + (count * 360);
-   end;
-
-   if(vRotation[2] >= 360.0) then begin
-      count := abs(round(vRotation[2] / 360));
-      vRotation[2] := vRotation[2] - (count * 360);
-   end else if(vRotation[2] <= -360.0) then begin
-      count := abs(round(vRotation[2] / 360));
-      vRotation[2] := vRotation[2] + (count * 360);
-   end;
-end;
-
 procedure oxTTransform.Scale(x, y, z: single);
 var
    m: TMatrix4f;
@@ -538,11 +508,6 @@ begin
    x := v[0];
    y := v[1];
    z := v[2];
-end;
-
-procedure oxTTransform.GetEuler();
-begin
-   GetEuler(vRotation);
 end;
 
 class function oxTTransform.PerspectiveFrustum(l, r, b, t, n, f: single): TMatrix4f;

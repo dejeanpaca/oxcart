@@ -9,7 +9,7 @@ UNIT oxuEntity;
 INTERFACE
 
    USES
-      uStd, vmVector,
+      uStd, vmVector, vmQuaternions,
       {oX}
       oxuTransform, oxuComponent, oxuSerialization, oxuGlobalInstances;
 
@@ -89,6 +89,7 @@ TYPE
       {set rotation}
       procedure SetRotation(x, y, z: single);
       procedure SetRotation(const v: TVector3f);
+      procedure SetRotation(const v: TQuaternion);
       procedure RotateValues(x, y, z: Single);
 
       {set local rotatiin}
@@ -526,10 +527,7 @@ end;
 
 procedure oxTEntity.SetRotation(x, y, z: single);
 begin
-   vRotation[0] := x;
-   vRotation[1] := y;
-   vRotation[2] := z;
-
+   vmqFromEulerDeg(x, y, z, vRotation);
    SetupMatrix();
 
    UpdateComponentRotation();
@@ -537,21 +535,32 @@ end;
 
 procedure oxTEntity.SetRotation(const v: TVector3f);
 begin
-   vRotation := v;
-   ClampRotation();
+   vmqFromEulerDeg(v, vRotation);
 
    SetupMatrix();
 
    UpdateComponentRotation();
 end;
 
-procedure oxTEntity.RotateValues(x, y, z: Single);
+procedure oxTEntity.SetRotation(const v: TQuaternion);
 begin
-   vRotation[0] := vRotation[0] + x;
-   vRotation[1] := vRotation[1] + y;
-   vRotation[2] := vRotation[2] + z;
+   vRotation := v;
 
-   SetRotation(vRotation);
+   SetupMatrix();
+
+   UpdateComponentRotation();end;
+
+procedure oxTEntity.RotateValues(x, y, z: Single);
+var
+   v: TVector3;
+
+begin
+   vmqToEulerDeg(vRotation, v);
+   v[0] := v[0] + x;
+   v[1] := v[1] + y;
+   v[2] := v[2] + z;
+
+   SetRotation(v);
 end;
 
 procedure oxTEntity.RotateLocal(x, y, z: single);
@@ -637,16 +646,19 @@ end;
 procedure oxTEntity.GetWorldRotation(out p: TVector3f);
 var
    cur: oxTEntity;
+   v: TQuaternion;
 
 begin
    cur := self;
-   p := vmvZero3f;
+   v := vmqIdentity;
 
    repeat
-      p := p + cur.vRotation;
+      v := v + cur.vRotation;
 
       cur := cur.Parent;
    until (cur = nil);
+
+   vmqToEulerDeg(v, p);
 end;
 
 procedure oxTEntity.GetWorldScale(out p: TVector3f);
@@ -691,11 +703,12 @@ end;
 
 procedure oxTEntity.SetWorldRotation(const r: TVector3f);
 var
-   cR: TVector3f;
+   v,
+   cR: TQuaternion;
    cur: oxTEntity;
 
 begin
-   cR := vmvZero3f;
+   cR := vmqIdentity;
 
    if(self.Parent <> nil) then begin
       cur := self.Parent;
@@ -707,7 +720,8 @@ begin
       until (cur = nil);
    end;
 
-   SetRotation(r - CR);
+   vmqFromEuler(r, v);
+   SetRotation(v - cR);
 end;
 
 procedure oxTEntity.SetWorldScale(const s: TVector3f);
