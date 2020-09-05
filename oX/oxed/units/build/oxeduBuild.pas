@@ -1248,13 +1248,13 @@ begin
          platform := BuildInstalls.FindPlatform(BuildArch.GetPlatformString(), Build.BuiltWithVersion);
 
          if(platform = nil) then begin
-            log.e('Failed to find suitable compiler for ' + BuildArch.GetPlatformString() + ' and FPC ' + Build.BuiltWithVersion);
+            oxedBuildLog.e('Failed to find suitable compiler for ' + BuildArch.GetPlatformString() + ' and FPC ' + Build.BuiltWithVersion);
             exit(false);
          end;
 
          BuildInstalls.SetPlatform(platform^.Name);
 
-         log.v('Using platform: ' + BuildInstalls.CurrentPlatform^.Name +
+         oxedBuildLog.v('Using platform: ' + BuildInstalls.CurrentPlatform^.Name +
             ', fpc ' + BuildInstalls.CurrentPlatform^.Version +
             ', location: ' + BuildInstalls.CurrentPlatform^.GetExecutablePath());
       end;
