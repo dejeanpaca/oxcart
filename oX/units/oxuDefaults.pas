@@ -104,6 +104,7 @@ INTERFACE
       uiuDockableWindowContextMenu,
       uiuWindowContextMenu,
       uiuSkinLoader,
+      uiuCursorRenderer,
       {$ENDIF}
 
       {$IFDEF OX_FEATURE_PARAMS}
