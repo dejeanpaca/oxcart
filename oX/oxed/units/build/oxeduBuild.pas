@@ -543,6 +543,10 @@ begin
 
    {construct defaults}
    config.Construct();
+
+   {default target fpc units}
+   config.Add();
+   config.Add('## default target fpc units (' + BuildInstalls.CurrentPlatform^.Platform + ')');
    config.ConstructDefaultIncludes(BuildInstalls.CurrentPlatform^.GetBaseUnitsPath());
 
    {add packages}
