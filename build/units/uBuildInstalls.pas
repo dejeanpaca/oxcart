@@ -359,8 +359,7 @@ begin
    if(p = '') then
       exit('');
 
-   Result := p + DirSep + 'units' + DirSep + Platform + DirSep;
-   writeln('IT IS: ', Result);
+   Result := p + DirSep + 'units' + DirSep + Platform;
 end;
 
 function TBuildPlatform.Load(): boolean;
