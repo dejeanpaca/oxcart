@@ -60,6 +60,8 @@ TYPE
       OptimizationLevel: loopint;
 
       FPCOptions: record
+         {compiler mode}
+         CompilerMode: StdString;
          {where to output units (-FU)}
          UnitOutputPath,
          {what fpc config to use for building}
@@ -70,6 +72,12 @@ TYPE
          DontUseDefaultConfig: Boolean;
          {Allow goto and label (-Sg)}
          AllowGotoAndLabel: boolean;
+         {Allow C like operators (-Sc)}
+         CLikeOperators: boolean;
+         {Use reference counted strings (ansistrings, -Sh)}
+         ReferenceCountedString: boolean;
+         {Turn on inlining of routines marked as inline (-Si)}
+         TurnOnInlining: boolean;
       end;
 
       Options: record
@@ -349,11 +357,15 @@ begin
    IncludeDebugInfo := false;
    OptimizationLevel := 0;
 
+   FPCOptions.CompilerMode := 'objfpc';
    FPCOptions.UnitOutputPath := '';
    FPCOptions.UseConfig := '';
    FPCOptions.CompilerUtilitiesPath := '';
    FPCOptions.DontUseDefaultConfig := false;
    FPCOptions.AllowGotoAndLabel := true;
+   FPCOptions.CLikeOperators := true;
+   FPCOptions.ReferenceCountedString := true;
+   FPCOptions.TurnOnInlining := true;
 
    Libraries.Dispose();
 

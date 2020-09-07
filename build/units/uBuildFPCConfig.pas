@@ -169,6 +169,18 @@ begin
    AddSymbols(build.Symbols.List, build.Symbols.n);
    AddLibraries(build.Libraries.List, build.Libraries.n);
 
+   if(build.FPCOptions.CompilerMode <> '') then
+     config.Add('-M' + build.FPCOptions.CompilerMode);
+
+   if(build.FPCOptions.ReferenceCountedString) then
+      config.Add('-Sh');
+
+   if(build.FPCOptions.TurnOnInlining) then
+      config.Add('-Si');
+
+   if(build.FPCOptions.CLikeOperators) then
+      config.Add('-Sc');
+
    if(build.TargetOS <> '') then begin
       add('# target OS');
       add('-T' + build.TargetOS);
