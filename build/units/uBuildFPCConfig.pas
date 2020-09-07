@@ -169,6 +169,8 @@ begin
    AddSymbols(build.Symbols.List, build.Symbols.n);
    AddLibraries(build.Libraries.List, build.Libraries.n);
 
+   { compiler options }
+
    if(build.FPCOptions.CompilerMode <> '') then
      config.Add('-M' + build.FPCOptions.CompilerMode);
 
@@ -180,6 +182,28 @@ begin
 
    if(build.FPCOptions.CLikeOperators) then
       config.Add('-Sc');
+
+   { checks }
+
+   if(build.Checks.IO) then
+      config.Add('-Ci');
+
+   if(build.Checks.Range) then
+      config.Add('-Cr');
+
+   if(build.Checks.Overflow) then
+      config.Add('-Co');
+
+   if(build.Checks.Stack) then
+      config.Add('-Ct');
+
+   if(build.Checks.Assertions) then
+      config.Add('-Sa');
+
+   if(build.Checks.VerifyMethodCalls) then
+      config.Add('-CR');
+
+   { target }
 
    if(build.TargetOS <> '') then begin
       add('# target OS');
