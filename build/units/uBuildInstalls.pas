@@ -9,7 +9,7 @@ UNIT uBuildInstalls;
 INTERFACE
 
    USES
-      process, sysutils, uLog, uProcessHelpers,
+      process, sysutils, uLog, StringUtils, uProcessHelpers,
       uStd, uFPCHelpers, uBuild;
 
 TYPE
@@ -39,6 +39,9 @@ TYPE
       function Execute(const param: StdString; out output: StdString): boolean;
       class function Execute(const executablePath: StdString; const param: StdString; out output: StdString): boolean; static;
       function ReadVersion(): boolean;
+
+      {get assumed units path based on the fpc path and set cpu/os}
+      function GetBaseUnitsPath(): StdString;
 
       {load everything for this platform from the fpc executable}
       function Load(): boolean;
@@ -340,6 +343,24 @@ begin
 
    if(Result) then
       Version := v;
+end;
+
+function TBuildPlatform.GetBaseUnitsPath(): StdString;
+var
+   p: StdString;
+
+begin
+   p := ExcludeTrailingPathDelimiter(Path);
+
+   if(p = '') then
+      exit('');
+
+   p := GetParentDirectory(GetParentDirectory(p));
+   if(p = '') then
+      exit('');
+
+   Result := p + DirSep + 'units' + DirSep + Platform + DirSep;
+   writeln('IT IS: ', Result);
 end;
 
 function TBuildPlatform.Load(): boolean;
