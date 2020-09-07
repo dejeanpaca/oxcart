@@ -549,6 +549,12 @@ var
 begin
    TBuildFPCConfiguration.Initialize(config);
 
+   build.Checks.IO := true;
+   build.Checks.Range := true;
+   build.Checks.Overflow := true;
+   build.Checks.Stack := true;
+   build.Checks.Assertions := true;
+
    {construct defaults}
    config.Construct();
    config.ConstructDefaultIncludes(BuildInstalls.CurrentPlatform^.GetBaseUnitsPath());
@@ -794,12 +800,6 @@ begin
    end;
 
    {include checks}
-
-   parameters.Add('-Ci'); {I/O}
-   parameters.Add('-Cr'); {Range}
-   parameters.Add('-Co'); {Overflow}
-   parameters.Add('-Ct'); {Stack check}
-   parameters.Add('-Sa'); {Assertions}
 
    if(arch.DefaultCPUType <> '') then
       parameters.Add('-Cp' + arch.DefaultCPUType);
