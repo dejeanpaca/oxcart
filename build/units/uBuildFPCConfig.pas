@@ -250,6 +250,10 @@ begin
 
    if(build.Debug.External) then
       add('-Xg');
+
+   { optimization }
+   add('## optimization');
+   add('-O' + sf(build.Optimization.Level));
 end;
 
 procedure TBuildFPCConfiguration.ConstructDefaultIncludes(const basePath: StdString);
