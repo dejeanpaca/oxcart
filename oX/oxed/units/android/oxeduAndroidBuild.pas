@@ -114,7 +114,7 @@ begin
        exit;
    end;
 
-   path := build.FPCOptions.CompilerUtilitiesPath;
+   build.FPCOptions.CompilerUtilitiesPath := path;
 
    { set the library path, if any }
 
