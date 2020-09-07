@@ -28,6 +28,8 @@ TYPE
       {get fpc command line options for use with a config file}
       class function GetFPCCommandLineForConfig(): TSimpleStringList; static;
 
+      {add a new empty config line}
+      procedure Add(); inline;
       {add a new config line}
       procedure Add(const s: StdString); inline;
       {add a new config line}
@@ -142,6 +144,11 @@ begin
       Result.Add('@' + build.FPCOptions.UseConfig);
 end;
 
+procedure TBuildFPCConfiguration.Add();
+begin
+  Config.Add('');
+end;
+
 procedure TBuildFPCConfiguration.Add(const s: StdString);
 begin
    Config.Add(s);
@@ -158,11 +165,10 @@ begin
 end;
 
 procedure TBuildFPCConfiguration.Construct();
-
 begin
    Config.Dispose();
 
-   add('# unit output directory');
+   add('# paths');
 
    if(build.FPCOptions.UnitOutputPath <> '') then
       add('-FU' + build.FPCOptions.UnitOutputPath);
@@ -176,7 +182,7 @@ begin
    AddLibraries(build.Libraries.List, build.Libraries.n);
 
    { compiler options }
-
+   add();
    add('## compiler options');
 
    if(build.FPCOptions.CompilerMode <> '') then
@@ -195,7 +201,7 @@ begin
       add('-Sg');
 
    { checks }
-
+   add();
    add('## checks');
 
    if(build.Checks.IO) then
@@ -217,7 +223,7 @@ begin
       config.Add('-CR');
 
    { target }
-
+   add();
    add('## target');
 
    if(build.Target.OS <> '') then begin
@@ -240,6 +246,7 @@ begin
       add('-XP' + build.Target.BinUtilsPrefix);
 
    { debug }
+   add();
    add('## debug');
 
    if(build.Debug.Include) then
@@ -252,8 +259,17 @@ begin
       add('-Xg');
 
    { optimization }
+   add();
    add('## optimization');
    add('-O' + sf(build.Optimization.Level));
+
+   { custom options }
+   if(build.CustomOptions.n > 0) then begin
+      add();
+      add('## custom options');
+
+      FromList(build.CustomOptions.List, '',  build.CustomOptions.n);
+   end;
 end;
 
 procedure TBuildFPCConfiguration.ConstructDefaultIncludes(const basePath: StdString);
