@@ -108,11 +108,11 @@ begin
    if(build.FPCOptions.CompilerUtilitiesPath <> '') then
       AddArgument('-FD' + build.FPCOptions.CompilerUtilitiesPath);
 
-   if(build.TargetOS <> '') then
-      AddArgument('-T' + build.TargetOS);
+   if(build.Target.OS <> '') then
+      AddArgument('-T' + build.Target.OS);
 
-   if(build.TargetCPU <> '') then
-      AddArgument('-P' + build.TargetCPU);
+   if(build.Target.CPU <> '') then
+      AddArgument('-P' + build.Target.CPU);
 
    if(build.Debug.Include) then
       AddArgument('-g');
@@ -220,24 +220,24 @@ begin
 
    add('## target');
 
-   if(build.TargetOS <> '') then begin
+   if(build.Target.OS <> '') then begin
       add('# target OS');
-      add('-T' + build.TargetOS);
+      add('-T' + build.Target.OS);
    end;
 
-   if(build.TargetCPU <> '') then begin
+   if(build.Target.CPU <> '') then begin
       add('# target CPU');
-      add('-P' + build.TargetCPU);
+      add('-P' + build.Target.CPU);
    end;
 
-   if(build.CPUType <> '') then
-      add('-Cp' + build.CPUType);
+   if(build.Target.CPUType <> '') then
+      add('-Cp' + build.Target.CPUType);
 
-   if(build.FPUType <> '') then
-      add('-Cf' + build.FPUType);
+   if(build.Target.FPUType <> '') then
+      add('-Cf' + build.Target.FPUType);
 
-   if(build.BinUtilsPrefix <> '') then
-      add('-XP' + build.BinUtilsPrefix);
+   if(build.Target.BinUtilsPrefix <> '') then
+      add('-XP' + build.Target.BinUtilsPrefix);
 
    { debug }
    add('## debug');

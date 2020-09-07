@@ -1077,9 +1077,9 @@ begin
    build.FPCOptions.UnitOutputPath := oxedBuild.WorkArea  + 'lib';
 
    {setup base options}
-   build.CPUType := arch.DefaultCPUType;
-   build.FPUType := arch.DefaultFPUType;
-   build.BinUtilsPrefix := arch.BinUtilsPrefix;
+   build.Target.CPUType := arch.DefaultCPUType;
+   build.Target.FPUType := arch.DefaultFPUType;
+   build.Target.BinUtilsPrefix := arch.BinUtilsPrefix;
 
    if(oxedBuild.IsLibrary()) then
       build.FPCOptions.PositionIndependentCode := true;
