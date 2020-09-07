@@ -548,14 +548,26 @@ var
 
 begin
    TBuildFPCConfiguration.Initialize(config);
-   config.Construct();
 
+   {construct defaults}
+   config.Construct();
+   config.ConstructDefaultIncludes(BuildInstalls.CurrentPlatform^.GetBaseUnitsPath());
+
+   {add packages}
    InsertPackagesIntoConfig(config);
 
+   {add symbols}
    config.Add('');
 
    symbols := getSymbols();
    config.AddSymbols(symbols.List, symbols.n);
+
+   config.Add('-Mobjfpc');
+   config.Add('-Sh');
+   config.Add('-Si');
+   config.Add('-Sc');
+
+   { write config file }
 
    fn := oxedBuild.WorkArea + oxedBuild.Props.ConfigFile;
 
@@ -765,9 +777,13 @@ var
 begin
    arch := oxedBuild.BuildArch;
 
+   {don't use default FPC config}
+   build.FPCOptions.DontUseDefaultConfig := true;
+   {use our config}
    build.FPCOptions.UseConfig := oxedBuild.WorkArea + oxedBuild.Props.ConfigFile;
 
    parameters := TBuildFPCConfiguration.GetFPCCommandLineForConfig();
+
    {optimization level}
    parameters.Add('-O1');
    {verbosity level}
