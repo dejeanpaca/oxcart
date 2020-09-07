@@ -53,8 +53,15 @@ TYPE
       TargetOS,
       TargetCPU: StdString;
 
-      {include debug information}
-      IncludeDebugInfo: Boolean;
+      {debug information}
+      Debug: record
+         {include debug information}
+         Include,
+         {include line info unit}
+         LineInfo,
+         {include debug information from an external file}
+         External: boolean;
+      end;
 
       {selected optimization level}
       OptimizationLevel: loopint;
@@ -363,7 +370,9 @@ procedure TBuildSystem.ResetOptions();
 begin
    TargetOS := '';
    TargetCPU := '';
-   IncludeDebugInfo := false;
+   Debug.Include := false;
+   Debug.LineInfo := false;
+   Debug.External := false;
    OptimizationLevel := 0;
 
    FPCOptions.CompilerMode := 'objfpc';
