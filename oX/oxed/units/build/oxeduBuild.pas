@@ -759,11 +759,8 @@ procedure BuildFPC();
 var
    i: loopint;
    parameters: TSimpleStringList;
-   arch: oxedTPlatformArchitecture;
 
 begin
-   arch := oxedBuild.BuildArch;
-
    {don't use default FPC config}
    build.FPCOptions.DontUseDefaultConfig := true;
    {use our config}
@@ -777,22 +774,6 @@ begin
    parameters.Add('-vewnhi');
    {output FPC logo}
    parameters.Add('-l');
-
-   {include checks}
-
-   if(arch.DefaultCPUType <> '') then
-      parameters.Add('-Cp' + arch.DefaultCPUType);
-
-   if(arch.DefaultFPUType <> '') then
-      parameters.Add('-Cf' + arch.DefaultFPUType);
-
-   if(arch.BinUtilsPrefix <> '') then
-      parameters.Add('-XP' + arch.BinUtilsPrefix);
-
-   if(oxedBuild.IsLibrary()) then begin
-      {set position independent code}
-      parameters.Add('-Cg');
-   end;
 
    if(parameters.n > 0) then begin
       oxedBuildLog.Collapsed('FPC parameters for build');
@@ -1083,11 +1064,13 @@ end;
 
 procedure SetupFPCBuildOptions();
 var
+   arch: oxedTPlatformArchitecture;
    cpu,
    os: StdString;
 
 begin
-   oxedBuild.BuildArch.GetPlatformString().Separate(cpu, os);
+   arch := oxedBuild.BuildArch;
+   arch.GetPlatformString().Separate(cpu, os);
 
    {setup build options}
    build.ResetOptions();
@@ -1095,6 +1078,15 @@ begin
 
    build.FPCOptions.UnitOutputPath := oxedBuild.WorkArea  + 'lib';
 
+   {setup base options}
+   build.CPUType := arch.DefaultCPUType;
+   build.FPUType := arch.DefaultFPUType;
+   build.BinUtilsPrefix := arch.BinUtilsPrefix;
+
+   if(oxedBuild.IsLibrary()) then
+      build.FPCOptions.PositionIndependentCode := true;
+
+   {debug checks}
    build.Checks.IO := true;
    build.Checks.Range := true;
    build.Checks.Overflow := true;
