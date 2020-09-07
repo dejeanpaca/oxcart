@@ -181,6 +181,11 @@ begin
       add('# include debug info');
       add('-g');
    end;
+
+   if(build.FPCOptions.AllowGotoAndLabel) then begin
+      add('# allow goto and label');
+      add('-Sg');
+   end;
 end;
 
 procedure TBuildFPCConfiguration.FromList(const list: TStringArray; const prefix: StdString; count: loopint);

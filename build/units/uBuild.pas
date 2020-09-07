@@ -68,6 +68,8 @@ TYPE
          CompilerUtilitiesPath: StdString;
          {don't use default fpc config file}
          DontUseDefaultConfig: Boolean;
+         {Allow goto and label (-Sg)}
+         AllowGotoAndLabel: boolean;
       end;
 
       Options: record
@@ -351,6 +353,7 @@ begin
    FPCOptions.UseConfig := '';
    FPCOptions.CompilerUtilitiesPath := '';
    FPCOptions.DontUseDefaultConfig := false;
+   FPCOptions.AllowGotoAndLabel := true;
 
    Libraries.Dispose();
 
