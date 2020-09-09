@@ -69,8 +69,8 @@ TYPE
 
       function Add(const name, description, symbol: string): oxPFeatureDescriptor;
       function BuildFeatureSymbols(platform: string; isLibrary: boolean = false): TStringArray;
-      function GetSupportedFeatures(platform: string; isLibrary: boolean = false): oxTFeaturePDescriptorList;
-      function IsSupportedFeature(const feature: oxTFeatureDescriptor;
+      function GetSupported(platform: string; isLibrary: boolean = false): oxTFeaturePDescriptorList;
+      function IsSupported(const feature: oxTFeatureDescriptor;
          platform: string; isLibrary: boolean = false): boolean;
 
       {find a feature by its name}
@@ -236,7 +236,7 @@ var
    plist: oxTFeaturePDescriptorList;
 
 begin
-   plist := GetSupportedFeatures(platform, isLibrary);
+   plist := GetSupported(platform, isLibrary);
    Result := nil;
 
    if(plist.n > 0) then begin
@@ -248,7 +248,7 @@ begin
    end;
 end;
 
-function oxTFeaturesGlobal.GetSupportedFeatures(platform: string; isLibrary: boolean): oxTFeaturePDescriptorList;
+function oxTFeaturesGlobal.GetSupported(platform: string; isLibrary: boolean): oxTFeaturePDescriptorList;
 var
    i: loopint;
 
@@ -256,12 +256,12 @@ begin
    Result.Initialize(Result);
 
    for i := 0 to List.n - 1 do begin
-      if(IsSupportedFeature(List.List[i], platform, isLibrary)) then
+      if(IsSupported(List.List[i], platform, isLibrary)) then
          Result.Add(@List.List[i]);
    end;
 end;
 
-function oxTFeaturesGlobal.IsSupportedFeature(const feature: oxTFeatureDescriptor;
+function oxTFeaturesGlobal.IsSupported(const feature: oxTFeatureDescriptor;
    platform: string; isLibrary: boolean): boolean;
 
 begin
