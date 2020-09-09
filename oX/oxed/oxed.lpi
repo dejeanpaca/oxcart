@@ -78,7 +78,6 @@
       <CustomOptions Value="-dDEBUG
 -dOXED
 -dOX_DEBUG
--dOX_PROJECT_DEFINES
 -dOX_LIBRARY_SUPPORT"/>
     </Other>
   </CompilerOptions>
