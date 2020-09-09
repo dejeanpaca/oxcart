@@ -5,12 +5,13 @@
    Created on:    27.07.2010.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT uSimpleParser;
 
 INTERFACE
 
-   USES uStd, StringUtils, uParserBase;
+   USES
+      uStd, StringUtils, uParserBase, uFileUtils;
 
 CONST
    MAX_COMMENT_LEVEL                = 31;
@@ -68,7 +69,49 @@ TYPE
       class procedure InitKeyValue(out p: TParseData); static;
    end;
 
+   { TSimpleParserGlobal }
+
+   TSimpleParserGlobal = record
+      {load file strings as a list of key value pairs}
+      function LoadKeyValues(const fn: StdString; var kv: TStringPairs; const separator: char = '='): loopint;
+   end;
+
+VAR
+   SimpleParser: TSimpleParserGlobal;
+
 IMPLEMENTATION
+
+function loadKeyValuesParse(var p: TParseData): boolean;
+var
+   kv: PStringPairs;
+   pair: TStringPair;
+
+begin
+   kv := p.ExternalData;
+
+   pair[0] := p.Key;
+   pair[1] := p.Value;
+
+   kv^.Add(pair);
+
+   Result := true;
+end;
+
+{ TSimpleParserGlobal }
+
+function TSimpleParserGlobal.LoadKeyValues(const fn: StdString; var kv: TStringPairs; const separator: char = '='): loopint;
+var
+   parse: TParseData;
+
+begin
+   Result := 0;
+
+   TParseData.InitKeyValue(parse);
+   parse.KeyValueSeparator := separator;
+   parse.ExternalData := @kv;
+
+   parse.Read(fn, TParseMethod(@loadKeyValuesParse));
+end;
 
 class procedure TParseData.Init(out p: TParseData);
 begin
@@ -92,27 +135,28 @@ begin
    if (ReadEmptyLines) then
       minimumLength := -1;
 
+   if(ReadMethod = nil) then
+      exit(f.Error = 0);
+
    repeat
       f.Readln(CurrentLine);
-      if(f.Error <> 0) then break;
+
+      if(f.Error <> 0) then
+         break;
 
       {strip white space}
       if(StripWhitespace) then
          StringUtils.StripWhiteSpace(CurrentLine);
 
-      if(KeyValue) then
-         GetKeyValue(CurrentLine, Key, Value, KeyValueSeparator);
+      if(Length(CurrentLine) > minimumLength) then begin
+         if(KeyValue) then
+            GetKeyValue(CurrentLine, Key, Value, KeyValueSeparator);
 
-      if(ReadMethod <> nil) then begin
-         if(Length(CurrentLine) > minimumLength) then begin
-            if(not ReadMethod(self)) then begin
-               SetError(eSIMPLE_PARSER_PARSE_ROUTINE, 'Read parser method failed');
-               break;
-            end;
+         if(not ReadMethod(self)) then begin
+            SetError(eSIMPLE_PARSER_PARSE_ROUTINE, 'Read parser method failed');
+             break;
          end;
-      end else
-         {stop if ReadMethod is unset}
-         break;
+      end;
    until f.EOF();
 
    Result := f.Error = 0;
