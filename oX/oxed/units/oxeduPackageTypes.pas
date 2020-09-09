@@ -12,6 +12,9 @@ INTERFACE
       uStd, StringUtils, uFileUtils, uSimpleParser,
       oxuFeatures;
 
+CONST
+   OX_PACKAGE_PROPS_FILE_NAME = '.oxpackage';
+
 TYPE
    oxedTPackageUnit = record
       Name,
@@ -88,7 +91,7 @@ var
    values: TStringArray;
 
 begin
-   fn := IncludeTrailingPathDelimiterNonEmpty(Path) + '.package';
+   fn := IncludeTrailingPathDelimiterNonEmpty(Path) + OX_PACKAGE_PROPS_FILE_NAME;
    TStringPairs.Initialize(kv);
 
    if(FileUtils.Exists(fn) > 0) then begin
