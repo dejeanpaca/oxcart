@@ -5,7 +5,7 @@
    Handles a test program, compiles and runs it and reports Results.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT uTestProgram;
 
 INTERFACE

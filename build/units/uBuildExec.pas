@@ -11,7 +11,7 @@
    - Laz() method building will use the given lpi file and lazbuild to do the build, and the set Options are ignored.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT uBuildExec;
 
 INTERFACE
