@@ -6,6 +6,7 @@
 {$INCLUDE oxheader.inc}
 UNIT StringUtils;
 
+{$INCLUDE oxutf8.inc}
 {$INCLUDE oxtypesdefines.inc}
 
 INTERFACE
