@@ -3,7 +3,7 @@
    Copyright (c) 2017. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuThreadTask;
 
 INTERFACE

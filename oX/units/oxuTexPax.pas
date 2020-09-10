@@ -5,7 +5,7 @@
    Reference: https://github.com/jakesgordon/bin-packing/
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuTexPax;
 
 INTERFACE

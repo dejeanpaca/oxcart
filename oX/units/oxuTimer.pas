@@ -3,7 +3,7 @@
    Copyright (C) 2008. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuTimer;
 
 INTERFACE

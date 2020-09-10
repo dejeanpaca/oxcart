@@ -12,7 +12,7 @@
    still processed by the app and UI before they reach the oX window control.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuGlobalKeys;
 
 INTERFACE

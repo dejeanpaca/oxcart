@@ -3,7 +3,7 @@
    Copyright (c) 2019. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT uiuKeyMappings;
 
 INTERFACE

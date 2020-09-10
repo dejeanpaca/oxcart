@@ -3,7 +3,7 @@
    Copyright (c) 2011. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuWindow;
 
 INTERFACE

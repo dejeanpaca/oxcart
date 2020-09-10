@@ -5,7 +5,7 @@
    TODO: Support for multiple channels
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuMesh;
 
 INTERFACE

@@ -5,7 +5,7 @@
    Manage input devices via console
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuconInput;
 
 INTERFACE

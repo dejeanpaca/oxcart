@@ -5,7 +5,7 @@
    TODO: Implement more detailed al error checking, in a similar manner the gl renderer does it
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuAL;
 
 INTERFACE

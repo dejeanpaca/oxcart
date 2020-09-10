@@ -5,7 +5,7 @@
    TODO: Add normals and texture coords for meshes missing this
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxumPrimitive;
 
 INTERFACE

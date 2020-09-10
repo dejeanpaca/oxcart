@@ -3,7 +3,7 @@
    Copyright (c) 2018. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuLightComponent;
 
 INTERFACE

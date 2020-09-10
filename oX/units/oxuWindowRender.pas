@@ -3,7 +3,7 @@
    Copyright (c) 2020. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuWindowRender;
 
 INTERFACE

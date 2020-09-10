@@ -5,7 +5,7 @@
    TODO: Implement file icons
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT wdguFileList;
 
 INTERFACE

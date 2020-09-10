@@ -3,7 +3,7 @@
    Copyright (C) 2007. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuCamera;
 
 INTERFACE

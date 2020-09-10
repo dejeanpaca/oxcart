@@ -3,7 +3,7 @@
    Copyright (C) 2019. Dejan Boras
 }
 
-{$INCLUDE oxheader.inc}
+{$INCLUDE oxdefines.inc}
 UNIT oxeduwndProjectFeatures;
 
 INTERFACE

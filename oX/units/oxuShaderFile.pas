@@ -3,7 +3,7 @@
    Copyright (C) 2010. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuShaderFile;
 
 INTERFACE

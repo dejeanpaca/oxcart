@@ -3,7 +3,7 @@
    Copyright (C) 2011. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxumMD2;
 
 {MD2 Loader(Quake 2's model file).}

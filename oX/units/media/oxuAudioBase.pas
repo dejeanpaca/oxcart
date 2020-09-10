@@ -3,7 +3,7 @@
    Copyright (C) 2012. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuAudioBase;
 
 INTERFACE

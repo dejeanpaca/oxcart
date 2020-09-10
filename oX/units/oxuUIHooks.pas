@@ -3,7 +3,7 @@
    Copyright (c) 2014. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuUIHooks;
 
 INTERFACE

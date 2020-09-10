@@ -5,7 +5,7 @@
    TODO: Make files selectable, and add file type filters
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuwndFileDialog;
 
 INTERFACE

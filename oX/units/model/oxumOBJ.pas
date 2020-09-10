@@ -5,7 +5,7 @@
    TODO: Maybe try to optimize the wasUseMtl := false redundancy
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxumOBJ;
 
 INTERFACE

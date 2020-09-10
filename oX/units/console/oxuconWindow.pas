@@ -5,7 +5,7 @@
    Configure windows via the console
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuconWindow;
 
 INTERFACE

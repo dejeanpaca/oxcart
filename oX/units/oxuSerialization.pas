@@ -3,7 +3,7 @@
    Copyright (C) 2017. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}{$M+}
+{$INCLUDE oxheader.inc}
 UNIT oxuSerialization;
 
 {$INCLUDE oxtypesdefines.inc}

@@ -5,7 +5,7 @@
    Note: OX_EXTRA_SHADER_LOGGING can be used to make the unit output extra logging information.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuShaders;
 
 INTERFACE
