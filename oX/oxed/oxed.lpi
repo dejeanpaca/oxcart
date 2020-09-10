@@ -76,9 +76,9 @@
     </Linking>
     <Other>
       <CustomOptions Value="-dDEBUG
--dOXED
 -dOX_DEBUG
--dOX_LIBRARY_SUPPORT"/>
+-dOX_LIBRARY_SUPPORT
+-dOXED"/>
     </Other>
   </CompilerOptions>
   <Debugging>
