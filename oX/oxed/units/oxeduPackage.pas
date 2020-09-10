@@ -25,9 +25,7 @@ TYPE
       {display name}
       Name,
       {path to package}
-      Path,
-      {evaluated path}
-      EvaluatedPath: StdString;
+      Path: StdString;
 
       Units,
       IncludeFiles: oxedTPackagePaths;
