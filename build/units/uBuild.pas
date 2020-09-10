@@ -3,7 +3,7 @@
    Copyright (C) 2015. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT uBuild;
 
 INTERFACE
