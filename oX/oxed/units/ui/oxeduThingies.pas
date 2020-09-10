@@ -5,7 +5,7 @@
    TODO: Remove lists since we can have the edit renderers in the oxed components list anyways
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxeduThingies;
 
 INTERFACE

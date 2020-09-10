@@ -5,7 +5,7 @@
    TODO: Ignore oX data files which are not used
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxeduAssets;
 
 INTERFACE

@@ -3,7 +3,7 @@
    Copyright (C) 2016. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxeduwndSettings;
 
 INTERFACE

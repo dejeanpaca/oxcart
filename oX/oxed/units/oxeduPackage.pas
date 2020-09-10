@@ -6,7 +6,7 @@
    - Package identifier starting with @ means it's a path, not a package name
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxeduPackage;
 
 INTERFACE
