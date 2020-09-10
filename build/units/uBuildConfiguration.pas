@@ -27,6 +27,9 @@ TYPE
       {units base path group}
       dvgUnitsBase: TDVarGroup;
 
+      {should we load default units}
+      DoLoadUnits: boolean;
+
       {load configuration}
       procedure LoadConfiguration();
       {save location configuration}
@@ -400,7 +403,8 @@ end;
 
 procedure loadUnits();
 begin
-   BuildConfiguration.LoadUnits();
+   if(BuildConfiguration.DoLoadUnits) then
+      BuildConfiguration.LoadUnits();
 end;
 
 INITIALIZATION
@@ -457,4 +461,6 @@ INITIALIZATION
 
    build.OnLoadConfiguration.Add(@loadConfiguration);
    build.OnInitialize.Add(@loadUnits);
+
+   BuildConfiguration.DoLoadUnits := true;
 END.
