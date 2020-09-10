@@ -116,15 +116,7 @@ begin
 end;
 
 procedure onStart();
-var
-   i: loopint;
-
 begin
-   oxedProject.MainPackage.DisposeList();
-
-   for i := 0 to oxedProject.Packages.n - 1 do begin
-      oxedProject.Packages.List[i].DisposeList();
-   end;
 
    {get command line parameters with room for one more}
    oxedPasScanner.FpcCommandLine := TBuildFPCConfiguration.GetFPCCommandLine(1);

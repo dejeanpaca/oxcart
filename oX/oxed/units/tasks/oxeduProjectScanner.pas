@@ -15,7 +15,8 @@ INTERFACE
       {ox}
       oxuRunRoutines, oxuThreadTask, oxuRun,
       {oxed}
-      uOXED, oxeduPackage, oxeduProject, oxeduProjectManagement, oxeduTasks, oxeduActions;
+      uOXED, oxeduPackage, oxeduProject, oxeduProjectManagement, oxeduTasks, oxeduActions,
+      oxeduAssets;
 
 TYPE
    { oxedTProjectScannerTask }
@@ -188,6 +189,7 @@ begin
    log.v('Project scan started ...');
 
    try
+      scanPackage(oxedAssets.oxPackage);
       scanPackage(oxedProject.MainPackage);
 
       for i := 0 to oxedProject.Packages.n - 1 do begin
@@ -207,8 +209,18 @@ begin
 end;
 
 procedure oxedTProjectScannerTask.ThreadStart();
+var
+   i: loopint;
+
 begin
    inherited;
+
+   oxedProject.MainPackage.DisposeList();
+   oxedAssets.oxPackage.DisposeList();
+
+   for i := 0 to oxedProject.Packages.n - 1 do begin
+      oxedProject.Packages.List[i].DisposeList();
+   end;
 
    oxedProjectScanner.OnStart.Call();
 end;
