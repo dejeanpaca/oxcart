@@ -2,28 +2,7 @@
 
 {$INCLUDE ./oxheader.inc}
 
-{$DEFINE OX_PLATFORM_SUPPORT}
-
-
-{if debug is not defined, and this is not a relase version, define DEBUG symbol}
-{$IFNDEF OX_DEBUG}
-   {$IFNDEF OX_RELEASE}
-      {$DEFINE OX_DEBUG}
-   {$ENDIF}
-{$ENDIF}
-
-{$IFNDEF DEBUG}
-   {$IFNDEF OX_RELEASE}
-      {$DEFINE DEBUG}
-   {$ENDIF}
-{$ENDIF}
-
 { HANDLE LIBRARY }
-
-{$IFDEF OX_LIBRARY}
-   {$UNDEF OX_PLATFORM_SUPPORT}
-   {$DEFINE OX_LIBRARY_SUPPORT}
-{$ENDIF}
 
 {$INCLUDE oxfeaturedefines.inc}
 
