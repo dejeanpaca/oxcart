@@ -9,7 +9,9 @@ UNIT uBuildInstalls;
 INTERFACE
 
    USES
-      process, sysutils, uLog, StringUtils, uProcessHelpers,
+      process, sysutils, uLog,
+      {$IFDEF WINDOWS}StringUtils,{$ENDIF}
+      uProcessHelpers,
       uStd, uFPCHelpers, uBuild;
 
 TYPE
@@ -346,10 +348,15 @@ begin
 end;
 
 function TBuildPlatform.GetBaseUnitsPath(): StdString;
+{$IFDEF WINDOWS}
 var
    p: StdString;
+{$ENDIf}
 
 begin
+   Result := '';
+
+   {$IFDEF WINDOWS}
    p := ExcludeTrailingPathDelimiter(Path);
 
    if(p = '') then
@@ -360,6 +367,11 @@ begin
       exit('');
 
    Result := p + DirSep + 'units' + DirSep + Platform;
+   {$ENDIF}
+
+   {$IFDEF LINUX}
+   Result := '/usr/lib64/fpc/' + Version + '/units/' + Platform;
+   {$ENDIF}
 end;
 
 function TBuildPlatform.Load(): boolean;
