@@ -63,6 +63,8 @@ TYPE
       function NewPath(const p: StdString): oxedPPackagePath;
       {find an existing path (if any)}
       function FindPackagePath(const p: StdString): oxedPPackagePath;
+      {find unit path (if any)}
+      function FindPackageUnit(const p: StdString): oxedPPackagePath;
 
       {dispose of all the paths}
       procedure Destroy();
@@ -184,6 +186,27 @@ begin
       for i := 0 to n - 1 do begin
          if(List[i].Path = p) then
             exit(@List[i]);
+      end;
+   end;
+
+   Result := nil;
+end;
+
+function oxedTPackagePathsHelper.FindPackageUnit(const p: StdString): oxedPPackagePath;
+var
+   i,
+   j: loopint;
+   path: oxedPPackagePath;
+
+begin
+   if(n > 0) then begin
+      for i := 0 to n - 1 do begin
+         path := @List[i];
+
+         for j := 0 to path^.Units.n - 1 do begin
+            if(path^.Units.List[j] = p) then
+               exit(path);
+         end;
       end;
    end;
 

@@ -748,7 +748,7 @@ begin
 
    {check if main unit exists}
    if(oxedProject.MainUnit <> '') then begin
-      if(oxedProject.MainPackage.Units.FindPackagePath(oxedProject.MainUnit) = nil) then begin
+      if(oxedProject.MainPackage.Units.FindPackageUnit(oxedProject.MainUnit) = nil) then begin
          oxedBuildLog.e('Specified main unit ' + oxedProject.MainUnit + ' not found.');
          exit(false);
       end;
