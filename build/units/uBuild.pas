@@ -62,12 +62,14 @@ TYPE
 
       {debug information}
       Debug: record
-         {include debug information}
+         {include debug information (-g))}
          Include,
-         {include line info unit}
+         {include line info unit (-gl)}
          LineInfo,
-         {include debug information from an external file}
-         External: boolean;
+         {include debug information from an external file (-Xg)}
+         External,
+         {generate debug code for valgrind (-gv)}
+         Valgrind: boolean;
       end;
 
       {selected optimization level}
