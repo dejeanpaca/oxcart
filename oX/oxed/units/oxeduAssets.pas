@@ -15,7 +15,7 @@ INTERFACE
       {ox}
       oxuPaths,
       {oxed}
-      uOXED, oxeduPackage;
+      uOXED, oxeduPackageTypes, oxeduPackage;
 
 CONST
    OX_NO_ASSETS_FILE = '.noassets';
@@ -147,6 +147,7 @@ INITIALIZATION
    oxedAssets.Ignore.FileTypes.Add('.tmp');
    oxedAssets.Ignore.FileTypes.Add('.md');
    oxedAssets.Ignore.FileTypes.Add(OX_NO_ASSETS_FILE);
+   oxedAssets.Ignore.FileTypes.Add(OX_PACKAGE_PROPS_FILE_NAME);
 
    oxedAssets.Ignore.Directories.Add('backup');
 
