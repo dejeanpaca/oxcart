@@ -433,7 +433,7 @@ begin
    f.compiler.applyConventions := false;
 
    if(oxedBuild.BuildType <> OXED_BUILD_TASK_REBUILD_THIRD_PARTY) then begin
-      processPackage(oxedAssets.oxPackage, oxedProject.Path);
+      processPackage(oxedAssets.oxPackage, oxedAssets.oxPackage.Path);
       processPackage(oxedProject.MainPackage, oxedProject.Path);
 
       for i := 0 to oxedProject.Packages.n - 1 do begin
