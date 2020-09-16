@@ -1138,7 +1138,7 @@ begin
    build.Checks.Stack := true;
    build.Checks.Assertions := true;
 
-   {$IFDEF D+}
+   {$IFOPT D+}
    build.Debug.Include := true;
    build.Debug.LineInfo := true;
    build.Debug.External := true;
