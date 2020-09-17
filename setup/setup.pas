@@ -175,7 +175,7 @@ BEGIN
       fail('Failed to initialize lpi build system');
 
    {output all units into a single directory to speed up the process}
-   build.FPCOptions.UnitOutputDirectory := IncludeTrailingPathDelimiterNonEmpty(GetCurrentDir) + 'lib';
+   build.FPCOptions.UnitOutputPath := IncludeTrailingPathDelimiterNonEmpty(GetCurrentDir) + 'lib';
 
    processParameters();
 
