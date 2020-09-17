@@ -61,6 +61,7 @@ TYPE
       procedure Scale(s: single);
 
       procedure Translate(const v: TVector3f); virtual;
+      procedure TranslationMatrix(const v: TVector3f); virtual;
       procedure Rotate(const v: TVector4f); inline;
       procedure Scale(const v: TVector3f); virtual;
 
@@ -111,24 +112,10 @@ begin
 end;
 
 procedure oxTTransform.SetupMatrix();
-var
-   m: TMatrix4f;
-   v: TVector3f;
-
 begin
-   vmqToEulerDeg(vRotation, v);
+   vRotation.ToRotationMatrix(RotationMatrix);
 
-   GetRotationMatrixY(v[1], RotationMatrix);
-
-   GetRotationMatrixZ(v[2], m);
-   RotationMatrix := RotationMatrix * m;
-
-   GetRotationMatrixX(v[0], m);
-   RotationMatrix := RotationMatrix * m;
-
-   Matrix := vmmUnit4;
-
-   Translate(vPosition);
+   TranslationMatrix(vPosition);
 
    Matrix := Matrix * RotationMatrix;
 
@@ -398,6 +385,15 @@ begin
    m[2][3] := v[2];
 
    Matrix := Matrix * m;
+end;
+
+procedure oxTTransform.TranslationMatrix(const v: TVector3f);
+begin
+   Matrix := vmmUnit4;
+
+   Matrix[0][3] := v[0];
+   Matrix[1][3] := v[1];
+   Matrix[2][3] := v[2];
 end;
 
 procedure oxTTransform.Rotate(const v: TVector4f);
