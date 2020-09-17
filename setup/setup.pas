@@ -37,6 +37,7 @@ VAR
    build_count: longint = 0;
    fail_count: longint = 0;
    symbolParameters: array of string;
+   cleanBuild: boolean;
    quitOnFail: boolean = true;
 
 procedure fail(const reason: string);
@@ -141,6 +142,9 @@ begin
       else if(cur = '-no-quit') then begin
          log.w('Quit on failure is disabled');
          quitOnFail := false;
+      end else if(cur = '-clean') then begin
+         log.v('Will do a clean build');
+         cleanBuild := true;
       end else begin
          {whatever is left is our target}
          if(build_what = '') and (cur <> 'setup.pas') then begin
@@ -178,6 +182,11 @@ BEGIN
    build.FPCOptions.UnitOutputPath := IncludeTrailingPathDelimiterNonEmpty(GetCurrentDir) + 'lib';
 
    processParameters();
+
+   if(cleanBuild) then begin
+      log.i('Removing: ' + build.FPCOptions.UnitOutputPath);
+      FileUtils.RmDir(build.FPCOptions.UnitOutputPath);
+   end;
 
    build_tools();
 
