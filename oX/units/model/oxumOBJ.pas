@@ -141,6 +141,7 @@ var
    lineCount,
    vertexCount,
    normalCount,
+   texCoordCount,
    faceCount,
    facePointCount: loopint;
 
@@ -156,6 +157,7 @@ var
       hasFaces := false;
       vertexCount := 0;
       normalCount := 0;
+      texCoordCount := 0;
       faceCount := 0;
       facePointCount := 0;
       wasUseMtl := false;
@@ -166,6 +168,7 @@ var
       if(m <> Nil) and (data.f^.Error = 0) then begin
          m^.SetVertices(vertexCount);
          m^.SetNormals(normalCount);
+         m^.SetTexCoords(texCoordCount);
          m^.Data.nFaces := faceCount;
 
          m^.Data.nVertsPerFace := oxPrimitivePoints[loopint(m^.Primitive)];
@@ -214,6 +217,13 @@ begin
 
                   if(hasFaces) then
                      data.SetError(eINVALID, 'Invalid (vn) order at line ' + sf(lineCount));
+
+                  wasUseMtl := false;
+               end else if(key = 'vt') then begin
+                  inc(texCoordCount);
+
+                  if(hasFaces) then
+                     data.SetError(eINVALID, 'Invalid (vt) order at line ' + sf(lineCount));
 
                   wasUseMtl := false;
                end else if(key = 'f') then begin
@@ -271,6 +281,7 @@ var
    meshIndex,
    vertexIndex,
    normalIndex,
+   texCoordIndex,
    previousFace,
    currentFace,
    currentMaterial,
@@ -321,6 +332,7 @@ var
 
       vertexIndex := 0;
       normalIndex := 0;
+      texCoordIndex := 0;
 
       hasUV := false;
       hasN := false;
@@ -370,7 +382,7 @@ var
 
          if(hasN) and (m^.Data.n <> nil) and (inOffset > -1) then begin
             SetLength(newV, m^.Data.nVertices);
-            inc(ld.TotalV, m^.Data.nNormals);
+            inc(ld.TotalN, m^.Data.nNormals);
 
             oxPrimitives.Reindex(@indices[inOffset], pdword(@indices[ivOffset]), m^.Data.nIndices,
                @m^.Data.n[0], PVector3f(@newV[0]));
@@ -385,7 +397,7 @@ var
             SetLength(newUV, m^.Data.nVertices);
             inc(ld.TotalUV, m^.Data.nTexCoords);
 
-            oxPrimitives.Reindex(@indices[iuvOffset], pdword(@indices[iuvOffset]), m^.Data.nIndices, @m^.Data.t[0], PVector2f(@newUV[0]));
+            oxPrimitives.Reindex(@indices[iuvOffset], pdword(@indices[ivOffset]), m^.Data.nIndices, @m^.Data.t[0], PVector2f(@newUV[0]));
             SetLength(m^.Data.t, 0);
 
             m^.Data.t := newUV;
@@ -490,6 +502,7 @@ var
 
       if(hasUV) then begin
          v := face[source].uv - ld.TotalUV;
+
          setIndice(v, iuvOffset + where);
 
          if(v > m^.Data.nTexCoords) then
@@ -501,7 +514,7 @@ var
 
          setIndice(v, inOffset + where);
 
-         if(v > m^.Data.nTexCoords) then
+         if(v > m^.Data.nNormals) then
             data.SetError(eUNSUPPORTED, 'Failed to set normal indice because out of range');
       end;
    end;
@@ -580,6 +593,17 @@ begin
                   log.e('Normal count exceed scanned value: ' + sf(m^.Data.nNormals));
 
                inc(normalIndex);
+               wasUseMtl := false;
+            end else if(key = 'vt') then begin
+               if(texCoordIndex < m^.Data.nTexCoords) then begin
+                  if(not oxsSerialization.Deserialize(value, m^.Data.t[texCoordIndex])) then begin
+                     m^.Data.t[texCoordIndex] := vmvZero2f;
+                     data.SetError(eINVALID, 'Invalid tex coord value: ' + value);
+                  end;
+               end else
+                  log.e('Tex coord count exceed scanned value: ' + sf(m^.Data.nTexCoords));
+
+               inc(texCoordIndex);
                wasUseMtl := false;
             end else if(key = 'f') then begin
                facePointCount := CharacterCount(value, ' ') + 1;
