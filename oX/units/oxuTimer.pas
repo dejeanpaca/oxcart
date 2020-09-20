@@ -51,6 +51,7 @@ TYPE
 
    oxTTimerGlobal = record
       class function Sleep(duration: loopint): boolean; static;
+      class function SloppySleep(duration: loopint): boolean; static;
    end;
 
 VAR
@@ -81,9 +82,22 @@ begin
       SysUtils.Sleep(duration);
       MMSystem.timeEndPeriod(1);
       {$ELSE}
-      SysUtils.Sleep(time);
+      SysUtils.Sleep(duration);
       {$ENDIF}
 
+      Result := true;
+   end;
+end;
+
+class function oxTTimerGlobal.SloppySleep(duration: loopint): boolean;
+begin
+   Result := false;
+
+   if(duration = -1) then
+      duration := app.IdleTime;
+
+   if(duration > 0) then begin
+      SysUtils.Sleep(duration);
       Result := true;
    end;
 end;
