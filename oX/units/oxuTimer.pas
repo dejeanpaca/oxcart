@@ -50,8 +50,8 @@ TYPE
    { oxTTimerGlobal }
 
    oxTTimerGlobal = record
-      class function Sleep(duration: loopint): boolean; static;
-      class function SloppySleep(duration: loopint): boolean; static;
+      class function Sleep(duration: loopint = -1): boolean; static;
+      class function SloppySleep(duration: loopint = -1): boolean; static;
    end;
 
 VAR
