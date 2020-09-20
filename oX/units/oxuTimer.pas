@@ -50,11 +50,12 @@ TYPE
    { oxTTimerGlobal }
 
    oxTTimerGlobal = record
-      function Sleep(duration: loopint): boolean;
+      class function Sleep(duration: loopint): boolean; static;
    end;
 
-
 VAR
+   oxTimer: oxTTimerGlobal;
+
    {base timer used for most oX functionality}
    oxBaseTime,
    {game timer used for the game}
@@ -67,7 +68,7 @@ IMPLEMENTATION
 
 { oxTTimerGlobal }
 
-function oxTTimerGlobal.Sleep(duration: loopint): boolean;
+class function oxTTimerGlobal.Sleep(duration: loopint): boolean;
 begin
    Result := false;
 
