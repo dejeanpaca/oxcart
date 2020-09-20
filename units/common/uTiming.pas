@@ -100,11 +100,15 @@ TYPE
    { TTimerInterval }
 
    TTimerInterval = record
-      Interval: longint;
+      Interval,
+      {left over from the last offset}
+      LeftOver: single;
       Timer: TTimer;
 
-      class procedure Initialize(out t: TTimerInterval; setInterval: longint = 1000); static;
-      procedure Start(setInterval: longint = 1000);
+      class procedure Initializef(out t: TTimerInterval; setInterval: single = 1); static;
+      class procedure Initialize(out t: TTimerInterval; setInterval: loopint = 1000); static;
+      procedure Start(setInterval: single = 1);
+      procedure Start(setInterval: loopint = 1);
       function Elapsed(): boolean;
    end;
 
@@ -335,7 +339,7 @@ end;
 
 { TTimerInterval }
 
-class procedure TTimerInterval.Initialize(out t: TTimerInterval; setInterval: longint);
+class procedure TTimerInterval.Initializef(out t: TTimerInterval; setInterval: single);
 begin
    ZeroPtr(@t, SizeOf(t));
 
@@ -344,30 +348,35 @@ begin
    t.Start(setInterval);
 end;
 
-procedure TTimerInterval.Start(setInterval: longint);
+class procedure TTimerInterval.Initialize(out t: TTimerInterval; setInterval: loopint);
+begin
+   Initializef(t, setInterval / 1000);
+end;
+
+procedure TTimerInterval.Start(setInterval: single);
 begin
    Timer.Start();
 
    Interval := setInterval;
 end;
 
+procedure TTimerInterval.Start(setInterval: loopint);
+begin
+   Start(single(setInterval / 1000));
+end;
+
 function TTimerInterval.Elapsed(): boolean;
 var
-   elapsedTime,
-   intervalOffset: longint;
+   elapsedTime: single;
 
 begin
    Timer.Update();
 
-   elapsedTime := Timer.Elapsed();
+   elapsedTime := Timer.Elapsedf();
 
-   if(elapsedTime >= Interval) then begin
-      intervalOffset := elapsedTime - Interval;
-
+   if(elapsedTime + LeftOver >= Interval) then begin
       Timer.Start();
-
-      if(intervalOffset > 0) then
-         Timer.StartOffset(-intervalOffset);
+      LeftOver := (elapsedTime + LeftOver) - Interval;
 
       exit(true);
    end;
