@@ -60,7 +60,7 @@ IMPLEMENTATION
 class procedure oxTRenderingTimer.Initialize(out t: oxTRenderingTimer; target_framerate: loopint);
 begin
    t.TargetFramerate := target_framerate;
-   TTimerInterval.Initialize(t.Interval, round((1 / target_framerate) * 1000));
+   TTimerInterval.Initializef(t.Interval, 1 / target_framerate);
 end;
 
 function oxTRenderingTimer.Elapsed(): boolean;
