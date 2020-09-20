@@ -9,7 +9,10 @@ UNIT oxuTimer;
 INTERFACE
 
    USES
-      uStd, uTiming,
+      {$IFDEF WINDOWS}
+      MMSystem,
+      {$ENDIF}
+      sysutils, uApp, uStd, uTiming,
       {ox}
       uOX, oxuRunRoutines;
 
@@ -44,6 +47,13 @@ TYPE
       function Elapsed(): boolean;
    end;
 
+   { oxTTimerGlobal }
+
+   oxTTimerGlobal = record
+      function Sleep(duration: loopint): boolean;
+   end;
+
+
 VAR
    {base timer used for most oX functionality}
    oxBaseTime,
@@ -54,6 +64,28 @@ VAR
    oxRenderingTimer: oxTRenderingTimer;
 
 IMPLEMENTATION
+
+{ oxTTimerGlobal }
+
+function oxTTimerGlobal.Sleep(duration: loopint): boolean;
+begin
+   Result := false;
+
+   if(duration = -1) then
+      duration := app.IdleTime;
+
+   if(duration > 0) then begin
+      {$IFDEF WINDOWS}
+      MMSystem.timeBeginPeriod(1);
+      SysUtils.Sleep(duration);
+      MMSystem.timeEndPeriod(1);
+      {$ELSE}
+      SysUtils.Sleep(time);
+      {$ENDIF}
+
+      Result := true;
+   end;
+end;
 
 { oxTRenderingTimer }
 
