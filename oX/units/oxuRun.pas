@@ -13,7 +13,8 @@ INTERFACE
       {app}
       uApp, appuEvents, appuActionEvents,
       {oX}
-      uOX, oxuInit, oxuWindows, oxuPlatform, oxuRunRoutines, oxuWindowRender;
+      uOX, oxuInit, oxuWindows, oxuPlatform, oxuRunRoutines, oxuWindowRender,
+      oxuTimer;
 
 TYPE
    { oxTRunGlobal }
@@ -173,7 +174,7 @@ begin
 
    if(time > 0) then begin
       elapsed := Now;
-      SysUtils.Sleep(time);
+      oxTimer.Sleep(time);
       LastSleepElapsed := elapsed.Elapsedf();
    end;
 end;
