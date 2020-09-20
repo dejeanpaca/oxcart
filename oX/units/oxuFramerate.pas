@@ -136,7 +136,8 @@ end;
 
 procedure update();
 begin
-   oxFramerate.Increment();
+   if(oxWindowRender.Rendered) then
+      oxFramerate.Increment();
 end;
 
 INITIALIZATION
