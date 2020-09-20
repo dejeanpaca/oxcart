@@ -13,7 +13,7 @@ INTERFACE
       uStd, uError, uTiming, uLog,
       appuEvents
       {$IFNDEF NO_THREADS}
-      , oxuRun, uThreadUtils
+      , oxuTimer, uThreadUtils
       {$ENDIF};
 
 CONST
@@ -371,7 +371,7 @@ begin
       Stop();
 
       while(not Thread.Finished) do begin
-         oxRun.Sleep();
+         oxTimer.Sleep();
       end;
    end;
    {$ELSE}
