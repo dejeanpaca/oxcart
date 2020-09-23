@@ -112,12 +112,21 @@ end;
 class procedure oxTRenderingTimer.Initialize(out t: oxTRenderingTimer; target_framerate: loopint);
 begin
    t.TargetFramerate := target_framerate;
-   TTimerInterval.Initializef(t.Interval, 1 / target_framerate);
+
+   if(target_framerate > 0) then
+      TTimerInterval.Initializef(t.Interval, 1 / target_framerate)
+   else begin
+      TTimerInterval.Initializef(t.Interval, 1 / 60);
+      t.TargetFramerate := 0;
+   end;
 end;
 
 function oxTRenderingTimer.Elapsed(): boolean;
 begin
-   Result := Interval.Elapsed();
+   if(TargetFramerate > 0) then
+      Result := Interval.Elapsed()
+   else
+      Result := true;
 end;
 
 procedure oxTRenderingTimer.Reset();
@@ -205,6 +214,11 @@ INITIALIZATION
    ox.OnRun.Add('ox.tick', @tick);
    ox.OnStart.Add('ox.timer.start', @startTimer);
 
+   {$IFNDEF OX_LIBRARY}
    oxTRenderingTimer.Initialize(oxRenderingTimer, 60);
+   {$ELSE}
+   {in library mode, our rendering timing is dictated by the host}
+   oxTRenderingTimer.Initialize(oxRenderingTimer, 0);
+   {$ENDIF}
 
 END.
