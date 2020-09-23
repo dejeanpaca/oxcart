@@ -134,6 +134,7 @@ CONST
    );
 
 VAR
+   cZeroTimerInterval: TTimerInterval;
    timer: TTimer;
 
 IMPLEMENTATION
@@ -396,5 +397,6 @@ end;
 INITIALIZATION
    {setup the default timer}
    TTimer.Init(timer);
+   TTimerInterval.Initialize(cZeroTimerInterval);
 
 END.
