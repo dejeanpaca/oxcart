@@ -714,17 +714,24 @@ begin
    end;
 end;
 
+procedure SetupSource(out u: TPascalSourceBuilder);
+begin
+   TPascalSourceBuilder.Initialize(u);
+
+   u.Header := getSourceHeader();
+   u.Name := oxedProject.Identifier;
+
+   u.sUses := CreateUsesString();
+   CreateIncludesList(oxedBuild.Parameters.ExportSymbols, u.sExports);
+end;
+
 procedure RecreateProgram();
 var
    p: TAppendableString;
    u: TPascalSourceBuilder;
 
 begin
-   u.Header := getSourceHeader();
-   u.Name := oxedProject.Identifier;
-
-   u.sUses := CreateUsesString();
-   CreateIncludesList(oxedBuild.Parameters.ExportSymbols, u.sExports);
+   SetupSource(u);
 
    u.sMain := '   {$INCLUDE ./appinfo.inc}';
    u.sMain.Add('   oxRun.Go()');
@@ -742,11 +749,7 @@ var
    target: string;
 
 begin
-   u.Name := oxedProject.Identifier;
-   u.Header := getSourceHeader();
-
-   u.sUses := CreateUsesString();
-   CreateIncludesList(oxedBuild.Parameters.ExportSymbols, u.sExports);
+   SetupSource(u);
 
    u.sInitialization.Add('{$INCLUDE ./appinfo.inc}');
 
