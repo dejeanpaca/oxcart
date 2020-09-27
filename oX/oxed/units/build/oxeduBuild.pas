@@ -93,6 +93,7 @@ TYPE
 
       {build parameters}
       Parameters: record
+         IncludeUses,
          ExportSymbols: TSimpleStringList;
       end;
 
@@ -715,11 +716,21 @@ begin
 
    u.sUses := GetUsesString();
 
-   if(oxedBuild.InEditor) then begin
+   if oxedBuild.Parameters.IncludeUses.n > 0 then begin
       u.sUses := u.sUses + ',';
-      u.sUses.Add('{library}');
-      u.sUses.Add('oxuDynlib');
+
+      for i := 0 to oxedBuild.Parameters.IncludeUses.n - 1 do begin
+         {check for comment}
+         if pos('{', oxedBuild.Parameters.IncludeUses.List[i]) <> 1 then begin
+           if i < oxedBuild.Parameters.IncludeUses.n - 1 then
+              u.sUses.Add(oxedBuild.Parameters.IncludeUses.List[i] + ',')
+           else
+              u.sUses.Add(oxedBuild.Parameters.IncludeUses.List[i]);
+         end else
+            u.sUses.Add(oxedBuild.Parameters.IncludeUses.List[i]);
+      end;
    end;
+
 
    if oxedBuild.Parameters.ExportSymbols.n > 0 then begin
       for i := 0 to oxedBuild.Parameters.ExportSymbols.n - 1 do begin
@@ -1170,6 +1181,9 @@ end;
 procedure SetupEditorBuildOptions();
 begin
    if(oxedBuild.InEditor) then begin
+      oxedBuild.Parameters.IncludeUses.Add('{library}');
+      oxedBuild.Parameters.IncludeUses.Add('oxuDynlib');
+
       oxedBuild.Parameters.ExportSymbols.Add('ox_library_load');
       oxedBuild.Parameters.ExportSymbols.Add('ox_library_unload');
       oxedBuild.Parameters.ExportSymbols.Add('ox_library_version');
@@ -1405,6 +1419,7 @@ begin
    BuildArch := oxedEditorPlatform.Architecture;
    BuildMechanism := OXED_BUILD_VIA_FPC;
    Parameters.ExportSymbols.Dispose();
+   Parameters.IncludeUses.Dispose();
    SetupFPCPlatform();
 end;
 
@@ -1442,6 +1457,7 @@ INITIALIZATION
    TProcedures.InitializeValues(oxedBuild.OnDone);
 
    TSimpleStringList.InitializeValues(oxedBuild.Parameters.ExportSymbols);
+   TSimpleStringList.InitializeValues(oxedBuild.Parameters.IncludeUses);
 
    oxedProjectScanner.OnDone.Add(@onScanDone);
 
