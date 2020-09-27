@@ -91,6 +91,11 @@ TYPE
       {current build mechanism}
       BuildMechanism: oxedTBuildMechanism;
 
+      {build parameters}
+      Parameters: record
+         ExportSymbols: TSimpleStringList;
+      end;
+
       BuildCPU,
       BuildOS: StdString;
 
@@ -699,7 +704,10 @@ procedure RecreateLib();
 var
    p: TAppendableString;
    u: TPascalSourceBuilder;
-   fn, target: string;
+   fn,
+   target: string;
+
+   i: loopint;
 
 begin
    u.Name := oxedProject.Identifier;
@@ -711,10 +719,15 @@ begin
       u.sUses := u.sUses + ',';
       u.sUses.Add('{library}');
       u.sUses.Add('oxuDynlib');
+   end;
 
-      u.sExports := 'ox_library_load,';
-      u.sExports.Add('ox_library_unload,');
-      u.sExports.Add('ox_library_version');
+   if oxedBuild.Parameters.ExportSymbols.n > 0 then begin
+      for i := 0 to oxedBuild.Parameters.ExportSymbols.n - 1 do begin
+         if i < oxedBuild.Parameters.ExportSymbols.n - 1 then
+            u.sExports.Add(oxedBuild.Parameters.ExportSymbols.List[i] + ',')
+         else
+            u.sExports.Add(oxedBuild.Parameters.ExportSymbols.List[i]);
+      end;
    end;
 
    u.sInitialization.Add('{$INCLUDE ./appinfo.inc}');
@@ -1154,6 +1167,15 @@ begin
       build.CustomOptions.Add('#INCLUDE ' + fn);
 end;
 
+procedure SetupEditorBuildOptions();
+begin
+   if(oxedBuild.InEditor) then begin
+      oxedBuild.Parameters.ExportSymbols.Add('ox_library_load');
+      oxedBuild.Parameters.ExportSymbols.Add('ox_library_unload');
+      oxedBuild.Parameters.ExportSymbols.Add('ox_library_version');
+   end;
+end;
+
 procedure oxedTBuildGlobal.RunTask();
 begin
    if(not oxedBuild.Buildable(true)) or (not oxedProject.Valid()) then begin
@@ -1205,6 +1227,7 @@ begin
    InEditor := IsLibrary() and (BuildArch.Name = 'editor');
 
    SetupFPCBuildOptions();
+   SetupEditorBuildOptions();
 
    {run tasks}
    if(BuildType = OXED_BUILD_TASK_RECODE) then begin
@@ -1381,6 +1404,7 @@ begin
    BuildTarget := OXED_BUILD_LIB;
    BuildArch := oxedEditorPlatform.Architecture;
    BuildMechanism := OXED_BUILD_VIA_FPC;
+   Parameters.ExportSymbols.Dispose();
    SetupFPCPlatform();
 end;
 
@@ -1416,6 +1440,8 @@ INITIALIZATION
    TProcedures.InitializeValues(oxedBuild.OnPrepare);
    TProcedures.InitializeValues(oxedBuild.OnFailed);
    TProcedures.InitializeValues(oxedBuild.OnDone);
+
+   TSimpleStringList.InitializeValues(oxedBuild.Parameters.ExportSymbols);
 
    oxedProjectScanner.OnDone.Add(@onScanDone);
 
