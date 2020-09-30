@@ -16,13 +16,13 @@ procedure android_main(app: Pandroid_app); cdecl;
 
 IMPLEMENTATION
 
-procedure handle_cmd(app: Pandroid_app; cmd: longint); cdecl;
+procedure handle_cmd(app: Pandroid_app; cmd: int32); cdecl;
 begin
 end;
 
 procedure android_main(app: Pandroid_app); cdecl;
 var
-   nEvents: longint;
+   nEvents: int32;
    pSource: Pandroid_poll_source;
 
 begin
