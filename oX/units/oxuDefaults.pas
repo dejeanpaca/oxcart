@@ -16,6 +16,11 @@ INTERFACE
 
    USES
       uStd,
+      {$IFNDEF ANDROID}
+      uErrorCrashHandler,
+      {$ELSE}
+      uAndroidCrashHandler,
+      {$ENDIF}
       ufhStandard,
       {$IFDEF ANDROID}
       ulogAndroid,
