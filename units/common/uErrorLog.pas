@@ -57,11 +57,13 @@ begin
 end;
 
 INITIALIZATION
+   {$IFNDEF ANDROID}
    {store the old exit proc and set the new one}
    oldExitProc := ExitProc;
    ExitProc := @RunTimeError;
 
    oldExceptProc := @ExceptProc;
    ExceptProc := @UnhandledException;
+   {$ENDIF}
 
 END.
