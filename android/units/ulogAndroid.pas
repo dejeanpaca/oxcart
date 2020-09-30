@@ -24,6 +24,10 @@ TYPE
 VAR
    loghAndroid: TLogHandler;
 
+procedure logi(priority: longint; const what: StdString);
+procedure logi(const what: StdString);
+procedure loge(const what: StdString);
+
 IMPLEMENTATION
 
 CONST
@@ -36,6 +40,21 @@ CONST
       ANDROID_LOG_DEBUG, {logcDEBUG}
       ANDROID_LOG_INFO {logcOK}
    );
+
+procedure logi(priority: longint; const what: StdString);
+begin
+   SysLogWrite(priority, PAnsiChar(what));
+end;
+
+procedure logi(const what: StdString);
+begin
+   SysLogWrite(ANDROID_LOG_INFO, PAnsiChar(what));
+end;
+
+procedure loge(const what: StdString);
+begin
+   SysLogWrite(ANDROID_LOG_ERROR, PAnsiChar(what));
+end;
 
 { TAndroidLogHandler }
 
