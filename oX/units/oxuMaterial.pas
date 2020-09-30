@@ -152,8 +152,8 @@ TYPE
       {calculate the value pool size}
       function FormPool(): loopint;
 
-      function CheckType(index: loopint; uniformType: oxTShaderUniformType; alternativeType: oxTShaderUniformType = oxunfSHADER_NONE): boolean;
       {$IFDEF OX_DEBUG}
+      function CheckType(index: loopint; uniformType: oxTShaderUniformType; alternativeType: oxTShaderUniformType = oxunfSHADER_NONE): boolean;
       function DebugCheckType(index: loopint; uniformType: oxTShaderUniformType; alternativeType: oxTShaderUniformType = oxunfSHADER_NONE): boolean;
       procedure DebugFailedProp(index: loopint; const prop: string = '');
       procedure DebugFailedType(index: loopint; const what: string);
@@ -1026,8 +1026,6 @@ begin
    end;
 end;
 
-{$ENDIF}
-
 procedure oxTMaterial.DebugFailedProp(index: loopint; const prop: string);
 begin
    if(index < 0) then
@@ -1039,6 +1037,8 @@ begin
    if(index > -1) then
       log.w('Material(' + Name +  ') index ' + sf(index) + ' failed check: ' + what)
 end;
+
+{$ENDIF}
 
 function oxTMaterial.GetLoader(): POObject;
 begin
