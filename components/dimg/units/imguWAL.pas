@@ -36,8 +36,6 @@ TYPE
       value: longword; {unknown}
    end;
 
-procedure quake2palproc;
-
 VAR
    q2Palette: imgTPalette;
 
@@ -108,7 +106,7 @@ begin
   q2Palette.nColors := 256;
   q2Palette.PixF := PIXF_RGB;
   q2Palette.Size := 256 * 3;
-  q2Palette.Data := @quake2palproc;
+  q2Palette.Data := @quake2PaletteData;
   q2Palette.DataExternal := true;
   q2Palette.sAuthor := walcsPalAuthor;
   q2Palette.sName := walcsPalName;
