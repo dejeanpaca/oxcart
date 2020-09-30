@@ -114,6 +114,8 @@ begin
    arch.ToolChainPath := 'arm-linux-androideabi-4.9';
    arch.ToolChainPath := 'x86-4.9';
    arch.LibTarget := 'x86';
+   arch.DefaultCPUType := 'PENTIUM4';
+   arch.DefaultFPUType := 'SSE3';
    completeArch(arch, 'x86');
 
    {x86-64}
