@@ -22,7 +22,7 @@ interface
 
 uses ctypes, baseunix, unixtype,
      configuration, looper, input, rect, native_window, native_activity,
-     uLogAndroid;
+     uLogAndroid, StringUtils;
 
 (**
  * The native activity interface provided by <android/native_activity.h>
@@ -310,9 +310,6 @@ implementation
 
 uses cmem;
 
-const
-   LOG_TAG = 'ox';
-
 function strerror(i: longint): pchar; cdecl;
 begin
    result := 'Undefined!';
@@ -404,14 +401,14 @@ begin
     case cmd of
         APP_CMD_INPUT_CHANGED:
             begin
-               LOGI(ANDROID_LOG_FATAL, 'APP_CMD_INPUT_CHANGED');
+               logi('APP_CMD_INPUT_CHANGED');
                pthread_mutex_lock(@android_app^.mutex);
                if android_app^.inputQueue <> nil then
                    AInputQueue_detachLooper(android_app^.inputQueue);
                android_app^.inputQueue := android_app^.pendingInputQueue;
                if android_app^.inputQueue <> nil then
                begin
-                   LOGI(ANDROID_LOG_FATAL, 'Attaching input queue to looper');
+                   logi('Attaching input queue to looper');
                    AInputQueue_attachLooper(android_app^.inputQueue,
                            android_app^.looper, LOOPER_ID_INPUT, nil,
                            @android_app^.inputPollSource);
@@ -422,7 +419,7 @@ begin
 
         APP_CMD_INIT_WINDOW:
             begin
-               LOGI(ANDROID_LOG_FATAL, 'APP_CMD_INIT_WINDOW');
+               logi('APP_CMD_INIT_WINDOW');
                pthread_mutex_lock(@android_app^.mutex);
                android_app^.window := android_app^.pendingWindow;
                pthread_cond_broadcast(@android_app^.cond);
@@ -431,7 +428,7 @@ begin
 
         APP_CMD_TERM_WINDOW:
             begin
-               LOGI(ANDROID_LOG_FATAL, 'APP_CMD_TERM_WINDOW');
+               logi('APP_CMD_TERM_WINDOW');
                pthread_mutex_lock(@android_app^.mutex);
                android_app^.window := nil;
                pthread_cond_broadcast(@android_app^.cond);
@@ -443,7 +440,7 @@ begin
         APP_CMD_PAUSE,
         APP_CMD_STOP:
             begin
-//               LOGI(ANDROID_LOG_FATAL, 'activityState:=%d', cmd);
+               logi('activityState = ' + sf(cmd));
                pthread_mutex_lock(@android_app^.mutex);
                android_app^.activityState := cmd;
                pthread_cond_broadcast(@android_app^.cond);
@@ -452,7 +449,7 @@ begin
 
         APP_CMD_CONFIG_CHANGED:
             begin
-               LOGI(ANDROID_LOG_FATAL, 'APP_CMD_CONFIG_CHANGED');
+               logi('APP_CMD_CONFIG_CHANGED');
                AConfiguration_fromAssetManager(android_app^.config,
                        android_app^.activity^.assetManager);
                print_cur_config(android_app);
@@ -460,7 +457,7 @@ begin
 
         APP_CMD_DESTROY:
             begin
-               LOGI(ANDROID_LOG_FATAL, 'APP_CMD_DESTROY');
+               logi('APP_CMD_DESTROY');
                android_app^.destroyRequested := 1;
             end;
     end;
@@ -471,7 +468,7 @@ begin
     case cmd of
         APP_CMD_TERM_WINDOW:
             begin
-               LOGI(ANDROID_LOG_FATAL, 'APP_CMD_TERM_WINDOW');
+               logi('APP_CMD_TERM_WINDOW');
                pthread_mutex_lock(@android_app^.mutex);
                android_app^.window := nil;
                pthread_cond_broadcast(@android_app^.cond);
@@ -480,7 +477,7 @@ begin
 
         APP_CMD_SAVE_STATE:
             begin
-               LOGI(ANDROID_LOG_FATAL, 'APP_CMD_SAVE_STATE');
+               logi('APP_CMD_SAVE_STATE');
                pthread_mutex_lock(@android_app^.mutex);
                android_app^.stateSaved := 1;
                pthread_cond_broadcast(@android_app^.cond);
@@ -499,7 +496,7 @@ end;
 
 procedure android_app_destroy(android_app: Pandroid_app);
 begin
-    LOGI(ANDROID_LOG_FATAL, 'android_app_destroy!');
+    logi('android_app_destroy!');
     free_saved_state(android_app);
     pthread_mutex_lock(@android_app^.mutex);
     if (android_app^.inputQueue <> nil) then
@@ -516,16 +513,19 @@ var event: PAInputEvent;
     handled: cint32;
 begin
     event := nil;
+
+    logi('wat');
+
     if (AInputQueue_getEvent(app^.inputQueue, @event) >= 0) then
     begin
-//        LOGI(ANDROID_LOG_FATAL, 'New input event: type:=%d',AInputEvent_getType(event));
+        logi('New input event: type = ' + sf(AInputEvent_getType(event)));
         if AInputQueue_preDispatchEvent(app^.inputQueue, event) <> 0 then exit;
         handled := 0;
         if (app^.onInputEvent <> nil) then handled := app^.onInputEvent(app, event);
         AInputQueue_finishEvent(app^.inputQueue, event, handled);
-    end;
-{    else
-        LOGI(ANDROID_LOG_FATAL, 'Failure reading next input event: %s', strerror(errno));}
+    end
+    else
+        logf('Failure reading next input event: ' + sf(strerror(errno)));
 end;
 
 procedure process_cmd(app: Pandroid_app; source: Pandroid_poll_source); cdecl;
@@ -594,8 +594,8 @@ begin
         move(pbyte(savedState)^, pbyte(android_app^.savedState)^, savedStateSize);
     end;
 
-{    if FpPipe(msgpipe) <> 0 then
-        LOGI(ANDROID_LOG_FATAL, 'could not create pipe: %s', strerror(errno));}
+    if FpPipe(msgpipe) <> 0 then
+        logf('could not create pipe: ' + sf(strerror(errno)));
 
     android_app^.msgread := msgpipe[0];
     android_app^.msgwrite := msgpipe[1];
@@ -616,8 +616,8 @@ end;
 
 procedure android_app_write_cmd(android_app: Pandroid_app; cmd: cint8);
 begin
-{    if fpwrite(android_app^.msgwrite, cmd, sizeof(cmd)) <> sizeof(cmd) then
-        LOGI(ANDROID_LOG_FATAL, 'Failure writing android_app cmd: %s', strerror(errno));}
+    if fpwrite(android_app^.msgwrite, cmd, sizeof(cmd)) <> sizeof(cmd) then
+        logf('Failure writing android_app cmd: %s' + strerror(errno));
 end;
 
 procedure android_app_set_input(android_app: Pandroid_app; inputQueue: PAInputQueue);
@@ -648,7 +648,7 @@ end;
 
 procedure android_app_set_activity_state(android_app: Pandroid_app; cmd: cint8);
 begin
-//    logw(' Setting activity state!');
+    logi('Setting activity state!');
     pthread_mutex_lock(@android_app^.mutex);
     android_app_write_cmd(android_app, cmd);
     while (android_app^.activityState <> cmd) do
@@ -675,19 +675,19 @@ end;
 
 procedure onDestroy(activity: PANativeActivity); cdecl;
 begin
-//    LOGI(ANDROID_LOG_FATAL, 'Destroy: %p', activity);
+    logi('Destroy: ' + sf(activity));
     android_app_free(Pandroid_app(activity^.instance));
 end;
 
 procedure onStart(activity: PANativeActivity); cdecl;
 begin
-//    LOGI(ANDROID_LOG_FATAL, 'Start: %p', activity);
+   logi('Start: ' + sf(activity));
     android_app_set_activity_state(Pandroid_app(activity^.instance), APP_CMD_START);
 end;
 
 procedure onResume(activity: PANativeActivity); cdecl;
 begin
-//    LOGI(ANDROID_LOG_FATAL, 'Resume: %p', activity);
+    logi('Resume: ' + sf(activity));
     android_app_set_activity_state(Pandroid_app(activity^.instance), APP_CMD_RESUME);
 end;
 
@@ -698,7 +698,7 @@ begin
     android_app := activity^.instance;
     savedState := nil;
 
-//    LOGI(ANDROID_LOG_FATAL, 'SaveInstanceState: %p', activity);
+    logi('SaveInstanceState: %p' + sf(activity));
     pthread_mutex_lock(@android_app^.mutex);
     android_app^.stateSaved := 0;
     android_app_write_cmd(android_app, APP_CMD_SAVE_STATE);
@@ -720,13 +720,13 @@ end;
 
 procedure onPause(activity: PANativeActivity); cdecl;
 begin
-//    LOGI(ANDROID_LOG_FATAL, 'Pause: %p', activity);
+    logi('Pause: ' + sf(activity));
     android_app_set_activity_state(Pandroid_app(activity^.instance), APP_CMD_PAUSE);
 end;
 
 procedure onStop(activity: PANativeActivity); cdecl;
 begin
-//    LOGI(ANDROID_LOG_FATAL, 'Stop: %p', activity);
+    logi('Stop: ' + sf(activity));
     android_app_set_activity_state(Pandroid_app(activity^.instance), APP_CMD_STOP);
 end;
 
@@ -734,7 +734,7 @@ procedure onConfigurationChanged(activity: PANativeActivity); cdecl;
 var android_app: Pandroid_app;
 begin
     android_app := activity^.instance;
-//    LOGI(ANDROID_LOG_FATAL, 'ConfigurationChanged: %p', activity);
+    logi('Configuration changed: ' + sf(activity));
     android_app_write_cmd(android_app, APP_CMD_CONFIG_CHANGED);
 end;
 
@@ -742,13 +742,13 @@ procedure onLowMemory(activity: PANativeActivity); cdecl;
 var android_app: Pandroid_app;
 begin
     android_app := activity^.instance;
-//    LOGI(ANDROID_LOG_FATAL, 'LowMemory: %p', activity);
+    logw('Low memory: ' + sf(activity));
     android_app_write_cmd(android_app, APP_CMD_LOW_MEMORY);
 end;
 
 procedure onWindowFocusChanged(activity: PANativeActivity; focused: cint); cdecl;
 begin
-//    LOGI(ANDROID_LOG_FATAL, 'WindowFocusChanged: %p -- %d', activity, focused);
+    logi('Window focus changed: ' + sf(activity) + ' -- ' + sf(focused));
 
     if focused <> 0 then
        android_app_write_cmd(activity^.instance, APP_CMD_GAINED_FOCUS)
@@ -758,31 +758,31 @@ end;
 
 procedure onNativeWindowCreated(activity: PANativeActivity; window: PANativeWindow); cdecl;
 begin
-//    LOGI(ANDROID_LOG_FATAL, 'NativeWindowCreated: %p -- %p', activity, window);
+    logi('NativeWindowCreated: ' + sf(activity) + ' -- ' + sf(window));
     android_app_set_window(activity^.instance, window);
 end;
 
 procedure onNativeWindowDestroyed(activity: PANativeActivity; window: PANativeWindow); cdecl;
 begin
-//    LOGI(ANDROID_LOG_FATAL, 'NativeWindowDestroyed: %p -- %p', activity, window);
+    logi('NativeWindowDestroyed: ' +sf(activity) + '--' + sf(window));
     android_app_set_window(activity^.instance, nil);
 end;
 
 procedure onInputQueueCreated(activity: PANativeActivity; queue: PAInputQueue); cdecl;
 begin
-//    LOGI(ANDROID_LOG_FATAL, 'InputQueueCreated: %p -- %p', activity, queue);
+    logi('InputQueueCreated: ' + sf(activity) + '--' + sf(queue));
     android_app_set_input(activity^.instance, queue);
 end;
 
 procedure onInputQueueDestroyed(activity: PANativeActivity; queue: PAInputQueue); cdecl;
 begin
-//    LOGI(ANDROID_LOG_FATAL, 'InputQueueDestroyed: %p -- %p', activity, queue);
+    logi('InputQueueDestroyed: ' + sf(activity) + ' -- ' + sf(queue));
     android_app_set_input(activity^.instance, nil);
 end;
 
 procedure ANativeActivity_onCreate(activity: PANativeActivity; savedState: Pointer; savedStateSize: csize_t); cdecl;
 begin
-//    LOGI(ANDROID_LOG_FATAL, 'Creating: %p', activity);
+    logi('Creating: ' + sf(activity));
 
     activity^.callbacks^.onDestroy := @onDestroy;
     activity^.callbacks^.onStart := @onStart;
