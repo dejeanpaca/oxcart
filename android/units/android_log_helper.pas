@@ -16,6 +16,7 @@ procedure logi(const what: StdString);
 procedure logw(const what: StdString);
 procedure loge(const what: StdString);
 procedure logf(const what: StdString);
+procedure logv(const what: StdString);
 
 IMPLEMENTATION
 
@@ -42,6 +43,11 @@ end;
 procedure logf(const what: StdString);
 begin
    SysLogWrite(ANDROID_LOG_FATAL, PAnsiChar(what));
+end;
+
+procedure logv(const what: StdString);
+begin
+   SysLogWrite(ANDROID_LOG_VERBOSE, PAnsiChar(what));
 end;
 
 END.
