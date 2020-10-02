@@ -683,12 +683,16 @@ begin
    Result.Add('{$INCLUDE oxappuses.inc}');
 
    if(oxedProject.MainUnit <> '') then begin
-      Result := Result + ',';
+      if(not oxedProject.NilProject) then
+         Result := Result + ',';
+
       Result.Add('{main unit}');
       Result.Add('    {%H-}' + oxedProject.MainUnit);
    end else begin
       if(oxedProject.MainPackage.Units.n > 0) then begin
-         Result := Result + ',';
+         if(not oxedProject.NilProject) then
+            Result := Result + ',';
+
          Result.Add('{units}');
 
          processPackage(oxedProject.MainPackage);
@@ -720,7 +724,8 @@ begin
    Result := GetUsesString();
 
    if oxedBuild.Parameters.IncludeUses.n > 0 then begin
-      Result := Result + ',';
+      if(not oxedProject.NilProject) then
+         Result := Result + ',';
 
       CreateIncludesList(oxedBuild.Parameters.IncludeUses, Result);
    end;
@@ -745,8 +750,10 @@ var
 begin
    SetupSource(u);
 
-   u.sMain := '   {$INCLUDE ./appinfo.inc}';
-   u.sMain.Add('   oxRun.Go()');
+   if(not oxedProject.NilProject) then begin
+      u.sMain := '   {$INCLUDE ./appinfo.inc}';
+      u.sMain.Add('   oxRun.Go()');
+   end;
 
    p := u.BuildProgram();
 
@@ -763,7 +770,8 @@ var
 begin
    SetupSource(u);
 
-   u.sInitialization.Add('{$INCLUDE ./appinfo.inc}');
+   if(not oxedProject.NilProject) then
+      u.sInitialization.Add('{$INCLUDE ./appinfo.inc}');
 
    p := u.BuildLibrary();
 
