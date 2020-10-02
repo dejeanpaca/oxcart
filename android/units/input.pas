@@ -18,7 +18,7 @@ unit input;
 
 interface
 
-uses ctypes,looper,android_keycodes;
+uses ctypes,looper;
 
 (******************************************************************
  *

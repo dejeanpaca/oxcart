@@ -18,8 +18,6 @@ unit android_keycodes;
 
 interface
 
-uses ctypes;
-
 (******************************************************************
  *
  * IMPORTANT NOTICE:
