@@ -10,33 +10,34 @@ INTERFACE
 
 USES
    ctypes, looper, input, android_native_app_glue, android_keycodes,
-   uLog, ulogAndroid, StringUtils,
-   uApp, appuActionEvents;
+   android_log_helper, StringUtils;
 
 procedure android_main(app: Pandroid_app); cdecl;
 
 IMPLEMENTATION
 
-procedure handle_cmd(app: Pandroid_app; cmd: cint32); cdecl;
+procedure handle_cmd(app: Pandroid_app; cmd: cint32);
 begin
-   logi('command: ' + sf(command));
+   logi('command: ' + sf(cmd));
 end;
 
-function handle_input(app: Pandroid_app; event: PAInputEvent): cint32; cdecl;
+function handle_input(app: Pandroid_app; event: PAInputEvent): cint32;
 var
    kc,
-   action: cint32;
+   action,
+   etype: cint32;
 
 begin
+   etype := AInputEvent_getType(event);
+
    kc := AKeyEvent_getKeyCode(event);
    action := AKeyEvent_getAction(event);
 
-   if(kc = AKEYCODE_BACK) then begin
-      if(action = AKEY_STATE_UP) then begin
-         uApp.app.Active := false;
-         appActionEvents.QueueQuitEvent();
-
-         exit(1);
+   if(etype = AINPUT_EVENT_TYPE_KEY) then begin
+      if(kc = AKEYCODE_BACK) then begin
+         if(action = AKEY_STATE_UP) then begin
+            app^.destroyRequested = 1;
+         end;
       end;
    end;
 
@@ -45,6 +46,7 @@ end;
 
 procedure android_main(app: Pandroid_app); cdecl;
 var
+   ident,
    nEvents: cint;
    pSource: Pandroid_poll_source;
 
@@ -56,12 +58,19 @@ begin
    pSource := nil;
 
    repeat
-      if(ALooper_pollAll(0, nil, @nEvents, @pSource) >= 0) then begin
+      ident := ALooper_pollAll(-1, nil, @nEvents, @pSource);
+
+      if(ident >= 0) then begin
+         logi('event: ' + sf(ident));
          if(pSource <> nil) then begin
+            logi('source: ' + sf(pSource^.id));
             pSource^.process(app, pSource);
          end;
       end;
-   until (app^.destroyRequested > 0) or (not uApp.app.Active);
+
+      if(app^.destroyRequested <> 0) then
+         exit;
+   until false;
 end;
 
 END.
