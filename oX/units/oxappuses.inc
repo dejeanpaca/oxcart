@@ -12,6 +12,6 @@
 {ox}
 {%H-}uOX,
 {%H-}oxuDefaults
-{$IFNDEF OX_LIBRARY}
+{$IFNDEF LIBRARY}
 {%H-}, oxuRun
 {$ENDIF}
