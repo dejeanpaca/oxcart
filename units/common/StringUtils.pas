@@ -1116,7 +1116,7 @@ var
 begin
    {decide which separator to replace}
    {$IFDEF WINDOWS}rds := '/';{$ENDIF}
-   {$IFDEF LINUX}rds := '\';{$ENDIF}
+   {$IFDEF UNIX}rds := '\';{$ENDIF}
    {$IFDEF DARWIN}rds := '\';{$ENDIF}
 
    for i := 1 to Length(st) do begin
@@ -1133,7 +1133,7 @@ var
 begin
    {decide which separator to replace}
    {$IFDEF WINDOWS}rds := '/';{$ENDIF}
-   {$IFDEF LINUX}rds := '\';{$ENDIF}
+   {$IFDEF UNIX}rds := '\';{$ENDIF}
    {$IFDEF DARWIN}rds := '\';{$ENDIF}
 
    for i := 1 to Length(st) do begin
@@ -1153,7 +1153,7 @@ begin
 
    {decide which separator to replace}
    {$IFDEF WINDOWS}rds := '/';{$ENDIF}
-   {$IFDEF LINUX}rds := '\';{$ENDIF}
+   {$IFDEF UNIX}rds := '\';{$ENDIF}
    {$IFDEF DARWIN}rds := '\';{$ENDIF}
 
    for i := 1 to Length(Result) do begin
