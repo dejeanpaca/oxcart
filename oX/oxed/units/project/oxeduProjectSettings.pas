@@ -35,7 +35,8 @@ VAR
    dvRunParameter,
    dvFeature,
    dvLineEndings,
-   dvPlatformEnabled: TDVar;
+   dvPlatformEnabled,
+   dvNilProject: TDVar;
 
    stringValue: StdString;
 
@@ -48,6 +49,7 @@ begin
    dvOrganizationShort.Update(oxedProject.OrganizationShort);
    dvMainUnit.Update(oxedProject.MainUnit);
    dvLineEndings.Update(oxedProject.LineEndings);
+   dvNilProject.Update(oxedProject.NilProject);
 end;
 
 procedure validateLoad();
@@ -150,6 +152,8 @@ INITIALIZATION
 
    dvGroup.Add(dvPlatformEnabled, 'platform_enabled', dtcSTRING, @stringValue, [dvarNOTIFY_READ, dvarNOTIFY_WRITE]);
    dvPlatformEnabled.pNotify := @dvPlatformEnabledNotify;
+
+   dvGroup.Add(dvNilProject, 'nil_project', dtcBOOL, nil);
 
    oxedProjectSettingsFile.Create(dvGroup);
    oxedProjectSettingsFile.FileName := OXED_PROJECT_SETTINGS_FILE;

@@ -63,7 +63,8 @@ VAR
          Organization,
          OrganizationShort: wdgTInputBox;
          UnixLineEndings,
-         EnableConsole: wdgTCheckbox;
+         EnableConsole,
+         NilProject: wdgTCheckbox;
       end;
 
       Build: record
@@ -114,6 +115,7 @@ begin
    widgets.Project.OrganizationShort.SetText(oxedProject.OrganizationShort);
    widgets.Project.UnixLineEndings.Check(oxedProject.LineEndings = 'lf');
    widgets.Project.EnableConsole.Check(oxedProject.Session.EnableConsole);
+   widgets.Project.NilProject.Check(oxedProject.NilProject);
 
    widgets.Build.MainUnit.SetText(oxedProject.MainUnit);
    widgets.Build.DebugResources.Check(oxedProject.Session.DebugResources);
@@ -121,31 +123,23 @@ end;
 
 procedure saveCallback();
 begin
-   { project name }
+   { project }
    oxedProject.Name := widgets.Project.Name.GetText();
-
-   { project short name }
    oxedProject.ShortName := widgets.Project.ShortName.GetText();
-
-   { project identifier }
    oxedProject.Identifier := widgets.Project.Identifier.GetText();
-
-   { project organization }
    oxedProject.Organization := widgets.Project.Organization.GetText();
-
-   { project organization short }
    oxedProject.OrganizationShort := widgets.Project.OrganizationShort.GetText();
+   oxedProject.NilProject := widgets.Project.NilProject.Checked();
 
-   { line endings }
    if(widgets.Project.UnixLineEndings.Checked()) then
       oxedProject.LineEndings := 'lf'
    else
       oxedProject.LineEndings := 'crlf';
 
-   { enable console }
+   { session }
    oxedProject.Session.EnableConsole := widgets.Project.EnableConsole.Checked();
 
-   { other }
+   { build }
    oxedwndProjectSettings.StoreBuildModeSettings();
 
    {done}
@@ -197,6 +191,7 @@ begin
    wdgDivisor.Add('');
    widgets.Project.UnixLineEndings := wdgCheckbox.Add('Unix line endings');
    widgets.Project.EnableConsole := wdgCheckbox.Add('Enable engine console in project');
+   widgets.Project.NilProject := wdgCheckbox.Add('Nil project (manually managed or non oX project)');
 end;
 
 procedure addGlobalSymbol();
