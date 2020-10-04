@@ -173,7 +173,7 @@ TYPE
       running,
       stateSaved,
       destroyed,
-      redrawNeeded: cint;
+      redrawNeeded: boolean;
 
       pendingWindow: PANativeWindow;
       pendingContentRect: PARect;
@@ -362,25 +362,22 @@ begin
    AConfiguration_getLanguage(app^.config, lang);
    AConfiguration_getCountry(app^.config, country);
 
-   {logv("Config: mcc=%d mnc=%d lang=%c%c cnt=%c%c orien=%d touch=%d dens=%d "
-      "keys=%d nav=%d keysHid=%d navHid=%d sdk=%d size=%d long=%d "
-      "modetype=%d modenight=%d",
-      AConfiguration_getMcc(app^.config),
-      AConfiguration_getMnc(app^.config),
-      lang[0], lang[1], country[0], country[1],
-      AConfiguration_getOrientation(app^.config),
-      AConfiguration_getTouchscreen(app^.config),
-      AConfiguration_getDensity(app^.config),
-      AConfiguration_getKeyboard(app^.config),
-      AConfiguration_getNavigation(app^.config),
-      AConfiguration_getKeysHidden(app^.config),
-      AConfiguration_getNavHidden(app^.config),
-      AConfiguration_getSdkVersion(app^.config),
-      AConfiguration_getScreenSize(app^.config),
-      AConfiguration_getScreenLong(app^.config),
-      AConfiguration_getUiModeType(app^.config),
-      AConfiguration_getUiModeNight(app^.config));
-   }
+   logv('Config:' +
+      ' mcc=' + sf(AConfiguration_getMcc(app^.config)) +
+      ' mnc=' + sf(AConfiguration_getMnc(app^.config)) +
+      ' lang=' + lang[0] + lang[1] + ' ' + country[0] + country[1] +
+      ' orientation=' + sf(AConfiguration_getOrientation(app^.config)) +
+      ' touchscreen=' + sf(AConfiguration_getTouchscreen(app^.config)) +
+      ' density=' + sf(AConfiguration_getDensity(app^.config)) +
+      ' kb=' + sf(AConfiguration_getKeyboard(app^.config)) +
+      ' nav=' + sf(AConfiguration_getNavigation(app^.config)) +
+      ' keys_hidden=' + sf(AConfiguration_getKeysHidden(app^.config)) +
+      ' nav_hidden=' + sf(AConfiguration_getNavHidden(app^.config)) +
+      ' sdk_ver=' + sf(AConfiguration_getSdkVersion(app^.config)) +
+      ' screen_size=' + sf(AConfiguration_getScreenSize(app^.config)) +
+      ' screen_long=' + sf(AConfiguration_getScreenLong(app^.config)) +
+      ' ui_mode_type=' + sf(AConfiguration_getUiModeType(app^.config)) +
+      ' ui_mode_night=' + sf(AConfiguration_getUiModeNight(app^.config)));
 end;
 
 (**
@@ -465,7 +462,7 @@ begin
       APP_CMD_SAVE_STATE: begin
          logv('APP_CMD_SAVE_STATE');
          pthread_mutex_lock(@app^.mutex);
-         app^.stateSaved := 1;
+         app^.stateSaved := true;
          pthread_cond_broadcast(@app^.cond);
          pthread_mutex_unlock(@app^.mutex);
       end;
@@ -485,10 +482,12 @@ begin
 
    if app^.inputQueue <> nil then begin
       AInputQueue_detachLooper(app^.inputQueue);
+      app^.inputQueue := nil;
    end;
 
    AConfiguration_delete(app^.config);
-   app^.destroyed := 1;
+   app^.config := nil;
+   app^.destroyed := true;
    pthread_cond_broadcast(@app^.cond);
    pthread_mutex_unlock(@app^.mutex);
 
@@ -518,6 +517,8 @@ begin
 
       AInputQueue_finishEvent(app^.inputQueue, event, handled);
    end;
+
+   logi('hwat');
 end;
 
 procedure process_cmd(app: Pandroid_app; source: Pandroid_poll_source); cdecl;
@@ -559,7 +560,7 @@ begin
    app^.looper := looper;
 
    pthread_mutex_lock(@app^.mutex);
-   app^.running := 1;
+   app^.running := true;
    pthread_cond_broadcast(@app^.cond);
    pthread_mutex_unlock(@app^.mutex);
 
@@ -610,7 +611,7 @@ begin
 
    // Wait for thread to start.
    pthread_mutex_lock(@app^.mutex);
-   while (app^.running = 0) do begin
+   while (not app^.running) do begin
       pthread_cond_wait(@app^.cond, @app^.mutex);
    end;
 
@@ -627,15 +628,15 @@ end;
 
 procedure android_app_set_input(app: Pandroid_app; inputQueue: PAInputqueue);
 begin
-    pthread_mutex_lock(@app^.mutex);
-    app^.pendingInputQueue := inputQueue;
-    android_app_write_cmd(app, APP_CMD_INPUT_CHANGED);
+   pthread_mutex_lock(@app^.mutex);
+   app^.pendingInputQueue := inputQueue;
+   android_app_write_cmd(app, APP_CMD_INPUT_CHANGED);
 
-    while (app^.inputQueue <> app^.pendingInputQueue) do begin
-        pthread_cond_wait(@app^.cond, @app^.mutex);
-    end;
+   while (app^.inputQueue <> app^.pendingInputQueue) do begin
+      pthread_cond_wait(@app^.cond, @app^.mutex);
+   end;
 
-    pthread_mutex_unlock(@app^.mutex);
+   pthread_mutex_unlock(@app^.mutex);
 end;
 
 procedure android_app_set_window(app: Pandroid_app; window: PANativeWindow);
@@ -663,7 +664,7 @@ begin
    android_app_write_cmd(app, cmd);
 
    while (app^.activityState <> cmd) do begin
-        pthread_cond_wait(@app^.cond, @app^.mutex);
+      pthread_cond_wait(@app^.cond, @app^.mutex);
    end;
 
    pthread_mutex_unlock(@app^.mutex);
@@ -674,7 +675,7 @@ begin
    pthread_mutex_lock(@app^.mutex);
    android_app_write_cmd(app, APP_CMD_DESTROY);
 
-   while (app^.destroyed = 0) do begin
+   while (not app^.destroyed) do begin
       pthread_cond_wait(@app^.cond, @app^.mutex);
    end;
 
@@ -718,10 +719,10 @@ begin
 
    logv('SaveInstanceState: ' + sf(activity));
    pthread_mutex_lock(@app^.mutex);
-   app^.stateSaved := 0;
+   app^.stateSaved := false;
    android_app_write_cmd(app, APP_CMD_SAVE_STATE);
 
-   while (app^.stateSaved = 0) do begin
+   while (not app^.stateSaved) do begin
       pthread_cond_wait(@app^.cond, @app^.mutex);
    end;
 
