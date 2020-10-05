@@ -1,0 +1,7 @@
+# DVAR
+
+android.manual_file_management = true
+android.package_name = dbx7.ox.tests.native-activity
+android.emulator_cpu_type = 2
+android.target_version = 29
+android.project_files_path = android

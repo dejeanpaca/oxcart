@@ -1,0 +1,10 @@
+# DVAR
+
+project.name = NativeActivity
+project.short_name = 
+project.identifier = NativeActivity
+project.organization = 
+project.organization_short = 
+project.line_endings = lf
+project.platform_enabled = android
+project.nil_project = true
