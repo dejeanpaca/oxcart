@@ -1449,6 +1449,7 @@ begin
    BuildArch := oxedEditorPlatform.Architecture;
    BuildMechanism := OXED_BUILD_VIA_FPC;
    Parameters.ExportSymbols.Dispose();
+   Parameters.PreIncludeUses.Dispose();
    Parameters.IncludeUses.Dispose();
    SetupFPCPlatform();
 end;
