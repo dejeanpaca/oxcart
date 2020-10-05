@@ -154,7 +154,7 @@ TYPE
 
       // This is non-zero when the application's NativeActivity is being
       // destroyed and waiting for the app thread to complete.
-      destroyRequested: cint;
+      destroyRequested: boolean;
 
       // -------------------------------------------------
       // Below are "private" implementation of the glue code.
@@ -342,7 +342,7 @@ var
   cmd: cint8;
 
 begin
-   if fpread(app^.msgread, @cmd, SizeOf(cmd)) = SizeOf(cmd) then begin
+   if FpRead(app^.msgread, cmd, SizeOf(cmd)) = SizeOf(cmd) then begin
       if cmd = APP_CMD_SAVE_STATE then
          free_saved_state(app);
 
@@ -400,7 +400,7 @@ begin
          if app^.inputQueue <> nil then begin
             logv('Attaching input queue to looper');
             AInputQueue_attachLooper(app^.inputQueue, app^.looper, LOOPER_ID_INPUT, nil, @app^.inputPollSource);
-          end;
+         end;
 
           pthread_cond_broadcast(@app^.cond);
           pthread_mutex_unlock(@app^.mutex);
@@ -438,7 +438,7 @@ begin
 
       APP_CMD_DESTROY: begin
          logv('APP_CMD_DESTROY');
-         inc(app^.destroyRequested);
+         app^.destroyRequested := true;
       end;
    end;
 end;
@@ -475,7 +475,7 @@ end;
 
 procedure android_app_destroy(app: Pandroid_app);
 begin
-   logv('android_app_destroy!');
+   logv('Destroy android app!');
 
    free_saved_state(app);
    pthread_mutex_lock(@app^.mutex);
@@ -622,11 +622,11 @@ end;
 
 procedure android_app_write_cmd(app: Pandroid_app; cmd: cint8);
 begin
-   if FpWrite(app^.msgwrite, @cmd, SizeOf(cmd)) <> SizeOf(cmd) then
+   if FpWrite(app^.msgwrite, cmd, SizeOf(cmd)) <> SizeOf(cmd) then
       loge('Failure writing android_app cmd: ' + strerror(errno));
 end;
 
-procedure android_app_set_input(app: Pandroid_app; inputQueue: PAInputqueue);
+procedure android_app_set_input(app: Pandroid_app; inputQueue: PAInputQueue);
 begin
    pthread_mutex_lock(@app^.mutex);
    app^.pendingInputQueue := inputQueue;
