@@ -27,6 +27,7 @@ VAR
       EmulatorCPUType: wdgTDropDownList;
       PackageName,
       ProjectFilesPath: wdgTInputBox;
+      ExcludeDefaultMain,
       Enabled,
       ManualFileManagement: wdgTCheckbox;
       DeployTemplate: wdgTButton;
@@ -43,6 +44,7 @@ begin
    wdg.EmulatorCPUType.Enable(enabled);
    wdg.PackageName.Enable(enabled);
    wdg.ManualFileManagement.Enable(enabled);
+   wdg.ExcludeDefaultMain.Enable(enabled);
    enableAndroidDeployWidgets(enabled and wdg.ManualFileManagement.Checked());
 end;
 
@@ -72,6 +74,7 @@ begin
    oxedAndroidSettings.Project.ManualFileManagement := wdg.ManualFileManagement.Checked();
    oxedAndroidSettings.Project.ProjectFilesPath := wdg.ProjectFilesPath.GetText();
    oxedAndroidSettings.Project.EmulatorCPUType := oxedTAndroidCPUType(wdg.EmulatorCPUType.CurrentItem);
+   oxedAndroidSettings.Project.ExcludeDefaultMain := wdg.ExcludeDefaultMain.Checked();
 
    oxedPlatforms.Enable(oxedAndroidPlatform, wdg.Enabled.Checked());
 end;
@@ -83,6 +86,7 @@ begin
    wdg.PackageName.SetText(oxedAndroidSettings.Project.PackageName);
    wdg.ManualFileManagement.Check(oxedAndroidSettings.Project.ManualFileManagement);
    wdg.ProjectFilesPath.SetText(oxedAndroidSettings.Project.ProjectFilesPath);
+   wdg.ExcludeDefaultMain.Check(oxedAndroidSettings.Project.ExcludeDefaultMain);
    wdg.ProjectFilesPath.Enable(wdg.ManualFileManagement.Checked());
 
    wdg.EmulatorCPUType.SelectItem(loopint(oxedAndroidSettings.GetCPUType()));
@@ -118,6 +122,9 @@ begin
 
    wdgLabel.Add('Package name');
    wdg.PackageName := wdgInputBox.Add('');
+
+   wdg.ExcludeDefaultMain := wdgCheckbox.Add('Exclude default oX android main method', oxedAndroidSettings.Project.ExcludeDefaultMain);
+   wdg.ExcludeDefaultMain.SetHint('If you want to roll out your own android_main method, instead of the supplied engine one.');
 
    wdgDivisor.Add('Editor build settings');
 
