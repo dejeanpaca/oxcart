@@ -22,8 +22,7 @@ testresults.txt
 *.dSYM
 .oxsession/
 .oxtemp/
-.oxproject/
-android/
+android_project/
 test_data
 *.test
 .vscode
