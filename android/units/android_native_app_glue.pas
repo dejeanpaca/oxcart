@@ -502,8 +502,6 @@ var
 begin
    event := nil;
 
-   logi('process_input');
-
    while AInputQueue_getEvent(app^.inputQueue, @event) >= 0 do begin
       logv('New input event: type=' + sf(AInputEvent_getType(event)));
 
@@ -517,8 +515,6 @@ begin
 
       AInputQueue_finishEvent(app^.inputQueue, event, handled);
    end;
-
-   logi('hwat');
 end;
 
 procedure process_cmd(app: Pandroid_app; source: Pandroid_poll_source); cdecl;
