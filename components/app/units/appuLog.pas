@@ -18,16 +18,16 @@ TYPE
    { appTLog }
 
    appTLog = record
-     FileName: StdString;
-     {callback for setting up log files}
-     SetupCallback: TProcedure;
+      FileName: StdString;
+      {callback for setting up log files}
+      SetupCallback: TProcedure;
 
-     {skip initialization}
-     SkipInit: boolean;
+      {skip initialization}
+      SkipInit: boolean;
 
-     procedure Initialize();
-     {use a new setup callback and return the old one}
-     function UseSetupCallback(callback: TProcedure): TProcedure;
+      procedure Initialize();
+      {use a new setup callback and return the old one}
+      function UseSetupCallback(callback: TProcedure): TProcedure;
    end;
 
 VAR
@@ -43,6 +43,8 @@ var
 {$ENDIF}
 
 begin
+   stdlog.Handler := log.Handler.pDefault;
+
    {quit if already initialized}
    if(not stdlog.Flags.Initialized) then begin
       {create directory for logs}
