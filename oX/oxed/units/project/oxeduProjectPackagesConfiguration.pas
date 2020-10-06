@@ -34,7 +34,8 @@ end;
 
 procedure save();
 begin
-   oxedProjectPackagesConfigurationFile.Save();
+   if(oxedProject.Packages.n > 0) then
+      oxedProjectPackagesConfigurationFile.Save();
 end;
 
 procedure packageNotify(var context: TDVarNotificationContext);
