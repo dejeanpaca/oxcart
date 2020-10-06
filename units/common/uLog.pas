@@ -654,6 +654,7 @@ begin
    if(log.Settings.HandleLogs) and (not stdlog.Flags.Initialized) then begin
       {initialize the standard log file}
       stdlog.Initialize(fn, logh, mode);
+
       if(stdlog.Error = logeNONE) then
          {open the standard log file}
          stdlog.Open();
@@ -811,7 +812,8 @@ begin
 
    if(log.Settings.HandleLogs) then begin
       Flags.Closing := false;
-      if(not self.h^.needOpen) then begin
+
+      if(not Self.h^.NeedOpen) then begin
          Flags.Opened := true;
          Flags.Ok := true;
          exit;
@@ -827,7 +829,7 @@ begin
             h^.Start(@self);
 
             {write down the log header(if one exists)}
-            if(LogHeader <> '') and (not h^.noheader) then begin
+            if(LogHeader <> '') and (not h^.NoHeader) then begin
                i(LogHeader);
 
                {put an additional after the header(if chosen so)}
@@ -1246,6 +1248,7 @@ end;
 
 INITIALIZATION
    consoleColors[0] := ConsoleUtils.console.InitialTextColor;
+
    {$IFNDEF NOLOG}
    Init();
    log.Init(stdlog);

@@ -21,7 +21,7 @@ INTERFACE
       {$ELSE}
       uAndroidCrashHandler,
       {$ENDIF}
-      uFiles,
+      {%H-}uFiles,
       {$IFDEF ANDROID}
       ulogAndroid,
       {$ENDIF}
