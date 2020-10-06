@@ -342,6 +342,8 @@ var
   cmd: cint8;
 
 begin
+   cmd := 0;
+
    if FpRead(app^.msgread, cmd, SizeOf(cmd)) = SizeOf(cmd) then begin
       if cmd = APP_CMD_SAVE_STATE then
          free_saved_state(app);
@@ -577,7 +579,7 @@ var
    attr: pthread_attr_t;
 
 begin
-   app := Pandroid_app(malloc(SizeOf(android_app)));
+   app := GetMem(SizeOf(android_app));
    ZeroOut(app^, SizeOf(android_app));
    app^.activity := activity;
 
@@ -585,7 +587,7 @@ begin
    pthread_cond_init(@app^.cond, nil);
 
    if savedState <> nil then begin
-      app^.savedState := malloc(savedStateSize);
+      app^.savedState := GetMem(savedStateSize);
       app^.savedStateSize := savedStateSize;
       move(app^.savedState^, savedState^, savedStateSize);
    end;
@@ -607,6 +609,7 @@ begin
 
    // Wait for thread to start.
    pthread_mutex_lock(@app^.mutex);
+
    while (not app^.running) do begin
       pthread_cond_wait(@app^.cond, @app^.mutex);
    end;
