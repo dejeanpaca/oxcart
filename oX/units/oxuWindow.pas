@@ -154,7 +154,7 @@ begin
       if(renderer.Settings.VSync) then
          s := s + ', vsync';
 
-      log.Enter('Properties >');
+      log.Enter('Properties');
          log.i('Color: '    + sf(renderer.Settings.ColorBits));
 
          if(renderer.Settings.DepthBits > 0) then
