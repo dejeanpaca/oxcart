@@ -15,11 +15,11 @@ INTERFACE
       uError,
       {$ENDIF}
       {ox}
-      oxuTexture
-      {$IFNDEF ANDROID},{$ENDIF}
+      oxuTexture,
       {$IFDEF X11}GLX, oxuX11Platform{$ENDIF}
       {$IFDEF WINDOWS}windows, oxuWindowsOS{$ENDIF}
-      {$IFDEF COCOA}CocoaAll, oxuCocoaPlatform{$ENDIF};
+      {$IFDEF COCOA}CocoaAll, oxuCocoaPlatform{$ENDIF}
+      {$IFDEF ANDROID}egl{$ENDIF};
 
 CONST
    oglNONE = {$IFNDEF GLES}GL_NONE{$ELSE}GL_ZERO{$ENDIF};
@@ -37,6 +37,7 @@ TYPE
       {$IF DEFINED(WINDOWS)}HGLRC
       {$ELSEIF DEFINED(COCOA)}NSOpenGLContext
       {$ELSEIF DEFINED(X11)}GLXContext
+      {$ELSEIF DEFINED(ANDROID)}EGLContext
       {$ELSE}loopint{$ENDIF};
 
    { oglTVersion }
@@ -133,6 +134,7 @@ CONST
       {$IF DEFINED(WINDOWS)}0
       {$ELSEIF DEFINED(X11)}nil
       {$ELSEIF DEFINED(COCOA)}nil
+      {$ELSEIF DEFINED(ANDROID)}nil
       {$ELSE}0{$ENDIF};
 
    {version which we expect}
@@ -461,6 +463,8 @@ begin
    {$ELSEIF defined(X11)}
    Result := rc <> nil;
    {$ELSEIF defined(COCOA)}
+   Result := rc <> nil;
+   {$ELSEIF defined(ANDROID)}
    Result := rc <> nil;
    {$ELSE}
    Result := rc <> 0;
