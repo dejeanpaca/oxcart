@@ -14,7 +14,7 @@ INTERFACE
       {app}
       uApp, appuMouse,
       {oX}
-      oxuPlatform, oxuPlatforms, oxuWindowTypes;
+      oxuPlatform, oxuPlatforms, oxuWindowTypes, oxuRenderer;
 
 TYPE
    { oxTAndroidPlatform }
@@ -121,6 +121,20 @@ end;
 
 function oxTAndroidPlatform.MakeWindow(wnd: oxTWindow): boolean;
 begin
+   Result := false;
+
+   {initialize gl for window}
+   if(not oxTRenderer(wnd.Renderer).PreInitWindow(wnd)) then begin
+      wnd.RaiseError('Preinit failed');
+      exit;
+   end;
+
+   {initialize window}
+   if(not oxTRenderer(wnd.Renderer).InitWindow(wnd)) then begin
+      wnd.RaiseError('Renderer window create failed.');
+      exit;
+   end;
+
    Result := true;
 end;
 
