@@ -9,11 +9,12 @@ UNIT oxuAndroidPlatform;
 INTERFACE
 
    USES
-      uStd,
+      ctypes, looper, input, android_native_app_glue, android_keycodes, android_log_helper,
+      uStd, StringUtils,
       {app}
-      appuMouse,
+      uApp, appuMouse,
       {oX}
-      oxuTypes, oxuPlatform, oxuPlatforms, oxuWindowTypes;
+      oxuPlatform, oxuPlatforms, oxuWindowTypes;
 
 TYPE
    { oxTAndroidPlatform }
@@ -23,6 +24,8 @@ TYPE
       function Initialize(): boolean; override;
 
       function MakeWindow({%H-}wnd: oxTWindow): boolean; override;
+
+      procedure ProcessEvents(); override;
    end;
 
    { TAndroidPointerDriver }
@@ -39,8 +42,40 @@ TYPE
       procedure show(devID: longint; {%H-}wnd: pointer); override;
    end;
 
+VAR
+   AndroidApp: Pandroid_app;
+
+procedure AndroidHandleCommand(app: Pandroid_app; cmd: cint32);
+function AndroidHandleInput(app: Pandroid_app; event: PAInputEvent): cint32;
 
 IMPLEMENTATION
+
+procedure AndroidHandleCommand(app: Pandroid_app; cmd: cint32);
+begin
+   writeln(sf(cmd));
+end;
+
+function AndroidHandleInput(app: Pandroid_app; event: PAInputEvent): cint32;
+var
+   kc,
+   action,
+   etype: cint32;
+
+begin
+   etype := AInputEvent_getType(event);
+
+   kc := AKeyEvent_getKeyCode(event);
+   action := AKeyEvent_getAction(event);
+
+   if(etype = AINPUT_EVENT_TYPE_KEY) then begin
+      if(kc = AKEYCODE_BACK) then begin
+         if(action = AKEY_STATE_UP) then
+            app^.destroyRequested := true;
+      end;
+   end;
+
+   Result := 0;
+end;
 
 { TAndroidPointerDriver }
 
@@ -87,6 +122,33 @@ end;
 function oxTAndroidPlatform.MakeWindow(wnd: oxTWindow): boolean;
 begin
    Result := true;
+end;
+
+procedure oxTAndroidPlatform.ProcessEvents();
+var
+   ident,
+   nEvents: cint;
+   pSource: Pandroid_poll_source;
+
+begin
+   nEvents := 0;
+   pSource := nil;
+
+   repeat
+      ident := ALooper_pollAll(-1, nil, @nEvents, @pSource);
+
+      if(ident >= 0) then begin
+         logi('event: ' + sf(ident));
+
+         if(pSource <> nil) then begin
+            logi('source: ' + sf(pSource^.id));
+            pSource^.process(AndroidApp, pSource);
+         end;
+      end;
+
+      if(AndroidApp^.destroyRequested) or (not app.Active) then
+         exit;
+   until false;
 end;
 
 INITIALIZATION
