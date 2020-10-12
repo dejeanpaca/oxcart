@@ -44,6 +44,7 @@ TYPE
       function SetupWindow(wnd: oxTWindow): boolean; override;
       function PreInitWindow({%H-}wnd: oxTWindow): boolean; override;
       function InitWindow(wnd: oxTWindow): boolean; override;
+      function DeInitWindow({%H-}wnd: oxTWindow): boolean; override;
       function ContextWindowRequired(): boolean; override;
 
       {rendering}
@@ -135,6 +136,11 @@ begin
    glPlatform^.OnInitWindow(oglTWindow(wnd));
 
    Result := true;
+end;
+
+function oxglTRenderer.DeInitWindow(wnd: oxTWindow): boolean;
+begin
+   glPlatform^.OnDeInitWindow(oglTWindow(wnd));
 end;
 
 function oxglTRenderer.SetupWindow(wnd: oxTWindow): boolean;
