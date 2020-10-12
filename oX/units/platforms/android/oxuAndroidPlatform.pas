@@ -14,7 +14,7 @@ INTERFACE
       {app}
       uApp, appuMouse,
       {oX}
-      oxuRun, oxuPlatform, oxuPlatforms, oxuWindowTypes, oxuRenderer;
+      uOX, oxuRun, oxuPlatform, oxuPlatforms, oxuWindowTypes, oxuRenderer;
 
 TYPE
    { oxTAndroidPlatform }
@@ -53,8 +53,10 @@ IMPLEMENTATION
 
 procedure AndroidHandleCommand(app: Pandroid_app; cmd: cint32);
 begin
-   If(cmd = APP_CMD_INIT_WINDOW) then
-      oxRun.Initialize();
+   If(cmd = APP_CMD_INIT_WINDOW) then begin
+      if(not ox.Initialized) and (not ox.Started) then
+         oxRun.Initialize();
+   end;
 end;
 
 function AndroidHandleInput(app: Pandroid_app; event: PAInputEvent): cint32;
