@@ -64,7 +64,10 @@ TYPE
       OS: StdString;
       Architectures: oxedTPlatformArchitectureList;
 
-      RequireCMEM: boolean;
+      {does this platform require CMEM}
+      RequireCMEM,
+      {does this platform support external debug symbols}
+      SupportsExternalDebugSymbols: boolean;
 
       GlyphName: StdString;
       GlyphCode: longword;
@@ -173,6 +176,8 @@ begin
 
    Architectures.InitializeValues(Architectures);
    TSimpleStringList.InitializeValues(Symbols);
+
+   SupportsExternalDebugSymbols := true;
 end;
 
 destructor oxedTPlatform.Destroy;

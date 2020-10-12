@@ -90,6 +90,7 @@ begin
    Symbols.Add('GLES');
 
    RequireCMEM := true;
+   SupportsExternalDebugSymbols := false;
 
    Configuration := oxedTPlatformConfiguration.Create();
 
