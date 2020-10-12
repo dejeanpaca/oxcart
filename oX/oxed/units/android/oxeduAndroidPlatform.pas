@@ -87,6 +87,8 @@ begin
    OS := 'android';
    GlyphName := 'brands:61819';
 
+   Symbols.Add('GLES');
+
    RequireCMEM := true;
 
    Configuration := oxedTPlatformConfiguration.Create();
