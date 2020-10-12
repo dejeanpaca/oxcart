@@ -9,12 +9,13 @@ UNIT oxuAndroidPlatform;
 INTERFACE
 
    USES
-      ctypes, looper, input, android_native_app_glue, android_keycodes, android_log_helper,
+      ctypes, looper, input, android_native_app_glue, android_keycodes, android_log_helper, native_activity,
       uStd, StringUtils,
       {app}
-      uApp, appuMouse,
+      uApp, appuMouse, appuActionEvents,
       {oX}
-      uOX, oxuRun, oxuPlatform, oxuPlatforms, oxuWindowTypes, oxuRenderer;
+      uOX, oxuRun, oxuInit,
+      oxuPlatform, oxuPlatforms, oxuWindowTypes, oxuRenderer;
 
 TYPE
    { oxTAndroidPlatform }
@@ -57,6 +58,9 @@ begin
    If(cmd = APP_CMD_INIT_WINDOW) then begin
       if(not ox.Initialized) and (not ox.Started) then
          oxRun.Initialize();
+   end else if(cmd = APP_CMD_TERM_WINDOW) then begin
+      oxInitialization.Deinitialize();
+      ANativeActivity_finish(app^.activity);
    end;
 end;
 
@@ -75,7 +79,7 @@ begin
    if(etype = AINPUT_EVENT_TYPE_KEY) then begin
       if(kc = AKEYCODE_BACK) then begin
          if(action = AKEY_STATE_UP) then
-            app^.destroyRequested := true;
+            appActionEvents.QueueQuitEvent();
       end;
    end;
 
