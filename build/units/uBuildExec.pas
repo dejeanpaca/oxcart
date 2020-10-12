@@ -41,7 +41,13 @@ TYPE
          OnLine: TProcedures;
       end;
 
+      AbortFlag: boolean;
       Log: PLog;
+
+      {the process we're executing}
+      Process: TProcess;
+      {stream from the executed process}
+      ProcessStream: Text;
 
       {get lazarus project filename for the given path (which may already include project filename)}
       function GetLPIFilename(const path: StdString): StdString;
@@ -72,7 +78,9 @@ TYPE
       procedure StoreOutput(p: TProcess);
       procedure ResetOutput();
       {wait for a build process to finish (fpc/lazbuild)}
-      procedure Wait(p: TProcess);
+      procedure Wait();
+
+      procedure Abort();
    end;
 
 VAR
@@ -102,12 +110,13 @@ end;
 
 procedure TBuildSystemExec.Laz(const originalPath: StdString);
 var
-   p: TProcess;
    executableName: StdString;
    path: StdString;
    lazarus: PBuildLazarusInstall;
 
 begin
+   AbortFlag := false;
+
    path := originalPath;
    ReplaceDirSeparators(path);
 
@@ -117,31 +126,31 @@ begin
 
    lazarus := BuildInstalls.GetLazarus();
 
-   p := GetToolProcess();
+   Process := GetToolProcess();
 
-   p.Executable := lazarus^.Path + build.GetExecutableName('lazbuild');
+   Process.Executable := lazarus^.Path + build.GetExecutableName('lazbuild');
    if(build.Options.Rebuild) then
-      p.Parameters.Add('-B');
+      Process.Parameters.Add('-B');
 
-   p.Parameters.Add('-q');
+   Process.Parameters.Add('-q');
 
-   p.Parameters.Add(GetLPIFilename(path));
+   Process.Parameters.Add(GetLPIFilename(path));
 
    try
-      p.Execute();
+      Process.Execute();
    except
       on e: Exception do begin
          Log^.e('build > Failed to execute lazbuild: ' + lazarus^.Path + ' (' + e.ToString() + ')');
-         StoreOutput(p);
-         p.Free();
+         StoreOutput(Process);
+         FreeObject(Process);
          exit;
       end;
    end;
 
-   Wait(p);
-   StoreOutput(p);
+   Wait();
+   StoreOutput(Process);
 
-   if((p.ExitStatus = 0) and (p.ExitCode = 0)) then begin
+   if((Process.ExitStatus = 0) and (Process.ExitCode = 0)) then begin
       {NOTE: we exepect file name in LPI to not have a path}
 
       executableName := build.GetExecutableName(GetExecutableNameFromLPI(path));
@@ -154,10 +163,10 @@ begin
       Output.Success := true;
       Log^.k('build > Building successful');
    end else begin
-      BuildingFailed(p);
+      BuildingFailed(Process);
    end;
 
-   p.Free();
+   FreeObject(Process);
 end;
 
 VAR
@@ -200,13 +209,14 @@ end;
 
 procedure TBuildSystemExec.Pas(const originalPath: StdString; fpcParameters: PSimpleStringList = nil);
 var
-   p: TProcess;
    path: StdString;
    i: loopint;
    platform: PBuildPlatform;
    parameters: TSimpleStringList;
 
 begin
+   AbortFlag := false;
+
    path := originalPath;
    ReplaceDirSeparators(path);
 
@@ -215,10 +225,10 @@ begin
 
    Log^.i('build > Building: ' + path);
 
-   p := GetToolProcess();
+   Process := GetToolProcess();
 
-   p.Executable := platform^.GetExecutablePath();
-   Log^.v('Running: ' + p.Executable);
+   Process.Executable := platform^.GetExecutablePath();
+   Log^.v('Running: ' + Process.Executable);
 
    if(fpcParameters = nil) then begin
       if(build.FPCOptions.UseConfig = '') then
@@ -229,36 +239,36 @@ begin
       parameters := fpcParameters^;
 
    for i := 0 to parameters.n - 1 do begin
-      p.Parameters.Add(parameters.List[i]);
+      Process.Parameters.Add(parameters.List[i]);
    end;
 
-   p.Parameters.Add(path);
+   Process.Parameters.Add(path);
 
    try
-      p.Execute();
+      Process.Execute();
    except
       on e: Exception do begin
-         Log^.e('build > Failed running: ' + p.Executable + ' (' + e.ToString() + ')');
-         StoreOutput(p);
-         p.Free();
+         Log^.e('build > Failed running: ' + Process.Executable + ' (' + e.ToString() + ')');
+         StoreOutput(Process);
+         FreeObject(Process);
          exit();
      end;
    end;
 
-   Wait(p);
-   StoreOutput(p);
+   Wait();
+   StoreOutput(Process);
 
-   if((p.ExitStatus = 0) and (p.ExitCode = 0)) then begin
+   if((Process.ExitStatus = 0) and (Process.ExitCode = 0)) then begin
       Output.ExecutableName := build.GetExecutableName(ExtractFilePath(path) +
          ExtractFileNameNoExt(path), build.Options.IsLibrary);
 
       Output.Success := true;
       Log^.k('build > Building successful');
    end else begin
-      BuildingFailed(p);
+      BuildingFailed(Process);
    end;
 
-   p.Free();
+   FreeObject(Process);
 end;
 
 procedure TBuildSystemExec.BuildingFailed(const p: TProcess);
@@ -374,23 +384,22 @@ begin
    Output.ErrorDecription := '';
 end;
 
-procedure TBuildSystemExec.Wait(p: TProcess);
+procedure TBuildSystemExec.Wait();
 var
    s: StdString;
-   f: TextFile;
 
 begin
-   ZeroOut(f, SizeOf(f));
+   ZeroOut(ProcessStream, SizeOf(ProcessStream));
 
    if(Output.Redirect) then begin
-      AssignStream(f, p.Output);
-      Reset(f);
+      AssignStream(ProcessStream, Process.Output);
+      Reset(ProcessStream);
    end;
 
    repeat
       if(Output.Redirect) then begin
-         while(not eof(f)) do begin
-            ReadLn(f, s);
+         while(not eof(ProcessStream)) do begin
+            ReadLn(ProcessStream, s);
             Output.LastLine := s;
             Output.OnLine.Call();
          end;
@@ -398,12 +407,34 @@ begin
          break;
       end;
 
-      Sleep(5);
-   until (not p.Running);
+      if(AbortFlag) then begin
+         Log^.i('build > aborted');
 
-   if(Output.Redirect) then begin
-      Close(f);
-   end;
+         if(Process <> nil) then
+            Process.Terminate(0);
+
+         Close(ProcessStream);
+
+         break;
+      end;
+
+      Sleep(5);
+   until (not Process.Running);
+
+   if(Output.Redirect) then
+      Close(ProcessStream);
+end;
+
+procedure TBuildSystemExec.Abort();
+begin
+   Log^.i('build > aborting ...');
+
+   AbortFlag := true;
+
+   if(Process <> nil) then
+      Process.Terminate(217);
+
+   Close(ProcessStream);
 end;
 
 INITIALIZATION
