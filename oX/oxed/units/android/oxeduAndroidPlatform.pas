@@ -56,7 +56,10 @@ var
          platformToolchainPath + DirSep + 'bin';
 
       {complete lib path}
-      a.LibPath := archPath + DirSep + 'usr' + DirSep + 'lib';
+      if(a.LibTarget <> 'x86_64') then
+         a.LibPath := archPath + DirSep + 'usr' + DirSep + 'lib'
+      else
+         a.LibPath := archPath + DirSep + 'usr' + DirSep + 'lib64';
 
       {set extensions}
       a.LibraryExtension := '.so';
