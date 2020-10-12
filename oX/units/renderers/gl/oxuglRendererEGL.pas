@@ -146,7 +146,7 @@ end;
 function oxglTEGL.GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext;
 begin
    if(wnd.wd.display <> nil) and (wnd.wd.config <> nil) then
-      eglCreateContext(wnd.wd.display, wnd.wd.config, nil, nil)
+      Result := eglCreateContext(wnd.wd.display, wnd.wd.config, nil, nil)
    else
       Result := nil;
 end;
