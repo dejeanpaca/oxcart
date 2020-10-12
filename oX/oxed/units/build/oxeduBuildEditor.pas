@@ -40,11 +40,17 @@ begin
    oxedBuild.StartTask(OXED_BUILD_TASK_REBUILD_THIRD_PARTY, oxedEditorPlatform.Architecture);
 end;
 
+procedure AbortBuild();
+begin
+   oxedBuild.Abort();
+end;
+
 INITIALIZATION
    oxedActions.REBUILD := appActionEvents.SetCallback(@RebuildEditorTask);
    oxedActions.RECODE := appActionEvents.SetCallback(@RecodeEditorTask);
    oxedActions.RECREATE := appActionEvents.SetCallback(@RecreateEditorTask);
    oxedActions.CLEANUP := appActionEvents.SetCallback(@CleanupEditorTask);
    oxedActions.REBUILD_THIRD_PARTY := appActionEvents.SetCallback(@RebuildThirdPartyTask);
+   oxedActions.ABORT_BUILD := appActionEvents.SetCallback(@AbortBuild);
 
 END.

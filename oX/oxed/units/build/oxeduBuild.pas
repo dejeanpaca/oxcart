@@ -92,6 +92,8 @@ TYPE
       BuildPlatform: oxedTPlatform;
       {current build mechanism}
       BuildMechanism: oxedTBuildMechanism;
+      {signal the build process to abort}
+      BuildAbort: boolean;
 
       {build parameters}
       Parameters: record
@@ -170,6 +172,8 @@ TYPE
       procedure StartTask(taskType: oxedTBuildTaskType; architecture: oxedTPlatformArchitecture);
       {run a task of the specified type}
       procedure StartTask(taskType: oxedTBuildTaskType);
+
+      procedure Abort();
 
       {setup the required build platform}
       function SetupPlatform(): boolean;
@@ -1340,6 +1344,12 @@ begin
    Task.Start();
 end;
 
+procedure oxedTBuildGlobal.Abort();
+begin
+   BuildAbort := true;
+   BuildExec.Abort();
+end;
+
 function oxedTBuildGlobal.SetupPlatform(): boolean;
 var
    laz: PBuildLazarusInstall;
@@ -1457,6 +1467,7 @@ begin
    BuildTarget := OXED_BUILD_LIB;
    BuildArch := oxedEditorPlatform.Architecture;
    BuildMechanism := OXED_BUILD_VIA_FPC;
+   BuildAbort := false;
    Parameters.ExportSymbols.Dispose();
    Parameters.PreIncludeUses.Dispose();
    Parameters.IncludeUses.Dispose();
