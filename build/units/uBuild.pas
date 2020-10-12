@@ -70,6 +70,14 @@ TYPE
          External,
          {generate debug code for valgrind (-gv)}
          Valgrind: boolean;
+
+         {debug information options}
+         Information: record
+            DwarfSets: boolean;
+         end;
+
+         {dwarf debug information level}
+         DwarfLevel: loopint;
       end;
 
       {selected optimization level}
