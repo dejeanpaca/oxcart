@@ -14,7 +14,7 @@ INTERFACE
       {app}
       uApp, appuMouse,
       {oX}
-      oxuPlatform, oxuPlatforms, oxuWindowTypes, oxuRenderer;
+      oxuRun, oxuPlatform, oxuPlatforms, oxuWindowTypes, oxuRenderer;
 
 TYPE
    { oxTAndroidPlatform }
@@ -47,12 +47,14 @@ VAR
 
 procedure AndroidHandleCommand(app: Pandroid_app; cmd: cint32);
 function AndroidHandleInput(app: Pandroid_app; event: PAInputEvent): cint32;
+procedure AndroidProcessEvents();
 
 IMPLEMENTATION
 
 procedure AndroidHandleCommand(app: Pandroid_app; cmd: cint32);
 begin
-   writeln(sf(cmd));
+   If(cmd = APP_CMD_INIT_WINDOW) then
+      oxRun.Initialize();
 end;
 
 function AndroidHandleInput(app: Pandroid_app; event: PAInputEvent): cint32;
@@ -75,6 +77,28 @@ begin
    end;
 
    Result := 0;
+end;
+
+procedure AndroidProcessEvents();
+var
+   ident,
+   nEvents: cint;
+   pSource: Pandroid_poll_source;
+
+begin
+   nEvents := 0;
+   pSource := nil;
+
+   ident := ALooper_pollAll(-1, nil, @nEvents, @pSource);
+
+   if(ident >= 0) then begin
+      logi('event: ' + sf(ident));
+
+      if(pSource <> nil) then begin
+         logi('source: ' + sf(pSource^.id));
+         pSource^.process(AndroidApp, pSource);
+      end;
+   end;
 end;
 
 { TAndroidPointerDriver }
@@ -139,30 +163,8 @@ begin
 end;
 
 procedure oxTAndroidPlatform.ProcessEvents();
-var
-   ident,
-   nEvents: cint;
-   pSource: Pandroid_poll_source;
-
 begin
-   nEvents := 0;
-   pSource := nil;
-
-   repeat
-      ident := ALooper_pollAll(-1, nil, @nEvents, @pSource);
-
-      if(ident >= 0) then begin
-         logi('event: ' + sf(ident));
-
-         if(pSource <> nil) then begin
-            logi('source: ' + sf(pSource^.id));
-            pSource^.process(AndroidApp, pSource);
-         end;
-      end;
-
-      if(AndroidApp^.destroyRequested) or (not app.Active) then
-         exit;
-   until false;
+   AndroidProcessEvents();
 end;
 
 INITIALIZATION
