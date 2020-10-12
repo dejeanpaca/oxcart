@@ -165,7 +165,7 @@ INTERFACE
       {$ENDIF}
       {%H-}uOX,
 
-      {$IFDEF OX_FEATURE_UI}
+      {$IF DEFINED(OX_FEATURE_UI) AND DEFINED(OX_FEATURE_UI_WINDOWS)}
       oxuwndSettings,
       oxuwndSettingsVideo,
       oxuwndSettingsAudio,
