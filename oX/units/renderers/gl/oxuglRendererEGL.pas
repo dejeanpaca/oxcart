@@ -165,7 +165,8 @@ end;
 
 procedure oxglTEGL.SwapBuffers(wnd: oglTWindow);
 begin
-   eglSwapBuffers(wnd.wd.display, wnd.wd.surface);
+   if(wnd.wd.display <> nil) and (wnd.wd.surface <> nil) then
+      eglSwapBuffers(wnd.wd.display, wnd.wd.surface);
 end;
 
 INITIALIZATION
