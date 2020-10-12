@@ -13,7 +13,7 @@ USES
    {app}
    uApp,
    {ox}
-   uOX, oxuRun, oxuPlatform, oxuAndroidPlatform;
+   uOX, oxuRun, oxuPlatform, oxuAndroidPlatform, oxuInit;
 
 procedure android_main(app: Pandroid_app); cdecl;
 
@@ -50,6 +50,8 @@ begin
 
    if(not ox.InitializationFailed) then
       oxRun.Done();
+
+   oxInitialization.DeInitialize();
 end;
 
 END.
