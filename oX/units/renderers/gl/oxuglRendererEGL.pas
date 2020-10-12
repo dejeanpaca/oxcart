@@ -27,6 +27,7 @@ TYPE
 
       procedure OnInitialize(); virtual;
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
+      procedure OnDeInitWindow(wnd: oglTWindow); virtual;
       function GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext; virtual;
       function ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
       function DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
@@ -138,6 +139,14 @@ begin
    wnd.Dimensions.Assign(w, h);
 
    Result := true;
+end;
+
+procedure oxglTEGL.OnDeInitWindow(wnd: oglTWindow);
+begin
+   if(wnd.wd.Surface <> nil) then
+      eglDestroySurface(wnd.wd.display, wnd.wd.Surface);
+
+   wnd.wd.Surface := nil;
 end;
 
 function oxglTEGL.GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext;
