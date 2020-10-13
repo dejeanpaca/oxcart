@@ -140,7 +140,7 @@ end;
 
 function oxglTRenderer.DeInitWindow(wnd: oxTWindow): boolean;
 begin
-   glPlatform^.OnDeInitWindow(oglTWindow(wnd));
+   Result := glPlatform^.OnDeInitWindow(oglTWindow(wnd));
 end;
 
 function oxglTRenderer.SetupWindow(wnd: oxTWindow): boolean;
