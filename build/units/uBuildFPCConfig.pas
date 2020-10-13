@@ -198,13 +198,13 @@ begin
    add('## compiler options');
 
    if(build.FPCOptions.CompilerMode <> '') then
-     config.Add('-M' + build.FPCOptions.CompilerMode);
+     add('-M' + build.FPCOptions.CompilerMode);
 
    if(build.FPCOptions.ReferenceCountedString) then
-      config.Add('-Sh');
+      add('-Sh');
 
    if(build.FPCOptions.TurnOnInlining) then
-      config.Add('-Si');
+      add('-Si');
 
    if(build.FPCOptions.CLikeOperators) then
       config.Add('-Sc');
@@ -212,27 +212,30 @@ begin
    if(build.FPCOptions.AllowGotoAndLabel) then
       add('-Sg');
 
+   if(build.FPCOptions.PositionIndependentCode) then
+      add('-Cg');
+
    { checks }
    add();
    add('## checks');
 
    if(build.Checks.IO) then
-      config.Add('-Ci');
+      add('-Ci');
 
    if(build.Checks.Range) then
-      config.Add('-Cr');
+      add('-Cr');
 
    if(build.Checks.Overflow) then
-      config.Add('-Co');
+      add('-Co');
 
    if(build.Checks.Stack) then
-      config.Add('-Ct');
+      add('-Ct');
 
    if(build.Checks.Assertions) then
-      config.Add('-Sa');
+      add('-Sa');
 
    if(build.Checks.VerifyMethodCalls) then
-      config.Add('-CR');
+      add('-CR');
 
    { target }
    add();
