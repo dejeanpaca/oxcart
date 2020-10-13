@@ -10,6 +10,7 @@ INTERFACE
 
 USES
    android_native_app_glue, android_log_helper, native_activity,
+   StringUtils,
    {app}
    uApp,
    {ox}
@@ -33,15 +34,18 @@ begin
    uApp.app.Active := true;
 
    repeat
-      if(ox.Initialized) then
+      if(ox.Initialized) then begin
+         if(not ox.Started) then
+            oxRun.Start();
+
          oxRun.GoCycle(true)
-      else
+      end else
          AndroidProcessEvents();
 
       if ox.InitializationFailed or (not uApp.app.Active) then begin
          if(not finished) then begin
             finished := true;
-            logv('CLOSING ACTIVITY');
+            logv('Closing activity: ' + sf(app^.activity));
             ANativeActivity_finish(app^.activity);
          end;
       end;
