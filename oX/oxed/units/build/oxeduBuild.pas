@@ -687,6 +687,9 @@ var
    end;
 
 begin
+   if(build.Debug.DwarfLineInfo) then
+      units.Add('lnfodwrf');
+
    if(oxedBuild.Parameters.PreIncludeUses.n > 0) then begin
      units.Add('{build included first}');
 
