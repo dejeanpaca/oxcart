@@ -58,7 +58,7 @@ begin
    If(cmd = APP_CMD_INIT_WINDOW) then begin
       if(not ox.Initialized) and (not ox.Started) then
          oxRun.Initialize();
-   end else if(cmd = APP_CMD_TERM_WINDOW) then begin
+   end else if(cmd = APP_CMD_DESTROY) then begin
       oxInitialization.Deinitialize();
       ANativeActivity_finish(app^.activity);
    end;
@@ -96,7 +96,7 @@ begin
    nEvents := 0;
    pSource := nil;
 
-   ident := ALooper_pollAll(-1, nil, @nEvents, @pSource);
+   ident := ALooper_pollAll(0, nil, @nEvents, @pSource);
 
    if(ident >= 0) then begin
       logi('event: ' + sf(ident));
