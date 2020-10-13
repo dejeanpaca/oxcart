@@ -128,6 +128,9 @@ begin
    if(build.Debug.Valgrind) then
       AddArgument('-gv');
 
+   if(build.Debug.Stabs) then
+      AddArgument('-gs');
+
    if(build.Debug.Information.DwarfSets) then
       AddArgument('-godwarfsets');
 
@@ -269,6 +272,9 @@ begin
 
    if(build.Debug.Valgrind) then
       add('-gv');
+
+   if(build.Debug.Stabs) then
+      add('-gs');
 
    if(build.Debug.Information.DwarfSets) then
       add('-godwarfsets');

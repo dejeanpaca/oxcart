@@ -69,7 +69,11 @@ TYPE
          {include debug information from an external file (-Xg)}
          External,
          {generate debug code for valgrind (-gv)}
-         Valgrind: boolean;
+         Valgrind,
+         {stabs}
+         Stabs,
+         {use dwarf line info}
+         DwarfLineInfo: boolean;
 
          {debug information options}
          Information: record
