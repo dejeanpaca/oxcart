@@ -292,7 +292,7 @@ begin
       add();
       add('## custom options');
 
-      FromList(build.CustomOptions.List, '',  build.CustomOptions.n);
+      FromList(build.CustomOptions.List, '', build.CustomOptions.n);
    end;
 end;
 
