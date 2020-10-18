@@ -16,6 +16,8 @@
 
 unit native_activity;
 
+{$packrecords c}
+
 interface
 
 uses asset_manager,input,native_window,rect,jni,ctypes;
@@ -27,7 +29,7 @@ uses asset_manager,input,native_window,rect,jni,ctypes;
  }
 type
   PANativeActivityCallbacks = ^ANativeActivityCallbacks;
-  ANativeActivity = record
+  ANativeActivity = packed record
     (**
      * Pointer to the callback function table of the native application.
      * You can set the functions here to your own callbacks.  The callbacks

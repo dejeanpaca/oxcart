@@ -16,6 +16,8 @@
 
 unit looper;
 
+{$packrecords c}
+
 interface
 
 uses ctypes;
