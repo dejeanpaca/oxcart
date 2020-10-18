@@ -9,8 +9,8 @@ UNIT oxuAndroidPlatform;
 INTERFACE
 
    USES
-      ctypes, looper, input, android_native_app_glue, android_keycodes, android_log_helper, native_activity,
-      uStd, StringUtils,
+      ctypes, looper, input, android_native_app_glue, android_keycodes, native_activity,
+      uStd,
       {app}
       uApp, appuMouse, appuActionEvents,
       {oX}

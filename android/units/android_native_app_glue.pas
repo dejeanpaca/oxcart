@@ -799,23 +799,23 @@ end;
 
 procedure ANativeActivity_onCreate(activity: PANativeActivity; savedState: pointer; savedStateSize: csize_t); cdecl;
 begin
-    logv('Creating: ' + sf(activity));
+   logv('Creating: ' + sf(activity));
 
-    activity^.callbacks^.onDestroy := @onDestroy;
-    activity^.callbacks^.onStart := @onStart;
-    activity^.callbacks^.onResume := @onResume;
-    activity^.callbacks^.onSaveInstanceState := @onSaveInstanceState;
-    activity^.callbacks^.onPause := @onPause;
-    activity^.callbacks^.onStop := @onStop;
-    activity^.callbacks^.onConfigurationChanged := @onConfigurationChanged;
-    activity^.callbacks^.onLowMemory := @onLowMemory;
-    activity^.callbacks^.onWindowFocusChanged := @onWindowFocusChanged;
-    activity^.callbacks^.onNativeWindowCreated := @onNativeWindowCreated;
-    activity^.callbacks^.onNativeWindowDestroyed := @onNativeWindowDestroyed;
-    activity^.callbacks^.onInputQueueCreated := @onInputQueueCreated;
-    activity^.callbacks^.onInputQueueDestroyed := @onInputQueueDestroyed;
+   activity^.callbacks^.onDestroy := @onDestroy;
+   activity^.callbacks^.onStart := @onStart;
+   activity^.callbacks^.onResume := @onResume;
+   activity^.callbacks^.onSaveInstanceState := @onSaveInstanceState;
+   activity^.callbacks^.onPause := @onPause;
+   activity^.callbacks^.onStop := @onStop;
+   activity^.callbacks^.onConfigurationChanged := @onConfigurationChanged;
+   activity^.callbacks^.onLowMemory := @onLowMemory;
+   activity^.callbacks^.onWindowFocusChanged := @onWindowFocusChanged;
+   activity^.callbacks^.onNativeWindowCreated := @onNativeWindowCreated;
+   activity^.callbacks^.onNativeWindowDestroyed := @onNativeWindowDestroyed;
+   activity^.callbacks^.onInputQueueCreated := @onInputQueueCreated;
+   activity^.callbacks^.onInputQueueDestroyed := @onInputQueueDestroyed;
 
-    activity^.instance := android_app_create(activity, savedState, savedStateSize);
+   activity^.instance := android_app_create(activity, savedState, savedStateSize);
 end;
 
 END.
