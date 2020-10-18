@@ -99,10 +99,7 @@ begin
    ident := ALooper_pollAll(0, nil, @nEvents, @pSource);
 
    if(ident >= 0) then begin
-      logi('event: ' + sf(ident));
-
       if(pSource <> nil) then begin
-         logi('source: ' + sf(pSource^.id));
          pSource^.process(AndroidApp, pSource);
       end;
    end;
@@ -171,8 +168,10 @@ end;
 
 function oxTAndroidPlatform.DestroyWindow(wnd: oxTWindow): boolean;
 begin
+   Result := true;
+
    if(wnd.Renderer <> nil) then
-      oxTRenderer(wnd.Renderer).DeInitWindow(wnd);
+      Result := oxTRenderer(wnd.Renderer).DeInitWindow(wnd);
 end;
 
 procedure oxTAndroidPlatform.ProcessEvents();
