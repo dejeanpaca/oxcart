@@ -495,6 +495,8 @@ begin
    pthread_cond_broadcast(@app^.cond);
    pthread_mutex_unlock(@app^.mutex);
 
+   logv('Halting app');
+   halt(0);
     // Can't touch android_app object after this.
 end;
 
