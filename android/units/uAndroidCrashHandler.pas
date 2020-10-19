@@ -33,6 +33,7 @@ begin
       s := getRunTimeErrorDescription(ErrorCode);
 
       loge('Error (' + sf(ErrorCode) + '): ' + s + ' @ $' + addr2str(addr));
+      loge(DumpCallStack(1));
    end;
 end;
 
