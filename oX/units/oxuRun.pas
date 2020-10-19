@@ -112,6 +112,7 @@ end;
 procedure oxTRunGlobal.Done();
 begin
    log.i('oX > Finished running the program...');
+   ox.Started := false;
    log.Leave();
 end;
 
