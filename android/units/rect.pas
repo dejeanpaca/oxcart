@@ -16,6 +16,8 @@
 
 unit rect;
 
+{$packrecords c}
+
 interface
 
 uses ctypes;

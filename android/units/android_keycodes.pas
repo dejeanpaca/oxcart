@@ -16,6 +16,8 @@
 
 unit android_keycodes;
 
+{$packrecords c}
+
 interface
 
 (******************************************************************

@@ -200,7 +200,6 @@ begin
 
      {$IFDEF WINDOWS}
      FileUtils.HideFile(oxedProject.TempPath);
-     writeln('Hidden: ', oxedProject.TempPath);
      {$ENDIF}
   end;
 end;
