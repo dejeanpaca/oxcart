@@ -59,6 +59,7 @@ begin
       if(not ox.Initialized) and (not ox.Started) then
          oxRun.Initialize();
    end else if(cmd = APP_CMD_DESTROY) then begin
+      oxRun.Done();
       oxInitialization.Deinitialize();
       ANativeActivity_finish(app^.activity);
    end;
