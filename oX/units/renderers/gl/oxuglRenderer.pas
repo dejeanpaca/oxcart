@@ -177,7 +177,7 @@ begin
       {check if versions match}
       if(oglVersionCheck() = ogleVERSION_UNSUPPORTED) then begin
          wnd.RaiseError(eUNSUPPORTED, 'Got OpenGL version ' +
-            oxglRendererInfo.Version.GetString() + ' which is unsupported, minimum required ' +
+            oxglRendererInfo.Version.GetString() + ' (' + oxglRendererInfo.sVersion + ')  which is unsupported, minimum required ' +
             oxglRendererInfo.GetRequiredVersion().GetString());
       end;
    end;
