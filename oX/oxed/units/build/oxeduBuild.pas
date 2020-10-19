@@ -388,19 +388,17 @@ var
 begin
    TSimpleStringList.Initialize(Result);
 
-   Result.Add('OXED');
-   Result.Add('OX_NO_DEFAULT_FEATURES');
-
    {$IFDEF OX_DEBUG}
    Result.Add('OX_DEBUG');
    Result.Add('DEBUG');
    {$ENDIF}
-
-   if oxedProject.Session.DebugResources then
-      Result.Add('OX_RESOURCE_DEBUG');
-
    if oxedBuild.IsLibrary() then begin
       Result.Add('LIBRARY');
+
+      if oxedBuild.InEditor then begin
+         Result.Add('OX_LIBRARY');
+         Result.Add('OX_LIBRARY_SUPPORT');
+      end;
 
       if(oxedBuild.InEditor) then begin
       {$IFDEF NO_THREADS}
@@ -409,13 +407,14 @@ begin
       end;
    end;
 
+   Result.Add('OXED');
+   Result.Add('OX_NO_DEFAULT_FEATURES');
+
+   if oxedProject.Session.DebugResources then
+      Result.Add('OX_RESOURCE_DEBUG');
+
    if oxedProject.NilProject then begin
       Result.Add('OX_NIL');
-   end;
-
-   if oxedBuild.InEditor then begin
-      Result.Add('OX_LIBRARY');
-      Result.Add('OX_LIBRARY_SUPPORT');
    end;
 
    for i := 0 to oxedBuild.Features.n - 1 do begin
