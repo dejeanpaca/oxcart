@@ -28,6 +28,7 @@ begin
       s := getRunTimeErrorDescription(ErrorCode);
 
       writeln(stdout, 'Error (', ErrorCode, '): ', s, ' @ $', addr2str(addr));
+      writeln(DumpCallStack(1));
    end;
 end;
 
@@ -41,6 +42,9 @@ end;
 
 procedure UnhandledException(obj: TObject; addr: Pointer; {%H-}frameCount: Longint; {%H-}frames: PPointer);
 begin
+   if(not isConsole) then
+      exit;
+
    writeln(stdout, '(╯°□°)╯︵ ┻━┻');
    writeln(stdout, 'Unhandled exception @ $',  addr2str(addr), ' :');
 
