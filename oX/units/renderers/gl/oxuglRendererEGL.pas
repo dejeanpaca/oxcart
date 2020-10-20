@@ -9,7 +9,7 @@ UNIT oxuglRendererEGL;
 INTERFACE
 
    USES
-      uLog, StringUtils,
+      uStd, uLog, StringUtils,
       egl,
       {ox.gl}
       oxuOGL, oxuglWindow,
@@ -26,7 +26,7 @@ TYPE
 
       constructor Create();
 
-      function RaiseError(): loopint; override;
+      function RaiseError(): loopint;
 
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
       function OnDeInitWindow(wnd: oglTWindow): boolean; virtual;
@@ -76,7 +76,6 @@ var
    r, g, b, d: EGLint;
 
 begin
-   log.v('preinit');
    Result := false;
    wnd.wd.Display := eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
@@ -119,8 +118,6 @@ begin
       exit(false);
    end;
 
-   log.i('found config');
-
    if eglGetConfigAttrib(wnd.wd.Display, config, EGL_NATIVE_VISUAL_ID, @format) = EGL_FALSE then begin
       wnd.RaiseError('Failed to get EGL_NATIVE_VISUAL_ID');
       exit(false);
@@ -128,7 +125,6 @@ begin
 
    wnd.wd.Config := config;
 
-   log.i('getting window: ' + sf(AndroidApp));
    surface := eglCreateWindowSurface(wnd.wd.Display, config, AndroidApp^.window, nil);
 
    if(surface = nil) then begin
@@ -141,7 +137,6 @@ begin
    eglQuerySurface(wnd.wd.Display, surface, EGL_WIDTH, @w);
    eglQuerySurface(wnd.wd.Display, surface, EGL_HEIGHT, @h);
 
-   log.i('dimensions: ' + sf(w) + 'x' + sf(h));
    wnd.Dimensions.Assign(w, h);
 
    Result := true;
