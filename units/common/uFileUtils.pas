@@ -185,6 +185,8 @@ TYPE
 
       {load string from a pipe file (or regular file)}
       class function LoadStringPipe(const fn: StdString; out data: StdString): fileint; static;
+      {load string from a pipe file (or regular file)}
+      class function LoadStringPipe(const fn: StdString; out data: string): fileint; static;
 
       {write a file}
       class function CreateFile(const fn: StdString): longint; static;
@@ -815,6 +817,14 @@ begin
 end;
 
 class function TFileUtilsGlobal.LoadStringPipe(const fn: StdString; out data: StdString): fileint;
+var
+   dataStr: string absolute data;
+
+begin
+   Result := LoadStringPipe(fn, dataStr);
+end;
+
+class function TFileUtilsGlobal.LoadStringPipe(const fn: StdString; out data: string): fileint;
 var
    buffer: array[0..32767] of char;
    f: THandle;
