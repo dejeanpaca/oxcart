@@ -32,6 +32,7 @@ TYPE
       function OnDeInitWindow(wnd: oglTWindow): boolean; virtual;
       function GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext; virtual;
       function ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
+      function ClearContext(wnd: oglTWindow): boolean; virtual;
       function DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
       procedure SwapBuffers(wnd: oglTWindow); virtual;
    end;
@@ -162,6 +163,11 @@ end;
 function oxglTEGL.ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean;
 begin
    Result := eglMakeCurrent(wnd.wd.Display, wnd.wd.Surface, wnd.wd.Surface, context) <> EGL_FALSE;
+end;
+
+function oxglTEGL.ClearContext(wnd: oglTWindow): boolean;
+begin
+   Result := eglMakeCurrent(wnd.wd.Display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) <> EGL_FALSE;
 end;
 
 function oxglTEGL.DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean;
