@@ -26,6 +26,8 @@ TYPE
       Major,
       Minor: longint;
 
+      constructor Create();
+
       procedure OnInitialize(); virtual;
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
       procedure SwapBuffers(wnd: oglTWindow); virtual;
@@ -185,6 +187,11 @@ begin
       wnd.CreateFail('glx > Error: Unable to find fb config');
 
    Result := false;
+end;
+
+constructor oxglxTGlobal.Create();
+begin
+   Name := 'x11';
 end;
 
 procedure oxglxTGlobal.OnInitialize();

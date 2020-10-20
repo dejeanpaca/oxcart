@@ -9,9 +9,8 @@ UNIT oxuglRendererEGL;
 INTERFACE
 
    USES
-      uLog, StringUtils,
+      uStd, uLog,
       egl,
-      {$INCLUDE usesgl.inc},
       {ox.gl}
       oxuOGL, oxuglWindow,
       oxuglRendererPlatform, oxuglRenderer,
@@ -25,10 +24,15 @@ TYPE
       Major,
       Minor: longint;
 
+      constructor Create();
+
+      function RaiseError(): loopint; virtual;
+
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
       function OnDeInitWindow(wnd: oglTWindow): boolean; virtual;
       function GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext; virtual;
       function ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
+      function ClearContext(wnd: oglTWindow): boolean; virtual;
       function DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
       procedure SwapBuffers(wnd: oglTWindow); virtual;
    end;
@@ -39,6 +43,20 @@ VAR
 IMPLEMENTATION
 
 { oxglTEGL }
+
+function oxglTEGL.RaiseError(): loopint;
+begin
+   Result := eglGetError();
+
+   {we always set success as 0}
+   if(Result = EGL_SUCCESS) then
+      Result := 0;
+end;
+
+constructor oxglTEGL.Create();
+begin
+   Name := 'egl';
+end;
 
 function oxglTEGL.PreInitWindow(wnd: oglTWindow): boolean;
 var
@@ -58,13 +76,11 @@ var
    cfg,
    config: EGLConfig;
    surface: EGLSurface;
-   context: EGLContext;
    supportedConfigs: array of EGLConfig;
 
    r, g, b, d: EGLint;
 
 begin
-   log.v('preinit');
    Result := false;
    wnd.wd.Display := eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
@@ -107,8 +123,6 @@ begin
       exit(false);
    end;
 
-   log.i('found config');
-
    if eglGetConfigAttrib(wnd.wd.Display, config, EGL_NATIVE_VISUAL_ID, @format) = EGL_FALSE then begin
       wnd.RaiseError('Failed to get EGL_NATIVE_VISUAL_ID');
       exit(false);
@@ -116,7 +130,6 @@ begin
 
    wnd.wd.Config := config;
 
-   log.i('getting window: ' + sf(AndroidApp));
    surface := eglCreateWindowSurface(wnd.wd.Display, config, AndroidApp^.window, nil);
 
    if(surface = nil) then begin
@@ -129,7 +142,6 @@ begin
    eglQuerySurface(wnd.wd.Display, surface, EGL_WIDTH, @w);
    eglQuerySurface(wnd.wd.Display, surface, EGL_HEIGHT, @h);
 
-   log.i('dimensions: ' + sf(w) + 'x' + sf(h));
    wnd.Dimensions.Assign(w, h);
 
    Result := true;
@@ -155,6 +167,11 @@ end;
 function oxglTEGL.ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean;
 begin
    Result := eglMakeCurrent(wnd.wd.Display, wnd.wd.Surface, wnd.wd.Surface, context) <> EGL_FALSE;
+end;
+
+function oxglTEGL.ClearContext(wnd: oglTWindow): boolean;
+begin
+   Result := eglMakeCurrent(wnd.wd.Display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) <> EGL_FALSE;
 end;
 
 function oxglTEGL.DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean;
