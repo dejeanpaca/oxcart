@@ -18,7 +18,11 @@ IMPLEMENTATION
 
 procedure appAndroidSysInfoGetInformation();
 begin
-   appLinuxSysInfoGetInformation();
+   appSI.System.Name := 'Android';
+
+   appLinuxSysInfoGetKernelVersion();
+   appLinuxSysInfoGetMemoryInfo();
+   appLinuxSysInfoGetCPUInfo();
 end;
 
 INITIALIZATION
