@@ -26,6 +26,8 @@ TYPE
 
       constructor Create();
 
+      function RaiseError(): loopint; override;
+
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
       function OnDeInitWindow(wnd: oglTWindow): boolean; virtual;
       function GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext; virtual;
@@ -40,6 +42,11 @@ VAR
 IMPLEMENTATION
 
 { oxglTEGL }
+
+function oxglTEGL.RaiseError(): loopint;
+begin
+   Result := eglGetError();
+end;
 
 constructor oxglTEGL.Create();
 begin
