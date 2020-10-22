@@ -27,8 +27,8 @@ TYPE
       procedure SwapBuffers(wnd: oglTWindow); virtual;
       function GetContext(wnd: oglTWindow; shareContext: HGLRC): HGLRC; virtual;
       function ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
-      function ClearContext(wnd: oglTWindow): boolean; virtual;
-      function DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
+      function ClearContext({%H-}wnd: oglTWindow): boolean; virtual;
+      function DestroyContext({%H-}wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
    end;
 
 VAR
