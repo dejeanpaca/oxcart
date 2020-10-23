@@ -272,6 +272,8 @@ TYPE
 
       {writing statements}
       procedure s(const st: StdString);
+      {log something}
+      procedure log(priority: loopint; const st: StdString);
 
       {SETTING COLORS}
       {sets 3 colors rgb for the text, opaque}
@@ -1053,6 +1055,7 @@ end;
 procedure conTConsole.i();
 begin
    i('');
+
    if(LogOutput <> nil) then
       LogOutput^.i();
 end;
@@ -1068,6 +1071,7 @@ end;
 procedure conTConsole.w(const s: StdString);
 begin
    RawWriteln(s, Colors.Warning);
+
    if(LogOutput <> nil) then
       LogOutput^.w(s);
 end;
@@ -1075,6 +1079,7 @@ end;
 procedure conTConsole.d(const s: StdString);
 begin
    RawWriteln(s, Colors.Debug);
+
    if(LogOutput <> nil) then
       LogOutput^.d(s);
 end;
@@ -1082,6 +1087,7 @@ end;
 procedure conTConsole.v(const s: StdString);
 begin
    RawWriteln(s, Colors.Verbose);
+
    if(LogOutput <> nil) then
       LogOutput^.v(s);
 end;
@@ -1089,6 +1095,7 @@ end;
 procedure conTConsole.f(const s: StdString);
 begin
    RawWriteln(s, Colors.Fatal);
+
    if(LogOutput <> nil) then
       LogOutput^.f(s);
 end;
@@ -1096,6 +1103,7 @@ end;
 procedure conTConsole.k(const s: StdString);
 begin
    RawWriteln(s, Colors.Ok);
+
    if(LogOutput <> nil) then
       LogOutput^.k(s);
 end;
@@ -1118,6 +1126,32 @@ begin
 
    if(LogOutput <> nil) then
       LogOutput^.i(st);
+end;
+
+procedure conTConsole.log(priority: loopint; const st: StdString);
+var
+   color: TColor4ub;
+
+begin
+   if(priority = logcINFO) then
+      color := Colors.Statement
+   else if(priority = logcWARNING) then
+      color := Colors.Warning
+   else if(priority = logcERROR) then
+      color := Colors.Error
+   else if(priority = logcVERBOSE) then
+      color := Colors.Verbose
+   else if(priority = logcFATAL) then
+      color := Colors.Fatal
+   else if(priority = logcDEBUG) then
+      color := Colors.Debug
+   else if(priority = logcOK) then
+      color := Colors.Ok;
+
+   RawWriteln(st, color);
+
+   if(LogOutput <> nil) then
+      LogOutput^.s(priority, st);
 end;
 
 procedure conTConsole.Color3ub(r, g, b: byte);
