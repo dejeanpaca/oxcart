@@ -1204,10 +1204,15 @@ begin
    {$IFOPT D+}
    build.Debug.Include := true;
    build.Debug.LineInfo := true;
-
-   if(oxedBuild.BuildPlatform.SupportsExternalDebugSymbols) then
-      build.Debug.External := true;
    {$ENDIF}
+
+   {platforn}
+   build.ExecutableOptions.ExcludeDefaultLibraryPath := oxedBuild.BuildPlatform.ExcludeDefaultLibraryPath;
+
+   if(build.Debug.Include) then begin
+      if(oxedBuild.BuildPlatform.SupportsExternalDebugSymbols) then
+         build.Debug.External := true;
+   end;
 
    {optimization}
    build.Optimization.Level := 1;

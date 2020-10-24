@@ -94,6 +94,7 @@ begin
 
    RequireCMEM := true;
    SupportsExternalDebugSymbols := false;
+   ExcludeDefaultLibraryPath := true;
 
    Configuration := oxedTPlatformConfiguration.Create();
 

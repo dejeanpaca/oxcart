@@ -67,7 +67,9 @@ TYPE
       {does this platform require CMEM}
       RequireCMEM,
       {does this platform support external debug symbols}
-      SupportsExternalDebugSymbols: boolean;
+      SupportsExternalDebugSymbols,
+      {do not search default library path (-Xd)}
+      ExcludeDefaultLibraryPath: boolean;
 
       GlyphName: StdString;
       GlyphCode: longword;
