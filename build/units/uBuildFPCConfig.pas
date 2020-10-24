@@ -137,6 +137,9 @@ begin
    if(build.Debug.DwarfLevel > 0) then
       AddArgument('-gw' + sf(build.Debug.DwarfLevel));
 
+   if(build.ExecutableOptions.ExcludeDefaultLibraryPath) then
+      AddArgument('-Xd');
+
    for i := 0 to emptyAfter - 1 do begin
       AddArgument('');
    end;
@@ -284,6 +287,13 @@ begin
 
    if(build.Debug.DwarfLevel > 0) then
       add('-gw' + sf(build.Debug.DwarfLevel));
+
+   {executable options}
+   add();
+   add('## executable options');
+
+   if(build.ExecutableOptions.ExcludeDefaultLibraryPath) then
+      add('-Xd');
 
    { optimization }
    add();
