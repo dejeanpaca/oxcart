@@ -38,6 +38,7 @@ var
 begin
    {system name}
    appSI.System.Name := windowsVersion.GetString();
+   appSI.System.OS := 'windows';
 
    {get system information from windows}
    GetSystemInfo(@si);
