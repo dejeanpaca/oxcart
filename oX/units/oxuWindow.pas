@@ -252,10 +252,10 @@ end;
 
 procedure oxTWindowGlobal.DestroyRenderingContexts(wnd: oxTWindow);
 begin
-   oxTRenderer(wnd.Renderer).ClearContext(wnd.RenderingContext);
-
    {destroy context}
    if(wnd.RenderingContext > -1) then begin
+      oxTRenderer(wnd.Renderer).ClearContext(wnd.RenderingContext);
+
       if(not oxTRenderer(wnd.Renderer).DestroyContext(wnd.RenderingContext)) then
          wnd.DestroyFail('Failed to destroy RC for window.');
 
