@@ -70,16 +70,14 @@ begin
       if(ox.Started) then begin
          oxTRenderer(oxWindow.Current.Renderer).DestroyContext(oxWindow.Current.RenderingContext);
          oxTRenderer(oxWindow.Current.Renderer).DestroyContext(oxWindow.Current.ThreadRenderingContext);
+         oxWindow.Current.RenderingContext := -1;
+         oxWindow.Current.ThreadRenderingContext := -1;
          oxTRenderer(oxWindow.Current.Renderer).DeInitWindow(oxWindow.Current);
       end;
    end else if(cmd = APP_CMD_GAINED_FOCUS) then begin
-      logv('gained focus');
-
       if(oxWindow.Current <> nil) then
          oxWindow.Current.Select();
    end else if(cmd = APP_CMD_LOST_FOCUS) then begin
-      logv('lost focus');
-
       if(oxWindow.Current <> nil) then
          oxWindow.Current.Deselect();
    end else if(cmd = APP_CMD_DESTROY) then begin
