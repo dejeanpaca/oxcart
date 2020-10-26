@@ -13,12 +13,13 @@ INTERFACE
       {oX}
       uOX, oxuWindowTypes, oxuWindow, oxuGlobalInstances,
       oxuTimer, oxuViewport, oxuRenderer, oxuRenderingContext,
-      oxuWindows, oxuUIHooks,
+      oxuWindows,
+      {ui}
+      oxuUIHooks, uiuWindow
+      {lib}
       {$IFDEF OX_LIBRARY}
-      oxuRenderers,
-      {$ENDIF}
-      {io}
-      uiuControl;
+      , oxuRenderers
+      {$ENDIF};
 
 TYPE
    oxPWindowRender = ^oxTWindowRender;
@@ -79,6 +80,9 @@ end;
 procedure oxTWindowRender.Window(wnd: oxTWindow);
 begin
    Rendered := false;
+
+   if(not wnd.oxProperties.RenderUnfocused) and (not wnd.IsSelected()) then
+      exit;
 
    if(not oxRenderingTimer.Elapsed()) then
       exit;

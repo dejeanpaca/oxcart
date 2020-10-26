@@ -37,7 +37,9 @@ TYPE
         {is the screen fullscreen}
         Fullscreen,
         {is the fullscreen mode windowed}
-        WindowedFullscreen: boolean;
+        WindowedFullscreen,
+        {render window even when unfocused}
+        RenderUnfocused: boolean;
       end;
 
       {renderer associated with the window}
@@ -106,6 +108,7 @@ begin
    Properties := Properties + [uiwndpAUTO_CENTER, uiwndpVISIBLE];
 
    oxProperties.ApplyDefaultViewport := true;
+   oxProperties.RenderUnfocused := true;
 
    RenderingContext := -1;
    ThreadRenderingContext := -1;

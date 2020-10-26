@@ -9,12 +9,13 @@ UNIT oxuAndroidPlatform;
 INTERFACE
 
    USES
-      ctypes, looper, input, android_native_app_glue, android_keycodes, native_activity,
+      ctypes, looper, input, android_native_app_glue, android_keycodes, android_log_helper,
       uStd,
       {app}
       uApp, appuMouse, appuActionEvents,
       {oX}
       uOX, oxuRun, oxuInit,
+      oxuWindow, uiuWindow,
       oxuPlatform, oxuPlatforms, oxuWindowTypes, oxuRenderer;
 
 TYPE
@@ -58,10 +59,21 @@ begin
    If(cmd = APP_CMD_INIT_WINDOW) then begin
       if(not ox.Initialized) and (not ox.Started) then
          oxRun.Initialize();
+
+      oxWindow.Current.Select();
+   end else if(cmd = APP_CMD_GAINED_FOCUS) then begin
+      logv('gained focus');
+
+      if(oxWindow.Current <> nil) then
+         oxWindow.Current.Select();
+   end else if(cmd = APP_CMD_LOST_FOCUS) then begin
+      logv('lost focus');
+
+      if(oxWindow.Current <> nil) then
+         oxWindow.Current.Deselect();
    end else if(cmd = APP_CMD_DESTROY) then begin
       oxRun.Done();
       oxInitialization.Deinitialize();
-      ANativeActivity_finish(app^.activity);
    end;
 end;
 
@@ -151,6 +163,9 @@ end;
 function oxTAndroidPlatform.MakeWindow(wnd: oxTWindow): boolean;
 begin
    Result := false;
+
+   {don't render when window has no focus}
+   wnd.oxProperties.RenderUnfocused := false;
 
    {initialize gl for window}
    if(not oxTRenderer(wnd.Renderer).PreInitWindow(wnd)) then begin
