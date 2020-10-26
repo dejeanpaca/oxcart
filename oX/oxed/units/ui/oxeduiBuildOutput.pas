@@ -144,6 +144,7 @@ begin
 
    Add(3104, logcVERBOSE);
    Add(5024, logcVERBOSE);
+   Add(9009, logcVERBOSE);
 end;
 
 INITIALIZATION
