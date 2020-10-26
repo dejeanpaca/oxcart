@@ -56,11 +56,22 @@ IMPLEMENTATION
 
 procedure AndroidHandleCommand(app: Pandroid_app; cmd: cint32);
 begin
-   If(cmd = APP_CMD_INIT_WINDOW) then begin
+   if(cmd = APP_CMD_INIT_WINDOW) then begin
       if(not ox.Initialized) and (not ox.Started) then
-         oxRun.Initialize();
-
-      oxWindow.Current.Select();
+         oxRun.Initialize()
+      else begin
+         if(ox.Started) then begin
+            oxTRenderer(oxWindow.Current.Renderer).PreInitWindow(oxWindow.Current);
+            oxTRenderer(oxWindow.Current.Renderer).InitWindow(oxWindow.Current);
+            oxTRenderer(oxWindow.Current.Renderer).SetupWindow(oxWindow.Current);
+         end;
+      end;
+   end else if(cmd = APP_CMD_TERM_WINDOW) then begin
+      if(ox.Started) then begin
+         oxTRenderer(oxWindow.Current.Renderer).DestroyContext(oxWindow.Current.RenderingContext);
+         oxTRenderer(oxWindow.Current.Renderer).DestroyContext(oxWindow.Current.ThreadRenderingContext);
+         oxTRenderer(oxWindow.Current.Renderer).DeInitWindow(oxWindow.Current);
+      end;
    end else if(cmd = APP_CMD_GAINED_FOCUS) then begin
       logv('gained focus');
 
