@@ -111,12 +111,12 @@ begin
 
    renderer.SetupData(wnd);
 
-   wnd.oxProperties.Created := true;
    wnd.SetDimensions(externalWindow.Dimensions.w, externalWindow.Dimensions.h, false);
 
    windowCreateCommon(wnd);
 
    rendererOk := renderer.SetupWindow(wnd);
+   wnd.oxProperties.Created := true;
    Result := rendererOk;
 
    if(rendererOk) then begin
@@ -194,7 +194,6 @@ begin
       {$ENDIF}
 
       {success}
-      wnd.oxProperties.Created := true;
       Result := true;
    end;
 
@@ -202,8 +201,10 @@ begin
 
    Result := renderer.SetupWindow(wnd);
 
-   if(Result) then
+   if(Result) then begin
       windowCreateFinalize(wnd);
+      wnd.oxProperties.Created := true;
+   end;
 
    log.Leave();
 end;
