@@ -22,6 +22,7 @@ IMPLEMENTATION
 
 procedure android_main(app: Pandroid_app); cdecl;
 var
+   cycledEvents: boolean;
    finished: boolean;
 
 begin
@@ -34,13 +35,19 @@ begin
    uApp.app.Active := true;
 
    repeat
-      if(ox.Initialized) then begin
+      cycledEvents := false;
+
+      if(ox.Initialized) and (not finished) then begin
          if(not ox.Started) then
             oxRun.Start();
 
-         if(not finished) then
-            oxRun.GoCycle(true)
-      end else
+         if(not finished) then begin
+            oxRun.GoCycle(true);
+            cycledEvents := true;
+         end;
+      end;
+
+      if(not cycledEvents) then
          AndroidProcessEvents();
 
       if ox.InitializationFailed or (not uApp.app.Active) then begin
