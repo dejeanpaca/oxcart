@@ -92,7 +92,6 @@ begin
    ClearBits := oxrBUFFER_CLEAR_DEFAULT;
 
    SetViewport(0, 0, 640, 480);
-   OnChange.InitializeValues(OnChange);
 end;
 
 procedure oxTViewportHelper.Initialize(x, y, w, h: longint);
@@ -110,9 +109,6 @@ end;
 procedure oxTViewportHelper.Apply(doClear: boolean);
 begin
    if(Enabled) then begin
-      if(Changed) then
-         OnChange.Call(@Self);
-
       Viewport();
 
       if(doClear) then
