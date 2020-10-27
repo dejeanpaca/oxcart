@@ -17,7 +17,7 @@
 
 UNIT android_native_app_glue;
 
-{$packrecords c}
+{$packrecords c}{$modeswitch advancedrecords}
 
 INTERFACE
 
@@ -104,6 +104,9 @@ TYPE
     * VM, although it will need to be in order to make JNI calls any
     * Java objects.
     *)
+
+   { android_app }
+
    android_app = record
       // The application can place a pointer to its own state object
       // here if it likes.
@@ -175,10 +178,16 @@ TYPE
       running,
       stateSaved,
       destroyed,
-      redrawNeeded: boolean;
+      redrawNeeded,
+      mutexValid: boolean;
 
       pendingWindow: PANativeWindow;
       pendingContentRect: PARect;
+
+      procedure mutex_lock();
+      procedure mutex_unlock();
+      procedure cond_wait();
+      procedure cond_broadcast();
    end;
 
 CONST
@@ -324,15 +333,15 @@ end;
 
 procedure free_saved_state(app: Pandroid_app);
 begin
-    pthread_mutex_lock(@app^.mutex);
+   app^.mutex_lock();
 
-    if app^.savedState <> nil then begin
-        free(app^.savedState);
-        app^.savedState := nil;
-        app^.savedStateSize := 0;
-    end;
+   if app^.savedState <> nil then begin
+      free(app^.savedState);
+      app^.savedState := nil;
+      app^.savedStateSize := 0;
+   end;
 
-    pthread_mutex_unlock(@app^.mutex);
+   app^.mutex_unlock();
 end;
 
 (**
@@ -394,7 +403,7 @@ begin
    case cmd of
       APP_CMD_INPUT_CHANGED: begin
          logv('APP_CMD_INPUT_CHANGED');
-         pthread_mutex_lock(@app^.mutex);
+         app^.mutex_lock();
 
          if app^.inputQueue <> nil then
              AInputQueue_detachLooper(app^.inputQueue);
@@ -406,21 +415,21 @@ begin
             AInputQueue_attachLooper(app^.inputQueue, app^.looper, LOOPER_ID_INPUT, nil, @app^.inputPollSource);
          end;
 
-          pthread_cond_broadcast(@app^.cond);
-          pthread_mutex_unlock(@app^.mutex);
+         app^.cond_broadcast();
+         app^.mutex_unlock();
       end;
 
       APP_CMD_INIT_WINDOW: begin
          logv('APP_CMD_INIT_WINDOW');
-         pthread_mutex_lock(@app^.mutex);
+         app^.mutex_lock();
          app^.window := app^.pendingWindow;
-         pthread_cond_broadcast(@app^.cond);
-         pthread_mutex_unlock(@app^.mutex);
+         app^.cond_broadcast();
+         app^.mutex_unlock();
       end;
 
       APP_CMD_TERM_WINDOW: begin
          logv('APP_CMD_TERM_WINDOW');
-         pthread_cond_broadcast(@app^.cond);
+         app^.cond_broadcast();
       end;
 
       APP_CMD_RESUME,
@@ -428,10 +437,10 @@ begin
       APP_CMD_PAUSE,
       APP_CMD_STOP: begin
          logv('activityState=' + sf(cmd));
-         pthread_mutex_lock(@app^.mutex);
+         app^.mutex_lock();
          app^.activityState := cmd;
-         pthread_cond_broadcast(@app^.cond);
-         pthread_mutex_unlock(@app^.mutex);
+         app^.cond_broadcast();
+         app^.mutex_unlock();
       end;
 
       APP_CMD_CONFIG_CHANGED: begin
@@ -457,18 +466,18 @@ begin
    case cmd of
       APP_CMD_TERM_WINDOW: begin
          logv('post APP_CMD_TERM_WINDOW');
-         pthread_mutex_lock(@app^.mutex);
+         app^.mutex_lock();
          app^.window := nil;
-         pthread_cond_broadcast(@app^.cond);
-         pthread_mutex_unlock(@app^.mutex);
+         app^.cond_broadcast();
+         app^.mutex_unlock();
       end;
 
       APP_CMD_SAVE_STATE: begin
          logv('post APP_CMD_SAVE_STATE');
-         pthread_mutex_lock(@app^.mutex);
+         app^.mutex_lock();
          app^.stateSaved := true;
-         pthread_cond_broadcast(@app^.cond);
-         pthread_mutex_unlock(@app^.mutex);
+         app^.cond_broadcast();
+         app^.mutex_unlock();
       end;
 
       APP_CMD_RESUME: begin
@@ -482,7 +491,7 @@ begin
    logv('Destroy android app!');
 
    free_saved_state(app);
-   pthread_mutex_lock(@app^.mutex);
+   app^.mutex_lock();
 
    if app^.inputQueue <> nil then begin
       AInputQueue_detachLooper(app^.inputQueue);
@@ -492,8 +501,8 @@ begin
    AConfiguration_delete(app^.config);
    app^.config := nil;
    app^.destroyed := true;
-   pthread_cond_broadcast(@app^.cond);
-   pthread_mutex_unlock(@app^.mutex);
+   app^.cond_broadcast();
+   app^.mutex_unlock();
 
    logv('Halting app');
    halt(0);
@@ -561,10 +570,10 @@ begin
    ALooper_addFd(looper, app^.msgread, LOOPER_ID_MAIN, ALOOPER_EVENT_INPUT, nil, @app^.cmdPollSource);
    app^.looper := looper;
 
-   pthread_mutex_lock(@app^.mutex);
+   app^.mutex_lock();
    app^.running := true;
-   pthread_cond_broadcast(@app^.cond);
-   pthread_mutex_unlock(@app^.mutex);
+   app^.cond_broadcast();
+   app^.mutex_unlock();
 
    android_main(app);
 
@@ -590,6 +599,8 @@ begin
    pthread_mutex_init(@app^.mutex, nil);
    pthread_cond_init(@app^.cond, nil);
 
+   app^.mutexValid := true;
+
    if savedState <> nil then begin
       app^.savedState := GetMem(savedStateSize);
       app^.savedStateSize := savedStateSize;
@@ -612,13 +623,13 @@ begin
    pthread_create(@app^.thread, @attr, @android_app_entry, app);
 
    // Wait for thread to start.
-   pthread_mutex_lock(@app^.mutex);
+   app^.mutex_lock();
 
    while (not app^.running) do begin
-      pthread_cond_wait(@app^.cond, @app^.mutex);
+      app^.cond_wait();
    end;
 
-   pthread_mutex_unlock(@app^.mutex);
+   app^.mutex_unlock();
 
    Result := app;
 end;
@@ -631,20 +642,20 @@ end;
 
 procedure android_app_set_input(app: Pandroid_app; inputQueue: PAInputQueue);
 begin
-   pthread_mutex_lock(@app^.mutex);
+   app^.mutex_lock();
    app^.pendingInputQueue := inputQueue;
    android_app_write_cmd(app, APP_CMD_INPUT_CHANGED);
 
    while (app^.inputQueue <> app^.pendingInputQueue) do begin
-      pthread_cond_wait(@app^.cond, @app^.mutex);
+      app^.cond_wait();
    end;
 
-   pthread_mutex_unlock(@app^.mutex);
+   app^.mutex_unlock();
 end;
 
 procedure android_app_set_window(app: Pandroid_app; window: PANativeWindow);
 begin
-   pthread_mutex_lock(@app^.mutex);
+   app^.mutex_lock();
 
    if app^.pendingWindow <> nil then
       android_app_write_cmd(app, APP_CMD_TERM_WINDOW);
@@ -655,37 +666,38 @@ begin
       android_app_write_cmd(app, APP_CMD_INIT_WINDOW);
 
    while (app^.window <> app^.pendingWindow) do begin
-      pthread_cond_wait(@app^.cond, @app^.mutex);
+      app^.cond_wait();
    end;
 
-   pthread_mutex_unlock(@app^.mutex);
+   app^.mutex_unlock();
 end;
 
 procedure android_app_set_activity_state(app: Pandroid_app; cmd: cint8);
 begin
-   pthread_mutex_lock(@app^.mutex);
+   app^.mutex_lock();
    android_app_write_cmd(app, cmd);
 
    while (app^.activityState <> cmd) do begin
-      pthread_cond_wait(@app^.cond, @app^.mutex);
+      app^.cond_wait();
    end;
 
-   pthread_mutex_unlock(@app^.mutex);
+   app^.mutex_unlock();
 end;
 
 procedure android_app_free(app: Pandroid_app);
 begin
-   pthread_mutex_lock(@app^.mutex);
+   app^.mutex_lock();
    android_app_write_cmd(app, APP_CMD_DESTROY);
 
    while (not app^.destroyed) do begin
-      pthread_cond_wait(@app^.cond, @app^.mutex);
+      app^.cond_wait();
    end;
 
-   pthread_mutex_unlock(@app^.mutex);
+   app^.mutex_unlock();
 
    FpClose(app^.msgread);
    FpClose(app^.msgwrite);
+   app^.mutexValid := false;
    pthread_cond_destroy(@app^.cond);
    pthread_mutex_destroy(@app^.mutex);
    free(app);
@@ -721,12 +733,12 @@ begin
    outLen^ := 0;
 
    logv('SaveInstanceState: ' + sf(activity));
-   pthread_mutex_lock(@app^.mutex);
+   app^.mutex_lock();
    app^.stateSaved := false;
    android_app_write_cmd(app, APP_CMD_SAVE_STATE);
 
    while (not app^.stateSaved) do begin
-      pthread_cond_wait(@app^.cond, @app^.mutex);
+      app^.cond_wait();
    end;
 
    if app^.savedState <> nil then begin
@@ -736,7 +748,7 @@ begin
       app^.savedStateSize := 0;
    end;
 
-   pthread_mutex_unlock(@app^.mutex);
+   app^.mutex_unlock();
 
    Result := savedState;
 end;
@@ -818,6 +830,31 @@ begin
    activity^.callbacks^.onInputQueueDestroyed := @onInputQueueDestroyed;
 
    activity^.instance := android_app_create(activity, savedState, savedStateSize);
+end;
+
+{ android_app }
+
+procedure android_app.mutex_lock();
+begin
+   if(mutexValid) then
+      pthread_mutex_lock(@mutex);
+end;
+
+procedure android_app.mutex_unlock();
+begin
+   if(mutexValid) then
+      pthread_mutex_unlock(@mutex);
+end;
+
+procedure android_app.cond_wait();
+begin
+   if(mutexValid) then
+      pthread_cond_wait(@cond, @mutex);
+end;
+
+procedure android_app.cond_broadcast();
+begin
+   pthread_cond_broadcast(@cond);
 end;
 
 END.
