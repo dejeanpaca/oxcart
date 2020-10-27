@@ -9,13 +9,13 @@ UNIT oxuAndroidPlatform;
 INTERFACE
 
    USES
-      ctypes, looper, input, android_native_app_glue, android_keycodes, android_log_helper,
+      ctypes, looper, input, android_native_app_glue, android_keycodes,
       uStd,
       {app}
       uApp, appuKeys, appuKeyEvents, appuMouse, appuMouseEvents, appuActionEvents,
       {oX}
       uOX, oxuRun, oxuInit,
-      oxuWindow, uiuWindow,
+      oxuWindow, oxuWindowHelper, uiuWindow,
       oxuPlatform, oxuPlatforms, oxuWindowTypes, oxuRenderer;
 
 TYPE
@@ -232,15 +232,18 @@ begin
 
    {initialize gl for window}
    if(not oxTRenderer(wnd.Renderer).PreInitWindow(wnd)) then begin
-      wnd.RaiseError('Preinit failed');
+      wnd.RaiseError('android > egl preinit failed');
       exit;
    end;
 
    {initialize window}
    if(not oxTRenderer(wnd.Renderer).InitWindow(wnd)) then begin
-      wnd.RaiseError('Renderer window create failed.');
+      wnd.RaiseError('android > egl window create failed.');
       exit;
    end;
+
+   wnd.SetPosition(0, 0, false);
+   wnd.SetDimensions(wnd.Dimensions.w, wnd.Dimensions.h, false);
 
    Result := true;
 end;
