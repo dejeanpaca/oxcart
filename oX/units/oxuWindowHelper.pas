@@ -129,8 +129,6 @@ begin
    Dimensions.h := h;
 
    if(not oxProperties.Context) then begin
-      system := system;
-
       if(system) and (oxProperties.Created) then
          oxPlatform.Resize(self, w, h);
 
