@@ -81,6 +81,9 @@ procedure oxTWindowRender.Window(wnd: oxTWindow);
 begin
    Rendered := false;
 
+   if(wnd.RenderingContext < 0) then
+      exit;
+
    if(not wnd.oxProperties.RenderUnfocused) and (not wnd.IsSelected()) then
       exit;
 
