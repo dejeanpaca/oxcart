@@ -98,8 +98,6 @@ TYPE
    end;
 
    {appTKey defined in appTypes.inc}
-   appKeyCodes = array[0..255] of byte;
-
    appPKeyListItem = ^appTKeyListItem;
    appTKeyListItem = record
       Name: string;
