@@ -727,7 +727,7 @@ end;
 procedure TLogUtils.SetDefaultHandler(const newHandler: tLogHandler);
 begin
    Handler.pDefault := @newHandler;
-   stdlog.Handler := @newHandler;
+   stdlog.AssignHandler(newHandler);
 end;
 
 procedure TLogUtils.Enter(const title: StdString);
