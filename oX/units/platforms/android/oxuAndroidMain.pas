@@ -9,7 +9,7 @@ UNIT oxuAndroidMain;
 INTERFACE
 
 USES
-   android_native_app_glue, android_log_helper, native_activity,
+   android_native_app_glue, android_log_helper, native_activity, android_native_activity_helper,
    StringUtils,
    {app}
    uApp,
@@ -30,6 +30,8 @@ begin
 
    app^.onAppCmd := @AndroidHandleCommand;
    app^.onInputEvent := @AndroidHandleInput;
+
+   androidAutoHideNavBar(app);
 
    finished := false;
    uApp.app.Active := true;
