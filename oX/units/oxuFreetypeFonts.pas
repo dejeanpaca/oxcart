@@ -367,13 +367,16 @@ begin
 end;
 
 function oxTFreetypeManager.CreateFont(const path: string; size: longint; base: longint; charCount: longint): oxTFont;
+{$IFDEF OX_FEATURE_FREETYPE}
 var
    ftFont: oxTFreetypeFont;
    fontLoaded: boolean = false;
+   {$ENDIF}
 
 begin
    Result := nil;
 
+   {$IFDEF OX_FEATURE_FREETYPE}
    if(charCount <= 0) then
       exit(nil);
 
@@ -390,6 +393,7 @@ begin
       if(fontLoaded) then
          FreeObject(ftFont);
    end;
+   {$ENDIF}
 end;
 
 function readFontList(var p: TParseData): boolean;
