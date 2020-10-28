@@ -16,6 +16,8 @@ INTERFACE
 TYPE
    oxPRenderingContext = ^oxTRenderingContext;
 
+   { oxTRenderingContext }
+
    oxTRenderingContext = record
       Name: StdString;
       {rendering context Id of the renderer}
@@ -26,11 +28,21 @@ TYPE
       Camera: pointer;
       {window associated with this rendering context, if any}
       Window: oxTWindow;
+
+      procedure UseWindow(wnd: oxTWindow);
    end;
 
 THREADVAR
    oxRenderingContext: oxTRenderingContext;
 
 IMPLEMENTATION
+
+{ oxTRenderingContext }
+
+procedure oxTRenderingContext.UseWindow(wnd: oxTWindow);
+begin
+   Viewport := @wnd.Viewport;
+   Window := Window;
+end;
 
 END.
