@@ -1025,7 +1025,7 @@ end;
 {get default font}
 function oxTFontGlobal.GetDefault(): oxTFont;
 begin
-   Result := default;
+   Result := Default;
 end;
 
 procedure oxTFontGlobal.GetNilDefault(var f: oxTFont);
