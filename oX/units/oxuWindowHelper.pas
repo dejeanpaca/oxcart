@@ -116,8 +116,7 @@ begin
       if(system) and (oxProperties.Created) then
          oxPlatform.Move(self, x, y);
 
-      if(oxProperties.Created) then
-         oxUIHooks.SetPosition(self, oxPoint(x, y));
+      oxUIHooks.SetPosition(self, oxPoint(x, y));
 
       SetupViewport();
    end;
@@ -132,8 +131,7 @@ begin
       if(system) and (oxProperties.Created) then
          oxPlatform.Resize(self, w, h);
 
-      if(oxProperties.Created) then
-         oxUIHooks.SetDimensions(self, oxTDimensions.Make(w, h));
+      oxUIHooks.SetDimensions(self, oxTDimensions.Make(w, h));
 
       SetupViewport();
    end;
