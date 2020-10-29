@@ -23,6 +23,7 @@ testresults.txt
 .oxsession/
 .oxtemp/
 android_project/
+.vs/
 test_data
 *.test
 .vscode
