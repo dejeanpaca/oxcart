@@ -9,7 +9,7 @@ UNIT oxuWindowRender;
 INTERFACE
 
    USES
-      uStd,
+      uStd, uLog,
       {oX}
       uOX, oxuWindowTypes, oxuWindow, oxuGlobalInstances,
       oxuTimer, oxuViewport, oxuRenderer, oxuRenderingContext,
@@ -81,14 +81,16 @@ procedure oxTWindowRender.Window(wnd: oxTWindow);
 begin
    Rendered := false;
 
-   if(wnd.RenderingContext < 0) then
-      exit;
-
    if(not wnd.oxProperties.RenderUnfocused) and (not wnd.IsSelected()) then
       exit;
 
-   if(not oxRenderingTimer.Elapsed()) then
-      exit;
+   if(not ox.LibraryMode) then begin
+     if(wnd.RenderingContext < 0) then
+        exit;
+
+     if(not oxRenderingTimer.Elapsed()) then
+        exit;
+   end;
 
    if(not OverrideRender) then begin
       StartRender(wnd);
@@ -96,9 +98,8 @@ begin
       oxWindows.OnRender.Call(wnd);
       oxWindows.Internal.OnPostRender.Call(wnd);
 
-      {$IFNDEF OX_LIBRARY}
-      oxTRenderer(wnd.Renderer).SwapBuffers(wnd);
-      {$ENDIF}
+      if(not ox.LibraryMode) then
+         oxTRenderer(wnd.Renderer).SwapBuffers(wnd);
 
       wnd.Viewport.Done();
 
