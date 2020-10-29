@@ -113,7 +113,7 @@ var
 function copyMessage(): StdString;
 begin
    if(len > 0) then
-      Result := Copy(PChar(@buf[0]), 1, len)
+      Result := Copy(PChar(@buf[0]), 1, len - 1)
    else
       Result := '';
 end;
