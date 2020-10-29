@@ -50,7 +50,7 @@ TYPE
       {rendering}
       procedure SwapBuffers(wnd: oxTWindow); override;
 
-      function GetContext(wnd: oxTWindow; shareContext: loopint=0): loopint; override;
+      function GetContext(wnd: oxTWindow; shareContext: loopint=-1): loopint; override;
       function GetContextString(index: loopint=0): StdString; override;
       procedure ContextCurrent(context: loopint); override;
       procedure ClearContext(context: loopint); override;
@@ -118,7 +118,7 @@ end;
 
 function oxglTRenderer.InitWindow(wnd: oxTWindow): boolean;
 begin
-   wnd.RenderingContext := GetContext(wnd);
+   wnd.RenderingContext := GetRenderingContext(wnd);
 
    if(wnd.RenderingContext = -1) or (wnd.ErrorCode <> 0) then begin
       if(wnd.ErrorCode = 0) then
@@ -128,7 +128,6 @@ begin
 
       exit(False);
    end;
-
 
    {bind rendering context to the window}
    ContextCurrent(wnd.RenderingContext);

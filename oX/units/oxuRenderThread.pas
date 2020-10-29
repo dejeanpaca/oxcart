@@ -17,7 +17,7 @@ TYPE
    { oxTRenderThread }
 
    oxTRenderThread = record
-      procedure StartThread({%H-}wnd: oxTWindow);
+      procedure StartThread({%H-}wnd: oxTWindow; rc: loopint = -1);
       procedure StopThread({%H-}wnd: oxTWindow);
    end;
 
@@ -28,24 +28,23 @@ IMPLEMENTATION
 
 { oxTRenderThread }
 
-procedure oxTRenderThread.StartThread(wnd: oxTWindow);
-var
-   rc: loopint;
-
+procedure oxTRenderThread.StartThread(wnd: oxTWindow; rc: loopint);
 begin
-   rc := oxRenderer.GetContext(wnd);
-
    oxRenderingContext.UseWindow(wnd);
    oxRenderingContext.RC := rc;
-   oxTRenderer(wnd.Renderer).ContextCurrent(rc);
+
+  if(rc > -1) then
+      oxTRenderer(wnd.Renderer).ContextCurrent(rc);
+
    oxTRenderer(wnd.Renderer).StartThread(wnd);
 end;
 
 procedure oxTRenderThread.StopThread(wnd: oxTWindow);
 begin
    oxTRenderer(wnd.Renderer).StopThread(wnd);
-   oxTRenderer(wnd.Renderer).ClearContext(oxRenderingContext.RC);
-   oxTRenderer(wnd.Renderer).DestroyContext(oxRenderingContext.RC);
+
+  if(oxRenderingContext.RC > -1) then
+      oxTRenderer(wnd.Renderer).ClearContext(oxRenderingContext.RC);
 end;
 
 END.
