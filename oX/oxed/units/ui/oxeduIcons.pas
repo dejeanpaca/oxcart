@@ -26,6 +26,7 @@ TYPE
       function Create(const c: string; size: longint = 0): oxTTexture;
 
       procedure Create(item: uiPContextMenuItem; c: longword; const name: string = '');
+      procedure Create(item: uiPContextMenuItem; const name: string = '');
    end;
 
 VAR
@@ -143,6 +144,11 @@ begin
 
    if(tex <> nil) then
       item^.SetGlyph(tex);
+end;
+
+procedure oxedTIconsGlobal.Create(item: uiPContextMenuItem; const name: string);
+begin
+  Create(item, 0, name);
 end;
 
 INITIALIZATION
