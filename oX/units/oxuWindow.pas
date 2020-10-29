@@ -182,18 +182,6 @@ begin
          exit;
       end;
 
-      {create a thread rendering context}
-      {$IFNDEF NO_THREADS}
-      if(not wnd.oxProperties.Context) then begin
-         if(oxTRenderer(wnd.Renderer).Properties.SupportsThreading) then begin
-            wnd.ThreadRenderingContext := oxTRenderer(wnd.Renderer).GetContext(wnd, wnd.RenderingContext);
-
-            if(wnd.ErrorCode = 0) then
-               log.v('Created thread render context');
-         end;
-      end;
-      {$ENDIF}
-
       {success}
       Result := true;
    end;
@@ -255,13 +243,6 @@ begin
          wnd.DestroyFail('Failed to destroy RC for window.');
 
       wnd.RenderingContext := -1;
-   end;
-
-   if(wnd.ThreadRenderingContext > -1) then begin
-      if(not oxTRenderer(wnd.Renderer).DestroyContext(wnd.ThreadRenderingContext)) then
-         wnd.DestroyFail('Failed to destroy thread RC for window.');
-
-      wnd.ThreadRenderingContext := -1;
    end;
 
    oxTRenderer(wnd.Renderer).DestroyAllRenderingContexts(wnd);

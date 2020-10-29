@@ -56,8 +56,7 @@ TYPE
       oxwExternal: oxTWindow;
 
       {rendering contexts}
-      RenderingContext,
-      ThreadRenderingContext: loopint;
+      RenderingContext: loopint;
 
       {viewport for this window}
       Viewport: oxTViewport;
@@ -111,7 +110,6 @@ begin
    oxProperties.RenderUnfocused := true;
 
    RenderingContext := -1;
-   ThreadRenderingContext := -1;
 
    Frame := uiwFRAME_STYLE_DEFAULT;
 

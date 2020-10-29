@@ -392,12 +392,11 @@ end;
 
 procedure oxTRenderer.StartThread(wnd: oxTWindow);
 begin
-   ContextCurrent(wnd.ThreadRenderingContext);
 end;
 
 procedure oxTRenderer.StopThread(wnd: oxTWindow);
 begin
-   ClearContext(wnd.ThreadRenderingContext);
+
 end;
 
 procedure oxTRenderer.SetProjectionMatrix(const m: TMatrix4f);

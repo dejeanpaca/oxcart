@@ -56,8 +56,8 @@ TYPE
       procedure ClearContext(context: loopint); override;
       function DestroyContext(context: loopint): boolean; override;
 
-      procedure StartThread(wnd: oxTWindow); override;
-      procedure StopThread(wnd: oxTWindow); override;
+      procedure StartThread({%H-}wnd: oxTWindow); override;
+      procedure StopThread({%H-}wnd: oxTWindow); override;
 
       procedure SetProjectionMatrix(const m: vmVector.TMatrix4f); override;
 
@@ -321,13 +321,11 @@ end;
 
 procedure oxglTRenderer.StartThread(wnd: oxTWindow);
 begin
-   ContextCurrent(wnd.ThreadRenderingContext);
    ogl.InitState();
 end;
 
 procedure oxglTRenderer.StopThread(wnd: oxTWindow);
 begin
-   ClearContext(wnd.ThreadRenderingContext);
 end;
 
 procedure oxglTRenderer.SetProjectionMatrix(const m: vmVector.TMatrix4f);

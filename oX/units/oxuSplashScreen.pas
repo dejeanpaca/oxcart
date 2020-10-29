@@ -12,7 +12,8 @@ INTERFACE
       uTiming, uStd, uLog, uColors, vmVector, StringUtils,
       {oX}
       uOX, oxuTypes, oxuWindowTypes,
-      oxuTexture, oxuTextureGenerate, oxuPaths, oxuRenderer, oxuRender, oxuThreadTask,
+      oxuRenderer, oxuRender, oxuRenderThread,
+      oxuTexture, oxuTextureGenerate, oxuPaths, oxuThreadTask,
       oxuMaterial, oxuFont, oxumPrimitive, oxuWindow, oxuTransform, oxuResourcePool, oxuPrimitives,
       oxuRunRoutines, oxuTimer,
       {ui}
@@ -197,15 +198,15 @@ end;
 procedure oxTSplashScreen.TaskStart();
 begin
    if(AssociatedWindow <> nil) then
-      oxTRenderer(AssociatedWindow.Renderer).StartThread(AssociatedWindow);
+      oxRenderThread.StartThread(AssociatedWindow);
 end;
 
 procedure oxTSplashScreen.TaskStop();
 begin
-   if(AssociatedWindow <> nil) then
-      oxTRenderer(AssociatedWindow.Renderer).StopThread(AssociatedWindow);
-
    Unload();
+
+   if(AssociatedWindow <> nil) then
+      oxRenderThread.StopThread(AssociatedWindow);
 end;
 
 { oxTBasicSplashScreen }
