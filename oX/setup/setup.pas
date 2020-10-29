@@ -68,7 +68,7 @@ BEGIN
       buildLibraries.Target := 'oxed' + DirectorySeparator;
 
       buildLibraries.CopyLibrary('oal_soft.dll', 'openal32.dll');
-      buildLibraries.CopyLibrary('freetype-6.dll');
+      buildLibraries.CopyLibrary('freetype-6.dll', 'freetype.dll');
       {$ENDIF}
 
       log.i('Done setting up OXED libraries');
