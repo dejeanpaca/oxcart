@@ -85,7 +85,9 @@ TYPE
       {list of events called on the main thread when the message queue is processed}
       Events: record
          {should we emit any events}
-         Emit: oxTThreadEmitSet;
+         Emit,
+         {if any events were emitted}
+         Emitted: oxTThreadEmitSet;
          {called when the thread is done}
          ThreadStart,
          ThreadDone: oxTThreadMethods;
@@ -157,6 +159,7 @@ TYPE
       Handler: appTEventHandler;
 
       procedure Queue(Task: oxTThreadTask; evID: longword);
+      procedure Destroy(var Task: oxTThreadTask);
    end;
 
 
@@ -211,6 +214,15 @@ begin
    appEvents.Init(ev, evID, @Handler);
    ev.ExternalData := Task;
    appEvents.Queue(ev);
+end;
+
+procedure oxTThreadEvents.Destroy(var Task: oxTThreadTask);
+begin
+   {remove any remaining events}
+   if(OX_THREAD_TASK_EMIT_DONE in Task.Events.Emitted) then
+      appEvents.DisableWithExternalData(Task);
+
+   FreeObject(Task);
 end;
 
 { oxTThreadMethodsHelper }
@@ -316,6 +328,8 @@ begin
    if(Started) then
       exit;
 
+   Events.Emitted := [];
+
    FreeObject(Thread);
    {$IFNDEF NO_THREADS}
    Thread := RunnerInstanceType.Create(true, Self);
@@ -330,6 +344,7 @@ begin
 
    {call start event}
    if(OX_THREAD_TASK_EMIT_START in Events.Emit) then begin
+      Include(Events.Emitted, OX_THREAD_TASK_EMIT_START);
       ThreadStart();
       Events.ThreadStart.Call(Self);
    end;
@@ -459,8 +474,10 @@ begin
 
    TaskEnd();
 
-   if(OX_THREAD_TASK_EMIT_DONE in Events.Emit) then
+   if(OX_THREAD_TASK_EMIT_DONE in Events.Emit) then begin
+      Include(Events.Emitted, OX_THREAD_TASK_EMIT_DONE);
       oxThreadEvents.Queue(Self, OX_THREAD_TASK_DONE);
+   end;
 end;
 
 procedure oxTThreadTask.SetName(const newName: string);
