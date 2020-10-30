@@ -131,6 +131,8 @@ TYPE
       function GetLazarus(): PBuildLazarusInstall;
       {set current platform by its name}
       function SetPlatform(const name: StdString): Boolean;
+      {set current platform to default platform}
+      procedure SetDefaultPlatform();
       {set lazarus by name}
       function SetLazarusInstall(const name: StdString): Boolean;
       {find lazarus install by name, returns nil if nothing found}
@@ -512,8 +514,13 @@ begin
       exit(true);
    end;
 
-   CurrentPlatform := @Platforms.List[0];
+   SetDefaultPlatform();
    Result := false;
+end;
+
+procedure TBuildSystemInstalls.SetDefaultPlatform();
+begin
+   CurrentPlatform := DefaultPlatform;
 end;
 
 function TBuildSystemInstalls.SetLazarusInstall(const name: StdString): Boolean;
