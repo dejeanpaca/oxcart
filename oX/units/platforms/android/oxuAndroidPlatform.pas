@@ -68,6 +68,9 @@ begin
             oxTRenderer(oxWindow.Current.Renderer).SetupWindow(oxWindow.Current);
          end;
       end;
+
+      if(app^.autoHideNavBar) then
+         app^.hideNavbar := true;
    end else if(cmd = APP_CMD_TERM_WINDOW) then begin
       if(ox.Started) then begin
          oxTRenderer(oxWindow.Current.Renderer).DestroyAllRenderingContexts(oxWindow.Current);
