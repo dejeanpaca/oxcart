@@ -268,6 +268,21 @@ TYPE
       oxTEXTURE_3D
    );
 
+   {render target type}
+   oxTRenderTargetType = (
+      oxRENDER_TARGET_NONE,
+      oxRENDER_TARGET_TEXTURE,
+      oxRENDER_TARGET_WINDOW
+   );
+
+   {render target}
+   oxTRenderTarget = record
+      {the render target (window or texture)}
+      Target: TObject;
+      {type of the render target}
+      Typ: oxTRenderTargetType;
+   end;
+
 CONST
    oxBLEND_MAX = oxBLEND_FILTER;
 
@@ -294,11 +309,11 @@ CONST
 
    oxcCONTEXT_WINDOW_IDX            = -1;
 
-
 VAR
    oxNullPoint: oxTPoint;
    oxNullDimensions: oxTDimensions;
    oxNullRect: oxTRect;
+   oxNullRenderTarget: oxTRenderTarget;
 
 {return an oxTPoint record with the specified coordinates}
 function oxPoint(x, y: loopint): oxTPoint;
