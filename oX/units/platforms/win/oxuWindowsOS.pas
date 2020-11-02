@@ -196,10 +196,8 @@ begin
 
    Result := Windows.LoadImage(0, pchar(fn), IMAGE_ICON, 0, 0, LR_LOADFROMFILE or flags);
 
-   if(winos.GetLastError(true) <> 0) then begin
-      log.w('Failed to load icon: ' + fn);
+   if(winos.GetLastError(true) <> 0) then
       Result := 0;
-   end;
 end;
 
 END.
