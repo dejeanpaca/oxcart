@@ -138,7 +138,7 @@ TYPE
       function GetRenderingContext({%H-}wnd: oxTWindow; {%H-}shareContext: loopint = -1): loopint; virtual;
       function GetUnusedContext(): loopint; virtual;
       function GetContextString({%H-}index: loopint = 0): StdString; virtual;
-      procedure ContextCurrent(context: loopint); virtual;
+      procedure ContextCurrent(context: loopint; var target: oxTRenderTarget); virtual;
       procedure ClearContext(context: loopint); virtual;
       function DestroyContext({%H-}context: loopint): boolean; virtual;
 
@@ -373,11 +373,10 @@ begin
    Result := '';
 end;
 
-procedure oxTRenderer.ContextCurrent(context: loopint);
+procedure oxTRenderer.ContextCurrent(context: loopint; var target: oxTRenderTarget);
 begin
-   if(context >= 0) then begin
+   if(context >= 0) then
       RenderingContexts[context].Used := true;
-   end;
 end;
 
 procedure oxTRenderer.ClearContext(context: loopint);

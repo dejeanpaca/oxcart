@@ -43,6 +43,9 @@ TYPE
       {swaps the buffers for all windows}
       procedure SwapBuffers(wnd: oxTWindow);
       procedure SwapBuffers();
+
+      {set rendering context to window}
+      procedure ContextCurrent(wnd: oxTWindow);
    end;
 
 VAR
@@ -132,6 +135,11 @@ begin
    for i := 0 to (oxWindows.n - 1) do begin
       SwapBuffers(oxWindows.w[i]);
    end;
+end;
+
+procedure oxTWindowRender.ContextCurrent(wnd: oxTWindow);
+begin
+   oxTRenderer(wnd.Renderer).ContextCurrent(wnd.RenderingContext, wnd.RenderTarget);
 end;
 
 INITIALIZATION

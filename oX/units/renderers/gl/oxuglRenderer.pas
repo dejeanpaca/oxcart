@@ -52,7 +52,7 @@ TYPE
 
       function GetContext(wnd: oxTWindow; shareContext: loopint=-1): loopint; override;
       function GetContextString(index: loopint=0): StdString; override;
-      procedure ContextCurrent(context: loopint); override;
+      procedure ContextCurrent(context: loopint; var target: oxTRenderTarget); override;
       procedure ClearContext(context: loopint); override;
       function DestroyContext(context: loopint): boolean; override;
 
@@ -130,7 +130,7 @@ begin
    end;
 
    {bind rendering context to the window}
-   ContextCurrent(wnd.RenderingContext);
+   ContextCurrent(wnd.RenderingContext, wnd.RenderTarget);
    ogl.ActivateRenderingContext();
 
    glPlatform^.OnInitWindow(oglTWindow(wnd));
@@ -250,7 +250,7 @@ begin
    Result := sf(glRenderingContexts[index]);
 end;
 
-procedure oxglTRenderer.ContextCurrent(context: loopint);
+procedure oxglTRenderer.ContextCurrent(context: loopint; var target: oxTRenderTarget);
 var
    error: loopint;
    wnd: oglTWindow;
@@ -260,7 +260,7 @@ begin
       wnd := oglTWindow(RenderingContexts[context].Window);
       log.v('gl > Set render context ' + sf(context) +  ' current');
 
-      glPlatform^.ContextCurrent(wnd, glRenderingContexts[context]);
+      glPlatform^.ContextCurrent(target, glRenderingContexts[context]);
       error := glPlatform^.RaiseError();
 
       if(error <> 0) then

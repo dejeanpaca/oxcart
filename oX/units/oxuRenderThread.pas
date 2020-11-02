@@ -34,7 +34,7 @@ begin
    oxRenderingContext.RC := rc;
 
    if(rc > -1) then
-      oxTRenderer(wnd.Renderer).ContextCurrent(rc);
+      oxTRenderer(wnd.Renderer).ContextCurrent(rc, wnd.RenderTarget);
 
    oxTRenderer(wnd.Renderer).StartThread(wnd);
    log.v('Started rendering thread: ' + sf(oxRenderingContext.RC));
