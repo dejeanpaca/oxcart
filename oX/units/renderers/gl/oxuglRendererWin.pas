@@ -30,7 +30,7 @@ TYPE
       procedure OnInitWindow({%H-}wnd: oglTWindow); virtual;
       procedure SwapBuffers(wnd: oglTWindow); virtual;
       function GetContext(wnd: oglTWindow; shareContext: HGLRC): HGLRC; virtual;
-      function ContextCurrent(var target: oxTRenderTarget; context: oglTRenderingContext): boolean; virtual;
+      function ContextCurrent(const context: oxTRenderTargetContext): boolean; virtual;
       function ClearContext({%H-}wnd: oglTWindow): boolean; virtual;
       function DestroyContext({%H-}wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
    end;
@@ -283,15 +283,15 @@ function winLegacyContext(wnd: oglTWindow; shareContext: HGLRC = 0): HGLRC;
 begin
    {create the OpenGL rendering context}
    Result := wglCreateContext(wnd.wd.dc);
+   wnd.wd.LastError := winos.GetLastError();
 
-   if(Result <> 0) then begin
+   if(Result <> 0) and (wnd.wd.LastError = 0) then begin
       if(not wnd.oxProperties.Context) and (shareContext <> 0) then begin
          if(not wglShareLists(Result, shareContext)) then begin
             wnd.wd.LastError := winos.LogError('gl > (wglCreateContext) Failed to share lists with context ' + sf(shareContext));
          end;
       end;
-   end else
-      wnd.wd.LastError := winos.GetLastError();
+   end;
 end;
 
 { oxglTPlatformWGL }
@@ -402,10 +402,12 @@ begin
       log.e('gl > (' + method + ') Failed getting rendering context ' + winos.FormatMessage(wnd.wd.LastError));
 end;
 
-function oxglTPlatformWGL.ContextCurrent(var target: oxTRenderTarget; context: oglTRenderingContext): boolean;
+function oxglTPlatformWGL.ContextCurrent(const context: oxTRenderTargetContext): boolean;
 begin
-   if(target.Typ = oxRENDER_TARGET_WINDOW) then
-      Result := wglMakeCurrent(winosTWindow(target.Target).wd.dc, context);
+   if(context.Target^.Typ = oxRENDER_TARGET_WINDOW) then
+      Result := wglMakeCurrent(winosTWindow(context.Target^.Target).wd.dc, oxglRenderer.glRenderingContexts[context.RenderContext])
+   else
+      Result := wglMakeCurrent(0, 0);
 end;
 
 function oxglTPlatformWGL.ClearContext(wnd: oglTWindow): boolean;

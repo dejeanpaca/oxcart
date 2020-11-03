@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd,
       {ox}
-      oxuTypes,
+      oxuTypes, oxuRenderer,
       {gl}
       oxuOGL, oxuglWindow;
 
@@ -34,7 +34,7 @@ TYPE
       function OnDeInitWindow({%H-}wnd: oglTWindow): boolean; virtual;
       procedure SwapBuffers({%H-}wnd: oglTWindow); virtual;
       function GetContext({%H-}wnd: oglTWindow; {%H-}shareContext: oglTRenderingContext): oglTRenderingContext; virtual;
-      function ContextCurrent(var {%H-}target: oxTRenderTarget; {%H-}context: oglTRenderingContext): boolean; virtual;
+      function ContextCurrent(const {%H-}context: oxTRenderTargetContext): boolean; virtual;
       function ClearContext({%H-}wnd: oglTWindow): boolean; virtual;
       function DestroyContext({%H-}wnd: oglTWindow; {%H-}context: oglTRenderingContext): boolean; virtual;
    end;
@@ -83,7 +83,7 @@ begin
    Result := default(oglTRenderingContext);
 end;
 
-function oxglTPlatform.ContextCurrent(var target: oxTRenderTarget; context: oglTRenderingContext): boolean;
+function oxglTPlatform.ContextCurrent(const context: oxTRenderTargetContext): boolean;
 begin
    Result := true;
 end;

@@ -35,6 +35,8 @@ TYPE
       pInfo: oxglPRendererInfo;
       {$ENDIF}
 
+      constructor Create(); override;
+
       procedure AfterInitialize(); override;
 
       procedure OnInitialize(); override;
@@ -52,7 +54,7 @@ TYPE
 
       function GetContext(wnd: oxTWindow; shareContext: loopint=-1): loopint; override;
       function GetContextString(index: loopint=0): StdString; override;
-      procedure ContextCurrent(context: loopint; var target: oxTRenderTarget); override;
+      procedure ContextCurrent(const context: oxTRenderTargetContext); override;
       procedure ClearContext(context: loopint); override;
       function DestroyContext(context: loopint): boolean; override;
 
@@ -65,8 +67,6 @@ TYPE
       procedure Clear(clearBits: longword); override;
       procedure ClearColor(c: TColor4f); override;
 
-      constructor Create(); override;
-
       function GetSummary(): TStringArray; override;
       function GetPlatformErrorDescription(error: loopint): StdString;
   end;
@@ -77,6 +77,22 @@ VAR
 IMPLEMENTATION
 
 { oxglTRenderer }
+
+constructor oxglTRenderer.Create();
+begin
+   inherited;
+
+   {$IFDEF GLES}
+      Name := 'OpenGL ES';
+   {$ELSE}
+      Name := 'OpenGL';
+   {$ENDIF}
+
+   WindowInstance := oglTWindow;
+   PlatformInstance := glSystemPlatform;
+
+   Id := 'gl';
+end;
 
 procedure oxglTRenderer.AfterInitialize();
 begin
@@ -117,6 +133,9 @@ begin
 end;
 
 function oxglTRenderer.InitWindow(wnd: oxTWindow): boolean;
+var
+   rtc: oxTRenderTargetContext;
+
 begin
    wnd.RenderingContext := GetRenderingContext(wnd);
 
@@ -129,8 +148,10 @@ begin
       exit(False);
    end;
 
+   wnd.FromWindow(rtc);
+
    {bind rendering context to the window}
-   ContextCurrent(wnd.RenderingContext, wnd.RenderTarget);
+   ContextCurrent(rtc);
    ogl.ActivateRenderingContext();
 
    glPlatform^.OnInitWindow(oglTWindow(wnd));
@@ -250,21 +271,29 @@ begin
    Result := sf(glRenderingContexts[index]);
 end;
 
-procedure oxglTRenderer.ContextCurrent(context: loopint; var target: oxTRenderTarget);
+procedure oxglTRenderer.ContextCurrent(const context: oxTRenderTargetContext);
 var
    error: loopint;
+   rc: loopint;
 
 begin
-   if(context >= 0) then begin
-      log.v('gl > Set render context ' + sf(context) +  ' current');
+   rc := context.RenderContext;
 
-      glPlatform^.ContextCurrent(target, glRenderingContexts[context]);
+   if(rc >= 0) then begin
+      log.v('gl > Set render context ' + sf(rc) +  ' current');
+
+      glPlatform^.ContextCurrent(context);
       error := glPlatform^.RaiseError();
 
       if(error <> 0) then
-         log.w('gl > Failed to set context ' + sf(context) + ' current: ' + GetPlatformErrorDescription(error));
+         log.w('gl > Failed to set context ' + sf(rc) + ' current: ' + GetPlatformErrorDescription(error));
 
-      RenderingContexts[context].Used := true;
+      RenderingContexts[rc].Used := true;
+
+      if(context.Target^.Typ = oxRENDER_TARGET_WINDOW) then
+         RenderingContexts[rc].Window := oxTWindow(context.Target^.Target)
+      else
+         RenderingContexts[rc].Window := nil;
    end;
 end;
 
@@ -372,22 +401,6 @@ end;
 procedure oxglTRenderer.ClearColor(c: TColor4f);
 begin
    glClearColor(c[0], c[1], c[2], c[3]);
-end;
-
-constructor oxglTRenderer.Create();
-begin
-   inherited;
-
-   {$IFDEF GLES}
-      Name := 'OpenGL ES';
-   {$ELSE}
-      Name := 'OpenGL';
-   {$ENDIF}
-
-   WindowInstance := oglTWindow;
-   PlatformInstance := glSystemPlatform;
-
-   Id := 'gl';
 end;
 
 function oxglTRenderer.GetSummary(): TStringArray;
