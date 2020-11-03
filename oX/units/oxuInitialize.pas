@@ -192,12 +192,13 @@ begin
    oxRenderers.Use(oxRenderer);
    oxRenderer.AfterInitialize();
 
+   {$IFNDEF OX_LIBRARY}
+
    {$IFNDEF NO_THREADS}
    {get an additional rendering context}
    oxRenderer.GetContext(oxWindow.Current);
    {$ENDIF}
 
-   {$IFNDEF OX_LIBRARY}
    if(oxContextWindow.Require) then begin
       oxContextWindow.Destroy();
       oxWindows.SetCurrent(oxWindows.w[0]);
