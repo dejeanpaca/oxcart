@@ -253,11 +253,9 @@ end;
 procedure oxglTRenderer.ContextCurrent(context: loopint; var target: oxTRenderTarget);
 var
    error: loopint;
-   wnd: oglTWindow;
 
 begin
    if(context >= 0) then begin
-      wnd := oglTWindow(RenderingContexts[context].Window);
       log.v('gl > Set render context ' + sf(context) +  ' current');
 
       glPlatform^.ContextCurrent(target, glRenderingContexts[context]);
