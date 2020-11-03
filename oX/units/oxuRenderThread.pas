@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, uLog, StringUtils,
       {ox}
-      oxuWindowTypes, oxuRenderer, oxuRenderingContext;
+      oxuTypes, oxuWindowTypes, oxuRenderer, oxuRenderingContext;
 
 TYPE
    { oxTRenderThread }
@@ -29,12 +29,18 @@ IMPLEMENTATION
 { oxTRenderThread }
 
 procedure oxTRenderThread.StartThread(wnd: oxTWindow; rc: loopint);
+var
+   rtc: oxTRenderTargetContext;
+
 begin
+   wnd.FromWindow(rtc);
+   rtc.RenderContext := rc;
+
    oxRenderingContext.UseWindow(wnd);
    oxRenderingContext.RC := rc;
 
    if(rc > -1) then
-      oxTRenderer(wnd.Renderer).ContextCurrent(rc, wnd.RenderTarget);
+      oxTRenderer(wnd.Renderer).ContextCurrent(rtc);
 
    oxTRenderer(wnd.Renderer).StartThread(wnd);
    log.v('Started rendering thread: ' + sf(oxRenderingContext.RC));
