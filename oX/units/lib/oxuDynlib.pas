@@ -13,7 +13,7 @@ INTERFACE
       {app}
       uAppInfo, uApp,
       {ox}
-      uOX, oxuGlobalInstances, oxuInit, oxuRun, oxulibSettings;
+      uOX, oxuGlobalInstances, oxuInitialize, oxuRun, oxulibSettings;
 
 CONST
    {library interface version (does not necessarily indicate engine compatibility)}
