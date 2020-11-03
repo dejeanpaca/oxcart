@@ -43,6 +43,7 @@ TYPE
    { oxTRendererRenderingContext }
    oxTRendererRenderingContext = record
       Window: oxTWindow;
+      Created,
       Used: boolean;
    end;
 
@@ -138,7 +139,7 @@ TYPE
       function GetRenderingContext({%H-}wnd: oxTWindow; {%H-}shareContext: loopint = -1): loopint; virtual;
       function GetUnusedContext(): loopint; virtual;
       function GetContextString({%H-}index: loopint = 0): StdString; virtual;
-      procedure ContextCurrent(const context: oxTRenderTargetContext); virtual;
+      procedure ContextCurrent(const {%H-}context: oxTRenderTargetContext); virtual;
       procedure ContextCurrent(context: loopint; var {%H-}target: oxTRenderTarget);
       procedure ClearContext(context: loopint); virtual;
       function DestroyContext({%H-}context: loopint): boolean; virtual;
@@ -304,12 +305,12 @@ var
 
 begin
    for i := 0 to oxMAXIMUM_RENDER_CONTEXT do begin
-      if(RenderingContexts[i].Window = nil) then begin
+      if(not RenderingContexts[i].Created) then begin
          log.i('Created rendering context ' + sf(i));
 
+         RenderingContexts[i].Created := true;
          RenderingContexts[i].Window := wnd;
          RenderingContexts[i].Used := false;
-
          exit(i);
       end;
    end;
@@ -322,6 +323,7 @@ begin
    if(context > -1) then begin
       RenderingContexts[context].Window := nil;
       RenderingContexts[context].Used := false;
+      RenderingContexts[context].Created := false;
 
       log.i('Rendering context ' + sf(context) + ' destroyed');
    end;
@@ -341,7 +343,11 @@ begin
 end;
 
 function oxTRenderer.GetRenderingContext(wnd: oxTWindow; shareContext: loopint): loopint;
+var
+   rtc: oxTRenderTargetContext;
+
 begin
+   {get an unused context if we can first}
    Result := GetUnusedContext();
 
    if(Result < 0) then begin
@@ -352,7 +358,18 @@ begin
          end;
       end;
 
+      wnd.FromWindow(rtc);
+
+      {sometimes, gl won't allow sharing lists or getting a context if we have one set currently}
+      if(wnd.RenderingContext > -1) then
+         ClearContext(wnd.RenderingContext);
+
+      {get new context}
       Result := GetContext(wnd, shareContext);
+
+      {restore the original context for this window}
+      if(wnd.RenderingContext > -1) then
+         ContextCurrent(rtc);
    end;
 end;
 
@@ -376,13 +393,18 @@ end;
 
 procedure oxTRenderer.ContextCurrent(const context: oxTRenderTargetContext);
 begin
-
 end;
 
 procedure oxTRenderer.ContextCurrent(context: loopint; var target: oxTRenderTarget);
+var
+   rtc: oxTRenderTargetContext;
+
 begin
-   if(context >= 0) then
-      RenderingContexts[context].Used := true;
+   rtc.Target := @target;
+   rtc.ContextType := oxRENDER_TARGET_CONTEXT_RENDER;
+   rtc.RenderContext := context;
+
+   ContextCurrent(rtc);
 end;
 
 procedure oxTRenderer.ClearContext(context: loopint);
