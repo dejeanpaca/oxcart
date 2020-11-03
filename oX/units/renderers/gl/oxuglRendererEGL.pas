@@ -33,7 +33,7 @@ TYPE
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
       function OnDeInitWindow(wnd: oglTWindow): boolean; virtual;
       function GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext; virtual;
-      function ContextCurrent(var target: oxTRenderTarget; context: oglTRenderingContext): boolean; virtual;
+      function ContextCurrent(const context: oxTRenderTargetContext): boolean; virtual;
       function ClearContext(wnd: oglTWindow): boolean; virtual;
       function DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
       procedure SwapBuffers(wnd: oglTWindow); virtual;
@@ -172,15 +172,21 @@ begin
       Result := nil;
 end;
 
-function oxglTEGL.ContextCurrent(var target: oxTRenderTarget; context: oglTRenderingContext): boolean;
+function oxglTEGL.ContextCurrent(const context: oxTRenderTargetContext): boolean;
 var
    wnd: oglTWindow;
+   glrc: oglTRenderingContext;
 
 begin
-   if(target.Typ = oxRENDER_TARGET_WINDOW) then begin
-      wnd := oglTWindow(target.Target);
+   if(context.Target^.Typ = oxRENDER_TARGET_WINDOW) then begin
+      wnd := oglTWindow(context.Target^.Target);
 
-      Result := eglMakeCurrent(wnd.wd.Display, wnd.wd.Surface, wnd.wd.Surface, context) <> EGL_FALSE;
+      glrc := oxglRenderer.glRenderingContexts[context.RenderContext];
+
+      if(context.ContextType = oxRENDER_TARGET_CONTEXT_RENDER) then
+         Result := eglMakeCurrent(wnd.wd.Display, wnd.wd.Surface, wnd.wd.Surface, glrc) <> EGL_FALSE
+      else
+         Result := eglMakeCurrent(wnd.wd.Display, EGL_NO_SURFACE, EGL_NO_SURFACE, glrc) <> EGL_FALSE
    end;
 end;
 
