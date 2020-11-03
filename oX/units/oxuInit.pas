@@ -213,9 +213,8 @@ begin
    {call base initialization routines}
    ox.BaseInit.iCall();
 
-   if(ox.Error <> 0) then begin
-      RaiseError('Base initialization failed');
-   end;
+   if(ox.Error <> 0) then
+      exit(RaiseError('Base initialization failed'));
 
    log.i('Base initialization done (Elapsed: ' + elapsedTime.ElapsedfToString() + 's)');
 
@@ -229,9 +228,8 @@ begin
 
    {call initialization routines}
    ox.Init.iCall();
-   if(ox.Error <> 0) then begin
+   if(ox.Error <> 0) then
       exit(RaiseError('Initialization failed'));
-   end;
 
    log.i('Called all initialization routines (elapsed: ' + elapsedTime.ElapsedfToString() + 's)');
 
