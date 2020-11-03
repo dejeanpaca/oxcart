@@ -512,7 +512,7 @@ begin
    wnd.wd.wStyle     := wStyle;
    wnd.wd.wStyleEx   := wStyleEx;
 
-   wndCreate      := wnd;
+   wndCreate := wnd;
 
    {adjust dimensions so they are exactly what we want}
    r.Top    := wnd.Position.y;
@@ -570,7 +570,12 @@ begin
 
    if(not wnd.wd.NoDC) then begin
       wnd.wd.dc := GetDC(wnd.wd.h);
-      Log.i('Window dc(' + sf(wnd.wd.dc) + ')');
+      wnd.wd.LastError := winos.GetLastError();
+
+      if(wnd.wd.LastError <> 0) then
+         wnd.CreateFail('win-gdi > Cannot get window DC. ' + winos.FormatMessage(winos.LastError))
+      else
+         Log.i('Window dc(' + sf(wnd.wd.dc) + ')');
    end;
 end;
 

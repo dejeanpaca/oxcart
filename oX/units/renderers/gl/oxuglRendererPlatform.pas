@@ -9,7 +9,7 @@ UNIT oxuglRendererPlatform;
 INTERFACE
 
    USES
-      uStd,
+      uStd, StringUtils,
       {ox}
       oxuTypes, oxuRenderer,
       {gl}
@@ -27,6 +27,7 @@ TYPE
 
       {raise an error, if any}
       function RaiseError(): loopint; virtual;
+      function GetErrorDescription(error: loopint): StdString; virtual;
 
       procedure OnInitialize(); virtual;
       function PreInitWindow({%H-}wnd: oglTWindow): boolean; virtual;
@@ -51,6 +52,11 @@ end;
 function oxglTPlatform.RaiseError(): loopint;
 begin
    Result := 0;
+end;
+
+function oxglTPlatform.GetErrorDescription(error: loopint): StdString;
+begin
+   Result := sf(error);
 end;
 
 procedure oxglTPlatform.OnInitialize();
