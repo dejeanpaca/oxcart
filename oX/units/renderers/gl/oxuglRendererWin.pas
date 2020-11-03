@@ -409,8 +409,11 @@ begin
    if(wnd.wd.LastError <> 0) then begin
       if(Result = 0) then
          log.e('gl > (' + method + ') Failed getting rendering context ' + winos.FormatMessage(wnd.wd.LastError))
-      else
-         log.w('gl > (' + method + ') Error while getting rendering context ' + winos.FormatMessage(wnd.wd.LastError));
+      else begin
+         log.w('gl > (' + method + ') Error while getting rendering context (glrc: ' + sf(Result) + ') ' + winos.FormatMessage(wnd.wd.LastError));
+         {we'll ignore any errors, because we got an RC}
+         wnd.wd.LastError := 0;
+      end;
    end;
 end;
 

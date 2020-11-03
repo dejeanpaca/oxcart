@@ -255,12 +255,12 @@ begin
       shareRC := glRenderingContexts[shareContext];
 
    rc := glPlatform^.GetContext(oglTWindow(wnd), shareRC);
-   error := glPlatform^.RaiseError();
 
    if(ogl.ValidRC(rc)) then begin
       Result := AddRenderingContext(wnd);
       glRenderingContexts[Result] := rc;
    end else begin
+      error := glPlatform^.RaiseError();
       wnd.RaiseError(eFAIL, 'Not a valid rendering context ' + GetPlatformErrorDescription(error));
       Result := -1;
    end;
@@ -282,8 +282,10 @@ begin
    if(rc >= 0) then begin
       log.v('gl > Set render context ' + sf(rc) +  ' current');
 
-      glPlatform^.ContextCurrent(context);
-      error := glPlatform^.RaiseError();
+      error := 0;
+
+      if(not glPlatform^.ContextCurrent(context)) then
+         error := glPlatform^.RaiseError();
 
       if(error <> 0) then
          log.w('gl > Failed to set context ' + sf(rc) + ' current: ' + GetPlatformErrorDescription(error));
@@ -306,8 +308,10 @@ begin
    if(context >= 0) then begin
       wnd := oglTWindow(RenderingContexts[context].Window);
 
-      glPlatform^.ClearContext(wnd);
-      error := glPlatform^.RaiseError();
+      error := 0;
+
+      if(not glPlatform^.ClearContext(wnd)) then
+         error := glPlatform^.RaiseError();
 
       if(error = 0) then
          log.v('gl > Cleared context ' + sf(context))
@@ -338,7 +342,10 @@ begin
    if(ogl.ValidRC(rc)) then begin
       Result := glPlatform^.DestroyContext(wnd, rc);
 
-      error := glPlatform^.RaiseError();
+      error := 0;
+
+      if(not Result) then
+         error := glPlatform^.RaiseError();
 
       if(error <> 0) then
          log.w('gl > Failed to destroy context ' + sf(context) + '  current: ' + GetPlatformErrorDescription(error));
