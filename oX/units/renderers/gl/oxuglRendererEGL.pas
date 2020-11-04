@@ -9,7 +9,7 @@ UNIT oxuglRendererEGL;
 INTERFACE
 
    USES
-      uStd, uLog,
+      uStd, uLog, StringUtils,
       egl,
       {ox}
       oxuTypes,
@@ -88,9 +88,14 @@ begin
    Result := false;
    wnd.wd.Display := eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
-   if(wnd.wd.Display <> nil) then
-      eglInitialize(wnd.wd.Display, nil, nil)
-   else begin
+   if(wnd.wd.Display <> nil) then begin
+      eglInitialize(wnd.wd.Display, nil, nil);
+
+      if(not wnd.oxProperties.Created) then begin
+         log.v('EGL Vendor: ' + eglQueryString(wnd.wd.Display, EGL_VENDOR));
+         log.v('EGL Version: ' + eglQueryString(wnd.wd.Display, EGL_VERSION));
+      end;
+   end else begin
       log.e('Failed to get default EGL display');
       exit(false);
    end;
@@ -142,6 +147,7 @@ begin
    end;
 
    wnd.wd.Surface := surface;
+   wnd.wd.ValidSurface := true;
 
    eglQuerySurface(wnd.wd.Display, surface, EGL_WIDTH, @w);
    eglQuerySurface(wnd.wd.Display, surface, EGL_HEIGHT, @h);
@@ -207,9 +213,17 @@ begin
 end;
 
 procedure oxglTEGL.SwapBuffers(wnd: oglTWindow);
+var
+   error: EGLenum;
+
 begin
-   if(wnd.wd.Display <> nil) and (wnd.wd.Surface <> nil) then
-      eglSwapBuffers(wnd.wd.Display, wnd.wd.Surface);
+   if(wnd.wd.Display <> nil) and (wnd.wd.Surface <> nil) and (wnd.wd.ValidSurface) then begin
+      error := eglSwapBuffers(wnd.wd.Display, wnd.wd.Surface);
+      if(error <> EGL_TRUE) then begin
+         wnd.wd.ValidSurface := false;
+         log.e('egl > Cannot swap buffers on surface ' + sf(wnd.wd.Surface) + ', egl error: ' + HexStr(error, 4));
+      end;
+   end;
 end;
 
 INITIALIZATION
