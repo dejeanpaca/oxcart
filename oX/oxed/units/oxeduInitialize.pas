@@ -63,6 +63,8 @@ INTERFACE
       {platforms}
       oxeduwndAndroidSettings, oxeduwndAndroidGeneralSettings,
       oxeduAndroidMenu,
+      {ypk}
+      oxeduYPK,
       {initialize keys last}
       oxeduKeys,
       {$ENDIF}
