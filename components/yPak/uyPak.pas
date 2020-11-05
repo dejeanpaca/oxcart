@@ -8,7 +8,8 @@ UNIT uyPak;
 
 INTERFACE
 
-   USES uStd, uFile;
+   USES
+      uStd, uFile;
 
 TYPE
    ypkTID = array[0..3] of char;
@@ -35,22 +36,33 @@ CONST
    ypkeINVALID_ID          = $0103;
 
 TYPE
-   ypkTHeader = packed record
+   ypkfTHeader = packed record
+      {file ID}
       ID: ypkTID;
+      {file endian}
       Endian,
-      Version,
-      Variant: word;
+      {version of the ypk file}
+      Version: word;
+      {size of the data blob}
+      BlobSize,
+      {number of files we have}
       Files: fileint;
    end;
 
-   ypkPEntry = ^ypkTEntry;
-   ypkTEntry = packed record
+   ypkfPEntry = ^ypkfTEntry;
+   {contains a entry for a file}
+   ypkfTEntry = packed record
+      {offset for the filename in the blob}
+      FileNameOffset,
+      {offset for the file in the ypk file}
       Offset,
+      {size of the file}
       Size: fileint;
-      fn: string[ypkMAX_FN_LENGTH];
    end;
 
-   ypkTEntries = specialize TSimpleList<ypkTEntry>;
+   ypkTEntries = specialize TSimpleList<ypkfTEntry>;
+
+   { ypkTGlobal }
 
    ypkTGlobal = record
       Error: loopint;
@@ -61,20 +73,21 @@ TYPE
       procedure eReset();
 
       { HEADER }
-      procedure ReadHeader(var f: TFile; out hdr: ypkTHeader);
-      procedure WriteHeader(var f: TFile; filecount: longint);
+      procedure ReadHeader(var f: TFile; out hdr: ypkfTHeader);
+      procedure WriteHeader(var f: TFile; blobSize, fileCount: fileint);
 
       { ENTRIES }
-      function ReadEntries(var f: TFile; var e: ypkTEntries; count: longint): longint;
+      function ReadEntries(var f: TFile; var e: ypkTEntries; count: longint): fileint;
       procedure WriteEntries(var f: TFile; var e: ypkTEntries);
 
-      {finds a file with the specified name in the entries}
-      function Find(var e: ypkTEntries; const fn: string): longint;
+      { FILENAMES BLOB }
+      function ReadBlob(var f: TFile; out blob: PByte; size: fileint): fileint;
+      function WriteBlob(var f: TFile; out blob: PByte; size: fileint): fileint;
    end;
 
 CONST
-   ypkHEADER_SIZE       = SizeOf(ypkTHeader);
-   ypkENTRY_SIZE        = SizeOf(ypkTEntry);
+   ypkHEADER_SIZE       = SizeOf(ypkfTHeader);
+   ypkENTRY_SIZE        = SizeOf(ypkfTEntry);
 
 VAR
    ypk: ypkTGlobal;
@@ -101,7 +114,7 @@ end;
 
 { HEADER }
 
-procedure ypkTGlobal.ReadHeader(var f: TFile; out hdr: ypkTHeader);
+procedure ypkTGlobal.ReadHeader(var f: TFile; out hdr: ypkfTHeader);
 begin
    f.Read(hdr, SizeOf(hdr));
 
@@ -118,22 +131,23 @@ begin
    end;
 end;
 
-procedure ypkTGlobal.WriteHeader(var f: TFile; filecount: longint);
+procedure ypkTGlobal.WriteHeader(var f: TFile; blobSize, fileCount: fileint);
 var
-   hdr: ypkTHeader;
+   hdr: ypkfTHeader;
 
 begin
    hdr.ID         := ypkID;
    hdr.Endian     := ypkENDIAN;
    hdr.Version    := ypkVERSION;
-   hdr.Files      := filecount;
+   hdr.Files      := fileCount;
+   hdr.BlobSize   := blobSize;
 
    f.Write(hdr, SizeOf(hdr));
 end;
 
 { ENTRIES }
 
-function ypkTGlobal.ReadEntries(var f: TFile; var e: ypkTEntries; count: longint): longint;
+function ypkTGlobal.ReadEntries(var f: TFile; var e: ypkTEntries; count: longint): fileint;
 begin
    if(count > 0) then begin
       e.n := count;
@@ -156,18 +170,28 @@ begin
       f.Write(e.List[0], int64(e.n) * ypkENTRY_SIZE);
 end;
 
-function ypkTGlobal.Find(var e: ypkTEntries; const fn: string): longint;
-var
-   i: longint;
-
+function ypkTGlobal.ReadBlob(var f: TFile; out blob: PByte; size: fileint): fileint;
 begin
-   if(e.n > 0) then
-      for i := 0 to (e.n-1) do begin
-         if(e.List[i].fn = fn) then
-            exit(i);
-      end;
+   Result := 0;
 
-   Result := -1;
+   blob := nil;
+
+   if(size > 0) then begin
+      XGetMem(blob, size);
+
+      Result := f.Read(blob^, size);
+   end;
+end;
+
+function ypkTGlobal.WriteBlob(var f: TFile; out blob: PByte; size: fileint): fileint;
+begin
+   Result := 0;
+
+   blob := nil;
+
+   if(size > 0) then begin
+      Result := f.Write(blob^, size);
+   end;
 end;
 
 END.
