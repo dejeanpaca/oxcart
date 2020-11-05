@@ -1,10 +1,10 @@
 {
-   uyPak, yPak base unit
+   uyPakFile, yPak file helper
    Copyright (C) 2011. Dejan Boras
 }
 
 {$INCLUDE oxheader.inc}
-UNIT uyPak;
+UNIT uyPakFile;
 
 INTERFACE
 
