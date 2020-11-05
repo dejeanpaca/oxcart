@@ -19,16 +19,16 @@ TYPE
 
    ypkTFSFile = record
       f: TFile;
-      entries: ypkTEntries;
+      Entries: ypkTEntries;
 
       procedure CorrectPaths();
    end;
 
    ypkTFileSystemGlobal = record
       {default buffer size set for fs files, 0 means no buffer}
-      bufferSize: fileint;
+      BufferSize: fileint;
       {correct file paths when a file is added to the filesystem}
-      correctPaths: boolean;
+      CorrectPaths: boolean;
 
       vfsh: PFileHandler;
       vfs: TVFileSystem;
@@ -105,7 +105,7 @@ var
 begin
    Result := -1;
 
-   new(f);
+   New(f);
 
    {get an index to a fs pointer}
    filesystem.Add(f);
@@ -120,10 +120,11 @@ begin
    Result := nil;
 
    ypk.ReadHeader(fs.f, hdr);
-   if(fs.f.error = 0) then begin
-      ypk.ReadEntries(fs.f, fs.entries, hdr.Files);
 
-      if(fs.f.error = 0) then begin
+   if(fs.f.error = 0) then begin
+      ypk.ReadEntries(fs.f, fs.Entries, hdr.Files);
+
+      if(fs.f.Error = 0) then begin
          Result := @fs;
 
          log.i(tag + 'Loaded file successfully: ' + fs.f.fn + '(handleID: ' + sf(fs.f.handleID) +
@@ -150,9 +151,10 @@ begin
 
          {open the file}
          fs^.f.Open(fn);
-         if(fs^.f.error = 0) then begin
-            if(bufferSize > 0) then
-               fs^.f.Buffer(bufferSize);
+
+         if(fs^.f.Error = 0) then begin
+            if(BufferSize > 0) then
+               fs^.f.Buffer(BufferSize);
 
             Result := ypkfsAdd(fs^)
          end else
@@ -173,7 +175,7 @@ var
    fs: ypkPFSFile;
 
 begin
-   result := nil;
+   Result := nil;
 
    fsidx := getFile();
 
@@ -182,9 +184,10 @@ begin
 
       {open the file}
       fOpenUnix(fs^.f, d, offs, size);
-      if(fs^.f.error = 0) then begin
-         fs^.f.handleID := handleID;
-         result := ypkfsAdd(fs^);
+
+      if(fs^.f.Error = 0) then begin
+         fs^.f.HandleID := handleID;
+         Result := ypkfsAdd(fs^);
       end else
          writeLog(fs^, 'Cannot open file.')
    end;
@@ -212,9 +215,9 @@ begin
    end;
 
    if(filesystem.n > 0) then
-      log.i(tag+'Filesystem successfully mounted.')
+      log.i(tag + 'Filesystem successfully mounted.')
    else
-      log.i(tag+'Filesystem not mounted. No files.')
+      log.i(tag + 'Filesystem not mounted. No files.')
 end;
 
 procedure ypkTFileSystemGlobal.Unmount();
@@ -267,7 +270,7 @@ begin
    fs := ypkfs.Find(fn, entryIdx);
 
    if(entryIdx > -1) then
-      Result := fs^.entries.List[entryIdx].size
+      Result := fs^.Entries.List[entryIdx].Size
    else
       Result := -1;
 end;
@@ -282,13 +285,14 @@ begin
    Result := false;
 
    fs := ypkfs.Find(fn, entryIdx);
-   if(entryIdx > -1) then begin
-      entry := @fs^.entries.List[entryIdx].offs;
 
-      f.Open(fs^.f, entry^.offs, entry^.size);
+   if(entryIdx > -1) then begin
+      entry := @fs^.Entries.List[entryIdx].Offset;
+
+      f.Open(fs^.f, entry^.Offset, entry^.Size);
 
       if(fs^.f.error = 0) then
-         Result := fs^.f.Seek(entry^.offs) > -1;
+         Result := fs^.f.Seek(entry^.Offset) > -1;
    end;
 end;
 
@@ -302,8 +306,8 @@ begin
    fs := Find(fn, entryIdx);
 
    if(entryIdx > -1) then begin
-      offs := fs^.entries.List[entryIdx].offs;
-      size := fs^.entries.List[entryIdx].size;
+      offs := fs^.Entries.List[entryIdx].Offset;
+      size := fs^.Entries.List[entryIdx].Size;
       exit(true);
    end;
 
@@ -321,7 +325,7 @@ begin
    if(filesystem.n > 0) then begin
       for i := (filesystem.n - 1) downto 0 do begin
          if(filesystem.List[i] <> nil) then begin
-            entryIdx := ypk.Find(filesystem.List[i]^.entries, fn);
+            entryIdx := ypk.Find(filesystem.List[i]^.Entries, fn);
 
             if(entryIdx > -1) then
                exit(filesystem.List[i]);
@@ -346,7 +350,7 @@ end;
 
 function ypkTFileSystemGlobal.FileCount(var fs: ypkTFSFile): longint;
 begin
-   Result := fs.entries.n;
+   Result := fs.Entries.n;
 end;
 
 function ypkTFileSystemGlobal.FileCount(): longint;
@@ -360,7 +364,7 @@ begin
    if(filesystem.n > 0) then
       for i := 0 to (filesystem.n - 1) do begin
          if(filesystem.List[i] <> nil) then
-            inc(count, filesystem.List[i]^.entries.n);
+            inc(count, filesystem.List[i]^.Entries.n);
       end;
 
    Result := 0;
@@ -374,10 +378,10 @@ begin
 end;
 
 INITIALIZATION
-   ypkfs.correctPaths := true;
-   ypkfs.bufferSize := 8192;
+   ypkfs.CorrectPaths := true;
+   ypkfs.BufferSize := 8192;
    fFile.fsInit(ypkfs.vfs);
-   ypkfs.vfsh:= @subfHandler;
+   ypkfs.vfsh := @subfHandler;
 
    ypkfs.vfs.Name             := 'ypkVFS';
    ypkfs.vfs.FileInFS         := @finFS;
@@ -390,4 +394,5 @@ INITIALIZATION
 
 FINALIZATION
    ypkfs.DisposePool();
+
 END.
