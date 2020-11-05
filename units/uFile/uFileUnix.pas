@@ -9,85 +9,87 @@ UNIT uFileUnix;
 INTERFACE
 
    USES BaseUnix, Unix, uStd, uFileUtils, uFile, StringUtils;
+
+TYPE
+
+   { TUnixFileHandler }
+
+   TUnixFileHandler = object(TFileHandler)
+      constructor Create();
+
+      procedure Open(var f: TFile); virtual;
+      procedure New(var f: TFile); virtual;
+      function Read(var f: TFile; out buf; count: fileint): fileint; virtual;
+      function Write(var f: TFile; const buf; count: fileint): fileint; virtual;
+      procedure Close(var f: TFile); virtual;
+      procedure Flush(var f: TFile); virtual;
+      function Seek(var f: TFile; pos: fileint): fileint; virtual;
+      procedure OnBufferSet(var f: TFile); virtual;
+   end;
+
+   { TUnifBufferedFileHandler }
+
+   TUnifBufferedFileHandler = object(TUnixFileHandler)
+      function Read(var f: TFile; out buf; count: fileint): fileint; virtual;
+      function Write(var f: TFile; const buf; count: fileint): fileint; virtual;
+   end;
    
 VAR
-   stdfUnixHandler: TFileHandler;
-   stdfUnixHandlerBuffered: TFileHandler;
+   stdfUnixHandler: TUnixFileHandler;
+   stdfUnixHandlerBuffered: TUnixFileHandler;
 
    unixStdFileHandler: TFileStdHandler;
 
-procedure fOpenUnx(var f: TFile; d: cint; offs, size: fileint); {normal file via descriptor}
+procedure fOpenUnix(var f: TFile; d: cint; offs, size: fileint); {normal file via descriptor}
 
 IMPLEMENTATION
 
-function fioerr(var f: TFile): longint;
+function fIoErr(var f: TFile): longint;
 begin
-   f.ioError := fpgeterrno();
+   f.IoError := fpgeterrno();
 
-   if(f.ioError = 0) then
+   if(f.IoError = 0) then
       exit(0)
    else begin
       fpseterrno(0);
-      f.error := eIO;
+      f.Error := eIO;
    end;
 
-   Result := f.ioError;
+   Result := f.IoError;
 end;
 
 {STANDARD FILE HANDLER}
 
-procedure unxOpen(var f: TFile);
-var
-   pos: fileint;
-
+procedure fOpenUnix(var f: TFile; d: cint; offs, size: fileint); {normal file via descriptor}
 begin
-   fpseterrno(0);
+   f.ErrorReset();
+   f.fNew      := 0;
+   f.fMode     := fcfREAD;
 
-   f.handle := FpOpen(f.fn, O_RdOnly);
+   {set defaults}
+   f.SetDefaults('dscr:' + sf(d));
 
-   if(fioerr(f) = 0) then begin
-      pos := FpLseek(f.handle, 0, SEEK_END);
-      if(fioerr(f) = 0) then begin
-         FpLSeek(f.handle, 0, SEEK_SET);
-         if(fioerr(f) = 0) then begin
-            f.fSize := pos;
-            f.fSizeLimit := 0;
+   {assign a standard file handler}
+   f.AssignHandler(stdfUnixHandler);
+   if(f.Error = 0) then begin
+      f.Handle := d;
+      f.Seek(offs);
 
-            f.AutoSetBuffer();
-         end else
-            f.RaiseError(feSEEK);
-      end else
-         f.RaiseError(feSEEK);
-   end else
-      f.RaiseError(feOPEN);
-end;
-
-procedure unxNew(var f: TFile);
-begin
-   fpseterrno(0);
-
-   f.handle := FpOpen(f.fn, O_WrOnly or O_Creat or O_Trunc);
-   if(fioerr(f) <> 0) then begin
-      f.RaiseError(feNEW);
-      f.AutoSetBuffer();
+      if(f.Error = 0) then begin
+         f.fSize        := size;
+         f.fSizeLimit   := size;
+         f.fOffset      := offs;
+      end;
    end;
 end;
 
-procedure unxClose(var f: TFile);
-begin
-   FpClose(f.handle);
-   fioerr(f);
-end;
+{ TUnifBufferedFileHandler }
 
-procedure unxFlush(var f: TFile);
-begin
-   FpWrite(f.handle, f.bData^, f.bPosition);
-   fioerr(f);
-end;
-
-function unxReadBfrd(var f: TFile; out buf; count: fileint): fileint;
+function TUnifBufferedFileHandler.Read(var f: TFile; out buf; count: fileint): fileint;
 var
-   bRead, bLeft, rLeft: fileint;
+   bRead,
+   bLeft,
+   rLeft: fileint;
 
 begin
    bLeft := f.bLimit - f.bPosition;
@@ -113,8 +115,9 @@ begin
 
       {fill the buffer first and then read from buffer}
       if(rLeft <= f.bSize) then begin
-         bRead := FpRead(f.handle, f.bData^, f.bSize);
-         if(fioerr(f) = 0) then begin
+         bRead := FpRead(f.Handle, f.bData^, f.bSize);
+
+         if(fIoErr(f) = 0) then begin
             move(f.bData^, (@buf + bLeft)^, rLeft);
             f.bPosition    := rLeft;
             f.bLimit       := bRead;
@@ -123,8 +126,9 @@ begin
             Result := -bLeft;
       {read directly}
       end else begin
-         bRead := FpRead(f.handle, (@buf + bLeft)^, rLeft);
-         if(fioerr(f) = 0) then
+         bRead := FpRead(f.Handle, (@buf + bLeft)^, rLeft);
+
+         if(fIoErr(f) = 0) then
             Result := bLeft + bRead
          else
             Result := -(bLeft + bRead);
@@ -132,24 +136,11 @@ begin
    end;
 end;
 
-function unxRead(var f: TFile; out buf; count: fileint): fileint;
-var
-   bRead: fileint;
-
-begin
-   {$PUSH}{$HINTS OFF} // buf does not need to be initialized, since we're moving data into it
-   bRead := FpRead(f.handle, buf, count);{$POP}
-   if(fioerr(f) = 0) then
-      Result := bRead
-   else
-		exit(-1);
-end;
-
-function unxWriteBfrd(var f: TFile; var buf; count: fileint): fileint;
+function TUnifBufferedFileHandler.Write(var f: TFile; const buf; count: fileint): fileint;
 var
    bWrite: fileint;
 
-procedure movetobuf(); inline;
+procedure moveToBuf(); inline;
 begin
    move(buf, (f.bData + f.bPosition)^, count);
    inc(f.bPosition, count);
@@ -158,23 +149,23 @@ end;
 begin
    {store into buffer}
    if(f.bPosition + count < f.bSize-1) then begin
-      movetobuf();
+      moveToBuf();
       Result := count;
    {write out}
    end else begin
       {write out buffer}
-      bWrite := FpWrite(f.handle, f.bData^, f.bPosition);
+      bWrite := FpWrite(f.Handle, f.bData^, f.bPosition);
       f.bPosition := 0;
 
       {store data into buffer if it can fit}
       if(count < f.bSize) then begin
-         movetobuf();
+         moveToBuf();
          Result := count;
       {otherwise write contents directly to file}
       end else begin
-         bWrite := FpWrite(f.handle, buf, count);
+         bWrite := FpWrite(f.Handle, buf, count);
 
-         if(fioerr(f) = 0) then
+         if(fIoErr(f) = 0) then
             Result := bWrite
          else
             exit(-1);
@@ -182,31 +173,106 @@ begin
    end;
 end;
 
-function unxWrite(var f: TFile; var buf; count: fileint): fileint;
+{ TUnixFileHandler }
+
+constructor TUnixFileHandler.Create();
+begin
+   Name := 'unix';
+   UseBuffering := true;
+end;
+
+procedure TUnixFileHandler.Open(var f: TFile);
+var
+   pos: fileint;
+
+begin
+   fpseterrno(0);
+   f.Handle := FpOpen(f.fn, O_RdOnly);
+
+   if(fIoErr(f) = 0) then begin
+      pos := FpLseek(f.Handle, 0, SEEK_END);
+
+      if(fIoErr(f) = 0) then begin
+         FpLSeek(f.Handle, 0, SEEK_SET);
+
+         if(fIoErr(f) = 0) then begin
+            f.fSize := pos;
+            f.fSizeLimit := 0;
+
+            f.AutoSetBuffer();
+         end else
+            f.RaiseError(feSEEK);
+      end else
+         f.RaiseError(feSEEK);
+   end else
+      f.RaiseError(feOPEN);
+end;
+
+procedure TUnixFileHandler.New(var f: TFile);
+begin
+   fpseterrno(0);
+
+   f.Handle := FpOpen(f.fn, O_WrOnly or O_Creat or O_Trunc);
+
+   if(fIoErr(f) <> 0) then begin
+      f.RaiseError(feNEW);
+      f.AutoSetBuffer();
+   end;
+end;
+
+function TUnixFileHandler.Read(var f: TFile; out buf; count: fileint): fileint;
+var
+   bRead: fileint;
+
+begin
+   {$PUSH}{$HINTS OFF} // buf does not need to be initialized, since we're moving data into it
+   bRead := FpRead(f.Handle, buf, count);{$POP}
+
+   if(fIoErr(f) = 0) then
+      Result := bRead
+   else
+		exit(-1);
+end;
+
+function TUnixFileHandler.Write(var f: TFile; const buf; count: fileint): fileint;
 var
    bWrite: fileint;
 
 begin
-   bWrite := FpWrite(f.handle, buf, count);
-   if(fioerr(f) = 0) then
+   bWrite := FpWrite(f.Handle, buf, count);
+
+   if(fIoErr(f) = 0) then
       Result := bWrite
    else
       Result := -1;
 end;
 
-function unxSeek(var f: TFile; pos: fileint): fileint;
+procedure TUnixFileHandler.Close(var f: TFile);
+begin
+   FpClose(f.Handle);
+   fIoErr(f);
+end;
+
+procedure TUnixFileHandler.Flush(var f: TFile);
+begin
+   FpWrite(f.Handle, f.bData^, f.bPosition);
+   fIoErr(f);
+end;
+
+function TUnixFileHandler.Seek(var f: TFile; pos: fileint): fileint;
 var
    res: fileint;
 
 begin
-   res := FpLSeek(f.handle, f.fOffset + pos, Seek_Set);
-   if(fioerr(f) = 0) then
+   res := FpLSeek(f.Handle, f.fOffset + pos, Seek_Set);
+
+   if(fIoErr(f) = 0) then
       Result := res
    else
       Result := -1;
 end;
 
-procedure unxOnBufferSet(var f: TFile);
+procedure TUnixFileHandler.OnBufferSet(var f: TFile);
 begin
    {if buffering set}
    if(f.bSize > 0) then
@@ -216,46 +282,7 @@ begin
       f.pHandler := @stdfUnixHandler;
 end;
 
-procedure fOpenUnx(var f: TFile; d: cint; offs, size: fileint); {normal file via descriptor}
-begin
-   f.ErrorReset();
-   f.fNew      := 0;
-   f.fMode     := fcfREAD;
-
-   {set defaults}
-   f.SetDefaults('dscr:' + sf(d));
-
-   {assign a standard file handler}
-   f.AssignHandler(stdfUnixHandler);
-   if(f.error = 0) then begin
-      f.handle := d;
-      unxSeek(f, offs);
-
-      if(f.error = 0) then begin
-         f.fSize        := size;
-         f.fSizeLimit   := size;
-         f.fOffset      := offs;
-      end;
-   end;
-end;
-
 INITIALIZATION
-   {standard file handler}
-   stdfUnixHandler               := fDummyHandler;
-   stdfUnixHandler.Name          := 'unix';
-   stdfUnixHandler.open          := fTFileProcedure(@unxOpen);
-   stdfUnixHandler.read          := fTReadFunc     (@unxRead);
-   stdfUnixHandler.write         := fTWriteFunc    (@unxWrite);
-   stdfUnixHandler.close         := fTFileProcedure(@unxClose);
-   stdfUnixHandler.flush         := fTFileProcedure(@unxFlush);
-   stdfUnixHandler.seek          := fTSeekProc     (@unxSeek);
-   stdfUnixHandler.onbufferset   := fTFileProcedure(@unxOnBufferSet);
-   stdfUnixHandler.useBuffering  := true;
-
-   stdfUnixHandlerBuffered       := stdfUnixHandler;
-   stdfUnixHandlerBuffered.read  := fTReadFunc(@unxReadBfrd);
-   stdfUnixHandlerBuffered.write := fTWriteFunc(@unxWriteBfrd);
-
-   unixStdFileHandler.handler    := @stdfUnixHandler;
-   fStdFileHandler               := @unixStdFileHandler;
+   unixStdFileHandler.Handler := @stdfUnixHandler;
+   fFile.Handlers.Std := @unixStdFileHandler;
 END.
