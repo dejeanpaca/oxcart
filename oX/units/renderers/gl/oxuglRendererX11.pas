@@ -9,9 +9,12 @@ UNIT oxuglRendererX11;
 INTERFACE
 
    USES
+      {x}
       x, xlib, xutil, GLX,
+      {std}
       uStd, uLog, StringUtils,
-      oxuRenderer, oxuWindowTypes,
+      {ox}
+      oxuTypes, oxuRenderer, oxuWindowTypes,
       {renderer.gl}
       oxuOGL, oxuglExtensions, oxuglRendererPlatform, oxuglRenderer, oxuglWindow,
       oxuX11Platform, oxuGLX;
@@ -35,7 +38,7 @@ TYPE
       procedure SwapBuffers(wnd: oglTWindow); virtual;
 
       function GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext = default(oglTRenderingContext)): oglTRenderingContext; virtual;
-      function ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
+      function ContextCurrent(const context: oxTRenderTargetContext): boolean; virtual;
       function ClearContext(wnd: oglTWindow): boolean; virtual;
       function DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
    end;
@@ -323,11 +326,20 @@ begin
       log.v('gl > (' + method + ') Got rendering context');
 end;
 
-function oxglxTGlobal.ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean;
+function oxglxTGlobal.ContextCurrent(const context: oxTRenderTargetContext): boolean;
+var
+   wnd: oglTWindow;
+
 begin
-   glXMakeCurrent(x11.DPY, wnd.wd.h, context);
-   wnd.wd.LastError := x11.GetError();
-   Result := wnd.wd.LastError = 0;
+   if(context.Target^.Typ = oxRENDER_TARGET_WINDOW) then begin
+      wnd := oglTWindow(context.Target^.Target);
+
+      glXMakeCurrent(x11.DPY, wnd.wd.h, oxglRenderer.glRenderingContexts[context.RenderContext]);
+      wnd.wd.LastError := x11.GetError();
+      Result := wnd.wd.LastError = 0;
+   end else begin
+      Result := ClearContext(nil);
+   end;
 end;
 
 function oxglxTGlobal.ClearContext(wnd: oglTWindow): boolean;
