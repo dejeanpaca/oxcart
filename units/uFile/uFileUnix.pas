@@ -44,6 +44,9 @@ procedure fOpenUnix(var f: TFile; d: cint; offs, size: fileint); {normal file vi
 
 IMPLEMENTATION
 
+function xFpread(fd: cint; buf: pchar; nbytes : size_t): ssize_t; external name 'FPC_SYSC_READ';
+Function xFpWrite(fd : cInt; buf:pChar; nbytes : TSize): TSsize;  external name 'FPC_SYSC_WRITE';
+
 function fIoErr(var f: TFile): longint;
 begin
    f.IoError := fpgeterrno();
@@ -115,7 +118,7 @@ begin
 
       {fill the buffer first and then read from buffer}
       if(rLeft <= f.bSize) then begin
-         bRead := FpRead(f.Handle, f.bData^, f.bSize);
+         bRead := xFpread(f.Handle, pchar(f.bData), f.bSize);
 
          if(fIoErr(f) = 0) then begin
             move(f.bData^, (@buf + bLeft)^, rLeft);
@@ -126,7 +129,7 @@ begin
             Result := -bLeft;
       {read directly}
       end else begin
-         bRead := FpRead(f.Handle, (@buf + bLeft)^, rLeft);
+         bRead := xFpread(f.Handle, pchar(@buf + bLeft), rLeft);
 
          if(fIoErr(f) = 0) then
             Result := bLeft + bRead
@@ -154,7 +157,7 @@ begin
    {write out}
    end else begin
       {write out buffer}
-      bWrite := FpWrite(f.Handle, f.bData^, f.bPosition);
+      bWrite := xFpread(f.Handle, pchar(f.bData), f.bPosition);
       f.bPosition := 0;
 
       {store data into buffer if it can fit}
@@ -163,7 +166,7 @@ begin
          Result := count;
       {otherwise write contents directly to file}
       end else begin
-         bWrite := FpWrite(f.Handle, buf, count);
+         bWrite := xFpread(f.Handle, pchar(@buf), count);
 
          if(fIoErr(f) = 0) then
             Result := bWrite
@@ -226,7 +229,7 @@ var
 
 begin
    {$PUSH}{$HINTS OFF} // buf does not need to be initialized, since we're moving data into it
-   bRead := FpRead(f.Handle, buf, count);{$POP}
+   bRead := xFpRead(f.Handle, pchar(@buf), count);{$POP}
 
    if(fIoErr(f) = 0) then
       Result := bRead
@@ -239,7 +242,7 @@ var
    bWrite: fileint;
 
 begin
-   bWrite := FpWrite(f.Handle, buf, count);
+   bWrite := xFpWrite(f.Handle, pchar(@buf), count);
 
    if(fIoErr(f) = 0) then
       Result := bWrite
@@ -255,7 +258,7 @@ end;
 
 procedure TUnixFileHandler.Flush(var f: TFile);
 begin
-   FpWrite(f.Handle, f.bData^, f.bPosition);
+   xFpWrite(f.Handle, pchar(f.bData), f.bPosition);
    fIoErr(f);
 end;
 
