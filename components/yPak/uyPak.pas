@@ -3,7 +3,7 @@
    Copyright (C) 2011. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT uyPak;
 
 INTERFACE
@@ -37,21 +37,23 @@ CONST
 TYPE
    ypkTHeader = packed record
       ID: ypkTID;
-      Endian: word;
-      Version: word;
-      Files: longint;
+      Endian,
+      Version,
+      Variant: word;
+      Files: fileint;
    end;
 
    ypkPEntry = ^ypkTEntry;
    ypkTEntry = packed record
-      offs, size: longint;
+      offs,
+      size: fileint;
       fn: string[ypkMAX_FN_LENGTH];
    end;
 
    ypkTEntries = specialize TSimpleList<ypkTEntry>;
 
    ypkTGlobal = record
-      error: longint;
+      Error: loopint;
 
       { ERROR HANDLING }
       procedure eRaise(e: longint);
