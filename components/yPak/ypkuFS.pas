@@ -24,14 +24,14 @@ TYPE
       {blob memory containing file names}
       Blob: PByte;
       {ypk entries}
-      Entries: ypkTEntries;
+      Entries: ypkfTEntries;
 
       {correct file path separators for all entries}
       procedure CorrectPaths();
       {get file name for entry specified by index}
       function GetFn(index: loopint): PShortString;
       {finds a file with the specified name in the entries}
-      function Find(var e: ypkTEntries; const fn: string): longint;
+      function Find(var e: ypkfTEntries; const fn: string): longint;
    end;
 
    ypkTFileSystemGlobal = record
@@ -91,7 +91,7 @@ var
    e: StdString;
 
 begin
-   e := 'ypkError: ' + sf(ypk.error) + ', fError:' + sf(fs.f.error);
+   e := 'ypkError: ' + sf(ypkf.Error) + ', fError:' + sf(fs.f.Error);
 
    if(ioE <> 0) then
       e := e + ', ioE:' + sf(ioE);
@@ -129,11 +129,11 @@ var
 begin
    Result := nil;
 
-   ypk.ReadHeader(fs.f, hdr);
+   ypkf.ReadHeader(fs.f, hdr);
 
    if(fs.f.error = 0) then begin
-      ypk.ReadBlob(fs.f, fs.Blob, fs.BlobSize);
-      ypk.ReadEntries(fs.f, fs.Entries, hdr.Files);
+      ypkf.ReadBlob(fs.f, fs.Blob, fs.BlobSize);
+      ypkf.ReadEntries(fs.f, fs.Entries, hdr.Files);
 
       if(fs.f.Error = 0) then begin
          Result := @fs;
@@ -397,7 +397,7 @@ begin
    end;
 end;
 
-function ypkTFSFile.Find(var e: ypkTEntries; const fn: string): longint;
+function ypkTFSFile.Find(var e: ypkfTEntries; const fn: string): longint;
 var
    i: longint;
 

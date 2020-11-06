@@ -46,7 +46,11 @@ TYPE
       {size of the data blob}
       BlobSize,
       {number of files we have}
-      Files: fileint;
+      Files,
+      {offset where the files start (files offset is already included into each file entry offset, but is here to indicate the start of the files block)}
+      FilesOffset,
+      {total size for files block}
+      FilesSize: fileint;
    end;
 
    ypkfPEntry = ^ypkfTEntry;
@@ -60,11 +64,11 @@ TYPE
       Size: fileint;
    end;
 
-   ypkTEntries = specialize TSimpleList<ypkfTEntry>;
+   ypkfTEntries = specialize TSimpleList<ypkfTEntry>;
 
-   { ypkTGlobal }
+   { ypkfTGlobal }
 
-   ypkTGlobal = record
+   ypkfTGlobal = record
       Error: loopint;
 
       { ERROR HANDLING }
@@ -72,13 +76,15 @@ TYPE
       function eGet(): longint;
       procedure eReset();
 
+      procedure InitializeHeader(out hdr: ypkfTHeader);
+
       { HEADER }
       procedure ReadHeader(var f: TFile; out hdr: ypkfTHeader);
-      procedure WriteHeader(var f: TFile; blobSize, fileCount: fileint);
+      procedure WriteHeader(var f: TFile; const hdr: ypkfTHeader);
 
       { ENTRIES }
-      function ReadEntries(var f: TFile; var e: ypkTEntries; count: longint): fileint;
-      procedure WriteEntries(var f: TFile; var e: ypkTEntries);
+      function ReadEntries(var f: TFile; var e: ypkfTEntries; count: longint): fileint;
+      procedure WriteEntries(var f: TFile; var e: ypkfTEntries);
 
       { FILENAMES BLOB }
       function ReadBlob(var f: TFile; out blob: PByte; size: fileint): fileint;
@@ -90,31 +96,40 @@ CONST
    ypkENTRY_SIZE        = SizeOf(ypkfTEntry);
 
 VAR
-   ypk: ypkTGlobal;
+   ypkf: ypkfTGlobal;
 
 IMPLEMENTATION
 
 { ERROR HANDLING }
 
-procedure ypkTGlobal.eRaise(e: longint);
+procedure ypkfTGlobal.eRaise(e: longint);
 begin
    Error := e;
 end;
 
-function ypkTGlobal.eGet(): longint;
+function ypkfTGlobal.eGet(): longint;
 begin
    result := error;
    Error := 0;
 end;
 
-procedure ypkTGlobal.eReset();
+procedure ypkfTGlobal.eReset();
 begin
    Error := 0;
 end;
 
+procedure ypkfTGlobal.InitializeHeader(out hdr: ypkfTHeader);
+begin
+   ZeroOut(hdr, SizeOf(hdr));
+
+   hdr.ID         := ypkID;
+   hdr.Endian     := ypkENDIAN;
+   hdr.Version    := ypkVERSION;
+end;
+
 { HEADER }
 
-procedure ypkTGlobal.ReadHeader(var f: TFile; out hdr: ypkfTHeader);
+procedure ypkfTGlobal.ReadHeader(var f: TFile; out hdr: ypkfTHeader);
 begin
    f.Read(hdr, SizeOf(hdr));
 
@@ -131,23 +146,14 @@ begin
    end;
 end;
 
-procedure ypkTGlobal.WriteHeader(var f: TFile; blobSize, fileCount: fileint);
-var
-   hdr: ypkfTHeader;
-
+procedure ypkfTGlobal.WriteHeader(var f: TFile; const hdr: ypkfTHeader);
 begin
-   hdr.ID         := ypkID;
-   hdr.Endian     := ypkENDIAN;
-   hdr.Version    := ypkVERSION;
-   hdr.Files      := fileCount;
-   hdr.BlobSize   := blobSize;
-
    f.Write(hdr, SizeOf(hdr));
 end;
 
 { ENTRIES }
 
-function ypkTGlobal.ReadEntries(var f: TFile; var e: ypkTEntries; count: longint): fileint;
+function ypkfTGlobal.ReadEntries(var f: TFile; var e: ypkfTEntries; count: longint): fileint;
 begin
    if(count > 0) then begin
       e.n := count;
@@ -164,13 +170,13 @@ begin
    Result := eNONE;
 end;
 
-procedure ypkTGlobal.WriteEntries(var f: TFile; var e: ypkTEntries);
+procedure ypkfTGlobal.WriteEntries(var f: TFile; var e: ypkfTEntries);
 begin
    if(e.n > 0) then
       f.Write(e.List[0], int64(e.n) * ypkENTRY_SIZE);
 end;
 
-function ypkTGlobal.ReadBlob(var f: TFile; out blob: PByte; size: fileint): fileint;
+function ypkfTGlobal.ReadBlob(var f: TFile; out blob: PByte; size: fileint): fileint;
 begin
    Result := 0;
 
@@ -183,7 +189,7 @@ begin
    end;
 end;
 
-function ypkTGlobal.WriteBlob(var f: TFile; out blob: PByte; size: fileint): fileint;
+function ypkfTGlobal.WriteBlob(var f: TFile; out blob: PByte; size: fileint): fileint;
 begin
    Result := 0;
 
