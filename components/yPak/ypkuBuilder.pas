@@ -9,15 +9,17 @@ UNIT ypkuBuilder;
 INTERFACE
 
    USES
-      uStd, uFile,
+      uStd, uFile, uFileUtils, ustrBlob,
       {ypk}
       yPakU, uyPakFile;
 
 
 TYPE
    ypkTBuilderFile = record
-      source,
-      destination: StdString;
+      FileNameOffset: loopint;
+
+      Source,
+      Destination: StdString;
    end;
 
    ypkTBuilderFiles = specialize TSimpleList<ypkTBuilderFile>;
@@ -25,9 +27,13 @@ TYPE
    { ypkTBuilder }
 
    ypkTBuilder = record
-      fn: string;
+      OutputFN: string;
 
       Files: ypkTBuilderFiles;
+
+      {ypk data blob}
+      Blob: PByte;
+      Total: loopint;
 
       procedure Reset();
       procedure Build();
@@ -44,8 +50,59 @@ begin
 end;
 
 procedure ypkTBuilder.Build();
+var
+   i,
+   currentOffset,
+   filesOffset: loopint;
+
+   sb: TShortStringBlob;
+   entries: ypkfTEntries;
+
+   hdr: ypkfTHeader;
+
 begin
-   {TODO: Implement actual building}
+   TShortStringBlob.Initialize(sb);
+   ypkfTEntries.Initialize(entries);
+
+   for i := 0 to Files.n - 1 do begin
+      sb.Analyze(Files[i].Destination);
+   end;
+
+   sb.Allocate();
+
+   for i := 0 to Files.n - 1 do begin
+      Files.List[i].FileNameOffset := sb.Offset;
+      sb.Insert(Files[i].Destination);
+   end;
+
+   entries.Allocate(Files.n);
+
+   filesOffset := SizeOf(hdr) + sb.Total + (Files.n * SizeOf(ypkfTEntry));
+
+   {setup all file entries}
+   currentOffset := 0;
+
+   for i := 0 to Files.n - 1 do begin
+      entries.List[i].FileNameOffset := Files.List[i].FileNameOffset;
+      entries.List[i].Offset := currentOffset + filesOffset;
+      entries.List[i].Size := FileUtils.Exists(Files.List[i].Source);
+
+      inc(currentOffset, entries[i].Size);
+   end;
+
+   {setup header}
+
+   ypkf.InitializeHeader(hdr);
+
+   hdr.Files := entries.n;
+   hdr.BlobSize := sb.Total;
+   hdr.FilesSize := currentOffset;
+   hdr.FilesOffset := filesOffset;
+
+   { TODO: write to file }
+
+   sb.Dispose();
+   entries.Dispose();
 end;
 
 procedure ypkTBuilder.AddFile(const source, destination: StdString);
@@ -53,8 +110,8 @@ var
    f: ypkTBuilderFile;
 
 begin
-   f.source := source;
-   f.destination := destination;
+   f.Source := source;
+   f.Destination := destination;
 
    Files.Add(f);
 end;
