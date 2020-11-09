@@ -9,7 +9,8 @@ UNIT ypkuBuilder;
 INTERFACE
 
    USES
-      uStd, uFile, uFileUtils, ustrBlob,
+      uStd, ustrBlob,
+      uFile, uFiles, ufhStandard, uFileUtils,
       {ypk}
       yPakU, uyPakFile;
 
@@ -36,7 +37,7 @@ TYPE
       Total: loopint;
 
       procedure Reset();
-      procedure Build();
+      function Build(): boolean;
       procedure AddFile(const source, destination: StdString);
    end;
 
@@ -49,7 +50,7 @@ begin
    Files.Dispose();
 end;
 
-procedure ypkTBuilder.Build();
+function ypkTBuilder.Build(): boolean;
 var
    i,
    currentOffset,
@@ -59,8 +60,11 @@ var
    entries: ypkfTEntries;
 
    hdr: ypkfTHeader;
+   f: TFile;
 
 begin
+   Result := true;
+
    TShortStringBlob.Initialize(sb);
    ypkfTEntries.Initialize(entries);
 
@@ -99,7 +103,38 @@ begin
    hdr.FilesSize := currentOffset;
    hdr.FilesOffset := filesOffset;
 
-   { TODO: write to file }
+   {create output file}
+   fFile.Init(f);
+   f.New(OutputFN);
+
+   {copy source files to ypk file}
+   if(f.Error <> 0) then begin
+      ypkf.WriteHeader(f, hdr);
+
+      if(f.Error = 0) then begin
+
+         if(sb.Total > 0) then
+            ypkf.WriteBlob(f, sb.Blob, sb.Total);
+
+         if(entries.n > 0) then
+            ypkf.WriteEntries(f, entries);
+
+         for i := 0 to Files.n - 1 do begin
+            if(fCopy(Files.List[i].Source, f) < 0) then begin
+               Result := false;
+               break;
+            end;
+
+            if(f.Error <> 0) then begin
+               Result := false;
+               break;
+            end;
+         end;
+      end;
+   end;
+
+   {done}
+   f.CloseAndDestroy();
 
    sb.Dispose();
    entries.Dispose();
@@ -116,5 +151,4 @@ begin
    Files.Add(f);
 end;
 
-INITIALIZATION
 END.
