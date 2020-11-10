@@ -129,14 +129,10 @@ begin
    oxedAssets.oxPackage.Path := oxPaths.BasePath;
 end;
 
-INITIALIZATION
-   oxed.Init.Add('assets', @init);
-
-   oxedTPackage.Init(oxedAssets.oxDataPackage);
-   oxedTPackage.Init(oxedAssets.oxPackage);
-
-   oxedTAssetsIgnorePaths.Initialize(oxedAssets.Ignore);
-   oxedTAssetsIgnorePaths.Initialize(oxedAssets.ProjectIgnore);
+procedure ResetIgnores();
+begin
+   oxedAssets.Ignore.FileTypes.Dispose();
+   oxedAssets.Ignore.Directories.Dispose();
 
    oxedAssets.Ignore.FileTypes.Add('.pas');
    oxedAssets.Ignore.FileTypes.Add('.pp');
@@ -150,5 +146,17 @@ INITIALIZATION
    oxedAssets.Ignore.FileTypes.Add(OX_PACKAGE_PROPS_FILE_NAME);
 
    oxedAssets.Ignore.Directories.Add('backup');
+end;
+
+INITIALIZATION
+   oxed.Init.Add('assets', @init);
+
+   oxedTPackage.Init(oxedAssets.oxDataPackage);
+   oxedTPackage.Init(oxedAssets.oxPackage);
+
+   oxedTAssetsIgnorePaths.Initialize(oxedAssets.Ignore);
+   oxedTAssetsIgnorePaths.Initialize(oxedAssets.ProjectIgnore);
+
+   ResetIgnores();
 
 END.
