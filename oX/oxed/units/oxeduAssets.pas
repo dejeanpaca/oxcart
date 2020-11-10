@@ -15,7 +15,7 @@ INTERFACE
       {ox}
       oxuPaths,
       {oxed}
-      uOXED, oxeduPackageTypes, oxeduPackage;
+      uOXED, oxeduPackageTypes, oxeduPackage, oxeduProjectManagement;
 
 CONST
    OX_NO_ASSETS_FILE = '.noassets';
@@ -45,6 +45,16 @@ TYPE
 
       function ShouldIgnore(const ext: StdString): boolean;
       function ShouldIgnoreDirectory(const name: StdString): boolean;
+
+      {add a file ignore}
+      procedure AddFileIgnore(const path: StdString);
+      {remove a file ignore}
+      procedure RemoveFileIgnore(const path: StdString);
+
+      {add a directory ignore}
+      procedure AddDirectoryIgnore(const path: StdString);
+      {remove a directory ignore}
+      procedure RemoveDirectoryIgnore(const path: StdString);
 
       function IsLastPath(const path: StdString; var list: TSimpleStringList): boolean;
    end;
@@ -88,6 +98,30 @@ end;
 function oxedTAssets.ShouldIgnoreDirectory(const name: StdString): boolean;
 begin
    Result := IsLastPath(name, Ignore.Directories) or IsLastPath(name, ProjectIgnore.Directories);
+end;
+
+procedure oxedTAssets.AddFileIgnore(const path: StdString);
+begin
+   if(path <> '') then
+      Ignore.FileTypes.AddUnique(path);
+end;
+
+procedure oxedTAssets.RemoveFileIgnore(const path: StdString);
+begin
+   if(path <> '') then
+      Ignore.FileTypes.RemoveString(path);
+end;
+
+procedure oxedTAssets.AddDirectoryIgnore(const path: StdString);
+begin
+   if(path <> '') then
+      Ignore.Directories.AddUnique(path);
+end;
+
+procedure oxedTAssets.RemoveDirectoryIgnore(const path: StdString);
+begin
+   if(path <> '') then
+      Ignore.Directories.RemoveString(path);
 end;
 
 function oxedTAssets.IsLastPath(const path: StdString; var list: TSimpleStringList): boolean;
@@ -157,6 +191,6 @@ INITIALIZATION
    oxedTAssetsIgnorePaths.Initialize(oxedAssets.Ignore);
    oxedTAssetsIgnorePaths.Initialize(oxedAssets.ProjectIgnore);
 
-   ResetIgnores();
+   oxedProjectManagement.OnPreOpen.Add(@ResetIgnores);
 
 END.
