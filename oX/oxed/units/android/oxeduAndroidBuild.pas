@@ -26,6 +26,7 @@ TYPE
       BUILD_ASSETS_TO_PROJECT_ACTION: TEventID;
 
       procedure BuildToProject();
+      procedure BuildAssetsToProject();
       procedure Initialize();
    end;
 
@@ -47,6 +48,19 @@ begin
    oxedBuild.StartTask(OXED_BUILD_TASK_RECODE, oxedAndroidPlatform.Architectures.List[cpuType]);
 end;
 
+procedure oxedTAndroidBuild.BuildAssetsToProject();
+var
+   cpuType: loopint;
+
+begin
+   cpuType := loopint(oxedAndroidSettings.GetCPUType());
+
+   oxedBuild.BuildTarget := OXED_BUILD_LIB;
+   oxedBuild.BuildAssets := true;
+   oxedBuild.BuildBinary := false;
+   oxedBuild.StartTask(OXED_BUILD_TASK_RECODE, oxedAndroidPlatform.Architectures.List[cpuType]);
+end;
+
 procedure oxedTAndroidBuild.Initialize();
 begin
    if BuildInstalls.FindPlatform('arm-android') = nil then
@@ -60,11 +74,6 @@ begin
 
    if BuildInstalls.FindPlatform('x86_64-android') = nil then
       BuildInstalls.AddPlatformFromExecutable('x86_64', 'android', '', 'ppcrossx64');
-end;
-
-procedure buildToProject();
-begin
-   oxedAndroidBuild.BuildToProject();
 end;
 
 function isAndroidBuild(): oxedTAndroidPlatformArchitecture;
@@ -179,9 +188,14 @@ begin
       oxedBuild.Fail('Cannot create libs directory at: ' + targetPath);
 end;
 
+procedure buildToProject();
+begin
+   oxedAndroidBuild.BuildToProject();
+end;
+
 procedure buildAssetsToProject();
 begin
-   oxedBuildLog.v('android > building assets');
+   oxedAndroidBuild.BuildAssetsToProject();
 end;
 
 procedure init();
