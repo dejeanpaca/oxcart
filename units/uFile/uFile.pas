@@ -61,8 +61,7 @@ TYPE
    TFile = record
       fn: StdString;
       fMode,
-      fType,
-      fNew: longword;
+      fType: longword;
       Error,
       IoError: longint;
 
@@ -100,7 +99,7 @@ TYPE
 
       {set defaults for a file}
       procedure SetDefaults(const fileName: StdString);
-      procedure SetDefaults(new: boolean; mode: longint; const fileName: StdString);
+      procedure SetDefaults(mode: longint; const fileName: StdString);
       {return the size of the file}
       function GetSize(): fileint;
 
@@ -396,13 +395,13 @@ end;
 { FILE ERROR HANDLING }
 procedure TFile.RaiseError(err: longint);
 begin
-   error := err;
+   Error := err;
 end;
 
 
 procedure TFile.ErrorIgnore();
 begin
-   error    := 0;
+   Error    := 0;
    IoError  := 0;
    IOResult();
 end;
@@ -414,20 +413,20 @@ begin
    if(IoError = 0) then
       exit(0)
    else
-      error := eIO;
+      Error := eIO;
 
    Result := IoError;
 end;
 
 procedure TFile.ErrorReset();
 begin
-   error    := 0;
+   Error    := 0;
    IoError  := 0;
 end;
 
 function TFile.GetErrorString(): StdString;
 begin
-   Result := fFile.GetErrorString(error);
+   Result := fFile.GetErrorString(Error);
 end;
 
 
@@ -443,14 +442,9 @@ begin
    fn             := fileName;
 end;
 
-procedure TFile.SetDefaults(new: boolean; mode: longint; const fileName: StdString);
+procedure TFile.SetDefaults(mode: longint; const fileName: StdString);
 
 begin
-   if(new) then
-      fNew  := 1
-   else
-      fNew  := 0;
-
    fMode := mode;
    SetDefaults(fileName);
 end;
@@ -515,10 +509,10 @@ begin
    if(doReadUp = true) then begin
       Buffer(fSize);
 
-      if(error = 0) then begin
+      if(Error = 0) then begin
          SeekStart();
 
-         if(error = 0) then begin
+         if(Error = 0) then begin
             Read(bData^, fSize);
             fPosition := 0;
             bPosition := 0;
@@ -640,7 +634,8 @@ begin
       end;
 
       bRead := pHandler^.Read(Self, buf, count);
-      if(error = 0) then
+
+      if(Error = 0) then
          inc(fPosition, bRead);
 
       Result := bRead;
@@ -662,7 +657,8 @@ begin
       end;
 
       bWrite := pHandler^.Write(Self, buf, count);
-      if(error = 0) then
+
+      if(Error = 0) then
          inc(fPosition, bWrite);
 
       Result := bWrite;
@@ -692,7 +688,7 @@ begin
    repeat
       count := Read(c, 1);
 
-      if(error = 0) and (count > 0) then begin
+      if(Error = 0) and (count > 0) then begin
          if(c = #10) then
             break;
 
@@ -719,7 +715,7 @@ begin
    repeat
       count := Read(c, 1);
 
-      if(error = 0) and (count > 0) then begin
+      if(Error = 0) and (count > 0) then begin
          if(c = #10) then
             break;
 
@@ -792,7 +788,7 @@ begin
    if(position <= fSize) then begin
       Result := pHandler^.Seek(Self, position);
 
-      if(error = 0) then begin
+      if(Error = 0) then begin
          fPosition   := position;
          bPosition   := 0; {invalidate buffer}
          bLimit      := 0;
@@ -867,7 +863,8 @@ begin
 
    {read string length}
    bRead := Read(len, SizeOf(len));
-   if(error = 0) then begin
+
+   if(Error = 0) then begin
       SetLength(s, len);
 
       if(len > 0) then
@@ -888,7 +885,8 @@ begin
 
    {read string length}
    bRead := Read(len, SizeOf(len));
-   if(error = 0) then begin
+
+   if(Error = 0) then begin
       SetLength(s, len);
 
       if(len > 0) then
@@ -914,7 +912,8 @@ begin
 
    {read string length}
    bRead := Read(len, SizeOf(len));
-   if(error = 0) then begin
+
+   if(Error = 0) then begin
       SetLength(s, len);
 
       if(len > 0) then
@@ -936,7 +935,7 @@ begin
    bWrote := Write(len, SizeOf(len));
 
    {write string contents}
-   if(error = 0) and (len > 0) then
+   if(Error = 0) and (len > 0) then
       inc(bWrote, Write(s[1], len));
 
    Result := bWrote;
@@ -950,8 +949,8 @@ begin
    Result := FileUtils.Exists(fn);
 
    {$IFNDEF FILE_NOFS}
-(*   if(Result = -1) then
-      Result := fsExists(fn);*)
+   if(Result = -1) then
+      Result := fsExists(fn);
    {$ENDIF}
 end;
 
@@ -975,7 +974,7 @@ procedure InitFileHandlers();
 begin
    {dummy file handler}
    fFile.DummyHandler.Create();
-   fFile.DummyHandler.Name          := 'Dummy';
+   fFile.DummyHandler.Name := 'Dummy';
 end;
 
 { FileSystem }
@@ -1013,6 +1012,7 @@ begin
 
    if(cur <> nil) then repeat
       res := cur^.FileInFS(fn);
+
       if(res > -1) then
          exit(res);
 

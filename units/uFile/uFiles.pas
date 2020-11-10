@@ -67,15 +67,15 @@ begin
    end;
    {$ENDIF}
 
-   SetDefaults(false, fcfREAD, fName);
+   SetDefaults(fcfREAD, fName);
 
    {assign a standard file handler}
    AssignHandler(h.Handler^);
 
-   if(error = 0) then begin
+   if(Error = 0) then begin
       pHandler^.Open(self);
 
-      if(error <> 0) then
+      if(Error <> 0) then
          Dispose();
    end;
 end;
@@ -91,12 +91,12 @@ procedure TFileOperationsHelper.New(var h: TFileStdHandler; const fName: StdStri
 begin
    Assert(@h <> nil, 'Fatal: An nil standard file handler was specified');
 
-   SetDefaults(true, fcfWRITE, fName);
+   SetDefaults(fcfWRITE, fName);
 
    {assign a standard file handler}
    AssignHandler(h.Handler^);
 
-   if(error = 0) then
+   if(Error = 0) then
       pHandler^.New(self);
 end;
 
@@ -114,19 +114,19 @@ begin
    Assert(@h <> nil, 'Fatal: A invalid memory file handler was specified');
 
    {set defaults}
-   SetDefaults(false, fcfREAD, '');
+   SetDefaults(fcfREAD, '');
 
    {assign a standard file handler}
    AssignHandler(h.Handler^);
 
-   if(error = 0) then begin
+   if(Error = 0) then begin
       {setup the file}
       h.Open(self, mem, size);
 
       {open the file}
       pHandler^.Open(self);
 
-      if(error <> 0) then
+      if(Error <> 0) then
          Dispose();
    end;
 end;
@@ -142,11 +142,11 @@ procedure TFileOperationsHelper.New(var h: TFileMemHandler; size: fileint);
 begin
    Assert(@h <> nil, 'Fatal: A nil memory file handler was specified');
 
-   SetDefaults(true, fcfWRITE, '');
+   SetDefaults(fcfWRITE, '');
 
    {assign a memory handler}
    AssignHandler(h.Handler^);
-   if(error = 0) then begin
+   if(Error = 0) then begin
       {create a new file}
       h.New(self, size);
       pHandler^.New(self);
@@ -167,17 +167,18 @@ begin
    Assert(@h <> nil, 'Fatal: A invalid sub file handler was specified');
 
    {set defaults}
-   SetDefaults(false, fcfREAD, '');
+   SetDefaults(fcfREAD, '');
 
    {assign a standard file handler}
    AssignHandler(h.Handler^);
-   if(error = 0) then begin
+
+   if(Error = 0) then begin
       {setup the file}
       h.Open(self, parent, pos, size);
 
       {open the file}
       pHandler^.Open(self);
-      if(error <> 0) then
+      if(Error <> 0) then
          Dispose();
    end;
 end;
@@ -193,12 +194,12 @@ procedure TFileOperationsHelper.New(var h: TFileSubHandler; var parent: TFile; p
 begin
    Assert(@h <> nil, 'Fatal: A nil sub file handler was specified');
 
-   SetDefaults(true, fcfWRITE, '');
+   SetDefaults(fcfWRITE, '');
 
    {assign a memory handler}
    AssignHandler(h.Handler^);
 
-   if(error = 0) then begin
+   if(Error = 0) then begin
       {create a new file}
       h.New(self, parent, pos, size);
       pHandler^.New(self);
