@@ -33,19 +33,14 @@ IMPLEMENTATION
 { oxedTAndroidProjectFiles }
 
 procedure oxedTAndroidProjectFiles.Deploy(const destination: StdString);
-var
-   path: StdString;
-
 begin
-   path := oxedProject.Path + oxedAndroidSettings.Project.ProjectFilesPath;
-
    if(oxedAndroidSettings.Project.PackageName = '') then begin
       log.e('android > No package name set. Cannot deploy project.');
       exit;
    end;
 
-   oxedAndroidProjectFiles.DeployTemplate(path);
-   oxedAndroidProjectFiles.UpdateValues(path);
+   oxedAndroidProjectFiles.DeployTemplate(destination);
+   oxedAndroidProjectFiles.UpdateValues(destination);
 end;
 
 procedure oxedTAndroidProjectFiles.DeployTemplate(const destination: StdString);
