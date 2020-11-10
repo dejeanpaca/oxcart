@@ -18,14 +18,14 @@ TYPE
 
    TFileStrings = record
       {load list of short strings into a packed memory structur}
-      function LoadPacked(var f: TFile; out p: TPackedStrings): fileint;
-      {Load a list of strings from given file. Returns number of strings loaded on success or fileutil error code.}
-      function LoadList(var f: TFile; out s: TStringArray): fileint;
-
+      function LoadPacked(var f: TFile; var p: TPackedStrings): fileint;
       {load list of short strings into a packed memory structur}
       function LoadPacked(const fn: string; out p: TPackedStrings): fileint;
+
       {Load a list of strings from given file. Returns number of strings loaded on success or fileutil error code.}
       function LoadList(const fn: string; out s: TStringArray): fileint;
+      {Load a list of strings from given file. Returns number of strings loaded on success or fileutil error code.}
+      function LoadList(var f: TFile; var s: TStringArray): fileint;
    end;
 
 VAR
@@ -35,7 +35,7 @@ IMPLEMENTATION
 
 { TFileStrings }
 
-function TFileStrings.LoadPacked(var f: TFile; out p: TPackedStrings): fileint;
+function TFileStrings.LoadPacked(var f: TFile; var p: TPackedStrings): fileint;
 var
    current: shortstring;
    index,
@@ -45,7 +45,6 @@ var
 begin
    current := '';
    Result := eNONE;
-   TPackedStrings.Init(p);
 
    totalStrings := 0;
    totalSize := 0;
@@ -82,20 +81,6 @@ begin
    exit(eFILE_READ);
 end;
 
-function TFileStrings.LoadList(var f: TFile; out s: TStringArray): fileint;
-begin
-   s := nil;
-   Result := eNONE;
-
-   LoadList(f, s);
-   f.ReadStrings(s);
-
-   if(f.Error = 0) then
-      exit(Length(s));
-
-   exit(eFILE_READ);
-end;
-
 function TFileStrings.LoadPacked(const fn: string; out p: TPackedStrings): fileint;
 var
    f: TFile;
@@ -103,7 +88,7 @@ var
 begin
    fFile.Init(f);
    f.Open(fn);
-   p := nil;
+   TPackedStrings.Init(p);
 
    if(f.Error = 0) then begin
       LoadPacked(f, p);
@@ -130,6 +115,19 @@ begin
       Result := eFILE_OPEN;
 
    f.CloseAndDestroy();
+end;
+
+function TFileStrings.LoadList(var f: TFile; var s: TStringArray): fileint;
+begin
+   Result := eNONE;
+
+   LoadList(f, s);
+   f.ReadStrings(s);
+
+   if(f.Error = 0) then
+      exit(Length(s));
+
+   exit(eFILE_READ);
 end;
 
 END.
