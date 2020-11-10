@@ -3,7 +3,7 @@
    Copyright (C) 2011. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxheader.inc}
 UNIT uFileUnix;
 
 INTERFACE
@@ -27,13 +27,13 @@ TYPE
       procedure OnBufferSet(var f: TFile); virtual;
    end;
 
-   { TUnifBufferedFileHandler }
+   { TUnixBufferedFileHandler }
 
-   TUnifBufferedFileHandler = object(TUnixFileHandler)
+   TUnixBufferedFileHandler = object(TUnixFileHandler)
       function Read(var f: TFile; out buf; count: fileint): fileint; virtual;
       function Write(var f: TFile; const buf; count: fileint): fileint; virtual;
    end;
-   
+
 VAR
    stdfUnixHandler: TUnixFileHandler;
    stdfUnixHandlerBuffered: TUnixFileHandler;
@@ -86,9 +86,9 @@ begin
    end;
 end;
 
-{ TUnifBufferedFileHandler }
+{ TUnixBufferedFileHandler }
 
-function TUnifBufferedFileHandler.Read(var f: TFile; out buf; count: fileint): fileint;
+function TUnixBufferedFileHandler.Read(var f: TFile; out buf; count: fileint): fileint;
 var
    bRead,
    bLeft,
@@ -139,7 +139,7 @@ begin
    end;
 end;
 
-function TUnifBufferedFileHandler.Write(var f: TFile; const buf; count: fileint): fileint;
+function TUnixBufferedFileHandler.Write(var f: TFile; const buf; count: fileint): fileint;
 var
    bWrite: fileint;
 
@@ -286,6 +286,10 @@ begin
 end;
 
 INITIALIZATION
+   stdfUnixHandler.Create();
+   stdfUnixHandlerBuffered.Create();
+
    unixStdFileHandler.Handler := @stdfUnixHandler;
    fFile.Handlers.Std := @unixStdFileHandler;
+
 END.
