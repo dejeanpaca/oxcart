@@ -46,7 +46,7 @@ TYPE
 
    oxedTBuildTarget = (
       OXED_BUILD_LIB,
-      OXED_BUILD_STANDALONE
+      OXED_BUILD_EXECUTABLE
    );
 
    oxedTBuildMechanism = (
@@ -76,7 +76,9 @@ TYPE
       {called when build is done}
       OnDone,
       {called when the build has failed}
-      OnFailed: TProcedures;
+      OnFailed,
+      {called when assets need to be built}
+      OnAssets: TProcedures;
 
       {current build task type}
       BuildType: oxedTBuildTaskType;
@@ -93,7 +95,9 @@ TYPE
       {current build mechanism}
       BuildMechanism: oxedTBuildMechanism;
       {signal the build process to abort}
-      BuildAbort: boolean;
+      BuildAbort,
+      {build assets}
+      BuildAssets: boolean;
 
       {build parameters}
       Parameters: record
@@ -197,6 +201,9 @@ TYPE
 
       {Reset build targets and options. Should be called after a build so the next one doesn't use leftover settings.}
       procedure Reset();
+
+      private
+      procedure FurtherSteps();
    end;
 
 VAR
@@ -370,7 +377,7 @@ end;
 
 function oxedTBuildGlobal.IsLibrary(): boolean;
 begin
-   Result := BuildTarget <> OXED_BUILD_STANDALONE;
+   Result := BuildTarget <> OXED_BUILD_EXECUTABLE;
 end;
 
 function getRelativePath(const basePath: StdString; const unitPath: StdString): StdString;
@@ -915,25 +922,6 @@ begin
    BuildExec.Output.Redirect := previousRedirect;
 end;
 
-procedure StandaloneSteps();
-begin
-   if(not oxedBuild.MoveExecutable()) then
-      exit;
-
-   oxedBuild.CopyLibraries();
-
-   if(not oxedBuild.BuildOk) then
-      exit;
-
-   oxedBuildAssets.Deploy(oxedBuild.TargetPath);
-
-   if(not oxedBuild.BuildOk) then
-      exit;
-
-   {open target file path when done}
-   app.OpenFileManager(oxedBuild.TargetPath);
-end;
-
 function createPath(const name, path: StdString): boolean;
 begin
    if(not FileUtils.DirectoryExists(path)) then begin
@@ -1027,8 +1015,7 @@ begin
    ExecuteBuild();
 
    if(BuildExec.Output.Success) then begin
-      if(BuildTarget = OXED_BUILD_STANDALONE) then
-         StandaloneSteps();
+      FurtherSteps();
    end else
       Fail(modestring + ' failed (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
 
@@ -1059,7 +1046,7 @@ var
 
 begin
    {nothing to do here}
-   if(BuildTarget <> OXED_BUILD_STANDALONE) then
+   if(BuildTarget <> OXED_BUILD_EXECUTABLE) then
       exit(true);
 
    Result := false;
@@ -1100,7 +1087,7 @@ var
 
 begin
    {nothing to do here}
-   if(BuildTarget <> OXED_BUILD_STANDALONE) then
+   if(BuildTarget <> OXED_BUILD_EXECUTABLE) then
       exit(true);
 
    Result := false;
@@ -1288,6 +1275,8 @@ begin
 
    InEditor := IsLibrary() and (BuildArch.Name = 'editor');
 
+   BuildAssets := BuildType = OXED_BUILD_TASK_STANDALONE;
+
    SetupFPCBuildOptions();
    SetupEditorBuildOptions();
 
@@ -1326,7 +1315,7 @@ begin
       exit;
 
    if(taskType = OXED_BUILD_TASK_STANDALONE) then
-      BuildTarget := OXED_BUILD_STANDALONE;
+      BuildTarget := OXED_BUILD_EXECUTABLE;
 
    assert(BuildArch <> nil, 'Build architecture not set before StartTask()');
 
@@ -1478,6 +1467,34 @@ begin
    BuildInstalls.SetDefaultPlatform();
 end;
 
+procedure oxedTBuildGlobal.FurtherSteps();
+begin
+   if(BuildType = OXED_BUILD_TASK_STANDALONE) then begin
+      if(BuildTarget = OXED_BUILD_LIB) then begin
+         if(not MoveExecutable()) then
+            exit;
+      end;
+
+      if(not CopyLibraries()) then
+         exit;
+   end;
+
+   if(BuildAssets) then begin
+      oxedBuildAssets.Deploy(oxedBuild.TargetPath);
+
+      if(not oxedBuild.BuildOk) then
+         exit;
+
+      OnAssets.Call();
+   end;
+
+   if(BuildType = OXED_BUILD_TASK_STANDALONE) then begin
+      {open target file path when    done}
+      app.OpenFileManager(TargetPath);
+   end;
+end;
+
+
 procedure CreateSourceFile(const fn: string);
 var
    p: TAppendableString;
@@ -1508,8 +1525,9 @@ INITIALIZATION
    TProcedures.InitializeValues(oxedBuild.OnStartRun);
    TProcedures.InitializeValues(oxedBuild.OnFinish);
    TProcedures.InitializeValues(oxedBuild.OnPrepare);
-   TProcedures.InitializeValues(oxedBuild.OnFailed);
    TProcedures.InitializeValues(oxedBuild.OnDone);
+   TProcedures.InitializeValues(oxedBuild.OnFailed);
+   TProcedures.InitializeValues(oxedBuild.OnAssets);
 
    TSimpleStringList.InitializeValues(oxedBuild.Parameters.ExportSymbols);
    TSimpleStringList.InitializeValues(oxedBuild.Parameters.PreIncludeUses);
