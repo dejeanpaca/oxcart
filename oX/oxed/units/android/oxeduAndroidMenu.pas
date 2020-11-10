@@ -13,9 +13,9 @@ INTERFACE
       {ui}
       wdguToolbar,
       {oxed}
-      oxeduPlatform, oxeduAndroidPlatform, oxeduWorkbar,
-      oxeduAndroidBuild,
-      oxeduMenubar, oxeduIcons;
+      oxeduPlatform, oxeduWorkbar, oxeduMenubar, oxeduIcons,
+      {android}
+      oxeduAndroid, oxeduAndroidPlatform, oxeduAndroidBuild, oxeduAndroidSettings;
 
 IMPLEMENTATION
 
@@ -29,7 +29,13 @@ begin
 
       if(item = nil) then begin
          item := oxedWorkbar.Workbar.AddButton(oxedIcons.Create($f3cd), oxedAndroidBuild.BUILD_TO_PROJECT_ACTION);
-         item^.Hint := 'Build to android project';
+         item^.Hint := 'Build binary (' +
+            oxedAndroidCPUTypes[LongInt(oxedAndroidSettings.Project.EmulatorCPUType)] + ') to android project';
+
+         item^.Color.Assign(61, 220, 132, 255);
+
+         item := oxedWorkbar.Workbar.AddButton(oxedIcons.Create($f10b), oxedAndroidBuild.BUILD_ASSETS_TO_PROJECT_ACTION);
+         item^.Hint := 'Build assets to android project';
          item^.Color.Assign(61, 220, 132, 255);
       end;
    end;
