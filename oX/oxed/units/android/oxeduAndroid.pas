@@ -17,6 +17,8 @@ TYPE
    );
 
 CONST
+   OXED_DEFAULT_ANDROID_PROJECT_PATH = 'android_project';
+
    oxedAndroidCPUTypes: array[0..3] of string = (
       'arm',
       'arm64',

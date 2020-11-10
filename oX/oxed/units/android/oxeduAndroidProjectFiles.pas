@@ -17,8 +17,10 @@ TYPE
    { oxedTAndroidProjectFiles }
 
    oxedTAndroidProjectFiles = record
-      {deploys project files to the configured project files path}
       procedure Deploy(const destination: StdString = '');
+
+      {deploys project files to the configured project files path}
+      procedure DeployTemplate(const destination: StdString = '');
       {replace values in files with project values}
       procedure UpdateValues(const destination: StdString = '');
    end;
@@ -31,6 +33,22 @@ IMPLEMENTATION
 { oxedTAndroidProjectFiles }
 
 procedure oxedTAndroidProjectFiles.Deploy(const destination: StdString);
+var
+   path: StdString;
+
+begin
+   path := oxedProject.Path + oxedAndroidSettings.Project.ProjectFilesPath;
+
+   if(oxedAndroidSettings.Project.PackageName = '') then begin
+      log.e('android > No package name set. Cannot deploy project.');
+      exit;
+   end;
+
+   oxedAndroidProjectFiles.DeployTemplate(path);
+   oxedAndroidProjectFiles.UpdateValues(path);
+end;
+
+procedure oxedTAndroidProjectFiles.DeployTemplate(const destination: StdString);
 var
    path,
    source: StdString;
