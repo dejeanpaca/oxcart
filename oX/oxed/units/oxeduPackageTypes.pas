@@ -31,6 +31,8 @@ TYPE
       Path: StdString;
 
       Platforms: oxTFeaturePlatforms;
+      {this part of the package is optional (must be included explicitly)}
+      Optional: boolean;
       {parent package path}
       Parent: oxedPPackagePath;
 
@@ -123,6 +125,8 @@ begin
 
             if(Length(values) > 0) then
                Platforms.SetExcluded(values);
+         end else if (key = 'optional') then begin
+            Optional := true;
          end;
       end;
    end;
