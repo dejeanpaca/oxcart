@@ -26,10 +26,13 @@ TYPE
    { oxedTPackagePath }
 
    oxedTPackagePath = record
-      Units: TSimpleStringList;
+      Units,
+      IncludeFiles: TSimpleStringList;
       Path: StdString;
 
       Platforms: oxTFeaturePlatforms;
+      {parent package path}
+      Parent: oxedPPackagePath;
 
       class procedure Initialize(out p: oxedTPackagePath); static;
 
@@ -54,8 +57,10 @@ TYPE
    { oxedTPackagePathsHelper }
 
    oxedTPackagePathsHelper = record helper for oxedTPackagePaths
-      {add new path/unit from package unit}
+      {add new path/unit to package units list}
       procedure AddUnit(const unitFile: oxedTPackageUnit);
+      {add new path/unit to package includes list}
+      procedure AddInclude(const unitFile: oxedTPackageUnit);
 
       {add a new path}
       function Get(const p: StdString): oxedPPackagePath;
@@ -77,7 +82,9 @@ IMPLEMENTATION
 class procedure oxedTPackagePath.Initialize(out p: oxedTPackagePath);
 begin
    ZeroOut(p, SizeOf(p));
-   p.Units.InitializeValues(p.Units);
+
+   TSimpleStringList.InitializeValues(p.Units);
+   TSimpleStringList.InitializeValues(p.IncludeFiles);
 end;
 
 function oxedTPackagePath.IsSupported(const platform: StdString; isLibrary: boolean): boolean;
@@ -153,6 +160,18 @@ begin
 
    p := Get(unitPath);
    p^.Units.Add(unitFile.Name);
+end;
+
+procedure oxedTPackagePathsHelper.AddInclude(const unitFile: oxedTPackageUnit);
+var
+   includePath: StdString;
+   p: oxedPPackagePath;
+
+begin
+   includePath := ExtractFilePath(unitFile.Path);
+
+   p := Get(includePath);
+   p^.IncludeFiles.Add(unitFile.Name);
 end;
 
 function oxedTPackagePathsHelper.Get(const p: StdString): oxedPPackagePath;

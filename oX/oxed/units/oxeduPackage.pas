@@ -27,8 +27,7 @@ TYPE
       {path to package}
       Path: StdString;
 
-      Units,
-      IncludeFiles: oxedTPackagePaths;
+      Paths: oxedTPackagePaths;
 
       function GetPath(): StdString;
       function GetIdentifier(): StdString;
@@ -86,21 +85,19 @@ end;
 
 function oxedTPackage.IsEmpty(): boolean;
 begin
-   Result := (Units.n = 0) and (IncludeFiles.n = 0);
+   Result := (Paths.n = 0);
 end;
 
 procedure oxedTPackage.DisposeList();
 begin
-   Units.Destroy();
-   IncludeFiles.Destroy();
+   Paths.Destroy();
 end;
 
 class procedure oxedTPackage.Init(out p: oxedTPackage);
 begin
    ZeroOut(p, SizeOf(p));
 
-   oxedTPackagePaths.InitializeValues(p.Units);
-   oxedTPackagePaths.InitializeValues(p.IncludeFiles);
+   oxedTPackagePaths.InitializeValues(p.Paths);
 end;
 
 END.
