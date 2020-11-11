@@ -32,7 +32,9 @@ TYPE
 
       Platforms: oxTFeaturePlatforms;
       {this part of the package is optional (must be included explicitly)}
-      Optional: boolean;
+      Optional,
+      {have we loaded package properties already}
+      LoadedProperties: boolean;
       {parent package path}
       Parent: oxedPPackagePath;
 
@@ -105,6 +107,11 @@ var
    values: TStringArray;
 
 begin
+   if(LoadedProperties) then
+      exit;
+
+   LoadedProperties := true;
+
    fn := IncludeTrailingPathDelimiterNonEmpty(Path) + OX_PACKAGE_PROPS_FILE_NAME;
    TStringPairs.Initialize(kv);
 
