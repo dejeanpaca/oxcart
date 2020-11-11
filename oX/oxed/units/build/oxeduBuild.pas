@@ -1475,7 +1475,7 @@ begin
    BuildMechanism := OXED_BUILD_VIA_FPC;
    BuildAbort := false;
    BuildBinary := true;
-   BuildAssets := true;
+   BuildAssets := false;
    Parameters.ExportSymbols.Dispose();
    Parameters.PreIncludeUses.Dispose();
    Parameters.IncludeUses.Dispose();
