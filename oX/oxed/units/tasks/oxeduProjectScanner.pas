@@ -15,7 +15,9 @@ INTERFACE
       {ox}
       oxuRunRoutines, oxuThreadTask, oxuTimer,
       {oxed}
-      uOXED, oxeduPackage, oxeduProject, oxeduProjectManagement, oxeduTasks, oxeduActions,
+      uOXED,
+      oxeduPackage, oxeduPackageTypes,
+      oxeduProject, oxeduProjectManagement, oxeduTasks, oxeduActions,
       oxeduAssets;
 
 TYPE
@@ -107,6 +109,10 @@ begin
 end;
 
 function onDirectory(const fd: TFileTraverseData): boolean;
+var
+   packagePath: StdString;
+   path: oxedPPackagePath;
+
 begin
    Result := true;
 
@@ -117,6 +123,13 @@ begin
    {ignore project temporary directory}
    if(fd.f.Name = oxedProject.Path + oxPROJECT_TEMP_DIRECTORY) then
       exit(false);
+
+   {load package path properties if we have any}
+   if(FileExists(fd.f.Name + DirectorySeparator + OX_PACKAGE_PROPS_FILE_NAME)) then begin
+      packagePath := ExtractRelativepath(oxedProjectScanner.CurrentPath, fd.f.Name);
+      path := oxedProjectScanner.CurrentPackage^.Paths.Get(packagePath);
+      path^.LoadPathProperties();
+   end;
 end;
 
 { oxedTScannerOnFileProceduresHelper }
