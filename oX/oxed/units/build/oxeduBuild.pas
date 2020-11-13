@@ -1135,8 +1135,7 @@ end;
 
 class procedure oxedTBuildGlobal.BuildStandaloneTask(arch: oxedTPlatformArchitecture);
 begin
-   oxedBuild.BuildArch := arch;
-   oxedBuild.StartTask(OXED_BUILD_TASK_STANDALONE);
+   oxedBuild.StartTask(OXED_BUILD_TASK_STANDALONE, arch);
 end;
 
 procedure RebuildThirdParty();
@@ -1238,20 +1237,18 @@ begin
    if(not oxedBuild.Buildable(true)) or (not oxedProject.Valid()) then
       exit;
 
-   {start off empty}
-   oxedBuildLog.Log.Reset();
-
-   if(BuildBinary) then begin
-      if(not SetupFPCPlatform()) then begin
-         Reset();
-         exit;
-      end;
-   end;
-
    {we start off assuming things are fine}
    BuildOk := true;
    BuildFailed := false;
    BuildStart := Now;
+
+   if(BuildType = OXED_BUILD_TASK_STANDALONE) then begin
+      BuildAssets := true;
+      BuildBinary := true;
+   end;
+
+   {start off empty}
+   oxedBuildLog.Log.Reset();
 
    {get cpu and OS from arch}
    BuildArch.GetPlatformString().Separate(BuildCPU, BuildOS);
@@ -1269,10 +1266,19 @@ begin
       BuildType := OXED_BUILD_TASK_REBUILD;
    end;
 
+   InEditor := IsLibrary() and (BuildArch.Name = 'editor');
+
    if(IsLibrary()) then
       Props.Source := oxPROJECT_LIB_SOURCE
    else
       Props.Source := oxPROJECT_MAIN_SOURCE;
+
+   if(BuildBinary) then begin
+      if(not SetupFPCPlatform()) then begin
+         Reset();
+         exit;
+      end;
+   end;
 
    if(oxedBuild.BuildMechanism = OXED_BUILD_VIA_FPC) then
       props.ConfigFile := GetFPCConfigFilename()
@@ -1282,13 +1288,6 @@ begin
    TargetPath := GetTargetPath();
    WorkArea := GetWorkingAreaPath();
    Features := GetFeatures();
-
-   InEditor := IsLibrary() and (BuildArch.Name = 'editor');
-
-   if(BuildType = OXED_BUILD_TASK_STANDALONE) then begin
-      BuildAssets := true;
-      BuildBinary := true;
-   end;
 
    SetupFPCBuildOptions();
    SetupEditorBuildOptions();
@@ -1310,6 +1309,9 @@ begin
       build.Options.Rebuild := true;
       RunBuild();
    end;
+
+   {we're done}
+   PreviousBuildArch := BuildArch;
 
    Reset();
    oxedBuildLog.v('oxed > Build task done');
@@ -1386,24 +1388,25 @@ var
 begin
    Result := false;
 
-   if(IsLibrary()) then begin
-      if(PreviousBuildArch <> BuildArch) then begin
-         platform := BuildInstalls.FindPlatform(BuildArch.GetPlatformString(), Build.BuiltWithVersion);
-
-         if(platform = nil) then begin
-            oxedBuildLog.e('Failed to find suitable compiler for ' + BuildArch.GetPlatformString() + ' and FPC ' + Build.BuiltWithVersion);
-            exit(false);
-         end;
-
-         BuildInstalls.SetPlatform(platform^.Name);
-
-         oxedBuildLog.v('Using platform: ' + BuildInstalls.CurrentPlatform^.Name +
-            ', fpc ' + BuildInstalls.CurrentPlatform^.Version +
-            ', location: ' + BuildInstalls.CurrentPlatform^.GetExecutablePath());
-      end;
+   if(BuildArch = nil) or (InEditor) then begin
+      BuildInstalls.SetDefaultPlatform();
+      exit(True);
    end;
 
-   PreviousBuildArch := BuildArch;
+   platform := BuildInstalls.FindPlatform(BuildArch.GetPlatformString(), Build.BuiltWithVersion);
+
+   if(platform = nil) then begin
+      oxedBuildLog.e('Failed to find suitable compiler for ' + BuildArch.GetPlatformString() + ' and FPC ' + Build.BuiltWithVersion);
+      exit(false);
+   end;
+
+   BuildInstalls.SetPlatform(platform^.Name);
+
+   oxedBuildLog.v('Using platform: ' + BuildInstalls.CurrentPlatform^.Name +
+      ', fpc ' + BuildInstalls.CurrentPlatform^.Version +
+      ', location: ' + BuildInstalls.CurrentPlatform^.GetExecutablePath());
+
+
    exit(true);
 end;
 
@@ -1486,7 +1489,7 @@ procedure oxedTBuildGlobal.FurtherSteps();
 begin
    if(BuildBinary) then begin
       if(BuildType = OXED_BUILD_TASK_STANDALONE) then begin
-         if(BuildTarget = OXED_BUILD_LIB) then begin
+         if(BuildTarget <> OXED_BUILD_LIB) then begin
             if(not MoveExecutable()) then
                exit;
          end;
