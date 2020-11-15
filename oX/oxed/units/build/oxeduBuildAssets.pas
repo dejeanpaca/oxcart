@@ -99,28 +99,29 @@ end;
 
 function onDirectory(const fd: TFileTraverseData): boolean;
 var
-   name: StdString;
+   currentPath: StdString;
    pp: oxedPPackagePath;
 
 begin
    Result := true;
 
+   currentPath := copy(fd.f.Name, Length(oxedBuildAssets.CurrentPath) + 1, Length(fd.f.Name));
+
    {ignore project config directory}
-   if(fd.f.Name = oxedProject.Path + oxPROJECT_DIRECTORY) then
+   if(currentPath = oxPROJECT_DIRECTORY) then
       exit(false);
 
    {ignore project temporary directory}
-   if(fd.f.Name = oxedProject.Path + oxPROJECT_TEMP_DIRECTORY) then
+   if(currentPath = oxPROJECT_TEMP_DIRECTORY) then
       exit(false);
 
    {ignore directory if included in ignore lists}
-   name := ExtractFileName(fd.f.Name);
 
-   if(oxedAssets.ShouldIgnoreDirectory(name)) then
+   if(oxedAssets.ShouldIgnoreDirectory(currentPath)) then
       exit(False);
 
    {Find closest package path, and skip if optional}
-   pp := oxedBuildAssets.CurrentPackage^.Paths.FindClosest(name);
+   pp := oxedBuildAssets.CurrentPackage^.Paths.FindClosest(currentPath);
 
    if(pp <> nil) and (pp^.IsOptional()) then
       exit(False);
