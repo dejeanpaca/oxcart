@@ -111,8 +111,10 @@ begin
       {Find closest package path, and skip if optional}
       pp := oxedBuildAssets.CurrentPackage^.Paths.FindClosest(dir);
 
-      if(pp <> nil) and (pp^.IsOptional()) then
+      if(pp <> nil) and (pp^.IsOptional()) then begin
+         oxedBuildLog.v('Optional: ' + dir);
          exit(False);
+      end;
    end else
       Result := false;
 end;
