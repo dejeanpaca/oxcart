@@ -33,8 +33,12 @@ INTERFACE
       oxeduCameraComponent, oxeduLightComponent, oxeduUIComponent,
       {platforms}
       oxeduEditorPlatform,
+      {$IFDEF WINDOWS}
       oxeduWindowsPlatform,
+      {$ENDIF}
+      {$IFDEF LINUX}
       oxeduLinuxPlatform,
+      {$ENDIF}
       {android}
       oxeduAndroidPlatform,
       oxeduAndroidSettingsFile,
