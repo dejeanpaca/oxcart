@@ -500,7 +500,7 @@ begin
    previousBuildUnits := build.Units;
    build.Units.Dispose();
 
-   thirdparty := OXED_BUILD_3RDPARTY_PATH + DirectorySeparator;
+   thirdparty := OXED_BUILD_3RDPARTY_PATH + DirSep;
 
    for i := 0 to previousBuildUnits.n - 1 do begin
       if(oxedBuild.IncludeThirdParty or (pos(thirdparty, previousBuildUnits.List[i]) = 0)) then
@@ -1444,9 +1444,9 @@ begin
       if(BuildArch = oxedEditorPlatform.Architecture) then
          Result := oxedProject.TempPath
       else
-         Result := oxedProject.TempPath + BuildArch.GetPlatformString() + DirectorySeparator;
+         Result := oxedProject.TempPath + BuildArch.GetPlatformString() + DirSep;
    end else
-      Result := IncludeTrailingPathDelimiterNonEmpty(base) + oxedBuild.BuildArch.GetPlatformString() + DirectorySeparator;
+      Result := IncludeTrailingPathDelimiterNonEmpty(base) + oxedBuild.BuildArch.GetPlatformString() + DirSep;
 end;
 
 function oxedTBuildGlobal.GetTargetExecutableFileName(): StdString;

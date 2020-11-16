@@ -157,7 +157,7 @@ end;
 procedure init();
 begin
    oxedAssets.oxDataPackage.Id := 'ox_data';
-   oxedAssets.oxDataPackage.Path := oxPaths.BasePath + 'data' + DirectorySeparator;
+   oxedAssets.oxDataPackage.Path := oxPaths.BasePath + 'data' + DirSep;
 
    oxedAssets.oxPackage.Id := 'ox';
    oxedAssets.oxPackage.Path := oxPaths.BasePath;
