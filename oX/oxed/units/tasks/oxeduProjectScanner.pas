@@ -106,24 +106,33 @@ end;
 
 function onDirectory(const fd: TFileTraverseData): boolean;
 var
-   packagePath: StdString;
+   currentPath: StdString;
    path: oxedPPackagePath;
 
 begin
    Result := true;
 
+   currentPath := copy(fd.f.Name, Length(oxedProjectScanner.CurrentPath) + 1, Length(fd.f.Name));
+
    {ignore project config directory}
-   if(fd.f.Name = oxedProject.Path + oxPROJECT_DIRECTORY) then
+   if(currentPath = oxPROJECT_DIRECTORY) then
       exit(false);
 
    {ignore project temporary directory}
-   if(fd.f.Name = oxedProject.Path + oxPROJECT_TEMP_DIRECTORY) then
+   if(currentPath = oxPROJECT_TEMP_DIRECTORY) then
       exit(false);
+
+   {ignore folder if .noassets file is declared in it}
+   if FileUtils.Exists(fd.f.Name + DirectorySeparator + OX_NO_ASSETS_FILE) >= 0 then
+      exit(False);
+
+   {ignore directory if included in ignore lists}
+   if(oxedAssets.ShouldIgnoreDirectory(currentPath)) then
+      exit(False);
 
    {load package path properties if we have any}
    if(FileExists(fd.f.Name + DirectorySeparator + OX_PACKAGE_PROPS_FILE_NAME)) then begin
-      packagePath := ExtractRelativepath(oxedProjectScanner.CurrentPath, fd.f.Name);
-      path := oxedProjectScanner.CurrentPackage^.Paths.Get(packagePath);
+      path := oxedProjectScanner.CurrentPackage^.Paths.Get(currentPath);
       path^.LoadPathProperties(oxedProjectScanner.CurrentPath);
    end;
 end;
