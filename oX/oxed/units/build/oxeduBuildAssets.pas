@@ -105,16 +105,16 @@ var
 begin
    Result := true;
 
-   dir := copy(fd.f.Name, Length(oxedBuildAssets.CurrentPath) + 1, Length(fd.f.Name));
+   dir := oxedProjectScanner.GetValidPath(oxedBuildAssets.CurrentPath, fd.f.Name);
 
-   if(oxedProjectScanner.ValidPath(dir, fd.f.Name)) then
-      exit(False);
+   if(dir <> '') then begin
+      {Find closest package path, and skip if optional}
+      pp := oxedBuildAssets.CurrentPackage^.Paths.FindClosest(dir);
 
-   {Find closest package path, and skip if optional}
-   pp := oxedBuildAssets.CurrentPackage^.Paths.FindClosest(dir);
-
-   if(pp <> nil) and (pp^.IsOptional()) then
-      exit(False);
+      if(pp <> nil) and (pp^.IsOptional()) then
+         exit(False);
+   end else
+      Result := false;
 end;
 
 { oxedTBuildAssets }
