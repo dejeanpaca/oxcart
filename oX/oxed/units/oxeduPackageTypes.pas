@@ -80,7 +80,7 @@ TYPE
       {find closes package path for given path}
       function FindClosest(const path: StdString; excludeSelf: boolean = false): oxedPPackagePath;
       {find parent path}
-      function AssociateParent(const p: oxedTPackagePath): oxedPPackagePath;
+      procedure AssociateParent(var p: oxedTPackagePath);
 
       {dispose of all the paths}
       procedure Destroy();
@@ -230,7 +230,7 @@ var
 
 begin
    oxedTPackagePath.Initialize(path);
-   path.Path := p;
+   path.Path := IncludeTrailingPathDelimiterNonEmpty(p);
 
    Add(path);
    Result := GetLast();
@@ -277,19 +277,22 @@ function oxedTPackagePathsHelper.FindClosest(const path: StdString; excludeSelf:
 var
    i: loopint;
    potentialParent: oxedPPackagePath;
+   p: StdString;
 
 begin
    Result := nil;
    potentialParent := nil;
 
+   p := IncludeTrailingPathDelimiterNonEmpty(path);
+
    {find parent with longest path (means closest to our package path)}
 
    for i := 0 to n - 1 do begin
-      if(excludeSelf) and (path = List[i].Path) then
+      if(excludeSelf) and (p = List[i].Path) then
          continue;
 
       {do we have the parent path in our path}
-      if(pos(List[i].Path, path) = 1) then begin
+      if(pos(List[i].Path, p) = 1) then begin
          if(potentialParent <> nil) then begin
             {whichever parent is closer to our path}
             if(Length(potentialParent^.Path) < Length(List[i].Path)) then
@@ -302,34 +305,9 @@ begin
    Result := potentialParent;
 end;
 
-function oxedTPackagePathsHelper.AssociateParent(const p: oxedTPackagePath): oxedPPackagePath;
-var
-   i: loopint;
-   potentialParent: oxedPPackagePath;
-
+procedure oxedTPackagePathsHelper.AssociateParent(var p: oxedTPackagePath);
 begin
-   Result := nil;
-   potentialParent := nil;
-
-   {find parent with longest path (means closest to our package path)}
-
-   for i := 0 to n - 1 do begin
-      {don't match with ourselves}
-      if(@List[i] = @p) then
-         continue;
-
-      {do we have the parent path in our path}
-      if(pos(List[i].Path, p.Path) = 1) then begin
-         if(potentialParent <> nil) then begin
-            {whichever parent is closer to our path}
-            if(Length(potentialParent^.Path) < Length(List[i].Path)) then
-               potentialParent := @List[i];
-         end else
-            potentialParent := @List[i];
-      end;
-   end;
-
-   Result := potentialParent;
+   p.Parent := FindClosest(p.Path, true);
 end;
 
 procedure oxedTPackagePathsHelper.Destroy();
