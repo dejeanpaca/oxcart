@@ -15,7 +15,7 @@ INTERFACE
       uFPCHelpers, uPasSourceHelper,
       uBuild, uBuildInstalls, uBuildExec, uBuildConfiguration, uBuildLibraries, uBuildFPCConfig,
       {app}
-      uApp, appuActionEvents,
+      uApp, appuActionEvents, appuSysInfo,
       {ox}
       oxuThreadTask, oxuFeatures, oxuRenderer, oxeduEditorPlatform,
       {oxed}
@@ -606,6 +606,16 @@ begin
    config.Add();
    config.Add('## default target fpc units (' + BuildInstalls.CurrentPlatform^.Platform + ')');
    config.ConstructDefaultIncludes(BuildInstalls.CurrentPlatform^.GetBaseUnitsPath());
+
+   {$IFDEF LINUX}
+   fn := '/usr/lib/gcc/x86_64-redhat-linux/10/';
+
+   if(DirectoryExists(fn)) then begin
+      config.Add();
+      config.Add('### default objects path for linker');
+      config.Add('-Fl' + fn);
+   end;
+   {$ENDIF}
 
    {add packages}
    InsertPackagesIntoConfig(config);
