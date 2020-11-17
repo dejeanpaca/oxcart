@@ -1085,7 +1085,8 @@ begin
 
    {move the file}
    if(RenameFile(source, destination)) then begin
-      oxedBuildLog.v('Moving: ' + source + ' to ' + destination);
+      oxedBuildLog.v('Moved: ' + source + ' to ' + destination);
+
       Result := true;
    end else
       Fail('Failed to move: ' + source + ' to ' + destination);
