@@ -326,7 +326,8 @@ begin
    log.i('Called de-initialization routines');
 
    {done with renderer}
-   oxRenderer.AfterDeinitialize();
+   if(oxRenderer <> nil) then
+      oxRenderer.AfterDeinitialize();
 
    {destroy the remaining primary window}
    oxWindows.Dispose();
