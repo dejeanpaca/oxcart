@@ -353,7 +353,7 @@ procedure init();
 begin
    oglRender := oglTRender.Create();
 
-   oxglRenderer.components.RegisterComponent('render', @componentReturn);
+   oxglRenderer.Components.RegisterComponent('render', @componentReturn);
    oxglRenderer.AfterInit.Add(glInitRoutines, 'render', @renderInit);
 end;
 

@@ -1146,7 +1146,9 @@ begin
    else if(priority = logcDEBUG) then
       color := Colors.Debug
    else if(priority = logcOK) then
-      color := Colors.Ok;
+      color := Colors.Ok
+   else
+      color := Colors.Statement;
 
    RawWriteln(st, color);
 
