@@ -48,12 +48,41 @@ TYPE
       function FindDirectory(const asset: StdString): StdString;
       {add an asset path}
       procedure Add(const assetPath: StdString);
+
+      procedure SetDefaultEngineAssetPath();
    end;
 
 VAR
    oxPaths: oxTPaths;
 
 IMPLEMENTATION
+
+function tryDetermineAssetPath(startPath: StdString): StdString;
+var
+   path: StdString;
+
+begin
+   path := IncludeTrailingPathDelimiter(startPath);
+
+   repeat
+      if(FileUtils.Exists(path + 'here.oxsource') > 0) then begin
+         break;
+      end else begin
+         if(path = IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(path))) or (path = '') then begin
+            path := '';
+            break;
+         end;
+
+         path := IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(path));
+      end;
+   until (path = '');
+
+   if(path <> '') then
+      path := path + 'oX' + DirectorySeparator;
+
+   Result := path;
+end;
+
 
 { oxTPaths }
 
@@ -107,30 +136,22 @@ begin
    end;
 end;
 
-function tryDetermineAssetPath(startPath: StdString): StdString;
+procedure oxTPaths.SetDefaultEngineAssetPath();
 var
-   path: StdString;
+   assetPath: StdString;
 
 begin
-   path := IncludeTrailingPathDelimiter(startPath);
+   assetPath := GetEnvironmentVariable(OX_ASSET_PATH_ENV);
 
-   repeat
-      if(FileUtils.Exists(path + 'here.oxsource') > 0) then begin
-         break;
-      end else begin
-         if(path = IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(path))) or (path = '') then begin
-            path := '';
-            break;
-         end;
+   {we'll try to determine asset path ourselves}
+   if(assetPath = '') then
+      assetPath := tryDetermineAssetPath(GetCurrentDir());
 
-         path := IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(path));
-      end;
-   until (path = '');
-
-   if(path <> '') then
-      path := path + 'oX' + DirectorySeparator;
-
-   Result := path;
+   if(assetPath <> '') then begin
+      log.v('ox > Auto determined asset path: ' + assetPath);
+      BasePath := assetPath;
+      Add(assetPath);
+   end;
 end;
 
 {$IFDEF OX_LIBRARY}
@@ -162,11 +183,6 @@ end;
 
 {$IFNDEF OX_LIBRARY}
 procedure init();
-{$IFDEF OX_DEBUG}
-var
-   assetPath: StdString;
-{$ENDIF}
-
 begin
    oxPaths.WorkingDirectory := appPath.GetExecutablePath();
 
@@ -176,18 +192,8 @@ begin
    if(oxPaths.WorkingDirectory <> '') then
       log.v('ox > Asset base path: ' + oxPaths.WorkingDirectory);
 
-   {$IFDEF OX_DEBUG}
-   assetPath := GetEnvironmentVariable(OX_ASSET_PATH_ENV);
-
-   {we'll try to determine asset path ourselves}
-   if(assetPath = '') then
-      assetPath := tryDetermineAssetPath(GetCurrentDir());
-
-   if(assetPath <> '') then begin
-      log.v('ox > Auto determined asset path: ' + assetPath);
-      oxPaths.BasePath := assetPath;
-      oxPaths.Add(assetPath);
-   end;
+   {$IFDEF OXED}
+   oxPaths.SetDefaultEngineAssetPath();
    {$ENDIF}
 end;
 {$ENDIF}
