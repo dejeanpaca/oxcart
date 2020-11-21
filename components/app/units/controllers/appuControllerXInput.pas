@@ -12,7 +12,7 @@ INTERFACE
       uStd, uLog, StringUtils,
       appuController,
       {windows}
-      windows, DX12.xinput;
+      windows, DX12.XInput;
 
 TYPE
    { appTXInputControllerHandler }
