@@ -42,9 +42,6 @@ begin
 end;
 
 procedure onDisable(platform: oxedTPlatform);
-var
-   item: wdgPToolbarItem;
-
 begin
    if(platform = oxedAndroidPlatform) then begin
       oxedWorkbar.Workbar.RemoveItem(oxedWorkbar.Workbar.FindItemByAction(oxedAndroidBuild.BUILD_TO_PROJECT_ACTION));
