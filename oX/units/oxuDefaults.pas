@@ -104,7 +104,9 @@ INTERFACE
       oxuPointerControl,
       oxuScreenshot,
       {$IFNDEF OX_LIBRARY}
+      {$IFNDEF ANDROID}
       oxuDefaultSplashScreen,
+      {$ENDIF}
       {$ENDIF}
 
       {ui}

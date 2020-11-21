@@ -68,6 +68,8 @@ TYPE
 
          Properties: oxTRendererProperties;
 
+         {flag to preserve RCs while destroying or recreating a window}
+         PreserveRCs: boolean;
          RenderingContexts: array[0..oxMAXIMUM_RENDER_CONTEXT] of oxTRendererRenderingContext;
 
          {current renderer settings}

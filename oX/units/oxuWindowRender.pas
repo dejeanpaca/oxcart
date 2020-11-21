@@ -95,6 +95,9 @@ begin
         exit;
    end;
 
+   if(not oxRenderingContext.CanRender) then
+      exit;
+
    if(not OverrideRender) then begin
       StartRender(wnd);
 

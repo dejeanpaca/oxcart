@@ -14,9 +14,9 @@ INTERFACE
       {app}
       uApp, appuEvents, appuKeys, appuKeyEvents, appuMouse, appuMouseEvents, appuActionEvents,
       {oX}
-      uOX, oxuRun, oxuInit,
+      uOX, oxuRun, oxuInitialize,
       oxuWindow, oxuWindowHelper,
-      oxuPlatform, oxuPlatforms, oxuWindowTypes, oxuRenderer,
+      oxuPlatform, oxuPlatforms, oxuWindowTypes, oxuRenderer, oxuRenderThread,
       {ui}
       uiuTypes, uiuWindowTypes, uiuWindow;
 
@@ -57,15 +57,22 @@ procedure AndroidProcessEvents();
 IMPLEMENTATION
 
 procedure AndroidHandleCommand(app: Pandroid_app; cmd: cint32);
+var
+   renderer: oxTRenderer;
+
 begin
    if(cmd = APP_CMD_INIT_WINDOW) then begin
       if(not ox.Initialized) and (not ox.Started) then
          oxRun.Initialize()
       else begin
          if(ox.Started) then begin
-            oxTRenderer(oxWindow.Current.Renderer).PreInitWindow(oxWindow.Current);
-            oxTRenderer(oxWindow.Current.Renderer).InitWindow(oxWindow.Current);
-            oxTRenderer(oxWindow.Current.Renderer).SetupWindow(oxWindow.Current);
+            renderer := oxTRenderer(oxWindow.Current.Renderer);
+
+            renderer.PreserveRCs := true;
+            renderer.PreInitWindow(oxWindow.Current);
+            renderer.InitWindow(oxWindow.Current);
+            renderer.SetupWindow(oxWindow.Current);
+            oxRenderThread.StartThread(oxWindow.Current, oxWindow.Current.RenderingContext);
          end;
       end;
 
@@ -73,9 +80,10 @@ begin
          app^.hideNavbar := true;
    end else if(cmd = APP_CMD_TERM_WINDOW) then begin
       if(ox.Started) then begin
-         oxTRenderer(oxWindow.Current.Renderer).DestroyAllRenderingContexts(oxWindow.Current);
-         oxWindow.Current.RenderingContext := -1;
-         oxTRenderer(oxWindow.Current.Renderer).DeInitWindow(oxWindow.Current);
+         renderer := oxTRenderer(oxWindow.Current.Renderer);
+
+         renderer.PreserveRCs := true;
+         renderer.DeInitWindow(oxWindow.Current);
       end;
    end else if(cmd = APP_CMD_GAINED_FOCUS) then begin
       if(oxWindow.Current <> nil) then

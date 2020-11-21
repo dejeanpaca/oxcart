@@ -359,7 +359,7 @@ end;
 
 procedure deinit();
 begin
-   oglRender.Free();
+   FreeObject(oglRender);
 end;
 
 INITIALIZATION

@@ -140,9 +140,16 @@ begin
       log.w('android > No installed NDK found in SDK path: ' + basePath);
 
    {set an NDK for use}
-   if(NDKPath = '') and (UsedNDK = '') then begin
-      UsedNDK := oxedAndroidSettings.AvailableNDKs.List[oxedAndroidSettings.AvailableNDKs.n - 1];
-      log.i('android > Auto set NDK path: ' + UsedNDK);
+   if(NDKPath = '') then begin
+      if(UsedNDK = '') then begin
+         {no default ndk set, use first one found}
+         UsedNDK := oxedAndroidSettings.AvailableNDKs.List[oxedAndroidSettings.AvailableNDKs.n - 1];
+         log.i('android > Auto set NDK path: ' + UsedNDK);
+      end else begin
+         {if can't find the used ndk, use first one found}
+         if(not DirectoryExists(GetNDKPathInSDK() + UsedNDK)) then
+            UsedNDK := oxedAndroidSettings.AvailableNDKs.List[oxedAndroidSettings.AvailableNDKs.n - 1];
+      end;
    end;
 end;
 
