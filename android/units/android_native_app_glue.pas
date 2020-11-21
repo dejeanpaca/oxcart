@@ -184,11 +184,7 @@ TYPE
       {we need to redraw the app}
       redrawNeeded,
       {is the mutex valid (not destroyed)}
-      mutexValid,
-      {signal hide the navbar}
-      hideNavbar,
-      {if true, will automatically hide the navbar}
-      autoHideNavBar: boolean;
+      mutexValid: boolean;
 
       pendingWindow: PANativeWindow;
       pendingContentRect: PARect;
