@@ -12,10 +12,9 @@ INTERFACE
       uStd, uLog, StringUtils,
       egl,
       {ox}
-      oxuTypes,
+      oxuTypes, oxuRenderer,
       {ox.gl}
-      oxuOGL, oxuglWindow,
-      oxuglRendererPlatform, oxuglRenderer,
+      oxuOGL, oxuglWindow, oxuglRendererPlatform, oxuglRenderer,
       {android}
       oxuAndroidPlatform;
 
@@ -29,6 +28,7 @@ TYPE
       constructor Create();
 
       function RaiseError(): loopint; virtual;
+      function GetErrorDescription(error: loopint): StdString; virtual;
 
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
       function OnDeInitWindow(wnd: oglTWindow): boolean; virtual;
@@ -53,6 +53,11 @@ begin
    {we always set success as 0}
    if(Result = EGL_SUCCESS) then
       Result := 0;
+end;
+
+function oxglTEGL.GetErrorDescription(error: loopint): StdString;
+begin
+   Result := '$' + HexStr(error, 4);
 end;
 
 constructor oxglTEGL.Create();
@@ -89,12 +94,14 @@ var
 begin
    Result := false;
 
+   oxRenderer.logtv('egl > initialize');
+
    if(wnd.wd.Display = nil) then begin
       wnd.wd.Display := eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
       if(wnd.wd.Display <> nil) then begin
          eglInitialize(wnd.wd.Display, @eglMajor, @eglMinor);
-         log.v('egl > Initialized display');
+         oxRenderer.logtv('egl > Initialized display');
 
          if(not wnd.oxProperties.Created) then begin
             log.v('EGL Vendor: ' + eglQueryString(wnd.wd.Display, EGL_VENDOR));
@@ -104,7 +111,7 @@ begin
    end;
 
    if(wnd.wd.Display = nil) then begin
-      log.e('Failed to get default EGL display');
+      oxRenderer.logte('egl > Failed to get default EGL display');
       exit(false);
    end;
 
@@ -147,7 +154,7 @@ begin
       end;
 
       wnd.wd.Config := config;
-      log.v('egl > Found a config');
+      oxRenderer.logtv('egl > Found a config');
    end;
 
    if(wnd.wd.Surface = nil) then begin
@@ -158,13 +165,13 @@ begin
          exit(false);
       end;
 
-      log.v('egl > Created window surface');
+      oxRenderer.logtv('egl > Created window surface');
       wnd.wd.ValidSurface := true;
    end;
 
    eglQuerySurface(wnd.wd.Display, wnd.wd.Surface, EGL_WIDTH, @w);
    eglQuerySurface(wnd.wd.Display, wnd.wd.Surface, EGL_HEIGHT, @h);
-   log.v('egl > Surface dimensions: ' + sf(w) + 'x' + sf(h));
+   oxRenderer.logtv('egl > Surface dimensions: ' + sf(w) + 'x' + sf(h));
 
    wnd.Dimensions.Assign(w, h);
 
@@ -173,16 +180,19 @@ end;
 
 function oxglTEGL.OnDeInitWindow(wnd: oglTWindow): boolean;
 begin
+   oxRenderer.logtv('egl > deinitialize');
+
    if(wnd.wd.Surface <> EGL_NO_SURFACE) then begin
       eglDestroySurface(wnd.wd.Display, wnd.wd.Surface);
       wnd.wd.Surface := EGL_NO_SURFACE;
-      log.v('egl > Destroyed surface');
+      oxRenderer.logtv('egl > Destroyed surface');
    end;
 
    if(not oxglRenderer.PreserveRCs) then begin
       if(wnd.wd.Display <> EGL_NO_DISPLAY) then begin
          eglTerminate(wnd.wd.Display);
          wnd.wd.Display := EGL_NO_DISPLAY;
+         oxRenderer.logtv('egl > Terminated display');
       end;
    end;
 
@@ -217,7 +227,7 @@ begin
 
       glrc := oxglRenderer.glRenderingContexts[context.RenderContext];
 
-      Result := eglMakeCurrent(wnd.wd.Display, wnd.wd.Surface, wnd.wd.Surface, glrc) <> EGL_FALSE
+      Result := eglMakeCurrent(wnd.wd.Display, wnd.wd.Surface, wnd.wd.Surface, glrc) <> EGL_FALSE;
    end;
 end;
 
@@ -246,7 +256,7 @@ begin
       if(eglSwapBuffers(wnd.wd.Display, wnd.wd.Surface) <> EGL_TRUE) then begin
          error := RaiseError();
          wnd.wd.ValidSurface := false;
-         log.e('egl > Cannot swap buffers on surface ' + sf(wnd.wd.Surface) + ', egl error: ' + HexStr(error, 4));
+         oxRenderer.logte('egl > Cannot swap buffers on surface ' + sf(wnd.wd.Surface) + ', egl error: ' + HexStr(error, 4));
       end;
    end;
 end;
