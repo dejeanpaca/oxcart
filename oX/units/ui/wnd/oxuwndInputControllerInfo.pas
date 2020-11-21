@@ -23,7 +23,7 @@ INTERFACE
       {ui}
       uiuControl, uiuWindow,
       uiuWidget, uiWidgets,
-      wdguLabel, wdguButton, wdguDivisor;
+      wdguLabel, wdguButton, wdguDivisor, wdguControllerInputState;
 
 TYPE
 
