@@ -786,12 +786,7 @@ begin
    PointerDriver := TX11PointerDriver.Create();
 
    {open the display for X11}
-   if(OpenDisplay()) then
-      Result := true
-   else begin
-      log.f('X11 > Fatal: Failed to open display.');
-      Result := false;
-   end;
+   Result := OpenDisplay();
 end;
 
 procedure UnloadCursor(var cursor: x.TCursor);
@@ -860,7 +855,7 @@ begin
          Screen := DefaultScreenOfDisplay(DPY);
          DisplayOpened := true;
       end else
-         log.e('X11 > Cannot open X server display.');
+         log.f('X11 > Fatal: Cannot open X server display.');
    end;
 
    Result := DisplayOpened;
