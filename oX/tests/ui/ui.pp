@@ -17,7 +17,7 @@ PROGRAM ui;
       wdguButton, wdguLabel, wdguTitleButtons, wdguCheckbox, wdguScrollbar, wdguRadioButton, wdguProgressBar,
       wdguList, wdguTabs, wdguInputBox, wdguGrid, wdguTextEdit,
       oxuwndAbout, oxuwndToast, oxuwndQuickMenu, oxuwndSplash, oxuwndSettings, oxuwndColorPicker,
-      oxuInit;
+      oxuInitialize;
 
 TYPE
 
