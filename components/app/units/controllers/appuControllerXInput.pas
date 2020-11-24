@@ -115,8 +115,10 @@ begin
 
    {setup hat state from buttons}
    if(DPadPresent) then begin
-      for i := 0 to 3 do
-         State.DPad[i] := State.KeyProperties[12 + i];
+      State.DPad[appbCONTROLLER_DPAD_UP]     := State.KeyProperties[15];
+      State.DPad[appbCONTROLLER_DPAD_DOWN]   := State.KeyProperties[14];
+      State.DPad[appbCONTROLLER_DPAD_LEFT]   := State.KeyProperties[13];
+      State.DPad[appbCONTROLLER_DPAD_RIGHT]  := State.KeyProperties[12];
    end;
 
    if(TriggerCount > 0) then begin
