@@ -166,6 +166,7 @@ TYPE
       procedure GoLeft();
       procedure GoZero();
       procedure GoBelow(spacing: loopint = -1);
+      procedure NextLine(spacing: loopint = -1);
 
       function AboveOf(xOffset: longint = 0; yOffset: longint = 0; spacing: boolean = true): oxTPoint;
       function BelowOf(xOffset: longint = 0; yOffset: longint = 0; spacing: boolean = true): oxTPoint;
@@ -363,6 +364,12 @@ begin
 
    r.y := r.y - r.h - offset;
    r.h := 0;
+end;
+
+procedure uiTWidgetLastRect.NextLine(spacing: loopint);
+begin
+   GoBelow(spacing);
+   GoLeft();
 end;
 
 function uiTWidgetLastRect.AboveOf(xOffset: longint; yOffset: longint; spacing: boolean): oxTPoint;
