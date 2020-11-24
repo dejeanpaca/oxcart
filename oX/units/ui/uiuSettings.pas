@@ -19,6 +19,8 @@ TYPE
 
    uiTSettings = record
       NaturalScroll: boolean;
+      {how many subdivisions to use for rendering}
+      RenderSubdivisions: loopint;
 
       function ScrollDirection(): loopint;
    end;
@@ -29,7 +31,8 @@ VAR
 IMPLEMENTATION
 
 VAR
-   dvNaturalScroll: TDVar;
+   dvNaturalScroll,
+   dvRenderSubdivisions: TDVar;
 
 { uiTSettings }
 
@@ -42,6 +45,9 @@ begin
 end;
 
 INITIALIZATION
+   uiSettings.RenderSubdivisions := 64;
+
    uiTUI.dvg.Add(dvNaturalScroll, 'natural_scroll', dtcBOOL, @uiSettings.NaturalScroll);
+   uiTUI.dvg.Add(dvRenderSubdivisions, 'render_subdivisions', dtcLOOPINT, @uiSettings.RenderSubdivisions);
 
 END.
