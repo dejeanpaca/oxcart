@@ -145,9 +145,14 @@ TYPE
       {axis value range}
       AxisValueRange: longint;
 
-      {dead zone for axis/trigger}
-      DeadZone: single;
-      DeadZoneStretch: boolean;
+      {dead zone for axis}
+      DeadZone,
+      {dead zone for trigger}
+      TriggerDeadZone: single;
+      {stretch non dead zone value to full range}
+      DeadZoneStretch,
+      {stretch trigger non dead zone value to full range}
+      TriggerDeadZoneStretch: boolean;
 
       {has the device state been updated}
       Updated,
@@ -198,8 +203,18 @@ TYPE
       {get trigger value}
       function GetTriggerValue(index: loopint): single;
 
-      {get normalized value for axis or trigger}
-      function GetNormalizedValue(rawValue: loopint; max: loopint = 32767): appiTAxisState;
+      {get normalized value for axis}
+      function GetNormalizedAxisTriggerValue(value: single; dZ: single; stretch: boolean): appiTAxisState;
+
+      {get normalized value for axis}
+      function GetNormalizedAxisValue(rawValue: loopint): appiTAxisState;
+      {get normalized value for axis ()}
+      function GetNormalizedAxisValue(value: single): appiTAxisState;
+
+      {get normalized value for trigger}
+      function GetNormalizedTriggerValue(rawValue: loopint): appiTAxisState;
+      {get normalized value for trigger}
+      function GetNormalizedTriggerValue(value: single): appiTAxisState;
 
       {set the pressed state of a button}
       procedure SetButtonPressedState(index: loopint; pressed: boolean);
@@ -391,6 +406,8 @@ begin
    DeviceIndex := -1;
    DeadZone := 0.1;
    DeadZoneStretch := true;
+   TriggerDeadZone := 0.1;
+   TriggerDeadZoneStretch := true;
    TriggerValueRange := 32767;
 
    State.Keys.SetupKeys(appMAX_CONTROLLER_BUTTONS, @State.KeyProperties);
@@ -458,16 +475,15 @@ begin
    Result := 0;
 
    if(index >= 0) and (index < AxisCount) then
-      Result := State.Axes[index];
+      Result := GetNormalizedAxisValue(State.Axes[index]);
 end;
 
 function appTControllerDevice.GetUnitAxisValue(index: loopint): single;
 begin
    Result := 0.5;
 
-   if(index >= 0) and (index < AxisCount) then begin
-      Result := (State.Axes[index] + 1.0) / 2;
-   end;
+   if(index >= 0) and (index < AxisCount) then
+      Result := GetNormalizedAxisValue(State.Axes[index]) + 1.0 / 2;
 end;
 
 function appTControllerDevice.GetTriggerValue(index: loopint): single;
@@ -475,31 +491,51 @@ begin
    Result := 0;
 
    if(index >= 0) and (index < TriggerCount) then
-      Result := State.Triggers[index];
+      Result := GetNormalizedTriggerValue(State.Triggers[index]);
 end;
 
-function appTControllerDevice.GetNormalizedValue(rawValue: loopint; max: loopint): appiTAxisState;
+function appTControllerDevice.GetNormalizedAxisTriggerValue(value: single; dZ: single; stretch: boolean): appiTAxisState;
 begin
-   {get positive raw value}
-   Result := appiTAxisState.GetRaw(abs(rawValue), max);
+   Result := abs(value);
 
    {dead zone means 0}
-   if(Result < DeadZone) then begin
+   if(Result < dZ) then begin
       Result := 0;
    end else begin
       {correct for strech}
-      if(DeadZoneStretch) then begin
-         Result := (1 / DeadZone) * Result;
+      if(stretch) then begin
+         Result := (1 / dZ) * Result;
       end;
    end;
 
-   {correct if we went over}
-   if(Result > 1) then
-      Result := 1;
+   {clamp value so we don't go out of bounds}
+   vmClamp(value, 0.0, 1.0);
 
    {we convert to negative value if raw value was negative}
-   if(rawValue < 0) then
+   if(value < 0) then
       Result := Result * -1;
+end;
+
+function appTControllerDevice.GetNormalizedAxisValue(rawValue: loopint): appiTAxisState;
+begin
+   Result := appiTAxisState.GetRaw(abs(rawValue), AxisValueRange);
+   Result := GetNormalizedAxisValue(Result);
+end;
+
+function appTControllerDevice.GetNormalizedAxisValue(value: single): appiTAxisState;
+begin
+   Result := GetNormalizedAxisTriggerValue(value, DeadZone, DeadZoneStretch);
+end;
+
+function appTControllerDevice.GetNormalizedTriggerValue(rawValue: loopint): appiTAxisState;
+begin
+   Result := appiTAxisState.GetRaw(abs(rawValue), TriggerValueRange);
+   Result := GetNormalizedTriggerValue(Result);
+end;
+
+function appTControllerDevice.GetNormalizedTriggerValue(value: single): appiTAxisState;
+begin
+   Result := GetNormalizedAxisTriggerValue(value, TriggerDeadZone, TriggerDeadZoneStretch);
 end;
 
 procedure appTControllerDevice.SetButtonPressedState(index: loopint; pressed: boolean);
