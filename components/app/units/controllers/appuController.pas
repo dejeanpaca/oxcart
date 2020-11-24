@@ -134,11 +134,13 @@ TYPE
       {device name}
       Name: string;
 
+      {is a dpad present}
+      DPadPresent: boolean;
+
       {counts of axes and buttons}
       DeviceIndex,
       AxisCount,
       TriggerCount,
-      HatCount,
       ButtonCount,
       {trigger value range}
       TriggerValueRange,
@@ -164,8 +166,8 @@ TYPE
          KeyState: TBitSet64;
          {more detailed key state}
          Keys: appiTKeyStates;
-         {hat state}
-         Hat: array[0..3] of appiTKeyState;
+         {dpad state}
+         DPad: array[0..3] of appiTKeyState;
          {key properties}
          KeyProperties: array[0..appMAX_CONTROLLER_BUTTONS] of appiTKeyState;
          {state of all axes}
@@ -418,7 +420,6 @@ begin
    log.i('Button count: ' + sf(ButtonCount));
    log.i('Axis count: ' + sf(AxisCount));
    log.i('Trigger count: ' + sf(TriggerCount));
-   log.i('Hat count: ' + sf(HatCount));
 end;
 
 procedure appTControllerDevice.DeInitialize();

@@ -71,7 +71,7 @@ procedure setGamepad();
 begin
    AxisCount := 4;
    TriggerCount := 2;
-   HatCount := 1;
+   DPadPresent := true;
    ButtonCount := 16;
 end;
 
@@ -82,7 +82,7 @@ begin
    if(capabilities.SubType = XINPUT_DEVSUBTYPE_GAMEPAD) then
       Name := 'XInput Gamepad ' + sf(index)
    else
-      Name := 'XInput Device ' + sf(index);
+      Name := 'XInput Gamepad ' + sf(index);
 
    setGamepad();
 end;
@@ -114,9 +114,9 @@ begin
    end;
 
    {setup hat state from buttons}
-   if(HatCount > 0) then begin
+   if(DPadPresent) then begin
       for i := 0 to 3 do
-         State.Hat[i] := State.KeyProperties[12 + i];
+         State.DPad[i] := State.KeyProperties[12 + i];
    end;
 
    if(TriggerCount > 0) then begin
