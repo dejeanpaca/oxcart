@@ -40,11 +40,12 @@ TYPE
 
    appTXInputControllerDevice = class(appTControllerDevice)
       XInputIndex: loopint;
+      XPacket: dword;
 
       constructor Create(); override;
 
       procedure Initialize(index: loopint; var capabilities: TXINPUT_CAPABILITIES);
-      procedure Run(); override;
+      procedure Update(); override;
       procedure DeInitialize(); override;
    end;
 
@@ -57,9 +58,11 @@ IMPLEMENTATION
 
 constructor appTXInputControllerDevice.Create();
 begin
-  inherited Create();
+   inherited Create();
 
-  Handler := @appXInputControllerHandler;
+   TriggerValueRange := 255;
+   AxisValueRange := 255;
+   Handler := @appXInputControllerHandler;
 end;
 
 procedure appTXInputControllerDevice.Initialize(index: loopint; var capabilities: TXINPUT_CAPABILITIES);
@@ -77,14 +80,51 @@ begin
    Name := 'XInput ' + sf(index);
 end;
 
-procedure appTXInputControllerDevice.Run();
+procedure appTXInputControllerDevice.Update();
 var
+   i: loopint;
+   bState: TBitSet16;
+
    xstate: TXINPUT_STATE;
+   gamepad: TXINPUT_GAMEPAD;
 
 begin
+   inherited;
+
    XInputGetState(XInputIndex, xstate);
 
-   // TODO: Process state
+   {state has not changed, do nothing}
+   if(XPacket = xstate.dwPacketNumber) then
+      exit;
+
+   Updated := true;
+
+   XPacket := xstate.dwPacketNumber;
+   gamepad := xstate.Gamepad;
+   bState := gamepad.wButtons;
+
+   {get button state}
+   for i := 0 to 15 do begin
+      SetButtonPressedState(i, bState.GetBit(15 - i));
+   end;
+
+   {setup hat state from buttons}
+   if(HatCount > 0) then begin
+      for i := 0 to 3 do
+         State.Hat[i] := State.KeyProperties[12 + i];
+   end;
+
+   if(TriggerCount > 0) then begin
+      SetTriggerState(0, gamepad.bLeftTrigger);
+      SetTriggerState(1, gamepad.bRightTrigger);
+   end;
+
+   if(AxisCount > 0) then begin
+      SetAxisState(0, gamepad.sThumbLX);
+      SetAxisState(1, gamepad.sThumbLY);
+      SetAxisState(2, gamepad.sThumbRX);
+      SetAxisState(3, gamepad.sThumbRY);
+   end;
 end;
 
 procedure appTXInputControllerDevice.DeInitialize();
