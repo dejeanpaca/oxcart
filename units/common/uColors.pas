@@ -8,7 +8,8 @@ UNIT uColors;
 
 INTERFACE
 
-   USES StringUtils;
+   USES
+      StringUtils;
 
 TYPE
    {COLOR TYPES}
@@ -121,6 +122,8 @@ TYPE
       function ToColor4f(): TColor4f;
       function ToColor4ub(): TColor4ub;
       function ToHex(): string;
+
+      class function Interpolate(const c1, c2: TColor3ub; ratio: single): TColor3ub; static;
    end;
 
    { TColor4ubHelper }
@@ -140,6 +143,8 @@ TYPE
       function Transparent(): boolean;
       {ignore the alpha value}
       function ToHex3(): string;
+
+      class function Interpolate(const c1, c2: TColor4ub; ratio: single): TColor4ub; static;
    end;
 
    { TColor3fHelper }
@@ -154,6 +159,8 @@ TYPE
       function ToColor3ub(): TColor3ub;
       function ToColor4ub(): TColor4ub;
       function ToColor4f(): TColor4f;
+
+      class function Interpolate(const c1, c2: TColor3f; ratio: single): TColor3f; static;
    end;
 
    { TColor4fHelper }
@@ -169,6 +176,8 @@ TYPE
       function ToColor3ub(): TColor3ub;
       function ToColor4ub(): TColor4ub;
       function ToColor3f(): TColor4f;
+
+      class function Interpolate(const c1, c2: TColor4f; ratio: single): TColor4f; static;
    end;
 
    { TColorsGlobal }
@@ -342,6 +351,13 @@ begin
    Result := '#' + HexStr(Self[0], 2) + HexStr(Self[1], 2) + HexStr(Self[2], 2);
 end;
 
+class function TColor3ubHelper.Interpolate(const c1, c2: TColor3ub; ratio: single): TColor3ub;
+begin
+   Result[0] := Round(c1[0] * (1 - ratio) + c2[0] * ratio);
+   Result[1] := Round(c1[1] * (1 - ratio) + c2[1] * ratio);
+   Result[2] := Round(c1[2] * (1 - ratio) + c2[2] * ratio);
+end;
+
 
 { TColor4ubHelper }
 
@@ -460,6 +476,14 @@ begin
    Result := '#' + HexStr(Self[0], 2) + HexStr(Self[1], 2) + HexStr(Self[2], 2);
 end;
 
+class function TColor4ubHelper.Interpolate(const c1, c2: TColor4ub; ratio: single): TColor4ub;
+begin
+   Result[0] := Round(c1[0] * (1 - ratio) + c2[0] * ratio);
+   Result[1] := Round(c1[1] * (1 - ratio) + c2[1] * ratio);
+   Result[2] := Round(c1[2] * (1 - ratio) + c2[2] * ratio);
+   Result[3] := Round(c1[3] * (1 - ratio) + c2[3] * ratio);
+end;
+
 
 { TColor3fHelper }
 
@@ -541,6 +565,13 @@ function TColor3fHelper.ToColor4f(): TColor4f;
 begin
    Result[3] := 1.0;
    Move(Self, Result, SizeOf(single) * 3);
+end;
+
+class function TColor3fHelper.Interpolate(const c1, c2: TColor3f; ratio: single): TColor3f;
+begin
+   Result[0] := c1[0] * (1 - ratio) + c2[0] * ratio;
+   Result[1] := c1[1] * (1 - ratio) + c2[1] * ratio;
+   Result[2] := c1[2] * (1 - ratio) + c2[2] * ratio;
 end;
 
 { TColor4fHelper }
@@ -641,6 +672,14 @@ begin
    Result[0] := Self[0];
    Result[1] := Self[1];
    Result[2] := Self[2];
+end;
+
+class function TColor4fHelper.Interpolate(const c1, c2: TColor4f; ratio: single): TColor4f;
+begin
+   Result[0] := c1[0] * (1 - ratio) + c2[0] * ratio;
+   Result[1] := c1[1] * (1 - ratio) + c2[1] * ratio;
+   Result[2] := c1[2] * (1 - ratio) + c2[2] * ratio;
+   Result[3] := c1[3] * (1 - ratio) + c2[3] * ratio;
 end;
 
 INITIALIZATION
