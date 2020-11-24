@@ -611,7 +611,7 @@ begin
          Result := appCONTROLLER_DIRECTION_DOWN;
 
          if(IsDPadPressed(appbCONTROLLER_DPAD_LEFT)) then
-            Result := appCONTROLLER_DIRECTION_DOWN
+            Result := appCONTROLLER_DIRECTION_DOWN_LEFT
          else if(IsDPadPressed(appbCONTROLLER_DPAD_RIGHT)) then
             Result := appCONTROLLER_DIRECTION_DOWN_RIGHT;
       end else if(IsDPadPressed(appbCONTROLLER_DPAD_LEFT)) then
