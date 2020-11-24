@@ -97,6 +97,11 @@ TYPE
       Window: oxedTSceneEditWindow;
       Material: oxTMaterial;
 
+      vColors: array[0..5] of TColor4f;
+      vLines: array[0..5] of TVector3;
+
+      constructor Create();
+
       procedure RenderEntity(var params: oxTSceneRenderParameters); override;
 
       procedure CameraEnd(var params: oxTSceneRenderParameters); override;
@@ -123,6 +128,24 @@ begin
 end;
 
 { oxedTSceneEditRenderer }
+
+constructor oxedTSceneEditRenderer.Create();
+begin
+   inherited;
+
+   ZeroOut(vLines, SizeOf(vLines));
+
+   vLines[1] := vmCreate(OXED_LINE_GRID_LENGTH, 0.0, 0.0);
+   vLines[3] := vmCreate(0.0, OXED_LINE_GRID_LENGTH, 0.0);
+   vLines[5] := vmCreate(0.0, 0.0, OXED_LINE_GRID_LENGTH);
+
+   vColors[0] := cRed4f;
+   vColors[1] := cRed4f;
+   vColors[2] := cGreen4f;
+   vColors[3] := cGreen4f;
+   vColors[4] := cBlue4f;
+   vColors[5] := cBlue4f;
+end;
 
 procedure oxedTSceneEditRenderer.RenderEntity(var params: oxTSceneRenderParameters);
 var
@@ -155,24 +178,22 @@ begin
    { render a base grid }
 
    oxRender.BlendDefault();
+   oxRender.DisableTextureCoords();
    oxRender.DepthWrite(false);
    Material.ApplyColor('color', 0.5, 0.5, 0.5, 0.5);
-   oxRender.DepthDefault();
+
    oxGridRender.Render2D(OXED_LINE_GRID_LENGTH, 50);
-   Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
-   oxRender.DepthWrite(true);
-   oxRender.DisableBlend();
 
    { render XYZ axis lines }
-
    oxRender.DepthTest(oxTEST_FUNCTION_NONE);
-   Material.ApplyColor('color', cRed4f);
-   oxRenderUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(OXED_LINE_GRID_LENGTH, 0.0, 0.0));
-   Material.ApplyColor('color', cGreen4f);
-   oxRenderUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(0.0, OXED_LINE_GRID_LENGTH, 0.0));
-   Material.ApplyColor('color', cBlue4f);
-   oxRenderUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(0.0, 0.0, OXED_LINE_GRID_LENGTH));
-   oxRender.DepthTest(oxTEST_FUNCTION_DEFAULT);
+
+   oxRender.Color(vColors[0]);
+   oxRender.Vertex(vLines[0]);
+   oxRender.DrawArrays(oxPRIMITIVE_LINES, 6);
+
+   Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
+   oxRender.DisableColor();
+   oxRender.DepthDefault();
 end;
 
 { oxedTSceneEditWindow }
