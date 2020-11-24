@@ -61,21 +61,28 @@ begin
    inherited Create();
 
    TriggerValueRange := 255;
-   AxisValueRange := 255;
+   AxisValueRange := 32767;
    Handler := @appXInputControllerHandler;
 end;
 
 procedure appTXInputControllerDevice.Initialize(index: loopint; var capabilities: TXINPUT_CAPABILITIES);
+
+procedure setGamepad();
+begin
+   AxisCount := 4;
+   TriggerCount := 2;
+   HatCount := 1;
+   ButtonCount := 16;
+end;
+
 begin
    XInputIndex := index;
    ButtonCount := PopCnt(capabilities.Gamepad.wButtons);
 
-   if(capabilities.SubType = XINPUT_DEVSUBTYPE_GAMEPAD) then begin
-      AxisCount := 4;
-      TriggerCount := 2;
-      HatCount := 1;
-   end else
-      Valid := false;
+   if(capabilities.SubType = XINPUT_DEVSUBTYPE_GAMEPAD) then
+      setGamepad()
+   else
+      setGamepad();
 
    Name := 'XInput ' + sf(index);
 end;
@@ -89,8 +96,6 @@ var
    gamepad: TXINPUT_GAMEPAD;
 
 begin
-   inherited;
-
    XInputGetState(XInputIndex, xstate);
 
    {state has not changed, do nothing}
@@ -104,8 +109,8 @@ begin
    bState := gamepad.wButtons;
 
    {get button state}
-   for i := 0 to 15 do begin
-      SetButtonPressedState(i, bState.GetBit(15 - i));
+   for i := 1 to 16 do begin
+      SetButtonPressedState(i - 1, bState.GetBit(16 - i));
    end;
 
    {setup hat state from buttons}
