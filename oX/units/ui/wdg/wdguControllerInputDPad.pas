@@ -55,6 +55,7 @@ procedure wdgTControllerDPadState.Render();
 var
    radius: single;
    center,
+   v,
    p: TVector2f;
 
 begin
@@ -70,28 +71,31 @@ begin
       center[1] := RPosition.y - radius;
 
       p := Center;
+      v := vmvZero2;
 
       if(Direction = appCONTROLLER_DIRECTION_UP) then begin
-         p[1] := p[1] + radius;
+         v[1] := +1;
       end else if(Direction = appCONTROLLER_DIRECTION_DOWN) then begin
-         p[1] := p[1] - radius;
+         v[1] := -1;
       end else if(Direction = appCONTROLLER_DIRECTION_LEFT) then begin
-         p[0] := p[0] - radius;
+         v[0] := -1;
       end else if(Direction = appCONTROLLER_DIRECTION_RIGHT) then begin
-         p[0] := p[0] + radius;
+         v[0] := +1;
       end else if(Direction = appCONTROLLER_DIRECTION_UP_LEFT) then begin
-         p[0] := p[0] - radius;
-         p[1] := p[1] + radius;
+         v[0] := -1;
+         v[1] := +1;
       end else if(Direction = appCONTROLLER_DIRECTION_UP_RIGHT) then begin
-         p[0] := p[0] + radius;
-         p[1] := p[1] + radius;
+         v[0] := +1;
+         v[1] := +1;
       end else if(Direction = appCONTROLLER_DIRECTION_DOWN_LEFT) then begin
-         p[0] := p[0] - radius;
-         p[1] := p[1] - radius;
+         v[0] := -1;
+         v[1] := -1;
       end else if(Direction = appCONTROLLER_DIRECTION_DOWN_RIGHT) then begin
-         p[0] := p[0] + radius;
-         p[1] := p[1] - radius;
+         v[0] := 1;
+         v[1] := -1
       end;
+
+      p := p + (v.Normalized() * radius);
 
       uiDraw.Line(center, p);
    end;
