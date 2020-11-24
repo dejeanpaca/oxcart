@@ -43,6 +43,8 @@ TYPE
       procedure Box(const r: oxTRect);
 
       procedure Line(x1, y1, x2, y2: single);
+      procedure Line(const p1, p2: TVector2f);
+      procedure Line(const p1, p2: oxTPoint);
       procedure HLine(x1, y1, x2: single);
       procedure VLine(x1, y1, y2: single);
       procedure Rect(x1, y1, x2, y2: single);
@@ -147,6 +149,16 @@ begin
    v[1][1] := y2 + 1;
 
    oxRender.Lines(v);
+end;
+
+procedure uiTDraw.Line(const p1, p2: TVector2f);
+begin
+   Line(p1[0], p1[1], p2[0], p2[1]);
+end;
+
+procedure uiTDraw.Line(const p1, p2: oxTPoint);
+begin
+   Line(p1.x, p1.y, p2.x, p2.y);
 end;
 
 procedure uiTDraw.HLine(x1, y1, x2: single);
