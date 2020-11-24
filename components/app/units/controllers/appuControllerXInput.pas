@@ -80,11 +80,11 @@ begin
    ButtonCount := PopCnt(capabilities.Gamepad.wButtons);
 
    if(capabilities.SubType = XINPUT_DEVSUBTYPE_GAMEPAD) then
-      setGamepad()
+      Name := 'XInput Gamepad ' + sf(index)
    else
-      setGamepad();
+      Name := 'XInput Device ' + sf(index);
 
-   Name := 'XInput ' + sf(index);
+   setGamepad();
 end;
 
 procedure appTXInputControllerDevice.Update();
