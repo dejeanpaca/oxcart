@@ -23,9 +23,8 @@ TYPE
    wdgTControllerButtonState = class(uiTWidget)
       public
          ButtonName: StdString;
+         ButtonIndex: loopint;
          Pressure: single;
-
-      procedure Initialize(); override;
 
       procedure SetPressure(newPressure: single);
 
@@ -56,29 +55,33 @@ end;
 procedure wdgTControllerButtonState.Render();
 var
    clr: TColor4ub;
-   r: single;
+   radius: single;
+   r: oxTRect;
 
 begin
    {render surface}
    clr := GetSkinObject().Colors.Highlight;
    clr[3] := round(Pressure * 255);
 
-   oxui.Material.SetColor('color', clr);
+   SetColor(clr);
 
-   r := vmMin(Dimensions.w, Dimensions.h);
+   radius := vmMin(Dimensions.w, Dimensions.h) / 2;
 
-   uiDraw.Disk(RPosition.x, RPosition.y, r);
+   uiDraw.Disk(RPosition.x + radius, RPosition.y - radius, radius * 0.9);
 
    {render border}
    SetColor(GetSkinObject().Colors.Border);
-   uiDraw.Circle(RPosition.x, RPosition.y, r);
+   uiDraw.Circle(RPosition.x + radius, RPosition.y - radius, radius * 0.9);
 
    {render button name, if set}
    if(ButtonName <> '') then begin
       SetColor(GetSkinObject().Colors.TextInHighlight);
       oxf.Start();
       CachedFont.Start();
-      CachedFont.Write(RPosition.x, RPosition.y, ButtonName);
+
+      r.Assign(RPosition, Dimensions);
+
+      CachedFont.WriteCentered(ButtonName, r);
       oxf.Stop();
    end;
 end;
@@ -92,7 +95,7 @@ end;
 INITIALIZATION
    wdgControllerButtonState.Create('controller_button_state');
 
-   wdgControllerButtonState.Defaults.Width := 20;
-   wdgControllerButtonState.Defaults.Height := 20;
+   wdgControllerButtonState.Defaults.Width := 25;
+   wdgControllerButtonState.Defaults.Height := 25;
 
 END.
