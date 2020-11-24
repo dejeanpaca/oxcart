@@ -15,7 +15,7 @@ INTERFACE
       oxuPrimitives, oxuTransform, oxuTexture, oxuWindow, oxuViewportType,
       oxumPrimitive,
       {ui}
-      oxuUI, uiuBase;
+      oxuUI, uiuBase, uiuSettings;
 
 CONST
    uiMAX_SCISSOR_STACK = 64;
@@ -263,9 +263,11 @@ end;
 
 procedure uiTDraw.Circle(x1, y1, radius: Single);
 begin
-   oxTransform.vPosition.Assign(x1, y1, 0.0);
-   oxTransform.vScale.Assign(radius, radius, 0.0);
+   oxTransform.Identity();
+   oxTransform.vPosition.Assign(x1 + 0.375, y1 + 0.375, 0.0);
+   oxTransform.vScale.Assign(radius, radius, 1.0);
    oxTransform.SetupMatrix();
+   oxTransform.Apply();
 
    mCircle.Render();
 
@@ -275,9 +277,11 @@ end;
 
 procedure uiTDraw.Disk(x1, y1, radius: Single);
 begin
-   oxTransform.vPosition.Assign(x1, y1, 0.0);
-   oxTransform.vScale.Assign(radius, radius, 0.0);
+   oxTransform.Identity();
+   oxTransform.vPosition.Assign(x1 + 0.375, y1 + 0.375, 0.0);
+   oxTransform.vScale.Assign(radius, radius, 1.0);
    oxTransform.SetupMatrix();
+   oxTransform.Apply();
 
    mDisk.Render();
 
@@ -453,8 +457,8 @@ procedure init();
 begin
    {TODO: Get subdivisions from UI settings}
 
-   uiDraw.mCircle.InitCircle(1.0, 64);
-   uiDraw.mDisk.InitDisk(1.0, 64);
+   uiDraw.mCircle.InitCircle(1.0, uiSettings.RenderSubdivisions);
+   uiDraw.mDisk.InitDisk(1.0, uiSettings.RenderSubdivisions);
 end;
 
 procedure deinit();
