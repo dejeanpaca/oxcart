@@ -30,7 +30,7 @@ TYPE
       FileName: string;
 
       procedure Initialize(const fn: string);
-      procedure Run(); override;
+      procedure Update(); override;
       procedure DeInitialize(); override;
 
       private
@@ -149,7 +149,7 @@ begin
       log.e('Failed adding device: ' + fn + '. Unix error: ' + sf(ioerror()));
 end;
 
-procedure appTLinuxControllerDevice.Run();
+procedure appTLinuxControllerDevice.Update();
 var
    jsevent: js_event;
    count: int64;
@@ -181,7 +181,7 @@ begin
             State.Keys.Process(jsevent.number, event.Value > 0);
          end else  if(jsevent.typ and JS_EVENT_AXIS > 0) then begin
             event.Typ := appCONTROLLER_EVENT_AXIS;
-            State.Axes[jsevent.number] := GetNormalizedValue(jsevent.value);
+            State.Axes[jsevent.number] := jsevent.value;
             event.Value := State.Axes[jsevent.number];
          end;
 
