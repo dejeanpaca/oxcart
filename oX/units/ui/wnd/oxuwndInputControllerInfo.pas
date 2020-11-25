@@ -166,7 +166,7 @@ begin
 
       for i := 0 to Controller.AxisGroupCount - 1 do begin
          wdg.AxisGroups[i] := wdgControllerDPadState.Add(uiWidget.LastRect.RightOf());
-         wdg.AxisGroups[i].SetDirection(Controller.GetAxisGroupDirectionVector(i));
+         wdg.AxisGroups[i].SetDirection(Controller.GetAxisGroupVector(i));
       end;
    end;
 
@@ -205,8 +205,9 @@ begin
       wdg.DPad.SetDirection(Controller.GetDPadDirection());
 
    for i := 0 to Controller.AxisGroupCount - 1 do begin
-      if(wdg.AxisGroups[i] <> nil) then
-         wdg.AxisGroups[i].SetDirection(Controller.GetAxisGroupDirectionVector(i));
+      if(wdg.AxisGroups[i] <> nil) then begin
+         wdg.AxisGroups[i].SetDirection(Controller.GetAxisGroupVector(i));
+      end;
    end;
 end;
 
