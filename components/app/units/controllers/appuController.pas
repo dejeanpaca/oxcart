@@ -441,9 +441,9 @@ constructor appTControllerDevice.Create();
 begin
    Valid := true;
    DeviceIndex := -1;
-   DeadZone := 0.1;
+   DeadZone := 0.15;
    DeadZoneStretch := true;
-   TriggerDeadZone := 0.1;
+   TriggerDeadZone := 0.15;
    TriggerDeadZoneStretch := true;
    TriggerValueRange := 32767;
 
@@ -545,9 +545,8 @@ begin
       Result := 0;
    end else begin
       {correct for strech}
-      if(stretch) then begin
+      if(stretch) then
          Result := (1 / (1 - dZ)) * (Result - dZ);
-      end;
    end;
 
    {clamp value so we don't go out of bounds}
