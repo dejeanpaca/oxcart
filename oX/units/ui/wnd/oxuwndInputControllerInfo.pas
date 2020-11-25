@@ -24,7 +24,7 @@ INTERFACE
       uiuControl, uiuWindow,
       uiuWidget, uiWidgets,
       wdguLabel, wdguButton, wdguDivisor, wdguProgressBar,
-      wdguControllerInputState, wdguControllerInputDPad;
+      wdguControllerInputState;
 
 TYPE
 

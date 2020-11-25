@@ -9,7 +9,9 @@ UNIT wdguControllerInputState;
 INTERFACE
 
    USES
-      uStd, uColors, vmMath,
+      uStd, uColors, vmMath, vmVector,
+      {app}
+      appuController,
       {oX}
       oxuTypes, oxumPrimitive, oxuFont, oxuMaterial,
       {ui}
@@ -43,10 +45,35 @@ TYPE
       end;
    end;
 
+   { wdgTControllerDPadState }
+
+   wdgTControllerDPadState = class(uiTWidget)
+      public
+         DirectionVector: TVector2;
+
+      procedure SetDirection(newDirection: loopint);
+      procedure SetDirection(newDirection: TVector2);
+      procedure Render(); override;
+      procedure GetComputedDimensions(out d: oxTDimensions); override;
+   end;
+
+   wdgTControllerDPadStateGlobal = object(specialize wdgTBase<wdgTControllerDPadState>)
+   public
+      Defaults: record
+         Dimensions: oxTDimensions;
+
+         SurfaceColor,
+         HighlightColor: TColor4ub;
+      end;
+   end;
+
 VAR
    wdgControllerButtonState: wdgTControllerButtonStateGlobal;
+   wdgControllerDPadState: wdgTControllerDPadStateGlobal;
 
 IMPLEMENTATION
+
+{ wdgTControllerButtonState }
 
 procedure wdgTControllerButtonState.SetPressure(newPressure: single);
 begin
@@ -97,7 +124,52 @@ begin
    d.h := wdgControllerButtonState.Defaults.Height;
 end;
 
+{ wdgTControllerDPadState }
+
+procedure wdgTControllerDPadState.SetDirection(newDirection: loopint);
+begin
+   DirectionVector := appTControllerDevice.GetDPadDirectionVector(newDirection);
+end;
+
+procedure wdgTControllerDPadState.SetDirection(newDirection: TVector2);
+begin
+   DirectionVector := newDirection;
+end;
+
+procedure wdgTControllerDPadState.Render();
+var
+   radius: single;
+   center,
+   p: TVector2f;
+
+begin
+   SetColor(wdgControllerDPadState.Defaults.SurfaceColor);
+   radius := vmMin(Dimensions.w, Dimensions.h) / 2;
+
+   uiDraw.Disk(RPosition.x + radius, RPosition.y - radius, radius * 0.95);
+
+   if(DirectionVector <> vmvZero2) then begin
+      SetColor(wdgControllerDPadState.Defaults.HighlightColor);
+
+      center[0] := RPosition.x + radius;
+      center[1] := RPosition.y - radius;
+
+      p := Center;
+      p := p + (DirectionVector * radius);
+
+      uiDraw.Line(center, p);
+   end;
+end;
+
+procedure wdgTControllerDPadState.GetComputedDimensions(out d: oxTDimensions);
+begin
+   d := wdgControllerDPadState.Defaults.Dimensions;
+end;
+
+
 INITIALIZATION
+   { wdgControllerButtonState }
+
    wdgControllerButtonState.Create('controller_button_state');
 
    wdgControllerButtonState.Defaults.Width := 25;
@@ -105,5 +177,14 @@ INITIALIZATION
 
    wdgControllerButtonState.Defaults.SurfaceColor := cBlack4ub;
    wdgControllerButtonState.Defaults.HighlightColor := cRed4ub;
+
+   { wdgControllerDPadState }
+
+   wdgControllerDPadState.Create('controller_button_state');
+
+   wdgControllerDPadState.Defaults.Dimensions.Assign(80, 80);
+
+   wdgControllerDPadState.Defaults.SurfaceColor := cBlack4ub;
+   wdgControllerDPadState.Defaults.HighlightColor := cRed4ub;
 
 END.
