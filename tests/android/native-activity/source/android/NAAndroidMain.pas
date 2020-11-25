@@ -40,7 +40,7 @@ TYPE
       state: TSavedState;
    end;
 
-function engine_init_display(engine: PEngine): boolean;
+function engine_init_display(var engine: TEngine): boolean;
 var
    attribs: array[0..8] of EGLint = (
       EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
@@ -80,27 +80,27 @@ begin
    config := nil;
 
    for i := 0 to numConfigs do begin
-       if(i = numConfigs) then
-           break;
+      if i = numConfigs then
+         break;
 
-       cfg := supportedConfigs[i];
+      cfg := supportedConfigs[i];
 
-       if ((eglGetConfigAttrib(display, cfg, EGL_RED_SIZE, @r) <> 0) and
-           (eglGetConfigAttrib(display, cfg, EGL_GREEN_SIZE, @g) <> 0) and
-           (eglGetConfigAttrib(display, cfg, EGL_BLUE_SIZE,  @b) <> 0) and
-           (eglGetConfigAttrib(display, cfg, EGL_DEPTH_SIZE, @d) <> 0) and
-           (r = 8) and (g = 8) and (b = 8) and (d = 0) )  then begin
-               config := supportedConfigs[i];
-               break;
-       end;
+      if ((eglGetConfigAttrib(display, cfg, EGL_RED_SIZE, @r) <> 0) and
+         (eglGetConfigAttrib(display, cfg, EGL_GREEN_SIZE, @g) <> 0) and
+         (eglGetConfigAttrib(display, cfg, EGL_BLUE_SIZE,  @b) <> 0) and
+         (eglGetConfigAttrib(display, cfg, EGL_DEPTH_SIZE, @d) <> 0) and
+         (r = 8) and (g = 8) and (b = 8) and (d = 0) )  then begin
+            config := supportedConfigs[i];
+            break;
+      end;
    end;
 
    if i = numConfigs then
       config := supportedConfigs[0];
 
-   if (config = nil) then begin
-       logw('Unable to initialize EGLConfig');
-       exit(false);
+   if config = nil then begin
+      logw('Unable to initialize EGLConfig');
+      exit(false);
    end;
 
    (* EGL_NATIVE_VISUAL_ID is an attribute of the EGLConfig that is
@@ -108,23 +108,25 @@ begin
     * As soon as we picked a EGLConfig, we can safely reconfigure the
     * ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID. *)
    eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, @format);
-   surface := eglCreateWindowSurface(display, config, engine^.app^.window, nil);
+   ANativeWindow_setBuffersGeometry(engine.app^.window, 0, 0, @format);
+
+   surface := eglCreateWindowSurface(display, config, engine.app^.window, nil);
    context := eglCreateContext(display, config, nil, nil);
 
    if (eglMakeCurrent(display, surface, surface, context) = EGL_FALSE) then begin
-       logw('Unable to eglMakeCurrent');
-       exit(false);
+      logw('Unable to eglMakeCurrent');
+      exit(false);
    end;
 
    eglQuerySurface(display, surface, EGL_WIDTH, @w);
    eglQuerySurface(display, surface, EGL_HEIGHT, @h);
 
-   engine^.display := display;
-   engine^.context := context;
-   engine^.surface := surface;
-   engine^.width  := w;
-   engine^.height := h;
-   engine^.state.angle := 0;
+   engine.display := display;
+   engine.context := context;
+   engineengine.surface := surface;
+   engine.width  := w;
+   engine.height := h;
+   engine.state.angle := 0;
 
    // Check openGL on the system
    logi('VENDOR: ' + pChar(glGetString(GL_VENDOR)));
@@ -144,39 +146,39 @@ end;
 (**
  * Just the current frame in the display.
  *)
-procedure engine_draw_frame(engine: PEngine);
+procedure engine_draw_frame(var engine: TEngine);
 begin
-    if engine^.display = nil then
-       exit;
+   if engine.display = nil then
+      exit;
 
-    // Just fill the screen with a color.
-    glClearColor(engine^.state.x / engine^.width, engine^.state.angle,
-                 engine^.state.y / engine^.height, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
+   // Just fill the screen with a color.
+   glClearColor(engine.state.x / engine.width, engine.state.angle, engine.state.y / engine.height, 1);
+   glClear(GL_COLOR_BUFFER_BIT);
 
-    eglSwapBuffers(engine^.display, engine^.surface);
+   eglSwapBuffers(engine.display, engine.surface);
 end;
 
 (**
  * Tear down the EGL context currently associated with the display.
  *)
-procedure engine_term_display(engine: PEngine);
+procedure engine_term_display(var engine: TEngine);
 begin
-    if engine^.display <> EGL_NO_DISPLAY then begin
-        eglMakeCurrent(engine^.display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-        if engine^.context <> EGL_NO_CONTEXT  then
-            eglDestroyContext(engine^.display, engine^.context);
+   if engine.display <> EGL_NO_DISPLAY then begin
+      eglMakeCurrent(engine.display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
-        if engine^.surface <> EGL_NO_SURFACE then
-            eglDestroySurface(engine^.display, engine^.surface);
+      if engine.context <> EGL_NO_CONTEXT  then
+         eglDestroyContext(engine.display, engine.context);
 
-        eglTerminate(engine^.display);
-    end;
+      if engine.surface <> EGL_NO_SURFACE then
+         eglDestroySurface(engine.display, engine.surface);
 
-    engine^.animating := false;
-    engine^.display := EGL_NO_DISPLAY;
-    engine^.context := EGL_NO_CONTEXT;
-    engine^.surface := EGL_NO_SURFACE;
+      eglTerminate(engine.display);
+   end;
+
+   engine.animating := false;
+   engine.display := EGL_NO_DISPLAY;
+   engine.context := EGL_NO_CONTEXT;
+   engine.surface := EGL_NO_SURFACE;
 end;
 
 (**
@@ -220,13 +222,13 @@ begin
       APP_CMD_INIT_WINDOW: begin
          // The window is being shown, get it ready.
          if (engine^.app^.window <> nil) then begin
-            if engine_init_display(engine) then
-               engine_draw_frame(engine);
+            if engine_init_display(engine^) then
+               engine_draw_frame(engine^);
          end;
       end;
       APP_CMD_TERM_WINDOW: begin
          // The window is being hidden or closed, clean it up.
-         engine_term_display(engine);
+         engine_term_display(engine^);
       end;
       APP_CMD_GAINED_FOCUS: begin
          // When our app gains focus, we start monitoring the accelerometer.
@@ -246,7 +248,7 @@ begin
          *)
          // Also stop animating.
          engine^.animating := false;
-         engine_draw_frame(engine);
+         engine_draw_frame(engine^);
       end;
    end;
 end;
@@ -282,7 +284,7 @@ begin
       end;
 
       if app^.destroyRequested then begin
-         engine_term_display(@engine);
+         engine_term_display(engine);
          exit;
       end;
 
@@ -294,7 +296,7 @@ begin
 
           // Drawing is throttled to the screen update rate, so there
           // is no need to do timing here.
-          engine_draw_frame(@engine);
+          engine_draw_frame(engine);
       end;
    until false;
 end;
