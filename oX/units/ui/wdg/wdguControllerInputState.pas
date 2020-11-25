@@ -34,15 +34,16 @@ TYPE
       procedure GetComputedDimensions(out d: oxTDimensions); override;
    end;
 
+   wdgTControllerStateDefaults = record
+      Dimensions: oxTDimensions;
+
+      SurfaceColor,
+      HighlightColor: TColor4ub;
+   end;
+
    wdgTControllerButtonStateGlobal = object(specialize wdgTBase<wdgTControllerButtonState>)
    public
-      Defaults: record
-         Width,
-         Height: loopint;
-
-         SurfaceColor,
-         HighlightColor: TColor4ub;
-      end;
+      Defaults: wdgTControllerStateDefaults;
    end;
 
    { wdgTControllerDPadState }
@@ -59,12 +60,7 @@ TYPE
 
    wdgTControllerDPadStateGlobal = object(specialize wdgTBase<wdgTControllerDPadState>)
    public
-      Defaults: record
-         Dimensions: oxTDimensions;
-
-         SurfaceColor,
-         HighlightColor: TColor4ub;
-      end;
+      Defaults: wdgTControllerStateDefaults;
    end;
 
 VAR
@@ -120,8 +116,7 @@ end;
 
 procedure wdgTControllerButtonState.GetComputedDimensions(out d: oxTDimensions);
 begin
-   d.w := wdgControllerButtonState.Defaults.Width;
-   d.h := wdgControllerButtonState.Defaults.Height;
+   d := wdgControllerButtonState.Defaults.Dimensions;
 end;
 
 { wdgTControllerDPadState }
@@ -172,8 +167,7 @@ INITIALIZATION
 
    wdgControllerButtonState.Create('controller_button_state');
 
-   wdgControllerButtonState.Defaults.Width := 25;
-   wdgControllerButtonState.Defaults.Height := 25;
+   wdgControllerButtonState.Defaults.Dimensions.Assign(25, 25);
 
    wdgControllerButtonState.Defaults.SurfaceColor := cBlack4ub;
    wdgControllerButtonState.Defaults.HighlightColor := cRed4ub;
@@ -182,9 +176,7 @@ INITIALIZATION
 
    wdgControllerDPadState.Create('controller_button_state');
 
+   wdgControllerDPadState.Defaults := wdgControllerButtonState.Defaults;;
    wdgControllerDPadState.Defaults.Dimensions.Assign(80, 80);
-
-   wdgControllerDPadState.Defaults.SurfaceColor := cBlack4ub;
-   wdgControllerDPadState.Defaults.HighlightColor := cRed4ub;
 
 END.
