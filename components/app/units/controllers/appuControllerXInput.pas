@@ -73,6 +73,15 @@ begin
    TriggerCount := 2;
    DPadPresent := true;
    ButtonCount := 16;
+   AxisGroupCount := 2;
+
+   {left thumbstick}
+   AxisGroups[0][0] := 0;
+   AxisGroups[0][1] := 1;
+
+   {right thumbstick}
+   AxisGroups[1][0] := 2;
+   AxisGroups[1][1] := 3;
 end;
 
 begin

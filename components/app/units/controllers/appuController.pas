@@ -136,6 +136,8 @@ CONST
    appMAX_CONTROLLER_AXES = 16;
    {maximum number of triggers supported}
    appMAX_CONTROLLER_TRIGGERS = 8;
+   {maximum number of axis groups}
+   appMAX_CONTROLLER_AXIS_GROUPS = 8;
 
 TYPE
    appTControllerEventType = (
@@ -158,6 +160,7 @@ TYPE
       AxisCount,
       TriggerCount,
       ButtonCount,
+      AxisGroupCount,
       {trigger value range}
       TriggerValueRange,
       {axis value range}
@@ -176,6 +179,9 @@ TYPE
       Updated,
       {is the device valid (present)}
       Valid: boolean;
+
+      {axis groups with X/Y coordinates (thumbsticks)}
+      AxisGroups: array[0..appMAX_CONTROLLER_AXIS_GROUPS] of appiTAxisGroup;
 
       State: record
          {pressed state of all buttons, max 64 supported}
@@ -250,6 +256,9 @@ TYPE
       class function GetDPadDirectionVector(direction: loopint): TVector2;
       {get the dpad direction vector for this device}
       function GetDPadDirectionVector(): TVector2;
+
+      {get direction vector for an axis group}
+      function GetAxisGroupDirectionVector(group: loopint): TVector2;
    end;
 
    { appTControllerEvent }
@@ -664,6 +673,28 @@ var
 begin
    direction := GetDPadDirection();
    Result := GetDPadDirectionVector(direction);
+end;
+
+function appTControllerDevice.GetAxisGroupDirectionVector(group: loopint): TVector2;
+var
+   x,
+   y: single;
+
+   axisGroup: appiTAxisGroup;
+
+begin
+   Result := vmvZero2;
+
+   if(group >= 0) and (group < AxisGroupCount) then begin
+      axisGroup := AxisGroups[group];
+
+      x := GetNormalizedAxisValue(State.Axes[axisGroup[0]]);
+      y := GetNormalizedAxisValue(State.Axes[axisGroup[0]]);
+
+      Result[0] := x;
+      Result[1] := y;
+      Result.Normalize();
+   end;
 end;
 
 { appTControllerHandler }
