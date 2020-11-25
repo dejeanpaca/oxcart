@@ -52,7 +52,6 @@ TYPE
       procedure TextureCoords(var {%H-}v: TVector2f); virtual;
       procedure DisableTextureCoords(); virtual;
 
-
       procedure Vertex(var {%H-}v: TVector2f); virtual;
       procedure Vertex(var {%H-}v: TVector3f); virtual;
 
