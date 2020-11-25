@@ -9,7 +9,7 @@ UNIT NAAndroidMain;
 INTERFACE
 
    USES
-      looper, input, android_native_app_glue, baseunix,
+      looper, input, android_native_app_glue, baseunix, native_window,
       egl, gles,
       android_log_helper, uStd;
 
@@ -108,7 +108,7 @@ begin
     * As soon as we picked a EGLConfig, we can safely reconfigure the
     * ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID. *)
    eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, @format);
-   ANativeWindow_setBuffersGeometry(engine.app^.window, 0, 0, @format);
+   ANativeWindow_setBuffersGeometry(engine.app^.window, 0, 0, format);
 
    surface := eglCreateWindowSurface(display, config, engine.app^.window, nil);
    context := eglCreateContext(display, config, nil, nil);
@@ -123,7 +123,7 @@ begin
 
    engine.display := display;
    engine.context := context;
-   engineengine.surface := surface;
+   engine.surface := surface;
    engine.width  := w;
    engine.height := h;
    engine.state.angle := 0;
