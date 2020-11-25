@@ -9,14 +9,17 @@ UNIT oxuAndroidPlatform;
 INTERFACE
 
    USES
-      ctypes, looper, input, android_native_app_glue, android_keycodes,
-      uStd,
+      ctypes, looper, input, android_native_app_glue, android_keycodes, native_window,
+      uStd, uLog, StringUtils,
+      {egl}
+      egl, oxuglWindow,
       {app}
       uApp, appuEvents, appuKeys, appuKeyEvents, appuMouse, appuMouseEvents, appuActionEvents,
       {oX}
-      uOX, oxuRun, oxuInitialize,
+      uOX, oxuInitialize, oxuViewport,
       oxuWindow, oxuWindowHelper,
-      oxuPlatform, oxuPlatforms, oxuWindowTypes, oxuRenderer, oxuRenderThread,
+      oxuPlatform, oxuPlatforms, oxuWindowTypes,
+      oxuRenderer, oxuRenderThread, oxuRenderingContext,
       {ui}
       uiuTypes, uiuWindowTypes, uiuWindow;
 
@@ -29,6 +32,7 @@ TYPE
 
       function MakeWindow({%H-}wnd: oxTWindow): boolean; override;
       function DestroyWindow(wnd: oxTWindow): boolean; override;
+      function SetupBuffer(wnd: oxTWindow): boolean;
 
       procedure ProcessEvents(); override;
    end;
@@ -47,8 +51,36 @@ TYPE
       procedure show(devID: longint; {%H-}wnd: pointer); override;
    end;
 
+   { oxTAndroidPlatformGlobal }
+
+   oxTAndroidPlatformGlobal = record
+      {recreate the surface}
+      fRecreateSurface,
+      fHaveFocus,
+      fLostFocus,
+      fRegainedFocus,
+      fInitWindow,
+      fLostWindow,
+      fStarted,
+      fDone: boolean;
+
+      {signal hide the navbar}
+      HideNavbar,
+      {if true, will automatically hide the navbar}
+      AutoHideNavBar: boolean;
+
+      {platform object}
+      Platform: oxTAndroidPlatform;
+
+      procedure RecreateSurface();
+      procedure RegainedFocus();
+      procedure DestroyWindow();
+   end;
+
 VAR
    AndroidApp: Pandroid_app;
+   {android platform global}
+   oxAndroidPlatform: oxTAndroidPlatformGlobal;
 
 procedure AndroidHandleCommand(app: Pandroid_app; cmd: cint32);
 function AndroidHandleInput(app: Pandroid_app; event: PAInputEvent): cint32;
@@ -57,43 +89,41 @@ procedure AndroidProcessEvents();
 IMPLEMENTATION
 
 procedure AndroidHandleCommand(app: Pandroid_app; cmd: cint32);
-var
-   renderer: oxTRenderer;
-
 begin
    if(cmd = APP_CMD_INIT_WINDOW) then begin
-      if(not ox.Initialized) and (not ox.Started) then
-         oxRun.Initialize()
-      else begin
-         if(ox.Started) then begin
-            renderer := oxTRenderer(oxWindow.Current.Renderer);
-
-            renderer.PreserveRCs := true;
-            renderer.PreInitWindow(oxWindow.Current);
-            renderer.InitWindow(oxWindow.Current);
-            renderer.SetupWindow(oxWindow.Current);
-            oxRenderThread.StartThread(oxWindow.Current, oxWindow.Current.RenderingContext);
-         end;
-      end;
-
-      if(app^.autoHideNavBar) then
-         app^.hideNavbar := true;
+      oxAndroidPlatform.fInitWindow := true;
    end else if(cmd = APP_CMD_TERM_WINDOW) then begin
       if(ox.Started) then begin
-         renderer := oxTRenderer(oxWindow.Current.Renderer);
-
-         renderer.PreserveRCs := true;
-         renderer.DeInitWindow(oxWindow.Current);
+         oxRenderingContext.CanRender := false;
+         oxAndroidPlatform.fLostWindow := true;
       end;
    end else if(cmd = APP_CMD_GAINED_FOCUS) then begin
-      if(oxWindow.Current <> nil) then
+      log.v('android > Gained focus');
+
+      if(oxWindow.Current <> nil) then begin
          oxWindow.Current.Select();
+         oxAndroidPlatform.fRegainedFocus := true;
+         oxAndroidPlatform.fHaveFocus := true;
+         oxAndroidPlatform.fLostFocus := false;
+
+         if(oxAndroidPlatform.AutoHideNavBar) then
+            oxAndroidPlatform.hideNavbar := true;
+      end;
    end else if(cmd = APP_CMD_LOST_FOCUS) then begin
+      log.v('android > Lost focus');
+
       if(oxWindow.Current <> nil) then
          oxWindow.Current.Deselect();
+
+      oxAndroidPlatform.fHaveFocus := false;
+      oxAndroidPlatform.fLostFocus := true;
+      oxAndroidPlatform.fRegainedFocus := false;
+      oxRenderingContext.CanRender := false;
+
+      if(oxAndroidPlatform.fStarted) then
+         oxAndroidPlatform.fStarted := false;
    end else if(cmd = APP_CMD_DESTROY) then begin
-      oxRun.Done();
-      oxInitialization.Deinitialize();
+      oxAndroidPlatform.fDone := true;
    end;
 end;
 
@@ -196,6 +226,58 @@ begin
    end;
 end;
 
+{ oxTAndroidPlatformGlobal }
+
+procedure oxTAndroidPlatformGlobal.RecreateSurface();
+var
+   renderer: oxTRenderer;
+   wnd: oxTWindow;
+
+begin
+   if(not fRecreateSurface) then
+      exit;
+
+   wnd := oxWindow.Current;
+   renderer := oxTRenderer(wnd.Renderer);
+
+   renderer.PreserveRCs := true;
+   renderer.PreInitWindow(wnd);
+   oxTAndroidPlatform(wnd.Platform).SetupBuffer(wnd);
+   renderer.InitWindow(wnd);
+   renderer.SetupWindow(wnd);
+
+   if(wnd.ErrorCode <> 0) then
+      log.e('Failed to restore window: ' + sf(wnd.ErrorCode) + '/' + wnd.ErrorDescription);
+
+   fRecreateSurface := false;
+   fRegainedFocus := true;
+end;
+
+procedure oxTAndroidPlatformGlobal.RegainedFocus();
+begin
+   if(not fRegainedFocus) then
+      exit;
+
+   oxWindow.Current.Viewport.Apply();
+   oxRenderThread.StartThread(oxWindow.Current, oxWindow.Current.RenderingContext);
+   oxRenderingContext.CanRender := true;
+
+   fRegainedFocus := false;
+end;
+
+procedure oxTAndroidPlatformGlobal.DestroyWindow();
+var
+   renderer: oxTRenderer;
+
+begin
+   renderer := oxTRenderer(oxWindow.Current.Renderer);
+
+   renderer.PreserveRCs := true;
+   renderer.DeInitWindow(oxWindow.Current);
+
+   fLostWindow := false;
+end;
+
 { TAndroidPointerDriver }
 
 constructor TAndroidPointerDriver.Create();
@@ -228,6 +310,7 @@ end;
 constructor oxTAndroidPlatform.Create();
 begin
    Name := 'android';
+   oxAndroidPlatform.Platform := Self;
 end;
 
 function oxTAndroidPlatform.Initialize(): boolean;
@@ -250,13 +333,18 @@ begin
    {initialize gl for window}
    if(not oxTRenderer(wnd.Renderer).PreInitWindow(wnd)) then begin
       wnd.RaiseError('android > egl preinit failed');
-      exit;
+      exit(false);
+   end;
+
+   if(not SetupBuffer(wnd)) then begin
+      wnd.RaiseError('android > failed to setup window buffer');
+      exit(false);
    end;
 
    {initialize window}
    if(not oxTRenderer(wnd.Renderer).InitWindow(wnd)) then begin
       wnd.RaiseError('android > egl window create failed.');
-      exit;
+      exit(false);
    end;
 
    wnd.SetPosition(0, wnd.Dimensions.h - 1, false);
@@ -273,12 +361,32 @@ begin
       Result := oxTRenderer(wnd.Renderer).DeInitWindow(wnd);
 end;
 
+function oxTAndroidPlatform.SetupBuffer(wnd: oxTWindow): boolean;
+var
+   glwnd: oglTWindow;
+   format: EGLint;
+
+begin
+   Result := false;
+   glwnd := oglTWindow(wnd);
+
+   if eglGetConfigAttrib(glwnd.wd.Display, glwnd.wd.config, EGL_NATIVE_VISUAL_ID, @format) = EGL_FALSE then begin
+      wnd.RaiseError('egl > Failed to get EGL_NATIVE_VISUAL_ID');
+      exit(false);
+   end;
+
+   ANativeWindow_setBuffersGeometry(AndroidApp^.window, 0, 0, format);
+
+   Result := true;
+end;
+
 procedure oxTAndroidPlatform.ProcessEvents();
 begin
    AndroidProcessEvents();
 end;
 
 INITIALIZATION
+//   oxAndroidPlatform.AutoHideNavBar := true;
    oxPlatforms.Register(oxTAndroidPlatform);
 
 END.
