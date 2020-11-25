@@ -61,21 +61,21 @@ begin
    Workbar.AddSeparator();
 
    btn := Workbar.AddButton(oxedIcons.Create($f121), oxedActions.RECODE);
-   btn^.Hint := 'Recode project';
+   btn^.SetHint('Recode project');
    btn^.Color.Assign(255, 102, 0, 255);
 
    Workbar.AddSeparator();
 
    Buttons.ProjectSettings := Workbar.AddButton(oxedIcons.Create($f013), oxedwndProjectSettings.OpenWindowAction);
-   Buttons.ProjectSettings^.Hint := 'Open project settings';
+   Buttons.ProjectSettings^.SetHint('Open project settings');
 
    btn := Workbar.AddButton(oxedIcons.Create($f07b), oxedActions.OPEN_PROJECT_DIRECTORY);
-   btn^.Hint := 'Open project directory';
+   btn^.SetHint('Open project directory');
    btn^.Color := uiFiles.DirectoryColor;
    Buttons.ProjectDirectory := btn;
 
    btn := Workbar.AddButton(oxedIcons.Create($f1b0), oxedActions.OPEN_LAZARUS);
-   btn^.Hint := 'Open lazarus for project';
+   btn^.SetHint('Open lazarus for project');
    btn^.Color := oxedUI.LazarusColor;
    Buttons.OpenLazarus := btn;
 

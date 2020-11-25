@@ -56,13 +56,13 @@ begin
       oxedMenuToolbar.Toolbar.AddSeparator();
 
    oxedRunButtons.Wdg.Play := oxedMenuToolbar.Toolbar.AddButton(oxedIcons.Create($f04b), oxedActions.RUN_PLAY);
-   oxedRunButtons.Wdg.Play^.Hint := 'Start playing (run) the project';
+   oxedRunButtons.Wdg.Play^.SetHint('Start playing (run) the project');
 
    oxedRunButtons.Wdg.Pause := oxedMenuToolbar.Toolbar.Addbutton(oxedIcons.Create($f04c), oxedActions.RUN_PAUSE);
-   oxedRunButtons.Wdg.Pause^.Hint := 'Pause running';
+   oxedRunButtons.Wdg.Pause^.SetHint('Pause running');
 
    oxedRunButtons.Wdg.Stop := oxedMenuToolbar.Toolbar.AddButton(oxedIcons.Create($f04d), oxedActions.RUN_STOP);
-   oxedRunButtons.Wdg.Stop^.Hint := 'Stop running';
+   oxedRunButtons.Wdg.Stop^.SetHint('Stop running');
 
    oxedMenuToolbar.OnResize();
 
@@ -89,10 +89,10 @@ procedure OnProjectPauseToggle();
 begin
    if(not oxedProject.Paused) then begin
       oxedRunButtons.Wdg.Pause^.Color := cWhite4ub;
-      oxedRunButtons.Wdg.Pause^.Hint := 'Pause running';
+      oxedRunButtons.Wdg.Pause^.SetHint('Pause running');
    end else begin
       oxedRunButtons.Wdg.Pause^.Color.Assign(127, 64, 64, 255);
-      oxedRunButtons.Wdg.Pause^.Hint := 'Resume running';
+      oxedRunButtons.Wdg.Pause^.SetHint('Resume running');
    end;
 end;
 

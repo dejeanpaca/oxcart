@@ -47,7 +47,7 @@ begin
    oxedMenuToolbar.Toolbar.Transparent := true;
 
    oxedMenuToolbar.FrameRate := oxedMenuToolbar.Toolbar.AddCaption('');
-   oxedMenuToolbar.FrameRate^.Hint := 'Editor frame rate';
+   oxedMenuToolbar.FrameRate^.SetHint('Editor frame rate');
 
    oxedMenuToolbar.OnResize();
 end;

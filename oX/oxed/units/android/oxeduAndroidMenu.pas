@@ -29,13 +29,13 @@ begin
 
       if(item = nil) then begin
          item := oxedWorkbar.Workbar.AddButton(oxedIcons.Create($f3cd), oxedAndroidBuild.BUILD_TO_PROJECT_ACTION);
-         item^.Hint := 'Build binary (' +
-            oxedAndroidCPUTypes[LongInt(oxedAndroidSettings.Project.EmulatorCPUType)] + ') to android project';
+         item^.SetHint('Build binary (' +
+            oxedAndroidCPUTypes[LongInt(oxedAndroidSettings.Project.EmulatorCPUType)] + ') to android project');
 
          item^.Color.Assign(61, 220, 132, 255);
 
          item := oxedWorkbar.Workbar.AddButton(oxedIcons.Create($f10b), oxedAndroidBuild.BUILD_ASSETS_TO_PROJECT_ACTION);
-         item^.Hint := 'Build assets to android project';
+         item^.SetHint('Build assets to android project');
          item^.Color.Assign(61, 220, 132, 255);
       end;
    end;
