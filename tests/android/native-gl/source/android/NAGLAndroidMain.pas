@@ -9,7 +9,7 @@ UNIT NAGLAndroidMain;
 INTERFACE
 
    USES
-      looper, input, android_native_app_glue, baseunix,
+      looper, android_native_app_glue, baseunix,
       egl, gles,
       android_log_helper, uStd;
 
@@ -18,13 +18,6 @@ procedure android_main(app: Pandroid_app); cdecl;
 IMPLEMENTATION
 
 TYPE
-   TSavedState = record
-      angle: single;
-      x,
-      y: int32;
-   end;
-
-
    PEngine = ^TEngine;
    TEngine = record
       app: Pandroid_app;
@@ -37,7 +30,11 @@ TYPE
       width,
       height: int32;
 
-      state: TSavedState;
+      state: record
+         x,
+         y,
+         angle: single;
+      end;
    end;
 
 function engine_init_display(engine: PEngine): boolean;
@@ -70,9 +67,6 @@ begin
 
    supportedConfigs := nil;
 
-   (* Here, the application chooses the configuration it desires.
-    * find the best match if possible, otherwise use the very first one
-    *)
    eglChooseConfig(display, attribs, nil, 0, @numConfigs);
    SetLength(supportedConfigs, numConfigs);
    eglChooseConfig(display, attribs, @supportedConfigs[0], numConfigs, @numConfigs);
@@ -103,10 +97,6 @@ begin
        exit(false);
    end;
 
-   (* EGL_NATIVE_VISUAL_ID is an attribute of the EGLConfig that is
-    * guaranteed to be accepted by ANativeWindow_setBuffersGeometry().
-    * As soon as we picked a EGLConfig, we can safely reconfigure the
-    * ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID. *)
    eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, @format);
    surface := eglCreateWindowSurface(display, config, engine^.app^.window, nil);
    context := eglCreateContext(display, config, nil, nil);
@@ -124,7 +114,6 @@ begin
    engine^.surface := surface;
    engine^.width  := w;
    engine^.height := h;
-   engine^.state.angle := 0;
 
    // Check openGL on the system
    logi('VENDOR: ' + pChar(glGetString(GL_VENDOR)));
@@ -141,9 +130,7 @@ begin
    Result := true;
 end;
 
-(**
- * Just the current frame in the display.
- *)
+{ Just the current frame in the display. }
 procedure engine_draw_frame(engine: PEngine);
 begin
     if engine^.display = nil then
@@ -157,14 +144,13 @@ begin
     eglSwapBuffers(engine^.display, engine^.surface);
 end;
 
-(**
- * Tear down the EGL context currently associated with the display.
- *)
+{ Tear down the EGL context currently associated with the display. }
 procedure engine_term_display(engine: PEngine);
 begin
     if engine^.display <> EGL_NO_DISPLAY then begin
         eglMakeCurrent(engine^.display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-        if engine^.context <> EGL_NO_CONTEXT  then
+
+         if engine^.context <> EGL_NO_CONTEXT then
             eglDestroyContext(engine^.display, engine^.context);
 
         if engine^.surface <> EGL_NO_SURFACE then
@@ -179,30 +165,6 @@ begin
     engine^.surface := EGL_NO_SURFACE;
 end;
 
-(**
- * Process the next input event.
- *)
-function engine_handle_input(app: Pandroid_app; event: PAInputEvent): cint32;
-var
-   engine: PEngine;
-
-begin
-   engine := app^.userData;
-
-    if AInputEvent_getType(event) = AINPUT_EVENT_TYPE_MOTION then begin
-        engine^.animating := true;
-        engine^.state.x := round(AMotionEvent_getX(event, 0));
-        engine^.state.y := round(AMotionEvent_getY(event, 0));
-
-        exit(1);
-    end;
-
-    exit(0);
-end;
-
-(**
- * Process the next main command.
- *)
 procedure engine_handle_cmd(app: Pandroid_app; cmd: cint32);
 var
    engine: PEngine;
@@ -211,43 +173,30 @@ begin
     engine := app^.userData;
 
     case cmd of
-      APP_CMD_SAVE_STATE: begin
-         // The system has asked us to save our current state.  Do so.
-         engine^.app^.savedState := GetMem(sizeof(TSavedState));
-         TSavedState(engine^.app^.savedState^) := engine^.state;
-         engine^.app^.savedStateSize := SizeOf(TSavedState);
-      end;
       APP_CMD_INIT_WINDOW: begin
-         // The window is being shown, get it ready.
          if (engine^.app^.window <> nil) then begin
-            if engine_init_display(engine) then
-               engine_draw_frame(engine);
+            if(engine_init_display(engine)) then
+                engine^.animating := true;
          end;
       end;
       APP_CMD_TERM_WINDOW: begin
-         // The window is being hidden or closed, clean it up.
          engine_term_display(engine);
       end;
-      APP_CMD_GAINED_FOCUS: begin
-         // When our app gains focus, we start monitoring the accelerometer.
-         (*if (engine->accelerometerSensor != nullptr) {
-            ASensorEventQueue_enableSensor(engine->sensorEventQueue, engine->accelerometerSensor);
-            // We'd like to get 60 events per second (in us).
-            ASensorEventQueue_setEventRate(engine->sensorEventQueue,
-               engine->accelerometerSensor, (1000L/60)*1000);
-         } *)
-      end;
       APP_CMD_LOST_FOCUS: begin
-         // When our app loses focus, we stop monitoring the accelerometer.
-         // This is to avoid consuming battery while not being used.
-         (* if (engine->accelerometerSensor != nullptr) {
-               ASensorEventQueue_disableSensor(engine->sensorEventQueue, engine->accelerometerSensor);
-            }
-         *)
-         // Also stop animating.
          engine^.animating := false;
-         engine_draw_frame(engine);
       end;
+   end;
+end;
+
+procedure run(var engine: TEngine);
+begin
+   if engine.animating then begin
+      engine.state.angle := engine.state.angle + 0.01;
+
+      if engine.state.angle > 1 then
+         engine.state.angle := 0;
+
+      engine_draw_frame(@engine);
    end;
 end;
 
@@ -264,11 +213,7 @@ begin
    app^.userData := @engine;
 
    app^.onAppCmd := @engine_handle_cmd;
-   app^.onInputEvent := @engine_handle_input;
    engine.app := app;
-
-   if(app^.savedState <> nil) then
-      engine.state := TSavedState(app^.savedState^);
 
    nEvents := 0;
    pSource := nil;
@@ -286,16 +231,7 @@ begin
          exit;
       end;
 
-      if engine.animating then begin
-          engine.state.angle := engine.state.angle + 0.01;
-
-          if (engine.state.angle > 1) then
-              engine.state.angle := 0;
-
-          // Drawing is throttled to the screen update rate, so there
-          // is no need to do timing here.
-          engine_draw_frame(@engine);
-      end;
+      run(engine);
    until false;
 end;
 
