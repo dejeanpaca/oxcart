@@ -24,9 +24,10 @@ TYPE
 
    wdgTControllerDPadState = class(uiTWidget)
       public
-         Direction: loopint;
+         DirectionVector: TVector2;
 
       procedure SetDirection(newDirection: loopint);
+      procedure SetDirection(newDirection: TVector2);
       procedure Render(); override;
       procedure GetComputedDimensions(out d: oxTDimensions); override;
    end;
@@ -48,14 +49,18 @@ IMPLEMENTATION
 
 procedure wdgTControllerDPadState.SetDirection(newDirection: loopint);
 begin
-   Direction := newDirection;
+   DirectionVector := appTControllerDevice.GetDPadDirectionVector(newDirection);
+end;
+
+procedure wdgTControllerDPadState.SetDirection(newDirection: TVector2);
+begin
+   DirectionVector := newDirection;
 end;
 
 procedure wdgTControllerDPadState.Render();
 var
    radius: single;
    center,
-   v,
    p: TVector2f;
 
 begin
@@ -64,15 +69,14 @@ begin
 
    uiDraw.Disk(RPosition.x + radius, RPosition.y - radius, radius * 0.95);
 
-   if(Direction <> appCONTROLLER_DIRECTION_NONE) then begin
+   if(DirectionVector <> vmvZero2) then begin
       SetColor(wdgControllerDPadState.Defaults.HighlightColor);
 
       center[0] := RPosition.x + radius;
       center[1] := RPosition.y - radius;
 
       p := Center;
-      v := appTControllerDevice.GetDPadDirectionVector(Direction);
-      p := p + (v * radius);
+      p := p + (DirectionVector * radius);
 
       uiDraw.Line(center, p);
    end;
