@@ -677,9 +677,6 @@ end;
 
 function appTControllerDevice.GetAxisGroupDirectionVector(group: loopint): TVector2;
 var
-   x,
-   y: single;
-
    axisGroup: appiTAxisGroup;
 
 begin
@@ -688,11 +685,9 @@ begin
    if(group >= 0) and (group < AxisGroupCount) then begin
       axisGroup := AxisGroups[group];
 
-      x := GetNormalizedAxisValue(State.Axes[axisGroup[0]]);
-      y := GetNormalizedAxisValue(State.Axes[axisGroup[0]]);
+      Result[0] := GetNormalizedAxisValue(State.Axes[axisGroup[0]]);
+      Result[1] := GetNormalizedAxisValue(State.Axes[axisGroup[1]]);
 
-      Result[0] := x;
-      Result[1] := y;
       Result.Normalize();
    end;
 end;
