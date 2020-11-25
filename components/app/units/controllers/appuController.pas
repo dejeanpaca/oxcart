@@ -257,8 +257,12 @@ TYPE
       {get the dpad direction vector for this device}
       function GetDPadDirectionVector(): TVector2;
 
-      {get direction vector for an axis group}
+      {get vector for an axis group (unnormalized position)}
+      function GetAxisGroupVector(group: loopint): TVector2;
+      {get direction vector for an axis group (normalized to unit length)}
       function GetAxisGroupDirectionVector(group: loopint): TVector2;
+      {get direction vector magnitude (0.0 - 1.0)}
+      function GetAxisGroupDirectionMagnitude(group: loopint): single;
    end;
 
    { appTControllerEvent }
@@ -674,7 +678,7 @@ begin
    Result := GetDPadDirectionVector(direction);
 end;
 
-function appTControllerDevice.GetAxisGroupDirectionVector(group: loopint): TVector2;
+function appTControllerDevice.GetAxisGroupVector(group: loopint): TVector2;
 var
    axisGroup: appiTAxisGroup;
 
@@ -686,9 +690,23 @@ begin
 
       Result[0] := GetNormalizedAxisValue(State.Axes[axisGroup[0]]);
       Result[1] := GetNormalizedAxisValue(State.Axes[axisGroup[1]]);
-
-      Result.Normalize();
    end;
+end;
+
+function appTControllerDevice.GetAxisGroupDirectionVector(group: loopint): TVector2;
+begin
+   Result := vmvZero2;
+
+   if(group >= 0) and (group < AxisGroupCount) then
+      Result := GetAxisGroupVector(group).Normalized();
+end;
+
+function appTControllerDevice.GetAxisGroupDirectionMagnitude(group: loopint): single;
+begin
+   Result := 0;
+
+   if(group >= 0) and (group < AxisGroupCount) then
+      Result := GetAxisGroupVector(group).Magnitude();
 end;
 
 { appTControllerHandler }
