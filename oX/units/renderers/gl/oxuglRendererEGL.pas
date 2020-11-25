@@ -31,7 +31,7 @@ TYPE
       function GetErrorDescription(error: loopint): StdString; virtual;
 
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
-      procedure OnInitWindow(wnd: oglTWindow); virtual;
+      function OnInitWindow(wnd: oglTWindow): boolean; virtual;
       function OnDeInitWindow(wnd: oglTWindow): boolean; virtual;
       function GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext; virtual;
       function ContextCurrent(const context: oxTRenderTargetContext): boolean; virtual;
@@ -153,7 +153,7 @@ begin
    Result := true;
 end;
 
-procedure oxglTEGL.OnInitWindow(wnd: oglTWindow);
+function oxglTEGL.OnInitWindow(wnd: oglTWindow): boolean;
 var
    w,
    h: EGLint;
@@ -164,7 +164,7 @@ begin
 
       if(wnd.wd.Surface = nil) then begin
          wnd.RaiseError('Failed to create window surface, egl error: ' + HexStr(RaiseError(), 4));
-         exit();
+         exit(false);
       end;
 
       oxRenderer.logtv('egl > Created window surface');
@@ -176,6 +176,7 @@ begin
    oxRenderer.logtv('egl > Surface dimensions: ' + sf(w) + 'x' + sf(h));
 
    wnd.Dimensions.Assign(w, h);
+   Result := true;
 end;
 
 function oxglTEGL.OnDeInitWindow(wnd: oglTWindow): boolean;
