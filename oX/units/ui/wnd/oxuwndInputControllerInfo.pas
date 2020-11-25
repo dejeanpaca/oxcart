@@ -42,6 +42,7 @@ TYPE
 
       wdg: record
          DPad: wdgTControllerDPadState;
+         AxisGroups: array[0..appMAX_CONTROLLER_AXIS_GROUPS - 1] of wdgTControllerDPadState;
          Buttons: array[0..appMAX_CONTROLLER_BUTTONS - 1] of wdgTControllerButtonState;
          Axes: array[0..appMAX_CONTROLLER_AXES - 1] of wdgTProgressBar;
          Triggers: array[0..appMAX_CONTROLLER_TRIGGERS - 1] of wdgTProgressBar;
@@ -103,6 +104,7 @@ begin
    ZeroOut(wdg.Buttons, SizeOf(wdg.Buttons));
    ZeroOut(wdg.Axes, SizeOf(wdg.Axes));
    ZeroOut(wdg.Triggers, SizeOf(wdg.Triggers));
+   ZeroOut(wdg.AxisGroups, SizeOf(wdg.AxisGroups));
 
    for i := 0 to Controller.ButtonCount - 1 do begin
       if(i mod buttonsPerRow = 0) and (i >= buttonsPerRow) then
@@ -115,7 +117,6 @@ begin
 
       wdg.Buttons[i] := btnWidget;
    end;
-
 
    r := uiWidget.LastRect;
 
@@ -160,6 +161,14 @@ begin
       wdg.DPad.SetDirection(Controller.GetDPadDirection());
    end;
 
+   if(Controller.AxisGroupCount > 0) then begin
+      uiWidget.LastRect.NextLine();
+
+      for i := 0 to Controller.AxisGroupCount - 1 do begin
+         wdg.AxisGroups[i] := wdgControllerDPadState.Add(uiWidget.LastRect.RightOf());
+      end;
+   end;
+
    {add a cancel button}
    btnOk := wdgButton.Add('Close', uiWidget.LastRect.BelowOf(), oxNullDimensions, @Close);
    btnOk.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT);
@@ -193,6 +202,11 @@ begin
 
    if(wdg.DPad <> nil) then
       wdg.DPad.SetDirection(Controller.GetDPadDirection());
+
+   for i := 0 to Controller.AxisGroupCount - 1 do begin
+      if(wdg.AxisGroups[i] <> nil) then
+         wdg.AxisGroups[i].SetDirection(Controller.GetAxisGroupDirectionVector(i));
+   end;
 end;
 
 constructor oxTControllerInfoWindow.Create();
