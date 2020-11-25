@@ -34,6 +34,8 @@ TYPE
    appiPKeyState = ^appiTKeyState;
    appiTKeyState = TBitSet;
 
+   appiTAxisGroup = array[0..1] of loopint;
+
    { appiTKeyStates }
 
    appiTKeyStates = record
