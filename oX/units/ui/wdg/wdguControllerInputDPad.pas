@@ -71,31 +71,8 @@ begin
       center[1] := RPosition.y - radius;
 
       p := Center;
-      v := vmvZero2;
-
-      if(Direction = appCONTROLLER_DIRECTION_UP) then begin
-         v[1] := +1;
-      end else if(Direction = appCONTROLLER_DIRECTION_DOWN) then begin
-         v[1] := -1;
-      end else if(Direction = appCONTROLLER_DIRECTION_LEFT) then begin
-         v[0] := -1;
-      end else if(Direction = appCONTROLLER_DIRECTION_RIGHT) then begin
-         v[0] := +1;
-      end else if(Direction = appCONTROLLER_DIRECTION_UP_LEFT) then begin
-         v[0] := -1;
-         v[1] := +1;
-      end else if(Direction = appCONTROLLER_DIRECTION_UP_RIGHT) then begin
-         v[0] := +1;
-         v[1] := +1;
-      end else if(Direction = appCONTROLLER_DIRECTION_DOWN_LEFT) then begin
-         v[0] := -1;
-         v[1] := -1;
-      end else if(Direction = appCONTROLLER_DIRECTION_DOWN_RIGHT) then begin
-         v[0] := 1;
-         v[1] := -1
-      end;
-
-      p := p + (v.Normalized() * radius);
+      v := appTControllerDevice.GetDPadDirectionVector(Direction);
+      p := p + (v * radius);
 
       uiDraw.Line(center, p);
    end;
