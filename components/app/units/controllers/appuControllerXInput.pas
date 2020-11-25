@@ -12,7 +12,7 @@ INTERFACE
       uStd, uLog, StringUtils,
       appuController,
       {windows}
-      windows, DX12.XInput;
+      windows, JwaWinError, DX12.XInput;
 
 TYPE
    { appTXInputControllerHandler }
@@ -104,8 +104,16 @@ var
    xstate: TXINPUT_STATE;
    gamepad: TXINPUT_GAMEPAD;
 
+   error: loopint;
+
 begin
-   XInputGetState(XInputIndex, xstate);
+   error := XInputGetState(XInputIndex, xstate);
+
+   {device disconnected}
+   if(error = ERROR_DEVICE_NOT_CONNECTED) then begin
+      Disconnected();
+      exit;
+   end;
 
    {state has not changed, do nothing}
    if(XPacket = xstate.dwPacketNumber) then
@@ -174,7 +182,6 @@ end;
 
 procedure appTXInputControllerHandler.Run();
 begin
-   inherited Run();
 end;
 
 function appTXInputControllerHandler.GetName(): StdString;
