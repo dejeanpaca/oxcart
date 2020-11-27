@@ -74,6 +74,8 @@ INTERFACE
          {%H-}appuControllerXInput,
          {%H-}appuControllerDirectInput,
          {$ENDIF}
+         {use default controller mappings}
+         appuControllerMappings,
       {$ENDIF}
 
       { renderers }
