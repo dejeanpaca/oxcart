@@ -24,7 +24,7 @@ begin
    appTControllerDeviceMapping.Initialize(m);
 
    {$IFDEF WINDOWS}
-   m.ButtonCount := 16;
+   m.Settings.ButtonCount := 16;
    {$ENDIF}
    {$IFDEF LINUX}
    m.Settings.ButtonCount := 10;
