@@ -245,6 +245,9 @@ TYPE
          KeyState: TBitSet64;
          {more detailed key state}
          Keys: appiTKeyStates;
+         {detailed dpad key state}
+         DPadKeys: appiTKeyStates;
+
          {dpad state}
          DPad: array[0..3] of appiTKeyState;
          {key properties}
@@ -308,6 +311,8 @@ TYPE
       procedure SetTriggerState(index: loopint; raw: loopint);
       {set the state of an axis}
       procedure SetAxisState(index: loopint; raw: loopint);
+      {set dpad pressed state}
+      procedure SetDPadPressed(index: loopint; pressed: boolean);
 
       {get direction of the dpad}
       function GetDPadDirection(): loopint;
@@ -595,6 +600,7 @@ begin
    Mapping := @appControllerDeviceGenericMapping;
 
    State.Keys.SetupKeys(appMAX_CONTROLLER_BUTTONS, @State.KeyProperties);
+   State.DPadKeys.SetupKeys(4, @State.DPad);
 end;
 
 procedure appTControllerDevice.LogDevice();
@@ -793,6 +799,11 @@ begin
          vmClamp(State.Axes[index], -1.0, 1.0);
       end;
    end;
+end;
+
+procedure appTControllerDevice.SetDPadPressed(index: loopint; pressed: boolean);
+begin
+   State.DPadKeys.Process(index, pressed);
 end;
 
 function appTControllerDevice.GetDPadDirection(): loopint;
