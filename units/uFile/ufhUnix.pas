@@ -8,7 +8,8 @@ UNIT ufhUnix;
 
 INTERFACE
 
-   USES BaseUnix, Unix, uStd, uFileUtils, uFile, StringUtils;
+   USES
+      BaseUnix, Unix, uUnix, uStd, uFileUtils, uFile, StringUtils;
 
 TYPE
 
@@ -43,9 +44,6 @@ VAR
 procedure fOpenUnix(var f: TFile; d: cint; offs, size: fileint); {normal file via descriptor}
 
 IMPLEMENTATION
-
-function xFpread(fd: cint; buf: pchar; nbytes : size_t): ssize_t; external name 'FPC_SYSC_READ';
-Function xFpWrite(fd : cInt; buf:pChar; nbytes : TSize): TSsize;  external name 'FPC_SYSC_WRITE';
 
 function fIoErr(var f: TFile): longint;
 begin
@@ -117,7 +115,7 @@ begin
 
       {fill the buffer first and then read from buffer}
       if(rLeft <= f.bSize) then begin
-         bRead := xFpread(f.Handle, pchar(f.bData), f.bSize);
+         bRead := unxFpread(f.Handle, pchar(f.bData), f.bSize);
 
          if(fIoErr(f) = 0) then begin
             move(f.bData^, (@buf + bLeft)^, rLeft);
@@ -128,7 +126,7 @@ begin
             Result := -bLeft;
       {read directly}
       end else begin
-         bRead := xFpread(f.Handle, pchar(@buf + bLeft), rLeft);
+         bRead := unxFpread(f.Handle, pchar(@buf + bLeft), rLeft);
 
          if(fIoErr(f) = 0) then
             Result := bLeft + bRead
@@ -156,7 +154,7 @@ begin
    {write out}
    end else begin
       {write out buffer}
-      bWrite := xFpread(f.Handle, pchar(f.bData), f.bPosition);
+      bWrite := unxFpread(f.Handle, pchar(f.bData), f.bPosition);
       f.bPosition := 0;
 
       {store data into buffer if it can fit}
@@ -165,7 +163,7 @@ begin
          Result := count;
       {otherwise write contents directly to file}
       end else begin
-         bWrite := xFpread(f.Handle, pchar(@buf), count);
+         bWrite := unxFpread(f.Handle, pchar(@buf), count);
 
          if(fIoErr(f) = 0) then
             Result := bWrite
@@ -228,7 +226,7 @@ var
 
 begin
    {$PUSH}{$HINTS OFF} // buf does not need to be initialized, since we're moving data into it
-   bRead := xFpRead(f.Handle, pchar(@buf), count);{$POP}
+   bRead := unxFpRead(f.Handle, pchar(@buf), count);{$POP}
 
    if(fIoErr(f) = 0) then
       Result := bRead
@@ -241,7 +239,7 @@ var
    bWrite: fileint;
 
 begin
-   bWrite := xFpWrite(f.Handle, pchar(@buf), count);
+   bWrite := unxFpWrite(f.Handle, pchar(@buf), count);
 
    if(fIoErr(f) = 0) then
       Result := bWrite
@@ -257,7 +255,7 @@ end;
 
 procedure TUnixFileHandler.Flush(var f: TFile);
 begin
-   xFpWrite(f.Handle, pchar(f.bData), f.bPosition);
+   unxFpWrite(f.Handle, pchar(f.bData), f.bPosition);
    fIoErr(f);
 end;
 

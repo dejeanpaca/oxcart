@@ -9,7 +9,8 @@ UNIT appuControllerLinux;
 INTERFACE
 
    USES
-      baseunix, sysutils, uStd, uLog, StringUtils, uLinux,
+      baseunix, sysutils,
+      uUnix, uStd, uLog, StringUtils, uLinux,
       appuController;
 
 TYPE
@@ -72,8 +73,6 @@ TYPE
 
 VAR
    appLinuxControllerHandler: appTLinuxControllerHandler;
-
-function xFpread(fd: cint; buf: pchar; nbytes : size_t): ssize_t; external name 'FPC_SYSC_READ';
 
 { js_event_helper }
 
@@ -190,7 +189,7 @@ begin
 
    repeat
       {no need for event to be initialized, since we read it}
-      count := xFpRead(fileHandle, @jsevent, SizeOf(js_event));
+      count := unxFpRead(fileHandle, @jsevent, SizeOf(js_event));
 
       if(count = SizeOf(js_event)) then begin
          event.MappedFunction := appCONTROLLER_NONE;

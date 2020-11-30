@@ -24,7 +24,7 @@ INTERFACE
   USES
      baseunix, unixtype,
      android_log_helper, rect, input, native_activity, looper, configuration, native_window,
-     StringUtils, uStd;
+     uStd, uUnix, StringUtils;
 
   (**
    * The native activity interface provided by <android/native_activity.h>
@@ -331,9 +331,6 @@ IMPLEMENTATION
 USES
    cmem, libc_helper;
 
-function xFpread(fd: cint; buf: pChar; nbytes: TSize): TSsize; external name 'FPC_SYSC_READ';
-Function xFpWrite(fd: cInt; buf: pChar; nbytes: TSize): TSsize;  external name 'FPC_SYSC_WRITE';
-
 function strerror(e: cint): ansistring;
 begin
    Result := sf(e);
@@ -363,7 +360,7 @@ var
 begin
    cmd := 0;
 
-   if xFpRead(app^.msgread, @cmd, SizeOf(cmd)) = SizeOf(cmd) then begin
+   if unxFpRead(app^.msgread, @cmd, SizeOf(cmd)) = SizeOf(cmd) then begin
       if cmd = APP_CMD_SAVE_STATE then
          free_saved_state(app);
 
@@ -643,7 +640,7 @@ end;
 
 procedure android_app_write_cmd(app: Pandroid_app; cmd: cint8);
 begin
-   if xFpWrite(app^.msgwrite, @cmd, SizeOf(cmd)) <> SizeOf(cmd) then
+   if unxFpWrite(app^.msgwrite, @cmd, SizeOf(cmd)) <> SizeOf(cmd) then
       loge('Failure writing android_app cmd: ' + strerror(errno));
 end;
 
