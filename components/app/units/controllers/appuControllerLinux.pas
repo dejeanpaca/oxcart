@@ -73,6 +73,8 @@ TYPE
 VAR
    appLinuxControllerHandler: appTLinuxControllerHandler;
 
+function xFpread(fd: cint; buf: pchar; nbytes : size_t): ssize_t; external name 'FPC_SYSC_READ';
+
 { js_event_helper }
 
 function js_event_helper.GetTypeString: string;
@@ -188,9 +190,9 @@ begin
 
    repeat
       {no need for event to be initialized, since we read it}
-      count := {%H-}FpRead(fileHandle, jsevent, SizeOf(js_event));
+      count := xFpRead(fileHandle, @jsevent, SizeOf(js_event));
 
-      if(count > 0) then begin
+      if(count = SizeOf(js_event)) then begin
          event.MappedFunction := appCONTROLLER_NONE;
          event.Controller := Self;
          event.KeyCode := jsevent.number;
@@ -213,7 +215,7 @@ begin
 
          Updated := true;
       end else begin
-         error := fpgeterrno;
+         error := fpgeterrno();
 
          if(error = ESysENODEV) then
             Disconnected();
