@@ -3,6 +3,9 @@
    Copyright (C) 2016. Dejan Boras
 
    Axes are mapped from -1.0 to +1.0
+   Triggers are mapped from 0.0 to +1.0
+   DPad is assumed to have up/down/left/right buttons (other directions are combined from this)
+   Axis groups combine two axes for an X/Y with -1.0 .. 1.0 values assumed left to right, and down to up
 }
 
 {$INCLUDE oxheader.inc}
@@ -151,6 +154,8 @@ TYPE
    appTControllerAxisRemapType = (
       {it's an actual axis}
       appCONTROLLER_AXIS_IS_AXIS,
+      {the axis has an inverted direction}
+      appCONTROLLER_AXIS_IS_INVERTED,
       {this is actually a trigger}
       appCONTROLLER_AXIS_IS_TRIGGER,
       {axis is actually a dpad}
@@ -176,6 +181,8 @@ TYPE
       ButtonCount,
       {how many triggers this device has}
       TriggerCount,
+      {how many remapped axes we have}
+      RemappedAxisCount,
       {number of axis groups}
       AxisGroupCount: loopint;
 
@@ -198,7 +205,7 @@ TYPE
 
       Settings: appTControllerDeviceSetting;
 
-      {should we remap axes}
+      {should we remap axes (if true, also need to set RemappedAxisCount to the proper value)}
       RemapAxes: boolean;
 
       AxisRemaps: array[0..appMAX_CONTROLLER_AXES - 1] of appTControllerAxisRemap;
@@ -312,7 +319,7 @@ TYPE
       {set the state of an axis}
       procedure SetAxisState(index: loopint; raw: loopint);
       {set dpad pressed state}
-      procedure SetDPadPressed(index: loopint; pressed: boolean);
+      procedure SetDPadPressed(button: loopint; pressed: boolean);
 
       {get direction of the dpad}
       function GetDPadDirection(): loopint;
@@ -621,6 +628,7 @@ end;
 procedure appTControllerDevice.UpdateStart();
 begin
    State.Keys.UpdateCycle();
+   State.DPadKeys.UpdateCycle();
    Updated := false;
 end;
 
@@ -772,40 +780,52 @@ var
    pressed: boolean;
 
 begin
-   if(index >= 0) and (index < Settings.AxisCount) then begin
-      if(Mapping^.RemapAxes) then begin
-         rm := Mapping^.AxisRemaps[index];
+   if(Mapping^.RemapAxes) then begin
+      {nothing to do here}
+      if(index < 0) or (index >= Settings.RemappedAxisCount) then
+         exit();
 
-         if(rm.RemapType = appCONTROLLER_AXIS_IS_AXIS) then begin
-            State.Axes[index].AssignRaw(raw, AxisValueRange);
-            vmClamp(State.Axes[index], -1.0, 1.0);
-         end else if(rm.RemapType = appCONTROLLER_AXIS_IS_TRIGGER) then begin
-            SetTriggerState(rm.Index, AxisValueRange);
-         end else if(rm.RemapType = appCONTROLLER_AXIS_IS_DPAD) then begin
-            pressed := raw <> 0;
+      rm := Mapping^.AxisRemaps[index];
 
-            if(rm.Index = 0) then begin
-               if(raw < 0) then
-                  State.DPad[appbCONTROLLER_DPAD_UP].Prop(kpPRESSED, pressed)
-               else if(raw > 0) then
-                  State.DPad[appbCONTROLLER_DPAD_DOWN].Prop(kpPRESSED, pressed);
-            end else if(rm.Index = 1) then begin
-               if(raw < 0) then
-                  State.DPad[appbCONTROLLER_DPAD_LEFT].Prop(kpPRESSED, pressed)
-               else if(raw > 0) then
-                  State.DPad[appbCONTROLLER_DPAD_RIGHT].Prop(kpPRESSED, pressed);
-            end;
+      {remap axis to axis}
+      if(rm.RemapType = appCONTROLLER_AXIS_IS_AXIS) then begin
+         State.Axes[rm.Index].AssignRaw(raw, AxisValueRange);
+         vmClamp(State.Axes[rm.Index], -1.0, 1.0);
+      {remap inverted axis to axis}
+      end else if(rm.RemapType = appCONTROLLER_AXIS_IS_INVERTED) then begin
+         State.Axes[rm.Index].AssignRaw(-raw, AxisValueRange);
+         vmClamp(State.Axes[rm.Index], -1.0, 1.0);
+      {axis is actually a trigger}
+      end else if(rm.RemapType = appCONTROLLER_AXIS_IS_TRIGGER) then begin
+         raw := (raw + AxisValueRange) div 2;
+         SetTriggerState(rm.Index, raw);
+      {the axis is a dpad axis}
+      end else if(rm.RemapType = appCONTROLLER_AXIS_IS_DPAD) then begin
+         pressed := raw <> 0;
+
+         if(rm.Index = 0) then begin
+            if(raw < 0) then
+               SetDPadPressed(appbCONTROLLER_DPAD_UP, pressed)
+            else if(raw > 0) then
+               SetDPadPressed(appbCONTROLLER_DPAD_DOWN, pressed);
+         end else if(rm.Index = 1) then begin
+            if(raw < 0) then
+               SetDPadPressed(appbCONTROLLER_DPAD_LEFT, pressed)
+            else if(raw > 0) then
+               SetDPadPressed(appbCONTROLLER_DPAD_RIGHT, pressed);
          end;
-      end else begin
+      end;
+   end else begin
+      if(index >= 0) and (index < Settings.AxisCount) then begin
          State.Axes[index].AssignRaw(raw, AxisValueRange);
          vmClamp(State.Axes[index], -1.0, 1.0);
       end;
    end;
 end;
 
-procedure appTControllerDevice.SetDPadPressed(index: loopint; pressed: boolean);
+procedure appTControllerDevice.SetDPadPressed(button: loopint; pressed: boolean);
 begin
-   State.DPadKeys.Process(index, pressed);
+   State.DPadKeys.Process(button, pressed);
 end;
 
 function appTControllerDevice.GetDPadDirection(): loopint;
