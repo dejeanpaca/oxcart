@@ -1,6 +1,8 @@
 {
    appuControllerDirectInput, DirectInput controller handling
    Copyright (C) 2019. Dejan Boras
+
+   TODO: Implement force feedback support
 }
 
 {$INCLUDE oxheader.inc}
@@ -26,14 +28,17 @@ TYPE
       procedure Reset(); virtual;
       procedure Run(); virtual;
 
-      private
-         procedure Add();
+      protected
+         function Add(var lpddi: TDIDeviceInstanceA): boolean;
    end;
 
    { appTDirectInputControllerDevice }
 
    appTDirectInputControllerDevice = class(appTControllerDevice)
-      FileName: string;
+      Device: IDirectInputDevice8A;
+
+      GUID,
+      FFGUID: windows.TGUID;
 
       procedure Update(); override;
       procedure DeInitialize(); override;
@@ -77,12 +82,11 @@ begin
    Reset();
 end;
 
-function diCallback(var lpddi: TDIDeviceInstanceA; pvRef: Pointer): windows.BOOL; stdcall;
+function diCallback(var lpddi: TDIDeviceInstanceA; {%H-}pvRef: Pointer): windows.BOOL; stdcall;
 begin
-   writeln('instance: ', pchar(lpddi.tszInstanceName));
-   writeln('product: ', pchar(lpddi.tszProductName));
+   appDirectInputControllerHandler.Add(lpddi);
 
-   Result := false;
+   Result := DIENUM_CONTINUE;
 end;
 
 procedure appTDirectInputControllerHandler.Reset();
@@ -95,14 +99,28 @@ begin
    inherited Run();
 end;
 
-procedure appTDirectInputControllerHandler.Add();
+function appTDirectInputControllerHandler.Add(var lpddi: TDIDeviceInstanceA): boolean;
 var
    device: appTDirectInputControllerDevice;
+   diDevice: IDirectInputDevice8A;
+   error: HRESULT;
 
 begin
-   device := appTDirectInputControllerDevice.Create();
+   Result := false;
+   error := appDirectInputControllerHandler.DIInterface.CreateDevice(lpddi.guidInstance, diDevice, nil);
 
-   appControllers.Add(device);
+   {only create our own device if DI created a device}
+   if(error = DI_OK) then begin
+      device := appTDirectInputControllerDevice.Create();
+
+      device.Name := pchar(lpddi.tszProductName);
+      device.GUID := lpddi.guidInstance;
+      device.FFGUID := lpddi.guidFFDriver;
+
+      appControllers.Add(device);
+      Result := true;
+   end else
+      log.e('Failed to create DirectInput device for: ' + pchar(lpddi.tszInstanceName) + ' (' + pchar(lpddi.tszProductName) + ')');
 end;
 
 INITIALIZATION
