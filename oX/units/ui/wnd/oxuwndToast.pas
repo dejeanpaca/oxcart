@@ -121,7 +121,7 @@ begin
    Durations[2] := 6000;
    Durations[3] := 10000;
 
-   Color.Assign(8, 8, 8, 212);
+   Color.Assign(8, 8, 8, 236);
 
    inherited Create;
 end;
