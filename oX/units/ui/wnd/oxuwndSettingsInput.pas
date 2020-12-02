@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd,
       {app}
-      uApp, appuController,
+      uApp, appuController, appuControllers,
       {ox}
       uOX, oxuRunRoutines, oxuwndSettings, oxuwndInputControllerInfo,
       {ui}

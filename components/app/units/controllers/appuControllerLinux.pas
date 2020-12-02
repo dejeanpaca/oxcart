@@ -11,7 +11,8 @@ INTERFACE
    USES
       baseunix, sysutils,
       uUnix, uStd, uLog, StringUtils, uLinux,
-      appuController;
+      {app}
+      appuController, appuControllers;
 
 TYPE
    { appTLinuxControllerDevice }

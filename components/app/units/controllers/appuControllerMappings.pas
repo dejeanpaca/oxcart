@@ -11,7 +11,7 @@ UNIT appuControllerMappings;
 INTERFACE
 
    USES
-      appuController;
+      appuController, appuControllers;
 
 VAR
    {xbox 360 gamepad}
