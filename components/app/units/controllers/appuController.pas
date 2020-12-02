@@ -448,7 +448,7 @@ begin
    log.i('Button count: ' + sf(Settings.ButtonCount));
    log.i('Axis count: ' + sf(Settings.AxisCount));
    log.i('Trigger count: ' + sf(Settings.TriggerCount));
-   log.i('DPad prsent: ' + sf(Settings.DPadPresent));
+   log.i('DPad present: ' + sf(Settings.DPadPresent));
 end;
 
 procedure appTControllerDevice.DeInitialize();
