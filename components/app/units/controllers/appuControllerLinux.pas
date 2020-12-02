@@ -14,18 +14,6 @@ INTERFACE
       appuController;
 
 TYPE
-
-   { appTLinuxControllerHandler }
-
-   appTLinuxControllerHandler = object(appTControllerHandler)
-      procedure Initialize(); virtual;
-      procedure Reset(); virtual;
-      procedure Run(); virtual;
-
-      private
-         procedure Add(const fn: string);
-   end;
-
    { appTLinuxControllerDevice }
 
    appTLinuxControllerDevice = class(appTControllerDevice)
@@ -39,6 +27,20 @@ TYPE
 
       private
          fileHandle: longint;
+   end;
+
+   { appTLinuxControllerHandler }
+
+   appTLinuxControllerHandler = object(appTControllerHandler)
+      procedure Initialize(); virtual;
+      procedure Reset(); virtual;
+      procedure Run(); virtual;
+      procedure Rescan(); virtual;
+
+      protected
+         procedure Add(const fn: string);
+         function FindByFn(const fn: string): appTLinuxControllerDevice;
+
    end;
 
 IMPLEMENTATION
@@ -240,36 +242,42 @@ begin
 end;
 
 procedure appTLinuxControllerHandler.Reset();
-var
-   fSearch: TSearchRec;
-   err: longint;
-
 begin
-   inherited Reset;
-
-   {find all devices}
-   err := FindFirst('/dev/input/js*', faAnyFile, fSearch);
-
-   if(err = 0) then begin
-      log.Collapsed('Controller initialization (reset)');
-      repeat
-         {device found, add it}
-         Add('/dev/input/' + fSearch.Name);
-
-         err := FindNext(fSearch);
-      until (err <> 0);
-      log.Leave();
-   end else
-      log.v('No controllers found');
-
-   FindClose(fSearch);
-
-   ioErrorIgn();
+   Rescan();
 end;
 
 procedure appTLinuxControllerHandler.Run();
 begin
    inherited Run();
+end;
+
+procedure appTLinuxControllerHandler.Rescan();
+var
+   fSearch: TSearchRec;
+   err: longint;
+   fn: string;
+
+begin
+   {find all devices}
+   err := FindFirst('/dev/input/js*', faAnyFile, fSearch);
+
+   if(err = 0) then begin
+      repeat
+         fn := '/dev/input/' + fSearch.Name;
+
+         if(FindByFn(fn) = nil) then begin
+            {device found, add it}
+            Add(fn);
+         end;
+
+         err := FindNext(fSearch);
+      until (err <> 0);
+      log.Leave();
+   end;
+
+   FindClose(fSearch);
+
+   ioErrorIgn();
 end;
 
 procedure appTLinuxControllerHandler.Add(const fn: string);
@@ -282,6 +290,21 @@ begin
 
    appControllers.Add(device);
    ioErrorIgn();
+end;
+
+function appTLinuxControllerHandler.FindByFn(const fn: string): appTLinuxControllerDevice;
+var
+   i: loopint;
+
+begin
+   for i := 0 to appControllers.List.n - 1 do begin
+      if(appControllers.List[i].ClassType = appTLinuxControllerDevice.ClassType) then begin
+         if(appTLinuxControllerDevice(appControllers.List[i]).FileName = fn) then
+            exit(appTLinuxControllerDevice(appControllers.List[i]));
+      end;
+   end;
+
+   Result := nil;
 end;
 
 INITIALIZATION
