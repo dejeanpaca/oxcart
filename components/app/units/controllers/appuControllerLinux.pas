@@ -144,8 +144,6 @@ begin
             log.w('Failed getting device name: ' + linux.GetErrorString(error));
       end;
 
-      log.Collapsed(Name);
-
       error := fpIOCtl(fileHandle, linux._ior('j', JSIOCGAXES, sizeof(nAxes)), @nAxes);
 
       if(error = 0) then begin
@@ -171,9 +169,6 @@ begin
          Settings.ButtonCount := nButtons
       else
          log.w('Failed to get number of buttons: ' + linux.GetErrorString(fpgeterrno()));
-
-      LogDevice();
-      log.Leave();
    end else
       log.e('Failed adding device: ' + fn + '. Unix error: ' + sf(ioerror()));
 end;
@@ -272,7 +267,6 @@ begin
 
          err := FindNext(fSearch);
       until (err <> 0);
-      log.Leave();
    end;
 
    FindClose(fSearch);
