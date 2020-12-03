@@ -12,7 +12,7 @@ INTERFACE
 
    USES
       sysutils, Types,
-      uStd, uLog, StringUtils, uTiming,
+      uStd, uLog, uTiming,
       {app}
       appuController, appuControllers, appuControllerWindows,
       {ox}
@@ -32,6 +32,8 @@ TYPE
       procedure Initialize(); virtual;
       procedure Scan(); virtual;
       procedure Rescan(); virtual;
+
+      procedure SetupDI();
 
       protected
          function Add(var lpddi: TDIDeviceInstanceA): boolean;
@@ -78,21 +80,8 @@ begin
 end;
 
 procedure appTDirectInputControllerHandler.Initialize();
-var
-   error: HResult;
-
 begin
-   if(not LoadDirectInput()) then begin
-      log.e('Failed to load DirectInput');
-      exit;
-   end;
-
-   error := DirectInput8Create(system.MainInstance, DIRECTINPUT_VERSION, IID_IDirectInput8A, DIInterface, Nil);
-
-   if(error <> DI_OK) then begin
-      log.e('Failed to initialize DirectInput 8 (error: ' + sf(error) + ')');
-      exit;
-   end;
+   SetupDI();
 end;
 
 procedure appTDirectInputControllerHandler.Scan();
@@ -112,6 +101,9 @@ var
    time: TDateTime;
 
 begin
+   if(DIInterface = nil) then
+      exit;
+
    time := Now();
 
    if(oxWindow.Current <> nil) then begin
@@ -119,6 +111,20 @@ begin
 
       log.v('DirectInput device enumeration elapsed: ' + time.ElapsedfToString(3));
    end;
+end;
+
+procedure appTDirectInputControllerHandler.SetupDI();
+var
+   error: HResult;
+
+begin
+   error := DirectInput8Create(system.MainInstance, DIRECTINPUT_VERSION, IID_IDirectInput8A, DIInterface, Nil);
+
+   if(error <> DI_OK) then begin
+      DIInterface := nil;
+      log.e('Failed to initialize DirectInput 8: ' + winos.FormatMessage(windows.DWORD(error)));
+   end else
+      log.v('Initialized DirectInput');
 end;
 
 function appTDirectInputControllerHandler.Add(var lpddi: TDIDeviceInstanceA): boolean;
@@ -163,6 +169,22 @@ begin
 
    {only create our own device if DI created a device}
    if(error = DI_OK) then begin
+      {get device updates when in background and exclusive access when in foreground}
+      if failed(diDevice.SetCooperativeLevel(0,
+         DISCL_BACKGROUND and DISCL_EXCLUSIVE), 'Failed to set cooperative level') then
+         exit(false);
+
+      {use generic joystick data format}
+      if failed(diDevice.SetDataFormat(c_dfDIJoystick), 'Failed to set data format') then
+         exit(false);
+
+      {get device capabilities}
+      ZeroOut(capabilities, SizeOf(capabilities));
+
+      if failed(diDevice.GetCapabilities(capabilities), 'Failed to get capabilities') then begin
+         exit(false);
+      end;
+
       device := appTDirectInputControllerDevice.Create();
 
       device.Name := pchar(lpddi.tszProductName);
@@ -170,27 +192,6 @@ begin
       device.FFGUID := lpddi.guidFFDriver;
 
       device.Device := diDevice;
-
-      {get device updates when in background and exclusive access when in foreground}
-      if failed(diDevice.SetCooperativeLevel(winosTWindow(oxWindow.Current).wd.h,
-         DISCL_BACKGROUND or DISCL_EXCLUSIVE), 'Failed to set cooperative level') then begin
-         FreeObject(device);
-         exit(false);
-      end;
-
-      {use generic joystick data format}
-      if failed(diDevice.SetDataFormat(c_dfDIJoystick), 'Failed to set data format') then begin
-         FreeObject(device);
-         exit(false);
-      end;
-
-      {get device capabilities}
-      ZeroOut(capabilities, SizeOf(capabilities));
-
-      if failed(diDevice.GetCapabilities(capabilities), 'Failed to get capabilities') then begin
-         FreeObject(device);
-         exit(false);
-      end;
 
       {get number of axes and buttons}
       writeln(capabilities.dwAxes, ' ', capabilities.dwButtons);
