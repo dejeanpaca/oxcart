@@ -101,6 +101,7 @@ end;
 function TBuildSystemExec.GetToolProcess(): TProcess;
 begin
    Result := TProcess.Create(nil);
+   Result.ShowWindow := swoHIDE;
 
    if(not Output.Redirect) then
       Result.Options := Result.Options + [poWaitOnExit]
