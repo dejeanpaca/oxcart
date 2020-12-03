@@ -339,14 +339,11 @@ begin
    end;
 
    if(oxSplashScreen.Startup <> nil) then begin
-      if(oxSplashScreen.StartupThreaded) then begin
-         oxSplashScreen.Startup.StartSplash(oxWindow.Current);
-         oxSplashScreen.Startup.Render();
+      oxSplashScreen.Startup.StartSplash(oxWindow.Current);
+      oxSplashScreen.Startup.Render();
+
+      if(oxSplashScreen.StartupThreaded) then
          oxSplashScreen.Startup.Start();
-      end else begin
-         oxSplashScreen.Startup.StartSplash(oxWindow.Current);
-         oxSplashScreen.Startup.Render();
-      end;
    end;
 end;
 
