@@ -11,13 +11,14 @@ UNIT appuControllerDirectInput;
 INTERFACE
 
    USES
-      uStd, uLog, StringUtils,
+      sysutils, Types,
+      uStd, uLog, StringUtils, uTiming,
       {app}
-      appuController,
+      appuController, appuControllers, appuControllerWindows,
       {ox}
       uOX, oxuWindow, oxuWindowsOS,
       {dx}
-      windows, DirectInput;
+      windows, ComObj, DirectInput;
 
 TYPE
 
@@ -27,8 +28,8 @@ TYPE
       DIInterface: IID_IDirectInput8;
 
       procedure Initialize(); virtual;
-      procedure Reset(); virtual;
-      procedure Run(); virtual;
+      procedure Scan(); virtual;
+      procedure Rescan(); virtual;
 
       protected
          function Add(var lpddi: TDIDeviceInstanceA): boolean;
@@ -47,6 +48,9 @@ TYPE
    end;
 
 IMPLEMENTATION
+
+function StringFromCLSID(const guid: TCLSID; out str: POLESTR): HRESULT; stdcall; external  'ole32.dll' name 'StringFromCLSID';
+procedure CoTaskMemFree(p: PVOID); stdcall; external  'ole32.dll' name 'CoTaskMemFree';
 
 VAR
    appDirectInputControllerHandler: appTDirectInputControllerHandler;
@@ -80,8 +84,11 @@ begin
       log.e('Failed to initialize DirectInput 8 (error: ' + sf(error) + ')');
       exit;
    end;
+end;
 
-   Reset();
+procedure appTDirectInputControllerHandler.Scan();
+begin
+   Rescan();
 end;
 
 function diCallback(var lpddi: TDIDeviceInstanceA; {%H-}pvRef: Pointer): windows.BOOL; stdcall;
@@ -91,16 +98,18 @@ begin
    Result := DIENUM_CONTINUE;
 end;
 
-procedure appTDirectInputControllerHandler.Reset();
+procedure appTDirectInputControllerHandler.Rescan();
+var
+   time: TDateTime;
+
 begin
+   time := Now();
+
    if(oxWindow.Current <> nil) then begin
       DIInterface.EnumDevices(DI8DEVCLASS_GAMECTRL, @diCallback, nil, DIEDFL_ATTACHEDONLY);
-   end;
-end;
 
-procedure appTDirectInputControllerHandler.Run();
-begin
-   inherited Run();
+      log.v('DirectInput device enumeration elapsed: ' + time.ElapsedfToString(3));
+   end;
 end;
 
 function appTDirectInputControllerHandler.Add(var lpddi: TDIDeviceInstanceA): boolean;
@@ -110,6 +119,8 @@ var
    error: HRESULT;
 
    capabilities: DIDEVCAPS;
+
+   pc: PWideChar;
 
    procedure logError(const what: string);
    begin
@@ -126,6 +137,19 @@ var
 
 begin
    Result := false;
+
+   {we should not handle xinput devices if XInput handler is present}
+   if(appControllerWindows.XInputHandlerPresent) then begin
+      StringFromCLSID(lpddi.guidProduct, pc);
+
+      if(appControllerWindows.IsXInputDevice(pc)) then begin
+         CoTaskMemFree(pc);
+         exit(true);
+      end;
+
+      CoTaskMemFree(pc);
+   end;
+
    error := appDirectInputControllerHandler.DIInterface.CreateDevice(lpddi.guidInstance, diDevice, nil);
 
    {only create our own device if DI created a device}
@@ -173,7 +197,7 @@ end;
 procedure init();
 begin
    {we can only init a directinput device when we have a window}
-   appDirectInputControllerHandler.Reset();
+   appDirectInputControllerHandler.Rescan();
 end;
 
 INITIALIZATION
