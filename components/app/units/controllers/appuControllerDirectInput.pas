@@ -27,6 +27,8 @@ TYPE
    appTDirectInputControllerHandler = object(appTControllerHandler)
       DIInterface: IID_IDirectInput8;
 
+      constructor Create();
+
       procedure Initialize(); virtual;
       procedure Scan(); virtual;
       procedure Rescan(); virtual;
@@ -67,6 +69,13 @@ begin
 end;
 
 { appTDirectInputControllerHandler }
+
+constructor appTDirectInputControllerHandler.Create();
+begin
+   inherited;
+
+   AutoRescan := false;
+end;
 
 procedure appTDirectInputControllerHandler.Initialize();
 var
