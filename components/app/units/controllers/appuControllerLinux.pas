@@ -33,9 +33,7 @@ TYPE
    { appTLinuxControllerHandler }
 
    appTLinuxControllerHandler = object(appTControllerHandler)
-      procedure Initialize(); virtual;
-      procedure Reset(); virtual;
-      procedure Run(); virtual;
+      procedure Scan(); virtual;
       procedure Rescan(); virtual;
 
       protected
@@ -232,19 +230,9 @@ end;
 
 { appTLinuxControllerHandler }
 
-procedure appTLinuxControllerHandler.Initialize();
-begin
-   Reset();
-end;
-
-procedure appTLinuxControllerHandler.Reset();
+procedure appTLinuxControllerHandler.Scan();
 begin
    Rescan();
-end;
-
-procedure appTLinuxControllerHandler.Run();
-begin
-   inherited Run();
 end;
 
 procedure appTLinuxControllerHandler.Rescan();
