@@ -62,10 +62,12 @@ TYPE
       fInitWindow,
       fLostWindow,
       fStarted,
-      fDone: boolean;
+      fDone,
+      {main thread should be signalled to handle an activity}
+      fSignalMainThread: boolean;
 
       {signal hide the navbar}
-      HideNavbar,
+      fHideNavbar,
       {if true, will automatically hide the navbar}
       AutoHideNavBar: boolean;
 
@@ -75,6 +77,8 @@ TYPE
       procedure RecreateSurface();
       procedure RegainedFocus();
       procedure DestroyWindow();
+
+      procedure HideNavBar();
    end;
 
 VAR
@@ -107,7 +111,7 @@ begin
          oxAndroidPlatform.fLostFocus := false;
 
          if(oxAndroidPlatform.AutoHideNavBar) then
-            oxAndroidPlatform.hideNavbar := true;
+            oxAndroidPlatform.HideNavBar();
       end;
    end else if(cmd = APP_CMD_LOST_FOCUS) then begin
       log.v('android > Lost focus');
@@ -278,6 +282,12 @@ begin
    fLostWindow := false;
 end;
 
+procedure oxTAndroidPlatformGlobal.HideNavBar();
+begin
+   oxAndroidPlatform.fSignalMainThread := true;
+   oxAndroidPlatform.fHideNavbar := true;
+end;
+
 { TAndroidPointerDriver }
 
 constructor TAndroidPointerDriver.Create();
@@ -389,7 +399,7 @@ begin
 end;
 
 INITIALIZATION
-//   oxAndroidPlatform.AutoHideNavBar := true;
+   oxAndroidPlatform.AutoHideNavBar := true;
    oxPlatforms.Register(oxTAndroidPlatform);
 
 END.
