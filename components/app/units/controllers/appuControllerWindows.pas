@@ -9,15 +9,19 @@ UNIT appuControllerWindows;
 INTERFACE
 
    USES
-      windowsutils,
-      uStd, Utilwmi;
+      uStd,
+      {windows}
+      windowsutils, Utilwmi;
 
 TYPE
 
    { appTControllerWindows }
 
    appTControllerWindows = record
-      function IsXInputDevice(const deviceID: StdString): boolean;
+      {do we have an xinput handler}
+      XInputHandlerPresent: boolean;
+
+      function IsXInputDevice(const deviceID: string): boolean;
    end;
 
 VAR
@@ -29,7 +33,7 @@ IMPLEMENTATION
 
 { appTControllerWindows }
 
-function appTControllerWindows.IsXInputDevice(const deviceID: StdString): boolean;
+function appTControllerWindows.IsXInputDevice(const deviceID: string): boolean;
 var
    i,
    j: longint;
