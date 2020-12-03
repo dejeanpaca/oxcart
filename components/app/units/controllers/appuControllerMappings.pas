@@ -31,14 +31,30 @@ begin
    m.Settings.TriggerCount := 2;
    m.Settings.AxisGroupCount := 2;
    m.Settings.DPadPresent := true;
+   m.Settings.ButtonCount := 16;
 
    m.Id := 'xbox360';
-   m.RecognitionString := '360';
+   m.RecognitionStrings[0] := '360';
 
    {$IFDEF WINDOWS}
-   m.Settings.ButtonCount := 16;
+   {for xinput api}
+   m.ButtonFunctions[0] := appCONTROLLER_Y;
+   m.ButtonFunctions[1] := appCONTROLLER_X;
+   m.ButtonFunctions[2] := appCONTROLLER_B;
+   m.ButtonFunctions[3] := appCONTROLLER_A;
+
+   m.ButtonFunctions[6] := appCONTROLLER_LEFT_SHOULDER;
+   m.ButtonFunctions[7] := appCONTROLLER_RIGHT_SHOULDER;
+
+   m.ButtonFunctions[9] := appCONTROLLER_LEFT_STICK_CLICK;
+   m.ButtonFunctions[8] := appCONTROLLER_RIGHT_STICK_CLICK;
+
+   m.ButtonFunctions[10] := appCONTROLLER_BACK;
+   m.ButtonFunctions[11] := appCONTROLLER_MENU;
    {$ENDIF}
 
+   {$IFDEF LINUX}
+   {joy api}
    m.ButtonFunctions[0] := appCONTROLLER_A;
    m.ButtonFunctions[1] := appCONTROLLER_B;
    m.ButtonFunctions[2] := appCONTROLLER_X;
@@ -55,9 +71,6 @@ begin
    m.ButtonFunctions[9] := appCONTROLLER_LEFT_STICK_CLICK;
    m.ButtonFunctions[10] := appCONTROLLER_RIGHT_STICK_CLICK;
 
-
-   {$IFDEF LINUX}
-   m.Settings.ButtonCount := 16;
    m.Settings.RemappedAxisCount := 8;
 
    m.Settings.AxisGroups[0][0] := 0;
@@ -97,7 +110,6 @@ begin
    m.AxisRemaps[7].Func := appCONTROLLER_DPAD_LEFT_RIGHT;
    m.AxisRemaps[7].Index := 1;
 
-
    m.RemapAxes := true;
    {$ENDIF}
 end;
@@ -107,7 +119,8 @@ begin
    initialize360(m);
 
    m.Id := 'xbox-one';
-   m.RecognitionString := 'X-Box One';
+   m.RecognitionStrings[0] := 'X-Box One';
+   m.RecognitionStrings[1] := 'XInput Gamepad';
 end;
 
 procedure initializeTwinUSBJoystick(out m: appTControllerDeviceMapping);
@@ -121,7 +134,7 @@ begin
    m.Settings.DPadPresent := true;
 
    m.Id := 'twin-usb-joystick';
-   m.RecognitionString := 'Twin USB Joystick';
+   m.RecognitionStrings[0] := 'Twin USB Joystick';
 
    {$IFDEF LINUX}
    m.Settings.RemappedAxisCount := 6;
