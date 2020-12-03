@@ -101,23 +101,23 @@ var
    f: TFile;
 
 begin
-   result := eNONE;
+   Result := eNONE;
 
    fFile.Init(f);
    f.Open(fn);
    
-   if(f.error = 0) then begin
+   if(f.Error = 0) then begin
       Load(tfd, f);
 
-      if(f.error <> 0) then
-         log.e('oxTFD > Error(' + sf(f.error) + ',' + sf(f.IoError) + ') reading file: ' + fn);
+      if(f.Error <> 0) then
+         log.e('oxTFD > Error(' + sf(f.Error) + ',' + sf(f.IoError) + ') reading file: ' + fn);
    end else
-      log.e('oxTFD > Error(' + sf(f.error) + ',' + sf(f.IoError) + ') opening file: ' + fn);
+      log.e('oxTFD > Error(' + sf(f.Error) + ',' + sf(f.IoError) + ') opening file: ' + fn);
 
    f.Close();
 
-   if(f.error <> 0) then
-      result := eIO;
+   if(f.Error <> 0) then
+      Result := eIO;
 end;
 
 function oxTTFDGlobal.Load(var tfd: oxTTFD; var f: TFile): longint;
@@ -125,11 +125,11 @@ var
    h: oxTfTFD;
 
 begin
-   result := eNONE;
+   Result := eNONE;
    ZeroOut(h, SizeOf(h));
 
    f.Read(h, SizeOf(h));
-   if(f.error = 0) then begin
+   if(f.Error = 0) then begin
       { check header }
       if(h.Header.ID = ID) then begin
          if(h.Header.Endian = ENDIAN_WORD) then begin
@@ -147,27 +147,27 @@ begin
 
                {read strings}
                f.ReadAnsiString(tfd.TextureName);
-               if(f.error = 0) then begin
+               if(f.Error = 0) then begin
                   f.ReadAnsiString(tfd.Name);
 
-                  if(f.error = 0) then begin
+                  if(f.Error = 0) then begin
                      f.ReadAnsiString(tfd.Author);
 
-                     if(f.error = 0) then
+                     if(f.Error = 0) then
                         f.ReadAnsiString(tfd.Description);
                   end;
                end;
 
             end else
-               result := oxeTFD_INVALID_VERSION;
+               Result := oxeTFD_INVALID_VERSION;
          end else
-            result := oxeTFD_INVALID_ENDIAN;
+            Result := oxeTFD_INVALID_ENDIAN;
       end else
-         result := oxeTFD_INVALID_ID;
+         Result := oxeTFD_INVALID_ID;
    end;
 
-   if(f.error <> 0) then
-      result := eIO
+   if(f.Error <> 0) then
+      Result := eIO
 end;
 
 { SAVING }
@@ -177,23 +177,23 @@ var
    f: TFile;
 
 begin
-   result := eNONE;
+   Result := eNONE;
 
    fFile.Init(f);
    f.New(fn);
 
-   if(f.error = 0) then begin
+   if(f.Error = 0) then begin
       Save(tfd, f);
 
-      if(f.error <> 0) then
-         log.e('oxTFD > Error(' + sf(f.error) + ',' + sf(f.IoError) + ') writing file: ' + fn);
+      if(f.Error <> 0) then
+         log.e('oxTFD > Error(' + sf(f.Error) + ',' + sf(f.IoError) + ') writing file: ' + fn);
    end else
       log.e('oxTFD > Failed to create: ' + fn);
 
    f.Close();
 
-   if(f.error <> 0) then
-      result := eIO;
+   if(f.Error <> 0) then
+      Result := eIO;
 end;
 
 function oxTTFDGlobal.Save(var tfd: oxTTFD; var f: TFile): longint;
@@ -201,7 +201,7 @@ var
    h: oxTfTFD;
 
 begin
-   result := eNONE;
+   Result := eNONE;
 
    h.Header.ID          := ID;
    h.Header.Endian      := ENDIAN_WORD;
@@ -217,23 +217,23 @@ begin
    h.Lines           := tfd.Lines;
 
    f.Write(h, SizeOf(h));
-   if(f.error = 0) then begin
+   if(f.Error = 0) then begin
       f.WriteAnsiString(tfd.TextureName);
 
-      if(f.error = 0) then begin
+      if(f.Error = 0) then begin
          f.WriteAnsiString(tfd.Name);
 
-         if(f.error = 0) then begin
+         if(f.Error = 0) then begin
             f.WriteAnsiString(tfd.Author);
 
-            if(f.error = 0) then
+            if(f.Error = 0) then
                f.WriteAnsiString(tfd.Description);
          end;
       end;
    end;
 
-   if(f.error <> 0) then
-      result := eIO;
+   if(f.Error <> 0) then
+      Result := eIO;
 end;
 
 INITIALIZATION
