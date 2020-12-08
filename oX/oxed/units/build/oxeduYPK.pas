@@ -12,7 +12,7 @@ INTERFACE
       {ypk}
       ypkuFS, ypkuBuilder,
       {oxed}
-      uOXED, oxeduBuild;
+      uOXED;
 
 TYPE
    oxedTYPK = record
@@ -23,11 +23,6 @@ VAR
    oxedYPK: oxedTYPK;
 
 IMPLEMENTATION
-
-procedure onAssets();
-begin
-   oxedYPK.Builder.Reset();
-end;
 
 procedure initialize();
 begin
@@ -41,6 +36,5 @@ end;
 
 INITIALIZATION
    oxed.Init.Add('ypk', @initialize, @deinitialize);
-   oxedBuild.OnAssets.Add(@onAssets);
 
 END.
