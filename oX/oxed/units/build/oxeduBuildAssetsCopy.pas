@@ -11,7 +11,8 @@ INTERFACE
    USES
       uStd, sysutils, uFileUtils,
       {oxed}
-      uOXED, oxeduProjectScanner,
+      uOXED,
+      oxeduProjectWalker,
       oxeduBuild, oxeduBuildLog, oxeduBuildAssets;
 
 TYPE
@@ -19,7 +20,7 @@ TYPE
    { oxedTCopyAssetsDeployer }
 
    oxedTCopyAssetsDeployer = class(oxedTAssetsDeployer)
-      function OnFile(var f: oxedTAssetBuildFile; var {%H-}sf: oxedTScannerFile): boolean; override;
+      function OnFile(var f: oxedTAssetBuildFile; var {%H-}sf: oxedTProjectWalkerFile): boolean; override;
    end;
 
 VAR
@@ -42,7 +43,7 @@ end;
 
 { oxedTCopyAssetsDeployer }
 
-function oxedTCopyAssetsDeployer.OnFile(var f: oxedTAssetBuildFile; var sf: oxedTScannerFile): boolean;
+function oxedTCopyAssetsDeployer.OnFile(var f: oxedTAssetBuildFile; var sf: oxedTProjectWalkerFile): boolean;
 var
    target: StdString;
 

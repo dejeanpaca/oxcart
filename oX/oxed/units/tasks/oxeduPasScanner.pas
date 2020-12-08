@@ -14,7 +14,8 @@ INTERFACE
       {pas}
       PScanner, PParser, PasTree,
       {oxed}
-      oxeduPackage, oxeduPackageTypes, oxeduProject, oxeduProjectScanner;
+      oxeduPackage, oxeduPackageTypes, oxeduProject,
+      oxeduProjectWalker, oxeduProjectScanner;
 
 TYPE
    oxedTPasScanResult = record
@@ -101,7 +102,7 @@ begin
    FreeAndNil(E);
 end;
 
-procedure onFile(var f: oxedTScannerFile);
+procedure onFile(var f: oxedTProjectWalkerFile);
 var
    unitFile: oxedTPackageUnit;
 

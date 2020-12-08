@@ -13,7 +13,8 @@ INTERFACE
       {oxed}
       uOXED, oxeduBuildLog,
       oxeduPackage, oxeduPackageTypes,
-      oxeduProject, oxeduProjectScanner, oxeduAssets, oxeduConsole;
+      oxeduProject, oxeduProjectScanner, oxeduProjectWalker,
+      oxeduAssets, oxeduConsole;
 
 TYPE
    oxedTAssetBuildFile = record
@@ -36,7 +37,7 @@ TYPE
       {called when deploy is done}
       procedure OnDone(); virtual;
 
-      function OnFile(var {%H-}f: oxedTAssetBuildFile; var {%H-}sf: oxedTScannerFile): boolean; virtual;
+      function OnFile(var {%H-}f: oxedTAssetBuildFile; var {%H-}sf: oxedTProjectWalkerFile): boolean; virtual;
    end;
 
    { oxedTBuildAssets }
@@ -47,7 +48,7 @@ TYPE
       FileCount: loopint;
 
 
-      Current: oxedTProjectScannerCurrent;
+      Current: oxedTProjectWalkerCurrent;
 
       {target path where assets will go}
       Target,
@@ -59,7 +60,7 @@ TYPE
       {called before assets are deployed (hook your deployer here)}
       PreDeploy: TProcedures;
       {called when a file is handled}
-      OnFile: oxedTProjectScannerFileProcedures;
+      OnFile: oxedTProjectWalkerFileProcedures;
 
       {currently used assets deployer}
       Deployer,
@@ -90,14 +91,14 @@ begin
 
 end;
 
-function oxedTAssetsDeployer.OnFile(var f: oxedTAssetBuildFile; var sf: oxedTScannerFile): boolean;
+function oxedTAssetsDeployer.OnFile(var f: oxedTAssetBuildFile; var sf: oxedTProjectWalkerFile): boolean;
 begin
    Result := true;
 end;
 
 function scanFile(const fd: TFileTraverseData): boolean;
 var
-   f: oxedTScannerFile;
+   f: oxedTProjectWalkerFile;
    aF: oxedTAssetBuildFile;
 
    source,
@@ -145,7 +146,7 @@ var
 begin
    Result := true;
 
-   dir := oxedProjectScanner.GetValidPath(oxedBuildAssets.Current.Path, fd.f.Name);
+   dir := oxedTProjectWalker.GetValidPath(oxedBuildAssets.Current.Path, fd.f.Name);
 
    if(dir <> '') then begin
       {Find closest package path, and skip if optional}
