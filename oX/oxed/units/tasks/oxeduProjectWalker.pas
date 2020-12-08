@@ -1,6 +1,8 @@
 {
    oxeduProjectWalker, walks through project packages and files
    Copyright (C) 2020. Dejan Boras
+
+   TODO: better handle file and directory failure (stop on fail)
 }
 
 {$INCLUDE oxheader.inc}
@@ -16,7 +18,7 @@ INTERFACE
       oxuRunRoutines, oxuTimer,
       {oxed}
       uOXED,
-      oxeduPackage, oxeduPackageTypes, oxeduProject,
+      oxeduPackage, oxeduProject,
       oxeduAssets;
 
 TYPE
@@ -66,17 +68,27 @@ TYPE
       OnDone: TProcedures;
       OnFile: oxedTProjectWalkerFileProcedures;
 
+      {should we handle the oX source package}
+      HandleOx,
+      {should we handle the oX data package}
+      HandleOxData,
       {has this task been terminated}
       Terminated: boolean;
 
       constructor Create(); virtual;
 
+      {run the walker}
       procedure Run();
 
       {checks if the path is valid (not ignored or excluded)}
       class function ValidPath(const packagePath, fullPath: StdString): Boolean; static;
       {get valid path}
       class function GetValidPath(const basePath, fullPath: StdString): StdString; static;
+
+      protected
+         function HandleFile(var {%H-}f: oxedTProjectWalkerFile; const {%H-}fd: TFileTraverseData): boolean; virtual;
+         function HandleDirectory(var {%H-}dir: StdString; const {%H-}fd: TFileTraverseData): boolean; virtual;
+         function HandlePackage(var {%H-}package: oxedTPackage): boolean; virtual;
    end;
 
 IMPLEMENTATION
@@ -92,6 +104,10 @@ begin
    walker := oxedTProjectWalker(fd.ExternalData);
 
    walker.Current.FormFile(f, fd.f);
+
+   if(not walker.HandleFile(f, fd)) then
+      exit(false);
+
    walker.OnFile.Call(f);
 
    if(walker.Terminated) then
@@ -101,7 +117,6 @@ end;
 function onDirectory(const fd: TFileTraverseData): boolean;
 var
    dir: StdString;
-   path: oxedPPackagePath;
    walker: oxedTProjectWalker;
 
 begin
@@ -111,13 +126,9 @@ begin
 
    dir := oxedTProjectWalker.GetValidPath(walker.Current.Path, fd.f.Name);
 
-   if(dir <> '') then begin
-      {load package path properties if we have any}
-      if(FileExists(fd.f.Name + DirSep + OX_PACKAGE_PROPS_FILE_NAME)) then begin
-         path := walker.Current.Package^.Paths.Get(dir);
-         path^.LoadPathProperties(walker.Current.Path);
-      end;
-   end else
+   if(dir <> '') then
+      walker.HandleDirectory(dir, fd)
+   else
       Result := false;
 end;
 
@@ -158,36 +169,49 @@ begin
    Walker.OnFile := @scanFile;
    Walker.OnDirectory := @onDirectory;
    Walker.ExternalData := Self;
+
+   HandleOx := true;
+   HandleOxData := true;
 end;
 
 procedure oxedTProjectWalker.Run();
 var
    i: loopint;
+   ok: boolean;
 
-procedure walkPackage(var p: oxedTPackage);
+function walkPackage(var p: oxedTPackage): boolean;
 begin
    Current.Package := @p;
    Current.Path := oxedProject.GetPackagePath(p);
+
+   Result := HandlePackage(p);
+
+   if(not Result) then
+      exit(False);
 
    Walker.Run(Current.Path);
 end;
 
 begin
+   Terminated := false;
+
    try
-      if(not Terminated) then
-         walkPackage(oxedAssets.oxPackage);
+      if(not Terminated) and (HandleOx) then
+         ok := walkPackage(oxedAssets.oxPackage);
 
-      if(not Terminated) then
-         walkPackage(oxedAssets.oxDataPackage);
+      if(not Terminated) and (HandleOxData) and (ok) then
+         ok := walkPackage(oxedAssets.oxDataPackage);
 
-      if(not Terminated) then
-         walkPackage(oxedProject.MainPackage);
+      if(not Terminated) and ok then
+         ok := walkPackage(oxedProject.MainPackage);
 
-      for i := 0 to oxedProject.Packages.n - 1 do begin
-         if(not Terminated) then
-            walkPackage(oxedProject.Packages.List[i])
-         else
-            break;
+      if(ok) then begin
+         for i := 0 to oxedProject.Packages.n - 1 do begin
+            if(not Terminated) and ok then
+               ok := walkPackage(oxedProject.Packages.List[i])
+            else
+               break;
+         end;
       end;
    except
       on e: Exception do begin
@@ -226,6 +250,21 @@ begin
 
    if(not ValidPath(Result, fullPath)) then
       exit('');
+end;
+
+function oxedTProjectWalker.HandleFile(var f: oxedTProjectWalkerFile; const fd: TFileTraverseData): boolean;
+begin
+   Result := true;
+end;
+
+function oxedTProjectWalker.HandleDirectory(var dir: StdString; const fd: TFileTraverseData): boolean;
+begin
+   Result := true;
+end;
+
+function oxedTProjectWalker.HandlePackage(var package: oxedTPackage): boolean;
+begin
+   Result := true;
 end;
 
 END.
