@@ -46,8 +46,8 @@ TYPE
 
       FileCount: loopint;
 
-      CurrentPackage: oxedPPackage;
-      CurrentPath,
+
+      Current: oxedTProjectScannerCurrent;
 
       {target path where assets will go}
       Target,
@@ -97,7 +97,6 @@ end;
 
 function scanFile(const fd: TFileTraverseData): boolean;
 var
-   ext: StdString;
    f: oxedTScannerFile;
    aF: oxedTAssetBuildFile;
 
@@ -111,21 +110,12 @@ begin
    if(Pos(oxPROJECT_TEMP_DIRECTORY, fd.f.Name) = 1) then
       exit;
 
-   ext := ExtractFileExt(fd.f.Name);
-   f.Extension := ext;
+   oxedBuildAssets.Current.FormFile(f, fd.f);
 
    if(oxedAssets.ShouldIgnore(f.Extension)) then begin
       consoleLog.v('Ignoring: ' + fd.f.Name);
       exit;
    end;
-
-   f.FileName := fd.f.Name;
-   f.fd := fd.f;
-
-   f.Package := oxedBuildAssets.CurrentPackage;
-   f.PackagePath := oxedBuildAssets.CurrentPath;
-   f.PackageFileName := ExtractRelativepath(f.PackagePath, f.FileName);
-   f.ProjectFileName := oxedProject.GetPackageRelativePath(f.Package^) + f.PackageFileName;
 
    oxedBuildLog.v('Deploying: ' + fd.f.Name);
 
@@ -137,7 +127,7 @@ begin
    aF.Source := source;
    aF.Target := target;
 
-   aF.CurrentPackage := oxedBuildAssets.CurrentPackage;
+   aF.CurrentPackage := oxedBuildAssets.Current.Package;
 
    if not oxedBuildAssets.Deployer.OnFile(aF, f) then
       exit(False);
@@ -155,11 +145,11 @@ var
 begin
    Result := true;
 
-   dir := oxedProjectScanner.GetValidPath(oxedBuildAssets.CurrentPath, fd.f.Name);
+   dir := oxedProjectScanner.GetValidPath(oxedBuildAssets.Current.Path, fd.f.Name);
 
    if(dir <> '') then begin
       {Find closest package path, and skip if optional}
-      pp := oxedBuildAssets.CurrentPackage^.Paths.FindClosest(dir);
+      pp := oxedBuildAssets.Current.Package^.Paths.FindClosest(dir);
 
       if(pp <> nil) and (pp^.IsOptional()) then begin
          oxedBuildLog.v('Optional: ' + dir);
@@ -215,23 +205,23 @@ begin
       end;
    end;
 
-   CurrentPackage := nil;
+   Current.Package := nil;
 
    oxedBuildLog.i('Done assets deploy (files: ' + sf(FileCount) + ')');
 end;
 
 procedure oxedTBuildAssets.DeployPackage(var p: oxedTPackage);
 begin
-   CurrentPackage := @p;
-   CurrentPath := oxedProject.GetPackagePath(p);
+   Current.Package := @p;
+   Current.Path := oxedProject.GetPackagePath(p);
 
    if(TargetSuffix = '') then
       CurrentTarget := Target
    else
       CurrentTarget := IncludeTrailingPathDelimiter(Target + TargetSuffix);
 
-   oxedBuildLog.v('Deploying package: ' + CurrentPath);
-   Walker.Run(oxedBuildAssets.CurrentPath);
+   oxedBuildLog.v('Deploying package: ' + Current.Path);
+   Walker.Run(oxedBuildAssets.Current.Path);
 
    TargetSuffix := '';
 end;
