@@ -166,6 +166,10 @@ constructor oxedTProjectWalker.Create();
 begin
    TFileTraverse.Initialize(Walker);
 
+   TProcedures.InitializeValues(OnStart);
+   TProcedures.InitializeValues(OnDone);
+   oxedTProjectWalkerFileProcedures.InitializeValues(OnFile);
+
    Walker.OnFile := @scanFile;
    Walker.OnDirectory := @onDirectory;
    Walker.ExternalData := Self;
