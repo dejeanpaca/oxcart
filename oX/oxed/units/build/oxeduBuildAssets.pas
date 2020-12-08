@@ -16,6 +16,28 @@ INTERFACE
       oxeduProject, oxeduProjectScanner, oxeduAssets, oxeduConsole;
 
 TYPE
+   oxedTAssetBuildFile = record
+      {currently used package}
+      CurrentPackage: oxedPPackage;
+
+      {source path, includes package path (or full path to the transformed file)}
+      Source,
+      {full destination path}
+      Target: StdString;
+   end;
+
+   {this class handles deploying the actual assets, after they've been processed}
+
+   { oxedTAssetsDeployer }
+
+   oxedTAssetsDeployer = class
+      {called when starting deploy}
+      procedure OnStart(); virtual;
+      {called when deploy is done}
+      procedure OnDone(); virtual;
+
+      function OnFile(var {%H-}f: oxedTAssetBuildFile; var sf: oxedTScannerFile): boolean; virtual;
+   end;
 
    { oxedTBuildAssets }
 
@@ -26,14 +48,23 @@ TYPE
 
       CurrentPackage: oxedPPackage;
       CurrentPath,
-      {target path}
+
+      {target path where assets will go}
       Target,
       {target path with the provided suffix}
       CurrentTarget,
       {use a suffix with the target path (if you want to override the target path)}
       TargetSuffix: StdString;
 
+      {called before assets are deployed (hook your deployer here)}
+      PreDeploy: TProcedures;
+      {called when a file is handled}
       OnFile: oxedTProjectScannerFileProcedures;
+
+      {currently used assets deployer}
+      Deployer,
+      {default deployer set on every build}
+      DefaultDeployer: oxedTAssetsDeployer;
 
       procedure Initialize();
       {deploys asset files to the given target}
@@ -47,10 +78,28 @@ VAR
 
 IMPLEMENTATION
 
+{ oxedTAssetsDeployer }
+
+procedure oxedTAssetsDeployer.OnStart();
+begin
+
+end;
+
+procedure oxedTAssetsDeployer.OnDone();
+begin
+
+end;
+
+function oxedTAssetsDeployer.OnFile(var f: oxedTAssetBuildFile; var sf: oxedTScannerFile): boolean;
+begin
+   Result := true;
+end;
+
 function scanFile(const fd: TFileTraverseData): boolean;
 var
    ext: StdString;
    f: oxedTScannerFile;
+   aF: oxedTAssetBuildFile;
 
    source,
    target: StdString;
@@ -83,14 +132,15 @@ begin
    source := f.PackagePath + f.PackageFileName;
    target := oxedBuildAssets.CurrentTarget + f.PackageFileName;
 
-   {create directories required for target file, and quit if we fail}
-   if(not sysutils.ForceDirectories(ExtractFilePath(target))) then
-      Result := false;
+   ZeroOut(aF, SizeOf(aF));
 
-   if(FileUtils.Copy(source, target) < 0) then begin
-      oxedBuildLog.e('Failed to copy source file (' + source + ') to target (' + target + ')');
-      Result := false;
-   end;
+   aF.Source := source;
+   aF.Target := target;
+
+   aF.CurrentPackage := oxedBuildAssets.CurrentPackage;
+
+   if not oxedBuildAssets.Deployer.OnFile(aF, f) then
+      exit(False);
 
    inc(oxedBuildAssets.FileCount);
 
@@ -139,7 +189,11 @@ begin
    Target := IncludeTrailingPathDelimiter(useTarget);
    oxedBuildLog.i('Deploying asset files to ' + useTarget);
 
+   Deployer := DefaultDeployer;
+
    FileCount := 0;
+
+   PreDeploy.Call();
 
    try
       {deploy assets from ox, but only those in the data directory}
