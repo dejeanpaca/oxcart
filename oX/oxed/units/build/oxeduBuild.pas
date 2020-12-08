@@ -319,6 +319,8 @@ begin
    end;
 end;
 
+procedure onScanDone(); forward;
+
 { oxedTBuildGlobal }
 
 class procedure oxedTBuildGlobal.Initialize();
@@ -329,6 +331,8 @@ begin
    oxedBuild.Task.EmitAllEvents();
 
    oxedBuild.Reset();
+
+   oxedProjectScanner.OnDone.Add(@onScanDone);
 end;
 
 class procedure oxedTBuildGlobal.Deinitialize();
@@ -1592,8 +1596,6 @@ INITIALIZATION
    TSimpleStringList.InitializeValues(oxedBuild.Parameters.ExportSymbols);
    TSimpleStringList.InitializeValues(oxedBuild.Parameters.PreIncludeUses);
    TSimpleStringList.InitializeValues(oxedBuild.Parameters.IncludeUses);
-
-   oxedProjectScanner.OnDone.Add(@onScanDone);
 
    {don't load default units, we'll load ox units as a package}
    BuildConfiguration.DoLoadUnits := false;

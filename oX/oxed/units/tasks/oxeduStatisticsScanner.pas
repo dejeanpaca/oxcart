@@ -11,6 +11,7 @@ INTERFACE
    USES
       uStd, uFileUtils,
       {oxed}
+      uOXED,
       oxeduProject, oxeduProjectScanner, oxeduProjectWalker, oxeduProjectStatistics;
 
 IMPLEMENTATION
@@ -47,8 +48,13 @@ begin
    oxedProjectStatistics.Reset();
 end;
 
-INITIALIZATION
+procedure initialize();
+begin
    oxedProjectScanner.OnStart.Add(@onStart);
    oxedProjectScanner.OnFile.Add(@onFile);
+end;
+
+INITIALIZATION
+   oxed.Init.Add('statistics_scanner', @initialize);
 
 END.
