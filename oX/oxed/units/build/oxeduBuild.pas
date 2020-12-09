@@ -337,6 +337,9 @@ end;
 
 class procedure oxedTBuildGlobal.Deinitialize();
 begin
+   oxedBuild.Reset();
+   build.DeInitialize();
+   lpi.DeInitialize();
    FreeObject(oxedBuild.Task);
 end;
 
