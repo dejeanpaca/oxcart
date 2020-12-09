@@ -174,6 +174,7 @@ TYPE
       Template: TLPITemplate;
 
       procedure Initialize();
+      procedure DeInitialize();
       function IsInitialized(): boolean;
 
       procedure Create(const source: StdString; context: PLPIContext = nil; testMode: boolean = false);
@@ -571,6 +572,11 @@ begin
       Initialized := true;
    end else
       log.e('Cannot initialize lpi build, due to base build system not being initialized');
+end;
+
+procedure TLPIGlobal.DeInitialize();
+begin
+   Initialized := false;
 end;
 
 function TLPIGlobal.IsInitialized(): boolean;
