@@ -127,31 +127,45 @@ end;
 function oxedTAssets.IsLastPath(const path: StdString; var list: TSimpleStringList): boolean;
 var
    i,
-   len: loopint;
+   len,
+   p: loopint;
 {$IFDEF WINDOWS}
    lpath: StdString;
 {$ENDIF}
 
 begin
-   len := Length(path);
+   Result := false;
 
-   if(len > 0) then begin
+   if(path <> '') then begin
       {$IFDEF WINDOWS}
       lpath := LowerCase(path);
+      len := Length(lpath);
+      {$ELSE}
+      len := length(path);
       {$ENDIF}
 
       for i := 0 to list.n - 1 do begin
+         p := len - Length(list.List[i]) + 1;
+
+         {mismatched length}
+         if(p < 0) then
+            continue;
+
          {$IFDEF WINDOWS}
-         if(StringPos(list.List[i], lpath, Length(list.List[i]) - len) > 0) then
-            exit(true);
+         if StringPos(lpath, list.List[i], p) <> 0 then begin
          {$ELSE}
-         if(StringPos(list.List[i], path, Length(list.List[i]) - len) > 0) then
-            exit(true);
-         {$ENDif}
+         if StringPos(path, list.List[i], p) <> 0 then begin
+         {$ENDIF}
+            dec(p);
+            if(p > 0) then begin
+               {make sure we don't match with a partial path}
+               if(path[p] = DirectorySeparator) then
+                  exit(true);
+            end else
+               exit(true);
+         end;
       end;
    end;
-
-   Result := false;
 end;
 
 procedure init();
@@ -172,6 +186,7 @@ begin
    oxedAssets.Ignore.FileTypes.Add('.pp');
    oxedAssets.Ignore.FileTypes.Add('.inc');
    oxedAssets.Ignore.FileTypes.Add('.gitignore');
+   oxedAssets.Ignore.FileTypes.Add('.gitmodules');
    oxedAssets.Ignore.FileTypes.Add('.blend');
    oxedAssets.Ignore.FileTypes.Add('.temp');
    oxedAssets.Ignore.FileTypes.Add('.tmp');
