@@ -529,22 +529,22 @@ end;
 
 procedure oxTRenderer.logti(const what: StdString);
 begin
-   log.i(Id + ' (t: ' + sf(GetThreadID()) + ')  ' + what);
+   consoleLog.i(Id + ' (t: ' + sf(GetThreadID()) + ')  ' + what);
 end;
 
 procedure oxTRenderer.logtv(const what: StdString);
 begin
-   log.v(Id + ' (t: ' + sf(GetThreadID()) + ') ' + what);
+   consoleLog.v(Id + ' (t: ' + sf(GetThreadID()) + ') ' + what);
 end;
 
 procedure oxTRenderer.logtw(const what: StdString);
 begin
-   log.w(Id + ' (t: ' + sf(GetThreadID()) + ') ' + what);
+   consoleLog.w(Id + ' (t: ' + sf(GetThreadID()) + ') ' + what);
 end;
 
 procedure oxTRenderer.logte(const what: StdString);
 begin
-   log.e(Id + ' (t: ' + sf(GetThreadID()) + ') ' + what);
+   consoleLog.e(Id + ' (t: ' + sf(GetThreadID()) + ') ' + what);
 end;
 
 function instanceGlobal(): TObject;
