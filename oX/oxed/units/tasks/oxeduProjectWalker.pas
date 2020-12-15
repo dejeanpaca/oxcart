@@ -127,7 +127,7 @@ begin
    dir := oxedTProjectWalker.GetValidPath(walker.Current.Path, fd.f.Name);
 
    if(dir <> '') then
-      walker.HandleDirectory(dir, fd)
+      Result := walker.HandleDirectory(dir, fd)
    else
       Result := false;
 end;
@@ -140,6 +140,7 @@ begin
 
    f.FileName := fd.Name;
    f.Extension := ExtractFileExt(fd.Name);
+   writeln(fd.Name, ' ', f.Extension);
    f.fd := fd;
 
    f.Package := Package;
