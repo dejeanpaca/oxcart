@@ -185,8 +185,6 @@ begin
    oxedAssets.Ignore.FileTypes.Add('.pas');
    oxedAssets.Ignore.FileTypes.Add('.pp');
    oxedAssets.Ignore.FileTypes.Add('.inc');
-   oxedAssets.Ignore.FileTypes.Add('.gitignore');
-   oxedAssets.Ignore.FileTypes.Add('.gitmodules');
    oxedAssets.Ignore.FileTypes.Add('.blend');
    oxedAssets.Ignore.FileTypes.Add('.temp');
    oxedAssets.Ignore.FileTypes.Add('.tmp');
