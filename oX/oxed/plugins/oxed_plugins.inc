@@ -1,8 +1,12 @@
 {$IFDEF OXED_PLUGIN_TESTS}
    {tests plugin}
-   oxeduTestsPlugin
+   oxeduTestsPlugin,
    {$IFNDEF NO_UI}
-   , oxeduTestsPluginUI
+   oxeduTestsPluginUI,
    {$ENDIF}
 {$ENDIF}
 
+{$IFDEF OXED_PLUGIN_VCS}
+   oxeduVCSManagement,
+   oxeduGit,
+{$ENDIF}
