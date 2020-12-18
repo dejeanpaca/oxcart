@@ -9,10 +9,7 @@ procedure androidAutoHideNavBar(var app: android_app);
 
 IMPLEMENTATION
 
-procedure androidAutoHideNavBar(var app: android_app);
-var
-   env: PJNIEnv;
-
+VAR
    activityClass,
    windowClass,
    viewClass,
@@ -25,37 +22,57 @@ var
 
    flagFullscreenID,
    flagHideNavigationID,
-   flagImmersiveStickyID: jfieldID;
+   flagImmersiveStickyID,
+   flagLayoutStableID,
+   flagLayoutHideNavigationID,
+   flagLayoutFullscreenID: jfieldID;
 
    flagFullscreen,
    flagHideNavigation,
    flagImmersiveSticky,
+   flagLayoutStable,
+   flagLayoutHideNavigation,
+   flagLayoutFullscreen: cint;
+
+procedure androidAutoHideNavBar(var app: android_app);
+var
+   env: PJNIEnv;
    flag: cint;
 
 begin
    env := mainThreadEnv;
 
-   activityClass := env^^.FindClass(env, 'android/app/NativeActivity');
-   getWindow := env^^.GetMethodID(env, activityClass, 'getWindow', '()Landroid/view/Window;');
+   if(activityClass = nil) then begin
+      activityClass := env^^.FindClass(env, 'android/app/NativeActivity');
+      getWindow := env^^.GetMethodID(env, activityClass, 'getWindow', '()Landroid/view/Window;');
 
-   windowClass := env^^.FindClass(env, 'android/view/Window');
-   getDecorView := env^^.GetMethodID(env, windowClass, 'getDecorView', '()Landroid/view/View;');
+      windowClass := env^^.FindClass(env, 'android/view/Window');
+      getDecorView := env^^.GetMethodID(env, windowClass, 'getDecorView', '()Landroid/view/View;');
 
-   viewClass := env^^.FindClass(env, 'android/view/View');
-   setSystemUiVisibility := env^^.GetMethodID(env, viewClass, 'setSystemUiVisibility', '(I)V');
+      viewClass := env^^.FindClass(env, 'android/view/View');
+      setSystemUiVisibility := env^^.GetMethodID(env, viewClass, 'setSystemUiVisibility', '(I)V');
+
+      flagFullscreenID := env^^.GetStaticFieldID(env, viewClass, 'SYSTEM_UI_FLAG_FULLSCREEN', 'I');
+      flagHideNavigationID := env^^.GetStaticFieldID(env, viewClass, 'SYSTEM_UI_FLAG_HIDE_NAVIGATION', 'I');
+      flagImmersiveStickyID := env^^.GetStaticFieldID(env, viewClass, 'SYSTEM_UI_FLAG_IMMERSIVE_STICKY', 'I');
+      flagLayoutStableID := env^^.GetStaticFieldID(env, viewClass, 'SYSTEM_UI_FLAG_LAYOUT_STABLE', 'I');
+      flagLayoutHideNavigationID := env^^.GetStaticFieldID(env, viewClass, 'SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION', 'I');
+      flagLayoutFullscreenID := env^^.GetStaticFieldID(env, viewClass, 'SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN', 'I');
+
+      flagFullscreen := env^^.GetStaticIntField(env, viewClass, flagFullscreenID);
+      flagHideNavigation := env^^.GetStaticIntField(env, viewClass, flagHideNavigationID);
+      flagImmersiveSticky := env^^.GetStaticIntField(env, viewClass, flagImmersiveStickyID);
+      flagLayoutStable := env^^.GetStaticIntField(env, viewClass, flagLayoutStableID);
+      flagLayoutHideNavigation := env^^.GetStaticIntField(env, viewClass, flagLayoutHideNavigationID);
+      flagLayoutFullscreen := env^^.GetStaticIntField(env, viewClass, flagLayoutFullscreenID);
+   end;
+
+   flag := flagImmersiveSticky or
+      flagLayoutStable or flagLayoutHideNavigation or flagLayoutFullscreen or
+      flagHideNavigation or flagFullscreen;
 
    window := env^^.CallObjectMethod(env, app.activity^.clazz, getWindow);
    decorView := env^^.CallObjectMethod(env, window, getDecorView);
-
-   flagFullscreenID := env^^.GetStaticFieldID(env, viewClass, 'SYSTEM_UI_FLAG_FULLSCREEN', 'I');
-   flagHideNavigationID := env^^.GetStaticFieldID(env, viewClass, 'SYSTEM_UI_FLAG_HIDE_NAVIGATION', 'I');
-   flagImmersiveStickyID := env^^.GetStaticFieldID(env, viewClass, 'SYSTEM_UI_FLAG_IMMERSIVE_STICKY', 'I');
-
-   flagFullscreen := env^^.GetStaticIntField(env, viewClass, flagFullscreenID);
-   flagHideNavigation := env^^.GetStaticIntField(env, viewClass, flagHideNavigationID);
-   flagImmersiveSticky := env^^.GetStaticIntField(env, viewClass, flagImmersiveStickyID);
-
-   flag := flagFullscreen or flagHideNavigation or flagImmersiveSticky;
 
    env^^.CallVoidMethodA(env, decorView, setSystemUiVisibility, @flag);
 end;
