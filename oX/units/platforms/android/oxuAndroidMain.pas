@@ -24,9 +24,14 @@ IMPLEMENTATION
 
 TYPE
    TState = (
+      {we're just starting initialization}
       STATE_INITIALIZE,
+      {wait for window to be ready (all changes applied before proceeding)}
       STATE_WAIT_FOR_WINDOW,
-      WINDOW_READY
+      {window is ready, and we can initialize the engine}
+      STATE_WINDOW_READY,
+      {we're all set up and running}
+      STATE_RUNNING
    );
 
 VAR
@@ -123,11 +128,14 @@ begin
                State := STATE_WAIT_FOR_WINDOW;
                oxAndroidPlatform.HideNavBar();
             end else
-               State := WINDOW_READY;
+               State := STATE_WINDOW_READY;
 
-            if(State = WINDOW_READY) then begin
+            if(State = STATE_WINDOW_READY) then begin
                oxRun.Initialize();
                oxAndroidPlatform.fInitWindow := false;
+
+               if(not ox.InitializationFailed) then
+                  State := STATE_RUNNING;
             end;
          end;
       end;
