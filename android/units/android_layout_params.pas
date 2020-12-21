@@ -23,10 +23,11 @@ TYPE
    { androidTLayoutParams }
 
    androidTLayoutParams = record
-      cl: jclass;
+      layoutParamsClass: jclass;
       layoutInDisplayCutoutMode: jfieldID;
 
-      procedure SetLayoutInDisplayCutoutMode(window: jclass; layout: jint);
+      procedure SetLayoutInDisplayCutoutMode(params: jobject; layout: jint);
+      procedure Initialize();
    end;
 
 VAR
@@ -36,21 +37,18 @@ IMPLEMENTATION
 
 { androidTLayoutParams }
 
-procedure androidTLayoutParams.SetLayoutInDisplayCutoutMode(window: jclass; layout: jint);
-var
-   env: PJNIEnv;
-
+procedure androidTLayoutParams.SetLayoutInDisplayCutoutMode(params: jobject; layout: jint);
 begin
-   env := mainThreadEnv;
+   if(layoutInDisplayCutoutMode <> nil) then
+      mainThreadEnv^^.SetIntField(mainThreadEnv, params, layoutInDisplayCutoutMode, layout);
+end;
 
-   if(cl = nil) then begin
-      cl := env^^.FindClass(env, 'android/view/WindowManager$LayoutParams');
+procedure androidTLayoutParams.Initialize();
+begin
+   layoutParamsClass := mainThreadEnv^^.FindClass(mainThreadEnv, 'android/view/WindowManager$LayoutParams');
 
-      if(android_api_level >= 28) then
-         layoutInDisplayCutoutMode := env^^.GetFieldID(env, cl, 'layoutInDisplayCutoutMode', 'I');
-   end;
-
-   env^^.SetIntField(env, window, layoutInDisplayCutoutMode, layout);
+   if(android_api_level >= 28) then
+      layoutInDisplayCutoutMode := mainThreadEnv^^.GetFieldID(mainThreadEnv, layoutParamsClass, 'layoutInDisplayCutoutMode', 'I');
 end;
 
 END.
