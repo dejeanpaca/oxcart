@@ -61,7 +61,6 @@ TYPE
       fRegainedFocus,
       fInitWindow,
       fLostWindow,
-      fStarted,
       fDone,
       {main thread should be signalled to handle an activity}
       fSignalMainThread: boolean;
@@ -77,6 +76,8 @@ TYPE
       procedure RecreateSurface();
       procedure RegainedFocus();
       procedure DestroyWindow();
+
+      procedure Startup();
 
       procedure HideNavBar();
    end;
@@ -107,7 +108,6 @@ begin
       if(oxWindow.Current <> nil) then begin
          oxWindow.Current.Select();
          oxAndroidPlatform.fRegainedFocus := true;
-         oxAndroidPlatform.fHaveFocus := true;
          oxAndroidPlatform.fLostFocus := false;
 
          if(oxAndroidPlatform.AutoHideNavBar) then
@@ -123,9 +123,6 @@ begin
       oxAndroidPlatform.fLostFocus := true;
       oxAndroidPlatform.fRegainedFocus := false;
       oxRenderingContext.CanRender := false;
-
-      if(oxAndroidPlatform.fStarted) then
-         oxAndroidPlatform.fStarted := false;
    end else if(cmd = APP_CMD_DESTROY) then begin
       oxAndroidPlatform.fDone := true;
    end;
@@ -267,6 +264,7 @@ begin
    oxRenderingContext.CanRender := true;
 
    fRegainedFocus := false;
+   fHaveFocus := true;
 end;
 
 procedure oxTAndroidPlatformGlobal.DestroyWindow();
@@ -280,6 +278,12 @@ begin
    renderer.DeInitWindow(oxWindow.Current);
 
    fLostWindow := false;
+end;
+
+procedure oxTAndroidPlatformGlobal.Startup();
+begin
+   if(AutoHideNavBar) then
+      HideNavBar();
 end;
 
 procedure oxTAndroidPlatformGlobal.HideNavBar();
