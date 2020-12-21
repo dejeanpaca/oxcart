@@ -10,6 +10,7 @@ INTERFACE
 
 USES
    android_native_app_glue, android_log_helper, native_activity, android_native_activity_helper,
+   android_window,
    ctypes, looper, jni, uAndroid,
    uLog, uUnix, StringUtils,
    {app}
@@ -25,6 +26,16 @@ VAR
    mainThreadLooper: PALooper;
    mainThreadMessagePipe: unxTPipe;
 
+procedure hideNavbar();
+begin
+   androidAutoHideNavBar(AndroidApp^.activity);
+
+{   if(AndroidApp^.Window <> nil) then
+      androidLayoutParams.SetLayoutInDisplayCutoutMode(AndroidApp^.window, LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES);}
+
+   oxAndroidPlatform.fHideNavbar := false;
+end;
+
 function mainThreadLooperCallback(fd: cint; events: cint; data: pointer): cint; cdecl;
 var
    msg: char;
@@ -36,10 +47,13 @@ begin
    if(AndroidApp = nil) or (msg <> '@') then
       exit;
 
-   if(oxAndroidPlatform.fHideNavbar) then begin
-      androidAutoHideNavBar(AndroidApp^);
-      oxAndroidPlatform.fHideNavbar := false;
-   end;
+   {initialize jni constructs if we haven't already}
+   if(androidWindow.windowClass = nil) then
+      androidWindow.Initialize();
+
+   {hide navbar if requested}
+   if(oxAndroidPlatform.fHideNavbar) then
+      hideNavbar();
 end;
 
 procedure signalMainThread();
@@ -93,6 +107,9 @@ begin
 
       if(not ox.Initialized) and (not ox.InitializationFailed) then begin
          if(not ox.Started) and (oxAndroidPlatform.fInitWindow) then begin
+            if(oxAndroidPlatform.AutoHideNavBar) then
+               oxAndroidPlatform.HideNavBar();
+
             oxRun.Initialize();
             oxAndroidPlatform.fInitWindow := false;
          end;

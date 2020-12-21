@@ -30,7 +30,7 @@ TYPE
    end;
 
 VAR
-   layout_params: androidTLayoutParams;
+   androidLayoutParams: androidTLayoutParams;
 
 IMPLEMENTATION
 
