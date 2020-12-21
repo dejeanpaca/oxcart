@@ -9,8 +9,8 @@ UNIT oxuAndroidMain;
 INTERFACE
 
 USES
-   android_native_app_glue, android_log_helper, native_activity, android_native_activity_helper, android_env,
-   ctypes, looper, jni,
+   android_native_app_glue, android_log_helper, native_activity, android_native_activity_helper,
+   ctypes, looper, jni, uAndroid,
    uLog, uUnix, StringUtils,
    {app}
    uApp,
