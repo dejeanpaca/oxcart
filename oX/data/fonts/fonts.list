@@ -1,6 +1,6 @@
 default FontAwesome/Solid.otf
 regular FontAwesome/Regular.otf
-brands other/Brands.otf
+brands other/FontAwesome-Brands.otf
 
 inconsolata Inconsolata.ttf
 material other/MaterialIcons-Regular.woff
