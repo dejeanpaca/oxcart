@@ -68,8 +68,6 @@ INTERFACE
       {platforms}
       oxeduwndAndroidSettings, oxeduwndAndroidGeneralSettings,
       oxeduAndroidMenu,
-      {ypk}
-      oxeduYPK,
       {$ENDIF}
       {plugins}
       {$INCLUDE ../plugins/oxed_plugins.inc}
