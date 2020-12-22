@@ -426,7 +426,7 @@ end;
 
 function TFile.GetErrorString(): StdString;
 begin
-   Result := fFile.GetErrorString(Error);
+   Result := fFile.GetErrorString(Error, IoError);
 end;
 
 
