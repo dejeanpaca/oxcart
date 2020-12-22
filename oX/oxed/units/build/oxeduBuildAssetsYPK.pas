@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, sysutils, uFileUtils,
       {oxed}
-      uOXED, oxeduYPK, oxeduProjectScanner,
+      uOXED, oxeduYPK, oxeduProjectWalker,
       oxeduBuild, oxeduBuildLog, oxeduBuildAssets;
 
 TYPE
@@ -22,7 +22,7 @@ TYPE
       procedure OnStart(); override;
       procedure OnDone(); override;
 
-      function OnFile(var f: oxedTAssetBuildFile; var {%H-}sf: oxedTScannerFile): boolean; override;
+      function OnFile(var f: oxedTAssetBuildFile; var {%H-}sf: oxedTProjectWalkerFile): boolean; override;
    end;
 
 VAR
@@ -53,7 +53,7 @@ begin
    oxedYPK.Builder.Build();
 end;
 
-function oxedTYPKAssetsDeployer.OnFile(var f: oxedTAssetBuildFile; var sf: oxedTScannerFile): boolean;
+function oxedTYPKAssetsDeployer.OnFile(var f: oxedTAssetBuildFile; var sf: oxedTProjectWalkerFile): boolean;
 begin
    oxedYPK.Builder.AddFile(f.Source, f.Target);
    Result := true;
