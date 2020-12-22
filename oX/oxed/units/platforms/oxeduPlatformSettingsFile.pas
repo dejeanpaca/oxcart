@@ -41,7 +41,7 @@ var
 
 begin
    if(platform.Enabled) then begin
-      dvg := platform.GetDvarGroup();
+      dvg := platform.pDvg;
 
       if(dvg <> nil) then begin
          fn := GetFn(platform);
@@ -58,7 +58,7 @@ var
 
 begin
    if(platform.Enabled) then begin
-      dvg := platform.GetDvarGroup();
+      dvg := platform.pDvg;
 
       if(dvg <> nil) then begin
          fn := GetFn(platform);

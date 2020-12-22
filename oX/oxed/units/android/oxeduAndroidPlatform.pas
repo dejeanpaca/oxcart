@@ -24,7 +24,6 @@ TYPE
       constructor Create(); override;
 
       procedure ProjectReset(); override;
-      function GetDvarGroup(): PDVarGroup; override;
    end;
 
    { oxedTAndroidPlatformArchitecture }
@@ -73,6 +72,8 @@ begin
 
    Configuration := oxedTPlatformConfiguration.Create();
 
+   pDvg := @oxedAndroidSettings.Project.dvg;
+
    {arm}
    arch := oxedTAndroidPlatformArchitecture(
       AddArchitecture(oxedTAndroidPlatformArchitecture.Create('Android Arm x32', 'arm')));
@@ -117,11 +118,6 @@ end;
 procedure oxedTAndroidPlatform.ProjectReset();
 begin
    oxedAndroidSettings.ProjectReset();
-end;
-
-function oxedTAndroidPlatform.GetDvarGroup(): PDVarGroup;
-begin
-   Result := @oxedAndroidSettings.Project.dvg;
 end;
 
 procedure init();
