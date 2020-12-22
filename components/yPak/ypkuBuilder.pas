@@ -1,6 +1,6 @@
 {
-   yPakU, yPak tool base unit
-   Copyright (C) 2011. Dejan Boras
+   ypkuBuilder, yPak file builder
+   Copyright (C) 2020. Dejan Boras
 }
 
 {$INCLUDE oxheader.inc}
@@ -9,7 +9,7 @@ UNIT ypkuBuilder;
 INTERFACE
 
    USES
-      uStd, ustrBlob,
+      uStd, ustrBlob, StringUtils,
       uFile, uFiles, ufhStandard, uFileUtils,
       {ypk}
       yPakU, uyPakFile;
@@ -35,6 +35,8 @@ TYPE
       {ypk data blob}
       Blob: PByte;
       Total: loopint;
+
+      ErrorDescription: string;
 
       class procedure Initialize(out ypkb: ypkTBuilder); static;
 
@@ -72,6 +74,13 @@ var
 
    hdr: ypkfTHeader;
    f: TFile;
+
+procedure raiseError(const description: string);
+begin
+   ErrorDescription := description;
+   f.CloseAndDestroy();
+   Result := false;
+end;
 
 begin
    Result := true;
@@ -119,33 +128,52 @@ begin
    f.New(OutputFN);
 
    {copy source files to ypk file}
-   if(f.Error <> 0) then begin
+   if(f.Error = 0) then begin
       ypkf.WriteHeader(f, hdr);
 
-      if(f.Error = 0) then begin
+      if(f.Error <> 0) then begin
+         raiseError('Failed to write ypk file header');
+         exit(False);
+      end;
 
-         if(sb.Total > 0) then
-            ypkf.WriteBlob(f, sb.Blob, sb.Total);
+      if(sb.Total > 0) then begin
+         ypkf.WriteBlob(f, sb.Blob, sb.Total);
 
-         if(entries.n > 0) then
-            ypkf.WriteEntries(f, entries);
-
-         for i := 0 to Files.n - 1 do begin
-            if(fCopy(Files.List[i].Source, f) < 0) then begin
-               Result := false;
-               break;
-            end;
-
-            if(f.Error <> 0) then begin
-               Result := false;
-               break;
-            end;
+         if(f.Error <> 0) then begin
+            raiseError('Failed to write blob (' + sf(sb.Total) + ') to ypk ' + f.GetErrorString());
+            exit(false);
          end;
       end;
-   end;
 
-   {done}
-   f.CloseAndDestroy();
+      if(entries.n > 0) then begin
+         ypkf.WriteEntries(f, entries);
+
+         if(f.Error <> 0) then begin
+            raiseError('Failed to write entries to ypk ' + f.GetErrorString());
+            exit(false);
+         end;
+      end;
+
+      for i := 0 to Files.n - 1 do begin
+         if(fCopy(Files.List[i].Source, f) < 0) then begin
+            if(f.Error <> 0) then
+               raiseError('Failed to write to ypk ' + f.GetErrorString())
+            else
+               raiseError('Failed to read source file');
+
+            break;
+         end;
+
+         if(f.Error <> 0) then begin
+            raiseError('File I/O error: ' + f.GetErrorString());
+            break;
+         end;
+      end;
+
+      {done}
+      f.CloseAndDestroy();
+   end else
+      raiseError('Failed to create ypk file');
 
    sb.Dispose();
    entries.Dispose();

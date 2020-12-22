@@ -195,9 +195,8 @@ begin
 
    blob := nil;
 
-   if(size > 0) then begin
+   if(size > 0) then
       Result := f.Write(blob^, size);
-   end;
 end;
 
 END.
