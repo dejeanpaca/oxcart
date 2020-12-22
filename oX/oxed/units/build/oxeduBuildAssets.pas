@@ -106,14 +106,18 @@ procedure oxedTBuildAssets.Deploy(const useTarget: StdString);
 begin
    Target := IncludeTrailingPathDelimiter(useTarget);
    oxedBuildLog.i('Deploying asset files to ' + useTarget);
-   Deployer := DefaultDeployer;
    FileCount := 0;
+
+   Deployer.OnStart();
 
    PreDeploy.Call();
 
    Run();
 
+   Deployer.OnDone();
+
    oxedBuildLog.i('Done assets deploy (files: ' + sf(FileCount) + ')');
+   Deployer := DefaultDeployer;
 end;
 
 function oxedTBuildAssets.HandleFile(var f: oxedTProjectWalkerFile; const fd: TFileTraverseData): boolean;
