@@ -15,7 +15,8 @@ INTERFACE
       {build}
       uBuildInstalls, uBuild,
       {oxed}
-      uOXED, oxeduBuild, oxeduBuildLog,
+      uOXED,
+      oxeduBuild, oxeduBuildLog,
       oxeduAndroidPlatform, oxeduAndroidSettings, oxeduAndroid;
 
 TYPE
@@ -45,22 +46,21 @@ begin
    cpuType := loopint(oxedAndroidSettings.GetCPUType());
 
    oxedBuild.BuildTarget := OXED_BUILD_LIB;
+
+   oxedBuild.StartTask(OXED_BUILD_TASK_RECODE, oxedAndroidPlatform.Architectures.List[cpuType]);
 end;
 
 procedure oxedTAndroidBuild.BuildToProject();
 begin
    buildStart();
-
-   oxedBuild.StartTask(OXED_BUILD_TASK_RECODE, oxedAndroidPlatform.Architectures.List[cpuType]);
 end;
 
 procedure oxedTAndroidBuild.BuildAssetsToProject();
 begin
-   buildStart();
-
    oxedBuild.BuildAssets := true;
    oxedBuild.BuildBinary := false;
-   oxedBuild.StartTask(OXED_BUILD_TASK_RECODE, oxedAndroidPlatform.Architectures.List[cpuType]);
+
+   buildStart();
 end;
 
 procedure oxedTAndroidBuild.Initialize();
