@@ -9,9 +9,10 @@ UNIT oxeduBuildAssetsYPK;
 INTERFACE
 
    USES
-      uStd, sysutils, uFileUtils,
+      uStd, sysutils, uFileUtils, StringUtils,
+      ypkuBuilder,
       {oxed}
-      uOXED, oxeduYPK, oxeduProjectWalker,
+      uOXED, oxeduProjectWalker,
       oxeduBuild, oxeduBuildLog, oxeduBuildAssets;
 
 TYPE
@@ -19,6 +20,10 @@ TYPE
    { oxedTYPKAssetsDeployer }
 
    oxedTYPKAssetsDeployer = class(oxedTAssetsDeployer)
+      Builder: ypkTBuilder;
+
+      constructor Create();
+
       procedure OnStart(); override;
       procedure OnDone(); override;
 
@@ -37,25 +42,40 @@ end;
 
 procedure deinit();
 begin
-   FreeObject(oxedYPKAssetsDeployer);
+   if(oxedYPKAssetsDeployer <> nil) then begin
+      oxedYPKAssetsDeployer.Builder.Dispose();
+      FreeObject(oxedYPKAssetsDeployer);
+   end;
 end;
 
 { oxedTYPKAssetsDeployer }
 
+constructor oxedTYPKAssetsDeployer.Create();
+begin
+   ypkTBuilder.Initialize(Builder);
+end;
+
 procedure oxedTYPKAssetsDeployer.OnStart();
 begin
-   oxedYPK.Builder.Reset();
-   oxedYPK.Builder.OutputFN := IncludeTrailingPathDelimiter(oxedBuildAssets.Target) + 'data.ypk';
+   Builder.Reset();
+   Builder.OutputFN := IncludeTrailingPathDelimiterNonEmpty(oxedBuildAssets.Target) + 'data.ypk';
 end;
 
 procedure oxedTYPKAssetsDeployer.OnDone();
 begin
-   oxedYPK.Builder.Build();
+   oxedBuildLog.i('Building ypk file to: ' + Builder.OutputFN);
+
+   if(Builder.Build()) then
+      oxedBuildLog.k('Built ypk file: ' + Builder.OutputFN)
+   else begin
+      oxedBuildLog.e('Failed building ypk file: ' + Builder.OutputFN);
+      oxedBuildLog.e('Error: ' + Builder.ErrorDescription);
+   end;
 end;
 
 function oxedTYPKAssetsDeployer.OnFile(var f: oxedTAssetBuildFile; var sf: oxedTProjectWalkerFile): boolean;
 begin
-   oxedYPK.Builder.AddFile(f.Source, f.Target);
+   Builder.AddFile(f.Source, f.Target);
    Result := true;
 end;
 
