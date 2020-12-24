@@ -206,6 +206,10 @@ TYPE
       {get lpi filename based on current target}
       function GetLPIFilename(): StdString;
 
+      {move file from source to target (overwrites target and logs if indicated to do so)}
+      procedure MoveFile(const source, target, what: StdString; log: boolean = true);
+
+      {fail the build}
       procedure Fail(const reason: StdString);
 
       {Reset build targets and options. Should be called after a build so the next one doesn't use leftover settings.}
@@ -1503,6 +1507,25 @@ begin
       Result := oxPROJECT_LIB_LPI
    else
       Result := oxPROJECT_MAIN_LPI;
+end;
+
+procedure oxedTBuildGlobal.MoveFile(const source, target, what: StdString; log: boolean);
+var
+   ok: boolean;
+
+begin
+   {erase data file first}
+   if(FileUtils.Exists(target) > 0) then
+      FileUtils.Erase(target);
+
+   {move data file}
+   ok := RenameFile(source, target);
+
+   if(not ok) then
+      oxedBuild.Fail('Failed to move ' + what + ' from "' + source + '" to "' + target + '"');
+
+   if log and ok then
+      oxedBuildLog.k('Moved ' + what + ' from "' + source + '" to "' + target + '"');
 end;
 
 procedure oxedTBuildGlobal.Fail(const reason: StdString);
