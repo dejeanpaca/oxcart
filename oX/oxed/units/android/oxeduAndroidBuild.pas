@@ -187,15 +187,7 @@ begin
       source := oxedYPKAssetsDeployer.Builder.OutputFN;
       targetPath := appPath + '/src/main/res/assets/data.ypk';
 
-      {erase data file first}
-      if(FileUtils.Exists(targetPath) > 0) then
-         FileUtils.Erase(targetPath);
-
-      {move data file}
-      if(RenameFile(source, targetPath)) then
-         oxedBuildLog.k('Copied data file from "' + source + '" to "' + targetPath + '"')
-      else
-         oxedBuild.Fail('Failed to copy data file from "' + source + '" to "' + targetPath + '"');
+      oxedBuild.MoveFile(source, targetPath, 'data file');
    end;
 
    if(not oxedBuild.BuildBinary) then
@@ -208,10 +200,7 @@ begin
    if(ForceDirectories(targetPath)) then begin
       targetPath := targetPath + DirSep + 'libmain.so';
 
-      if(FileUtils.Copy(source, targetPath) > 0) then
-         oxedBuildLog.k('Copied library from "' + source + '" to "' + targetPath + '"')
-      else
-         oxedBuild.Fail('Failed to copy library from "' + source + '" to "' + targetPath + '"');
+      oxedBuild.MoveFile(source, targetPath, 'data file');
    end else
       oxedBuild.Fail('Cannot create libs directory at: ' + targetPath);
 end;
