@@ -1108,13 +1108,8 @@ begin
          source := ExtractAllNoExt(source) + '.dbg';
          destination := ExtractAllNoExt(destination) + '.dbg';
 
-         if(FileUtils.Exists(destination) > 0) then
-            FileUtils.Erase(destination);
-
-         if(FileUtils.Exists(source) > 0) then begin
-            if(RenameFile(source, destination)) then
-               oxedBuildLog.v('Moved debug info: ' + source + ' to ' + destination);
-         end;
+         if(FileExists(source)) then
+            MoveFile(source, destination, 'debug info');
       end;
 
       Result := true;
