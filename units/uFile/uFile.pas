@@ -114,6 +114,8 @@ TYPE
       function CanRead(): boolean;
       {can we write the file}
       function CanWrite(): boolean;
+      {is the file opened}
+      function IsOpened(): boolean;
 
       {FILE HANDLER}
       {assign a file handler to a file}
@@ -483,6 +485,11 @@ begin
    Result := (Error = 0) and ((fMode = fmOpenWrite) or (fMode = fmOpenReadWrite));
 end;
 
+function TFile.IsOpened(): boolean;
+begin
+   Result := fMode <> fcfNONE;
+end;
+
 {assign a file handler to a file}
 procedure TFile.AssignHandler(var handler);
 begin
@@ -532,6 +539,8 @@ begin
       pHandler^.Close(Self);
 
    HandlerDispose();
+
+   fMode := fcfNONE;
 end;
 
 procedure TFile.CloseAndDestroy();
