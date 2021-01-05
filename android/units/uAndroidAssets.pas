@@ -9,8 +9,8 @@ UNIT uAndroidAssets;
 INTERFACE
 
    USES
-      jni, native_activity,
-      uAndroid, asset_manager;
+      ctypes, jni, native_activity, asset_manager, android_log_helper,
+      uStd, uFile, uAndroid, uAndroidAssetFile;
 
 TYPE
 
@@ -24,6 +24,9 @@ TYPE
       procedure Get(activity: PANativeActivity);
       {done with the asset manager}
       procedure Done();
+
+      {open a file from the assets}
+      function Open(const path: StdString; out f: TFile): boolean;
    end;
 
 VAR
@@ -60,6 +63,50 @@ procedure androidTAssetManager.Done();
 begin
    if(GlobalRef <> nil) then
       mainThreadEnv^^.DeleteGlobalRef(mainThreadEnv, GlobalRef);
+end;
+
+function androidTAssetManager.Open(const path: StdString; out f: TFile): boolean;
+var
+   start,
+   length: cint64;
+   asset: PAAsset;
+
+begin
+   Result := false;
+   fFile.Init(f);
+
+   {set defaults}
+   f.SetDefaults(fcfREAD, path);
+
+   {assign a standard file handler}
+   f.AssignHandler(androidAssetFileHandler);
+
+   if(f.Error = 0) then begin
+      {open the actual asset}
+      asset := AAssetManager_open(Manager, pchar(path), AASSET_MODE_RANDOM);
+
+      if(asset = nil) then begin
+         loge('Asset manager failed to open: ' + path);
+         f.RaiseError(eIO);
+         exit(false);
+      end;
+
+      f.ExtData := asset;
+
+      {get a file handle for the asset}
+      f.Handle := AAsset_openFileDescriptor64(asset, @start, @length);
+
+      if(f.Handle > 0) then begin
+         f.fSize        := length;
+         f.fSizeLimit   := length;
+         f.fOffset      := start;
+
+         exit(True);
+      end else
+         loge('Failed to open asset file descriptor: ' + path);
+   end;
+
+   f.fMode := fcfNONE;
 end;
 
 END.
