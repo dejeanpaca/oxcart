@@ -36,7 +36,7 @@ var
    fn: StdString;
 
 begin
-   fn := 'assets/data.ypk';
+   fn := 'data.ypk';
 
    if(androidAssetManager.Open(fn, fData)) then
       logi('Opened assets file')
