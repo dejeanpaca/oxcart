@@ -70,13 +70,11 @@ var
    start,
    length: cint64;
    asset: PAAsset;
+   handle: fTHandle;
 
 begin
    Result := false;
    fFile.Init(f);
-
-   {set defaults}
-   f.SetDefaults(fcfREAD, path);
 
    {assign a standard file handler}
    f.AssignHandler(androidAssetFileHandler);
@@ -91,12 +89,15 @@ begin
          exit(false);
       end;
 
-      f.ExtData := asset;
-
       {get a file handle for the asset}
-      f.Handle := AAsset_openFileDescriptor64(asset, @start, @length);
+      handle := AAsset_openFileDescriptor64(asset, @start, @length);
 
       if(f.Handle > 0) then begin
+         {set defaults}
+         f.SetDefaults(fcfREAD, path);
+
+         f.Handle       := handle;
+         f.ExtData      := asset;
          f.fSize        := length;
          f.fSizeLimit   := length;
          f.fOffset      := start;
@@ -106,6 +107,7 @@ begin
          loge('Failed to open asset file descriptor: ' + path);
    end;
 
+   f.CloseAndDestroy();
    f.fMode := fcfNONE;
 end;
 
