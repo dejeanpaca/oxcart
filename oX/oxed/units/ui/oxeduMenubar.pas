@@ -181,19 +181,24 @@ begin
    Project := Bar.Add('Project');
 
    item := Project.AddItem('Recode', oxedActions.RECODE);
-
-   if(oxedPlatform.GlyphCode <> 0) then
-      oxedIcons.Create(item, oxedPlatform.GlyphCode, oxedPlatform.GlyphName);
+   oxedIcons.Create(item, $f0e7);
 
    item := Project.AddItem('Rebuild', oxedActions.REBUILD);
 
    if(oxedPlatform.GlyphCode <> 0) then
       oxedIcons.Create(item, oxedPlatform.GlyphCode, oxedPlatform.GlyphName);
 
-   Project.AddItem('Cleanup', oxedActions.CLEANUP);
-   Project.AddItem('Rescan', oxedActions.RESCAN);
-   Project.AddItem('Recreate', oxedActions.RECREATE);
-   Project.AddItem('Abort', oxedActions.ABORT_BUILD);
+   item := Project.AddItem('Cleanup', oxedActions.CLEANUP);
+   oxedIcons.Create(item, $f1b8);
+
+   item := Project.AddItem('Rescan', oxedActions.RESCAN);
+   oxedIcons.Create(item, $f254);
+
+   Project.AddItem('Recreate project files', oxedActions.RECREATE);
+
+   item := Project.AddItem('Abort', oxedActions.ABORT_BUILD);
+   oxedIcons.Create(item, $f28d);
+
    Project.AddSeparator();
 
    item := Project.AddItem('Play (Run)', oxedActions.RUN_PLAY);
