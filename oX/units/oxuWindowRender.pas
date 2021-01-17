@@ -13,7 +13,7 @@ INTERFACE
       {oX}
       uOX, oxuWindowTypes, oxuWindow, oxuGlobalInstances,
       oxuTimer, oxuViewport, oxuRenderer, oxuRenderingContext,
-      oxuWindows,
+      oxuWindows, oxuWindowHelper,
       {ui}
       oxuUIHooks, uiuWindow
       {lib}
@@ -99,6 +99,10 @@ begin
       exit;
 
    if(not OverrideRender) then begin
+      {viewport has been updated}
+      if(wnd.Viewport.Changed) then
+         wnd.SetupViewport();
+
       StartRender(wnd);
 
       oxWindows.OnRender.Call(wnd);
