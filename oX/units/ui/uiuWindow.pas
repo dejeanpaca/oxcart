@@ -1375,6 +1375,8 @@ end;
 {WINDOW SELECTION}
 function uiTWindowHelper.IsSelected(): boolean;
 begin
+   {TODO: Check if the root window is selected in system}
+
    Result := (Level <= GetUI().Select.l) and (GetUI().Select.s[Level] = Self);
 end;
 

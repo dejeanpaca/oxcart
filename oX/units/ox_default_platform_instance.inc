@@ -1,9 +1,9 @@
-   {$IF defined(X11)}
+{$IF defined(X11)}
    PlatformInstance := oxTX11Platform;
-   {$ELSEIF defined(WINDOWS)}
+{$ELSEIF defined(WINDOWS)}
    PlatformInstance := oxTWindowsPlatform;
-   {$ELSEIF defined(COCOA)}
+{$ELSEIF defined(COCOA)}
    PlatformInstance := TCocoaPlatform;
-   {$ELSEIF defined(ANDROID)}
-   PlatformInstance := oxTAndroidplatform;
-   {$ENDIF}
+{$ELSEIF defined(ANDROID)}
+   PlatformInstance := oxTAndroidPlatform;
+{$ENDIF}

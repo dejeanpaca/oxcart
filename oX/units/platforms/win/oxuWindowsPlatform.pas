@@ -766,12 +766,13 @@ end;
 
 procedure oxTWindowsPlatform.ProcessEvents();
 var
-  anyMessages: boolean;
+   anyMessages: boolean;
 
 begin
    repeat
       {process all messages at once}
       anyMessages := PeekMessage(@WinMsg, 0, 0, 0, 0);
+
       if (anyMessages) then begin
          GetMessage(@WinMsg, 0, 0, 0);
          DispatchMessage(WinMsg);
