@@ -61,8 +61,6 @@ INTERFACE
             {$ELSEIF defined(COCOA)}
                {%H-}oxuCocoaPlatform,
             {$ENDIF}
-         {$ELSE}
-            {%H-}oxuOXEDPlatform,
          {$ENDIF}
       {$ENDIF}
 
