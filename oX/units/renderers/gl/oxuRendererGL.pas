@@ -17,13 +17,13 @@ INTERFACE
       uStd,
       oxuglRenderer,
       {$IF DEFINED(WINDOWS)}
-      oxuglRendererWin, oxuWindowsPlatform,
+      oxuglRendererWin, {$IFNDEF OX_LIBRARY}oxuWindowsPlatform,{$ENDIF}
       {$ELSEIF DEFINED(X11)}
-      oxuglRendererX11, oxuX11Platform,
+      oxuglRendererX11, {$IFNDEF OX_LIBRARY}oxuX11Platform,{$ENDIF}
       {$ELSEIF DEFINED(COCOA)}
-      oxuglRendererCocoa, oxuCocoaPlatform,
+      oxuglRendererCocoa, {$IFNDEF OX_LIBRARY}oxuCocoaPlatform,{$ENDIF}
       {$ELSEIF DEFINED(ANDROID)}
-      oxuglRendererEGL, oxuAndroidPlatform,
+      oxuglRendererEGL, {$IFNDEF OX_LIBRARY}oxuAndroidPlatform,{$ENDIF}
       {$ENDIF}
       oxuglTextureComponent,
       oxuglTextureGenerate,
@@ -42,11 +42,14 @@ INTERFACE
 
 IMPLEMENTATION
 
+{we don't need to indicate which platform instance we want for the renderer, as we use the editor one}
+{$IFNDEF OX_LIBRARY}
 VAR
    PlatformInstance: TClass;
 
 INITIALIZATION
    {$INCLUDE ../../ox_default_platform_instance.inc}
    oxglTRenderer.glSystemPlatform := PlatformInstance;
+{$ENDIF}
 
 END.

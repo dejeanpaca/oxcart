@@ -89,7 +89,9 @@ begin
    {$ENDIF}
 
    WindowInstance := oglTWindow;
+   {$IFNDEF OX_LIBRARY}
    PlatformInstance := glSystemPlatform;
+   {$ENDIF}
 
    Id := 'gl';
 end;
