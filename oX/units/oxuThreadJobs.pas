@@ -34,6 +34,24 @@ TYPE
          Locker: TRTLCriticalSection;
    end;
 
+   { oxTTaskQueue }
+
+   oxTTaskQueue = record
+      List: oxTThreadTasksList;
+
+      {currently running task (nil if none)}
+      Running: oxTThreadTask;
+
+      procedure Queue(task: oxTThreadTask);
+      procedure Remove(task: oxTThreadTask);
+      function TaskIndex(task: oxTThreadTask): loopint;
+
+      procedure Reset();
+
+      {watches jobs, starts, updates queue, and returns true if any is running}
+      function Update(): boolean;
+   end;
+
 IMPLEMENTATION
 
 { oxTThreadJob }
@@ -103,6 +121,63 @@ begin
    EnterCriticalSection(Locker);
    Result := Queue.n > 0;
    LeaveCriticalSection(Locker);
+end;
+
+{ oxTTaskQueue }
+
+procedure oxTTaskQueue.Queue(task: oxTThreadTask);
+begin
+   List.Add(task);
+end;
+
+procedure oxTTaskQueue.Remove(task: oxTThreadTask);
+var
+   index: loopint;
+
+begin
+   index := List.Find(task);
+
+   if(index > -1) then
+      List.Remove(index);
+end;
+
+function oxTTaskQueue.TaskIndex(task: oxTThreadTask): loopint;
+begin
+   Result := List.Find(task);
+end;
+
+procedure oxTTaskQueue.Reset();
+begin
+   Running := nil;
+   List.RemoveAll();
+end;
+
+function oxTTaskQueue.Update(): boolean;
+
+procedure startFirst();
+begin
+   Running := List.List[0];
+   Running.Start();
+end;
+
+begin
+   if(List.n = 0) then
+      exit(false);
+
+   Result := true;
+
+   if(Running <> nil) then begin
+      if(Running.IsFinished()) then begin
+         Running := nil;
+         List.Remove(0);
+
+         if(List.n > 0) then
+            startFirst()
+         else
+            Result := false;
+      end;
+   end else
+      startFirst();
 end;
 
 END.
