@@ -65,10 +65,15 @@ TYPE
 
       constructor Create;
 
-      procedure AddGroup(const gName, gDescription: string; out group: appTKeyMappingGroup);
       function Find(keyCode: longint; state: TBitSet): appPKeyMapping;
       function Find(const k: appTKey): appPKeyMapping;
       function Find(action: TEventID): appPKeyMapping;
+
+      procedure AddGroup(const gName, gDescription: string; out group: appTKeyMappingGroup);
+      function FindGroup(const gName: string): appPKeyMappingGroup;
+
+      function Add(const gName: string; const kName, kDescription: string; const k: appTKey): appPKeyMapping;
+      function Add(const gName: string; const kName, kDescription: string; keyCode: longint; state: TBitSet): appPKeyMapping;
 
       function Call(const k: appTKey): appPKeyMapping;
       function Call(keyCode: longint; state: TBitSet): appPKeyMapping;
@@ -201,17 +206,6 @@ begin
    appTKeyMappingGroups.Initialize(Groups);
 end;
 
-procedure appTKeyMappings.AddGroup(const gName, gDescription: string; out group: appTKeyMappingGroup);
-begin
-   ZeroOut(group, SizeOf(group));
-
-   group.Name := gName;
-   group.Description := gDescription;
-   group.Keys.Initialize(group.Keys);
-
-   Groups.Add(@group);
-end;
-
 function appTKeyMappings.Find(keyCode: longint; state: TBitSet): appPKeyMapping;
 var
    i: loopint;
@@ -247,6 +241,52 @@ begin
       end;
 
    Result := nil;
+end;
+
+procedure appTKeyMappings.AddGroup(const gName, gDescription: string; out group: appTKeyMappingGroup);
+begin
+   ZeroOut(group, SizeOf(group));
+
+   group.Name := gName;
+   group.Description := gDescription;
+   group.Keys.Initialize(group.Keys);
+
+   Groups.Add(@group);
+end;
+
+function appTKeyMappings.FindGroup(const gName: string): appPKeyMappingGroup;
+var
+   i: loopint;
+
+begin
+   for i := 0 to Groups.n - 1 do begin
+      if Groups.List[i]^.Name = gName then
+         exit(Groups.List[i]);
+   end;
+
+   Result := nil;
+end;
+
+function appTKeyMappings.Add(const gName: string; const kName, kDescription: string; const k: appTKey): appPKeyMapping;
+var
+   g: appPKeyMappingGroup;
+
+begin
+   Result := nil;
+   g := FindGroup(gName);
+
+   if g <> nil then
+      Result := g^.AddKey(kName, kDescription, k);
+end;
+
+function appTKeyMappings.Add(const gName: string; const kName,  kDescription: string; keyCode: longint; state: TBitSet): appPKeyMapping;
+var
+   k: appTKey;
+
+begin
+   k.Assign(keyCode, state);
+
+   Result := Add(gName, kName, kDescription, k);
 end;
 
 function appTKeyMappings.Call(const k: appTKey): appPKeyMapping;
