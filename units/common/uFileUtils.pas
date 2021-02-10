@@ -86,60 +86,6 @@ TYPE
    PFileDescriptorList = ^TFileDescriptorList;
    TFileDescriptorList = specialize TSimpleList<TFileDescriptor>;
 
-   PFileTraverse = ^TFileTraverse;
-
-   PFileTraverseData = ^TFileTraverseData;
-   TFileTraverseData = record
-      Traverse: PFileTraverse;
-      ExternalData: Pointer;
-      f: TFileDescriptor;
-   end;
-
-   { TFileTraverse }
-
-   TFileTraverse = record
-   public
-      {extensions which are only to be included in processing (allowlist)}
-      Extensions: array of StdString;
-      {extensions which are to be excluded from being processed (blocklist)}
-      ExtensionBlocklist: array of StdString;
-
-      Running: boolean;
-      Recursive: boolean;
-
-      {called when a file is found with matching extension (if any), if returns false traversal is stopped}
-      OnFile: function(const f: TFileTraverseData): boolean;
-      OnDirectory: function(const f: TFileTraverseData): boolean;
-
-      ExternalData: pointer;
-
-      procedure Initialize();
-      class procedure Initialize(out traverse: TFileTraverse); static;
-
-      {processes a tree with a starting path}
-      procedure Run(const startPath: StdString);
-      {processes current path}
-      procedure Run();
-
-      {add an extension to the extension allowlist}
-      procedure AddExtension(const ext: StdString);
-      {add an extension to the extension blocklist}
-      procedure ExcludeExtension(const ext: StdString);
-
-      {reset extensions}
-      procedure ResetExtensions();
-
-      {stop traversing}
-      procedure Stop();
-
-   private
-      path: StdString;
-      {causes process to stop traversing files/directories if set to true}
-      stopTraverse: boolean;
-      {processes an individual directory (called recursively)}
-      procedure RunDirectory(const name: StdString);
-   end;
-
    { TFileUtilsGlobal }
 
    TFileUtilsGlobal = record
@@ -170,8 +116,6 @@ TYPE
 
       {copy a file from source to destination (returns file size on success, negative error code on failure)}
       class function Copy(const source, destination: StdString): longint; static;
-      {copy a file from source to destination}
-      class function CopyDirectory(const source, destination: StdString): longint; static;
 
       {normalize path, correct directory separators and replace special characters}
       class procedure NormalizePath(var s: StdString); static;
@@ -230,34 +174,6 @@ TYPE
       function HideFile(const {%H-}fn: StdString): boolean;
    end;
 
-   PDirectoryCopierData = ^TDirectoryCopierData;
-   PDirectoryCopier = ^TDirectoryCopier;
-
-   TDirectoryCopierData = record
-      TraverseData: PFileTraverseData;
-      Copier: PDirectoryCopier;
-      ExternalData: pointer;
-   end;
-
-   { TDirectoryCopier }
-
-   TDirectoryCopier = record
-      Walker: TFileTraverse;
-      {your own external data}
-      ExternalData: Pointer;
-
-      {called when a file is found with matching extension (if any), if returns false traversal is stopped}
-      OnFile: function(const f: TDirectoryCopierData): boolean;
-      OnDirectory: function(const f: TDirectoryCopierData): boolean;
-
-      Source,
-      Destination: StdString;
-
-      function Copy(const sourceDir, destinationDir: StdString): loopint;
-
-      class procedure Initialize(out copier: TDirectoryCopier); static;
-   end;
-
 VAR
    HomePath: StdString;
    FileUtils: TFileUtilsGlobal;
@@ -266,94 +182,6 @@ VAR
 procedure FileSetTextBuf(var f: text; {%H-}out buf); [INTERNPROC:fpc_in_settextbuf_file_x];
 
 IMPLEMENTATION
-
-function copyOnDirectory(const f: TFileTraverseData): boolean;
-var
-   data: PDirectoryCopier;
-   cd: TDirectoryCopierData;
-   path: StdString;
-
-begin
-   data := f.ExternalData;
-
-   if(data^.OnFile <> nil) then begin
-      cd.ExternalData := data^.ExternalData;
-      cd.Copier := data;
-      cd.TraverseData := @f;
-
-      Result := data^.OnDirectory(cd);
-   end else
-      Result := true;
-
-   if(Result) then begin
-      path := data^.Destination + ExtractRelativepath(data^.Source, f.f.Name);
-
-      if(not CreateDir(path)) then
-         Result := false;
-   end;
-end;
-
-function copyOnFile(const f: TFileTraverseData): boolean;
-var
-   data: PDirectoryCopier;
-   cd: TDirectoryCopierData;
-   path: string;
-
-begin
-   data := f.ExternalData;
-
-   if(data^.OnFile <> nil) then begin
-      cd.ExternalData := data^.ExternalData;
-      cd.Copier := data;
-      cd.TraverseData := @f;
-
-      Result := data^.OnFile(cd);
-   end else
-      Result := true;
-
-   if(Result) then begin
-      path := ExtractRelativepath(data^.Source, f.f.Name);
-
-      if(FileUtils.Copy(data^.Source + path, data^.Destination + path) < 0) then
-         Result := false;
-   end;
-end;
-
-{ TDirectoryCopier }
-
-function TDirectoryCopier.Copy(const sourceDir, destinationDir: StdString): loopint;
-begin
-   Result := 0;
-
-   if DirectoryExists(sourceDir) then begin
-      {create target directory}
-      if CreateDir(destinationDir) then begin
-         Source := IncludeTrailingPathDelimiterNonEmpty(sourceDir);
-         Destination := IncludeTrailingPathDelimiterNonEmpty(destinationDir);
-
-         Walker.ExternalData := @Self;
-         Walker.OnFile := @copyOnFile;
-         Walker.OnDirectory := @copyOnDirectory;
-
-         Walker.Run(sourceDir);
-      end else
-         Result := eIO
-   end else
-      {no source directory, nothing to do}
-      Result := eNOT_FOUND;
-
-   ioErrorIgn();
-end;
-
-class procedure TDirectoryCopier.Initialize(out copier: TDirectoryCopier);
-begin
-   TFileTraverse.Initialize(copier.Walker);
-   copier.ExternalData := nil;
-   copier.Source := '';
-   copier.Destination := '';
-   copier.OnFile := nil;
-   copier.OnDirectory := nil;
-end;
 
 { TFileDescriptor }
 
@@ -673,16 +501,6 @@ begin
 
    Close(sF);
    ioErrorIgn();
-end;
-
-class function TFileUtilsGlobal.CopyDirectory(const source, destination: StdString): longint;
-var
-   copier: TDirectoryCopier;
-
-begin
-   TDirectoryCopier.Initialize(copier);
-
-   Result := copier.Copy(source, Destination);
 end;
 
 class procedure TFileUtilsGlobal.NormalizePath(var s: StdString);
@@ -1514,152 +1332,6 @@ begin
    {$ENDIF}
 
    Result := false;
-end;
-
-{ TFileTraverse }
-
-procedure TFileTraverse.Initialize();
-begin
-   Recursive := true;
-end;
-
-class procedure TFileTraverse.Initialize(out traverse: TFileTraverse);
-begin
-   ZeroPtr(@traverse, SizeOf(traverse));
-   traverse.Initialize();
-end;
-
-procedure TFileTraverse.Run(const startPath: StdString);
-begin
-   path           := ExcludeTrailingPathDelimiter(startPath);
-   stopTraverse   := false;
-   Running        := true;
-
-   RunDirectory('');
-   Running := false;
-end;
-
-procedure TFileTraverse.Run();
-begin
-   Run('');
-end;
-
-procedure TFileTraverse.AddExtension(const ext: StdString);
-begin
-   SetLength(Extensions, Length(Extensions) + 1);
-   Extensions[Length(Extensions) - 1] := ext;
-end;
-
-procedure TFileTraverse.ExcludeExtension(const ext: StdString);
-begin
-   SetLength(ExtensionBlocklist, Length(ExtensionBlocklist) + 1);
-   ExtensionBlocklist[Length(ExtensionBlocklist) - 1] := ext;
-end;
-
-procedure TFileTraverse.ResetExtensions();
-begin
-   SetLength(ExtensionBlocklist, 0);
-   SetLength(Extensions, 0);
-end;
-
-procedure TFileTraverse.Stop();
-begin
-   stopTraverse := true;
-end;
-
-procedure TFileTraverse.RunDirectory(const name: StdString);
-var
-   src: TUnicodeSearchRec;
-   i,
-   result: longint;
-   ext,
-   fname: StdString;
-   ok: boolean;
-   fd: TFileTraverseData;
-
-begin
-   {build path}
-   if(name <> '') then
-      path := IncludeTrailingPathDelimiterNonEmpty(path) + ExcludeTrailingPathDelimiter(name);
-
-   {find first}
-   if(path = '') then
-      result := FindFirst('*', faReadOnly or faDirectory, src)
-   else
-      result := FindFirst(UTF8Decode(path + DirectorySeparator + '*'), faReadOnly or faDirectory, src);
-
-   fd.Traverse := @Self;
-   fd.ExternalData := ExternalData;
-
-   if(result = 0) then begin
-      repeat
-         {avoid special directories}
-         if(src.Name <> '.') and (src.Name <> '..') then begin
-            {found directory, recurse into it}
-            if(src.Attr and faDirectory > 0) then begin
-               if(Recursive) then begin
-                  if(OnDirectory = nil) then
-                     RunDirectory(UTF8Encode(src.Name))
-                  else begin
-                     TFileDescriptor.From(fd.f, src);
-                     fd.f.Name := path + DirectorySeparator + UTF8Encode(src.Name);
-
-                     if(OnDirectory(fd)) then
-                        RunDirectory(UTF8Encode(src.Name));
-                  end;
-               end;
-            end else begin
-               ok    := true;
-               ext   := UTF8Lower(ExtractFileExt(utf8string(UTF8Encode(src.Name))));
-
-               {check if extension matches any on the blocklist (if there is a blocklist)}
-               if(ExtensionBlocklist <> nil) then begin
-                  for i := 0 to Length(ExtensionBlocklist) - 1 do begin
-                     if(ext = ExtensionBlocklist[i]) then
-                        ok := false;
-                  end;
-               end;
-
-               {check if file matches extension (if any specified)}
-               if(Extensions <> nil) and (ok) then begin
-                  ok := false;
-
-                  for i := 0 to Length(Extensions) - 1 do
-                     if(ext = Extensions[i]) then
-                        ok := true;
-               end;
-
-               if(ok) then begin
-                  {build filename}
-                  if(path <> '') then
-                     fname := path + DirectorySeparator + UTF8Encode(src.Name)
-                  else
-                     fname := UTF8Encode(src.Name);
-
-                  {call OnFile to perform operations on the file}
-                  if(OnFile <> nil) then begin
-                     TFileDescriptor.From(fd.f, src);
-                     fd.f.Name := fname;
-
-                     if(not OnFile(fd)) then
-                        stopTraverse := true;
-                  end;
-               end;
-            end;
-         end;
-
-         if(stopTraverse) then
-            break;
-
-         {next file/directory}
-         result := FindNext(src);
-      until (result <> 0);
-   end;
-
-   path := ExcludeTrailingPathDelimiter(ExtractFilePath(path));
-
-   {we're done}
-   FindClose(src);
 end;
 
 INITIALIZATION

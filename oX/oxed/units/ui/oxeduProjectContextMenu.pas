@@ -9,7 +9,7 @@ UNIT oxeduProjectContextMenu;
 INTERFACE
 
    USES
-      sysutils, uStd, StringUtils, uFileUtils,
+      sysutils, uStd, StringUtils, uFileUtils, uDirectoryCopier,
       {app}
       appuEvents, appuActionEvents,
       {ox}
@@ -131,7 +131,7 @@ begin
          destination := oxedProjectContextMenu.Parameters.TargetPath + ' (Copy ' + sf(i) + ')';
       until not FileUtils.DirectoryExists(destination);
 
-      FileUtils.CopyDirectory(oxedProjectContextMenu.Parameters.TargetPath, destination);
+      CopyDirectory(oxedProjectContextMenu.Parameters.TargetPath, destination);
       reloadBrowserNav(true);
    end;
 end;
