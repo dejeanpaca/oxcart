@@ -10,7 +10,8 @@ INTERFACE
 
    USES
       sysutils, strutils,
-      uStd, uLog, udvars, dvaruFile, uFileUtils, StringUtils,
+      uStd, uLog, StringUtils, udvars,
+      dvaruFile, uFileUtils, uFileTraverse,
       uBuild, uBuildInstalls, appuPaths;
 
 TYPE

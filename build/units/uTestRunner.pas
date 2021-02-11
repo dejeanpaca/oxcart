@@ -8,8 +8,9 @@ UNIT uTestRunner;
 
 INTERFACE
 
-   USES sysutils, uStd, uLog, uFileUtils, StringUtils,
-     uTest, uTestProgram;
+   USES
+      sysutils, uStd, uLog, uFileUtils, uFileTraverse, StringUtils,
+      uTest, uTestProgram;
 
 TYPE
 

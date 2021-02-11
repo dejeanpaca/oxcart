@@ -11,7 +11,7 @@ UNIT oxeduProjectWalker;
 INTERFACE
 
    USES
-      sysutils, uStd, uError, uLog, uFileUtils, StringUtils,
+      sysutils, uStd, uError, uLog, uFileUtils, uFileTraverse, StringUtils,
       {app}
       appuActionEvents,
       {ox}
