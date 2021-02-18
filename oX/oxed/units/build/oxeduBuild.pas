@@ -1539,14 +1539,18 @@ begin
    InEditor := false;
    BuildType := OXED_BUILD_TASK_RECODE;
    BuildTarget := OXED_BUILD_LIB;
-   BuildArch := oxedEditorPlatform.Architecture;
+   if(oxedEditorPlatform <> nil) then
+      BuildArch := oxedEditorPlatform.Architecture;
+
    BuildMechanism := OXED_BUILD_VIA_FPC;
    BuildAbort := false;
    BuildBinary := true;
    BuildAssets := false;
+
    Parameters.ExportSymbols.Dispose();
    Parameters.PreIncludeUses.Dispose();
    Parameters.IncludeUses.Dispose();
+
    BuildInstalls.SetDefaultPlatform();
 end;
 
