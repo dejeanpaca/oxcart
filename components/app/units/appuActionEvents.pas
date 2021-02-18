@@ -21,8 +21,8 @@ TYPE
    {action handler record}
    appPActionHandler = ^appTActionHandler;
    appTActionHandler = record
-      call: apphTActionHandlerCallback;
-      next: appPActionHandler;
+      Call: apphTActionHandlerCallback;
+      Next: appPActionHandler;
    end;
 
    appPActionCallback = ^appTActionCallback;
@@ -30,7 +30,7 @@ TYPE
    { appTActionCallback }
 
    appTActionCallback = record
-      Action: longint;
+      Action: TEventID;
       Callback: TProcedure;
       ObjectCallback: TObjectProcedure;
 
@@ -47,9 +47,9 @@ TYPE
       Callbacks: appTActionCallbacks;
 
       {queues a action event}
-      function Queue(evID: longword; prm: longword = 0; wnd: pointer = nil): appPEvent;
+      function Queue(evID: TEventID; prm: longword = 0; wnd: pointer = nil): appPEvent;
       {returns an unique ID for the specified action event}
-      function GetID(): longint;
+      function GetID(): TEventID;
       {registers an action handler}
       procedure Register(var ah: appTActionHandler);
 
@@ -84,44 +84,44 @@ VAR
    last: appPActionHandler;
 
 VAR
-   UniqueActionEventID: longint = 0;
+   UniqueActionEventID: TEventID = 0;
 
 { appTActionCallback }
 
 procedure appTActionCallback.Call();
 begin
-   if(Callback <> nil) then
+   if Callback <> nil then
       Callback();
 
-   if(ObjectCallback <> nil) then
+   if ObjectCallback <> nil then
       ObjectCallback();
 end;
 
-function appTActionEvents.Queue(evID: longword; prm: longword; wnd: pointer): appPEvent;
+function appTActionEvents.Queue(evID: TEventID; prm: longword; wnd: pointer): appPEvent;
 var
    event: appTEvent;
 
 begin
    appEvents.Init(event, evID, @evh);
 
-   event.Params[0]   := prm;
+   event.Params[0] := prm;
 
-   result := appEvents.Queue(event);
-   result^.wnd := wnd;
+   Result := appEvents.Queue(event);
+   Result^.wnd := wnd;
 end;
 
-function appTActionEvents.GetID(): longint;
+function appTActionEvents.GetID(): TEventID;
 begin
    inc(UniqueActionEventID);
-   result := UniqueActionEventID;
+   Result := UniqueActionEventID;
 end;
 
 procedure appTActionEvents.Register(var ah: appTActionHandler);
 begin
-   ah.next := nil;
+   ah.Next := nil;
 
-   if(first <> nil) then
-      last^.next := @ah
+   if first <> nil then
+      last^.Next := @ah
    else
      first := @ah;
 
@@ -184,7 +184,7 @@ var
 
 begin
    for i := 0 to Callbacks.n - 1 do begin
-      if(Callbacks.List[i].Action = action) then
+      if Callbacks.List[i].Action = action then
          exit(@Callbacks.List[i]);
    end;
 
@@ -197,7 +197,7 @@ var
 
 begin
    pCallback := FindCallback(action);
-   if(pCallback <> nil) then begin
+   if pCallback <> nil then begin
       pCallback^.Callback := callback;
       exit(true);
    end;
@@ -223,15 +223,15 @@ var
    i: longint;
 
 begin
-   if(event.evID <> 0) then begin
+   if event.evID <> 0 then begin
       {if it's an action we can handle}
       if(event.evID = appACTION_QUIT) then
          app.Active := false
       else begin
          {find in callbacks first}
-         if(appActionEvents.Callbacks.n > 0) then
-            for i := 0 to (appActionEvents.Callbacks.n - 1) do begin
-              if(appActionEvents.Callbacks.List[i].Action = event.evID) then begin
+         if appActionEvents.Callbacks.n > 0 then
+            for i := 0 to appActionEvents.Callbacks.n - 1 do begin
+              if appActionEvents.Callbacks.List[i].Action = event.evID then begin
                  appActionEvents.Callbacks.List[i].Call();
                  exit;
               end;
@@ -240,19 +240,19 @@ begin
          {go through handlers}
          cur := first;
 
-         if(cur <> nil) then repeat
-            if(cur^.call <> nil) and (cur^.call(event)) then
+         if cur <> nil then repeat
+            if(cur^.Call <> nil) and (cur^.Call(event)) then
                break;
 
-            cur := cur^.next;
-         until (cur = nil);
+            cur := cur^.Next;
+         until cur = nil;
       end;
    end;
 end;
 
 procedure quitApp();
 begin
-   app.active := false;
+   app.Active := false;
 end;
 
 INITIALIZATION
