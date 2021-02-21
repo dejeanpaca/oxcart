@@ -64,7 +64,11 @@ TYPE
       function Generate(var img: imgTImage; out tex: oxTTexture): longint;
       function Generate(const fn: string; var f: TFile; out tex: oxTTexture): longint;
 
+      {assembles texture information from generated image}
       procedure FromGenerated(texId: oxTTextureId; out Tex: oxTTexture);
+
+      {called when done generating a texture (to dispose of image)}
+      procedure GenerateDone();
 
       class procedure Init(out t: oxTTextureGenerate); static;
 
@@ -164,9 +168,9 @@ begin
    Image := imgOptions.Image;
 
    {check for errors}
-   if(Result = 0) then begin
+   if(Result = 0) then
       OnLoad()
-   end else begin
+   else begin
       DisposeImage();
       Result := oxeIMAGE;
    end;
@@ -254,6 +258,8 @@ begin
    if(Result = 0) then
       {call the texture generation routine}
       Result := Generate(Tex);
+
+   GenerateDone();
 end;
 
 function oxTTextureGenerate.Generate(const filename: string; out Tex: oxTTexture): longint;
@@ -267,6 +273,8 @@ begin
       FromGenerated(texId, Tex)
    else
       Tex := nil;
+
+   GenerateDone();
 end;
 
 function oxTTextureGenerate.Generate(const extension: string; var f: TFile; out tex: oxTTextureID): longint;
@@ -278,6 +286,8 @@ begin
 
    {call the texture generation routine}
    Result := Generate(Tex);
+
+   GenerateDone();
 end;
 
 function oxTTextureGenerate.Generate(var img: imgTImage; out tex: oxTTextureID): longint;
@@ -316,7 +326,9 @@ begin
    Result := Load(fn, f);
 
    if(Result = 0) then
-      Result := Generate(tex)
+      Result := Generate(tex);
+
+   GenerateDone();
 end;
 
 procedure oxTTextureGenerate.FromGenerated(texId: oxTTextureId; out Tex: oxTTexture);
@@ -332,8 +344,12 @@ begin
       Tex.Properties.Prop(oxTEXTURE_HAS_ALPHA);
 
    Tex.PixelFormat := Image.PixF;
-
    Tex.TextureType := oxTEXTURE_2D;
+end;
+
+procedure oxTTextureGenerate.GenerateDone();
+begin
+   DisposeImage();
 end;
 
 class procedure oxTTextureGenerate.Init(out t: oxTTextureGenerate);
