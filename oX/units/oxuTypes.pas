@@ -9,7 +9,10 @@ UNIT oxuTypes;
 INTERFACE
 
    USES
-      sysutils, uStd, uSimpleList, StringUtils;
+      sysutils, uStd, uSimpleList, StringUtils
+      {$IFDEF OX_RESOURCE_DEBUG}
+      , uError
+      {$ENDIF};
 
 TYPE
 
