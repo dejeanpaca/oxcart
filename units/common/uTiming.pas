@@ -170,7 +170,7 @@ var
 
 begin
    ts := DateTimeToTimestamp(Self).time;
-   currentTime := DateTimeToTimestamp(Time).time;
+   currentTime := DateTimeToTimestamp(Time()).time;
 
    Result := (currentTime - ts) / 1000;
 end;
