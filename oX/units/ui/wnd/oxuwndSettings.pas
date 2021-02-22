@@ -12,11 +12,7 @@ USES
    {app}
    uStd, appuKeys,
    {oX}
-   uOX, oxuRunRoutines,
-   {$IFDEF OX_FEATURE_CONSOLE}
-   oxuConsoleBackend,
-   {$ENDIF}
-   oxuAudioBase,
+   uOX, oxuRunRoutines, oxuAudioBase,
    {ui}
    uiuWindow, uiWidgets, uiuKeyMappings,
    {wnd}
@@ -60,13 +56,6 @@ begin
    AddDivisor();
 end;
 
-{$IFDEF OX_FEATURE_CONSOLE}
-procedure consoleCallback({%H-}con: conPConsole);
-begin
-   oxwndSettings.Open();
-end;
-{$ENDIF}
-
 constructor oxTSettingsWindow.Create();
 begin
    Name := 'settings';
@@ -75,8 +64,7 @@ begin
    UseSurface := true;
 
    {$IFDEF OX_FEATURE_CONSOLE}
-   if(console.Selected <> nil) then
-      console.Selected^.AddCommand('wnd:settings', @consoleCallback);
+   ConsoleOpenCommand := 'wnd:settings';
    {$ENDIF}
 
    inherited Create;

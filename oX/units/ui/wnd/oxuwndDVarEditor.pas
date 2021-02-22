@@ -13,11 +13,7 @@ USES
    {app}
    appuMouse,
    {oX}
-   uOX, oxuTypes, oxuRunRoutines,
-   {$IFDEF OX_FEATURE_CONSOLE}
-   oxuConsoleBackend,
-   {$ENDIF}
-   oxuwndBase,
+   uOX, oxuTypes, oxuRunRoutines, oxuwndBase,
    {ui}
    uiuControl, uiuWindow, uiWidgets, uiuWidget, uiuInputBoxOverlay,
    {widgets}
@@ -294,6 +290,10 @@ begin
    Title := 'DVar Editor';
    Instance := oxuiTDVarEditorWindow;
 
+   {$IFDEF OX_FEATURE_CONSOLE}
+   ConsoleOpenCommand := 'wnd:dvar_editor';
+   {$ENDIF}
+
    inherited Create;
 end;
 
@@ -302,21 +302,9 @@ begin
    inherited;
 end;
 
-{$IFDEF OX_FEATURE_CONSOLE}
-procedure consoleCallback({%H-}con: conPConsole);
-begin
-   oxwndDVarEditor.Open();
-end;
-{$ENDIF}
-
 procedure Initialize();
 begin
    oxwndDVarEditor.Create();
-
-   {$IFDEF OX_FEATURE_CONSOLE}
-   if(console.Selected <> nil) then
-      console.Selected^.AddCommand('wnd:dvar_editor', @consoleCallback);
-   {$ENDIF}
 end;
 
 procedure deinitialize();

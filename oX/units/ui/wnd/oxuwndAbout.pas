@@ -13,11 +13,7 @@ USES
    {app}
    uAppInfo, appuSysInfoBase, appuActionEvents,
    {oX}
-   uOX, oxuTypes, oxuRunRoutines,
-   {$IFDEF OX_FEATURE_CONSOLE}
-   oxuConsoleBackend,
-   {$ENDIF}
-   oxuRenderer,
+   uOX, oxuTypes, oxuRunRoutines, oxuRenderer,
    {ui}
    uiuControl, uiuWindow, uiWidgets, uiuWidget, uiuTypes,
    oxuwndBase, oxuwndSystemInformation,
@@ -121,6 +117,10 @@ begin
    AddLink('=> Site', 'https://dbx7.net/');
    AddLink('=> Github', 'https://github.com/dejeanpaca/oxcart');
 
+   {$IFDEF OX_FEATURE_CONSOLE}
+   ConsoleOpenCommand := 'wnd:about';
+   {$ENDIF}
+
    inherited;
 end;
 
@@ -153,21 +153,9 @@ begin
    end;
 end;
 
-{$IFDEF OX_FEATURE_CONSOLE}
-procedure consoleCallback({%H-}con: conPConsole);
-begin
-   oxwndAbout.Open();
-end;
-{$ENDIF}
-
 procedure Initialize();
 begin
    oxwndAbout.Create();
-
-   {$IFDEF OX_FEATURE_CONSOLE}
-   if(console.Selected <> nil) then
-      console.Selected^.AddCommand('wnd:about', @consoleCallback);
-   {$ENDIF}
 end;
 
 procedure deinitialize();

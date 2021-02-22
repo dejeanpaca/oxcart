@@ -12,9 +12,6 @@ INTERFACE
       uStd,
       {oX}
       oxuTypes,
-      {$IFDEF OX_FEATURE_CONSOLE}
-      oxuConsoleBackend,
-      {$ENDIF}
       {wnd}
       oxuwndBase, oxuwndSettingsBase,
       {ui}
@@ -134,13 +131,6 @@ begin
    inherited;
 end;
 
-{$IFDEF OX_FEATURE_CONSOLE}
-procedure consoleCallback({%H-}con: conPConsole);
-begin
-   oxedwndProjectFeatures.Open();
-end;
-{$ENDIF}
-
 constructor oxedTProjectFeaturesWindow.Create();
 begin
    Name := 'project_features';
@@ -149,8 +139,7 @@ begin
    Instance := oxeduiTProjectFeaturesWindow;
 
    {$IFDEF OX_FEATURE_CONSOLE}
-   if(console.Selected <> nil) then
-      console.Selected^.AddCommand('wnd:project_features', @consoleCallback);
+   ConsoleOpenCommand := 'wnd:project_features';
    {$ENDIF}
 
    inherited Create;

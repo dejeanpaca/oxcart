@@ -13,9 +13,6 @@ INTERFACE
       uStd, appuKeys,
       {oX}
       oxuRunRoutines, oxuTypes,
-      {$IFDEF OX_FEATURE_CONSOLE}
-      oxuConsoleBackend,
-      {$ENDIF}
       {ui}
       uiuWindow, uiWidgets, uiuControl, uiuWidget, uiuKeyMappings,
       {wnd}
@@ -351,13 +348,6 @@ begin
    UpdateBuildModesWidget();
 end;
 
-{$IFDEF OX_FEATURE_CONSOLE}
-procedure consoleCallback({%H-}con: conPConsole);
-begin
-   oxedwndProjectSettings.Open();
-end;
-{$ENDIF}
-
 constructor oxedTSettingsWindow.Create();
 begin
    Name := 'settings';
@@ -368,8 +358,7 @@ begin
    Instance := oxeduiTProjectSettingsWindow;
 
    {$IFDEF OX_FEATURE_CONSOLE}
-   if(console.Selected <> nil) then
-      console.Selected^.AddCommand('wnd:project_settings', @consoleCallback);
+   ConsoleOpenCommand := 'wnd:project_settings';
    {$ENDIF}
 
    inherited Create;

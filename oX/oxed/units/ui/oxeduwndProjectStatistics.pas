@@ -12,9 +12,6 @@ INTERFACE
       uStd, StringUtils, uBinarySize,
       {oX}
       oxuTypes,
-      {$IFDEF OX_FEATURE_CONSOLE}
-      oxuConsoleBackend,
-      {$ENDIF}
       {wnd}
       oxuwndBase, oxuwndSettingsBase,
       {ui}
@@ -112,13 +109,6 @@ begin
    widgets.Statistics.Assigned();
 end;
 
-{$IFDEF OX_FEATURE_CONSOLE}
-procedure consoleCallback({%H-}con: conPConsole);
-begin
-   oxedwndProjectStatistics.Open();
-end;
-{$ENDIF}
-
 constructor oxedTProjectStatisticsWindow.Create();
 begin
    Name := 'project_statistics';
@@ -127,8 +117,7 @@ begin
    Instance := oxeduiTProjectStatisticsWindow;
 
    {$IFDEF OX_FEATURE_CONSOLE}
-   if(console.Selected <> nil) then
-      console.Selected^.AddCommand('wnd:project_statistics', @consoleCallback);
+   ConsoleOpenCommand := 'wnd:project_statistics';
    {$ENDIF}
 
    inherited Create;

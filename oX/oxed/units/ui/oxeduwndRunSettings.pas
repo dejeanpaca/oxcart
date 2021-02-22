@@ -13,9 +13,6 @@ INTERFACE
       appuKeys,
       {oX}
       oxuTypes,
-      {$IFDEF OX_FEATURE_CONSOLE}
-      oxuConsoleBackend,
-      {$ENDIF}
       {wnd}
       oxuwndBase, oxuwndSettingsBase,
       {ui}
@@ -135,13 +132,6 @@ begin
    inherited;
 end;
 
-{$IFDEF OX_FEATURE_CONSOLE}
-procedure consoleCallback({%H-}con: conPConsole);
-begin
-   oxedwndRunSettings.Open();
-end;
-{$ENDIF}
-
 constructor oxedTRunSettingsWindow.Create();
 begin
    Name := 'run_settings';
@@ -150,8 +140,7 @@ begin
    Instance := oxeduiTRunSettingsWindow;
 
    {$IFDEF OX_FEATURE_CONSOLE}
-   if(console.Selected <> nil) then
-      console.Selected^.AddCommand('wnd:run_settings', @consoleCallback);
+   ConsoleOpenCommand := 'wnd:run_settings';
    {$ENDIF}
 
    inherited Create;

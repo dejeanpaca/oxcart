@@ -3,7 +3,7 @@
    Copyright (C) 2017. Dejan Boras
 }
 
-{$INCLUDE oxheader.inc}
+{$INCLUDE oxdefines.inc}
 UNIT oxuwndBase;
 
 INTERFACE
@@ -14,6 +14,9 @@ INTERFACE
       appuEvents, appuActionEvents,
       {oX}
       oxuTypes, oxuRenderer,
+      {$IFDEF OX_FEATURE_CONSOLE}
+      oxuConsoleBackend,
+      {$ENDIF}
       {ui}
       uiuTypes, uiuControl, oxuUI, uiuWindowTypes, uiuWindow, uiuSurface, uiWidgets;
 
@@ -34,7 +37,11 @@ TYPE
    { oxTWindowBase }
    oxTWindowBase = object
       Name,
-      Title: string;
+      Title
+      {$IFDEF OX_FEATURE_CONSOLE}
+      {console command to open the window}
+      ,ConsoleOpenCommand
+      {$ENDIF}: string;
 
       DoDestroy,
       {use a surface instead of a regular window}
@@ -65,6 +72,11 @@ TYPE
 
       {called when a window is destroyed}
       procedure WindowDestroyed({%H-}wnd: oxuiTWindowBase); virtual;
+
+      {$IFDEF OX_FEATURE_CONSOLE}
+      {console open command callback}
+      procedure ConsoleOpenCallback({%H-}con: conPConsole);
+      {$ENDIF}
    end;
 
 IMPLEMENTATION
@@ -95,6 +107,11 @@ begin
       Height:= 320;
 
    doDestroy := true;
+
+   {$IFDEF OX_FEATURE_CONSOLE}
+   if(console.Selected <> nil) and (ConsoleOpenCommand <> '') then
+      console.Selected^.AddCommand(ConsoleOpenCommand, @ConsoleOpenCallback);
+   {$ENDIF}
 end;
 
 destructor oxTWindowBase.Destroy();
@@ -154,6 +171,13 @@ procedure oxTWindowBase.WindowDestroyed(wnd: oxuiTWindowBase);
 begin
 
 end;
+
+{$IFDEF OX_FEATURE_CONSOLE}
+procedure oxTWindowBase.ConsoleOpenCallback(con: conPConsole);
+begin
+   Open();
+end;
+{$ENDIF}
 
 procedure oxTWindowBase.Open();
 begin

@@ -14,9 +14,6 @@ USES
    uAppInfo, appuEvents, appuMouse, appuMouseEvents,
    {oX}
    uOX, oxuTypes, oxuRenderer,
-   {$IFDEF OX_FEATURE_CONSOLE}
-   oxuConsoleBackend,
-   {$ENDIF}
    oxuwndBase, oxuPaths, oxuRunRoutines,
    {ui}
    uiuWindowTypes, uiuWindow, uiWidgets, uiuWidget, uiuControl, uiuTypes,
@@ -156,13 +153,17 @@ end;
 
 constructor oxTSplashWindow.Create;
 begin
-   inherited Create;
+   {$IFDEF OX_FEATURE_CONSOLE}
+   ConsoleOpenCommand := 'wnd:splash';
+   {$ENDIF}
 
    Width := 480;
    Height := 420;
    BackgroundColor.Assign(32, 32, 42, 242);
 
    ID := uiControl.GetID('ox.splash');
+
+   inherited Create;
 end;
 
 procedure oxTSplashWindow.CreateWindow();
@@ -180,20 +181,8 @@ begin
       OnOpen.Call();
 end;
 
-{$IFDEF OX_FEATURE_CONSOLE}
-procedure consoleCallback({%H-}con: conPConsole);
-begin
-   oxwndSplash.Open();
-end;
-{$ENDIF}
-
 procedure initialize();
 begin
-   {$IFDEF OX_FEATURE_CONSOLE}
-   if(console.Selected <> nil) then
-      console.Selected^.AddCommand('wnd:splash', @consoleCallback);
-   {$ENDIF}
-
    oxwndSplash.Create();
 end;
 

@@ -13,11 +13,7 @@ INTERFACE
       {app}
       uApp, appuController, appuControllers,
       {ox}
-      uOX, oxuTypes,
-      {$IFDEF OX_FEATURE_CONSOLE}
-      oxuConsoleBackend,
-      {$ENDIF}
-      oxuwndBase,
+      uOX, oxuTypes, oxuwndBase,
       {ui}
       uiuControl, uiuWindow,
       uiuWidget, uiWidgets,
@@ -231,6 +227,10 @@ begin
    Title := 'Controller Info';
    Instance := oxuiTControllerInfoWindow;
 
+   {$IFDEF OX_FEATURE_CONSOLE}
+   ConsoleOpenCommand := 'wnd:controller_info';
+   {$ENDIF}
+
    inherited;
 end;
 
@@ -240,21 +240,10 @@ begin
       inherited;
 end;
 
-{$IFDEF OX_FEATURE_CONSOLE}
-procedure consoleCallback({%H-}con: conPConsole);
-begin
-   oxwndControllerInfo.Open();
-end;
-{$ENDIF}
 
 procedure initialize();
 begin
    oxwndControllerInfo.Create();
-
-   {$IFDEF OX_FEATURE_CONSOLE}
-   if(console.Selected <> nil) then
-      console.Selected^.AddCommand('wnd:controller_info', @consoleCallback);
-   {$ENDIF}
 end;
 
 procedure deinitialize();
