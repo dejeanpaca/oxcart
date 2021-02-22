@@ -143,6 +143,7 @@ TYPE
       OnInitializeStart,
       OnInitialize,
       OnReinitialize,
+      OnDeinitialize,
       OnLoadConfiguration,
       OnSaveConfiguration: TProcedures;
 
@@ -209,6 +210,8 @@ end;
 
 procedure TBuildSystem.DeInitialize();
 begin
+   OnDeinitialize.Call();
+
    Units.Dispose();
    Includes.Dispose();
    Symbols.Dispose();
@@ -493,6 +496,7 @@ INITIALIZATION
    TProcedures.Initialize(build.OnInitializeStart);
    TProcedures.Initialize(build.OnInitialize);
    TProcedures.Initialize(build.OnReinitialize);
+   TProcedures.Initialize(build.OnDeinitialize);
    TProcedures.Initialize(build.OnLoadConfiguration);
    TProcedures.Initialize(build.OnSaveConfiguration);
 
