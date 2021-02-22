@@ -40,7 +40,9 @@ TYPE
       {has the program started}
       Started,
       {are we running as part of a library}
-      LibraryMode: boolean;
+      LibraryMode,
+      {deinitializing started}
+      DeInitializing: boolean;
 
       {initialization failed}
       InitializationFailed: boolean;

@@ -286,6 +286,8 @@ begin
    if(not Started) then
       exit;
 
+   ox.DeInitializing := true;
+
    Started := false;
    startTime := Time();
 
@@ -361,6 +363,7 @@ begin
    log.Leave();
 
    ox.Initialized := false;
+   ox.DeInitializing := false;
 end;
 
 INITIALIZATION
