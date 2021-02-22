@@ -94,8 +94,6 @@ procedure initialize();
 begin
    {$IFNDEF NO_UI}
    oxwndAbout.ShowBuiltWith := true;
-
-   oxedMenubar.Deinitialize();
    {$ENDIF}
 
    oxed.Init.iCall();
@@ -120,6 +118,10 @@ begin
 
    {$IFNDEF OXED_BUILD}
    oxedProjectRunner.Stop();
+   {$ENDIF}
+
+   {$IFNDEF NO_UI}
+   oxedMenubar.Deinitialize();
    {$ENDIF}
 
    oxedProjectManagement.Destroy();
