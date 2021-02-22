@@ -195,6 +195,11 @@ begin
    Result := false;
 end;
 
+procedure deinit();
+begin
+   oxedProjectManagement.Destroy();
+end;
+
 INITIALIZATION
    TProcedures.InitializeValues(oxedProjectManagement.OnNew);
    TProcedures.InitializeValues(oxedProjectManagement.OnPreOpen);
@@ -206,5 +211,7 @@ INITIALIZATION
    TProcedures.InitializeValues(oxedProjectManagement.OnLoadProject);
    TProcedures.InitializeValues(oxedProjectManagement.OnLoadedProject);
    TProcedures.InitializeValues(oxedProjectManagement.OnSaveProject);
+
+   oxed.Init.dAdd('project_management', @deinit);
 
 END.
