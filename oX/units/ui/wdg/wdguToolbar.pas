@@ -487,13 +487,13 @@ var
    index: loopint;
 
 begin
+   Result := nil;
+
    if(actionId > 0) then begin
       index := FindItemIndexByAction(actionId);
 
       if(index > -1) then
-         Result := @Items.List[index]
-      else
-         Result := nil;
+         exit(@Items.List[index]);
    end;
 end;
 
