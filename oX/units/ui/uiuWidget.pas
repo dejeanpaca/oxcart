@@ -136,7 +136,7 @@ TYPE
       {updates the position of a widget}
       procedure PositionUpdate();
       {notify all children of parent size change}
-      procedure UpdateParentSize(selfNotify: boolean = true);
+      procedure UpdateParentSize();
 
       { modification }
 
@@ -396,7 +396,7 @@ begin
    RPositionChanged();
 end;
 
-procedure uiTWidget.UpdateParentSize(selfNotify: boolean);
+procedure uiTWidget.UpdateParentSize();
 var
    i: loopint;
 
@@ -405,9 +405,6 @@ begin
       if(Widgets.w[i] <> nil) then
          uiTWidget(Widgets.w[i]).UpdateParentSize();
    end;
-
-   if(selfNotify) then
-      ParentSizeChange();
 end;
 
 { MODIFICATION }
