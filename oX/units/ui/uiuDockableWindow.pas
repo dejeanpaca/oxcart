@@ -625,6 +625,7 @@ begin
    parent.GetMaximizationCoords(p, d);
 
    uiWindow.Create.MinimumInstanceType := uiTDockableArea;
+
    if(uiWindow.Create.Instance = nil) then
       uiWindow.Create.Instance := uiTDockableArea;
 

@@ -21,7 +21,7 @@ TYPE
    { oxedTDockableAreaWindow }
 
    oxedTDockableAreaWindow = class(uiTDockableArea)
-      procedure DeInitialize; override;
+      procedure DeInitialize(); override;
    end;
 
    { oxedTDockableArea }
@@ -38,21 +38,21 @@ IMPLEMENTATION
 
 { oxedTDockableAreaWindow }
 
-procedure oxedTDockableAreaWindow.DeInitialize;
+procedure oxedTDockableAreaWindow.DeInitialize();
 begin
-   inherited DeInitialize;
+   inherited;
 
    oxed.DockableArea := nil;
 end;
 
 { oxedTDockableArea }
 
-procedure oxedTDockableArea.Initialize;
+procedure oxedTDockableArea.Initialize();
 begin
    SetupLayout();
 end;
 
-procedure oxedTDockableArea.SetupLayout;
+procedure oxedTDockableArea.SetupLayout();
 begin
    if(oxed.DockableArea <> nil) then
       uiWindow.Dispose(uiTWindow(oxed.DockableArea));

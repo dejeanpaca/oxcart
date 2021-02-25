@@ -92,14 +92,14 @@ end;
 
 procedure oxuiTToastWindow.OnDeactivate();
 begin
-   inherited OnDeactivate();
+   inherited;
 
    CloseQueue();
 end;
 
 procedure oxuiTToastWindow.Update();
 begin
-   inherited Update();
+   inherited;
 
    if(Duration > 0) and (timer.Cur() - StartTime > Duration) then
       CloseQueue();
@@ -123,7 +123,7 @@ begin
 
    Color.Assign(8, 8, 8, 236);
 
-   inherited Create;
+   inherited;
 end;
 
 procedure oxTToastWindow.CreateWindow();
@@ -148,7 +148,7 @@ begin
    x := (parent.Dimensions.w - Width) div 2;
    y := Height - 1;
 
-   inherited CreateWindow;
+   inherited;
 
    {set background, if loaded}
    if(Window <> nil) then begin
