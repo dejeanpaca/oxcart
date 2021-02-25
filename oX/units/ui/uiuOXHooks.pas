@@ -61,7 +61,7 @@ begin
    wnd.Dimensions.h := dimensions.h;
 
    wnd.UpdateResize();
-   wnd.UpdatePositions();
+   wnd.UpdateRPosition();
 end;
 
 procedure uiTOXHooks.Select(wnd: oxTWindow);

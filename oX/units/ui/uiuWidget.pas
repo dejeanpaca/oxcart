@@ -135,8 +135,13 @@ TYPE
       { position and size }
       {updates the position of a widget}
       procedure PositionUpdate();
+      {update rposition for this widget and all child controls}
+      procedure UpdateRPosition();
       {notify all children of parent size change}
       procedure UpdateParentSize(selfNotify: boolean = true);
+
+      {compute the rposition for this control}
+      procedure ComputeRPosition();
 
       { modification }
 
@@ -385,12 +390,27 @@ var
    i: loopint;
 
 begin
-   RPosition.x := Parent.RPosition.x + Position.x;
-   RPosition.y := Parent.RPosition.y - (Parent.Dimensions.h - Position.y) + 1;
+   ComputeRPosition();
 
    for i := 0 to (Widgets.w.n - 1) do begin
       if(Widgets.w[i] <> nil) then
          uiTWidget(Widgets.w[i]).PositionUpdate();
+   end;
+
+   RPositionChanged();
+   PositionChanged();
+end;
+
+procedure uiTWidget.UpdateRPosition();
+var
+   i: loopint;
+
+begin
+   ComputeRPosition();
+
+   for i := 0 to (Widgets.w.n - 1) do begin
+      if(Widgets.w[i] <> nil) then
+         uiTWidget(Widgets.w[i]).RPositionChanged();
    end;
 
    RPositionChanged();
@@ -408,6 +428,12 @@ begin
 
    if(selfNotify) then
       ParentSizeChange();
+end;
+
+procedure uiTWidget.ComputeRPosition();
+begin
+   RPosition.x := Parent.RPosition.x + Position.x;
+   RPosition.y := Parent.RPosition.y - (Parent.Dimensions.h - Position.y) + 1;
 end;
 
 { MODIFICATION }

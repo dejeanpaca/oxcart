@@ -271,10 +271,15 @@ TYPE
 
       {updates positions for all child windows}
       procedure UpdatePositions();
+      {updates rposition for this window and all child controls}
+      procedure UpdateRPosition();
       {notifies all children that the parent resized}
       procedure UpdateParentSize(selfNotify: boolean = true);
       {update when resize is performed}
       procedure UpdateResize();
+
+      {compute RPosition(and APosition) for this window}
+      procedure ComputeRPosition();
 
       {adjusts the window position}
       procedure AdjustPosition();
@@ -1133,8 +1138,8 @@ begin
       UpdateResize();
 
       if(verticalMove) then
-         {we have to update RPositions and other data}
-         UpdatePositions();
+         {we have to update RPosition}
+         UpdateRPosition();
    end;
 end;
 
@@ -1790,32 +1795,10 @@ end;
 procedure uiTWindowHelper.UpdatePositions();
 var
    i: loopint;
-   child,
-   ext: uiTWindow;
+   child: uiTWindow;
 
 begin
-   if(Parent <> nil) then begin
-      {update relative positions}
-      RPosition := Parent.RPosition;
-
-      inc(RPosition.x, Position.x + GetFrameWidth());
-      dec(RPosition.y, (parent.Dimensions.h - Position.y - 1) + GetTitleHeight());
-
-      APosition.x := RPosition.x - GetFrameWidth();
-      APosition.y := RPosition.y + GetTitleHeight();
-   end else begin
-      ext := oxTWindow(wnd).ExternalWindow;
-
-      if(ext = nil) then begin
-         RPosition.x := 0;
-         RPosition.y := Dimensions.h - 1;
-      end else begin
-         RPosition.x := 0;
-         RPosition.y := ext.Dimensions.h - 1;
-      end;
-
-      APosition := RPosition;
-   end;
+   ComputeRPosition();
 
    Notification(uiWINDOW_MOVE);
 
@@ -1829,6 +1812,29 @@ begin
 
       if(child <> nil) then
          child.UpdatePositions();
+   end;
+
+   RPositionChanged();
+end;
+
+procedure uiTWindowHelper.UpdateRPosition();
+var
+   i: loopint;
+   child: uiTWindow;
+
+begin
+   ComputeRPosition();
+
+   {update the widgets}
+   for i := 0 to (Widgets.w.n - 1) do
+      uiTWidget(Widgets.w[i]).UpdateRPosition();
+
+   {update the children windows}
+   for i := 0 to (W.w.n - 1) do begin
+      child := uiTWindow(W.w[i]);
+
+      if(child <> nil) then
+         child.UpdateRPosition();
    end;
 
    RPositionChanged();
@@ -1861,6 +1867,35 @@ begin
    Notification(uiWINDOW_RESIZE);
    UpdateParentSize(false);
    SizeChanged();
+end;
+
+procedure uiTWindowHelper.ComputeRPosition();
+var
+   ext: uiTWindow;
+
+begin
+   if(Parent <> nil) then begin
+      {update relative positions}
+      RPosition := Parent.RPosition;
+
+      inc(RPosition.x, Position.x + GetFrameWidth());
+      dec(RPosition.y, (parent.Dimensions.h - Position.y - 1) + GetTitleHeight());
+
+      APosition.x := RPosition.x - GetFrameWidth();
+      APosition.y := RPosition.y + GetTitleHeight();
+   end else begin
+      ext := oxTWindow(wnd).ExternalWindow;
+
+      if(ext = nil) then begin
+         RPosition.x := 0;
+         RPosition.y := Dimensions.h - 1;
+      end else begin
+         RPosition.x := 0;
+         RPosition.y := ext.Dimensions.h - 1;
+      end;
+
+      APosition := RPosition;
+   end;
 end;
 
 procedure uiTWindowHelper.AdjustPosition();
