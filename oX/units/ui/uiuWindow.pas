@@ -1110,7 +1110,7 @@ end;
 
 procedure uiTWindowHelper.Resize(w, h: loopint; ignoreRestrictions: boolean);
 var
-   horizontalMove: boolean;
+   verticalMove: boolean;
 
 begin
    if(not ignoreRestrictions) then begin
@@ -1123,16 +1123,16 @@ begin
          h := 0;
    end;
 
-   horizontalMove := h <> Dimensions.h;
+   verticalMove := h <> Dimensions.h;
 
-   if(w <> Dimensions.w) or (horizontalMove) then begin
+   if(w <> Dimensions.w) or (verticalMove) then begin
       PreviousDimensions := Dimensions;
       Dimensions.w := w;
       Dimensions.h := h;
 
       UpdateResize();
 
-      if(horizontalMove) then
+      if(verticalMove) then
          {we have to update RPositions and other data}
          UpdatePositions();
    end;
@@ -1794,8 +1794,6 @@ var
    ext: uiTWindow;
 
 begin
-   Notification(uiWINDOW_MOVE);
-
    if(Parent <> nil) then begin
       {update relative positions}
       RPosition := Parent.RPosition;
@@ -1818,6 +1816,8 @@ begin
 
       APosition := RPosition;
    end;
+
+   Notification(uiWINDOW_MOVE);
 
    {update the widgets}
    for i := 0 to (Widgets.w.n - 1) do
