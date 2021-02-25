@@ -40,11 +40,11 @@ TYPE
       constructor Create(); override;
       procedure AutoPosition();
 
-      procedure Initialize; override;
+      procedure Initialize(); override;
 
       procedure Render(); override;
 
-      procedure ParentSizeChange; override;
+      procedure ParentSizeChange(); override;
    end;
 
    { wdgTWorkbarGlobal }
@@ -67,7 +67,7 @@ IMPLEMENTATION
 
 { wdgTWorkbar }
 
-constructor wdgTWorkbar.Create;
+constructor wdgTWorkbar.Create();
 begin
    inherited;
 
@@ -113,14 +113,14 @@ begin
    end;
 end;
 
-procedure wdgTWorkbar.Initialize;
+procedure wdgTWorkbar.Initialize();
 begin
    inherited Initialize;
 
    Color := uiTSkin(uiTWindow(wnd).Skin).Colors.Surface;
 end;
 
-procedure wdgTWorkbar.Render;
+procedure wdgTWorkbar.Render();
 var
    x2,
    y2: loopint;
@@ -144,9 +144,9 @@ begin
    end;
 end;
 
-procedure wdgTWorkbar.ParentSizeChange;
+procedure wdgTWorkbar.ParentSizeChange();
 begin
-   inherited ParentSizeChange;
+   inherited;
 
    AutoPosition();
 end;

@@ -1169,7 +1169,7 @@ end;
 procedure uiTWindowHelper.UpdateResize();
 begin
    Notification(uiWINDOW_RESIZE);
-   UpdateParentSize();
+   UpdateParentSize(false);
    SizeChanged();
 end;
 
