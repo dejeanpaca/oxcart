@@ -26,6 +26,7 @@ TYPE
 
    uiTWindowSplash = class(oxuiTWindowBase)
       procedure OnDeactivate(); override;
+      procedure ParentSizeChange(); override;
    end;
 
    { oxTSplashWindow }
@@ -85,6 +86,11 @@ end;
 procedure uiTWindowSplash.OnDeactivate();
 begin
    oxwndSplash.Close();
+end;
+
+procedure uiTWindowSplash.ParentSizeChange();
+begin
+   AutoCenter();
 end;
 
 procedure oxTSplashWindow.AddWidgets();
@@ -162,6 +168,7 @@ begin
    BackgroundColor.Assign(32, 32, 42, 242);
 
    ID := uiControl.GetID('ox.splash');
+   Instance := uiTWindowSplash;
 
    inherited Create;
 end;
@@ -170,7 +177,6 @@ procedure oxTSplashWindow.CreateWindow();
 begin
    uiWindow.Create.Frame := uiwFRAME_STYLE_NONE;
    uiWindow.Create.Properties := uiWindow.Create.Properties - [uiwndpRESIZABLE, uiwndpMOVABLE];
-   uiWindow.Create.Instance := uiTWindowSplash;
 
    inherited;
 
