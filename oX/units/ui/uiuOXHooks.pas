@@ -60,8 +60,7 @@ begin
    wnd.Dimensions.w := dimensions.w;
    wnd.Dimensions.h := dimensions.h;
 
-   wnd.UpdatePositions();
-   wnd.UpdateParentSize(false);
+   wnd.UpdateResize();
 end;
 
 procedure uiTOXHooks.Select(wnd: oxTWindow);
