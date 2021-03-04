@@ -3,7 +3,7 @@
    Copyright (C) 2019. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT uProcessHelpers;
 
 INTERFACE

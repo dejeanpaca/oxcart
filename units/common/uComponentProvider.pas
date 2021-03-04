@@ -3,7 +3,7 @@
    Copyright (C) 2014. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT uComponentProvider;
 
 INTERFACE

@@ -3,7 +3,7 @@
    Copyright (c) 2011. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 PROGRAM txt2passtr;
 
    USES sysutils, uSimpleParser;

@@ -3,7 +3,7 @@
    Copyright (C) 2018. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH TYPEHELPERS}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT uTVideoColors;
 
 INTERFACE

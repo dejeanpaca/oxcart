@@ -1,4 +1,4 @@
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 PROGRAM oxFontEd;
 
 USES

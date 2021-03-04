@@ -2,7 +2,7 @@
    Copyright (C) 2011. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 PROGRAM test;
 
    USES uLog, uStd, udvars, dvaruFile, ParamUtils, dvaruConParamHandler;

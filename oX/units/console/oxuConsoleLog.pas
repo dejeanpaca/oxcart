@@ -3,7 +3,7 @@
    Copyright (C) 2016. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 UNIT oxuConsoleLog;
 
 INTERFACE

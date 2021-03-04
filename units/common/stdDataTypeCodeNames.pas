@@ -7,7 +7,7 @@
    same thing I've created a standardised list.
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 UNIT stdDataTypeCodeNames;
 
 INTERFACE

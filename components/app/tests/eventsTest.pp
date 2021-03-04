@@ -2,7 +2,7 @@
    Copyright (C) 2013. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 PROGRAM eventsTest;
 
 USES

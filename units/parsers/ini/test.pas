@@ -4,7 +4,7 @@
    Copyright (C) 2007. Dejan Boras
 }
 
-{$APPTYPE CONSOLE}{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxheader.inc}
 PROGRAM test;
 
    USES uStd, uLog, uTiming, StringUtils, iniParser;

@@ -1,4 +1,4 @@
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 PROGRAM Test;
 
    USES sysutils, StringUtils, uTiming;

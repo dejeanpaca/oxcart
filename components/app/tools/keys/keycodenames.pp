@@ -7,7 +7,7 @@
    sure that keycode names list is valid.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxheader.inc}
 PROGRAM keycodenames;
 
 USES

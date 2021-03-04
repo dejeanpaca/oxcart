@@ -5,7 +5,7 @@
    TODO: Implement interval logic
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}{$MODESWITCH TYPEHELPERS}
+{$INCLUDE oxheader.inc}
 UNIT uTiming;
 
 INTERFACE

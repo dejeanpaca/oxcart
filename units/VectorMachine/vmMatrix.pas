@@ -3,7 +3,7 @@
    Copyright (C) 2010. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxheader.inc}
 UNIT vmMatrix;
 
 INTERFACE

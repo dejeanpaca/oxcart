@@ -9,7 +9,7 @@
    TODO: Add methods that operate Write() directly on the context (and store result there)
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT dvaruFile;
 
 INTERFACE

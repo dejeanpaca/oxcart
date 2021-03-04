@@ -9,7 +9,7 @@
    matches the codes.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxheader.inc}
 PROGRAM makecodenames;
 
 USES

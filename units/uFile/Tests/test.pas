@@ -4,7 +4,7 @@
    Copyright (C) 2007. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxheader.inc}
 PROGRAM test;
 
    USES uStd, StringUtils, uTiming, uFile, uFileSub, uFileMem, uFileStd;

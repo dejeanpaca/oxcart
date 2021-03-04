@@ -4,7 +4,7 @@
    Copyright (C) 2008. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxheader.inc}
 PROGRAM tvImg;
 
    USES

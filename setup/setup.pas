@@ -1,7 +1,8 @@
 {
    Deploys the workspace into a workable state. Builds certain often used tools.
 }
-{$MODE OBJFPC}{$H+}
+
+{$INCLUDE oxheader.inc}
 PROGRAM setup;
 
    USES

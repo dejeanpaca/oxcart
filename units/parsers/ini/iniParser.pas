@@ -5,7 +5,7 @@
 
 {BUG: The unit does not add lines which only have keys.}
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxheader.inc}
 UNIT iniParser;
 
 INTERFACE

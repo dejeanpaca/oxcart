@@ -3,7 +3,7 @@
    Copyright (C) 2011. Dejan Boras
 }
 
-{$MODE OBJFPC}
+{$INCLUDE oxheader.inc}
 PROGRAM genubflookup;
 
    USES sysutils, uSimpleParser;

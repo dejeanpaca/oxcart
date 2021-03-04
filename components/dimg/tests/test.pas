@@ -1,4 +1,4 @@
-{$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 PROGRAM Simple;
 
    USES uStd, uLog, uFileStd,
