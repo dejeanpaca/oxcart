@@ -92,6 +92,9 @@ var
    index: loopint;
 
 begin
+   if(List.n >= oxedRecents.Max) then
+      List.Remove(0);
+
    correctPath := ExcludeTrailingPathDelimiter(path);
 
    {check if already exists}
