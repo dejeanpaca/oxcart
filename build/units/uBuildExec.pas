@@ -18,7 +18,7 @@ INTERFACE
 
    USES
       sysutils, uStd, uError, uLog, uSimpleParser, uFileUtils, ConsoleUtils,
-      classes, process, uProcessHelpers, StreamIO,
+      classes, process, uProcessHelpers,
       StringUtils,
       uBuild, uBuildInstalls, uBuildFPCConfig
       {$IFDEF UNIX}, BaseUnix{$ENDIF};
@@ -47,7 +47,7 @@ TYPE
       {the process we're executing}
       Process: TProcess;
       {stream from the executed process}
-      ProcessStream: Text;
+      ProcessStream: TProcessStream;
 
       {get lazarus project filename for the given path (which may already include project filename)}
       function GetLPIFilename(const path: StdString): StdString;
@@ -395,8 +395,8 @@ begin
 
    repeat
       if(Output.Redirect) then begin
-         while(not eof(ProcessStream)) do begin
-            ReadLn(ProcessStream, s);
+         while(not eof(ProcessStream.Stream)) do begin
+            ReadLn(ProcessStream.Stream, s);
             Output.LastLine := s;
             Output.OnLine.Call();
          end;
@@ -410,7 +410,7 @@ begin
          if(Process <> nil) then
             Process.Terminate(0);
 
-         Close(ProcessStream);
+         ProcessStream.Close();
 
          break;
       end;
@@ -419,7 +419,7 @@ begin
    until (not Process.Running);
 
    if(Output.Redirect) then
-      Close(ProcessStream);
+      ProcessStream.Close();
 end;
 
 procedure TBuildSystemExec.Abort();
@@ -431,7 +431,7 @@ begin
    if(Process <> nil) then
       Process.Terminate(217);
 
-   Close(ProcessStream);
+   ProcessStream.Close();
 end;
 
 INITIALIZATION
