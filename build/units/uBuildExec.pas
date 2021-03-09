@@ -390,12 +390,8 @@ var
    s: StdString;
 
 begin
-   ZeroOut(ProcessStream, SizeOf(ProcessStream));
-
-   if(Output.Redirect) then begin
-      AssignStream(ProcessStream, Process.Output);
-      Reset(ProcessStream);
-   end;
+   if(Output.Redirect) then
+      Process.OpenOutputStream(ProcessStream);
 
    repeat
       if(Output.Redirect) then begin
