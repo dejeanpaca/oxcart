@@ -9,7 +9,7 @@ UNIT uProcessHelpers;
 INTERFACE
 
    USES
-      process, pipes, SysUtils, StreamIO,
+      process, pipes, classes, SysUtils, StreamIO,
       uStd, uLog, ConsoleUtils, StringUtils;
 
 TYPE
@@ -26,6 +26,8 @@ TYPE
       function GetOutputString(stripEndLine: boolean = true): StdString;
       function GetOutputStrings(stripEndLine: boolean = true; maxLines: loopint = -1): TSimpleStringList;
       function GetOutputStrings(maxLines: loopint): TSimpleStringList;
+
+      procedure OpenOutputStream(out s: Text);
    end;
 
    { TProcessHelpers }
@@ -43,6 +45,7 @@ TYPE
       procedure DisableLog();
 
       class procedure Initialize(out p: TProcessHelpers); static;
+      class procedure OpenStream(stream: TStream; out s: Text); static;
    end;
 
 VAR
@@ -116,6 +119,14 @@ begin
    p.LogOutput := true;
 end;
 
+class procedure TProcessHelpers.OpenStream(stream: TStream; out s: Text);
+begin
+   ZeroOut(s, SizeOf(s));
+
+   AssignStream(s, stream);
+   Reset(s);
+end;
+
 { TProcessHelper }
 
 function TProcessHelper.GetOutputString(stripEndLine: boolean): StdString;
@@ -159,6 +170,11 @@ end;
 function TProcessHelper.GetOutputStrings(maxLines: loopint): TSimpleStringList;
 begin
    Result := GetOutputStrings(true, maxLines);
+end;
+
+procedure TProcessHelper.OpenOutputStream(out s: Text);
+begin
+   TProcessHelpers.OpenStream(Self.Output, s);
 end;
 
 class function TProcessUtils.GetString(stream: TInputPipeStream; stripEndLine: boolean): StdString;
