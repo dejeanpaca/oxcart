@@ -21,6 +21,7 @@ TYPE
       Queue: oxTThreadTasksList;
 
       constructor Create(); override;
+      destructor Destroy(); override;
 
       procedure QueueAdd(task: oxTThreadTask);
       procedure QueueRemove(task: oxTThreadTask);
@@ -37,12 +38,18 @@ TYPE
    { oxTTaskQueue }
 
    oxTTaskQueue = record
-      List: oxTThreadTasksList;
+      Queue: oxTThreadTasksList;
 
       {currently running task (nil if none)}
       Running: oxTThreadTask;
 
-      procedure Queue(task: oxTThreadTask);
+
+      procedure Initialize();
+      class procedure Initialize(out t: oxTTaskQueue); static;
+
+      procedure DeInitialize();
+
+      procedure QueueAdd(task: oxTThreadTask);
       procedure Remove(task: oxTThreadTask);
       function TaskIndex(task: oxTThreadTask): loopint;
 
@@ -61,6 +68,13 @@ begin
    inherited Create;
 
    InitCriticalSection(Locker);
+end;
+
+destructor oxTThreadJob.Destroy();
+begin
+   inherited Destroy();
+
+   Queue.Dispose();
 end;
 
 procedure oxTThreadJob.QueueAdd(task: oxTThreadTask);
@@ -125,9 +139,25 @@ end;
 
 { oxTTaskQueue }
 
-procedure oxTTaskQueue.Queue(task: oxTThreadTask);
+procedure oxTTaskQueue.Initialize();
 begin
-   List.Add(task);
+   Queue.InitializeValues(Queue);
+end;
+
+class procedure oxTTaskQueue.Initialize(out t: oxTTaskQueue);
+begin
+   ZeroOut(t, SizeOf(t));
+   t.Initialize();
+end;
+
+procedure oxTTaskQueue.DeInitialize();
+begin
+   Queue.Dispose();
+end;
+
+procedure oxTTaskQueue.QueueAdd(task: oxTThreadTask);
+begin
+   Queue.Add(task);
 end;
 
 procedure oxTTaskQueue.Remove(task: oxTThreadTask);
@@ -135,33 +165,33 @@ var
    index: loopint;
 
 begin
-   index := List.Find(task);
+   index := Queue.Find(task);
 
    if(index > -1) then
-      List.Remove(index);
+      Queue.Remove(index);
 end;
 
 function oxTTaskQueue.TaskIndex(task: oxTThreadTask): loopint;
 begin
-   Result := List.Find(task);
+   Result := Queue.Find(task);
 end;
 
 procedure oxTTaskQueue.Reset();
 begin
    Running := nil;
-   List.RemoveAll();
+   Queue.RemoveAll();
 end;
 
 function oxTTaskQueue.Update(): boolean;
 
 procedure startFirst();
 begin
-   Running := List.List[0];
+   Running := Queue.List[0];
    Running.Start();
 end;
 
 begin
-   if(List.n = 0) then
+   if(Queue.n = 0) then
       exit(false);
 
    Result := true;
@@ -169,9 +199,9 @@ begin
    if(Running <> nil) then begin
       if(Running.IsFinished()) then begin
          Running := nil;
-         List.Remove(0);
+         Queue.Remove(0);
 
-         if(List.n > 0) then
+         if(Queue.n > 0) then
             startFirst()
          else
             Result := false;
