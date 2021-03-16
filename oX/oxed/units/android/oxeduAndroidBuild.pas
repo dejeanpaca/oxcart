@@ -185,7 +185,19 @@ begin
    {copy built data file to the target folder (if any)}
    if(oxedBuild.BuildAssets) then begin
       source := oxedYPKAssetsDeployer.Builder.OutputFN;
-      targetPath := appPath + '/src/main/assets/data.ypk';
+
+      targetPath := appPath + ReplaceDirSeparatorsf('/src/main/assets');
+
+      // create assets directory if it does not exits
+      if(not DirectoryExists(targetPath)) then begin
+         if(not CreateDir(targetPath)) then begin
+            oxedBuild.Fail('Failed to create target assets directory ' + targetPath);
+            exit;
+         end;
+      end;
+
+      // move data file into the app assets directory
+      targetPath := targetPath + DirSep + 'data.ypk';
 
       oxedBuild.MoveFile(source, targetPath, 'data file');
    end;
