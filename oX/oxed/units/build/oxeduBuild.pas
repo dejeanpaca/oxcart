@@ -1399,7 +1399,7 @@ begin
 
    BuildType := taskType;
 
-   Task.Start();
+   oxedTasks.Queue(Task);
 end;
 
 procedure oxedTBuildGlobal.Abort();
@@ -1588,7 +1588,6 @@ begin
       app.OpenFileManager(TargetPath);
    end;
 end;
-
 
 procedure CreateSourceFile(const fn: string);
 var
