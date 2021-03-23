@@ -98,6 +98,9 @@ begin
    if(not oxRenderingContext.CanRender) then
       exit;
 
+   if(not wnd.oxProperties.RenderMinimized) and (wnd.IsMinimized()) then
+      exit;
+
    if(not OverrideRender) then begin
       {viewport has been updated}
       if(wnd.Viewport.Changed) then
