@@ -178,6 +178,8 @@ TYPE
       procedure logtv(const what: StdString);
       procedure logtw(const what: StdString);
       procedure logte(const what: StdString);
+
+      function GetThreadName(): string;
    end;
 
    oxTRendererClass = class of oxTRenderer;
@@ -529,22 +531,27 @@ end;
 
 procedure oxTRenderer.logti(const what: StdString);
 begin
-   consoleLog.i(Id + ' (t: ' + sf(GetThreadID()) + ')  ' + what);
+   consoleLog.i(Id + ' (t: ' + GetThreadName() + ')  ' + what);
 end;
 
 procedure oxTRenderer.logtv(const what: StdString);
 begin
-   consoleLog.v(Id + ' (t: ' + sf(GetThreadID()) + ') ' + what);
+   consoleLog.v(Id + ' (t: ' + GetThreadName() + ') ' + what);
 end;
 
 procedure oxTRenderer.logtw(const what: StdString);
 begin
-   consoleLog.w(Id + ' (t: ' + sf(GetThreadID()) + ') ' + what);
+   consoleLog.w(Id + ' (t: ' + GetThreadName() + ') ' + what);
 end;
 
 procedure oxTRenderer.logte(const what: StdString);
 begin
-   consoleLog.e(Id + ' (t: ' + sf(GetThreadID()) + ') ' + what);
+   consoleLog.e(Id + ' (t: ' + GetThreadName() + ') ' + what);
+end;
+
+function oxTRenderer.GetThreadName(): string;
+begin
+   Result := HexStr(GetThreadID(), SizeOf(TThreadID) * 2);
 end;
 
 function instanceGlobal(): TObject;
