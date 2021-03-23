@@ -29,6 +29,7 @@ TYPE
    oxedTDockableArea = record
       procedure Initialize();
       procedure SetupLayout();
+      procedure CloseWindows();
    end;
 
 VAR
@@ -75,12 +76,23 @@ begin
    oxedWindow.Find(oxedTSceneEditWindow).Select();
 end;
 
+procedure oxedTDockableArea.CloseWindows();
+begin
+   oxed.DockableArea.DisposeSubWindows();
+end;
+
 procedure resetLayout();
 begin
    oxedDockableArea.SetupLayout();
 end;
 
+procedure closeWindows();
+begin
+   oxedDockableArea.CloseWindows();
+end;
+
 INITIALIZATION
    oxedActions.RESET_WINDOW_LAYOUT := appActionEvents.SetCallback(@resetLayout);
+   oxedActions.CLOSE_WINDOWS := appActionEvents.SetCallback(@closeWindows);
 
 END.
