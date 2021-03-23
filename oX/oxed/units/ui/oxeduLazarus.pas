@@ -17,14 +17,23 @@ INTERFACE
       {oX}
       oxuwndToast,
       {oxed}
-      uOXED, oxeduSettings,
+      uOXED, oxeduSettings, oxeduTasks,
       oxeduActions, oxeduBuild, oxeduConsole, oxeduProject;
 
 TYPE
 
+   { oxedTLazarusTask }
+
+   oxedTLazarusTask = class(oxedTTask)
+      constructor Create(); override;
+      procedure Run(); override;
+   end;
+
    { oxedTLazarusGlobal }
 
    oxedTLazarusGlobal = record
+      Task: oxedTTask;
+
       {open lazarus ide for this project}
       class procedure OpenLazarus(); static;
    end;
@@ -70,6 +79,21 @@ end;
 procedure openLazarusAfterRecreate();
 begin
    openLazarusRecreate(false);
+end;
+
+{ oxedTLazarusTask }
+
+constructor oxedTLazarusTask.Create();
+begin
+   inherited Create();
+
+   Name := 'Run lazarus';
+   TaskType := oxedTLazarusTask;
+end;
+
+procedure oxedTLazarusTask.Run();
+begin
+   inherited Run();
 end;
 
 class procedure oxedTLazarusGlobal.OpenLazarus();
@@ -118,8 +142,15 @@ begin
       log.v('Cannot open lazarus. No valid project');
 end;
 
+procedure init();
+begin
+   oxedLazarus.Task := oxedTLazarusTask.Create();
+   oxedLazarus.Task.EmitAllEvents();
+end;
+
 procedure deinit();
 begin
+   FreeObject(oxedLazarus.Task);
    FreeObject(laz);
 end;
 
@@ -128,6 +159,6 @@ INITIALIZATION
 
    oxedActions.OPEN_LAZARUS := appActionEvents.SetCallback(@oxedLazarus.OpenLazarus);
 
-   oxed.Init.dAdd('lazarus_run', @deinit);
+   oxed.Init.Add('lazarus_run', @init, @deinit);
 
 END.
