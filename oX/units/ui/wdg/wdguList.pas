@@ -817,8 +817,12 @@ begin
 
             if (not highlightable) then
                SetOddColor()
-            else
-               SetHighlightColor(i);
+            else begin
+               if(SelectedItem = i) then
+                  SetHighlightColor(i)
+               else
+                  SetFocalColor(i);
+            end;
 
             DrawHBR();
 
