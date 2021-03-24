@@ -4,13 +4,18 @@
 }
 
 {$INCLUDE oxheader.inc}
+
+{$IFNDEF OX_RESOURCE_DEBUG}
+   {$UNDEF OX_RESOURCE_DEBUG_CALLSTACK}
+{$ENDIF}
+
 UNIT oxuTypes;
 
 INTERFACE
 
    USES
       sysutils, uStd, uSimpleList, StringUtils
-      {$IFDEF OX_RESOURCE_DEBUG}
+      {$IFDEF OX_RESOURCE_DEBUG_CALLSTACK}
       , uError
       {$ENDIF};
 
@@ -179,8 +184,10 @@ TYPE
       Pool: TObject;
 
       {$IFDEF OX_RESOURCE_DEBUG}
+      {$IFDEF OX_RESOURCE_DEBUG_CALLSTACK}
       DebugAllocationPoint,
       DebugFreePoint: StdString;
+      {$ENDIF}
       {mark as freed without actually freeing}
       DebugFreed,
       {are we doing object free from a resource method}
@@ -438,7 +445,7 @@ end;
 
 constructor oxTResource.Create();
 begin
-   {$IFDEF OX_RESOURCE_DEBUG}
+   {$IFDEF OX_RESOURCE_DEBUG_CALLSTACK}
    DebugAllocationPoint := DumpCallStack(1);
    {$ENDIF}
    ReferenceCount := 1;
@@ -449,10 +456,13 @@ begin
    inherited Destroy;
 
    {$IFDEF OX_RESOURCE_DEBUG}
+
    if(ReferenceCount = -1) then
-      assert(FreeInResourceMethod, 'Permanent resource object freed outside of resource methods (do not free directly) ' + LineEnding + DebugAllocationPoint)
+      assert(FreeInResourceMethod, 'Permanent resource object freed outside of resource methods (do not free directly) '
+      {$IFDEF OX_RESOURCE_DEBUG_CALLSTACK} + LineEnding + DebugAllocationPoint {$ENDIF})
    else
-      assert(FreeInResourceMethod, 'Resource object freed outside of resource methods (do not free directly) ' + LineEnding + DebugAllocationPoint);
+      assert(FreeInResourceMethod, 'Resource object freed outside of resource methods (do not free directly) '
+      {$IFDEF OX_RESOURCE_DEBUG_CALLSTACK} + LineEnding + DebugAllocationPoint{$ENDIF});
    {$ENDIF}
 end;
 
