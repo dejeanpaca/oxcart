@@ -80,7 +80,6 @@ IMPLEMENTATION
 
 function wdgTImageTexture.SetImage(const fn: StdString): boolean;
 begin
-   Result := false;
    oxResource.Destroy(Texture);
    FileName := fn;
    Texture := nil;
@@ -96,6 +95,7 @@ begin
    oxResource.Destroy(Texture);
    FileName := '';
    Texture := newTexture;
+   newTexture.MarkUsed();
 
    Result := Texture <> nil;
 end;
