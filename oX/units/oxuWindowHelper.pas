@@ -27,9 +27,9 @@ TYPE
       procedure SetupViewport();
       procedure SetViewportOffset();
 
-      procedure Maximize();
-      procedure Minimize();
-      procedure Restore();
+      procedure Maximize(fromSystem: boolean = false);
+      procedure Minimize(fromSystem: boolean = false);
+      procedure Restore(fromSystem: boolean = false);
 
       {set a frame for the window}
       procedure SetFrame(fs: uiTWindowFrameStyle);
@@ -164,25 +164,25 @@ begin
       Viewport.SetOffset(0, 0);
 end;
 
-procedure oxTWindowHelper.Maximize();
+procedure oxTWindowHelper.Maximize(fromSystem: boolean);
 begin
    if(oxProperties.Fullscreen) then
       exit;
 
    if(oxUIHooks <> nil) then
-      oxUIHooks.Maximize(Self);
+      oxUIHooks.Maximize(Self, fromSystem);
 end;
 
-procedure oxTWindowHelper.Minimize();
+procedure oxTWindowHelper.Minimize(fromSystem: boolean);
 begin
    if(oxProperties.Fullscreen) then
       exit;
 
    if(oxUIHooks <> nil) then
-      oxUIHooks.Minimize(Self);
+      oxUIHooks.Minimize(Self, fromSystem);
 end;
 
-procedure oxTWindowHelper.Restore();
+procedure oxTWindowHelper.Restore(fromSystem: boolean);
 begin
    if(oxProperties.Fullscreen) then begin
       LeaveFullscreen();
@@ -190,7 +190,7 @@ begin
    end;
 
    if(oxUIHooks <> nil) then
-      oxUIHooks.Restore(Self);
+      oxUIHooks.Restore(Self, fromSystem);
 end;
 
 procedure oxTWindowHelper.SetFrame(fs: uiTWindowFrameStyle);
