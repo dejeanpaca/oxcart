@@ -335,13 +335,15 @@ begin
 
       {window moved}
       WM_MOVE: begin
+         if not wnd.IsMinimized() then
          wnd.SetPosition(
             SmallInt(lo(lParam)) - oxPlatform.FrameWidth(wnd),
             SmallInt(hi(lParam)) - oxPlatform.TitleHeight(wnd), false);
       end;
 
       WM_SIZE:
-         wnd.SetDimensions(lo(LParam), hi(LParam), false);
+         if not wnd.IsMinimized() then
+            wnd.SetDimensions(lo(LParam), hi(LParam), false);
 
       {a key has been pressed}
       WM_KEYDOWN, WM_KEYUP, WM_SYSKEYDOWN, WM_SYSKEYUP:
