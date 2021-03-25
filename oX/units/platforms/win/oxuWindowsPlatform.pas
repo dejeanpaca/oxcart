@@ -404,6 +404,15 @@ begin
             SC_MONITORPOWER: {don't kill monitor power}
                if(oxWindows.AllowScreenSaver) then
                   Result := 0;
+
+            SC_MINIMIZE:
+               wnd.Minimize(true);
+
+            SC_MAXIMIZE:
+               wnd.Maximize(true);
+
+            SC_RESTORE:
+               wnd.Restore(true);
          end;
       end
       else
