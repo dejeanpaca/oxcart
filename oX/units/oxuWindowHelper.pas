@@ -122,6 +122,9 @@ end;
 
 procedure oxTWindowHelper.SetPosition(x, y: longint; system: boolean);
 begin
+   if(Position.x = x) and (Position.y = y) then
+      exit;
+
    Position.x := x;
    Position.y := y;
 
@@ -137,6 +140,9 @@ end;
 
 procedure oxTWindowHelper.SetDimensions(w, h: longint; system: boolean);
 begin
+   if(Dimensions.w = w) and (Dimensions.h = h) then
+      exit;
+
    Dimensions.w := w;
    Dimensions.h := h;
 
