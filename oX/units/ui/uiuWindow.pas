@@ -93,11 +93,11 @@ TYPE
       procedure CloseQueue();
 
       {minimizes a window}
-      procedure Minimize();
+      procedure Minimize(fromSystem: boolean = false);
       {maximizes a window}
-      procedure Maximize();
+      procedure Maximize(fromSystem: boolean = false);
       {restore window from maximized or minimized state to normal}
-      procedure Restore();
+      procedure Restore(fromSystem: boolean = false);
 
       {set a new frame style}
       procedure SetFrameStyle(frameStyle: uiTWindowFrameStyle);
@@ -907,7 +907,7 @@ begin
    QueueEvent(wndevCLOSE);
 end;
 
-procedure uiTWindowHelper.Minimize();
+procedure uiTWindowHelper.Minimize(fromSystem: boolean);
 begin
    if(not (uiwndpMINIMIZED in Properties)) then begin
       Include(Properties, uiwndpMINIMIZED);
@@ -917,7 +917,7 @@ begin
    end;
 end;
 
-procedure uiTWindowHelper.Maximize();
+procedure uiTWindowHelper.Maximize(fromSystem: boolean);
 var
    p: oxTPoint;
    d: oxTDimensions;
@@ -942,13 +942,13 @@ begin
          Notification(uiWINDOW_MAXIMIZE);
          OnMaximize();
       end else begin
-         if(IsOxwReady()) then
+         if IsOxwReady() and (not fromSystem) then
             GetPlatform().Fullscreen(oxTWindow(Self));
       end;
    end;
 end;
 
-procedure uiTWindowHelper.Restore();
+procedure uiTWindowHelper.Restore(fromSystem: boolean);
 begin
    if(uiwndpMINIMIZED in Properties) then begin
       Exclude(Properties, uiwndpMINIMIZED);
@@ -966,7 +966,7 @@ begin
          Move(MaximizedPosition);
          Resize(MaximizedDimensions);
       end else begin
-         if(IsOxwReady()) then
+         if IsOxwReady() and (not fromSystem) then
             GetPlatform().Restore(oxTWindow(Self));
       end;
 

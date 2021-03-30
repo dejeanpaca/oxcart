@@ -33,9 +33,9 @@ TYPE
       procedure Select(wnd: oxTWindow); override;
       procedure Render(wnd: oxTWindow); override;
 
-      procedure Minimize(wnd: oxTWindow); override;
-      procedure Maximize(wnd: oxTWindow); override;
-      procedure Restore(wnd: oxTWindow); override;
+      procedure Minimize(wnd: oxTWindow; fromSystem: boolean = false); override;
+      procedure Maximize(wnd: oxTWindow; fromSystem: boolean = false); override;
+      procedure Restore(wnd: oxTWindow; fromSystem: boolean = false); override;
    end;
 
 IMPLEMENTATION
@@ -75,19 +75,19 @@ begin
       uiWindowRender.Render(wnd);
 end;
 
-procedure uiTOXHooks.Minimize(wnd: oxTWindow);
+procedure uiTOXHooks.Minimize(wnd: oxTWindow; fromSystem: boolean);
 begin
-   uiTWindow(wnd).Minimize();
+   uiTWindow(wnd).Minimize(fromSystem);
 end;
 
-procedure uiTOXHooks.Maximize(wnd: oxTWindow);
+procedure uiTOXHooks.Maximize(wnd: oxTWindow; fromSystem: boolean);
 begin
-   uiTWindow(wnd).Maximize();
+   uiTWindow(wnd).Maximize(fromSystem);
 end;
 
-procedure uiTOXHooks.Restore(wnd: oxTWindow);
+procedure uiTOXHooks.Restore(wnd: oxTWindow; fromSystem: boolean);
 begin
-   uiTWindow(wnd).Restore();
+   uiTWindow(wnd).Restore(fromSystem);
 end;
 
 procedure uiTOXHooks.InitializeWindow(wnd: oxTWindow);
