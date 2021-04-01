@@ -44,7 +44,7 @@ end;
 BEGIN
    ProcessParameters();
 
-   TParseData.Init(parseData);
+   parseData.Create();
    parseData.ReadMethod       := TParseMethod(@readFile);
    parseData.ReadEmptyLines   := true;
    parseData.StripWhitespace  := false;
