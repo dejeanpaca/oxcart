@@ -531,14 +531,14 @@ end;
 {close a opened file}
 procedure TFile.Close();
 begin
-   Flush();
+   if(fMode <> fcfNONE) then begin
+      Flush();
 
-   SeekStart();
+      SeekStart();
 
-   if(pHandler <> nil) then
-      pHandler^.Close(Self);
-
-   HandlerDispose();
+      if(pHandler <> nil) then
+         pHandler^.Close(Self);
+   end;
 
    fMode := fcfNONE;
 end;
@@ -558,8 +558,10 @@ begin
       XFreeMem(bData);
       bSize := 0;
 
+      bExternal := false;
+
       if(pHandler <> nil) then
-         pHandler^.onbufferset(Self);
+         pHandler^.OnBufferSet(Self);
    end;
 end;
 
@@ -568,11 +570,13 @@ procedure TFile.Buffer(Size: fileint);
 begin
    if(Size > 0) and (fMode <> fcfRW) then begin
       bExternal := false;
+
       if(Size < fFile.MinimumBufferSize) then
          Size := fFile.MinimumBufferSize;
 
       DisposeBuffer();
-      GetMem(bData, Size);
+      XGetMem(bData, Size);
+
       if(bData <> nil) then begin
          bSize       := Size;
          bPosition   := 0;
@@ -582,7 +586,7 @@ begin
          exit();
       end;
 
-      pHandler^.onbufferset(Self);
+      pHandler^.OnBufferSet(Self);
    end else
       DisposeBuffer();
 end;
@@ -597,7 +601,7 @@ begin
       bPosition := 0;
       bLimit := 0;
       bSize := Size;
-      pHandler^.onbufferset(Self);
+      pHandler^.OnBufferSet(Self);
    end;
 end;
 
