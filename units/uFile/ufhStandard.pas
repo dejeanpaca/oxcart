@@ -198,7 +198,7 @@ end;
 
 procedure TStandardFileHandler.Destroy(var f: TFile);
 begin
-   system.dispose(stdPData(f.pData));
+   system.Dispose(stdPData(f.pData));
 end;
 
 procedure TStandardFileHandler.Open(var f: TFile);

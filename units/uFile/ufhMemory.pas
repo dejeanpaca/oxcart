@@ -45,12 +45,11 @@ begin
    {$IFNDEF DFILE_QND}
    if(f.ExtData <> nil) then begin
    {$ENDIF}
-      move((f.extData + f.fPosition)^, {%H-}buf, count);
+      move((f.ExtData + f.fPosition)^, {%H-}buf, count);
       Result := count;
    {$IFNDEF DFILE_QND}
-   end else begin
+   end else
       Result := -1;
-   end;
    {$ENDIF}
 end;
 
@@ -69,12 +68,8 @@ end;
 
 procedure TMemoryFileHandler.Destroy(var f: TFile);
 begin
-   if(f.ExtData <> nil) then begin
-      if(f.HandlerProps and PROP_EXTERNAL > 0) then begin
-         Freemem(f.ExtData);
-         f.ExtData := nil;
-      end;
-   end;
+   if(f.ExtData <> nil) and (f.HandlerProps and PROP_EXTERNAL > 0) then
+      XFreeMem(f.ExtData);
 end;
 
 procedure memfOpen(var f: TFile; mem: pointer; size: fileint);
