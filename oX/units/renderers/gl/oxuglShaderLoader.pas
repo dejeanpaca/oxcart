@@ -144,7 +144,7 @@ begin
    parseOptions.GLSLVersion := oxglRendererInfo.GLSL.Compact;
    parseOptions.Data := @data;
 
-   TParseData.Init(parseData);
+   parseData.Create();
    parseData.ExternalData := @parseOptions;
    parseData.ReadMethod := TParseMethod(@parseShaderFile);
    parseData.StripWhitespace := false;

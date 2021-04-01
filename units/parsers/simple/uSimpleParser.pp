@@ -51,6 +51,9 @@ TYPE
       {external data, passed from the caller}
       ExternalData: pointer;
 
+      constructor Create();
+      constructor CreateKeyValue();
+
       {perform file reading}
       function Read(const fn: StdString): Boolean;
       function Read(const fn: StdString; readFunction: TParseMethod): Boolean;
@@ -62,11 +65,6 @@ TYPE
 
       function OnRead(): boolean; virtual;
       function OnWrite(): boolean; virtual;
-
-      {initialize a TParseData record}
-      class procedure Init(out p: TParseData); static;
-      {initialize a TParseData record}
-      class procedure InitKeyValue(out p: TParseData); static;
    end;
 
    { TSimpleParserGlobal }
@@ -106,26 +104,12 @@ var
 begin
    Result := 0;
 
-   TParseData.InitKeyValue(parse);
+   parse.CreateKeyValue();
    parse.KeyValueSeparator := separator;
    parse.ExternalData := @kv;
 
    parse.Read(fn, TParseMethod(@loadKeyValuesParse));
 end;
-
-class procedure TParseData.Init(out p: TParseData);
-begin
-   p.Create();
-   p.KeyValueSeparator := '=';
-   p.StripWhitespace := true;
-end;
-
-class procedure TParseData.InitKeyValue(out p: TParseData);
-begin
-   Init(p);
-   p.KeyValue := true;
-end;
-
 
 function TParseData.OnRead(): boolean;
 var
@@ -173,6 +157,23 @@ begin
    end;
 
    Result := true;
+end;
+
+constructor TParseData.Create();
+begin
+   inherited;
+
+   KeyValueSeparator := '=';
+   StripWhitespace := true;
+end;
+
+constructor TParseData.CreateKeyValue();
+begin
+   inherited;
+
+   KeyValueSeparator := '=';
+   StripWhitespace := true;
+   KeyValue := true;
 end;
 
 function TParseData.Read(const fn: StdString): Boolean;

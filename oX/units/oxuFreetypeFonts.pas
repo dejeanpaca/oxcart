@@ -424,7 +424,7 @@ begin
    path := oxPaths.Find(oxPaths.Fonts + 'fonts.list');
 
    if(path <> '') then begin
-      TParseData.InitKeyValue(p);
+      p.CreateKeyValue();
       p.ReadMethod := TParseMethod(@readFontList);
       p.KeyValueSeparator := ' ';
       p.Read(path);

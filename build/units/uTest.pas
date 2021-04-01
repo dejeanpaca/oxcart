@@ -584,7 +584,7 @@ begin
    Result := false;
    fn :=  TEST_RESULTS_FILENAME;
 
-   TParseData.Init(p);
+   p.Create();
    p.WriteMethod := TParseMethod(@writeResults);
    p.ExternalData := @Self;
    p.Write(fn);
@@ -656,7 +656,7 @@ begin
    loadResultsData.tests := @Self;
    loadResultsData.results := @results;
 
-   TParseData.InitKeyValue(p);
+   p.CreateKeyValue();
    p.ExternalData := @loadResultsData;
    p.ReadMethod := TParseMethod(@ReadResults);
    p.Read(TEST_RESULTS_FILENAME);

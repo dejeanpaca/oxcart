@@ -141,7 +141,7 @@ begin
 
    data.Options := options^;
 
-   TParseData.Init(data.Parser);
+   data.Parser.Create();
    data.Parser.ExternalData := @data;
    data.Parser.Read(fn, TParseMethod(@readTextFile));
 end;
@@ -318,7 +318,7 @@ begin
    data.Options := options^;
 
    if(dv.sub.s <> nil) or (dv.vs <> nil) then begin
-      TParseData.Init(data.Parser);
+      data.Parser.Create();
       data.Parser.ExternalData := @data;
       data.Parser.Write(fn, TParseMethod(@writeTextFile));
    end;
