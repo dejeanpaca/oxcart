@@ -16,7 +16,7 @@ USES
    {assets}
    oxuAndroidAssets, uAndroidAssets,
    {app}
-   uApp,
+   uApp, appuLog,
    {ox}
    uOX, oxuRun, oxuInitialize, oxuPlatform,
    oxuAndroidPlatform;
@@ -113,6 +113,8 @@ begin
 
    finished := false;
    uApp.app.Active := true;
+
+   appLog.Initialize();
 
    androidAssetManager.Get(app^.activity);
    oxAndroidAssets.Initialize();
