@@ -85,7 +85,6 @@ TYPE
       {extra data}
       ExtData: pointer;
       Handle: fTHandle;
-      HandleID: longint;
       pSub: PFile;
 
       procedure RaiseError(err: longint);
@@ -972,7 +971,6 @@ procedure TFileGlobal.Init(out f: TFile);
 begin
    ZeroPtr(@f, SizeOf(f));
    f.pHandler := @DummyHandler;
-   f.handleID := -1;
    f.SetLineEndings(fFile.LineEndings);
 end;
 
