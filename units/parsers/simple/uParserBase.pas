@@ -48,7 +48,7 @@ constructor TParserBase.Create();
 begin
    ErrorCode := 0;
    ErrorDescription := '';
-   ZeroOut(f, SizeOf(f));
+   fFile.Init(f);
 end;
 
 procedure TParserBase.SetError(code: loopint; const description: StdString);
@@ -72,8 +72,6 @@ end;
 
 function TParserBase.Read(const fn: StdString): boolean;
 begin
-   fFile.Init(f);
-
    f.Open(fn);
    if(f.Error = 0) then
       Result := Read(f)
@@ -110,8 +108,6 @@ end;
 
 function TParserBase.Write(const fn: StdString): boolean;
 begin
-   fFile.Init(f);
-
    f.New(fn);
    if(f.Error = 0) then begin
       Result := Write(f);
