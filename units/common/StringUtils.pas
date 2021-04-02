@@ -282,6 +282,8 @@ function ExtractFileDrive(const st: StdString): StdString;
 {replace directory separators with the one used on the current platform}
 procedure ReplaceDirSeparators(var st: StdString);
 {replace directory separators with the one used on the current platform}
+procedure ReplaceDirSeparators(var st: ShortString);
+{replace directory separators with the one used on the current platform}
 function ReplaceDirSeparatorsf(const st: StdString): StdString;
 {get parent directory in a given path}
 function GetParentDirectory(const st: StdString): StdString;
@@ -1130,6 +1132,23 @@ begin
 end;
 
 procedure ReplaceDirSeparators(var st: StdString);
+var
+   rds: char; {the directory separator which must be replaced}
+   i: longint;
+
+begin
+   {decide which separator to replace}
+   {$IFDEF WINDOWS}rds := '/';{$ENDIF}
+   {$IFDEF UNIX}rds := '\';{$ENDIF}
+   {$IFDEF DARWIN}rds := '\';{$ENDIF}
+
+   for i := 1 to Length(st) do begin
+      if(st[i] = rds) then
+         st[i] := DirectorySeparator;
+   end;
+end;
+
+procedure ReplaceDirSeparators(var st: ShortString);
 var
    rds: char; {the directory separator which must be replaced}
    i: longint;
