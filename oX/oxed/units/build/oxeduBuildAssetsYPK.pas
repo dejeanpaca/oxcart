@@ -65,9 +65,11 @@ procedure oxedTYPKAssetsDeployer.OnDone();
 begin
    oxedBuildLog.i('Building ypk file to: ' + Builder.OutputFN);
 
-   if(Builder.Build()) then
-      oxedBuildLog.k('Built ypk file: ' + Builder.OutputFN)
-   else begin
+   if(Builder.Build()) then begin
+      oxedBuildLog.k('Built ypk file: ' + Builder.OutputFN);
+      oxedBuildLog.v('Total files: ' + sf(Builder.Files.n));
+      oxedBuildLog.v('Total data: ' + sf(Builder.Total));
+   end else begin
       oxedBuildLog.e('Failed building ypk file: ' + Builder.OutputFN);
       oxedBuildLog.e('Error: ' + Builder.ErrorDescription);
    end;
