@@ -56,7 +56,6 @@ TYPE
       {add a file to the vfs file list}
       function Add(var f: TFile): ypkPFSFile;
       {mount and unmount the filesystem}
-      procedure Mount();
       procedure Unmount();
 
       {disposes of the entire pool}
@@ -88,7 +87,7 @@ TYPE
    ypkTFilesystem = specialize TSimpleList<ypkPFSFile>;
 
 VAR
-   filesystem: ypkTFilesystem;
+   fileSystem: ypkTFilesystem;
 
 procedure writeLog(var fs: ypkTFSFile; const s: StdString);
 var
@@ -126,10 +125,10 @@ begin
    New(f);
 
    {get an index to a fs pointer}
-   filesystem.Add(f);
+   fileSystem.Add(f);
    InitFSFile(f^);
 
-   Result := filesystem.n - 1;
+   Result := fileSystem.n - 1;
 end;
 
 function ypkfsAdd(var fs: ypkTFSFile): ypkPFSFile;
@@ -180,7 +179,7 @@ begin
       fsidx := getFile();
 
       if(fsidx > -1) then begin
-         fs := filesystem.List[fsidx];
+         fs := fileSystem.List[fsidx];
 
          {open the file}
          fs^.f.Open(fn);
@@ -207,7 +206,7 @@ begin
    fsidx := getFile();
 
    if(fsidx > -1) then begin
-      fs := filesystem.List[fsidx];
+      fs := fileSystem.List[fsidx];
 
       {set the file}
       fs^.f := f;
@@ -223,36 +222,16 @@ begin
       log.e('Cannot get an ypkfs file in the list');
 end;
 
-procedure ypkTFileSystemGlobal.Mount();
-var
-   i: longint;
-
-begin
-   {initialize filesystem}
-   if(filesystem.n > 0) then begin
-      for i := 0 to (filesystem.n - 1) do begin
-         if(filesystem.List[i] <> nil) then
-            filesystem.List[i]^.f.Buffer(fFile.MinimumBufferSize);
-      end;
-   end;
-
-   if(filesystem.n > 0) then
-      log.i(tag + 'Filesystem successfully mounted.')
-   else
-      log.i(tag + 'Filesystem not mounted. No files.')
-end;
-
 procedure ypkTFileSystemGlobal.Unmount();
 var
    i: longint;
 
 begin
    {close all files}
-   if(filesystem.n > 0) then begin
-      for i := 0 to (filesystem.n -1 ) do begin
-         if(filesystem.List[i] <> nil) then
-            if(filesystem.List[i]^.f.fMode <> fcfNONE) then
-               filesystem.List[i]^.f.Close();
+   if(fileSystem.n > 0) then begin
+      for i := 0 to fileSystem.n - 1 do begin
+         if(fileSystem.List[i] <> nil) then
+            fileSystem.List[i]^.f.Close();
       end;
    end;
 
@@ -267,18 +246,18 @@ var
    i: longint;
 
 begin
-   if(filesystem.n > 0) then begin
-      for i := 0 to (filesystem.n - 1) do begin
-         if(filesystem.List[i] <> nil) then begin
-            filesystem.List[i]^.f.Dispose();
+   if(fileSystem.n > 0) then begin
+      for i := 0 to (fileSystem.n - 1) do begin
+         if(fileSystem.List[i] <> nil) then begin
+            fileSystem.List[i]^.f.Dispose();
 
-            Dispose(filesystem.List[i]);
-            filesystem.List[i] := nil;
+            Dispose(fileSystem.List[i]);
+            fileSystem.List[i] := nil;
          end;
       end;
    end;
 
-   filesystem.Dispose();
+   fileSystem.Dispose();
 end;
 
 { HANDLER }
@@ -345,13 +324,13 @@ begin
    entryIdx := -1;
    Result := nil;
 
-   if(filesystem.n > 0) then begin
-      for i := (filesystem.n - 1) downto 0 do begin
-         if(filesystem.List[i] <> nil) then begin
-            entryIdx := filesystem.List[i]^.Find(filesystem.List[i]^.Entries, fn);
+   if(fileSystem.n > 0) then begin
+      for i := (fileSystem.n - 1) downto 0 do begin
+         if(fileSystem.List[i] <> nil) then begin
+            entryIdx := fileSystem.List[i]^.Find(fileSystem.List[i]^.Entries, fn);
 
             if(entryIdx > -1) then
-               exit(filesystem.List[i]);
+               exit(fileSystem.List[i]);
          end;
       end;
    end;
@@ -384,10 +363,10 @@ var
 begin
    count := 0;
 
-   if(filesystem.n > 0) then
-      for i := 0 to (filesystem.n - 1) do begin
-         if(filesystem.List[i] <> nil) then
-            inc(count, filesystem.List[i]^.Entries.n);
+   if(fileSystem.n > 0) then
+      for i := 0 to (fileSystem.n - 1) do begin
+         if(fileSystem.List[i] <> nil) then
+            inc(count, fileSystem.List[i]^.Entries.n);
       end;
 
    Result := 0;
@@ -458,8 +437,8 @@ INITIALIZATION
 
    fFile.fsAdd(ypkfs.vfs);
 
-   {initialize filesystem}
-   filesystem.InitializeValues(filesystem);
+   {initialize fileSystem}
+   fileSystem.InitializeValues(fileSystem);
 
 FINALIZATION
    ypkfs.DisposePool();
