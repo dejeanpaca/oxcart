@@ -50,6 +50,9 @@ function unxfIoErr(var f: TFile): longint;
 begin
    f.IoError := fpgeterrno();
 
+   if(f.IoError = 30) and (f.fMode = fcfREAD) then
+      f.IoError := 0;
+
    if(f.IoError = 0) then
       exit(0)
    else begin
