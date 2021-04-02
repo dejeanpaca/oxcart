@@ -101,6 +101,7 @@ begin
    end;
 
    entries.Allocate(Files.n);
+   entries.n := Files.n;
 
    filesOffset := SizeOf(hdr) + sb.Total + (Files.n * SizeOf(ypkfTEntry));
 
@@ -113,6 +114,7 @@ begin
       entries.List[i].Size := FileUtils.Exists(Files.List[i].Source);
 
       inc(currentOffset, entries[i].Size);
+      inc(Total, entries[i].Size);
    end;
 
    {setup header}
@@ -123,6 +125,8 @@ begin
    hdr.BlobSize := sb.Total;
    hdr.FilesSize := currentOffset;
    hdr.FilesOffset := filesOffset;
+
+   Total := hdr.DataSize();
 
    {create output file}
    fFile.Init(f);
