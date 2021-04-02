@@ -63,7 +63,7 @@ function TSubFileHandler.Read(var f: TFile; out buf; count: fileint): fileint;
 begin
    f.pSub^.Read(buf, count);
 
-   if(f.error = 0) then
+   if(f.Error = 0) then
       Result := count
    else
       Result := -1;
@@ -73,7 +73,7 @@ function TSubFileHandler.Write(var f: TFile; const buf; count: fileint): fileint
 begin
    f.pSub^.Write(buf, count);
 
-   if(f.error = 0) then
+   if(f.Error = 0) then
       Result := count
    else
       Result := -1;
