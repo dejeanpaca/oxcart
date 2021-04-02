@@ -457,7 +457,7 @@ end;
 procedure TStandardLogHandler.Close(log: PLog);
 begin
    system.close(log^.Fl^);
-   IOResult();
+   StdError(log^);
 end;
 
 procedure TStandardLogHandler.Flush(log: PLog);
@@ -518,7 +518,7 @@ end;
 
 function TStandardLogHandler.StdError(var log: TLog): longint;
 begin
-   log.IoError := IOResult();
+   log.IoError := ioerror();
 
    if(log.IoError <> 0) then
       log.SetErrorState(logeIO);
