@@ -9,7 +9,7 @@ UNIT ypkuFS;
 INTERFACE
 
    USES
-      uStd, ufhStandard, {$IFDEF UNIX}BaseUnix, ufhUnix, {$ENDIF}
+      uStd, ufhStandard,
       uLog, StringUtils,
       uFileUtils, uFile, {%H-}uFiles, ufhSub, uyPakFile;
 
@@ -52,11 +52,6 @@ TYPE
       function Add(const fn: StdString): ypkPFSFile;
       {add a file to the vfs file list}
       function Add(var f: TFile): ypkPFSFile;
-      {$IFDEF UNIX}
-      function Add(d: cint; offs, size: fileint): ypkPFSFile;
-      {$ENDIF}
-      {add a pool of ypk files to the vfs file list}
-      procedure AddPool(const fn: StdString);
       {mount and unmount the filesystem}
       procedure Mount();
       procedure Unmount();
@@ -217,38 +212,6 @@ begin
          writeLog(fs^, 'Given ypks file already has an error: ' + fs^.f.GetErrorString())
    end else
       log.e('Cannot get an ypkfs file in the list');
-end;
-
-{$IFDEF UNIX}
-function ypkTFileSystemGlobal.Add(d: cint; offs, size: fileint): ypkPFSFile;
-var
-   fsidx: longint;
-   fs: ypkPFSFile;
-
-begin
-   Result := nil;
-
-   fsidx := getFile();
-
-   if(fsidx > -1) then begin
-      fs := filesystem.List[fsidx];
-
-      {open the file}
-      fOpenUnix(fs^.f, d, offs, size);
-
-      if(fs^.f.Error = 0) then begin
-         Result := ypkfsAdd(fs^);
-      end else
-         writeLog(fs^, 'Cannot open file.')
-   end;
-end;
-
-{$ENDIF}
-
-procedure ypkTFileSystemGlobal.AddPool(const fn: StdString);
-begin
-   if(fn <> '') then begin
-   end;
 end;
 
 procedure ypkTFileSystemGlobal.Mount();
