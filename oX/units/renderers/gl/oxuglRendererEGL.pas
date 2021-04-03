@@ -16,7 +16,7 @@ INTERFACE
       {ox.gl}
       oxuOGL, oxuglWindow, oxuglRendererPlatform, oxuglRenderer,
       {android}
-      oxuAndroidPlatform;
+      android_native_app_glue, uAndroidApp;
 
 TYPE
    { oxglTEGL }

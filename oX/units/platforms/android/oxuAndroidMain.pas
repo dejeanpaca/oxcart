@@ -9,17 +9,17 @@ UNIT oxuAndroidMain;
 INTERFACE
 
 USES
-   android_native_app_glue, android_log_helper, native_activity, android_native_activity_helper,
-   android_window, android_layout_params,
-   ctypes, looper, jni, uAndroid,
-   uLog, uUnix, StringUtils,
-   {assets}
-   oxuAndroidAssets, uAndroidAssets,
+   ctypes, uLog, uUnix, StringUtils,
    {app}
    uApp, appuLog,
    {ox}
    uOX, oxuRun, oxuInitialize, oxuPlatform,
-   oxuAndroidPlatform;
+   {android}
+   looper, jni, android_native_app_glue, android_log_helper, native_activity, android_native_activity_helper,
+   android_window, android_layout_params, uAndroidApp,
+   uAndroid, uAndroidAssets,
+   {ox android}
+   oxuAndroidPlatform, oxuAndroidAssets;
 
 procedure android_main(app: Pandroid_app); cdecl;
 

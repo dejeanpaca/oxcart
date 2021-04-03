@@ -9,7 +9,11 @@ UNIT oxuAndroidPlatform;
 INTERFACE
 
    USES
-      ctypes, looper, input, android_native_app_glue, android_keycodes, native_window,
+      ctypes,
+      {android}
+      looper, input, android_native_app_glue, android_keycodes, native_window,
+      uAndroidApp,
+      {stdf}
       uStd, uLog, StringUtils,
       {egl}
       egl, oxuglWindow,
@@ -83,7 +87,6 @@ TYPE
    end;
 
 VAR
-   AndroidApp: Pandroid_app;
    {android platform global}
    oxAndroidPlatform: oxTAndroidPlatformGlobal;
 
