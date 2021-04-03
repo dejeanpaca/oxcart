@@ -184,16 +184,18 @@ end;
 {$IFNDEF OX_LIBRARY}
 procedure init();
 begin
-   oxPaths.WorkingDirectory := appPath.GetExecutablePath();
+   {$IFNDEF ANDROID}
+      oxPaths.WorkingDirectory := appPath.GetExecutablePath();
 
-   if(oxPaths.WorkingDirectory <> '') then
-      oxPaths.WorkingDirectory := IncludeTrailingPathDelimiter(oxPaths.WorkingDirectory);
+      if(oxPaths.WorkingDirectory <> '') then
+         oxPaths.WorkingDirectory := IncludeTrailingPathDelimiter(oxPaths.WorkingDirectory);
 
-   if(oxPaths.WorkingDirectory <> '') then
-      log.v('ox > Asset base path: ' + oxPaths.WorkingDirectory);
+      if(oxPaths.WorkingDirectory <> '') then
+         log.v('ox > Asset base path: ' + oxPaths.WorkingDirectory);
 
-   {$IFDEF OXED}
-   oxPaths.SetDefaultEngineAssetPath();
+      {$IFDEF OXED}
+      oxPaths.SetDefaultEngineAssetPath();
+      {$ENDIF}
    {$ENDIF}
 end;
 {$ENDIF}
