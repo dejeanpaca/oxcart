@@ -60,7 +60,7 @@ TYPE
       Name: string;
 
       {task thread}
-      Thread: TThread;
+      Thread: oxTThreadTaskRunner;
       {is the tread pending termination (task finish)}
       Terminated,
       {has the task started}
