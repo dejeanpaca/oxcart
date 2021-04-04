@@ -105,6 +105,11 @@ var
    cycledEvents: boolean;
    finished: boolean;
 
+   function areWeRunning(): boolean;
+   begin
+      Result := (not finished) and uApp.app.Active and (not app^.destroyRequested);
+   end;
+
 begin
    AndroidApp := app;
 
@@ -148,13 +153,7 @@ begin
          end;
       end;
 
-      if(oxAndroidPlatform.fDone) then begin
-         oxRun.Done();
-         oxInitialization.Deinitialize();
-         oxAndroidPlatform.fDone := false;
-      end;
-
-      if(ox.Initialized) and (not finished) then begin
+      if(ox.Initialized) and areWeRunning() then begin
          if(not ox.Started) then begin
             oxRun.Start();
          end else begin
@@ -183,7 +182,7 @@ begin
       if(not cycledEvents) then
          AndroidProcessEvents();
 
-      if ox.InitializationFailed or (not uApp.app.Active) then begin
+      if ox.InitializationFailed or (not areWeRunning()) then begin
          if(not finished) then begin
             finished := true;
             logv('Closing activity: ' + sf(app^.activity));
@@ -191,8 +190,11 @@ begin
          end;
       end;
 
-      if(AndroidApp^.destroyRequested) then
+      if(app^.destroyRequested) then begin
+         oxRun.Done();
+         oxInitialization.Deinitialize();
          break;
+      end;
    until false;
 
    oxAndroidAssets.DeInitialize();

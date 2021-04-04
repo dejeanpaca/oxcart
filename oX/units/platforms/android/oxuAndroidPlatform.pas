@@ -65,7 +65,6 @@ TYPE
       fRegainedFocus,
       fInitWindow,
       fLostWindow,
-      fDone,
       {main thread should be signalled to handle an activity}
       fSignalMainThread: boolean;
 
@@ -126,8 +125,6 @@ begin
       oxAndroidPlatform.fLostFocus := true;
       oxAndroidPlatform.fRegainedFocus := false;
       oxRenderingContext.CanRender := false;
-   end else if(cmd = APP_CMD_DESTROY) then begin
-      oxAndroidPlatform.fDone := true;
    end;
 end;
 
