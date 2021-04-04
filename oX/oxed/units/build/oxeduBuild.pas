@@ -436,8 +436,7 @@ function oxedTBuildGlobal.AddFeature(feature: StdString): oxPFeatureDescriptor;
 begin
    Result := oxFeatures.FindByName(feature);
 
-   if(Result <> nil) then
-      Features.AddFeature(Result);
+   Features.AddFeature(Result);
 end;
 
 procedure oxedTBuildGlobal.RecreateWorkArea();
