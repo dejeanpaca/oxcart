@@ -194,18 +194,18 @@ begin
       oxPaths.WorkingDirectory := IncludeTrailingPathDelimiterNonEmpty(oxPaths.WorkingDirectory);
 
       if(oxPaths.WorkingDirectory <> '') then begin
-         log.v('ox > Asset base path: ' + oxPaths.WorkingDirectory);
-
-         if(FileUtils.DirectoryExists(oxPaths.WorkingDirectory + 'data')) then begin
-            oxPaths.Add(oxPaths.WorkingDirectory);
-            oxPaths.WorkingDirectory := oxPaths.WorkingDirectory + 'data';
-         end;
+         {data should be our primary working directory}
+         if(FileUtils.DirectoryExists(oxPaths.WorkingDirectory + 'data')) then
+            oxPaths.WorkingDirectory := oxPaths.WorkingDirectory + oxDataPath;
       end;
 
       {$IFDEF OXED}
       oxPaths.SetDefaultEngineAssetPath();
       {$ENDIF}
    {$ENDIF}
+
+   if(oxPaths.WorkingDirectory <> '') then
+      log.v('ox > Asset base path: ' + oxPaths.WorkingDirectory);
 end;
 {$ENDIF}
 
