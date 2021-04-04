@@ -46,7 +46,7 @@ begin
    cpuType := loopint(oxedAndroidSettings.GetCPUType());
 
    oxedBuild.BuildTarget := OXED_BUILD_LIB;
-   oxedBuildAssets.Deployer := oxedYPKAssetsDeployer;
+   oxedBuildAssets.UseDeployer(oxedYPKAssetsDeployer);
 
    oxedBuild.StartTask(OXED_BUILD_TASK_RECODE, oxedAndroidPlatform.Architectures.List[cpuType]);
 end;
