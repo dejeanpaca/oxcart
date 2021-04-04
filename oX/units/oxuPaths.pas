@@ -191,12 +191,16 @@ procedure init();
 begin
    {$IFNDEF ANDROID}
       oxPaths.WorkingDirectory := appPath.GetExecutablePath();
+      oxPaths.WorkingDirectory := IncludeTrailingPathDelimiterNonEmpty(oxPaths.WorkingDirectory);
 
-      if(oxPaths.WorkingDirectory <> '') then
-         oxPaths.WorkingDirectory := IncludeTrailingPathDelimiter(oxPaths.WorkingDirectory);
-
-      if(oxPaths.WorkingDirectory <> '') then
+      if(oxPaths.WorkingDirectory <> '') then begin
          log.v('ox > Asset base path: ' + oxPaths.WorkingDirectory);
+
+         if(FileUtils.DirectoryExists(oxPaths.WorkingDirectory + 'data')) then begin
+            oxPaths.Add(oxPaths.WorkingDirectory);
+            oxPaths.WorkingDirectory := oxPaths.WorkingDirectory + 'data';
+         end;
+      end;
 
       {$IFDEF OXED}
       oxPaths.SetDefaultEngineAssetPath();
