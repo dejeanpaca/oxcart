@@ -407,7 +407,7 @@ begin
             continue;
 
          if(feature^.IncludeByDefault) then
-            Result.Add(feature);
+            Result.AddFeature(feature);
       end;
    end;
 
@@ -416,14 +416,14 @@ begin
       feature := oxFeatures.FindByName(oxedProject.Features[i]);
 
       if(feature <> nil) then
-         Result.Add(feature);
+         Result.AddFeature(feature);
    end;
 
    {in library mode, only include the renderer we need}
    if(lib) then begin
       feature := oxFeatures.FindByName('renderer.' + oxRenderer.Id);
       assert(feature <> nil, 'Renderer ' + oxRenderer.Id +  ' feature must never be nil');
-      Result.Add(feature);
+      Result.AddFeature(feature);
    end;
 end;
 
@@ -437,7 +437,7 @@ begin
    Result := oxFeatures.FindByName(feature);
 
    if(Result <> nil) then
-      Features.Add(Result);
+      Features.AddFeature(Result);
 end;
 
 procedure oxedTBuildGlobal.RecreateWorkArea();
