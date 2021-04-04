@@ -19,7 +19,9 @@ INTERFACE
       {ox}
       uOX, oxuRunRoutines, oxuWindowTypes, oxuTypes, oxuRenderer, oxuRenderers, oxuWindow,
       {renderer.gl}
-      oxuOGL, oxuglExtensions, oxuglInfo, oxuglRendererPlatform, oxuglRendererInfo, oxuglWindow
+      oxuOGL, oxuglExtensions,
+      oxuglInfo, {$IFDEF OX_LIBRARY}oxuglLibraryInfo, {$ENDIF}
+      oxuglRendererPlatform, oxuglRendererInfo, oxuglWindow
       {$IFNDEF OX_LIBRARY}, oxuglLog{$ENDIF};
 
 TYPE
@@ -32,7 +34,6 @@ TYPE
       glRenderingContexts: array[0..oxMAXIMUM_RENDER_CONTEXT] of oglTRenderingContext;
       {$IFDEF OX_LIBRARY_SUPPORT}
       pExtensions: oglPExtensions;
-      pInfo: oxglPRendererInfo;
       {$ENDIF}
 
       constructor Create(); override;
@@ -180,7 +181,6 @@ begin
 
    {$IFDEF OX_LIBRARY_SUPPORT}
    oglExtensions.pExternal := pExtensions;
-   pInfo := @oxglRendererInfo;
    {$ENDIF}
 
    if(ox.LibraryMode) then begin
@@ -196,15 +196,15 @@ begin
       logtw('Errors while setting up state');
 
    {get information from OpenGL}
+   {$IFNDEF OX_LIBRARY}
    oglGetInformation();
+   {$ELSE}
+   oglLibraryGetInformation();
+   {$ENDIF}
    if(ogl.eRaise() <> 0) then begin
       logtw('Errors while getting information');
       exit(false);
    end;
-
-   {$IFDEF OX_LIBRARY}
-   oxglRendererInfo := pInfo^;
-   {$ENDIF}
 
    if(not ox.LibraryMode) then begin
       {check if versions match}
