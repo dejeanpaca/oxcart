@@ -211,14 +211,9 @@ begin
    Result := true;
 
    oxedBuildLog.v('Deploying package: ' + Current.Path);
+   TargetSuffix := '';
 
-   if(@package = @oxedAssets.oxDataPackage) then begin
-      TargetSuffix := 'data';
-      CurrentTarget := IncludeTrailingPathDelimiterNonEmpty(Target) + IncludeTrailingPathDelimiterNonEmpty(TargetSuffix);
-   end else begin
-      TargetSuffix := '';
-      CurrentTarget := IncludeTrailingPathDelimiterNonEmpty(Target);
-   end;
+   CurrentTarget := IncludeTrailingPathDelimiterNonEmpty(Target);
 end;
 
 procedure initialize();
