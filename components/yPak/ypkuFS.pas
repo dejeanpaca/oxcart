@@ -299,7 +299,7 @@ begin
    fs := ypkfs.Find(fn, entryIdx);
 
    if(entryIdx > -1) then begin
-      entry := @fs^.data.Entries.List[entryIdx].Offset;
+      entry := @fs^.data.Entries.List[entryIdx];
 
       f.Open(fs^.f, entry^.Offset, entry^.Size);
       f.fn := f.fn + ':' + fn;
