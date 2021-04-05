@@ -9,7 +9,7 @@ UNIT uyPakFile;
 INTERFACE
 
    USES
-      uStd, uFile;
+      uStd, uFile, StringUtils;
 
 TYPE
    ypkTID = array[0..3] of char;
@@ -60,6 +60,7 @@ TYPE
    end;
 
    ypkfPEntry = ^ypkfTEntry;
+
    {contains a entry for a file}
    ypkfTEntry = packed record
       {offset for the filename in the blob}
@@ -71,6 +72,30 @@ TYPE
    end;
 
    ypkfTEntries = specialize TSimpleList<ypkfTEntry>;
+
+   ypkPData = ^ypkTData;
+
+   { ypkTData }
+
+   ypkTData = record
+      {how many files do we have}
+      Files: loopint;
+      {blob size}
+      BlobSize: fileint;
+      {blob memory containing file names}
+      Blob: PByte;
+      {ypk entries}
+      Entries: ypkfTEntries;
+
+      {correct file path separators for all entries}
+      procedure CorrectPaths();
+      {get file name for the given file index}
+      function GetFn(index: loopint): PShortString;
+      {finds a file with the specified name in the entries}
+      function Find(const fn: string): longint;
+
+      class procedure Initialize(out d: ypkTData); static;
+   end;
 
    { ypkTFile }
 
@@ -95,8 +120,11 @@ TYPE
       function ReadEntries(var e: ypkfTEntries; count: longint): fileint;
       procedure WriteEntries(var e: ypkfTEntries);
 
+      function ReadEntries(var data: ypkTData): fileint;
+
       { FILENAMES BLOB }
       function ReadBlob(out blob: PByte; size: fileint): fileint;
+      function ReadBlob(var data: ypkTData): fileint;
       function WriteBlob(var blob: PByte; size: fileint): fileint;
    end;
 
@@ -105,6 +133,51 @@ CONST
    ypkENTRY_SIZE        = SizeOf(ypkfTEntry);
 
 IMPLEMENTATION
+
+{ ypkTData }
+
+procedure ypkTData.CorrectPaths();
+var
+   i: loopint;
+   fn: PShortString;
+
+begin
+   for i := 0 to Entries.n - 1 do begin
+      fn := GetFn(i);
+
+      ReplaceDirSeparators(fn^);
+   end;
+end;
+
+function ypkTData.GetFn(index: loopint): PShortString;
+begin
+   Result := @EmptyShortString;
+
+   if(index >= 0) and (index < Entries.n) then begin
+      Result := PShortString(Blob + PtrInt(Entries.List[index].FileNameOffset));
+   end;
+end;
+
+function ypkTData.Find(const fn: string): longint;
+var
+   i: longint;
+
+begin
+   if(Entries.n > 0) and (Blob <> nil) and (BlobSize > 0) then begin
+      for i := 0 to Entries.n - 1 do begin
+         if(GetFN(i)^ = fn) then
+            exit(i);
+      end;
+   end;
+
+   Result := -1;
+end;
+
+class procedure ypkTData.Initialize(out d: ypkTData);
+begin
+   ZeroOut(d, SizeOf(d));
+   d.Entries.InitializeValues(d.Entries);
+end;
 
 { ypkfTHeader }
 
@@ -190,6 +263,11 @@ begin
       f^.Write(e.List[0], int64(e.n) * ypkENTRY_SIZE);
 end;
 
+function ypkTFile.ReadEntries(var data: ypkTData): fileint;
+begin
+   Result := ReadEntries(data.Entries, data.Files);
+end;
+
 function ypkTFile.ReadBlob(out blob: PByte; size: fileint): fileint;
 begin
    Result := 0;
@@ -201,6 +279,11 @@ begin
 
       Result := f^.Read(blob^, size);
    end;
+end;
+
+function ypkTFile.ReadBlob(var data: ypkTData): fileint;
+begin
+   Result := ReadBlob(data.Blob, data.BlobSize);
 end;
 
 function ypkTFile.WriteBlob(var blob: PByte; size: fileint): fileint;
