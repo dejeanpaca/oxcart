@@ -9,7 +9,7 @@ UNIT ypkuDirSep;
 INTERFACE
 
    USES
-     ConsoleUtils, StringUtils, uFile, uFiles, ufhStandard,
+     ConsoleUtils, uFile, uFiles, ufhStandard,
      yPakU, uyPakFile;
 
 procedure ReplaceDirSep();
@@ -46,7 +46,7 @@ begin
          end else
             console.e('Cannot read the YPAK file.');
       end else begin
-         console.e(pak.f.GetErrorString() +' - Header invalid or file unsupported.');
+         console.e(pak.f.GetErrorString() + ' - Header invalid or file unsupported.');
          writeln('ID:         ', hdr.ID);
          writeln('Endian:     ', hexstr(hdr.Endian, 4));
          writeln('Version:    ', hexstr(hdr.Version, 4));

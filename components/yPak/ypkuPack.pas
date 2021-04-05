@@ -71,7 +71,7 @@ var
 
 begin
    if(path <> '') then
-      fname := path+DirectorySeparator+fn
+      fname := path + DirectorySeparator + fn
    else
       fname := fn;
 
@@ -99,7 +99,7 @@ begin
             writeln('Found: ', fname, ' (', size, ')');
          end;
       end else begin
-         console.e('Failed to get information for file > '+fname);
+         console.e('Failed to get information for file > ' + fname);
          exit(eIO);
       end;
    end;
@@ -185,7 +185,7 @@ begin
          if(pak.f.error <> 0) then
             writeln('Failed to write to target ypk file.')
          else
-            writeln('Failed to read from source file: '+fname);
+            writeln('Failed to read from source file: ' + fname);
          exit;
       end;
    end;
