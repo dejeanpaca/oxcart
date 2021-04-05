@@ -61,22 +61,12 @@ end;
 
 function TSubFileHandler.Read(var f: TFile; out buf; count: fileint): fileint;
 begin
-   f.pSub^.Read(buf, count);
-
-   if(f.Error = 0) then
-      Result := count
-   else
-      Result := -1;
+   Result := f.pSub^.Read(buf, count);
 end;
 
 function TSubFileHandler.Write(var f: TFile; const buf; count: fileint): fileint;
 begin
-   f.pSub^.Write(buf, count);
-
-   if(f.Error = 0) then
-      Result := count
-   else
-      Result := -1;
+   Result := f.pSub^.Write(buf, count);
 end;
 
 function TSubFileHandler.Seek(var f: TFile; pos: fileint): fileint;
