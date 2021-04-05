@@ -78,7 +78,7 @@ TYPE
       protected
          function HandleFile(var f: oxedTProjectWalkerFile; const fd: TFileTraverseData): boolean; override;
          function HandleDirectory(var dir: StdString; const {%H-}fd: TFileTraverseData): boolean; override;
-         function HandlePackage(var package: oxedTPackage): boolean; override;
+         function HandlePackage(var {%H-}package: oxedTPackage): boolean; override;
    end;
 
 VAR
