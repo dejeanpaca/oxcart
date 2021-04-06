@@ -186,7 +186,10 @@ INTERFACE
       {loaders}
       oxuMaterialLoader,
       oxuShaderFileReader,
-      oxu9PatchFileReader;
+      oxu9PatchFileReader
+      {$IFDEF OX_PACK}
+      , oxuPackMounter
+      {$ENDIF};
 
 IMPLEMENTATION
 

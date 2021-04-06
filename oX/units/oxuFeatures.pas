@@ -69,6 +69,8 @@ TYPE
    oxTFeaturePDescriptorListHelper = record helper for oxTFeaturePDescriptorList
       {find a feature by its name}
       function FindByName(const name: string): oxPFeatureDescriptor;
+      {add a unique feature}
+      procedure AddFeature(feature: oxPFeatureDescriptor);
    end;
 
    { oxTFeaturesGlobal }
@@ -119,6 +121,13 @@ begin
    end;
 
    Result := nil;
+end;
+
+procedure oxTFeaturePDescriptorListHelper.AddFeature(feature: oxPFeatureDescriptor);
+begin
+   if(Find(feature) < 0) then begin
+      Add(feature);
+   end;
 end;
 
 
@@ -353,5 +362,8 @@ INITIALIZATION
    oxFeatures.Add('scene', 'Scene support', 'OX_FEATURE_SCENE');
 
    oxFeatures.Add('models', 'Model support', 'OX_FEATURE_MODELS');
+
+   oxFeatures.Add('pack', 'Packed data (ypk, bundle) support', 'OX_PACK')^.
+      IncludeByDefault := false;
 
 END.

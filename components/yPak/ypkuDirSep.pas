@@ -8,8 +8,9 @@ UNIT ypkuDirSep;
 
 INTERFACE
 
-   USES uFile, uFiles, ufhStandard, uyPak, yPakU,
-      ConsoleUtils, StringUtils;
+   USES
+     ConsoleUtils, uFile, uFiles, ufhStandard,
+     yPakU, uyPakFile;
 
 procedure ReplaceDirSep();
 
@@ -17,24 +18,25 @@ IMPLEMENTATION
 
 procedure ReplaceDirSep();
 var
-   hdr: ypkTHeader;
+   hdr: ypkfTHeader;
 
 begin
    writeln('Replacing directory separators in: ', pak.fn);
 
    {open}
    pak.f.Open(pak.fn);
-   if(pak.f.error = 0) then begin
-      ypkfSetBuffer();
+   if(pak.f.Error = 0) then begin
+      pak.SetBuffer();
 
       {read header}
-      ypk.ReadHeader(pak.f, hdr);
-      if(ypk.error = 0) then begin
+      ypkf.ReadHeader(hdr);
+
+      if(pak.f.Error = 0) then begin
          writeln('Reading entries...');
-         ypk.ReadEntries(pak.f, pak.entries, hdr.Files);
+         ypkf.ReadEntries(pak.Entries, hdr.Files);
 
          {read entries}
-         if(pak.f.error = 0)then begin
+         if(pak.f.Error = 0)then begin
             if(hdr.Files > 0) then begin
                writeln('Done reading entries.');
 
@@ -44,7 +46,8 @@ begin
          end else
             console.e('Cannot read the YPAK file.');
       end else begin
-         console.e(sf(ypk.error)+' - Header invalid or file unsupported.');
+         console.e(pak.f.GetErrorString() + ' - Header invalid or file unsupported.');
+
          writeln('ID:         ', hdr.ID);
          writeln('Endian:     ', hexstr(hdr.Endian, 4));
          writeln('Version:    ', hexstr(hdr.Version, 4));

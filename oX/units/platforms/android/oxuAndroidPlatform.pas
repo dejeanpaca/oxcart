@@ -9,7 +9,11 @@ UNIT oxuAndroidPlatform;
 INTERFACE
 
    USES
-      ctypes, looper, input, android_native_app_glue, android_keycodes, native_window,
+      ctypes,
+      {android}
+      looper, input, android_native_app_glue, android_keycodes, native_window,
+      uAndroidApp,
+      {stdf}
       uStd, uLog, StringUtils,
       {egl}
       egl, oxuglWindow,
@@ -61,7 +65,6 @@ TYPE
       fRegainedFocus,
       fInitWindow,
       fLostWindow,
-      fDone,
       {main thread should be signalled to handle an activity}
       fSignalMainThread: boolean;
 
@@ -83,7 +86,6 @@ TYPE
    end;
 
 VAR
-   AndroidApp: Pandroid_app;
    {android platform global}
    oxAndroidPlatform: oxTAndroidPlatformGlobal;
 
@@ -123,8 +125,6 @@ begin
       oxAndroidPlatform.fLostFocus := true;
       oxAndroidPlatform.fRegainedFocus := false;
       oxRenderingContext.CanRender := false;
-   end else if(cmd = APP_CMD_DESTROY) then begin
-      oxAndroidPlatform.fDone := true;
    end;
 end;
 

@@ -49,7 +49,9 @@ TYPE
       {add an asset path}
       procedure Add(const assetPath: StdString);
 
+      {$IFDEF OXED}
       procedure SetDefaultEngineAssetPath();
+      {$ENDIF}
    end;
 
 VAR
@@ -57,6 +59,7 @@ VAR
 
 IMPLEMENTATION
 
+{$IFDEF OXED}
 function tryDetermineAssetPath(startPath: StdString): StdString;
 var
    path: StdString;
@@ -82,7 +85,7 @@ begin
 
    Result := path;
 end;
-
+{$ENDIF}
 
 { oxTPaths }
 
@@ -136,6 +139,7 @@ begin
    end;
 end;
 
+{$IFDEF OXED}
 procedure oxTPaths.SetDefaultEngineAssetPath();
 var
    assetPath: StdString;
@@ -153,6 +157,7 @@ begin
       Add(assetPath);
    end;
 end;
+{$ENDIF}
 
 {$IFDEF OX_LIBRARY}
 procedure initLibrary();
@@ -184,17 +189,21 @@ end;
 {$IFNDEF OX_LIBRARY}
 procedure init();
 begin
-   oxPaths.WorkingDirectory := appPath.GetExecutablePath();
+   {$IFNDEF MOBILE}
+      oxPaths.WorkingDirectory := appPath.GetExecutablePath();
+      SetCurrentDir(oxPaths.WorkingDirectory);
 
-   if(oxPaths.WorkingDirectory <> '') then
-      oxPaths.WorkingDirectory := IncludeTrailingPathDelimiter(oxPaths.WorkingDirectory);
+      {data should be our primary working directory}
+      if FileUtils.DirectoryExists(oxPaths.WorkingDirectory + 'data') then
+         oxPaths.WorkingDirectory := oxDataPath;
+
+      {$IFDEF OXED}
+      oxPaths.SetDefaultEngineAssetPath();
+      {$ENDIF}
+   {$ENDIF}
 
    if(oxPaths.WorkingDirectory <> '') then
       log.v('ox > Asset base path: ' + oxPaths.WorkingDirectory);
-
-   {$IFDEF OXED}
-   oxPaths.SetDefaultEngineAssetPath();
-   {$ENDIF}
 end;
 {$ENDIF}
 

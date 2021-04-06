@@ -41,6 +41,8 @@ TYPE
       Started,
       {are we running as part of a library}
       LibraryMode,
+      {are we running on a mobile platform}
+      Mobile,
       {deinitializing started}
       DeInitializing: boolean;
 
@@ -185,6 +187,10 @@ INITIALIZATION
 
    {$IFDEF OX_LIBRARY}
    ox.LibraryMode := true;
+   {$ENDIF}
+
+   {$IFDEF MOBILE}
+   ox.Mobile := true;
    {$ENDIF}
 
 END.

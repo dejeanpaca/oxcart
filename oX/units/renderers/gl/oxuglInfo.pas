@@ -31,7 +31,6 @@ begin
    oxglRendererInfo.GLES := true;
    {$ENDIF}
 
-   {$IFNDEF OX_LIBRARY}
    {get basic information}
    oxglRendererInfo.Renderer := ogl.GetString(GL_RENDERER);
    oxglRendererInfo.Vendor   := ogl.GetString(GL_VENDOR);
@@ -83,10 +82,6 @@ begin
    {$ELSE}
    oxRenderer.Properties.Textures.Npot := false;
    oxRenderer.Properties.Textures.WarnedNpot := true;
-   {$ENDIF}
-
-   {$ELSE}
-   oglExtensions.Get();
    {$ENDIF}
 end;
 

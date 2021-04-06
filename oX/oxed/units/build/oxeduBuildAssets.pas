@@ -54,6 +54,9 @@ TYPE
       {use a suffix with the target path (if you want to override the target path)}
       TargetSuffix: StdString;
 
+      {mechanism to select a deployer, unless a deployer is assigned}
+      OnUseDeployer: TProcedure; static;
+
       {called before assets are deployed (hook your deployer here)}
       PreDeploy: TProcedures;
 
@@ -62,15 +65,20 @@ TYPE
       {default deployer set on every build}
       DefaultDeployer: oxedTAssetsDeployer;
 
+      {have we already assigned a deployer, used to select a deployer before automatic mechanisms (OnUseDeployer)}
+      DeployerAssigned: boolean;
+
       constructor Create(); override;
 
       {deploys asset files to the given target}
-      procedure Deploy(const useTarget: StdString);
+      function Deploy(const useTarget: StdString): boolean;
+      {use the given deployer}
+      procedure UseDeployer(const what: oxedTAssetsDeployer);
 
       protected
          function HandleFile(var f: oxedTProjectWalkerFile; const fd: TFileTraverseData): boolean; override;
          function HandleDirectory(var dir: StdString; const {%H-}fd: TFileTraverseData): boolean; override;
-         function HandlePackage(var package: oxedTPackage): boolean; override;
+         function HandlePackage(var {%H-}package: oxedTPackage): boolean; override;
    end;
 
 VAR
@@ -101,25 +109,52 @@ constructor oxedTBuildAssets.Create();
 begin
    inherited;
 
+   TProcedures.InitializeValues(PreDeploy);
+
    HandleOx := false;
 end;
 
-procedure oxedTBuildAssets.Deploy(const useTarget: StdString);
+function oxedTBuildAssets.Deploy(const useTarget: StdString): boolean;
 begin
+   Result := true;
    Target := IncludeTrailingPathDelimiter(useTarget);
    oxedBuildLog.i('Deploying asset files to ' + useTarget);
    FileCount := 0;
 
+   {create target directory if missing}
+   if(not FileUtils.DirectoryExists(useTarget)) then begin
+      if(not FileUtils.CreateDirectory(useTarget)) then begin
+         oxedBuildLog.e('Failed to create assets directory: ' + useTarget);
+         exit(false);
+      end;
+   end;
+
+   if OnUseDeployer <> nil then
+      OnUseDeployer();
+
+   {initialize deployer}
    Deployer.OnStart();
 
+   {call any pre deploy tasks}
    PreDeploy.Call();
 
+   {run}
    Run();
 
+   {we're done here}
    Deployer.OnDone();
+   DeployerAssigned := false;
 
    oxedBuildLog.i('Done assets deploy (files: ' + sf(FileCount) + ')');
    Deployer := DefaultDeployer;
+end;
+
+procedure oxedTBuildAssets.UseDeployer(const what: oxedTAssetsDeployer);
+begin
+   if(not DeployerAssigned) then begin
+      Deployer := what;
+      DeployerAssigned := true;
+   end;
 end;
 
 function oxedTBuildAssets.HandleFile(var f: oxedTProjectWalkerFile; const fd: TFileTraverseData): boolean;
@@ -176,14 +211,9 @@ begin
    Result := true;
 
    oxedBuildLog.v('Deploying package: ' + Current.Path);
+   TargetSuffix := '';
 
-   if(@package = @oxedAssets.oxDataPackage) then begin
-      TargetSuffix := 'data';
-      CurrentTarget := IncludeTrailingPathDelimiterNonEmpty(Target) + IncludeTrailingPathDelimiterNonEmpty(TargetSuffix);
-   end else begin
-      TargetSuffix := '';
-      CurrentTarget := IncludeTrailingPathDelimiterNonEmpty(Target);
-   end;
+   CurrentTarget := IncludeTrailingPathDelimiterNonEmpty(Target);
 end;
 
 procedure initialize();

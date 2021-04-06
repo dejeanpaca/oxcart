@@ -46,7 +46,7 @@ begin
    cpuType := loopint(oxedAndroidSettings.GetCPUType());
 
    oxedBuild.BuildTarget := OXED_BUILD_LIB;
-   oxedBuildAssets.Deployer := oxedYPKAssetsDeployer;
+   oxedBuildAssets.UseDeployer(oxedYPKAssetsDeployer);
 
    oxedBuild.StartTask(OXED_BUILD_TASK_RECODE, oxedAndroidPlatform.Architectures.List[cpuType]);
 end;
@@ -163,6 +163,8 @@ begin
 
    oxedBuild.Parameters.ExportSymbols.Add('android_main');
 
+   oxedBuild.AddFeature('pack');
+
    {disable external symbols as we can't use those on android}
    build.Debug.External := false;
 end;
@@ -188,7 +190,7 @@ begin
 
       targetPath := appPath + ReplaceDirSeparatorsf('/src/main/assets');
 
-      // create assets directory if it does not exits
+      {create assets directory if it does not exits}
       if(not DirectoryExists(targetPath)) then begin
          if(not CreateDir(targetPath)) then begin
             oxedBuild.Fail('Failed to create target assets directory ' + targetPath);
@@ -196,7 +198,7 @@ begin
          end;
       end;
 
-      // move data file into the app assets directory
+      {move data file into the app assets directory}
       targetPath := targetPath + DirSep + 'data.ypk';
 
       oxedBuild.MoveFile(source, targetPath, 'data file');

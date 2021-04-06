@@ -405,6 +405,7 @@ begin
 
    {add font specified with value (path)}
    if(p.Value <> '') then begin
+      ReplaceDirSeparators(p.Value);
       path := oxPaths.Find(oxPaths.Fonts + p.Value);
 
       if(path <> '') then begin

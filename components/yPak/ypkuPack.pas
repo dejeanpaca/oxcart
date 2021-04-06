@@ -1,6 +1,8 @@
 {
    ypkuPack, packing component
    Copyright (C) 2011. Dejan Boras
+
+   // TODO: Use ypkuBuilder
 }
 
 {$INCLUDE oxheader.inc}
@@ -8,9 +10,10 @@ UNIT ypkuPack;
 
 INTERFACE
 
-   USES sysutils, uStd, StringUtils, ConsoleUtils,
-     uFile, uFiles, ufhStandard,
-     uyPak, yPakU;
+   USES
+      sysutils, uStd, StringUtils, ConsoleUtils,
+      uFile, uFiles, ufhStandard,
+      yPakU, uyPakFile;
 
 procedure Pack();
 
@@ -20,25 +23,25 @@ CONST
    alloc_step = 256;
 
 {add a new entry to the list}
-function New(): ypkPEntry;
+function New(): ypkfPEntry;
 var
    free: longint;
 
 begin
-   free := pak.entries.n;
-   inc(pak.entries.n);
+   free := pak.Entries.n;
+   inc(pak.Entries.n);
 
-   if(pak.entries.a < pak.entries.n) then begin
-      inc(pak.entries.a, alloc_step);
+   if(pak.Entries.a < pak.Entries.n) then begin
+      inc(pak.Entries.a, alloc_step);
 
       try
-         SetLength(pak.entries.list, pak.entries.a);
+         SetLength(pak.Entries.list, pak.Entries.a);
       except
          exit();
       end;
    end;
 
-   result := @pak.entries.list[free];
+   result := @pak.Entries.list[free];
 end;
 
 procedure CorrectDirSeparators(var s: shortstring);
@@ -64,11 +67,11 @@ var
    fname: string;
    f: file;
    size: longint;
-   p: ypkPEntry;
+   p: ypkfPEntry;
 
 begin
    if(path <> '') then
-      fname := path+DirectorySeparator+fn
+      fname := path + DirectorySeparator + fn
    else
       fname := fn;
 
@@ -91,14 +94,12 @@ begin
          {get a new entry}
          if(IOResult() = 0) then begin
             p := New();
-            p^.fn := fname;
-            CorrectDirSeparators(p^.fn);
-            p^.size := size;
+            {TODO: Process this}
 
             writeln('Found: ', fname, ' (', size, ')');
          end;
       end else begin
-         console.e('Failed to get information for file > '+fname);
+         console.e('Failed to get information for file > ' + fname);
          exit(eIO);
       end;
    end;
@@ -132,15 +133,15 @@ begin
 
                chdir('..');
             end else begin
-               ext := LowerCase(ExtractFileExt(src.Name));
+               ext := LowerCase(ExtractFileExt(string(src.Name)));
                if(src.Name <> 'ypak') then begin
                   {exclusion filter}
-                  if(pak.filterMode = FLTR_MODE_EXCLUDE) then begin
-                     if(pos(ext, pak.excluded) = 0) then
+                  if(pak.FilterMode = FLTR_MODE_EXCLUDE) then begin
+                     if(pos(ext, pak.Excluded) = 0) then
                         ProcessFile(src.Name);
                   {inclusion filter}
                   end else begin
-                     if(pos(ext, pak.included) <> 0) then
+                     if(pos(ext, pak.Included) <> 0) then
                         ProcessFile(src.Name);
                   end;
 
@@ -173,8 +174,9 @@ var
    fname: string;
 
 begin
-   for i := 0 to (pak.entries.n - 1) do begin
-      fname := pak.entries.list[i].fn;
+   for i := 0 to (pak.Entries.n - 1) do begin
+      // TODO: fname := pak.Entries.list[i].;
+      fname := '';
       ReplaceDirSeparators(fname);
       writeln('Inserting(', i, '): ', fname);
 
@@ -183,7 +185,7 @@ begin
          if(pak.f.error <> 0) then
             writeln('Failed to write to target ypk file.')
          else
-            writeln('Failed to read from source file: '+fname);
+            writeln('Failed to read from source file: ' + fname);
          exit;
       end;
    end;
@@ -196,47 +198,55 @@ var
    offs: longint;
 
 begin
-   offs := ypkHEADER_SIZE + pak.entries.n*ypkENTRY_SIZE;
+   offs := ypkHEADER_SIZE + pak.Entries.n * ypkENTRY_SIZE;
 
    {set offset information for all entries}
-   for i := 0 to (pak.entries.n - 1) do begin
-      pak.entries.list[i].offs := offs;
-      inc(offs, pak.entries.list[i].size);
+   for i := 0 to (pak.Entries.n - 1) do begin
+      pak.Entries.list[i].Offset := offs;
+      inc(offs, pak.Entries.List[i].Size);
    end;
 
-   ypk.WriteEntries(pak.f, pak.entries);
+   ypkf.WriteEntries(pak.Entries);
 end;
 
 { PACK }
 
 procedure Pack();
+var
+   hdr: ypkfTHeader;
+
 begin
    writeln('Packing to file: ', pak.fn);
 
    {create a new file}
    pak.f.New(pak.fn);
-   if(pak.f.error = 0) then begin
-      ypkfSetBuffer();
+
+   if(pak.f.Error = 0) then begin
+      pak.SetBuffer();
+
+      ypkTFile.InitializeHeader(hdr);
+      // TODO: Build header
 
       {find files to package}
       writeln('Finding files to package...');
       findFiles();
-      if(pak.f.error = 0) then begin
+
+      if(pak.f.Error = 0) then begin
          writeln('Done finding files.');
 
          {write header}
-         ypk.WriteHeader(pak.f, pak.entries.n);
+         ypkf.WriteHeader(hdr);
 
          {populate information}
          writeln('Setting information...');
          SetInformation();
-         if(pak.f.error = 0) then begin
+         if(pak.f.Error = 0) then begin
             writeln('Done setting information.');
 
             {package files}
             writeln('Inserting files...');
             insertFiles();
-            if(pak.f.error = 0) then begin
+            if(pak.f.Error = 0) then begin
                writeln('Done inserting files.');
             end;
          end;
@@ -247,10 +257,11 @@ begin
 
    {done}
    pak.f.Close();
-   if(pak.f.error = 0) then
-      writeln('Done packing ', pak.entries.n, ' files.')
+
+   if(pak.f.Error = 0) then
+      writeln('Done packing ', pak.Entries.n, ' files.')
    else
-      console.e(sf(pak.f.error) + ' - Failed packing.');
+      console.e(sf(pak.f.Error) + ' - Failed packing.');
 end;
 
 END.

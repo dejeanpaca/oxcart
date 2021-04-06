@@ -13,8 +13,8 @@ INTERFACE
      uStd, uLog, uError, uTiming,
      {files}
      uFile, {%H-}uFiles, uFileHandlers,
-     {oX}
-     oxuFileFormat, oxuPaths;
+     {ox}
+     oxuPaths;
 
 TYPE
 
@@ -206,6 +206,8 @@ begin
          else
             f.fn := fn;
 
+         f.fn := fn;
+
          if(f.Error = 0) then begin
             exit(Read(f, fd.Handler^, options, pdata));
          end else begin
@@ -300,6 +302,8 @@ begin
             f.New(path)
          else
             f.fn := fn;
+
+         f.fn := fn;
 
          if(f.Error = 0) then begin
             exit(Write(f, fd.Handler^, options, pdata));
