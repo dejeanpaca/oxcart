@@ -422,11 +422,16 @@ end;
 function oxglTRenderer.GetSummary(): TStringArray;
 var
    list: array[0..3] of StdString;
+   listWithoutShaders: array[0..2] of StdString absolute list;
 
 begin
    list[0] := 'Vendor: ' + oxglRendererInfo.Vendor;
    list[1] := 'Renderer: ' + oxglRendererInfo.Renderer;
    list[2] := 'OpenGL: ' + oxglRendererInfo.sVersion;
+
+   if(oxglRendererInfo.GLSL.Major = 0) then
+      exit(listWithoutShaders);
+
    list[3] := 'GLSL Version: ' + oxglRendererInfo.GLSL.Version;
 
    Result := list;
