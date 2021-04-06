@@ -17,10 +17,13 @@ TYPE
    TSubFileHandler = object(TFileHandler)
       constructor Create();
 
+      procedure Make(var f: TFile); virtual;
+      procedure Destroy(var f: TFile); virtual;
       function Read(var f: TFile; out buf; count: fileint): fileint; virtual;
       function Write(var f: TFile; const buf; count: fileint): fileint; virtual;
       function Seek(var f: TFile; pos: fileint): fileint; virtual;
       procedure Flush(var f: TFile); virtual;
+      procedure Close(var f: TFile); virtual;
    end;
 
 VAR
@@ -28,6 +31,13 @@ VAR
    subSubFileHandler: TFileSubHandler;
 
 IMPLEMENTATION
+
+TYPE
+   subPData = ^subTData;
+   subTData = record
+      {original position of the parent file}
+      pOriginalPosition: loopint;
+   end;
 
 procedure subfOpen(var f: TFile; var fn: TFile; pos, size: fileint);
 begin
@@ -38,6 +48,10 @@ begin
    f.fSize        := size;
    f.fSizeLimit   := size;
    f.fOffset      := pos;
+
+   subPData(f.pData)^.pOriginalPosition := f.pSub^.fPosition;
+
+   f.pSub^.Seek(f.fOffset);
 end;
 
 procedure subfNew(var f: TFile; var fn: TFile; pos, size: fileint); {subfile}
@@ -48,6 +62,8 @@ begin
    f.fSize        := 0;
    f.fSizeLimit   := size;
    f.fOffset      := pos;
+
+   f.pSub^.Seek(f.fOffset);
 end;
 
 { TSubFileHandler }
@@ -57,6 +73,21 @@ begin
    Name := 'sub';
    DoReadUp := false;
    UseBuffering := false;
+end;
+
+procedure TSubFileHandler.Make(var f: TFile);
+begin
+   system.New(subPData(f.pData));
+
+   if(f.pData <> nil) then
+      Zero(f.pData^, SizeOf(subTData))
+   else
+      f.RaiseError(eNO_MEMORY);
+end;
+
+procedure TSubFileHandler.Destroy(var f: TFile);
+begin
+   system.Dispose(subPData(f.pData));
 end;
 
 function TSubFileHandler.Read(var f: TFile; out buf; count: fileint): fileint;
@@ -80,6 +111,11 @@ end;
 procedure TSubFileHandler.Flush(var f: TFile);
 begin
    f.pSub^.Flush();
+end;
+
+procedure TSubFileHandler.Close(var f: TFile);
+begin
+   f.pSub^.Seek(subPData(f.pData)^.pOriginalPosition);
 end;
 
 INITIALIZATION
