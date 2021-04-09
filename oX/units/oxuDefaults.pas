@@ -42,9 +42,9 @@ INTERFACE
 
       {$IFNDEF OX_LIBRARY}
          {image loaders}
-         {$INCLUDE ../../components/dimg/units/imgIncludeAllLoaders.inc},
+         imguBMP, imguJPEG, imguTGA, imguPNM, imguPNG,
          {image writers}
-         {$INCLUDE ../../components/dimg/units/imgIncludeAllWriters.inc},
+         imguwTGA,
       {$ELSE}
          {%H-}oxulibImageRW,
       {$ENDIF}
@@ -148,7 +148,6 @@ INTERFACE
       {$ENDIF}
 
       {$IFDEF OX_FEATURE_MODELS}
-      oxum3DS,
       oxumOBJ,
       {$ENDIF}
 
