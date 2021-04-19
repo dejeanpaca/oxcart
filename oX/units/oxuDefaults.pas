@@ -91,6 +91,10 @@ INTERFACE
       {%H-}oxuRendererDX,
       {$ENDIF}
 
+      {$IFNDEF OX_LIBRARY}
+      oxuRendererSettingsRW,
+      {$ENDIF}
+
       oxuProgramConfig,
 
       { default handlers }
