@@ -524,11 +524,10 @@ end;
 
 function uiTWidget.GetFont(): oxTFont;
 begin
-   if(Font <> nil) then begin
-      Result := Font;
-   end else begin
+   if(Font <> nil) then
+      Result := Font
+   else
       Result := oxui.GetDefaultFont();
-   end;
 end;
 
 function uiTWidget.SetFont(fnt: oxTFont): uiTWidget;
