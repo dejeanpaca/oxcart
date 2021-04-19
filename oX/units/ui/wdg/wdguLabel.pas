@@ -10,6 +10,7 @@ INTERFACE
 
    USES
       uStd, uColors, StringUtils,
+      vmVector,
       {oX}
       oxuTypes, oxuFont,
       {ui}
@@ -29,6 +30,8 @@ TYPE
       IsCentered: boolean;
       FontProperties: oxTFontPropertiesSet;
 
+      Scale: TVector2f;
+
       constructor Create(); override;
       procedure Initialize(); override;
 
@@ -38,6 +41,9 @@ TYPE
       procedure GetComputedDimensions(out d: oxTDimensions); override;
       procedure Multiline();
       procedure MultilineConditional();
+
+      {set a scale}
+      procedure SetScale(x, y: single);
    end;
 
    { wdgTLabelGlobal }
@@ -95,10 +101,16 @@ begin
    if((Caption <> '') or (Length(List) > 0)) and (f <> nil) then begin
       f.Start();
 
+      if(Scale <> vmvOne2f) then
+         f.Scale(Scale[0], Scale[1]);
+
       SetColorBlended(clr);
 
       if(not InRectangle) then begin
-         h := f.GetHeight();
+         if(Scale[1] = 1) then
+            h := f.GetHeight()
+         else
+            h := round(f.GetHeight() * Scale[1]);
 
          {render caption the regular way}
          if(Caption <> '') then begin
@@ -143,6 +155,9 @@ begin
          end;
       end;
 
+      if(Scale <> vmvOne2f) then
+         f.Scale(1.0, 1.0);
+
       oxf.Stop();
    end;
 
@@ -183,6 +198,12 @@ begin
       count := 1 + StringCount(Caption, LineEnding);
 
    d.h := (CachedFont.GetHeight() + (PaddingTop + PaddingBottom)) * count;
+
+   if(Scale[0] <> 1) then
+      d.w := round(d.w * Scale[0]);
+
+   if(Scale[1] <> 1) then
+      d.h := round(d.h * Scale[1]);
 end;
 
 procedure wdgTLabel.Multiline();
@@ -196,6 +217,12 @@ procedure wdgTLabel.MultilineConditional();
 begin
    if Caption.IsMultiLine() then
       Multiline();
+end;
+
+procedure wdgTLabel.SetScale(x, y: single);
+begin
+   Scale[0] := x;
+   Scale[1] := y;
 end;
 
 function wdgTLabelGlobal.Add(const Caption: StdString;
