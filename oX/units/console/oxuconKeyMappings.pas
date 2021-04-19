@@ -61,18 +61,18 @@ begin
 end;
 
 {console commands}
-procedure conCommandNotify(var con: conTConsole; {%H-}nID: longint);
+procedure conCommandNotify(var con: conTConsole);
 var
    cmd: string;
 
 begin
-   if(con.arguments.n >= 2) then begin
-      cmd := lowercase(con.arguments.list[1]);
+   if(con.Arguments.n >= 2) then begin
+      cmd := lowercase(con.Arguments.List[1]);
 
       if(cmd = 'list') then
          listKeyMappings(con)
       else
-         con.w('Command not recognized/supported: ' + con.arguments.list[1]);
+         con.w('Command not recognized/supported: ' + con.Arguments.List[1]);
    end else
       con.e('Keymap operation not specified');
 end;

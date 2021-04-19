@@ -30,7 +30,7 @@ begin
 end;
 
 {console commands}
-procedure conCommandNotify(var con: conTConsole; {%H-}nID: longint);
+procedure conCommandNotify(var con: conTConsole);
 var
     arg: string = '';
 

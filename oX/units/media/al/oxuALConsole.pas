@@ -20,14 +20,10 @@ CONST
       (sid: 'al'; sHelp: 'manages OpenAL'; nID: 0)
    );
 
-   conHandler: conTHandler = (
-      notify: nil;
-      nCommands: 1;
-      Commands: @conCommands;
-      Next: nil
-   );
+VAR
+   conHandler: conTHandler;
 
-procedure conCommandNotify(var con: conTConsole; {%H-}nID: uint16);
+procedure conCommandNotify(var con: conTConsole);
 var
    i, code, value: int32;
    arg: string;
@@ -73,6 +69,7 @@ begin
 
                {set the preferred device}
                arg := oxalDevices.Find(arg);
+
                if(arg <> '') then begin
                   oxalDevices.Preferred := arg;
                   con.s('Set the OpenAL device to: ' + oxalDevices.GetDeviceName(oxalDevices.DeviceSpecifier));
@@ -81,7 +78,7 @@ begin
                   con.e('Could not find the device specified.')
                end;
             end else
-               con.e('Error: Need to specify a device no. or name.');
+               con.e('Error: Need to specify a device No. or name.');
          end else begin
             con.e('There are no devices to choose from.');
          end;
@@ -93,7 +90,7 @@ begin
             con.i('Some subcommands have additional parameters.');
             con.i('Use <dal help [subcommand]> to view help for that subcommand.')
          end else if(con.Arguments.n > 2) then begin
-            arg := LowerCase(con.Arguments.list[2]);
+            arg := LowerCase(con.Arguments.List[2]);
 
             if(arg = 'listdevices') then
                con.i('Lists all OpenAL devices.')
@@ -120,8 +117,7 @@ end;
 
 procedure init();
 begin
-   conHandler.notify := conTCommandNotifyProc(@conCommandNotify);
-   oxConsole.console.AddHandler(conHandler);
+   console.Selected^.AddHandler(conHandler, conTCommandNotifyProc(@conCommandNotify), conCommands);
 end;
 
 INITIALIZATION
