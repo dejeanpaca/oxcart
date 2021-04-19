@@ -9,7 +9,7 @@ UNIT oxuconOpenPath;
 INTERFACE
 
    USES
-      uStd, uLog,
+      uStd, {$IFNDEF NOLOG}uLog,{$ENDIF}
       {app}
       appuPaths, uApp,
       {oX}
@@ -22,14 +22,6 @@ CONST
 
    conCommands: array[0..0] of conTCommand = (
       (sid: 'openpath'; sHelp: 'open file manager to a path by name'; nID: cidOPENPATH));
-
-(*   appPATH_CONFIG, {configuration path}
-   appPATH_CONFIG_SHARED, {shared configuration for all users}
-   appPATH_HOME, {user profile home}
-   appPATH_TEMP, {temporary files directory}
-   {NOTE: local is applicable to windows mostly due to the distinction of roaming and local profile}
-   appPATH_LOCAL, {local configuration path (should house non-critical things, which aren't quite temporary (logs, caches))}
-   appPATH_DOCUMENTS {documents directory}               *)
 
 VAR
    conHandler: conTHandler;
@@ -48,8 +40,14 @@ begin
       arg := LowerCase(con.Arguments.List[1]);
 
       if(arg = 'config') then
+         Open(appPath.Configuration.Path)
+      {$IFNDEF NOLOG}
+      else if(arg = 'logs') or (arg = logs) then
+         Open(log.Settings.Path)
+      {$ENDIF}
+      else if(arg = 'userconfig') then
          Open(appPath.Get(appPATH_CONFIG))
-      else if(arg = 'config_shared') then
+      else if(arg = 'userconfig_shared') then
          Open(appPath.Get(appPATH_CONFIG_SHARED))
       else if(arg = 'home') then
          Open(appPath.Get(appPATH_HOME))
