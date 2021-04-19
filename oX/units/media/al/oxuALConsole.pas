@@ -86,7 +86,7 @@ begin
       end else if(arg = 'help') then begin
          if(con.Arguments.n = 2) then begin
             con.i('dal [subcommand]');
-            con.i('Subcommands: listdevices, preferred, setdevice, help');
+            con.i('Subcommands: listdevices, preferred, setdevice');
             con.i('Some subcommands have additional parameters.');
             con.i('Use <dal help [subcommand]> to view help for that subcommand.')
          end else if(con.Arguments.n > 2) then begin
@@ -101,8 +101,6 @@ begin
                con.i('dal setdevice [name]');
                con.i('Where name is the name or nubmer of the device.');
                con.i('Use the listdevices subcommand to view devices.');
-            end else if(arg = 'help') then begin
-               con.i('Gives general or subcommand help.');
             end;
          end;
       end else begin
