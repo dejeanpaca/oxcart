@@ -21,7 +21,9 @@ TYPE
 
    oxTRendererProperties = record
       {does this renderer support threading}
-      SupportsThreading: boolean;
+      SupportsThreading,
+      {do we support render scaling}
+      SupportsRenderScaling: boolean;
 
       Textures: record
          {does the renderer support power of 2 textures}
@@ -214,6 +216,7 @@ begin
    {$IFNDEF NO_THREADS}
    Properties.SupportsThreading := true;
    {$ENDIF}
+   Properties.SupportsRenderScaling := true;
 
    ComponentProvider.Initialize(Components);
    UseRoutines.Initialize(UseRoutines);

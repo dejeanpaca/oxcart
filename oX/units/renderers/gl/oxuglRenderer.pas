@@ -83,6 +83,8 @@ constructor oxglTRenderer.Create();
 begin
    inherited;
 
+   Id := 'gl';
+
    {$IFDEF GLES}
       Name := 'OpenGL ES';
    {$ELSE}
@@ -94,7 +96,8 @@ begin
    PlatformInstance := glSystemPlatform;
    {$ENDIF}
 
-   Id := 'gl';
+   {no support for render scaling for classic gl}
+   Properties.SupportsRenderScaling := false;
 end;
 
 procedure oxglTRenderer.AfterInitialize();
