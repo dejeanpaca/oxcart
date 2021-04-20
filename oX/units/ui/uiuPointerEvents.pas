@@ -419,7 +419,7 @@ begin
    if(oxui = nil) then
       oxui := oxuUI.oxui;
 
-   oxui.mLastEventTime := timer.Cur();
+   oxui.mLastEventTime := TTimer.Current();
    m := appTMouseEvent(event.GetData()^);
 
    p.x := round(m.x);
@@ -487,7 +487,7 @@ begin
          if(oxui.mSelect.GetSelectedWnd() <> nil) then
             oxui.mSelect.GetSelectedWnd().Select();
 
-         oxui.mSelectHoverTime := timer.Cur();
+         oxui.mSelectHoverTime := TTimer.Current();
       end;
 
       {widget selection changed (changed to other widget, window, ...)}

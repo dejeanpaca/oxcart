@@ -36,6 +36,7 @@ TYPE
          ExitStatus: loopint;
          ExecutableName,
          ErrorDecription,
+         ToolTarget,
          LastLine,
          StdErr: StdString;
          OnLine: TProcedures;
@@ -324,6 +325,7 @@ begin
    ReplaceDirSeparators(fullPath);
 
    target := build.Tools.Path + ExtractFileName(fullPath);
+   Output.ToolTarget := target;
 
    if(FileUtils.Exists(fullPath) < 0) then begin
       Log^.e('build > Tool: ' + fullPath + ' could not be found');
