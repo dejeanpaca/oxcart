@@ -103,14 +103,11 @@ INTERFACE
       {$IFDEF OX_FEATURE_HTML_LOG}
       oxuLogHTML,
       {$ENDIF}
-
       oxuKeyboardControl,
       oxuPointerControl,
-      {$IFNDEF OX_LIBRARY}
-      {$IFNDEF MOBILE}
+      {$IF NOT DEFINED(OX_LIBRARY) AND NOT DEFINED(MOBILE)}
       oxuScreenshot,
       oxuDefaultSplashScreen,
-      {$ENDIF}
       {$ENDIF}
 
       {ui}
@@ -184,6 +181,10 @@ INTERFACE
          { ui windows }
          oxuwndAbout,
          {$ENDIF}
+      {$ENDIF}
+
+      {$IF NOT DEFINED(OX_LIBRARY) AND NOT DEFINED(MOBILE)}
+      oxuGlobalHotkeys,
       {$ENDIF}
 
       {loaders}
