@@ -870,12 +870,31 @@ end;
 function winosChangeDisplaySettings(lpDevMode: PDeviceMode; dwFlags: DWORD): longint;
 var
    code: longint;
+   codeName: string;
 
 begin
    {if failed to enter full screen then exit}
    code := ChangeDisplaySettings(lpDevMode, dwFlags);
-   if(code <> DISP_CHANGE_SUCCESSFUL) then
-      log.e('ChangeDisplaySettings returned: ' + sf(code));
+   if(code <> DISP_CHANGE_SUCCESSFUL) then begin
+      codeName := sf(code);
+
+      if code = DISP_CHANGE_BADDUALVIEW then
+         codeName := 'BADDUALVIEW'
+      else if code = DISP_CHANGE_BADFLAGS then
+         codeName := 'BADFLAGS'
+      else if code = DISP_CHANGE_BADMODE then
+         codeName := 'BADMODE'
+      else if code = DISP_CHANGE_BADPARAM then
+         codeName := 'BADPARAM'
+      else if code = DISP_CHANGE_FAILED then
+         codeName := 'FAILED'
+      else if code = DISP_CHANGE_NOTUPDATED then
+         codeName := 'NOTUPDATED'
+      else if code = DISP_CHANGE_RESTART then
+         codeName := 'RESTART';
+
+      log.e('ChangeDisplaySettings returned: ' + sf(code) + ' ' + codeName);
+   end;
 
    winos.LogError('Failed to change display settings');
 
