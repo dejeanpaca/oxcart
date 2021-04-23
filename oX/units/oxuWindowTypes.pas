@@ -19,10 +19,17 @@ TYPE
    { oxTWindow }
 
    oxTWindow = class (uiTWindow)
-      {position of the window before going to fullscreen}
-      FullscreenPosition: oxTPoint;
-      {dimensions before going fullscreen}
-      FullscreenDimensions: oxTDimensions;
+      Fullscreen: record
+         {is fullscreen mode enabled}
+         Enabled,
+         {is fullscreen mode windowed}
+         Windowed: boolean;
+
+         {position of the window before going to fullscreen}
+         Position: oxTPoint;
+         {dimensions before going fullscreen}
+         Dimensions: oxTDimensions;
+      end;
 
       {index in the window list}
       Index: loopint;
@@ -34,10 +41,6 @@ TYPE
         Context,
         {apply the default render context}
         ApplyDefaultViewport,
-        {is the screen fullscreen}
-        Fullscreen,
-        {is the fullscreen mode windowed}
-        WindowedFullscreen,
         {render window even when unfocused}
         RenderUnfocused,
         {render window even when minimized}

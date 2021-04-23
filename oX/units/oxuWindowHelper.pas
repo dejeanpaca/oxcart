@@ -34,7 +34,7 @@ TYPE
       {set a frame for the window}
       procedure SetFrame(fs: uiTWindowFrameStyle);
 
-      procedure Fullscreen();
+      procedure EnterFullscreen();
       procedure WindowedFullscreen();
       procedure LeaveFullscreen();
       procedure ToggleFullscreen();
@@ -48,20 +48,20 @@ IMPLEMENTATION
 
 { oxTWindowHelper }
 
-procedure oxTWindowHelper.Fullscreen();
+procedure oxTWindowHelper.EnterFullscreen();
 begin
-   if(not oxProperties.Fullscreen) then begin
-      FullscreenPosition := Position;
-      FullscreenDimensions := Dimensions;
+   if(not Fullscreen.Enabled) then begin
+      Fullscreen.Position := Position;
+      Fullscreen.Dimensions := Dimensions;
 
       if(oxPlatform.Fullscreen(self)) then begin
          SetPosition(0, 0);
 
-         if(oxProperties.WindowedFullscreen) then
+         if(Fullscreen.Windowed) then
             Maximize();
 
          oxPlatform.ShowWindow(self);
-         oxProperties.Fullscreen := true;
+         Fullscreen.Enabled := true;
 
          log.i('Entered fullscreen: ' + Title);
       end else
@@ -71,23 +71,23 @@ end;
 
 procedure oxTWindowHelper.WindowedFullscreen();
 begin
-   if(oxProperties.Fullscreen) then
+   if(Fullscreen.Enabled) then
       exit;
 
-   oxProperties.WindowedFullscreen := true;
-   Fullscreen();
+   Fullscreen.Windowed := true;
+   EnterFullscreen();
 end;
 
 procedure oxTWindowHelper.LeaveFullscreen();
 begin
-   if(oxProperties.Fullscreen) then begin
+   if(Fullscreen.Enabled) then begin
       if(oxPlatform.LeaveFullscreen(self)) then begin
          oxPlatform.ShowWindow(self);
 
-         SetPosition(FullscreenPosition.x, FullscreenPosition.y);
-         SetDimensions(FullscreenDimensions.w, FullscreenDimensions.h);
+         SetPosition(Fullscreen.Position.x, Fullscreen.Position.y);
+         SetDimensions(Fullscreen.Dimensions.w, Fullscreen.Dimensions.h);
 
-         oxProperties.Fullscreen := false;
+         Fullscreen.Enabled := false;
          log.i('Left fullscreen: ' + Title);
       end else
          log.e('Failed to leave fullscreen: ' + Title);
@@ -96,15 +96,15 @@ end;
 
 procedure oxTWindowHelper.ToggleFullscreen();
 begin
-   if(not oxProperties.Fullscreen) then
-      Fullscreen()
+   if(not Fullscreen.Enabled) then
+      EnterFullscreen()
    else
       LeaveFullscreen();
 end;
 
 procedure oxTWindowHelper.ToggleWindowedFullscreen();
 begin
-   if(not oxProperties.Fullscreen) then
+   if(not Fullscreen.Enabled) then
       WindowedFullscreen()
    else
       LeaveFullscreen();
@@ -172,7 +172,7 @@ end;
 
 procedure oxTWindowHelper.Maximize(fromSystem: boolean);
 begin
-   if(oxProperties.Fullscreen) then
+   if(Fullscreen.Enabled) then
       exit;
 
    if(oxUIHooks <> nil) then
@@ -181,7 +181,7 @@ end;
 
 procedure oxTWindowHelper.Minimize(fromSystem: boolean);
 begin
-   if(oxProperties.Fullscreen) then
+   if(Fullscreen.Enabled) then
       exit;
 
    if(oxUIHooks <> nil) then
@@ -190,7 +190,7 @@ end;
 
 procedure oxTWindowHelper.Restore(fromSystem: boolean);
 begin
-   if(oxProperties.Fullscreen) then begin
+   if(Fullscreen.Enabled) then begin
       LeaveFullscreen();
       exit;
    end;

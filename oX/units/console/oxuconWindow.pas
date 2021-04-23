@@ -117,7 +117,7 @@ begin
    wnd := oxWindows.w[selectedWindow];
 
    writeOutDimensions(con);
-   con.i('Fullscreen: ' + sf(wnd.oxProperties.Fullscreen));
+   con.i('Fullscreen: ' + sf(wnd.Fullscreen.Enabled));
 end;
 
 {console commands}

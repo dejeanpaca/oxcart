@@ -67,26 +67,26 @@ begin
    if(Dimensions.w <= 0) or (Dimensions.h <= 0) then
       Dimensions.Assign(640, 480);
 
-   if(w.oxProperties.Fullscreen) then
+   if(w.Fullscreen.Enabled) then
       w.Dimensions := FullscreenDimensions
    else
       w.Dimensions := Dimensions;
 
-   w.oxProperties.Fullscreen := Fullscreen;
-   w.oxProperties.WindowedFullscreen := WindowedFullscreen;
+   w.Fullscreen.Enabled := Fullscreen;
+   w.Fullscreen.Windowed := WindowedFullscreen;
 end;
 
 procedure oxTWindowSettings.Read(w: oxTWindow);
 begin
    Dimensions := w.Dimensions;
 
-   if(w.oxProperties.Fullscreen) then begin
+   if(w.Fullscreen.Enabled) then begin
       FullscreenDimensions := w.Dimensions;
-      Dimensions := w.FullscreenDimensions;
+      Dimensions := w.Fullscreen.Dimensions;
    end;
 
-   Fullscreen := w.oxProperties.Fullscreen;
-   WindowedFullscreen := w.oxProperties.WindowedFullscreen;
+   Fullscreen := w.Fullscreen.Enabled;
+   WindowedFullscreen := w.Fullscreen.Windowed;
 end;
 
 function getSelectedWindowSettings(): oxPWindowSettings;

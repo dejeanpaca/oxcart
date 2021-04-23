@@ -86,9 +86,9 @@ begin
    if(not wnd.oxProperties.Context) then begin
       oxUIHooks.Select(wnd);
 
-      if(wnd.oxProperties.Fullscreen) then begin
-         wnd.oxProperties.Fullscreen := false;
-         wnd.Fullscreen();
+      if(wnd.Fullscreen.Enabled) then begin
+         wnd.Fullscreen.Enabled := false;
+         wnd.EnterFullscreen();
       end;
 
       if(not wnd.oxProperties.Context) then
