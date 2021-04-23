@@ -19,7 +19,9 @@ TYPE
    { oxTWindowSettings }
 
    oxTWindowSettings = record
+      FullscreenDimensions,
       Dimensions: oxTDimensions;
+
       Fullscreen,
       WindowedFullscreen: boolean;
 
@@ -53,6 +55,8 @@ VAR
    dvIndex,
    dvWidth,
    dvHeight,
+   dvFSWidth,
+   dvFSHeight,
    dvFullscreen,
    dvWindowedFullscreen: TDVar;
 
@@ -63,15 +67,24 @@ begin
    if(Dimensions.w <= 0) or (Dimensions.h <= 0) then
       Dimensions.Assign(640, 480);
 
-   w.Dimensions := Dimensions;
+   if(w.oxProperties.Fullscreen) then
+      w.Dimensions := FullscreenDimensions
+   else
+      w.Dimensions := Dimensions;
+
    w.oxProperties.Fullscreen := Fullscreen;
    w.oxProperties.WindowedFullscreen := WindowedFullscreen;
 end;
 
 procedure oxTWindowSettings.Read(w: oxTWindow);
 begin
-   Dimensions.w := w.Dimensions.w;
-   Dimensions.h := w.Dimensions.h;
+   Dimensions := w.Dimensions;
+
+   if(w.oxProperties.Fullscreen) then begin
+      FullscreenDimensions := w.Dimensions;
+      Dimensions := w.FullscreenDimensions;
+   end;
+
    Fullscreen := w.oxProperties.Fullscreen;
    WindowedFullscreen := w.oxProperties.WindowedFullscreen;
 end;
@@ -94,6 +107,8 @@ begin
    if(selected <> nil) then begin
       dvWidth.Update(selected^.Dimensions.w);
       dvHeight.Update(selected^.Dimensions.h);
+      dvFSWidth.Update(selected^.FullscreenDimensions.w);
+      dvFSHeight.Update(selected^.FullscreenDimensions.h);
       dvFullscreen.Update(selected^.Fullscreen);
       dvWindowedFullscreen.Update(selected^.WindowedFullscreen);
    end;
@@ -143,6 +158,8 @@ INITIALIZATION
 
    dvgWindow.Add(dvWidth, 'width', dtcINT32, @oxWindowSettings.w[0].Dimensions.w);
    dvgWindow.Add(dvHeight, 'height', dtcINT32, @oxWindowSettings.w[0].Dimensions.h);
+   dvgWindow.Add(dvFSWidth, 'fullscreen_width', dtcINT32, @oxWindowSettings.w[0].FullscreenDimensions.w);
+   dvgWindow.Add(dvFSHeight, 'fullscreen_height', dtcINT32, @oxWindowSettings.w[0].FullscreenDimensions.h);
    dvgWindow.Add(dvFullscreen, 'fullscreen', dtcBOOL, @oxWindowSettings.w[0].Fullscreen);
    dvgWindow.Add(dvWindowedFullscreen, 'windowed_fullscreen', dtcBOOL, @oxWindowSettings.w[0].WindowedFullscreen);
 
