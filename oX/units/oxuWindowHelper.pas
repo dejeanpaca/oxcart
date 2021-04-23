@@ -49,12 +49,20 @@ IMPLEMENTATION
 { oxTWindowHelper }
 
 procedure oxTWindowHelper.EnterFullscreen();
+var
+   ok: boolean;
+
 begin
    if(not Fullscreen.Enabled) then begin
       Fullscreen.Position := Position;
       Fullscreen.Dimensions := Dimensions;
 
-      if(oxPlatform.Fullscreen(self)) then begin
+      ok := true;
+
+      if(not Fullscreen.Windowed) then
+         ok := oxPlatform.Fullscreen(self);
+
+      if(ok) then begin
          SetPosition(0, 0);
 
          if(Fullscreen.Windowed) then
@@ -64,8 +72,15 @@ begin
          Fullscreen.Enabled := true;
 
          log.i('Entered fullscreen: ' + Title);
-      end else
-         log.e('Failed to enter fullscreen: ' + Title);
+      end else begin
+         log.e('Failed to enter fullscreen: ' + Title + ' ' + Dimensions.ToString());
+
+         {restore if failed for non windowed mode}
+         if(not Fullscreen.Windowed) then begin
+            Fullscreen.Enabled := true;
+            LeaveFullscreen();
+         end;
+      end;
    end;
 end;
 
