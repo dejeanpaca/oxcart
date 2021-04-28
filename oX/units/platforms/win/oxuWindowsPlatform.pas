@@ -61,7 +61,7 @@ TYPE
 
       procedure OutClientAreaCoordinates(wnd: oxTWindow; out x, y: single); override;
 
-      function Fullscreen(window: oxTWindow; x, y, bpp: longint): boolean; override;
+      function Fullscreen({%H-}window: oxTWindow; x, y, bpp: longint): boolean; override;
       function Fullscreen(window: oxTWindow): boolean; override;
       function LeaveFullscreen(window: oxTWindow): boolean; override;
 
