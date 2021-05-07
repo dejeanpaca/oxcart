@@ -170,7 +170,7 @@ begin
 end;
 
 BEGIN
-   setupTimer.Start();
+   setupTimer.InitStart();
    build.Initialize();
 
    if(not build.Initialized) then begin
