@@ -20,7 +20,6 @@ CONST
    
    { notification routine specifiers }
    DVAR_NOTIFICATION_MODIFIED		   = $0001;
-   DVAR_NOTIFICATION_UPDATE			= $0002;
    DVAR_NOTIFICATION_WRITE          = $0003;
    DVAR_NOTIFICATION_READ           = $0004;
 
