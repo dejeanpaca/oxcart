@@ -12,7 +12,7 @@ INTERFACE
       uStd,
       {oX}
       uOX,  oxuTypes, oxuwndSettings,
-      oxuWindow, oxuRenderer, oxuRenderers,
+      oxuWindow, oxuRenderer, oxuRenderers, oxuRendererSettings,
       {ui}
       uiWidgets, wdguLabel, wdguDropDownList, wdguDivisor;
 
@@ -27,16 +27,23 @@ VAR
       RefreshRate,
       ColorDepth,
       RenderScale,
-      FrameLimiter: wdgTDropDownList;
+      FrameLimiter,
+      Sync: wdgTDropDownList;
    end;
 
-procedure revertSettings();
+procedure revert();
 begin
    {dont't allow to choose if there is not a choice}
    if(oxRenderers.n <= 2) then
       wdg.Renderers.Enable(false);
 
    wdg.Renderers.SelectItem(oxRenderers.CurrentIndex());
+   wdg.Renderers.SelectItem(loopint(oxRenderSettings.Sync));
+end;
+
+procedure save();
+begin
+   oxRenderSettings.Sync := oxTRenderSyncMethod(wdg.Sync.CurrentItem);
 end;
 
 procedure addVideoTab();
@@ -190,11 +197,29 @@ begin
    list.AutoSetDimensions(true);
 
    list.SelectItem(3);
+
+   uiWidget.LastRect.NextLine();
+
+   { frame limiting }
+
+   wdgLabel.Add('Video Sync');
+
+   list := wdgDropDownList.Add(uiWidget.LastRect.RightOf());
+   wdg.Sync := list;
+
+   list.Add('None');
+   list.Add('VSync');
+   list.Add('Adaptive');
+
+   list.AutoSetDimensions(true);
+
+   list.SelectItem(0);
 end;
 
 procedure init();
 begin
-   oxwndSettings.OnRevert.Add(@revertSettings);
+   oxwndSettings.OnRevert.Add(@revert);
+   oxwndSettings.OnSave.Add(@save);
    oxwndSettings.OnAddTabs.Add(@addVideoTab);
 end;
 
