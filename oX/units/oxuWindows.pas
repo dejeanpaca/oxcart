@@ -46,7 +46,10 @@ TYPE
       OnOverrideRender: oxTWindowRoutines;
 
       MaxWindowAllocate: loopint;
-      AllowScreenSaver: boolean;
+      {Indicate to the system if the screen is allowed to go into idle mode (turn off/screensaver)}
+      AllowScreenIdle,
+      {allow screen to go idle while we're paused or in a menu}
+      AllowScreenIdleDuringMenu: boolean;
 
       {description of last error}
       LastErrorDescription: string;
@@ -78,6 +81,9 @@ TYPE
 
       {set window as current}
       procedure SetCurrent(wnd: oxTWindow);
+
+      {do we currently allow screen to go idle}
+      function AllowedScreenIdle(): boolean;
    end;
 
 VAR
@@ -160,7 +166,7 @@ end;
 procedure oxTWindows.Create();
 begin
    MaxWindowAllocate := 1;
-   AllowScreenSaver := false;
+   AllowScreenIdleDuringMenu := true;
 
    Internal.OnPostRender.InitializeValues(Internal.OnPostRender);
 
@@ -268,6 +274,17 @@ end;
 procedure oxTWindows.SetCurrent(wnd: oxTWindow);
 begin
    oxWindow.Current := wnd;
+end;
+
+function oxTWindows.AllowedScreenIdle(): boolean;
+begin
+   Result := false;
+
+   if(oxWindows.AllowScreenIdle) then
+      Result := true
+   else if(oxWindows.AllowScreenIdleDuringMenu) then begin
+      // TODO: Check if we're allowed to go idle
+   end;
 end;
 
 INITIALIZATION

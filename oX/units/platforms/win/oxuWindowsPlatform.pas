@@ -399,12 +399,8 @@ begin
             SC_KEYMENU: {don't need windows to handle the F10 key}
                Result := 0;
 
-            SC_SCREENSAVE: {no screen-saver}
-               if(oxWindows.AllowScreenSaver) then
-                  Result := 0;
-
-            SC_MONITORPOWER: {don't kill monitor power}
-               if(oxWindows.AllowScreenSaver) then
+            SC_SCREENSAVE, SC_MONITORPOWER: {allow for screen-saver, or monitor power off}
+               if oxWindows.AllowedScreenIdle() then
                   Result := 0;
 
             SC_MINIMIZE:
