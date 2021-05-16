@@ -12,6 +12,7 @@ PROGRAM oxed;
 
    USES
       {$INCLUDE oxappuses.inc},
+      oxuAppDefaults,
       {oxed}
       uOXED, oxeduInitialize;
 
