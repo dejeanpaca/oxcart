@@ -121,6 +121,7 @@ TYPE
 
       nColors,
       nImages,
+      nGlyphs,
       nBools,
       nStrings: loopint;
 
@@ -134,6 +135,7 @@ TYPE
       function GetColor(colorIndex: loopint): TColor4ub;
 
       procedure UseColors(var colorDescriptor: array of uiTWidgetSkinColorDescriptor);
+      procedure UseGlyphs(var glyphsDescriptor: array of uiTWidgetSkinGlyphDescriptors);
 
       class procedure Initialize(out descriptor: uiTWidgetSkinDescriptor; const setName: StdString = ''); static;
    end;
@@ -218,6 +220,12 @@ procedure uiTWidgetSkinDescriptor.UseColors(var colorDescriptor: array of uiTWid
 begin
    nColors := Length(colorDescriptor);
    Colors := @colorDescriptor[0];
+end;
+
+procedure uiTWidgetSkinDescriptor.UseGlyphs(var glyphsDescriptor: array of uiTWidgetSkinGlyphDescriptors);
+begin
+   nGlyphs := Length(glyphsDescriptor);
+   Glyphs := @glyphsDescriptor[0];
 end;
 
 class procedure uiTWidgetSkinDescriptor.Initialize(out descriptor: uiTWidgetSkinDescriptor; const setName: StdString);
