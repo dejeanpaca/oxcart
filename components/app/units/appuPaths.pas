@@ -136,8 +136,6 @@ begin
 
    {add a directory separator to the end if the path is not empty}
    Result := IncludeTrailingPathDelimiterNonEmpty(path);
-
-   log.i('Got path: ' + Result);
 end;
 
 function appTPath.HomeConfigurationDir(const dir: StdString; local: boolean): StdString;
