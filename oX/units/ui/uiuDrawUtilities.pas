@@ -123,7 +123,6 @@ begin
    bearingx := 0;
    bearingy := 0;
 
-
    factorx := (1 / g.Texture.Width * r.w);
    factory := (1 / g.Texture.Height * r.h);
 
@@ -134,6 +133,7 @@ begin
 
    if(g.BearingY <> 0) then begin
       bearingy := round(factory * (g.Height - g.BearingY + 1));
+
       if(bearingy <> 0) then
          dec(pr.y, bearingy div 2);
    end;
