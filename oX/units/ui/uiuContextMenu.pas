@@ -593,9 +593,10 @@ begin
       SetColorBlended(clr.Darken(0.25));
 
       if(pSkin.ChevronRight.Texture <> nil) then begin
-         ir.x := r.x + Dimensions.w - 1 - ir.h;
-         ir.w := round(ir.h * 0.75);
+         ir.w := round(ir.h * 0.6);
          ir.h := ir.w;
+         ir.x := r.x + Dimensions.w - 1 - round(ir.h * 1.25);
+         dec(ir.y, (r.h - ir.h) div 2);
 
          uiDrawUtilities.Glyph(ir, pSkin.ChevronRight);
       end else begin
@@ -1070,7 +1071,7 @@ INITIALIZATION
    uiContextMenu.RenderKeyMappings := true;
    uiContextMenu.RenderBorder := true;
 
-   uiContextMenu.BackgroundColor.Assign(48, 48, 48, 244);
+   uiContextMenu.BackgroundColor.Assign(28, 28, 28, 232);
    uiContextMenu.BorderColor.Assign(8, 8, 8, 255);
 
    internalWidget.Register('context_menu', wdgTContextMenu);
