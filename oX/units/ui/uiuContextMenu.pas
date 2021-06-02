@@ -592,9 +592,17 @@ begin
       RenderCaption();
       SetColorBlended(clr.Darken(0.25));
 
-      ir.x := r.x + Dimensions.w - (5 + f.GetLength('>'));
+      if(pSkin.ChevronRight.Texture <> nil) then begin
+         ir.x := r.x + Dimensions.w - 1 - ir.h;
+         ir.w := round(ir.h * 0.75);
+         ir.h := ir.w;
 
-      f.WriteCentered('>', ir, [oxfpCenterVertical]);
+         uiDrawUtilities.Glyph(ir, pSkin.ChevronRight);
+      end else begin
+         ir.x := r.x + Dimensions.w - (5 + f.GetLength('>'));
+         f.WriteCentered('>', ir, [oxfpCenterVertical]);
+      end;
+
       SetColorBlended(pSkin.Colors.Text);
       oxf.Stop();
    end else if (item^.ItemType = uiCONTEXT_MENU_SEPARATOR) then begin
