@@ -59,6 +59,7 @@ TYPE
       Colors,
       InactiveColors: uiTWindowSkinColors;
 
+      {glyphs}
       TitleButtonSymbols: array[0..uiwcBUTTON_MAX] of Char;
       TitleButtonGlyphs: array[0..uiwcBUTTON_MAX] of oxTGlyph;
 
@@ -192,6 +193,9 @@ TYPE
 
       Colors,
       DisabledColors: uiTSkinColorSet;
+
+      {glyphs}
+      ChevronRight: oxTGlyph;
 
       destructor Destroy(); override;
 
