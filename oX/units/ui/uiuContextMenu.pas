@@ -190,6 +190,7 @@ TYPE
       ItemPadding,
       ItemLeftBlank: longint;
       BackgroundColor,
+      SeparatorColor,
       BorderColor: TColor4ub;
 
       {should key mappings be rendered}
@@ -608,7 +609,7 @@ begin
       oxf.Stop();
    end else if (item^.ItemType = uiCONTEXT_MENU_SEPARATOR) then begin
       uiDraw.ClearTexture();
-      uiDrawUtilities.HorizontalDivisorSunken(wnd, r.x + 1, r.y - (r.h div 2), r.x + r.w, Parent.GetSurfaceColor());
+      uiDrawUtilities.HorizontalDivisorSunken(wnd, r.x + 1, r.y - (r.h div 2), r.x + r.w, uiContextMenu.SeparatorColor);
    end;
 end;
 
@@ -1072,6 +1073,7 @@ INITIALIZATION
    uiContextMenu.RenderBorder := true;
 
    uiContextMenu.BackgroundColor.Assign(28, 28, 28, 232);
+   uiContextMenu.SeparatorColor.Assign(64, 64, 64, 255);
    uiContextMenu.BorderColor.Assign(8, 8, 8, 255);
 
    internalWidget.Register('context_menu', wdgTContextMenu);
