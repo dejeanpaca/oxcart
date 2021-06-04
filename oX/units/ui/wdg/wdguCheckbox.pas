@@ -19,24 +19,39 @@ INTERFACE
       uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuWidgetRender, wdguBase;
 
 CONST
-   wdgcCHECKBOX_TOGGLE                          = $0001;
+   wdgcCHECKBOX_TOGGLE = $0001;
 
+   {regular surface color}
    wdgscCHECKBOX_REGULAR = 0;
+   {disabled surface color}
    wdgscCHECKBOX_REGULAR_DISABLED = 1;
-   wdgscCHECKBOX_HOVER   = 2;
+   {checked surface color}
+   wdgscCHECKBOX_CHECKED = 2;
+   {check mark color}
+   wdgscCHECKBOX_CHECK_MARK = 3;
+   {disabled check mark color}
+   wdgscCHECKBOX_CHECK_MARK_DISABLED = 4;
 
-   wdgCheckboxSkinColorDescriptor: array[0..2] of uiTWidgetSkinColorDescriptor = (
+   wdgCheckboxSkinColorDescriptor: array[0..4] of uiTWidgetSkinColorDescriptor = (
        (
           Name: 'regular';
-          Color: (96, 96, 96, 255)
+          Color: (255, 255, 255, 255)
        ),
        (
           Name: 'regular_disabled';
           Color: (48, 48, 48, 255)
        ),
        (
-          Name: 'highlight';
-          Color: (0, 153, 204, 255)
+          Name: 'checked';
+          Color: (48, 192, 48, 255)
+       ),
+       (
+          Name: 'check_mark';
+          Color: (255, 255, 255, 255)
+       ),
+       (
+          Name: 'check_mark_disabled';
+          Color: (96, 96, 96, 255)
        )
     );
 
@@ -161,6 +176,7 @@ var
 
    renderProperties: longword;
    pwnd: uiTWindow;
+   pSkin: uiPWidgetSkin;
 
    clr: TColor4ub;
 
@@ -178,15 +194,22 @@ begin
 
    if(enabled) then begin
       if(not selected) then
-         uiRenderWidget.Box(x1, y2, x2, y1, uiTSkin(pwnd.Skin).Colors.InputSurface, uiTSkin(pwnd.Skin).Colors.Border, props, pwnd.Opacity)
+         clr := uiTSkin(pwnd.Skin).Colors.Border
       else
-         uiRenderWidget.Box(x1, y2, x2, y1, uiTSkin(pwnd.Skin).Colors.InputSurface, uiTSkin(pwnd.Skin).Colors.SelectedBorder, props, pwnd.Opacity);
-   end else
-      uiRenderWidget.Box(x1, y2, x2, y1, uiTSkin(pwnd.Skin).Colors.InputSurface, uiTSkin(pwnd.Skin).DisabledColors.Border, props, pwnd.Opacity)
+         clr := uiTSkin(pwnd.Skin).Colors.SelectedBorder;
+
+      if(not checked) then
+         uiRenderWidget.Box(x1, y2, x2, y1, pSkin^.GetColor(wdgscCHECKBOX_REGULAR), clr, props, pwnd.Opacity)
+      else
+         uiRenderWidget.Box(x1, y2, x2, y1, pSkin^.GetColor(wdgscCHECKBOX_CHECKED), clr, props, pwnd.Opacity);
+   end else begin
+      uiRenderWidget.Box(x1, y2, x2, y1, pSkin^.GetColor(wdgscCHECKBOX_REGULAR_DISABLED), uiTSkin(pwnd.Skin).DisabledColors.Border, props, pwnd.Opacity)
+   end;
 end;
 
 begin
    pwnd := uiTWindow(source.wnd);
+   pSkin := source.GetSkinObject().Get(wdgCheckbox.Internal.cID);
 
    {render check-box block}
    renderProperties := wdgRENDER_BLOCK_SURFACE or wdgRENDER_BLOCK_BORDER;
@@ -201,9 +224,9 @@ begin
    {render check if the checkbox is marked}
    if(checked) then begin
       if(enabled) then
-         clr := wdgCheckbox.CheckedColor
+         clr := pSkin^.GetColor(wdgscCHECKBOX_CHECK_MARK)
       else
-         clr := wdgCheckbox.DisabledColor;
+         clr := pSkin^.GetColor(wdgscCHECKBOX_CHECK_MARK_DISABLED);
 
       {draw a checkmark}
       source.SetColor(clr);
@@ -321,9 +344,6 @@ INITIALIZATION
    wdgCheckbox.LineWidth := 2.0;
 
    wdgCheckbox.Create('checkbox');
-
-   wdgCheckbox.DisabledColor.Assign(96, 96, 96, 255);
-   wdgCheckbox.CheckedColor.Assign(32, 160, 32, 255);
 
    wdgCheckbox.Internal.SkinDescriptor.UseColors(wdgCheckboxSkinColorDescriptor);
 
