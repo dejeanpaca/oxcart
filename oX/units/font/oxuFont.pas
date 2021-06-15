@@ -530,7 +530,7 @@ begin
                pIndice[index + 5] := charIndex * 4 + QuadIndicesus[5];
 
                if(Characters <> nil) then begin
-                  px := px + Characters[b].Advance;
+                  px := px + Characters[b].Advance - Characters[b].BearingX;
                   {restore y back on baseline}
                   py := py + (Characters[b].Height - Characters[b].BearingY);
                end else
