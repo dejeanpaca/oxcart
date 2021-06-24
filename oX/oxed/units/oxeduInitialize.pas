@@ -134,6 +134,8 @@ end;
 procedure onStart();
 begin
    {$IFNDEF NO_UI}
+   oxedProjectManagement.OnClosed.Call();
+
    {open a project}
    if(oxedSettings.StartWithLastProject) and (oxedRecents.LastOpen <> '') then begin
       log.v('project > Opening last opened project: ' + oxedRecents.LastOpen);
