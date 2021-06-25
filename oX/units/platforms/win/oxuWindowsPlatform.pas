@@ -740,7 +740,7 @@ begin
          wnd.CreateFail('Failed to create window due to error: ' + winos.FormatMessage(winosTWindow(wnd).wd.LastError));
    end;
 
-   wnd.SetIcon(oxPaths.Find(oxPaths.UI + 'window.ico'));
+   wnd.SetIcon(oxPaths.Find(oxPaths.UI + 'ox-logo.ico'));
 
    {done}
    if(uiwndpVISIBLE in wnd.Properties) then
