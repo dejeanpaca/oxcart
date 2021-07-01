@@ -45,11 +45,6 @@ VAR
 
 IMPLEMENTATION
 
-procedure oxwRenderPost(wnd: oxTWindow);
-begin
-   oxuiHooks.Render(wnd);
-end;
-
 constructor oxTWindowRender.Create();
 begin
 end;

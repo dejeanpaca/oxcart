@@ -40,9 +40,6 @@ TYPE
       {called after windows are created}
       OnPostCreate: TProcedures;
 
-      {called when window should be rendered}
-      OnRender: oxTWindowRoutines;
-
       MaxWindowAllocate: loopint;
       {Indicate to the system if the screen is allowed to go into idle mode (turn off/screensaver)}
       AllowScreenIdle,
@@ -51,12 +48,6 @@ TYPE
 
       {description of last error}
       LastErrorDescription: string;
-
-      {internal hooks and properties}
-      Internal: record
-         {called after other window rendering is done}
-         OnPostRender: oxTWindowRoutines;
-      end;
 
       {list of external windows}
       ExternalWindows: uiTSimpleControlList;
@@ -166,11 +157,7 @@ begin
    MaxWindowAllocate := 1;
    AllowScreenIdleDuringMenu := true;
 
-   Internal.OnPostRender.InitializeValues(Internal.OnPostRender);
-
    ExternalWindows.InitializeValues(ExternalWindows);
-
-   OnRender.InitializeValues(OnRender);
 end;
 
 procedure oxTWindows.Setup(var wnd: oxTWindow; const settings: oxTWindowSettings; contextWindow: boolean = false);

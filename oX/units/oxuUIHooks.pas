@@ -10,7 +10,7 @@ INTERFACE
 
    USES
       {oX}
-      oxuTypes, oxuWindowTypes;
+      oxuTypes, oxuWindowTypes, oxuRenderingContext;
 
 TYPE
 
@@ -32,7 +32,7 @@ TYPE
       procedure UpdatePosition({%H-}wnd: oxTWindow); virtual;
 
       procedure Select({%H-}wnd: oxTWindow); virtual;
-      procedure Render({%H-}wnd: oxTWindow); virtual;
+      procedure Render({%H-}var context: oxTRenderingContext); virtual;
 
       procedure Minimize({%H-}wnd: oxTWindow; {%H-}fromSystem: boolean = false); virtual;
       procedure Maximize({%H-}wnd: oxTWindow; {%H-}fromSystem: boolean = false); virtual;
@@ -84,7 +84,7 @@ procedure oxTUIHooks.Select(wnd: oxTWindow);
 begin
 end;
 
-procedure oxTUIHooks.Render(wnd: oxTWindow);
+procedure oxTUIHooks.Render(var context: oxTRenderingContext);
 begin
 end;
 

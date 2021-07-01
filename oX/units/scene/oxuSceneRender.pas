@@ -13,10 +13,14 @@ INTERFACE
       {ox}
       uOX,
       oxuProjectionType, oxuProjection, oxuViewportType, oxuViewport,
-      oxuWindowTypes, oxuCamera, oxuRender, oxuRenderingContext, oxuTransform, oxuWindows, oxuSerialization,
+      oxuWindowTypes, oxuCamera,
+      oxuRender, oxuRenderingContext, oxuSurfaceRender,
+      oxuTransform, oxuWindows, oxuSerialization,
       oxuMaterial, oxuGlobalInstances,
-      oxuScene, oxuEntity, oxuSceneManagement, oxuRenderLayerComponent,
-      oxuComponent, oxuCameraComponent, oxuRenderComponent;
+      {scene}
+      oxuScene, oxuEntity, oxuSceneManagement,
+      {components}
+      oxuRenderLayerComponent, oxuComponent, oxuCameraComponent, oxuRenderComponent;
 
 TYPE
    oxTSceneRenderOrderEntry = record
@@ -95,6 +99,7 @@ TYPE
       Scenes: array[0..oxcMAX_WINDOW] of oxTSceneRenderWindow;
 
       RenderOrder: oxTSceneRenderOrder;
+      SurfaceRenderer: oxTSurfaceRenderer; static;
 
       constructor Create();
    end;
@@ -104,6 +109,39 @@ VAR
    oxSceneRender: oxTSceneRender;
 
 IMPLEMENTATION
+
+procedure render(var context: oxTRenderingContext);
+var
+   sceneWindow: oxTSceneRenderWindow;
+   renderer: oxTSceneRenderer;
+   params: oxTSceneRenderParameters;
+   wnd: oxTWindow;
+
+begin
+
+   if(not oxSceneManagement.Enabled) or (not oxSceneRender.RenderAutomatically) then
+      exit;
+
+   wnd := context.Window;
+
+   {TODO: Allow rendering any surface instead of these hacks}
+   if(wnd = nil) then
+      exit;
+
+   sceneWindow := oxSceneRender.Scenes[wnd.Index];
+   renderer := sceneWindow.Renderer;
+
+   if(renderer = nil) then
+      renderer := oxSceneRender.Default;
+
+   if(sceneWindow.Scene <> nil) then begin
+      oxTSceneRenderParameters.Init(params);
+      params.Scene := sceneWindow.Scene;
+      params.RenderOrder := @oxSceneRender.RenderOrder;
+
+      renderer.Render(params);
+   end;
+end;
 
 { oxTSceneRenderOrder }
 
@@ -320,37 +358,9 @@ procedure oxTSceneRenderer.OnEnd();
 begin
 end;
 
-procedure render(wnd: oxTWindow);
-var
-   sceneWindow: oxTSceneRenderWindow;
-   renderer: oxTSceneRenderer;
-   params: oxTSceneRenderParameters;
-
-begin
-   if(not oxSceneRender.RenderAutomatically) then
-      exit;
-
-   sceneWindow := oxSceneRender.Scenes[wnd.Index];
-   renderer := sceneWindow.Renderer;
-
-   if(renderer = nil) then
-      renderer := oxSceneRender.Default;
-
-   if(sceneWindow.Scene <> nil) then begin
-      oxTSceneRenderParameters.Init(params);
-      params.Scene := sceneWindow.Scene;
-      params.RenderOrder := @oxSceneRender.RenderOrder;
-
-      renderer.Render(params);
-   end;
-end;
-
 procedure init();
 begin
    oxSceneRender.Default := oxTSceneRenderer.Create();
-
-   if(oxSceneManagement.Enabled) and (oxSceneRender.RenderAutomatically) then
-      oxWindows.OnRender.Add(@render);
 end;
 
 procedure deinit();
@@ -374,5 +384,8 @@ INITIALIZATION
    {$IFDEF OX_LIBRARY}
    oxSceneRender.AutoApplyChange := true;
    {$ENDIF}
+
+   oxSurfaceRender.Get(oxTSceneRender.SurfaceRenderer, @render);
+   oxTSceneRender.SurfaceRenderer.Name := 'scene';
 
 END.

@@ -18,13 +18,15 @@ USES
 TYPE
    oxTSurfaceRenderRoutine = procedure(var context: oxTRenderingContext);
 
+   oxPSurfaceRenderer = ^oxTSurfaceRenderer;
+
    oxTSurfaceRenderer = record
+      Name: string;
       Routine: oxTSurfaceRenderRoutine;
       Layer: loopint;
-      Mask: loopint;
    end;
 
-   oxTSurfaceRenderers = specialize TSimpleList<oxTSurfaceRenderer>;
+   oxTSurfaceRenderers = specialize TSimpleList<oxPSurfaceRenderer>;
 
    { oxTSurfaceRenderGlobal }
 
@@ -33,6 +35,9 @@ TYPE
 
       procedure Initialize();
       procedure Add(var renderer: oxTSurfaceRenderer);
+
+      {get a surface renderer entry and add it to the list}
+      procedure Get(out renderer: oxTSurfaceRenderer; routine: oxTSurfaceRenderRoutine);
 
       procedure Render(wnd: oxTWindow);
    end;
@@ -51,7 +56,19 @@ end;
 
 procedure oxTSurfaceRenderGlobal.Add(var renderer: oxTSurfaceRenderer);
 begin
-   List.Add(renderer);
+   List.Add(@renderer);
+end;
+
+procedure oxTSurfaceRenderGlobal.Get(out renderer: oxTSurfaceRenderer; routine: oxTSurfaceRenderRoutine);
+begin
+   ZeroOut(renderer, SizeOf(renderer));
+
+   renderer.Routine := routine;
+   renderer.Layer := 1 shl List.n;
+
+   List.Add(@renderer);
+
+   writeln(renderer.Layer);
 end;
 
 procedure oxTSurfaceRenderGlobal.Render(wnd: oxTWindow);
@@ -72,7 +89,7 @@ begin
    rc^.RC := wnd.RenderingContext;
 
    for i := 0 to List.n - 1 do begin
-      List.List[i].Routine(rc^);
+      List.List[i]^.Routine(rc^);
    end;
 
    if(not ox.LibraryMode) then
