@@ -67,8 +67,6 @@ begin
    renderer.Layer := 1 shl List.n;
 
    List.Add(@renderer);
-
-   writeln(renderer.Layer);
 end;
 
 procedure oxTSurfaceRenderGlobal.Render(wnd: oxTWindow);
