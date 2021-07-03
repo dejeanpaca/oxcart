@@ -46,7 +46,7 @@ end;
 
 function getPath(): StdString;
 begin
-   Result := Source + IncludeTrailingPathDelimiterNonEmpty(BuildInstalls.CurrentPlatform^.GetName());
+   Result := Source + IncludeTrailingPathDelimiterNonEmpty(BuildInstalls.CurrentPlatform^.Platform);
 end;
 
 begin
@@ -83,14 +83,16 @@ begin
       usedSource := getPath() + name;
 
    if(FileUtils.Exists(usedSource) <= 0) then begin
-      log.e('Could not find library ' + name + ' in ' + usedSource);
+      log.w('Could not find library ' + name + ' in ' + usedSource);
 
       usedSource := '';
 
       if(optimizationLevel <= 0) then begin
-         for optimizationLevel := 1 to BuildInstalls.CurrentPlatform^.OptimizationLevels.n do begin
+         writeln('levels: ', BuildInstalls.CurrentPlatform^.OptimizationLevels.n);
+         for optimizationLevel := 1 to BuildInstalls.CurrentPlatform^.OptimizationLevels.n - 1 do begin
             usedSource := getPath() +
                IncludeTrailingPathDelimiterNonEmpty(BuildInstalls.GetOptimizationLevelName(optimizationLevel)) + name;
+            writeln('usedSource: ', usedSource);
 
             if(FileUtils.Exists(usedSource) > 0) then begin
                log.w('Using optimized library: ' + usedSource + ' because regular not found');
