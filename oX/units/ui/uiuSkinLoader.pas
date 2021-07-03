@@ -9,11 +9,11 @@ UNIT uiuSkinLoader;
 INTERFACE
 
    USES
-      uLog, StringUtils, uFile, uFileUtils,
+      uStd, uLog, StringUtils, uFile, uFileUtils,
       {ox}
       oxuPaths, oxuTexture, oxuTextureGenerate, oxuGlyphs, uiuTypes,
       {ui}
-      uiuSkin, uiuSkinTypes;
+      uiuSkin, uiuSkinTypes, uiWidgets, uiuRegisteredWidgets, uiuWidget;
 
 TYPE
    { uiTSkinLoader }
@@ -30,6 +30,7 @@ IMPLEMENTATION
 class procedure uiTSkinLoader.Load(skin: uiTSkin);
 var
    windowPath: string;
+   s: uiPWidgetClass;
 
 begin
    skin.ResourcePath := IncludeTrailingPathDelimiterNonEmpty(oxPaths.FindDirectory(oxPaths.UI + skin.Name));
@@ -46,6 +47,20 @@ begin
    skin.Window.TitleButtonGlyphs[uiwBUTTON_RESTORE] := oxGlyphs.LoadGlyph($f2d2);
 
    skin.ChevronRight := oxGlyphs.LoadGlyph($f054);
+
+
+   s := uiRegisteredWidgets.Internals.s;
+
+   if(s = nil) then
+      exit;
+
+   repeat
+     if(s^.SkinDescriptor.Glyphs <> nil) then begin
+        {TODO: Go through everything}
+     end;
+
+     s := s^.Next;
+   until s = nil;
 end;
 
 class procedure uiTSkinLoader.LoadTexture(const fn: string; out tex: oxTTexture);
