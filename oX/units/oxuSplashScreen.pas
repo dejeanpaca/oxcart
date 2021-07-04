@@ -203,10 +203,9 @@ end;
 
 procedure oxTSplashScreen.Run();
 begin
-   if(AssociatedWindow.IsSelected()) then begin
-      TimeFlow := RenderingTimer.TimeFlow();
-      Render();
-   end;
+   Update();
+   TimeFlow := RenderingTimer.TimeFlow();
+   Render();
 end;
 
 procedure oxTSplashScreen.TaskStart();
@@ -303,7 +302,7 @@ begin
 
    dots := trunc((RenderingTimer.Cur() mod 1000) / 250);
 
-   f := oxf.GetDefault();
+   f := oxui.GetDefaultFont();
 
    if(f.Valid()) then begin
       f.Start();
