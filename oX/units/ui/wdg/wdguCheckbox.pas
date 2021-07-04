@@ -13,9 +13,9 @@ INTERFACE
       {app}
       appuKeys, appuMouse,
       {oX}
-      oxuTypes, oxuFont, oxuRender,
+      oxuTypes, oxuFont, oxuRender, oxuGlyph,
       {ui}
-      uiuDraw, uiuWindowTypes, uiuSkinTypes,
+      uiuDraw, uiuWindowTypes, uiuSkinTypes, uiuDrawUtilities,
       uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuWidgetRender, wdguBase;
 
 CONST
@@ -31,6 +31,8 @@ CONST
    wdgscCHECKBOX_CHECK_MARK = 3;
    {disabled check mark color}
    wdgscCHECKBOX_CHECK_MARK_DISABLED = 4;
+
+   wdgsgCHECKBOX_CHECK_MARK = 0;
 
    wdgsdCheckboxColor: array[0..4] of uiTWidgetSkinColorDescriptor = (
        (
@@ -179,11 +181,15 @@ var
    x1,
    y1,
    x2,
-   y2: longint;
+   y2,
+   diff: longint;
+
+   br: oxTRect;
 
    renderProperties: longword;
    pwnd: uiTWindow;
    pSkin: uiPWidgetSkin;
+   glyph: oxPGlyph;
 
    clr: TColor4ub;
 
@@ -218,6 +224,8 @@ begin
    pwnd := uiTWindow(source.wnd);
    pSkin := source.GetSkinObject().Get(wdgCheckbox.Internal.cID);
 
+   glyph := pSkin^.GetGlyph(wdgsgCHECKBOX_CHECK_MARK);
+
    {render check-box block}
    renderProperties := wdgRENDER_BLOCK_SURFACE or wdgRENDER_BLOCK_BORDER;
 
@@ -238,12 +246,25 @@ begin
       {draw a checkmark}
       source.SetColor(clr);
 
-      oxRender.LineWidth(wdgCheckbox.LineWidth);
+      if(glyph <> nil) then begin
+         diff := round(r.w * 0.35);
+         br := r;
 
-      uiDraw.Line(x1 + 3, y2 + 7, x1 + 7, y2 + 3);
-      uiDraw.Line(x1 + 7, y2 + 3, x2 - 3, y1 - 2);
+         br.w := br.w - diff;
+         br.x := br.x + diff div 2;
 
-      oxRender.LineWidth(1.0);
+         br.h := br.h - diff;
+         br.y := br.y - diff div 2;
+
+         uiDrawUtilities.Glyph(br, glyph^);
+      end else begin
+         oxRender.LineWidth(wdgCheckbox.LineWidth);
+
+         uiDraw.Line(x1 + 3, y2 + 7, x1 + 7, y2 + 3);
+         uiDraw.Line(x1 + 7, y2 + 3, x2 - 3, y1 - 2);
+
+         oxRender.LineWidth(1.0);
+      end;
    end;
 end;
 
