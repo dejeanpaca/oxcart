@@ -27,7 +27,7 @@ IMPLEMENTATION
 
 constructor oxedTSplashScreen.Create();
 begin
-   inherited Create;
+   inherited;
 
    WriteVersion := true;
    Texture.Path := '';
