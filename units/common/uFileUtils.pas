@@ -339,6 +339,7 @@ begin
    end;
 
    FindClose(f);
+   ioErrorIgn();
    exit(false);
 end;
 
@@ -398,6 +399,7 @@ begin
 
    {we're done}
    FindClose(src);
+   ioErrorIgn();
 end;
 
 class function TFileUtilsGlobal.RmDir(const dir: StdString): boolean;
@@ -1088,8 +1090,8 @@ begin
    end;
 
    {done}
-   ioErrorIgn();
    FindClose(f);
+   ioErrorIgn();
 
    Result := error;
 end;
@@ -1271,6 +1273,7 @@ begin
    TFileDescriptor.From(f, searchRec);
 
    FindClose(searchRec);
+   ioErrorIgn();
 end;
 
 procedure TFileUtilsGlobal.GetFileInfo(const fn: StdString; out f: TFileDescriptor);
@@ -1284,6 +1287,7 @@ begin
       TFileDescriptor.Initialize(f);
 
    FindClose(searchRec);
+   ioErrorIgn();
 end;
 
 procedure TFileUtilsGlobal.ReplaceInFile(const fn: string; const keyValue: array of TStringPair);
