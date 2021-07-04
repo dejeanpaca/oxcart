@@ -9,7 +9,7 @@ UNIT oxuSurfaceRender;
 INTERFACE
 
 USES
-   uStd,
+   uStd, uLog,
    {ox}
    uOX,
    oxuWindowTypes, oxuViewport,
@@ -96,6 +96,7 @@ var
    rc: oxPRenderingContext;
    i: loopint;
    wnd: oxTWindow;
+   errorDescription: StdString;
 
 begin
    wnd := context.Window;
@@ -114,14 +115,33 @@ begin
    if(context.Routine = nil) and (context.ObjectRoutine = nil) then begin
       for i := 0 to List.n - 1 do begin
          List.List[i]^.Routine(rc^);
+
+         errorDescription := oxRenderer.CheckError();
+
+         if(errorDescription <> '') then
+            log.e('Error state while rendering ' + List.List[i]^.Name + ': ' + errorDescription);
       end;
    end else begin
-      if(context.Routine <> nil) then
+      if(context.Routine <> nil) then begin
          context.Routine(rc^);
 
-      if(context.ObjectRoutine <> nil) then
+         errorDescription := oxRenderer.CheckError();
+
+         if(errorDescription <> '') then
+            log.e('Error state while rendering surface routine : ' + errorDescription);
+
+      end;
+
+      if(context.ObjectRoutine <> nil) then begin
          context.ObjectRoutine(rc^);
+
+         errorDescription := oxRenderer.CheckError();
+
+         if(errorDescription <> '') then
+            log.e('Error state while rendering surface object routine : ' + errorDescription);
+      end;
    end;
+
 
    if(not ox.LibraryMode) then
       oxTRenderer(wnd.Renderer).SwapBuffers(wnd);
