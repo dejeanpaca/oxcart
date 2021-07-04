@@ -302,7 +302,6 @@ function TTimer.TimeFlow(): single;
 begin
    Update();
    Result := ElapsedTimef * Factor;
-   Start();
 end;
 
 
