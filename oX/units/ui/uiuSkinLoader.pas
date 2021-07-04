@@ -31,6 +31,9 @@ class procedure uiTSkinLoader.Load(skin: uiTSkin);
 var
    windowPath: string;
    s: uiPWidgetClass;
+   descriptor: uiPWidgetSkinDescriptor;
+   wdgSkin: uiPWidgetSkin;
+   i: loopint;
 
 begin
    skin.ResourcePath := IncludeTrailingPathDelimiterNonEmpty(oxPaths.FindDirectory(oxPaths.UI + skin.Name));
@@ -55,11 +58,20 @@ begin
       exit;
 
    repeat
-     if(s^.SkinDescriptor.Glyphs <> nil) then begin
-        {TODO: Go through everything}
-     end;
+      wdgSkin := skin.Get(s^.cID);
 
-     s := s^.Next;
+      descriptor := @s^.SkinDescriptor;
+
+      if(descriptor^.Glyphs <> nil) then begin
+         for i := 0 to descriptor^.nGlyphs - 1 do begin
+            wdgSkin^.Glyphs[i] := oxGlyphs.LoadGlyph(wdgSkin^.GlyphStrings[i]);
+         end;
+      end;
+
+      if(descriptor^.OnLoad <> nil) then
+         descriptor^.OnLoad(skin, wdgSkin);
+
+      s := s^.Next;
    until s = nil;
 end;
 

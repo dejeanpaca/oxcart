@@ -157,6 +157,15 @@ begin
          skin.Strings[i] := descriptor.Strings^[i].Default;
    end;
 
+   if(descriptor.nGlyphs > 0) and (descriptor.Glyphs <> nil) then begin
+      {set size for glyphs array, and copy from default}
+      SetLength(skin.Glyphs, descriptor.nGlyphs);
+      SetLength(skin.GlyphStrings, descriptor.nGlyphs);
+
+      for i := 0 to descriptor.nGlyphs - 1 do
+         skin.GlyphStrings[i] := descriptor.Glyphs^[i].Default;
+   end;
+
    if(descriptor.Setup <> nil) then
       descriptor.Setup(TObject(s), @skin);
 end;
