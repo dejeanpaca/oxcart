@@ -36,7 +36,8 @@ TYPE
       {associated window}
       AssociatedWindow: oxTWindow;
 
-      Timer: TTimer;
+      Timer,
+      RenderingTimer: TTimer;
       TimeFlow: Single;
 
       constructor Create(); override;
@@ -121,6 +122,7 @@ begin
    DisplayTime := oxSplashScreen.DefaultDisplayTime;
 
    Timer.InitStart();
+   RenderingTimer.InitStart();
 
    EmitAllEvents();
 end;
@@ -138,6 +140,8 @@ begin
 
    Timer.Start();
    Load();
+
+   RenderingTimer.InitStart();
 end;
 
 procedure oxTSplashScreen.Load();
@@ -200,7 +204,7 @@ end;
 procedure oxTSplashScreen.Run();
 begin
    if(AssociatedWindow.IsSelected()) then begin
-      TimeFlow := Timer.TimeFlow();
+      TimeFlow := RenderingTimer.TimeFlow();
       Render();
    end;
 end;
@@ -297,7 +301,7 @@ begin
       oxTransform.Apply(m);
    end;
 
-   dots := trunc((Timer.Cur() mod 1000) / 250);
+   dots := trunc((RenderingTimer.Cur() mod 1000) / 250);
 
    f := oxf.GetDefault();
 
