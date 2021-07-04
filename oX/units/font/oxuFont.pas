@@ -40,6 +40,7 @@ TYPE
       IndiceCount: Loopint;
 
       class procedure Initialize(out c: oxTFont2DCache); static;
+      procedure Allocate(const s: StdString; maxlen: longint);
       procedure Destroy();
    end;
 
@@ -112,8 +113,6 @@ TYPE
       {prepare for font writing and use the specified font}
       procedure Start();
 
-      {allocate a buffer for a cache}
-      procedure Allocate(const s: StdString; var c: oxTFont2DCache; maxlen: longint = 0);
       {cache a string into buffers}
       function Cache(const s: StdString; var c: oxTFont2DCache; maxlen: longint = 0): boolean;
       {cache a string into buffers}
@@ -207,6 +206,22 @@ IMPLEMENTATION
 class procedure oxTFont2DCache.Initialize(out c: oxTFont2DCache);
 begin
    ZeroOut(c, SizeOf(c));
+end;
+
+procedure oxTFont2DCache.Allocate(const s: StdString; maxlen: longint);
+begin
+   Self.Length := system.Length(s);
+
+   if(maxlen > 0) and (Length > maxlen) then
+      Length := maxlen;
+
+   BufferLength := Length;
+
+   XGetMem(v, SizeOf(TVector2f) * BufferLength * 4);
+   XGetMem(t, SizeOf(TVector2f) * BufferLength * 4);
+   XGetMem(i, SizeOf(PWord) * BufferLength * 6);
+
+   ExternalData := false;
 end;
 
 procedure oxTFont2DCache.Destroy();
@@ -395,22 +410,6 @@ begin
 
       oxTransform.Apply();
    end;
-end;
-
-procedure oxTFont.Allocate(const s: StdString; var c: oxTFont2DCache; maxlen: longint);
-begin
-   c.Length := Length(s);
-
-   if(maxlen > 0) and (c.Length > maxlen) then
-      c.Length := maxlen;
-
-   c.BufferLength := c.Length;
-
-   XGetMem(c.v, SizeOf(TVector2f) * c.BufferLength * 4);
-   XGetMem(c.t, SizeOf(TVector2f) * c.BufferLength * 4);
-   XGetMem(c.i, SizeOf(PWord) * c.BufferLength * 6);
-
-   c.ExternalData := false;
 end;
 
 function oxTFont.Cache(const s: StdString; var c: oxTFont2DCache; maxlen: longint): boolean;
