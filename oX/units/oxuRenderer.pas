@@ -175,6 +175,9 @@ TYPE
       {selects this renderer for use}
       procedure Use(); virtual;
 
+      {check if there is an error and return a description}
+      function CheckError(): StdString; virtual;
+
       { THREAD LOGGING HELPERS }
       procedure logti(const what: StdString);
       procedure logtv(const what: StdString);
@@ -530,6 +533,11 @@ end;
 
 procedure oxTRenderer.Use();
 begin
+end;
+
+function oxTRenderer.CheckError(): StdString;
+begin
+   Result := '';
 end;
 
 procedure oxTRenderer.logti(const what: StdString);
