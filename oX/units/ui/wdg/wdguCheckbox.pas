@@ -32,7 +32,7 @@ CONST
    {disabled check mark color}
    wdgscCHECKBOX_CHECK_MARK_DISABLED = 4;
 
-   wdgCheckboxSkinColorDescriptor: array[0..4] of uiTWidgetSkinColorDescriptor = (
+   wdgsdCheckboxColor: array[0..4] of uiTWidgetSkinColorDescriptor = (
        (
           Name: 'regular';
           Color: (255, 255, 255, 255)
@@ -54,6 +54,13 @@ CONST
           Color: (96, 96, 96, 255)
        )
     );
+
+   wdgsdCheckboxGlyph: array[0..0] of uiTWidgetSkinGlyphDescriptor = (
+      (
+         Name: 'check_mark';
+         Default: 'default:$f00c'
+      )
+   );
 
 TYPE
    { wdgTCheckbox }
@@ -345,6 +352,7 @@ INITIALIZATION
 
    wdgCheckbox.Create('checkbox');
 
-   wdgCheckbox.Internal.SkinDescriptor.UseColors(wdgCheckboxSkinColorDescriptor);
+   wdgCheckbox.Internal.SkinDescriptor.UseColors(wdgsdCheckboxColor);
+   wdgCheckbox.Internal.SkinDescriptor.UseGlyphs(wdgsdCheckboxGlyph);
 
 END.
