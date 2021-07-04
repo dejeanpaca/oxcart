@@ -307,6 +307,7 @@ end;
 function oxglTPlatformWGL.RaiseError(): loopint;
 begin
    Result := winos.GetLastError(true);
+   windows.SetLastError(0);
 end;
 
 function oxglTPlatformWGL.GetErrorDescription(error: loopint): StdString;
