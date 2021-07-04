@@ -80,9 +80,12 @@ begin
       log.e(logString);
 end;
 
-procedure initWindow({%H-}wnd: oxTWindow);
+VAR
+   initRoutine: oxTRunRoutine;
+
+procedure initDebug();
 begin
-   if(oglExtensions.Supported(cGL_ARB_debug_output) and (not wnd.oxProperties.Context)) then begin
+   if oglExtensions.Supported(cGL_ARB_debug_output) then begin
       log.i('gl > Using debug output');
       glDebugMessageCallback(@debugOutput, nil);
 
@@ -93,7 +96,7 @@ end;
 
 procedure init();
 begin
-   oxglRenderer.OnWindowInit.Add(@initWindow);
+   oxglRenderer.AfterInit.Add(initRoutine, 'gl_debug_output', @initDebug);
 end;
 
 INITIALIZATION
