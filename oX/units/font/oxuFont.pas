@@ -71,8 +71,6 @@ TYPE
       public
 
       Texture: oxTTexture;
-      {characters are on a baseline on the texture}
-      TextureBaseline,
       {is the font monospace}
       Monospace: boolean;
       {file name}
