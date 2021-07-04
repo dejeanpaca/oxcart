@@ -173,6 +173,7 @@ TYPE
 
       procedure SetColor(which: loopint; var clr: TColor4ub);
       function GetColor(which: loopint): TColor4ub;
+      function GetGlyph(which: loopint): oxPGlyph;
    end;
 
 
@@ -297,6 +298,14 @@ begin
       Result := Colors[which]
    else
       Result := cWhite4ub;
+end;
+
+function uiTWidgetSkin.GetGlyph(which: loopint): oxPGlyph;
+begin
+   if(Glyphs <> nil) then
+      Result := @Glyphs[which]
+   else
+      Result := nil;
 end;
 
 END.
