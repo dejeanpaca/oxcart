@@ -40,7 +40,7 @@ TYPE
       IndiceCount: Loopint;
 
       class procedure Initialize(out c: oxTFont2DCache); static;
-      procedure Allocate(const s: StdString; maxlen: longint);
+      procedure Allocate(const s: StdString; maxlen: longint = 0);
       procedure Destroy();
    end;
 
