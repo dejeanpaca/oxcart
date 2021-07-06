@@ -157,6 +157,8 @@ TYPE
       function GetFeatures(): oxTFeaturePDescriptorList;
       {are we building a library}
       function IsLibrary(): boolean;
+      {are we building for editor}
+      function IsEditor(): boolean;
 
       {add a feature to the list by name}
       function AddFeature(feature: StdString): oxPFeatureDescriptor;
@@ -430,6 +432,11 @@ end;
 function oxedTBuildGlobal.IsLibrary(): boolean;
 begin
    Result := BuildTarget <> OXED_BUILD_EXECUTABLE;
+end;
+
+function oxedTBuildGlobal.IsEditor(): boolean;
+begin
+   Result := InEditor;
 end;
 
 function oxedTBuildGlobal.AddFeature(feature: StdString): oxPFeatureDescriptor;
@@ -1066,7 +1073,7 @@ begin
          exit;
       end;
 
-      if(IsLibrary()) then begin
+      if(IsEditor()) then begin
          {check if used fpc version matches us}
          if(pos(FPC_VERSION, BuildInstalls.CurrentPlatform^.Version) <> 1) then begin
             oxedBuildLog.e('Library fpc version mismatch. Got ' + BuildInstalls.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
@@ -1476,7 +1483,7 @@ begin
          oxedBuildLog.e('Failed to find suitable compiler for ' + BuildArch.GetPlatformString() + ' and FPC ' + Build.BuiltWithVersion);
          exit(false);
       end else
-         oxedBuildLog.w('Found compiler for ' + BuildArch.GetPlatformString() + ' with FPC v' + Build.BuiltWithVersion);
+         oxedBuildLog.w('Found compiler for ' + BuildArch.GetPlatformString() + ' with FPC v' + platform^.Version);
    end;
 
    BuildInstalls.SetPlatform(platform^.Name);
