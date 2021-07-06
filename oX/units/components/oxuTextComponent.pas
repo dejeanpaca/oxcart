@@ -98,7 +98,7 @@ end;
 procedure oxTTextComponent.RebuildCache();
 begin
    if(Font <> nil) then begin
-      Font.Allocate(Text, Cache);
+      Cache.Allocate(Text);
       Font.Cache(Text, Cache);
       Font.CenterUnit(Cache);
    end;
