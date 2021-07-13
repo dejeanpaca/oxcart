@@ -16,13 +16,12 @@ INTERFACE
 
    USES
       uStd,
-      {$IFNDEF ANDROID}
+      {$IF NOT DEFINED(MOBILE) AND NOT DEFINED(OX_LIBRARY)}
       uErrorCrashHandler,
-      {$ELSE}
-      uAndroidCrashHandler,
       {$ENDIF}
       {%H-}uFiles,
       {$IFDEF ANDROID}
+      uAndroidCrashHandler,
       ulogAndroid,
       {$ENDIF}
       { app }
