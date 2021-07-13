@@ -2,7 +2,7 @@
 
 ## Setup
 
-You will need Free Pascal 3.0.4 and Lazarus 1.8.4 or newer. `lazbuild` should be in your PATH.
+You will need Free Pascal 3.2.2 and Lazarus 2.2.0 or newer. `lazbuild` should be in your PATH.
 
 - To setup the workspace, run the `setup` script (cmd or sh) in `setup/`. Or build `setup.lpi` with lazarus.
 - You can pass symbols to the setup scripts/tool via the `-d SYMBOL` parameters if you want to deploy for a different kind of environment. Such as `-d X11` to build for X11 (needed by e.g. Vulkan 3rd party libraries, as ox assumes X11 by default).
