@@ -8,8 +8,9 @@ PROGRAM setup;
    USES
       sysutils, uStd, StringUtils, uLog, uFileUtils, appuPaths,
       ParamUtils, uTiming, uProcessHelpers,
+      {build}
       uBuild, uBuildConfiguration, uBuildInstalls,  uBuildExec,
-      uLPI, uLPIBuild, uTest;
+      uLPI, uLPIBuild;
 
 TYPE
    TTool = record
