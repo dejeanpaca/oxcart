@@ -257,6 +257,7 @@ begin
          br.y := br.y - diff div 2;
 
          uiDrawUtilities.Glyph(br, glyph^);
+         uiDraw.ClearTexture();
       end else begin
          oxRender.LineWidth(wdgCheckbox.LineWidth);
 
