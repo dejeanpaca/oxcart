@@ -203,7 +203,7 @@ end;
 
 function oxTRunGlobal.IsReady(): boolean;
 begin
-   Result := ox.Initialized and oxProgramInitTask.Initialized;
+   Result := ox.Initialized and oxProgramInitTask.Initialized and ox.Started;
 end;
 
 procedure oxTRunGlobal.AddRoutine(var routine: oxTRunRoutine);
