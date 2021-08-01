@@ -31,6 +31,7 @@ IMPLEMENTATION
 procedure oxTRenderThread.StartThread(wnd: oxTWindow; rc: loopint);
 var
    rtc: oxTRenderTargetContext;
+   errorDescription: StdString;
 
 begin
    wnd.FromWindow(rtc);
@@ -39,8 +40,13 @@ begin
    oxRenderingContext.UseWindow(wnd);
    oxRenderingContext.RC := rc;
 
-   if(rc > -1) then
+   if(rc > -1) then begin
       oxTRenderer(wnd.Renderer).ContextCurrent(rtc);
+      errorDescription := oxTRenderer(wnd.Renderer).CheckError();
+
+      if(errorDescription <> '') then
+         log.e(errorDescription);
+   end;
 
    oxTRenderer(wnd.Renderer).StartThread(wnd);
    oxTRenderer(wnd.Renderer).logtv('Started rendering thread: ' + sf(oxRenderingContext.RC));
