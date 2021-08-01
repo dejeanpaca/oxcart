@@ -389,6 +389,9 @@ begin
       if(wnd.RenderingContext > -1) then
          ContextCurrent(rtc);
    end;
+
+   if(Result > -1) then
+      RenderingContexts[Result].Used := true;
 end;
 
 function oxTRenderer.GetUnusedContext(): loopint;
