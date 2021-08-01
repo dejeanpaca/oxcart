@@ -357,8 +357,7 @@ begin
    oxedMenubar.Recents.Enable(not running);
 
    if(oxedMenubar.Project <> nil) then begin
-      oxedMenubar.Project.FindByAction(oxedwndProjectSettings.OpenWindowAction)^.Enable(enableRun);
-      oxedMenubar.Project.FindByAction(oxedwndRunSettings.OpenWindowAction)^.Enable(oxedProjectValid());
+      oxedMenubar.Project.FindByAction(oxedwndProjectSettings.OpenWindowAction)^.Enable(enableRun and oxedProjectValid());
       oxedMenubar.Project.FindByAction(oxedActions.OPEN_LAZARUS)^.Enable(oxedProjectValid());
       oxedMenubar.Project.FindByAction(oxedActions.OPEN_PROJECT_DIRECTORY)^.Enable(oxedProjectValid());
       oxedMenubar.Project.Enable(oxedProject <> nil);
