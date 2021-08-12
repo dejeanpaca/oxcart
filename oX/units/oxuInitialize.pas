@@ -9,7 +9,7 @@ UNIT oxuInitialize;
 INTERFACE
 
    USES
-     sysutils, uStd, uLog, uTiming, ParamUtils, StringUtils,
+     sysutils, uStd, uLog, uTiming, ParamUtils,
      {app}
      uAppInfo, uApp, appuLog, appudvarConfiguration,
      {oX}
@@ -108,7 +108,7 @@ begin
    log.i('Initialized application');
 
    {$IFNDEF NO_THREADS}
-   log.v('Main thread ID: ' + sf(GetThreadID));
+   log.v('Main thread ID: ' + getThreadIdentifier());
    {$ENDIF}
 
    {$IFNDEF OX_LIBRARY}

@@ -122,7 +122,7 @@ begin
    StartRender(wnd);
 
    Start();
-   log.v('Started render task: ' + Name);
+   log.v('(t: ' + getThreadIdentifier() + ') Started render task: ' + Name);
 end;
 
 procedure oxTRenderTask.RestoreRender();
@@ -163,7 +163,7 @@ begin
    if(AssociatedWindow <> nil) then
       oxRenderThread.StopThread(AssociatedWindow);
 
-   log.v('Ended render task: ' + Name);
+   log.v('(t: ' + getThreadIdentifier() + ') Ended render task: ' + Name);
 end;
 
 procedure oxTRenderTask.ThreadStart();
@@ -176,15 +176,14 @@ begin
 
    {get an RC to render the splash screen}
    RC := renderer.GetRenderingContext(AssociatedWindow);
-   log.v('Render task: ' + Name + ' got RC: ' + sf(RC));
-
+   log.v('(t: ' + getThreadIdentifier() + ') Render task: ' + Name + ' got RC: ' + sf(RC));
 
    {restore old context before proceeding}
    AssociatedWindow.FromWindow(rtc);
 
    renderer.ContextCurrent(rtc);
    {$IFNDEF NO_THREADS}
-   log.v('Set up render task ' + Name + ' on thread: ' + sf(GetThreadID()));
+   log.v('(t: ' + getThreadIdentifier() + ') Set up render task ' + Name);
    {$ENDIF}
 end;
 
