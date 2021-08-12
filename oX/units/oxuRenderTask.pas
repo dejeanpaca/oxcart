@@ -183,6 +183,9 @@ begin
    AssociatedWindow.FromWindow(rtc);
 
    renderer.ContextCurrent(rtc);
+   {$IFNDEF NO_THREADS}
+   log.v('Set up render task ' + Name + ' on thread: ' + sf(GetThreadID()));
+   {$ENDIF}
 end;
 
 END.
