@@ -9,7 +9,7 @@ UNIT oxuRunRoutines;
 INTERFACE
 
    USES
-      uStd;
+      sysutils, uStd, uTiming, StringUtils, uLog;
 
 TYPE
    oxPRunRoutine = ^ oxTRunRoutine;
@@ -32,15 +32,20 @@ TYPE
    { oxTRunRoutines }
 
    oxTRunRoutines = record
+      PoolName: string;
       s,
       e:  oxPRunRoutine;
+      UnusualTime: single;
 
-      class procedure Initialize(out r: oxTRunRoutines); static;
+      class procedure Initialize(out r: oxTRunRoutines; const usePoolName: string = ''); static;
+
+      function GetName(const methodName: string): string;
 
       procedure Call();
       procedure iCall();
       procedure dCall();
       class procedure CallNextReverse(current: oxPRunRoutine); static;
+      procedure Call(start: oxPRunRoutine; primary: boolean);
       procedure CallPrimary();
       procedure CallSecondary();
       function Find(const routine: oxTRunRoutine): boolean;
@@ -65,9 +70,19 @@ VAR
 
 { oxTRunRoutines }
 
-class procedure oxTRunRoutines.Initialize(out r: oxTRunRoutines);
+class procedure oxTRunRoutines.Initialize(out r: oxTRunRoutines; const usePoolName: string);
 begin
    ZeroPtr(@r, SizeOf(r));
+   r.UnusualTime := 0.5;
+   r.PoolName := usePoolName;
+end;
+
+function oxTRunRoutines.GetName(const methodName: string): string;
+begin
+   if(PoolName <> '') then
+      Result := '[' + PoolName + ', ' + methodName + ']'
+   else
+      Result := '[' + methodName + ']';
 end;
 
 procedure oxTRunRoutines.Call();
@@ -106,36 +121,48 @@ begin
       current^.Secondary();
 end;
 
-procedure oxTRunRoutines.CallPrimary();
+procedure oxTRunRoutines.Call(start: oxPRunRoutine; primary: boolean);
 var
    current: oxPRunRoutine;
+   elapsed: single;
+   time: TDateTime;
 
 begin
    {call all pre-run routines}
-   current := s;
+   current := start;
 
    if(current <> nil) then repeat
-      if(current^.Exec <> nil) then
-         current^.Exec();
+      time := Now();
+
+      log.v('Calling ' + GetName(current^.name));
+
+      if(primary) then begin
+         if(current^.Exec <> nil) then
+            current^.Exec();
+      end else begin
+        if(current^.Secondary <> nil) then
+           current^.Secondary();
+      end;
+
+      elapsed := time.Elapsedf();
+
+      log.v('Called ' + GetName(current^.name) + ', elapsed: ' + sf(elapsed, 5));
+
+      if(elapsed > UnusualTime) then
+         log.d('Initialization method (' + PoolName + ', ' + current^.Name + ' ) took unusual time: ' + sf(elapsed, 5));
 
       current := current^.Next;
    until (current = nil);
 end;
 
-procedure oxTRunRoutines.CallSecondary();
-var
-   current: oxPRunRoutine;
-
+procedure oxTRunRoutines.CallPrimary();
 begin
-   {call all pre-run routines}
-   current := s;
+   call(s, true);
+end;
 
-   if(current <> nil) then repeat
-      if(current^.Secondary <> nil) then
-         current^.Secondary();
-
-      current := current^.Next;
-   until (current = nil);
+procedure oxTRunRoutines.CallSecondary();
+begin
+   call(s, false)
 end;
 
 function oxTRunRoutines.Find(const routine: oxTRunRoutine): boolean;
