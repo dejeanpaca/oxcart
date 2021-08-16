@@ -11,6 +11,9 @@ INTERFACE
    USES
       sysutils, uStd, uTiming, StringUtils, uLog;
 
+CONST
+   oxcRunRoutineVerbose: boolean = false;
+
 TYPE
    oxPRunRoutine = ^ oxTRunRoutine;
    oxPRunRoutines = ^oxTRunRoutines;
@@ -134,7 +137,8 @@ begin
    if(current <> nil) then repeat
       time := Now();
 
-      log.v('Calling ' + GetName(current^.name));
+      if oxcRunRoutineVerbose then
+         log.v('Calling ' + GetName(current^.name));
 
       if(primary) then begin
          if(current^.Exec <> nil) then
@@ -146,7 +150,8 @@ begin
 
       elapsed := time.Elapsedf();
 
-      log.v('Called ' + GetName(current^.name) + ', elapsed: ' + sf(elapsed, 5));
+      if oxcRunRoutineVerbose then
+         log.v('Called ' + GetName(current^.name) + ', elapsed: ' + sf(elapsed, 5));
 
       if(elapsed > UnusualTime) then
          log.d('Initialization method (' + PoolName + ', ' + current^.Name + ' ) took unusual time: ' + sf(elapsed, 5));
