@@ -50,8 +50,6 @@ begin
       {separate}
       cpu := Copy(Self, 1, p - 1);
       os := Copy(Self, p + 1, Length(Self) - p);
-
-      writeln('CPU: ', cpu, ' OS: ', OS);
    end;
 end;
 
