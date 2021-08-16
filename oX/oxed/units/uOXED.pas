@@ -126,6 +126,9 @@ end;
 INITIALIZATION
    dvar.Add('oxed', dvgOXED);
 
+   oxTRunRoutines.Initialize(oxed.Init, 'oxed.Init');
+   oxTRunRoutines.Initialize(oxed.PostInit, 'oxed.PostInit');
+
    TProcedures.InitializeValues(oxed.OnSceneChange);
 
 END.

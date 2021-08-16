@@ -90,5 +90,6 @@ INITIALIZATION
 
    dvar.Add('app', app.dvGroup);
    app.dvGroup.Add(dvIdleTime, 'idle_time', dtcLONGINT, @app.IdleTime);
+   oxTRunRoutines.Initialize(app.InitializationProcs, 'app.Initialization');
 
 END.
