@@ -116,7 +116,7 @@ var
 begin
    FileName := fn;
 
-   fileHandle := fpOpen(FileName, O_RdOnly or O_NonBlock);
+   fileHandle := unxFpOpen(FileName, O_RdOnly or O_NonBlock, MODE_FPOPEN);
 
    if(fileHandle > 0) then begin
       log.i('Successfully opened device: ' + fn);
