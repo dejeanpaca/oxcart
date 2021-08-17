@@ -224,6 +224,11 @@ end;
 
 procedure oglTRender.Lines(var v: array of TVector2f);
 begin
+   {$IFDEF OX_DEBUG}
+   if(glDrawArrays = nil) then
+      exit;
+   {$ENDIF}
+
    glVertexPointer(2, GL_FLOAT, 0, @v);
    glDrawArrays(GL_LINES, 0, Length(v));
    {$IFDEF DEBUG}LastUsedVertex := @v;{$ENDIF}
@@ -231,6 +236,11 @@ end;
 
 procedure oglTRender.Lines(var v: array of TVector3f);
 begin
+   {$IFDEF OX_DEBUG}
+   if(glDrawArrays = nil) then
+      exit;
+   {$ENDIF}
+
    glVertexPointer(3, GL_FLOAT, 0, @v);
    glDrawArrays(GL_LINES, 0, Length(v));
    {$IFDEF DEBUG}LastUsedVertex := @v;{$ENDIF}
@@ -238,6 +248,11 @@ end;
 
 procedure oglTRender.LineLoop(var v: array of TVector2f);
 begin
+   {$IFDEF OX_DEBUG}
+   if(glDrawArrays = nil) then
+      exit;
+   {$ENDIF}
+
    glVertexPointer(2, GL_FLOAT, 0, @v);
    glDrawArrays(GL_LINE_LOOP, 0, Length(v));
    {$IFDEF DEBUG}LastUsedVertex := @v;{$ENDIF}
@@ -245,6 +260,11 @@ end;
 
 procedure oglTRender.LineLoop(var v: array of TVector3f);
 begin
+   {$IFDEF OX_DEBUG}
+   if(glDrawArrays = nil) then
+      exit;
+   {$ENDIF}
+
    glVertexPointer(3, GL_FLOAT, 0, @v);
    glDrawArrays(GL_LINE_LOOP, 0, Length(v));
    {$IFDEF DEBUG}LastUsedVertex := @v;{$ENDIF}
@@ -252,6 +272,11 @@ end;
 
 procedure oglTRender.LineStrip(var v: array of TVector2f);
 begin
+   {$IFDEF OX_DEBUG}
+   if(glDrawArrays = nil) then
+      exit;
+   {$ENDIF}
+
    glVertexPointer(2, GL_FLOAT, 0, @v);
    glDrawArrays(GL_LINE_STRIP, 0, Length(v));
    {$IFDEF DEBUG}LastUsedVertex := @v;{$ENDIF}
@@ -259,6 +284,11 @@ end;
 
 procedure oglTRender.LineStrip(var v: array of TVector3f);
 begin
+   {$IFDEF OX_DEBUG}
+   if(glDrawArrays = nil) then
+      exit;
+   {$ENDIF}
+
    glVertexPointer(3, GL_FLOAT, 0, @v);
    glDrawArrays(GL_LINE_STRIP, 0, Length(v));
    {$IFDEF DEBUG}LastUsedVertex := @v;{$ENDIF}
@@ -266,6 +296,11 @@ end;
 
 procedure oglTRender.Points(var v: array of TVector2f);
 begin
+   {$IFDEF OX_DEBUG}
+   if(glDrawArrays = nil) then
+      exit;
+   {$ENDIF}
+
    glVertexPointer(2, GL_FLOAT, 0, @v);
    glDrawArrays(GL_POINTS, 0, Length(v));
    {$IFDEF DEBUG}LastUsedVertex := @v;{$ENDIF}
@@ -273,6 +308,11 @@ end;
 
 procedure oglTRender.Points(var v: array of TVector3f);
 begin
+   {$IFDEF OX_DEBUG}
+   if(glDrawArrays = nil) then
+      exit;
+   {$ENDIF}
+
    glVertexPointer(3, GL_FLOAT, 0, @v);
    glDrawArrays(GL_POINTS, 0, Length(v));
    {$IFDEF DEBUG}LastUsedVertex := @v;{$ENDIF}
@@ -280,6 +320,11 @@ end;
 
 procedure oglTRender.Primitives(primitive: oxTPrimitives; count: longint; indices: PWord);
 begin
+   {$IFDEF OX_DEBUG}
+   if(glDrawElements = nil) then
+      exit;
+   {$ENDIF}
+
    if(primitive <> oxPRIMITIVE_NONE) then
       {$IFNDEF GLES}
       glDrawElements(oglPrimitiveTranslate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, indices);
@@ -292,6 +337,11 @@ end;
 
 procedure oglTRender.Primitives(primitive: oxTPrimitives; count: longint; indices: PLongWord);
 begin
+   {$IFDEF OX_DEBUG}
+   if(glDrawElements = nil) then
+      exit;
+   {$ENDIF}
+
    if(primitive <> oxPRIMITIVE_NONE) then
       {$IFNDEF GLES}
       glDrawElements(oglPrimitiveTranslate[GLenum(primitive)], count, GL_UNSIGNED_INT, indices);
@@ -305,6 +355,11 @@ end;
 
 procedure oglTRender.DrawArrays(primitive: oxTPrimitives; count: longint);
 begin
+   {$IFDEF OX_DEBUG}
+   if(glDrawArrays = nil) then
+      exit;
+   {$ENDIF}
+
    if(primitive <> oxPRIMITIVE_NONE) then
       glDrawArrays(oglPrimitiveTranslate[GLenum(primitive)], 0, count);
 end;
