@@ -14,7 +14,6 @@ UNIT oxuRendererGL;
 INTERFACE
 
    USES
-      uStd,
       oxuglRenderer,
       {$IF DEFINED(WINDOWS)}
       oxuglRendererWin, {$IFNDEF OX_LIBRARY}oxuWindowsPlatform,{$ENDIF}
@@ -32,9 +31,12 @@ INTERFACE
       {$IFNDEF GLES}
       oxuglShader,
       oxuglShaderLoader,
+      oxugl1Shims,
+         {$IFNDEF OX_LIBRARY}
+         oxuglDebugOutput,
+         {$ENDIF}
       {$ENDIF}
       oxuglMaterial,
-      {$IF (NOT DEFINED(OX_LIBRARY)) AND (NOT DEFINED(GLES))}oxuglDebugOutput,{$ENDIF}
       oxuglFP,
       oxuglFPShaders,
       oxuglScreenshot,
