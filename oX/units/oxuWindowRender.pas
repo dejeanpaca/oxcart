@@ -72,8 +72,6 @@ begin
    if(not wnd.oxProperties.RenderMinimized) and (wnd.IsMinimized()) then
       exit;
 
-     oxSurfaceRender.Render(wnd);
-
    {viewport has been updated}
    if(wnd.Viewport.Changed) then
       wnd.SetupViewport();
