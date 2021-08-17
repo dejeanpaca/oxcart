@@ -108,9 +108,14 @@ begin
    {$IFDEF WINDOWS}
    if(c = appPATH_CONFIG) then
       path := GetUTF8EnvironmentVariable('APPDATA')
-   else if(c = appPATH_LOCAL) then
-      path := GetUTF8EnvironmentVariable('LOCALAPPDATA')
-   else if(c = appPATH_HOME) then
+   else if(c = appPATH_LOCAL) then begin
+      path := GetUTF8EnvironmentVariable('LOCALAPPDATA');
+
+      if(path = '') then
+         path := GetUTF8EnvironmentVariable('USERPROFILE') + DirSep + 'Local Settings\Application Data';
+
+      writeln('LOCAL!: ', path);
+   end else if(c = appPATH_HOME) then
       path := GetUTF8EnvironmentVariable('USERPROFILE')
    else if(c = appPATH_CONFIG_SHARED) then
       path := GetUTF8EnvironmentVariable('ALLUSERSPROFILE')
