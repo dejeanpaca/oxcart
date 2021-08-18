@@ -21,8 +21,9 @@ IMPLEMENTATION
 CONST
    cidWINDOW = 0;
 
-   conCommands: array[0..0] of conTCommand = (
-      (sid: 'window'; sHelp: 'Handles window operations'; nID: cidWINDOW)
+   conCommands: array[0..1] of conTCommand = (
+      (sid: 'window'; sHelp: 'Handles window operations'; nID: cidWINDOW),
+      (sid: 'wnd'; sHelp: 'Handles window operations'; nID: cidWINDOW)
    );
 
 VAR
@@ -70,7 +71,7 @@ end;
 
 procedure writeOutDimensions(const con: conTConsole);
 begin
-   con.i('Dimensions: ' + sf(oxWindows.w[selectedWindow].Dimensions.w) + 'x' + sf(oxWindows.w[selectedWindow].Dimensions.h));
+   con.i('Dimensions: ' + oxWindows.w[selectedWindow].Dimensions.ToString());
 end;
 
 procedure setGetDimensions(const con: conTConsole);
@@ -117,6 +118,7 @@ begin
    wnd := oxWindows.w[selectedWindow];
 
    writeOutDimensions(con);
+   con.i('Position: ' + oxWindows.w[selectedWindow].Position.ToString());
    con.i('Fullscreen: ' + sf(wnd.Fullscreen.Enabled));
 end;
 
