@@ -139,7 +139,7 @@ begin
    renderer.SetupData(wnd);
 
    log.Enter('Window: ' + wnd.Title(* + ' (' + uiwGetIDString(wnd.w.wID) + ')'*));
-      log.i('Requested Size: ' + sf(wnd.Dimensions.w) + 'x' + sf(wnd.Dimensions.h));
+      log.i('Requested Size: ' + wnd.Dimensions.ToString());
 
       if(renderer.Settings.DoubleBuffer) then
          s := 'double buffer'
