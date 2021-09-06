@@ -17,7 +17,8 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uLog, uStd, uColors, StringUtils, uImage, vmVector,
       {ox}
-      uOX, oxuRunRoutines, oxuWindowTypes, oxuTypes, oxuRenderer, oxuRenderers, oxuWindow,
+      uOX, oxuRunRoutines, oxuWindowTypes, oxuTypes, oxuWindow,
+      oxuRenderer, oxuRenderers, oxuRenderingContext,
       {renderer.gl}
       oxuOGL, oxuglExtensions,
       oxuglInfo, {$IFDEF OX_LIBRARY}oxuglLibraryInfo, {$ENDIF}
@@ -56,7 +57,7 @@ TYPE
       function InternalGetContext(wnd: oxTWindow; shareContext: loopint=-1): loopint; override;
       function GetContextString(index: loopint=0): StdString; override;
       procedure InternalContextCurrent(const context: oxTRenderTargetContext); override;
-      procedure InternalClearContext(context: loopint); override;
+      procedure InternalClearContext(); override;
       function DestroyContext(context: loopint): boolean; override;
 
       procedure StartThread({%H-}wnd: oxTWindow); override;
@@ -149,7 +150,7 @@ begin
       exit(false);
 
    if(not PreserveRCs) or (wnd.RenderingContext = -1) then
-      wnd.RenderingContext := GetRenderingContext(wnd);
+         wnd.RenderingContext := GetRenderingContext(wnd);
 
    if(wnd.RenderingContext = -1) or (wnd.ErrorCode <> 0) then begin
       if(wnd.ErrorCode = 0) then
@@ -299,13 +300,16 @@ begin
       logtw('Failed to set context ' + sf(context.RenderContext) + ' current: ' + GetPlatformErrorDescription(error));
 end;
 
-procedure oxglTRenderer.InternalClearContext(context: loopint);
+procedure oxglTRenderer.InternalClearContext();
 var
    error: loopint;
    wnd: oglTWindow;
+   rc: oxPRenderingContext;
 
 begin
-   wnd := oglTWindow(RenderingContexts[context].Window);
+   rc := @oxRenderingContext;
+
+   wnd := oglTWindow(RenderingContexts[rc^.RC].Window);
 
    error := 0;
 
@@ -313,9 +317,9 @@ begin
       error := glPlatform^.RaiseError();
 
    if(error = 0) then
-      logtv('Cleared context ' + sf(context))
+      logtv('Cleared context ' + sf(rc^.RC))
    else
-      logtw('Failed to clear context ' + sf(context) + ': ' + GetPlatformErrorDescription(error));
+      logtw('Failed to clear context ' + sf(rc^.RC) + ': ' + GetPlatformErrorDescription(error));
 end;
 
 function oxglTRenderer.DestroyContext(context: loopint): boolean;
