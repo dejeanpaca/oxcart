@@ -53,10 +53,10 @@ TYPE
       {rendering}
       procedure SwapBuffers(wnd: oxTWindow); override;
 
-      function GetContext(wnd: oxTWindow; shareContext: loopint=-1): loopint; override;
+      function InternalGetContext(wnd: oxTWindow; shareContext: loopint=-1): loopint; override;
       function GetContextString(index: loopint=0): StdString; override;
-      procedure ContextCurrent(const context: oxTRenderTargetContext); override;
-      procedure ClearContext(context: loopint); override;
+      procedure InternalContextCurrent(const context: oxTRenderTargetContext); override;
+      procedure InternalClearContext(context: loopint); override;
       function DestroyContext(context: loopint): boolean; override;
 
       procedure StartThread({%H-}wnd: oxTWindow); override;
@@ -250,7 +250,7 @@ begin
    {$ENDIF}
 end;
 
-function oxglTRenderer.GetContext(wnd: oxTWindow; shareContext: loopint): loopint;
+function oxglTRenderer.InternalGetContext(wnd: oxTWindow; shareContext: loopint): loopint;
 var
    error: loopint;
    rc,
@@ -283,55 +283,39 @@ begin
    Result := sf(glRenderingContexts[index]);
 end;
 
-procedure oxglTRenderer.ContextCurrent(const context: oxTRenderTargetContext);
+procedure oxglTRenderer.InternalContextCurrent(const context: oxTRenderTargetContext);
 var
    error: loopint;
-   rc: loopint;
-
 begin
-   rc := context.RenderContext;
+   logtv('Set render context ' + sf(context.RenderContext) +  ' (glrc: ' +
+      sf(glRenderingContexts[context.RenderContext]) + ') current');
 
-   if(rc >= 0) then begin
-      logtv('Set render context ' + sf(rc) +  ' (glrc: ' + sf(glRenderingContexts[rc]) + ') current');
+   error := 0;
 
-      error := 0;
+   if(not glPlatform^.ContextCurrent(context)) then
+      error := glPlatform^.RaiseError();
 
-      if(not glPlatform^.ContextCurrent(context)) then
-         error := glPlatform^.RaiseError();
-
-      if(error <> 0) then
-         logtw('Failed to set context ' + sf(rc) + ' current: ' + GetPlatformErrorDescription(error));
-
-      RenderingContexts[rc].Used := true;
-
-      if(context.Target^.Typ = oxRENDER_TARGET_WINDOW) then
-         RenderingContexts[rc].Window := oxTWindow(context.Target^.Target)
-      else
-         RenderingContexts[rc].Window := nil;
-   end;
+   if(error <> 0) then
+      logtw('Failed to set context ' + sf(context.RenderContext) + ' current: ' + GetPlatformErrorDescription(error));
 end;
 
-procedure oxglTRenderer.ClearContext(context: loopint);
+procedure oxglTRenderer.InternalClearContext(context: loopint);
 var
    error: loopint;
    wnd: oglTWindow;
 
 begin
-   if(context >= 0) then begin
-      wnd := oglTWindow(RenderingContexts[context].Window);
+   wnd := oglTWindow(RenderingContexts[context].Window);
 
-      error := 0;
+   error := 0;
 
-      if(not glPlatform^.ClearContext(wnd)) then
-         error := glPlatform^.RaiseError();
+   if(not glPlatform^.ClearContext(wnd)) then
+      error := glPlatform^.RaiseError();
 
-      if(error = 0) then
-         logtv('Cleared context ' + sf(context))
-      else
-         logtw('Failed to clear context ' + sf(context) + ': ' + GetPlatformErrorDescription(error));
-
-      RenderingContexts[context].Used := false;
-   end;
+   if(error = 0) then
+      logtv('Cleared context ' + sf(context))
+   else
+      logtw('Failed to clear context ' + sf(context) + ': ' + GetPlatformErrorDescription(error));
 end;
 
 function oxglTRenderer.DestroyContext(context: loopint): boolean;
