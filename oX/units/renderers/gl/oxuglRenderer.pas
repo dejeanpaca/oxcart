@@ -58,7 +58,7 @@ TYPE
       function GetContextString(index: loopint=0): StdString; override;
       procedure InternalContextCurrent(const context: oxTRenderTargetContext); override;
       function InternalClearContext(): boolean; override;
-      function DestroyContext(context: loopint): boolean; override;
+      function InternalDestroyContext(context: loopint): boolean; override;
 
       procedure StartThread({%H-}wnd: oxTWindow); override;
       procedure StopThread({%H-}wnd: oxTWindow); override;
@@ -322,22 +322,17 @@ begin
       logtw('Failed to clear context ' + sf(rc^.RC) + ': ' + GetPlatformErrorDescription(error));
 end;
 
-function oxglTRenderer.DestroyContext(context: loopint): boolean;
+function oxglTRenderer.InternalDestroyContext(context: loopint): boolean;
 var
    error: loopint;
    rc: oglTRenderingContext;
    wnd: oglTWindow;
 
 begin
-   if(context < 0) then
-      exit(true);
-
    Result := true;
 
    rc := glRenderingContexts[context];
    wnd := oglTWindow(RenderingContexts[context].Window);
-
-   RemoveContext(context);
 
    if(ogl.ValidRC(rc)) then begin
       Result := glPlatform^.DestroyContext(wnd, rc);
