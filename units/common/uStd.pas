@@ -265,6 +265,7 @@ CONST
 VAR
    ioE: longint = eNONE;
    GlobalStartTime: TDateTime;
+   MainThreadId: {$IFNDEF NO_THREADS}TThreadID{$ELSE}PtrUInt{$ENDIF};
 
 {essentially does nothing}
 procedure Pass();
@@ -1073,13 +1074,24 @@ begin
 end;
 
 function getThreadIdentifier(): string;
+var
+   threadId: TThreadID;
+
 begin
-   Result := HexStr(GetThreadID(), SizeOf(TThreadID) * 2);
+   threadId := GetThreadID();
+
+   if(threadId = MainThreadId) then
+      Result := HexStr(threadId, SizeOf(TThreadID) * 2)
+   else
+      Result := 'main';
 end;
 
 {$ENDIF}
 
 INITIALIZATION
    GlobalStartTime := Time;
+   {$IFNDEF NO_THREADS}
+   MainThreadId := GetThreadID();
+   {$ENDIF}
 
 END.
