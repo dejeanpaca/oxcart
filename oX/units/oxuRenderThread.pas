@@ -34,6 +34,8 @@ var
    errorDescription: StdString;
 
 begin
+   oxRenderingContext.Initialize();
+
    wnd.FromWindow(rtc);
    rtc.RenderContext := rc;
 
