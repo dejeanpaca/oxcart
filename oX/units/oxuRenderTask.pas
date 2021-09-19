@@ -61,6 +61,7 @@ TYPE
       procedure TaskStop(); override;
 
       procedure ThreadStart(); override;
+      procedure ThreadDone(); override;
    end;
 
    oxTRenderTaskClass = class of oxTRenderTask;
@@ -122,7 +123,6 @@ begin
    StartRender(wnd);
 
    Start();
-   log.v('(t: ' + getThreadIdentifier() + ') Started render task: ' + Name);
 end;
 
 procedure oxTRenderTask.RestoreRender();
@@ -152,39 +152,38 @@ end;
 
 procedure oxTRenderTask.TaskStart();
 begin
-   if(AssociatedWindow <> nil) then
-      oxRenderThread.StartThread(AssociatedWindow, RC);
+
+   {start the thread}
+   oxRenderThread.StartThread(AssociatedWindow, RC);
+   log.v('(t: ' + getThreadIdentifier() + ') Started thread: ' + Name);
 end;
 
 procedure oxTRenderTask.TaskStop();
 begin
    Unload();
 
-   if(AssociatedWindow <> nil) then
-      oxRenderThread.StopThread(AssociatedWindow);
+   oxRenderThread.StopThread(AssociatedWindow);
 
-   log.v('(t: ' + getThreadIdentifier() + ') Ended render task: ' + Name);
+   log.v('(t: ' + getThreadIdentifier() + ') Ended render thread: ' + Name);
 end;
 
 procedure oxTRenderTask.ThreadStart();
 var
    renderer: oxTRenderer;
-   rtc: oxTRenderTargetContext;
 
 begin
    renderer := oxTRenderer(AssociatedWindow.Renderer);
 
-   {get an RC to render the splash screen}
+   {get an RC to render this task}
    RC := renderer.GetRenderingContext(AssociatedWindow);
    log.v('(t: ' + getThreadIdentifier() + ') Render task: ' + Name + ' got RC: ' + sf(RC));
 
-   {restore old context before proceeding}
-   AssociatedWindow.FromWindow(rtc);
+   log.v('(t: ' + getThreadIdentifier() + ') Started render task: ' + Name);
+end;
 
-   renderer.ContextCurrent(rtc);
-   {$IFNDEF NO_THREADS}
-   log.v('(t: ' + getThreadIdentifier() + ') Set up render task ' + Name);
-   {$ENDIF}
+procedure oxTRenderTask.ThreadDone();
+begin
+   log.v('(t: ' + getThreadIdentifier() + ') Done render task: ' + Name);
 end;
 
 END.
