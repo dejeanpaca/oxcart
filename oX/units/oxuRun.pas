@@ -14,7 +14,8 @@ INTERFACE
       uApp, appuEvents, appuActionEvents,
       {oX}
       uOX,
-      oxuInitialize, oxuWindows, oxuPlatform, oxuRunRoutines, oxuWindowRender, oxuProgramInitTask,
+      oxuInitialize, oxuWindows, oxuPlatform, oxuRunRoutines, oxuWindowRender,
+      oxuInitTask, oxuProgramInitTask,
       oxuTimer, oxuRenderingContext, oxuRenderer;
 
 TYPE
@@ -110,12 +111,12 @@ begin
 
          {main loop}
          repeat
-            if(ox.Initialized) then begin
+            if(ox.Initialized and oxInitTask.IsFinished()) then begin
                if(oxProgramInitTask.Task = nil) then
                   oxProgramInitTask.Go();
             end;
 
-            if(ox.Initialized and oxProgramInitTask.Initialized) then begin
+            if(ox.Initialized and oxProgramInitTask.IsFinished()) then begin
                if(not ox.Started) then
                   Start();
             end;

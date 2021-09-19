@@ -32,6 +32,7 @@ TYPE
       Task: oxTInitTask;
 
       procedure Go();
+      function IsFinished(): boolean;
    end;
 
 VAR
@@ -89,6 +90,17 @@ procedure oxTInitTaskGlobal.Go();
 begin
    Task := oxTInitTask.Create();
    Task.RunThreaded(oxWindow.Current);
+end;
+
+function oxTInitTaskGlobal.IsFinished(): boolean;
+begin
+   Result := false;
+
+   if(ox.Initialized) then
+      Result := true;
+
+   if(Task <> nil) then
+      Result := Task.IsFinished();
 end;
 
 END.

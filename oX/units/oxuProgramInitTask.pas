@@ -34,6 +34,7 @@ TYPE
       Initialized: boolean;
 
       procedure Go();
+      function IsFinished(): boolean;
    end;
 
 VAR
@@ -77,4 +78,14 @@ begin
    Task.RunThreaded(oxWindow.Current);
 end;
 
+function oxTProgramInitTaskGlobal.IsFinished(): boolean;
+begin
+   Result := false;
+
+   if(Initialized) then
+      Result := true;
+
+   if(Task <> nil) then
+      Result := Task.IsFinished();
+end;
 END.
