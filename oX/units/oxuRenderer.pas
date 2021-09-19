@@ -335,7 +335,7 @@ var
 begin
    for i := 0 to oxMAXIMUM_RENDER_CONTEXT do begin
       if(not RenderingContexts[i].Created) then begin
-         log.i('Created rendering context ' + sf(i));
+         logtv('Created rendering context ' + sf(i));
 
          RenderingContexts[i].Created := true;
          RenderingContexts[i].Window := wnd;
@@ -475,6 +475,8 @@ begin
          logtv('Cleared context ' + sf(rc^.RC))
       else
          logtw('Failed to clear context ' + sf(rc^.RC));
+
+      oxRenderingContext.RC := -1;
    end;
 end;
 

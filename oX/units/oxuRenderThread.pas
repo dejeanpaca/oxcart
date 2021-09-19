@@ -60,12 +60,9 @@ var
 
 begin
    wasRC := oxRenderingContext.RC;
-   oxTRenderer(wnd.Renderer).StopThread(wnd);
 
-   if(oxRenderingContext.RC > -1) then begin
-      oxTRenderer(wnd.Renderer).ClearContext();
-      oxRenderingContext.RC := -1;
-   end;
+   oxTRenderer(wnd.Renderer).StopThread(wnd);
+   oxTRenderer(wnd.Renderer).ClearContext();
 
    oxTRenderer(wnd.Renderer).logtv('Stopped rendering thread: ' + sf(wasRC));
 end;
