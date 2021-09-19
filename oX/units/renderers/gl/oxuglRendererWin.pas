@@ -290,8 +290,8 @@ begin
 
    if(Result <> 0) and (wnd.wd.LastError = 0) then begin
       if(not wnd.oxProperties.Context) and (shareContext <> 0) then begin
-         if(not wglShareLists(Result, shareContext)) then begin
-            wnd.wd.LastError := winos.LogError('gl > (wglCreateContext) Failed to share lists with context ' + sf(shareContext));
+         if(not wglShareLists(shareContext, Result)) then begin
+            wnd.wd.LastError := winos.LogError('gl > (wglCreateContext) Failed to share lists ' + sf(Result) + ' with context ' + sf(shareContext));
          end;
       end;
    end;
