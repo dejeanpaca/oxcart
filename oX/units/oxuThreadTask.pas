@@ -147,6 +147,8 @@ TYPE
 
       {set the thread name}
       procedure SetName(const newName: string);
+      {get the task name}
+      function GetName(): string;
    end;
 
    oxTThreadTasksList = specialize TSimpleList<oxTThreadTask>;
@@ -488,6 +490,14 @@ begin
    if(Thread <> nil) then
       TThreadUtils.SetThreadName(Thread, newName);
    {$ENDIF}
+end;
+
+function oxTThreadTask.GetName(): string;
+begin
+   if Name <> '' then
+      Result := Name
+   else
+      Result := ClassName;
 end;
 
 procedure processEvents(var event: appTEvent);
