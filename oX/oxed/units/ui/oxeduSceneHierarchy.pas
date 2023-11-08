@@ -17,7 +17,7 @@ INTERFACE
       {ox}
       oxuTypes, oxuScene, oxuEntity, oxuFont,
       {ui}
-      uiuTypes, uiuWindow, uiWidgets, uiuWidgetWindow, uiuWindowTypes,
+      uiuTypes, uiuWindow, uiWidgets, uiuWidgetWindow,
       wdguList, wdguHierarchyList, wdguInputBox, uiuWidget, uiuInputBoxOverlay,
       {oxed}
       uOXED, oxeduWindow, oxeduMenubar, oxeduEntityMenu, oxeduProjectManagement, oxeduProject, oxeduProjectRunner,
