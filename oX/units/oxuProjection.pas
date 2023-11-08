@@ -36,6 +36,7 @@ TYPE
       procedure SetViewportf(newX, newY, newW, newH: single);
       {set the new offset}
       procedure SetOffset(offsetX, offsetY: longint);
+      procedure SetOffset(const p: oxTPoint); inline;
       {sets a viewport from the projection}
       procedure Viewport();
 
@@ -183,6 +184,11 @@ procedure oxTProjectionHelper.SetOffset(offsetX, offsetY: longint);
 begin
    Offset.x := offsetX;
    Offset.y := offsetY;
+end;
+
+procedure oxTProjectionHelper.SetOffset(const p: oxTPoint);
+begin
+  SetOffset(p.x, p.y);
 end;
 
 procedure oxTProjectionHelper.Viewport();
