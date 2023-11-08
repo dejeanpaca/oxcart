@@ -34,6 +34,7 @@ TYPE
       Menus: uiTContextMenu;
 
       constructor Create(); override;
+      procedure Initialize; override;
       destructor Destroy; override;
 
       function Add(const menuCaption: string): uiTContextMenu;
@@ -55,6 +56,8 @@ TYPE
    { wdgTMenubarGlobal }
 
    wdgTMenubarGlobal = record
+      Color: TColor4ub;
+
       {default height}
       Height,
       {separation between menus}
@@ -114,6 +117,13 @@ begin
    SelectedMenu := -1;
 end;
 
+procedure wdgTMenubar.Initialize;
+begin
+   inherited Initialize;
+
+   Color := wdgMenubar.Color;
+end;
+
 destructor wdgTMenubar.Destroy;
 begin
    inherited Destroy;
@@ -141,7 +151,7 @@ var
 begin
    colors := GetColorset();
 
-   SetColor(colors^.LightSurface);
+   SetColor(Color);
    uiDraw.Box(RPosition, Dimensions);
 
    if(HamburgerMode) then begin
@@ -219,19 +229,21 @@ begin
       r.w := Dimensions.w;
 
       f.Start();
-         for i := 0 to (Menus.Items.n - 1) do begin
-            current := @Menus.Items.List[i];
 
-            if(current^.Properties.IsSet(uiCONTEXT_MENU_ITEM_ENABLED)) and
-            (uiTContextMenu(current^.Sub).Items.n > 0) then
-               SetColorBlended(colors^.Text)
-            else
-               SetColorBlended(uiTWindow(wnd).Skin.DisabledColors.Text);
+      for i := 0 to (Menus.Items.n - 1) do begin
+         current := @Menus.Items.List[i];
 
-            f.Write(r.x, r.y - r.h + 1 + PaddingBottom, current^.Caption);
+         if(current^.Properties.IsSet(uiCONTEXT_MENU_ITEM_ENABLED)) and
+         (uiTContextMenu(current^.Sub).Items.n > 0) then
+            SetColorBlended(colors^.Text)
+         else
+            SetColorBlended(uiTWindow(wnd).Skin.DisabledColors.Text);
 
-            inc(r.x, f.GetLength(current^.Caption) + Separation);
-         end;
+         f.Write(r.x, r.y - r.h + 1 + PaddingBottom, current^.Caption);
+
+         inc(r.x, f.GetLength(current^.Caption) + Separation);
+      end;
+
       oxf.Stop();
    end;
 end;
@@ -413,6 +425,7 @@ end;
 INITIALIZATION
    internal.Register('widget.menubar', @initializeWidget);
 
+   wdgMenubar.Color.Assign(24, 24, 32, 255);
    wdgMenubar.Height := MENUBAR_HEIGHT;
    wdgMenubar.Separation := MENUBAR_SEPARATION;
    wdgMenubar.Padding := MENUBAR_PADDING;

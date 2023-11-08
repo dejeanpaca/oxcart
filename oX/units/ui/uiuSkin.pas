@@ -217,7 +217,7 @@ begin
       TitleButtonSpacing := 1;
 
       {window colors}
-      Colors.cTitle.Assign(0, 99, 177, 255);
+      Colors.cTitle.Assign(84, 122, 201, 255);
       Colors.cTitleText  := cWhite4ub;
       Colors.cBackground.Assign(32, 32, 32, 244);
       Colors.cFrame := Colors.cTitle;
@@ -228,7 +228,7 @@ begin
 
       InactiveColors := Colors;
 
-      InactiveColors.cTitle.Assign(64, 64, 96, 255);
+      InactiveColors.cTitle := Colors.cTitle.Darken(0.2);
       InactiveColors.cTitleText.Assign(127, 127, 127, 255);
       InactiveColors.cFrame := InactiveColors.cTitle;
       InactiveColors.cInnerFrame.Assign(0, 0, 0, 255);
@@ -258,13 +258,13 @@ begin
       {text colors}
       Text.Assign(255, 255, 255, 255);
       TextInHighlight.Assign(255, 255, 255, 255);
-      InactiveText.Assign(127, 127, 127, 255);;
+      InactiveText.Assign(127, 127, 127, 255);
 
       {general colors}
       Highlight.Assign(127, 127, 255, 255);
       Shadow := cBlack4ub;
-      Surface.Assign(80, 80, 80, 255);
-      LightSurface.Assign(100, 100, 100, 255);
+      Surface.Assign(48, 48, 48, 255);
+      LightSurface.Assign(80, 80, 80, 255);
       SelectedBorder.Assign(63, 127, 255, 255);
       Border.Assign(16, 16, 16, 255);
 
