@@ -284,6 +284,10 @@ begin
 
    log.Enter('oX > De-initializing...');
 
+   {perform initial de-initialization step}
+   ox.OnInitialize.dCall();
+   log.i('oxDeinitialize complete');
+
    {save configuration only if we were initialized}
    if(ox.Initialized) then begin
       {$IFNDEF OX_LIBRARY}
@@ -294,10 +298,6 @@ begin
       {save configuration before objects are destroyed}
       appDVarTextConfiguration.Save();
    end;
-
-   {perform initial de-initialization step}
-   ox.OnDeinitialize.Call();
-   log.i('oxDeinitialize complete');
 
    if(ox.AppProcs.dlist.n > 0) then begin
       ox.AppProcs.dCall();

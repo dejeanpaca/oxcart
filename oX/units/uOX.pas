@@ -49,8 +49,6 @@ TYPE
       OnPreInitialize,
       {called after engine is initialized}
       OnInitialize,
-      {called before engine is deinitialized}
-      OnDeinitialize,
       {called when the program is ready to start}
       OnStart,
       {called after initialization, but before start to load required resources}
