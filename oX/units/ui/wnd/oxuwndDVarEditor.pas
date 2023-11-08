@@ -281,10 +281,7 @@ end;
 
 procedure oxTDVarEditorWindow.WindowDestroyed(wnd: oxuiTWindowBase);
 begin
-   wdg.Vars := nil;
-   wdg.Close := nil;
-   wdg.Divisor := nil;
-   wdg.Filter := nil;
+   ZeroPtr(@wdg, SizeOf(wdg));
 end;
 
 constructor oxTDVarEditorWindow.Create();
