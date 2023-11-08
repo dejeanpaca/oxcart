@@ -81,12 +81,14 @@ IMPLEMENTATION
 procedure oxedTInspectorWindowTransformWidgets.SetValue(w: wdgTInputBox; p, v: single; update: boolean; initial: boolean);
 begin
    if(w <> nil) and ((p <> v) or initial) then begin
-      w.SetText(FormatFloat('', v), wdgINPUT_BOX_NO_TEXT_CHANGE);
+      if(not w.IsSelected()) then begin
+         w.SetText(FormatFloat('', v), wdgINPUT_BOX_NO_TEXT_CHANGE);
 
-      if(update) then
-         w.CallTextChanged();
+         if(update) then
+            w.CallTextChanged();
 
-      w.GoToHome();
+         w.GoToHome();
+      end;
    end;
 end;
 
@@ -102,12 +104,12 @@ end;
 
 function getSingle(const s: string): single;
 begin
-   result := 0;
+   Result := 0;
 
    try
-      result := s.ToSingle();
+      Result := s.ToSingle();
    except
-      result := 0;
+      Result := 0;
    end;
 end;
 
