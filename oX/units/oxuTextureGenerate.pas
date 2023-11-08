@@ -49,6 +49,8 @@ TYPE
       function Load(const fileName: string): loopint;
       function Load(const extension: string; var f: TFile): loopint;
 
+      procedure GetImageOptions(out imgOptions: imgTRWOptions);
+
       {specify the texture generation size, only valid for textures whose size is unknown}
       procedure SetSize(width, height: longword);
 
@@ -151,19 +153,17 @@ end;
 
 function oxTTextureGenerate.Load(const fileName: string): loopint;
 var
-   imgProps: imgTRWOptions;
+   imgOptions: imgTRWOptions;
    fn: string;
 
 begin
    fn := oxPaths.Find(fileName);
 
    {load the image}
-   imgFile.Init(imgProps);
-   imgProps.SupressLog := true;
-   imgProps.Image := Image;
+   GetImageOptions(imgOptions);
 
-   Result := imgFile.Read(fn, imgProps);
-   Image := imgProps.Image;
+   Result := imgFile.Read(fn, imgOptions);
+   Image := imgOptions.Image;
 
    {check for errors}
    if(Result = 0) then begin
@@ -176,25 +176,29 @@ end;
 
 function oxTTextureGenerate.Load(const extension: string; var f: TFile): loopint;
 var
-   imgProps: imgTRWOptions;
+   imgOptions: imgTRWOptions;
 
 begin
    {load the image}
-   imgFile.Init(imgProps);
-   imgProps.SupressLog := true;
-   imgProps.SetToDefaultOrigin := false;
-   imgProps.Image := Image;
+   GetImageOptions(imgOptions);
 
-   Result := oxTFileRW(imgFile).Read(f, extension, @imgProps);
+   Result := oxTFileRW(imgFile).Read(f, extension, @imgOptions);
+   Image := imgOptions.Image;
 
    {check for errors}
    if(Result = 0) then
       OnLoad()
    else begin
       DisposeImage();
-
       Result := oxeIMAGE;
    end;
+end;
+
+procedure oxTTextureGenerate.GetImageOptions(out imgOptions: imgTRWOptions);
+begin
+   imgFile.Init(imgOptions);
+   imgOptions.SetToDefaultOrigin := false;
+   imgOptions.Image := Image;
 end;
 
 procedure oxTTextureGenerate.SetSize(width, height: longword);
@@ -313,10 +317,8 @@ begin
 
    Result := Load(fn, f);
 
-   if(Result <> eNONE) then
-      exit;
-
-   Result := Generate(tex);
+   if(Result = 0) then
+      Result := Generate(tex)
 end;
 
 procedure oxTTextureGenerate.FromGenerated(texId: oxTTextureId; out Tex: oxTTexture);
