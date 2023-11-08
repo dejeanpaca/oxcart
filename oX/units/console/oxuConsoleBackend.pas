@@ -274,6 +274,16 @@ TYPE
 
       {writing statements}
       procedure s(const st: StdString);
+
+      {SETTING COLORS}
+      {sets 3 colors rgb for the text, opaque}
+      procedure Color3ub(r, g, b: byte);
+      {sets 4 colors rgba for the text, with transparency}
+      procedure Color4ub(r, g, b, a: byte);
+      {same as conColor3ub, only takes an entire value instead of 3 individual ones}
+      procedure Color3ubv(const clr: TColor3ub);
+      {same as conColor3ub, only takes an entire value instead of 4 individual ones}
+      procedure Color4ubv(const clr: TColor4ub);
    end;
 
 TYPE
@@ -1111,6 +1121,32 @@ begin
       LogOutput^.i(st);
 end;
 
+procedure conTConsole.Color3ub(r, g, b: byte);
+begin
+   Colors.Current[0] := r;
+   Colors.Current[1] := g;
+   Colors.Current[2] := b;
+   Colors.Current[3] := 255;
+end;
+
+procedure conTConsole.Color4ub(r, g, b, a: byte);
+begin
+   Colors.Current[0] := r;
+   Colors.Current[1] := g;
+   Colors.Current[2] := b;
+   Colors.Current[3] := a;
+end;
+
+procedure conTConsole.Color3ubv(const clr: TColor3ub);
+begin
+   PColor3ub(@Colors.Current)^ := clr;
+end;
+
+procedure conTConsole.Color4ubv(const clr: TColor4ub);
+begin
+   Colors.Current := clr;
+end;
+
 { GLOBAL }
 
 procedure conTConsoleGlobal.Init(out con: conTConsole);
@@ -1207,28 +1243,22 @@ end;
 
 procedure conTConsoleGlobal.Color3ub(r, g, b: byte);
 begin
-   Selected^.Colors.Current[0] := r;
-   Selected^.Colors.Current[1] := g;
-   Selected^.Colors.Current[2] := b;
-   Selected^.Colors.Current[3] := 255;
+   Selected^.Color3ub(r, g, b);
 end;
 
 procedure conTConsoleGlobal.Color4ub(r, g, b, a: byte);
 begin
-   Selected^.Colors.Current[0] := r;
-   Selected^.Colors.Current[1] := g;
-   Selected^.Colors.Current[2] := b;
-   Selected^.Colors.Current[3] := a;
+   Selected^.Color4ub(r, g, b, a);
 end;
 
 procedure conTConsoleGlobal.Color3ubv(const clr: TColor3ub);
 begin
-   PColor3ub(@Selected^.Colors.Current)^ := clr;
+   Selected^.Color3ubv(clr);
 end;
 
 procedure conTConsoleGlobal.Color4ubv(const clr: TColor4ub);
 begin
-   Selected^.Colors.Current := clr;
+   Selected^.Color4ubv(clr);
 end;
 
 END.
