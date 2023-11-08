@@ -1077,6 +1077,9 @@ begin
    build.FPCOptions.UnitOutputPath := oxedBuild.WorkArea  + 'lib';
 
    {setup base options}
+   build.Target.CPU := cpu;
+   build.Target.OS := os;
+
    build.Target.CPUType := arch.DefaultCPUType;
    build.Target.FPUType := arch.DefaultFPUType;
    build.Target.BinUtilsPrefix := arch.BinUtilsPrefix;
