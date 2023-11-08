@@ -136,6 +136,7 @@ begin
    oxedSceneWindows.List.Add(Self);
 
    wdg.SceneRender := wdgSceneRender.Add();
+   wdg.SceneRender.Scene := oxScene;
 
    ResetCamera();
    UpdateSceneRenderWidget();
