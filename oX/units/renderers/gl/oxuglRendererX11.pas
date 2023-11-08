@@ -42,15 +42,20 @@ VAR
 IMPLEMENTATION
 
 procedure ExpandAttributes(wnd: oglTWindow; var attr: TXAttrIntSimpleList; fb: boolean = false);
+var
+   renderer: oxTRenderer;
+
 begin
-   if(wnd.RenderSettings.ColorBits >= 24) then begin
+   renderer := oxTRenderer(wnd.Renderer);
+
+   if(renderer.Settings.ColorBits >= 24) then begin
       attr.Add(GLX_RED_SIZE, 8);
       attr.Add(GLX_GREEN_SIZE, 8);
       attr.Add(GLX_BLUE_SIZE, 8);
 
-      if(wnd.RenderSettings.ColorBits = 32) then
+      if(renderer.Settings.ColorBits = 32) then
          attr.Add(GLX_ALPHA_SIZE, 8);
-   end else if(wnd.RenderSettings.ColorBits = 16) then begin
+   end else if(renderer.Settings.ColorBits = 16) then begin
       attr.Add(GLX_RED_SIZE, 4);
       attr.Add(GLX_GREEN_SIZE, 5);
       attr.Add(GLX_BLUE_SIZE, 4);
@@ -60,24 +65,24 @@ begin
       attr.Add(GLX_BLUE_SIZE, 1);
    end;
 
-   if(wnd.RenderSettings.DepthBits > 0) then
-      attr.Add(GLX_DEPTH_SIZE, wnd.RenderSettings.DepthBits);
+   if(renderer.Settings.DepthBits > 0) then
+      attr.Add(GLX_DEPTH_SIZE, renderer.Settings.DepthBits);
 
-   if(wnd.RenderSettings.StencilBits > 0) then
-      attr.Add(GLX_STENCIL_SIZE, wnd.RenderSettings.StencilBits);
+   if(renderer.Settings.StencilBits > 0) then
+      attr.Add(GLX_STENCIL_SIZE, renderer.Settings.StencilBits);
 
-   if(wnd.RenderSettings.DoubleBuffer) then begin
+   if(renderer.Settings.DoubleBuffer) then begin
       if(fb) then
          attr.Add(GLX_DOUBLEBUFFER, 1)
       else
          attr.Add(GLX_DOUBLEBUFFER);
    end;
 
-   if(wnd.RenderSettings.AccumBits > 0) then begin
-      attr.Add(GLX_ACCUM_RED_SIZE, wnd.RenderSettings.AccumBits);
-      attr.Add(GLX_ACCUM_GREEN_SIZE, wnd.RenderSettings.AccumBits);
-      attr.Add(GLX_ACCUM_BLUE_SIZE, wnd.RenderSettings.AccumBits);
-      attr.Add(GLX_ACCUM_ALPHA_SIZE, wnd.RenderSettings.AccumBits);
+   if(renderer.Settings.AccumBits > 0) then begin
+      attr.Add(GLX_ACCUM_RED_SIZE, renderer.Settings.AccumBits);
+      attr.Add(GLX_ACCUM_GREEN_SIZE, renderer.Settings.AccumBits);
+      attr.Add(GLX_ACCUM_BLUE_SIZE, renderer.Settings.AccumBits);
+      attr.Add(GLX_ACCUM_ALPHA_SIZE, renderer.Settings.AccumBits);
    end;
 end;
 
