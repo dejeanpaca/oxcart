@@ -59,6 +59,8 @@ TYPE
 
       {dispose of the widgets contents}
       procedure Dispose();
+      {dispose of the child widgets}
+      procedure DisposeSubWidgets();
 
       {visible property}
       procedure Show();
@@ -259,7 +261,7 @@ TYPE
       {dispose of a widget pointer and it's allocated data}
       procedure Dispose(var wdg: uiTWidget);
       {dispose of widgets}
-      procedure Dispose(const wdgs: uiTWidgets);
+      procedure Dispose(var wdgs: uiTWidgets);
       {queues an event to dispose a widget}
       procedure DisposeQueue(wdg: uiTWidget);
 
@@ -625,9 +627,12 @@ var
 begin
    w := GetWidgetsContainer();
 
-   pos := uiWidget.Pos(w^, self);
-   if(pos = w^.s) then
-      w^.s := -1;
+   if(w <> nil) then begin
+      pos := uiWidget.Pos(w^, self);
+
+     if(pos = w^.s) then
+         w^.s := -1;
+   end;
 
    {perform actions if we're not disposing of the widget}
    if(not (wdgpDESTROY_IN_PROGRESS in Properties)) then begin
@@ -850,7 +855,7 @@ begin
 
    if(s.w.n > 0) then
    for i := 0 to (s.w.n - 1) do begin
-      if(s.w[i] = wdg) then
+      if(s.w.List[i] = wdg) then
          exit(i);
    end;
 end;
@@ -1007,25 +1012,32 @@ end;
 { DISPOSING }
 procedure uiTWidgetHelper.Dispose();
 begin
+   if(wdgpDESTROY_IN_PROGRESS in Properties) then
+      exit;
+
    Include(Properties, wdgpDESTROY_IN_PROGRESS);
+
+   {dispose sub-widgets, if any}
+   uiWidget.Dispose(Widgets);
 
    {remove any other pending events for this widget}
    appEvents.DisableWithData(Self);
 
-   Deselected();
+   if(Parent <> nil) then
+      Deselected();
+
    oxui.mSelect.Deselect(uiTControl(Self));
 
    {de-initialize the widget}
    DeInitialize();
 
    {remove it from the parents Z order}
-   GetWidgetsContainer()^.z.Remove(self);
+   GetWidgetsContainer()^.Remove(self);
+end;
 
-   {dispose sub-widgets, if any}
+procedure uiTWidgetHelper.DisposeSubWidgets();
+begin
    uiWidget.Dispose(Widgets);
-
-   {dispose widget data}
-   Caption := '';
 end;
 
 procedure uiTWidgetGlobal.Dispose(var wdg: uiTWidget);
@@ -1033,23 +1045,26 @@ begin
    if(wdg <> nil) then begin
       {done}
       wdg.Dispose();
+
       FreeObject(wdg);
    end;
 end;
 
 {dispose of widgets}
-procedure uiTWidgetGlobal.Dispose(const wdgs: uiTWidgets);
+procedure uiTWidgetGlobal.Dispose(var wdgs: uiTWidgets);
 var
-   i: longint;
+   current: uiTWidget;
 
 begin
-   if(wdgs.w.n > 0) then begin
-      for i := 0 to (wdgs.w.n - 1) do
-         Dispose(uiTWidget(wdgs.w.List[i]));
+   assert(wdgs.w.n <= Length(wdgs.w.List), 'Sub-window count not equal to sub-window array size.');
 
+   if(wdgs.w.n > 0) then begin
+      current := uiTWidget(wdgs.w[0]);
+      uiWidget.Dispose(current);
+
+      Dispose(wdgs);
+   end else
       wdgs.w.Dispose();
-      wdgs.z.Dispose();
-   end;
 end;
 
 procedure uiTWidgetGlobal.DisposeQueue(wdg: uiTWidget);
