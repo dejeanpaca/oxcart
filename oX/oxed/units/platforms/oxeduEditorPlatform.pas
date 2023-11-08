@@ -9,7 +9,7 @@ UNIT oxeduEditorPlatform;
 INTERFACE
 
    USES
-      uStd,
+      uStd, uFPCHelpers,
       {ox}
       oxuRunRoutines,
       {oxed}
@@ -44,12 +44,13 @@ begin
    Name := 'Editor';
    Id := 'editor';
    GlyphName := 'brands:61820';
+   OS := FPC_TARGETOS;
 
    {editor platform is always enabled}
    Enabled := true;
 
    Configuration := oxedTPlatformConfiguration.Create();
-   Architecture := oxedTEditorPlatformArchitecture.Create('editor', 'editor');
+   Architecture := oxedTEditorPlatformArchitecture.Create('editor', FPC_TARGETCPU);
    AddArchitecture(Architecture);
 end;
 

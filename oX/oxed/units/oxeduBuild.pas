@@ -20,7 +20,7 @@ INTERFACE
       oxuThreadTask, oxuFeatures, oxuRenderer, oxeduEditorPlatform,
       {oxed}
       uOXED, oxeduConsole, oxeduPackageTypes, oxeduPackage, oxeduProject,
-      oxeduPlatform, oxeduTasks, oxeduActions, oxeduSettings,
+      oxeduPlatform, oxeduTasks, oxeduSettings,
       oxeduAppInfo,oxeduProjectScanner;
 
 CONST
@@ -807,11 +807,7 @@ var
    targetString: string;
 
 begin
-   if(BuildArch <> nil) then
-      log.v('Building architecture: ' + BuildArch.Architecture)
-   else
-      log.v('Building architecture: default');
-
+   log.v('Building platform: ' + BuildArch.GetPlatformString());
    log.v('Building into: ' + TargetPath);
    log.v('Working area: ' + WorkArea);
 
@@ -1018,15 +1014,9 @@ begin
    build.IncludeDebugInfo := false;
    {$ENDIf}
 
-   if(BuildArch <> nil) then begin
-      build.TargetCPU := BuildArch.Architecture;
-      build.TargetOS := oxedTPlatform(BuildArch.PlatformObject).OS;
-
-      build.FPCOptions.UnitOutputDirectory := oxedBuild.WorkArea  + 'lib-' + BuildArch.GetPlatformString();
-   end else begin
-      build.GetBuiltWithTarget().Separate(build.TargetCPU, build.TargetOS);
-      build.FPCOptions.UnitOutputDirectory := oxedBuild.WorkArea  + 'lib';
-   end;
+   build.TargetCPU := BuildArch.Architecture;
+   build.TargetOS := oxedTPlatform(BuildArch.PlatformObject).OS;
+   build.FPCOptions.UnitOutputDirectory := oxedBuild.WorkArea  + 'lib';
 
    if(BuildType = OXED_BUILD_TASK_RECODE) then begin
       build.Options.Rebuild := false;
@@ -1061,6 +1051,8 @@ begin
       Reset();
       exit;
    end;
+
+   assert(BuildArch <> nil, 'Build architecture not set before StartTask()');
 
    RunAfterScan := false;
 
@@ -1128,7 +1120,7 @@ function oxedTBuildGlobal.GetPlatformPath(const base: StdString): StdString;
 begin
    if(BuildTarget = OXED_BUILD_LIB) then begin
       {we're building for editor}
-      if(BuildArch = nil) or (BuildArch = oxedEditorPlatform.Architecture) then
+      if(BuildArch = oxedEditorPlatform.Architecture) then
          Result := oxedProject.TempPath
       else
          Result := oxedProject.TempPath + BuildArch.GetPlatformString() + DirectorySeparator;
