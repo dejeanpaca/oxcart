@@ -33,6 +33,8 @@ TYPE
       procedure TogglePause();
       procedure Tick();
       function Paused(): boolean;
+      {reset the timer to behave as it just started}
+      procedure Reset();
 
       class procedure Initialize(out t: oxTTime); static;
    end;
@@ -45,6 +47,9 @@ TYPE
 
       class procedure Initialize(out t: oxTRenderingTimer; target_framerate: loopint); static;
       function Elapsed(): boolean;
+
+      {reset the timer to behave as it just started}
+      procedure Reset();
    end;
 
    { oxTTimerGlobal }
@@ -115,6 +120,11 @@ begin
    Result := Interval.Elapsed();
 end;
 
+procedure oxTRenderingTimer.Reset();
+begin
+   Interval.Reset();
+end;
+
 { oxTTime }
 
 procedure oxTTime.Pause();
@@ -161,6 +171,12 @@ begin
    Result := Timer.Paused;
 end;
 
+procedure oxTTime.Reset();
+begin
+   Flow := 0;
+   Timer.Start();
+end;
+
 class procedure oxTTime.Initialize(out t: oxTTime);
 begin
    ZeroPtr(@t, SizeOf(t));
@@ -175,11 +191,19 @@ begin
    oxTime.Tick();
 end;
 
+procedure startTimer();
+begin
+   oxBaseTime.Reset();
+   oxTime.Reset();
+   oxRenderingTimer.Interval.Reset();
+end;
+
 INITIALIZATION
    oxTTime.Initialize(oxTime);
    oxTTime.Initialize(oxBaseTime);
 
    ox.OnRun.Add('ox.tick', @tick);
+   ox.OnStart.Add('ox.timer.start', @startTimer);
 
    oxTRenderingTimer.Initialize(oxRenderingTimer, 60);
 
