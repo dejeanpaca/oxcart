@@ -369,11 +369,13 @@ begin
       keRaise(eINVALID);
       exit;
    end;
-   if(hdr.Endian <> ) then begin
+
+   if(hdr.Endian <> ENDIAN_BYTE) then begin
       console.e('The file is written in a unsupported endian.');
       keRaise(eUNSUPPORTED);
       exit;
    end;
+
    if(hdr.Version <> xdpcVERSION) then begin
       console.e('The file format version is not supported.');
       keRaise(eUNSUPPORTED);

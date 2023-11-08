@@ -1446,7 +1446,7 @@ begin
    if(selected <> Self) then begin
       oxui.Select.Assign(uiTControl(Self));
 
-      oxui.useWindow := Self;
+      oxui.UseWindow := Self;
 
       if(previouslySelected <> Self) then begin
          {move the window and all it's parents to the top of the z order}

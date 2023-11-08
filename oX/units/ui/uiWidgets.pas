@@ -630,7 +630,7 @@ begin
    if(w <> nil) then begin
       pos := uiWidget.Pos(w^, self);
 
-     if(pos = w^.s) then
+      if(pos = w^.s) then
          w^.s := -1;
    end;
 
@@ -853,10 +853,11 @@ var
 begin
    Result := -1;
 
-   if(s.w.n > 0) then
-   for i := 0 to (s.w.n - 1) do begin
-      if(s.w.List[i] = wdg) then
-         exit(i);
+   if(s.w.n > 0) then begin
+      for i := 0 to (s.w.n - 1) do begin
+         if(s.w.List[i] = wdg) then
+            exit(i);
+      end;
    end;
 end;
 
