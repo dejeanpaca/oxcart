@@ -27,6 +27,11 @@ VAR
       ConfigPath: wdgTInputBox;
    end;
 
+procedure reloadBuildConfiguration();
+begin
+   build.ReInitialize();
+end;
+
 procedure openBuildPath();
 begin
    app.OpenFileManager(build.Tools.Build);
@@ -50,7 +55,7 @@ begin
    wdgLabel.Add('Configuration location');
    wdg.ConfigPath := wdgInputBox.Add('', uiWidget.LastRect.BelowOf(), oxNullDimensions);
 
-   wdgButton.Add('Reload Configuration');
+   wdgButton.Add('Reload Configuration').Callback.Use(@reloadBuildConfiguration);
    wdgButton.Add('Open build path', uiWidget.LastRect.RightOf(), oxNullDimensions, @openBuildPath);
 
    uiWidget.LastRect.GoLeft();
