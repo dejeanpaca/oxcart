@@ -153,17 +153,17 @@ var
 
 begin
    if(item^.Index < oxedEntityMenu.EntityList.n) then begin
+      current := oxedEntityMenu.GetCurrentEntity();
+
+      if(current = nil) then begin
+         log.e('No scene or entity set to which to add');
+         exit;
+      end;
+
       entity := oxedEntityMenu.EntityList.List[item^.Index]();
       entity.Name := item^.Caption;
 
-      current := oxedEntityMenu.GetCurrentEntity();
-
-      if(current = nil) then
-         log.e('No scene or entity set to which to add');
-
-      if(current <> nil) then begin
-         current.Add(entity);
-      end;
+      current.Add(entity);
    end;
 end;
 
