@@ -60,7 +60,7 @@ begin
    Workbar := wdgToolbar.Add();
    Workbar.AddSeparator();
 
-   btn := Workbar.AddButton(oxedIcons.Create($f121), oxedActions.RECODE);
+   btn := Workbar.AddButton(oxedIcons.Create($f0e7), oxedActions.RECODE);
    btn^.SetHint('Recode project');
    btn^.Color.Assign(255, 102, 0, 255);
 
