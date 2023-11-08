@@ -553,9 +553,10 @@ begin
      Render();
 
      {render any sub widgets}
-     for i := 0 to (widgets.z.Entries.n - 1) do
+     for i := 0 to (widgets.z.Entries.n - 1) do begin
         if(widgets.z.Entries[i] <> nil) then
            uiTWidget(widgets.z.Entries[i]).RenderAll();
+     end;
 
      if(not (wdgpNON_CLIENT in Properties)) then
         uiDraw.DoneScissor();
@@ -1110,8 +1111,8 @@ begin
       HELP                 := uiControl.GetID('Help');
    end;
 
-   uiWidget.GridSize.w := 5;
-   uiWidget.GridSize.h := 5;
+   uiWidget.GridSize.w := wdgGRID_SIZE;
+   uiWidget.GridSize.h := wdgGRID_SIZE;
    uiWidget.DefaultProperties := [wdgpENABLED, wdgpVISIBLE, wdgpSELECTABLE];
 
    uiWindow.OnCreate.Add(@onwndCreateSetTarget);
