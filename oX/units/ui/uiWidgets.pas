@@ -651,7 +651,7 @@ begin
 
          if(wdg.ID.ID = ID) then begin
             {first deselect whatever previous widget was selected}
-            oxui.Select.Deselect();
+            wnd.GetUI().Select.Deselect();
 
             {select the new widget}
             wdg.Select();

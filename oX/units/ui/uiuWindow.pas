@@ -1706,7 +1706,7 @@ end;
 
 procedure uiTWindowHelper.SetDefaultSkin();
 begin
-   SetSkin(oxui.GetDefaultSkin());
+   SetSkin(GetUI().GetDefaultSkin());
 end;
 
 { INTERNAL }
