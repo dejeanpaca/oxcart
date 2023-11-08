@@ -597,7 +597,9 @@ begin
       exit;
    end;
 
-   if(loaderData.HasQuads) then
+   if(loaderData.HasPolygons) then
+      log.w('Polygons will be converted to triangles for: ' + pData^.FileName)
+   else if(loaderData.HasQuads) then
       log.w('Quads will be converted to triangles for: ' + pData^.FileName);
 
    { actually load the model }
