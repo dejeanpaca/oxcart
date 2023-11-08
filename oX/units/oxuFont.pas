@@ -736,6 +736,7 @@ begin
    until (i >= l) or (totalHeight > r.h);
 
    y := r.y - GetHeight();
+
    if(centerVertical) then
       y := r.y - ((r.h div 2) - totalHeight div 2);
 
