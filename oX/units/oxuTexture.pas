@@ -14,10 +14,6 @@ INTERFACE
       {oX}
       oxuTypes, oxuRenderer, oxuRenderers;
 
-CONST
-   { TEXTURE PROPERTIES }
-   oxTEXTURE_HAS_ALPHA                 = $1;
-
 TYPE
    oxTTextureFilter = (
       oxTEXTURE_FILTER_NONE,
@@ -105,6 +101,13 @@ TYPE
    end;
 
    oxTSimpleTextureList = specialize TSimpleList<oxTTexture>;
+
+CONST
+   { TEXTURE PROPERTIES }
+   oxTEXTURE_HAS_ALPHA                 = $1;
+
+   {we'll assume no filter means nearest point "filter"}
+   oxTEXTURE_FILTER_NEAREST = oxTEXTURE_FILTER_NONE;
 
 VAR
    oxTex: oxTTextureGlobal;
