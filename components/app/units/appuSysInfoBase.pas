@@ -41,9 +41,11 @@ TYPE
    { appTSystemInformation }
 
    appTSystemInformation = record
-      SystemName,
-      SystemDeviceName,
-      KernelVersion: string;
+      System: record
+         Name,
+         DeviceName,
+         KernelVersion: string;
+      end;
 
       nProcessors: longint;
 	   Processors: array of appTProcessorInformation;
@@ -74,6 +76,8 @@ TYPE
       function GetProcessorModel(): string;
       {get processor name}
       function GetMemorySize(units: longint = SI_BINARY_SIZE_GB; adjust: boolean = true): string;
+
+      function HasSystemInformation(): boolean;
    end;
 
 VAR
@@ -134,6 +138,11 @@ begin
       Result := getiecByteSizeHumanReadable(Memory.Physical)
    else
       Result := getiecBinarySizeSuffixString(Memory.Physical, units);
+end;
+
+function appTSystemInformation.HasSystemInformation(): boolean;
+begin
+   Result := (appSI.System.Name <> '') or (appSI.System.DeviceName <> '') or (appSI.System.KernelVersion <> '');
 end;
 
 INITIALIZATION

@@ -44,14 +44,18 @@ var
    btnClose: wdgTButton;
 
 begin
-   wdgDivisor.Add('OS Information');
-   wdgLabel.Add('OS: ' + appSI.SystemName);
+   if appSI.HasSystemInformation() then begin
+      wdgDivisor.Add('OS Information');
 
-   if(appSI.SystemDeviceName <> '') then
-      wdgLabel.Add('System: ' + appSI.SystemDeviceName);
+      if(appSI.System.Name <> '') then
+         wdgLabel.Add('OS: ' + appSI.System.Name);
 
-   if(appSI.KernelVersion <> '') then
-      wdgLabel.Add('Kernel: ' + appSI.KernelVersion);
+      if(appSI.System.DeviceName <> '') then
+         wdgLabel.Add('System: ' + appSI.System.DeviceName);
+
+      if(appSI.System.KernelVersion <> '') then
+         wdgLabel.Add('Kernel: ' + appSI.System.KernelVersion);
+   end;
 
    wdgDivisor.Add('Hardware Information');
 
