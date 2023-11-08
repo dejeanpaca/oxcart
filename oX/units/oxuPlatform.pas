@@ -53,7 +53,7 @@ TYPE
       procedure OutClientAreaCoordinates(wnd: oxTWindow; out x, y: single); virtual;
 
       function Fullscreen(wnd: oxTWindow): boolean; virtual;
-      function Fullscreen({%H-}x, {%H-}y, {%H-}bpp: longint): boolean; virtual;
+      function Fullscreen({%H-}window: oxTWindow; {%H-}x, {%H-}y, {%H-}bpp: longint): boolean; virtual;
       function LeaveFullscreen({%H-}wnd: oxTWindow): boolean; virtual;
 
       procedure Move({%H-}wnd: oxTWindow; {%H-}x, {%H-}y: longint); virtual;
@@ -184,10 +184,10 @@ end;
 
 function oxTPlatform.Fullscreen(wnd: oxTWindow): boolean;
 begin
-   Result := Fullscreen(wnd.dimensions.w, wnd.dimensions.h, 32);
+   Result := Fullscreen(wnd, wnd.dimensions.w, wnd.dimensions.h, 32);
 end;
 
-function oxTPlatform.Fullscreen(x, y, bpp: longint): boolean;
+function oxTPlatform.Fullscreen(window: oxTWindow; x, y, bpp: longint): boolean;
 begin
    Result := true;
 end;

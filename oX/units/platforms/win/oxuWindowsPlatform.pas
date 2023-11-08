@@ -61,7 +61,7 @@ TYPE
 
       procedure OutClientAreaCoordinates(wnd: oxTWindow; out x, y: single); override;
 
-      function Fullscreen(x, y, bpp: longint): boolean; override;
+      function Fullscreen(window: oxTWindow; x, y, bpp: longint): boolean; override;
       function Fullscreen(window: oxTWindow): boolean; override;
       function LeaveFullscreen(window: oxTWindow): boolean; override;
 
@@ -875,6 +875,7 @@ var
 begin
    {if failed to enter full screen then exit}
    code := ChangeDisplaySettings(lpDevMode, dwFlags);
+
    if(code <> DISP_CHANGE_SUCCESSFUL) then begin
       codeName := sf(code);
 
@@ -901,7 +902,7 @@ begin
    Result := code;
 end;
 
-function oxTWindowsPlatform.Fullscreen(x, y, bpp: longint): boolean;
+function oxTWindowsPlatform.Fullscreen(window: oxTWindow; x, y, bpp: longint): boolean;
 var
    dmScreenSettings: DEVMODE;
 
@@ -915,7 +916,7 @@ begin
    dmScreenSettings.dmFields     := DM_BITSPERPEL or
                                     DM_PELSWIDTH or DM_PELSHEIGHT;
 
-   {if failed to enter full screen then exit}
+   {try to enter fullscreen}
    Result := winosChangeDisplaySettings(@dmScreenSettings, CDS_FULLSCREEN) = DISP_CHANGE_SUCCESSFUL;
 end;
 
@@ -940,12 +941,9 @@ begin
    if(winos.LogError('Failed to set GWL_EXSTYLE') <> 0) then
       exit(false);
 
-   if(not wnd.Fullscreen.Windowed) then begin
-      Result := Fullscreen(wnd.Dimensions.w, wnd.Dimensions.h, oxTRenderer(wnd.Renderer).Settings.ColorBits);
-
-      if(not Result) then
-         LeaveFullscreen(wnd);
-   end else
+   if(not wnd.Fullscreen.Windowed) then
+      Result := Fullscreen(wnd, wnd.Dimensions.w, wnd.Dimensions.h, oxTRenderer(wnd.Renderer).Settings.ColorBits)
+   else
       Result := true;
 end;
 
