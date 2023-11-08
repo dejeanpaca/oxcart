@@ -82,7 +82,7 @@ VAR
 IMPLEMENTATION
 
 CONST
-   MENUBAR_HEIGHT = 20;
+   MENUBAR_HEIGHT = 24;
    MENUBAR_SEPARATION = 15;
    MENUBAR_PADDING = 5;
    MENUBAR_BOTTOM_PADDING = 2;
@@ -227,8 +227,9 @@ begin
 
       {return to start position}
       r.x := RPosition.x + PaddingLeft;
-      r.h := Dimensions.h;
       r.y := RPosition.y;
+
+      r.h := Dimensions.h;
       r.w := Dimensions.w;
 
       f.Start();
@@ -245,7 +246,7 @@ begin
          end else
             SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).DisabledColors.Text);
 
-         f.Write(r.x, r.y - r.h + 1 + PaddingBottom, current^.Caption);
+         f.WriteInRect(current^.Caption, r, [oxfpCenterVertical]);
 
          inc(r.x, f.GetLength(current^.Caption) + Separation);
       end;
@@ -430,7 +431,7 @@ end;
 INITIALIZATION
    wdgMenubar.Internal.Register('widget.menubar', @initializeWidget);
 
-   wdgMenubar.Color.Assign(24, 24, 32, 255);
+   wdgMenubar.Color.Assign(28, 28, 36, 255);
    wdgMenubar.Height := MENUBAR_HEIGHT;
    wdgMenubar.Separation := MENUBAR_SEPARATION;
    wdgMenubar.Padding := MENUBAR_PADDING;
