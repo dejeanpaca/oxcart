@@ -3,6 +3,7 @@
    Copyright (C) 2012. Dejan Boras
 
 	TODO: Need to also skip unsupported sections in cpuinfo, and expand support for the hardware section.
+   TODO: Maybe not cram android stuff in here
 }
 
 {$INCLUDE oxheader.inc}
@@ -61,10 +62,10 @@ end;
 function cpuHandler(const key, value: string): boolean;
 var
    s: string;
-   ivalue: uint64;
+   ivalue: int64;
    fvalue: single;
-   code: longint;
-   idx: longint = -1;
+   code: loopint;
+   idx: loopint = -1;
 
 function prepare(): boolean;
 begin
@@ -89,7 +90,7 @@ begin
    if(code <> 0) then
       fvalue := 0;
 
-   result := code = 0;
+   Result := code = 0;
 end;
 
 begin
@@ -106,7 +107,7 @@ begin
 
       {if it's not a number then it's the cpu name}
       if(not prepare()) then
-         appSI.Processors[idx].Name := value;
+         appSI.Processors[idx - 1].Name := value;
 
       appSI.HasProcessorInfo := true;
       exit;
@@ -194,6 +195,7 @@ begin
    appSI.hasMemoryInfo := true;
 end;
 
+{$IFNDEF ANDROID}
 CONST
    nPlatforms = 3;
 
@@ -202,12 +204,15 @@ CONST
       'redhat-release',
       'slackware-version'
    );
+{$ENDIF}
 
 procedure appLinuxSysInfoGetInformation();
 var
    release: StdString = '';
    ok: longint;
+   {$IFNDEF ANDROID}
    i: longint;
+   {$ENDIF}
 
 begin
    {$IFNDEF ANDROID}
