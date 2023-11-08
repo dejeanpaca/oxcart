@@ -1378,7 +1378,7 @@ begin
    if(path = '') then
       result := FindFirst('*', faReadOnly or faDirectory, src)
    else
-      result := FindFirst(UTF8Decode(Path + DirectorySeparator + '*'), faReadOnly or faDirectory, src);
+      result := FindFirst(UTF8Decode(path + DirectorySeparator + '*'), faReadOnly or faDirectory, src);
 
    fd.Traverse := @Self;
    fd.ExternalData := ExternalData;
@@ -1391,13 +1391,13 @@ begin
             if(src.Attr and faDirectory > 0) then begin
                if(Recursive) then begin
                   if(OnDirectory = nil) then
-                     RunDirectory(UTF8Encode(src.Name))
+                     RunDirectory(UTF8Encode(src.Name));
                   else begin
                      TFileDescriptor.From(fd.f, src);
-                     fd.f.Name := UTF8Encode(src.Name);
+                     fd.f.Name := path + DirectorySeparator + UTF8Encode(src.Name);
 
                      if(OnDirectory(fd)) then
-                        RunDirectory(fd.f.Name);
+                        RunDirectory(UTF8Encode(src.Name));
                   end;
                end;
             end else begin
@@ -1429,7 +1429,7 @@ begin
                      fname := UTF8Encode(src.Name);
 
                   {call OnFile to perform operations on the file}
-                  if(OnFile<> nil) then begin
+                  if(OnFile <> nil) then begin
                      TFileDescriptor.From(fd.f, src);
                      fd.f.Name := fname;
 
