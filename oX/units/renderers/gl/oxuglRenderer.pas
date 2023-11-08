@@ -319,7 +319,9 @@ begin
    Result := error = 0;
 
    if(error <> 0) then
-      logtw('Failed to clear context ' + sf(rc^.RC) + ': ' + GetPlatformErrorDescription(error));
+      logtw('Failed to clear context ' + sf(rc^.RC) + ': ' + GetPlatformErrorDescription(error))
+   else
+      logtv('Cleared context ' + sf(rc^.RC) + ' (glrc: ' + sf(glRenderingContexts[rc^.RC]) + ')');
 end;
 
 function oxglTRenderer.InternalDestroyContext(context: loopint): boolean;
