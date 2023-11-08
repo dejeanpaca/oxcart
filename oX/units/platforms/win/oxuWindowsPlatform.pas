@@ -71,6 +71,8 @@ TYPE
       procedure Maximize(wnd: oxTWindow); override;
       procedure Minimize(wnd: oxTWindow); override;
       procedure Restore(wnd: oxTWindow); override;
+
+      function TranslateKey(k: appTKeyEvent): char; override;
    end;
 
 IMPLEMENTATION
@@ -942,6 +944,26 @@ end;
 procedure oxTWindowsPlatform.Restore(wnd: oxTWindow);
 begin
    windows.ShowWindow(winosTWindow(wnd).wd.h, SW_RESTORE);
+end;
+
+function oxTWindowsPlatform.TranslateKey(k: appTKeyEvent): char;
+var
+   charCode,
+   diacritic: longword;
+
+begin
+   charCode := 0;
+   diacritic := 0;
+
+   charCode := MapVirtualKeyA(k.PlatformCode, MAPVK_VK_TO_CHAR);
+   if(charCode <> 0) then begin
+      diacritic:= hi(charCode);
+      charCode := lo(charCode);
+
+      exit(char(charCode));
+   end;
+
+   Result := #0;
 end;
 
 INITIALIZATION
