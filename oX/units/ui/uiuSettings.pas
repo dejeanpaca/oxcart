@@ -13,7 +13,7 @@ INTERFACE
    USES
       udvars, uStd,
       {ox}
-      oxuUI;
+      uiuUI;
 
 TYPE
 
@@ -44,6 +44,6 @@ begin
 end;
 
 INITIALIZATION
-   oxTUI.dvg.Add(dvNaturalScroll, 'natural_scroll', dtcBOOL, @uiSettings.NaturalScroll);
+   uiTUI.dvg.Add(dvNaturalScroll, 'natural_scroll', dtcBOOL, @uiSettings.NaturalScroll);
 
 END.

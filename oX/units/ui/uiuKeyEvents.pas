@@ -17,11 +17,11 @@ INTERFACE
       {oX}
       oxuWindowTypes, oxuGlobalInstances,
       {ui}
-      uiuWindowTypes, uiuWindow, uiuWidget, uiuTypes, uiWidgets, oxuUI, uiuControl;
+      uiuWindowTypes, uiuWindow, uiuWidget, uiuTypes, uiWidgets, uiuUI, uiuControl;
 
 TYPE
    uiTKeyEventsGlobal = record
-      function Action(oxui: oxTUI; var event: appTEvent): boolean;
+      function Action(oxui: uiTUI; var event: appTEvent): boolean;
    end;
 
 VAR
@@ -102,7 +102,7 @@ begin
    end;
 end;
 
-function uiTKeyEventsGlobal.Action(oxui: oxTUI; var event: appTEvent): boolean;
+function uiTKeyEventsGlobal.Action(oxui: uiTUI; var event: appTEvent): boolean;
 var
    d: TData; {data}
    oxwnd: oxTWindow;

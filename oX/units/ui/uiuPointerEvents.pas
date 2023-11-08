@@ -15,9 +15,9 @@ INTERFACE
       {app}
       appuMouse, appuEvents, appuMouseEvents,
       {oX}
-      oxuUI, oxuWindowTypes, oxuTypes, oxuGlobalInstances, oxuWindow,
+      oxuWindowTypes, oxuTypes, oxuGlobalInstances, oxuWindow,
       {ui}
-      uiuWindowTypes, uiuWindow, uiuWidget, uiuTypes, uiWidgets, uiuControl, uiuCursor, uiuPointer;
+      uiuUI, uiuWindowTypes, uiuWindow, uiuWidget, uiuTypes, uiWidgets, uiuControl, uiuCursor, uiuPointer;
 
 TYPE
    { uiTPointerEventsGlobal }
@@ -25,7 +25,7 @@ TYPE
    uiTPointerEventsGlobal = record
       OpenContextWindow: uiTWindowProcedure;
 
-      procedure Action(oxui: oxTUI; var event: appTEvent);
+      procedure Action(oxui: uiTUI; var event: appTEvent);
    end;
 
 VAR
@@ -33,7 +33,7 @@ VAR
 
 IMPLEMENTATION
 
-procedure uiTPointerEventsGlobal.Action(oxui: oxTUI; var event: appTEvent);
+procedure uiTPointerEventsGlobal.Action(oxui: uiTUI; var event: appTEvent);
 var
    m: appTMouseEvent;
    p,

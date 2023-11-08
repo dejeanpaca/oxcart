@@ -13,10 +13,9 @@ INTERFACE
    USES
       udvars, uStd, uFileUtils,
       {ox}
-      oxuUI;
+      uiuUI;
 
 TYPE
-
    { uiTFiles }
 
    uiTFiles = record
@@ -52,8 +51,8 @@ INITIALIZATION
    uiFiles.SortFoldersFirst := true;
    uiFiles.Sort := true;
 
-   oxTUI.dvg.Add(dvSortFiles, 'sort_files', dtcBOOL, @uiFiles.Sort);
-   oxTUI.dvg.Add(dvSortFoldersFirst, 'sort_folders_first', dtcBOOL, @uiFiles.SortFoldersFirst);
-   oxTUI.dvg.Add(dvShowHiddenFiles, 'show_hidden_files', dtcBOOL, @uiFiles.ShowHiddenFiles);
+   uiTUI.dvg.Add(dvSortFiles, 'sort_files', dtcBOOL, @uiFiles.Sort);
+   uiTUI.dvg.Add(dvSortFoldersFirst, 'sort_folders_first', dtcBOOL, @uiFiles.SortFoldersFirst);
+   uiTUI.dvg.Add(dvShowHiddenFiles, 'show_hidden_files', dtcBOOL, @uiFiles.ShowHiddenFiles);
 
 END.

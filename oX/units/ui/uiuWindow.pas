@@ -19,7 +19,7 @@ INTERFACE
       oxuWindowTypes, oxuRender,
       oxuTexture, oxuTextureGenerate,
       {ui}
-      uiuBase, oxuUI, uiuSkin, uiuZOrder, uiuTypes, uiuControl, uiuSkinTypes,
+      uiuBase, uiuUI, oxuUI, uiuSkin, uiuZOrder, uiuTypes, uiuControl, uiuSkinTypes,
       uiuWindowTypes, uiuWidget, uiWidgets;
 
 CONST
@@ -50,7 +50,7 @@ TYPE
       {minimum base class type the above set instance needs to be}
       MinimumInstanceType: uiTWindowClass;
       {base UI object}
-      UIBase: oxTUI;
+      UIBase: uiTUI;
 
       {minimum size for the created window}
       MinimumSize,
@@ -62,7 +62,7 @@ TYPE
 
    uiTWindowHelper = class helper for uiTWindow
       {get the base UI object}
-      function GetUI(): oxTUI;
+      function GetUI(): uiTUI;
 
       {select this window (bring to focus)}
       procedure Select();
@@ -1328,12 +1328,12 @@ begin
    Result := (Level <= GetUI().Select.l) and (GetUI().Select.s[Level] = Self);
 end;
 
-function uiTWindowHelper.GetUI(): oxTUI;
+function uiTWindowHelper.GetUI(): uiTUI;
 begin
    if(oxwParent <> nil) then
-      Result := oxTUI(oxTWindow(oxwParent).UIBase)
+      Result := uiTUI(oxTWindow(oxwParent).UIBase)
    else
-      Result := oxTUI(oxTWindow(Self).UIBase);
+      Result := uiTUI(oxTWindow(Self).UIBase);
 end;
 
 procedure uiTWindowHelper.Select();
