@@ -304,7 +304,8 @@ begin
          f.RaiseError(eIO);
 
       Result := pos;
-   end;
+   end else
+      Result := -1;
 end;
 
 procedure TStandardFileHandler.OnBufferSet(var f: TFile);
