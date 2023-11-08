@@ -120,7 +120,7 @@ var
 
 begin
    unitFile.Name := ExtractFileNameNoExt(f.ProjectFileName);
-   unitFile.Path := f.ProjectFileName;
+   unitFile.Path := f.PackageFileName;
 
    if(f.Extension = '.pas') then begin
       f.Package^.Units.Add(unitFile);
