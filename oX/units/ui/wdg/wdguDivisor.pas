@@ -168,8 +168,6 @@ end;
 
 procedure wdgTDivisor.ParentSizeChange();
 begin
-   inherited ParentSizeChange();
-
    if(not NoAutomaticSizing) then
       Resize(GetComputedDimensionsf());
 end;
@@ -184,7 +182,7 @@ begin
    Result := wdgTDivisor(uiWidget.Add(internal, Pos, oxNullDimensions));
 
    if(Result <> nil) then begin
-      result.SetCaption(Caption);
+      Result.SetCaption(Caption);
       if(Vertical) then
          Include(Result.Properties, wdgpTRUE);
 
