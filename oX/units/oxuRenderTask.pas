@@ -9,14 +9,12 @@ UNIT oxuRenderTask;
 INTERFACE
 
    USES
-      uTiming, uStd, uLog, uColors,
+      uTiming, uStd, uLog, uColors, StringUtils,
       {oX}
       uOX, oxuTypes, oxuWindowTypes,
       oxuRenderer, oxuRender, oxuRenderThread, oxuSurfaceRender, oxuRenderingContext,
-      oxuTexture, oxuTextureGenerate, oxuPaths, oxuThreadTask, oxuWindow,
-      oxuRunRoutines, oxuTimer,
-      {ui}
-      oxuUI, uiuWindow, uiuWindowRender, uiuDraw;
+      oxuThreadTask, oxuWindow,
+      oxuRunRoutines, oxuTimer;
 
 
 TYPE
@@ -154,9 +152,8 @@ end;
 
 procedure oxTRenderTask.TaskStart();
 begin
-   if(AssociatedWindow <> nil) then begin
+   if(AssociatedWindow <> nil) then
       oxRenderThread.StartThread(AssociatedWindow, RC);
-   end;
 end;
 
 procedure oxTRenderTask.TaskStop();
@@ -170,7 +167,22 @@ begin
 end;
 
 procedure oxTRenderTask.ThreadStart();
+var
+   renderer: oxTRenderer;
+   rtc: oxTRenderTargetContext;
+
 begin
+   renderer := oxTRenderer(AssociatedWindow.Renderer);
+
+   {get an RC to render the splash screen}
+   RC := renderer.GetRenderingContext(AssociatedWindow);
+   log.v('Render task: ' + ClassName + ' got RC: ' + sf(RC));
+
+
+   {restore old context before proceeding}
+   AssociatedWindow.FromWindow(rtc);
+
+   renderer.ContextCurrent(rtc);
 end;
 
 END.
