@@ -72,6 +72,9 @@ TYPE
       {is the file a hidden file}
       function IsHidden(): boolean;
 
+      {is this a special file (.. or .)}
+      function IsSpecialDirectory(): boolean;
+
       procedure From(const s: TSearchRec);
       procedure From(const s: TUnicodeSearchRec);
       class procedure From(out f: TFileDescriptor; const s: TSearchRec); static;
@@ -363,6 +366,14 @@ begin
    {$IFDEF WINDOWS}
    Result := Result or (Attr and faHiddenWindows > 0);
    {$ENDIF}
+end;
+
+function TFileDescriptor.IsSpecialDirectory(): boolean;
+begin
+   if(IsDirectory()) then
+      Result := (Name = '..') or (Name = '.')
+   else
+      Result := false;
 end;
 
 procedure TFileDescriptor.From(const s: TSearchRec);
