@@ -55,7 +55,7 @@ TYPE
       Mode: oxTCameraMode;
       Style: oxTCameraStyle;
 
-      Angle: TVector3f;
+      Rotation: TVector3f;
       {camera radius}
       Radius: single;
 
@@ -79,6 +79,8 @@ TYPE
       procedure PitchYaw(pitch, yaw: single);
       {reset pitch yaw from the existing angles}
       procedure PitchYaw();
+      {set forward (view) from rotation (in degrees)}
+      procedure SetForward(const newRotation: TVector3f);
       {increase camera angles by pitch and yaw (assuming standard up vector)}
       procedure IncPitchYaw(pitch, yaw: single);
 
@@ -86,7 +88,7 @@ TYPE
       procedure UpFromView();
 
       {setup angles from the view and up vectors}
-      procedure SetupAngles();
+      procedure SetupRotation();
 
       {set up OpenGL to look the way the camera indicates}
       procedure LookAt(apply: boolean = true);
@@ -147,39 +149,45 @@ begin
 end;
 
 procedure oxTCamera.PitchYaw(pitch, yaw: single);
+var
+   vRot: TVector3f;
+
 begin
-   pitch := pitch * vmcToRad;
-   yaw := yaw * vmcToRad;
+   vRot[0] := pitch;
+   vRot[1] := yaw;
+   vRot[2] := 0;
 
-   vView[0] := sin(yaw) * cos(pitch);
-   vView[1] := sin(pitch);
-   vView[2] := cos(yaw) * cos(pitch);
-
-   vView.Normalize();
-   UpFromView();
+   SetForward(vRot);
 end;
 
 procedure oxTCamera.PitchYaw();
 begin
-   PitchYaw(Angle[0], Angle[1]);
+   SetForward(Rotation);
+end;
+
+procedure oxTCamera.SetForward(const newRotation: TVector3f);
+begin
+   Rotation := newRotation;
+   vView := vmForwardFromRotation(rotation);
+   UpFromView();
 end;
 
 procedure oxTCamera.IncPitchYaw(pitch, yaw: single);
 begin
-   Angle[0] := Angle[0] + pitch;
-   Angle[1] := Angle[1] + yaw;
+   Rotation[0] := Rotation[0] + pitch;
+   Rotation[1] := Rotation[1] + yaw;
 
-   if(Angle[0] >= 0) then
-      Angle[0] := Angle[0] mod 360.0
+   if(Rotation[0] >= 0) then
+      Rotation[0] := Rotation[0] mod 360.0
    else
-      Angle[0] := -(abs(Angle[0]) mod 360.0);
+      Rotation[0] := -(abs(Rotation[0]) mod 360.0);
 
-   if(Angle[1] >= 0) then
-      Angle[1] := Angle[1] mod 360.0
+   if(Rotation[1] >= 0) then
+      Rotation[1] := Rotation[1] mod 360.0
    else
-      Angle[1] := -(abs(Angle[1]) mod 360.0);
+      Rotation[1] := -(abs(Rotation[1]) mod 360.0);
 
-   PitchYaw(Angle[0], Angle[1]);
+   PitchYaw(Rotation[0], Rotation[1]);
 end;
 
 procedure oxTCamera.UpFromView();
@@ -188,7 +196,7 @@ begin
    vUp.Normalize();
 end;
 
-procedure oxTCamera.SetupAngles();
+procedure oxTCamera.SetupRotation();
 var
    d: TVector3f;
    pitch,
@@ -201,8 +209,9 @@ begin
    pitch := arcsin(d[1]);
    yaw := arctan2(d[0], d[2]);
 
-   Angle[0] := pitch * vmcToDeg;
-   Angle[1] := yaw * vmcToDeg;
+   Rotation[0] := pitch * vmcToDeg;
+   Rotation[1] := yaw * vmcToDeg;
+   Rotation[2] := 0;
 end;
 
 procedure oxTCamera.LookAt(apply: boolean);
@@ -285,7 +294,7 @@ begin
    vUp := oxvCameraUp;
    vRight := oxvCameraRight;
 
-   SetupAngles();
+   SetupRotation();
 
    Mode := oxCAMERA_MODE_DIRECTION;
    Style := oxCAMERA_STYLE_FREE;
@@ -356,7 +365,7 @@ INITIALIZATION
    serialization.AddProperty('Mode', @oxTCamera(nil).Mode, oxSerialization.Types.Enum);
    serialization.AddProperty('Style', @oxTCamera(nil).Style, oxSerialization.Types.Enum);
 
-   serialization.AddProperty('Angle', @oxTCamera(nil).Angle, oxSerialization.Types.Vector3f);
+   serialization.AddProperty('Rotation', @oxTCamera(nil).Rotation, oxSerialization.Types.Vector3f);
    serialization.AddProperty('Radius', @oxTCamera(nil).Radius, oxSerialization.Types.Single);
 
 
