@@ -422,7 +422,7 @@ CONST
    vmvOne4e: TVector4e           = (1.0, 1.0, 1.0, 1.0);
 
    {view vectors}
-   vmvUp: TVector3               = (0.0, 0.0, 1.0);
+   vmvUp: TVector3               = (0.0, 1.0, 0.0);
 
    {zero matrices}
    vmmZero2: TMatrix2 = (
