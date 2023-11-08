@@ -319,7 +319,7 @@ TYPE
    oxTRenderSyncMethod = (
       oxRENDER_SYNC_NONE,
       oxRENDER_SYNC_VSYNC,
-      oxRENDER_SYNC_FREESYNC
+      oxRENDER_SYNC_ADAPTIVE
    );
 
 CONST
