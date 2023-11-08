@@ -82,6 +82,15 @@ TYPE
          DwarfLevel: loopint;
       end;
 
+      Linker: record
+         {what linker to use (-FL)}
+         Use: String;
+      end;
+
+      Verbose: record
+         ShowEverything: boolean; {-va}
+      end;
+
       {selected optimization level}
       OptimizationLevel: loopint;
 
@@ -443,6 +452,9 @@ begin
    FPCOptions.PositionIndependentCode := false;
 
    ExecutableOptions.ExcludeDefaultLibraryPath := false;
+
+   Linker.Use := '';
+   Verbose.ShowEverything := false;
 
    Optimization.Level := 1;
 

@@ -28,6 +28,9 @@ TYPE
       {get fpc command line options for use with a config file}
       class function GetFPCCommandLineForConfig(): TSimpleStringList; static;
 
+      {get verbose parameters}
+      class function GetFPCVerboseParameters(): string; static;
+
       {add a new empty config line}
       procedure Add(); inline;
       {add a new config line}
@@ -72,6 +75,7 @@ end;
 class function TBuildFPCConfiguration.GetFPCCommandLine(emptyBefore: loopint = 0; emptyAfter: loopint = 0): TSimpleStringList;
 var
    i: loopint;
+   verboseString: string = '';
 
 procedure AddArgument(const s: StdString);
 begin
@@ -101,44 +105,51 @@ begin
       AddArgument('-d' + build.Symbols.List[i]);
    end;
 
-   if(build.Options.Rebuild) then
+   if build.Options.Rebuild then
       AddArgument('-B');
 
-   if(build.FPCOptions.UnitOutputPath <> '') then
+   if build.FPCOptions.UnitOutputPath <> '' then
       AddArgument('-FU' + build.FPCOptions.UnitOutputPath);
 
-   if(build.FPCOptions.CompilerUtilitiesPath <> '') then
+   if build.FPCOptions.CompilerUtilitiesPath <> '' then
       AddArgument('-FD' + build.FPCOptions.CompilerUtilitiesPath);
 
-   if(build.Target.OS <> '') then
+   if build.Target.OS <> '' then
       AddArgument('-T' + build.Target.OS);
 
-   if(build.Target.CPU <> '') then
+   if build.Target.CPU <> '' then
       AddArgument('-P' + build.Target.CPU);
 
-   if(build.Debug.Include) then
+   if build.Debug.Include then
       AddArgument('-g');
 
-   if(build.Debug.LineInfo) then
+   if build.Debug.LineInfo then
       AddArgument('-gl');
 
-   if(build.Debug.External) then
+   if build.Debug.External then
       AddArgument('-Xg');
 
-   if(build.Debug.Valgrind) then
+   if build.Debug.Valgrind then
       AddArgument('-gv');
 
-   if(build.Debug.Stabs) then
+   if build.Debug.Stabs then
       AddArgument('-gs');
 
-   if(build.Debug.Information.DwarfSets) then
+   if build.Debug.Information.DwarfSets then
       AddArgument('-godwarfsets');
 
-   if(build.Debug.DwarfLevel > 0) then
+   if build.Debug.DwarfLevel > 0 then
       AddArgument('-gw' + sf(build.Debug.DwarfLevel));
 
-   if(build.ExecutableOptions.ExcludeDefaultLibraryPath) then
+   if build.ExecutableOptions.ExcludeDefaultLibraryPath then
       AddArgument('-Xd');
+
+   verboseString := GetFPCVerboseParameters();
+   if not verboseString.IsEmpty then
+      AddArgument(verboseString);
+
+   if not build.Linker.Use.IsEmpty then
+      AddArgument('-FL' + build.Linker.Use);
 
    for i := 0 to emptyAfter - 1 do begin
       AddArgument('');
@@ -157,6 +168,17 @@ begin
 
    if(build.FPCOptions.UseConfig <> '') then
       Result.Add('@' + build.FPCOptions.UseConfig);
+end;
+
+class function TBuildFPCConfiguration.GetFPCVerboseParameters(): string;
+begin
+   Result := '';
+
+   if(build.Verbose.ShowEverything) then
+      Result := Result + 'a';
+
+   if not Result.IsEmpty then
+      Result := '-v' + Result;
 end;
 
 procedure TBuildFPCConfiguration.Add();
@@ -180,6 +202,9 @@ begin
 end;
 
 procedure TBuildFPCConfiguration.Construct();
+var
+   verboseString: string;
+
 begin
    Config.Dispose();
 
@@ -307,6 +332,23 @@ begin
 
       FromList(build.CustomOptions.List, '', build.CustomOptions.n);
    end;
+
+   {verbose}
+   if not build.Linker.Use.IsEmpty then begin
+      add('');
+      add('## linker');
+      add('-FL' + build.Linker.Use);
+      add('-Xe');
+   end;
+
+   {verbose}
+   verboseString := GetFPCVerboseParameters();
+   if not verboseString.IsEmpty then begin
+      add('');
+      add('## verbose');
+      add(verboseString);
+   end;
+
 end;
 
 procedure TBuildFPCConfiguration.ConstructDefaultIncludes(const basePath: StdString);
