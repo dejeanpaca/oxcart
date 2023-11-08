@@ -288,7 +288,7 @@ end;
 
 function TBuildPlatform.GetExecutablePath(): StdString;
 begin
-   if(Executable <> '') then
+   if(Executable = '') then
       Result := build.GetExecutableName(Path + 'fpc')
    else
       Result := Path + Executable;

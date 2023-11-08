@@ -27,7 +27,7 @@ TYPE
    x11TWindow = class(oxTWindow)
       wd: record
          LastError: longint;
-         visinfo: PXVisualInfo;
+         VisInfo: PXVisualInfo;
          wAttr: TXSetWindowAttributes;
 
          h: x.TWindow;
@@ -37,10 +37,10 @@ TYPE
    TX11PointerDriver = class(appTPointerDriver)
       constructor Create();
 
-      procedure getXY({%H-}devID: longint; wnd: pointer; out x, y: single); override;
-      procedure setXY({%H-}devID: longint; wnd: pointer; x, y: single); override;
-      procedure hide(devID: longint; {%H-}wnd: pointer); override;
-      procedure show(devID: longint; {%H-}wnd: pointer); override;
+      procedure GetXY({%H-}devID: longint; wnd: pointer; out x, y: single); override;
+      procedure SetXY({%H-}devID: longint; wnd: pointer; x, y: single); override;
+      procedure Hide(devID: longint; {%H-}wnd: pointer); override;
+      procedure Show(devID: longint; {%H-}wnd: pointer); override;
    end;
 
    { oxTX11Platform }
@@ -87,16 +87,19 @@ TYPE
 
       procedure OutClientAreaCoordinates({%H-}wnd: oxTWindow; out x, y: single); override;
 
-      class procedure LogError(error: longint); static;
-      procedure xSetSizeHint(wnd: oxTWindow; flags: longint = PMinSize or PMaxSize);
+      procedure XSetSizeHint(wnd: oxTWindow; flags: longint = PMinSize or PMaxSize);
 
       procedure LoadCursor(var c: x.TCursor; shape: LongWord);
       procedure LoadCursor(cursorType: uiTCursorType); override;
       procedure SetCursor(cursor: TCursor);
       procedure SetCursor(cursorType: uiTCursorType); override;
 
+      class procedure LogError(error: longint); static;
       {get the last error}
       function GetError(doDumpCallStack: boolean = true): longint;
+
+      protected
+         function OpenDisplay(): boolean;
    end;
 
 VAR
@@ -138,37 +141,6 @@ begin
 
       DisplayNotOpenedLogged := true;
    end;
-end;
-
-function x11OpenDisplay(): boolean;
-begin
-   Result := false;
-
-   if(x11.DisplayOpened = false) then begin
-      x11.DPY := XOpenDisplay(nil);
-
-      if(x11.DPY <> nil) then begin
-         x11.Screen := DefaultScreenOfDisplay(x11.DPY);
-         x11.DisplayOpened := true;
-      end else begin
-         log.e('X11 > Cannot open X server display.');
-         exit;
-      end;
-   end;
-
-   Result := x11.DisplayOpened;
-end;
-
-{ x11TGlobal }
-
-function oxTX11Platform.GetError(doDumpCallStack: boolean): longint;
-begin
-   Result := LastError.error_code;
-
-   if(doDumpCallStack) and (Result <> 0) then
-      DumpCallStack(1);
-
-   LastError.error_code := 0;
 end;
 
 VAR
@@ -264,7 +236,7 @@ procedure MouseHandle();
 begin
    {set the event position}
    m.x   := event.xbutton.x;
-   m.y   := event.xbutton.y;
+   m.y   := wnd.Dimensions.h - 1 - event.xbutton.y;
 
    {set button state}
    SetMouseButtonState(event.xmotion.state);
@@ -279,7 +251,7 @@ procedure MouseButtonHandle();
 begin
    appm.Init(m);
 
-   {check if this is a wheel event}
+   {check if this is a scroll event}
    if(event.xbutton.state and Button4Mask > 0) then begin
       m.Action := appmcWHEEL;
       m.Value  := 1;
@@ -290,14 +262,17 @@ begin
       m.Value  := -1;
    end;
 
-   {set event action, if not determined it's a wheel action already}
+   {set event action, if not determined it's a scroll action already}
    if(m.Action <> appmcWHEEL) then begin
-      case event._type of
-         x.ButtonPress:
-            m.Action    := appmcPRESSED;
-         x.ButtonRelease:
-            m.Action  := appmcRELEASED;
-      end;
+      if(event._type = x.ButtonPress) then
+         m.Action := appmcPRESSED
+      else if(event._type = x.ButtonRelease) then
+         m.Action  := appmcRELEASED;
+   end else begin
+      {ignore one scroll event so we don't have two scroll events,
+      since X gives both press and release events for single scroll}
+      if event._type = x.ButtonPress then
+         exit;
    end;
 
    {set button state}
@@ -543,10 +518,10 @@ begin
       end;
 
       {if successful then continue creating the window}
-      if(wnd.wd.visinfo <> nil) then begin
-         screenIndex := wnd.wd.visinfo^.screen;
-         depth := wnd.wd.visinfo^.depth;
-         visual := wnd.wd.visinfo^.visual;
+      if(wnd.wd.VisInfo <> nil) then begin
+         screenIndex := wnd.wd.VisInfo^.screen;
+         depth := wnd.wd.VisInfo^.depth;
+         visual := wnd.wd.VisInfo^.visual;
 
          {create a colormap and assign it}
          cm := XCreateColormap(DPY, RootWindow(DPY, screenIndex), visual, AllocNone);
@@ -622,7 +597,7 @@ begin
 
       {disable resizing if indicated as so}
       if(not (uiwndpRESIZABLE in wnd.Properties)) then
-         xSetSizeHint(wnd);
+         XSetSizeHint(wnd);
 
       {window successfully created}
       Result := true;
@@ -641,9 +616,9 @@ begin
    if(oxTRenderer(wnd.Renderer).DeInitWindow(wnd) = false) then
       Log.e('Renderer window de-init failed.');
 
-   if(xwnd.wd.visinfo <> nil) then begin
-      XFree(xwnd.wd.visinfo);
-      xwnd.wd.visinfo := nil;
+   if(xwnd.wd.VisInfo <> nil) then begin
+      XFree(xwnd.wd.VisInfo);
+      xwnd.wd.VisInfo := nil;
    end;
 
    {destroy color map}
@@ -662,7 +637,6 @@ begin
    Result := true;
 end;
 
-{ SWAP BUFFERS }
 procedure oxTX11Platform.Move(wnd: oxTWindow; x, y: longint);
 var
    error: longint;
@@ -679,7 +653,7 @@ var
 begin
    {make temporarily resizable}
    if(not (uiwndpRESIZABLE in wnd.Properties)) then
-      xSetSizeHint(wnd, 0);
+      XSetSizeHint(wnd, 0);
 
    {resize}
    error := XResizeWindow(DPY, x11TWindow(wnd).wd.h, w, h);
@@ -687,7 +661,7 @@ begin
 
    {restore default hint}
    if(not (uiwndpRESIZABLE in wnd.Properties)) then
-      xSetSizeHint(wnd);
+      XSetSizeHint(wnd);
 end;
 
 procedure oxTX11Platform.OutClientAreaCoordinates(wnd: oxTWindow; out x, y: single);
@@ -696,15 +670,7 @@ begin
    y := 0;
 end;
 
-class procedure oxTX11Platform.LogError(error: longint);
-begin
-   if(error = BadValue) then
-      log.e('X11 > returned bad value')
-   else if(error = BadWindow) then
-      log.w('X11 > XMoveResizeWindow returned bad window');
-end;
-
-procedure oxTX11Platform.xSetSizeHint(wnd: oxTWindow; flags: longint);
+procedure oxTX11Platform.XSetSizeHint(wnd: oxTWindow; flags: longint);
 var
    sizeHints: TXSizeHints;
 
@@ -819,7 +785,7 @@ begin
    PointerDriver := TX11PointerDriver.Create();
 
    {open the display for X11}
-   if(x11OpenDisplay()) then
+   if(OpenDisplay()) then
       Result := true
    else begin
       log.f('X11 > Fatal: Failed to open display.');
@@ -856,7 +822,7 @@ begin
    if(DPY <> nil) then begin
       XSetCloseDownMode(DPY, DestroyAll);
       XCloseDisplay(DPY);
-      x11.DPY := nil;
+      DPY := nil;
       DisplayOpened := false;
    end;
 
@@ -864,6 +830,41 @@ begin
 
    if(not Result) then
       log.e('X11 > Fatal: Failed to close display.');
+end;
+
+class procedure oxTX11Platform.LogError(error: longint);
+begin
+   if(error = BadValue) then
+      log.e('X11 > returned bad value')
+   else if(error = BadWindow) then
+      log.w('X11 > XMoveResizeWindow returned bad window');
+end;
+
+function oxTX11Platform.GetError(doDumpCallStack: boolean): longint;
+begin
+   Result := LastError.error_code;
+
+   if(doDumpCallStack) and (Result <> 0) then
+      DumpCallStack(1);
+
+   LastError.error_code := 0;
+end;
+
+function oxTX11Platform.OpenDisplay(): boolean;
+begin
+   if(DisplayOpened = false) then begin
+      DPY := XOpenDisplay(nil);
+
+      if(DPY <> nil) then begin
+         Screen := DefaultScreenOfDisplay(DPY);
+         DisplayOpened := true;
+      end else begin
+         log.e('X11 > Cannot open X server display.');
+         exit;
+      end;
+   end;
+
+   Result := DisplayOpened;
 end;
 
 { POINTER DRIVER }
