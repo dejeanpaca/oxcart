@@ -188,7 +188,6 @@ end;
 
 procedure deinit();
 begin
-   FreeObject(oxedProjectScanner.Walker);
    FreeObject(oxedProjectScanner.Task);
 end;
 
