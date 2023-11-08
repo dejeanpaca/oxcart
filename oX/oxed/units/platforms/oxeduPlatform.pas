@@ -71,6 +71,9 @@ TYPE
 
       Configuration: oxedTPlatformConfiguration;
 
+      {symbols that should be defined when building for this platform}
+      Symbols: TSimpleStringList;
+
       constructor Create(); virtual;
       destructor Destroy; override;
 
@@ -169,6 +172,7 @@ begin
    id := 'unknown';
 
    Architectures.InitializeValues(Architectures);
+   TSimpleStringList.InitializeValues(Symbols);
 end;
 
 destructor oxedTPlatform.Destroy;

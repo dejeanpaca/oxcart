@@ -88,6 +88,8 @@ TYPE
       BuildArch,
       {previously used build architecture}
       PreviousBuildArch: oxedTPlatformArchitecture;
+      {building for platform}
+      BuildPlatform: oxedTPlatform;
       {current build mechanism}
       BuildMechanism: oxedTBuildMechanism;
 
@@ -415,6 +417,10 @@ begin
    for i := 0 to oxedBuild.Features.n - 1 do begin
       Result.Add(oxedBuild.Features.List[i]^.Symbol);
    end;
+
+   for i := 0 to oxedBuild.BuildPlatform.Symbols.n - 1 do begin
+      Result.Add(oxedBuild.BuildPlatform.Symbols.List[i]);
+   end;
 end;
 
 procedure lpiLoaded(var f: TLPIFile);
@@ -629,7 +635,7 @@ begin
    Result := oxed.UseCMEM;
 
    if(not Result) then
-      Result := oxedTPlatform(oxedBuild.BuildArch.PlatformObject).RequireCMEM;
+      Result := oxedBuild.BuildPlatform.RequireCMEM;
 
    oxedBuildLog.v('Using cmem: ' + sf(Result));
 end;
@@ -1298,6 +1304,7 @@ end;
 procedure oxedTBuildGlobal.StartTask(taskType: oxedTBuildTaskType; architecture: oxedTPlatformArchitecture);
 begin
    BuildArch := architecture;
+   BuildPlatform := oxedTPlatform(BuildArch.PlatformObject);
    StartTask(taskType);
 end;
 
