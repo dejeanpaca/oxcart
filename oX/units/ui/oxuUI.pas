@@ -56,13 +56,6 @@ TYPE
       function GetSelectedWdg(): uiTWidget;
    end;
 
-   uiTWindowBaseReference = record
-      uid: qword;
-      wnd: uiTWindow;
-   end;
-
-   uiTWindowBaseReferencesList = array of uiTWindowBaseReference;
-
    { uiTPointerCapture }
 
    uiTPointerCapture = record
