@@ -135,4 +135,3 @@ INITIALIZATION
    oxui.InitializationProcs.Add('console_skin', @Initialize, @DeInitialize);
 
 END.
-

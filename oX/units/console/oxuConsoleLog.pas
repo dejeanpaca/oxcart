@@ -82,4 +82,3 @@ INITIALIZATION
    oldLogCallback := appLog.setupCallback;
    appLog.setupCallback := @SetupLog;
 END.
-

@@ -45,4 +45,3 @@ INITIALIZATION
    internal.Register('widget.empty', @initializeWidget);
 
 END.
-

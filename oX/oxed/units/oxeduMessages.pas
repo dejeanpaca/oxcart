@@ -108,4 +108,3 @@ INITIALIZATION
    oxed.Init.Add(oxedInitRoutines, 'messages', @init, @deinit);
 
 END.
-

@@ -180,4 +180,3 @@ BEGIN
    timer.Update();
    log.w('Elapsed: ' + sf(timer.Elapsedf(), 2) + 's');
 END.
-

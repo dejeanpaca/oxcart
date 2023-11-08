@@ -1804,4 +1804,3 @@ INITIALIZATION
 
    CreateDefaultPlatform();
 END.
-

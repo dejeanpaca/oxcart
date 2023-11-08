@@ -71,4 +71,3 @@ INITIALIZATION
    oxedMenubar.OnInit.Add(@initMenubar);
 
 END.
-

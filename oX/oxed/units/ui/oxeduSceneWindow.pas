@@ -430,4 +430,3 @@ INITIALIZATION
    oxedEntities.OnRemove.Add(@entityRemove);
 
 END.
-

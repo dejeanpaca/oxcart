@@ -355,4 +355,3 @@ INITIALIZATION
    wdgDropDownList.DropAreaWidth := 16;
 
 END.
-

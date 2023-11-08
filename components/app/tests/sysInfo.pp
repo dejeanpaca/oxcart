@@ -11,4 +11,3 @@ BEGIN
    appInfo.setName('sysinfo');
    appInfo.org := 'oxcart';
 END.
-

@@ -220,4 +220,3 @@ INITIALIZATION
    oxedProjectManagement.OnProjectClosed.Add(@onProjectClose);
 
 END.
-
