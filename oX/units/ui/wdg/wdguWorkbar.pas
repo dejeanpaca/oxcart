@@ -63,9 +63,6 @@ VAR
 
 IMPLEMENTATION
 
-CONST
-   WORKBAR_HEIGHT = 20;
-
 VAR
    internal: uiTWidgetClass;
 
@@ -167,7 +164,7 @@ end;
 INITIALIZATION
    internal.Register('widget.workbar', @initializeWidget);
 
-   wdgWorkbar.Height := WORKBAR_HEIGHT;
+   wdgWorkbar.Height := wdgWORKBAR_HEIGHT;
    wdgWorkbar.Shadows := true;
 
 END.
