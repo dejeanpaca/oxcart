@@ -41,7 +41,8 @@ var
 
 begin
    {add a cancel button}
-   btnOk := wdgButton.Add('Close', uiWidget.LastRect.BelowOf(), oxDimensions(80, 20), @Close);
+   btnOk := wdgButton.Add('Close', uiWidget.LastRect.BelowOf(), oxNullDimensions, @Close);
+
 
    Window.ContentAutoSize();
    Window.AutoCenter();

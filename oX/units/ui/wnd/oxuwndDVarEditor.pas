@@ -250,7 +250,7 @@ end;
 
 procedure oxTDVarEditorWindow.AddWidgets();
 begin
-   wdg.Close := wdgButton.Add('Close', oxNullPoint, oxDimensions(80, 20), @Close);
+   wdg.Close := wdgButton.Add('Close', oxNullPoint, oxNullDimensions, @Close);
 
    wdg.Divisor := wdgDivisor.Add('');
 

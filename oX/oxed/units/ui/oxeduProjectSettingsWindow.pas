@@ -310,6 +310,8 @@ begin
    wdgList.Add().Resize(240, 160);
    lastRect := uiWidget.LastRect;
 
+   uiTWidget.FitToGrid(dimensions);
+
    button := wdgButton.Add('Add', uiWidget.LastRect.RightOf(wdgDEFAULT_SPACING, 0, false), dimensions, @addGlobalSymbol);
    button.SetButtonPosition([uiCONTROL_GRID_TOP]);
 
