@@ -137,7 +137,8 @@ var
    rtc: oxTRenderTargetContext;
 
 begin
-   glPlatform^.OnInitWindow(oglTWindow(wnd));
+   if(not glPlatform^.OnInitWindow(oglTWindow(wnd))) then
+      exit(false);
 
    if(not PreserveRCs) or (wnd.RenderingContext = -1) then
       wnd.RenderingContext := GetRenderingContext(wnd);
@@ -148,7 +149,7 @@ begin
       else
          wnd.CreateFail('gl > No rendering context');
 
-      exit(False);
+      exit(false);
    end;
 
    wnd.FromWindow(rtc);
