@@ -1,10 +1,10 @@
 {
-   uFileUnix
+   ufhUnix
    Copyright (C) 2011. Dejan Boras
 }
 
 {$INCLUDE oxheader.inc}
-UNIT uFileUnix;
+UNIT ufhUnix;
 
 INTERFACE
 

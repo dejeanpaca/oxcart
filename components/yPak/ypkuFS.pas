@@ -8,7 +8,7 @@ UNIT ypkuFS;
 
 INTERFACE
 
-   USES uStd, ufhStandard, {$IFDEF UNIX}BaseUnix, uFileUnix, {$ENDIF}
+   USES uStd, ufhStandard, {$IFDEF UNIX}BaseUnix, ufhUnix, {$ENDIF}
       uLog, StringUtils,
       uFileUtils, uFile, {%H-}uFiles, ufhSub, uyPakFile;
 
