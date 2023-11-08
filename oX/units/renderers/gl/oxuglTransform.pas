@@ -20,6 +20,7 @@ TYPE
 
    oxglTTransform = class(oxTTransform)
       procedure Apply(); override;
+      procedure JustApply(const m: TMatrix4f); override;
    end;
 
 VAR
@@ -35,6 +36,16 @@ var
 
 begin
    transposed := Matrix.Transposed();
+
+   glLoadMatrixf(@transposed[0, 0]);
+end;
+
+procedure oxglTTransform.JustApply(const m: TMatrix4f);
+var
+   transposed: TMatrix4f;
+
+begin
+   transposed := m.Transposed();
 
    glLoadMatrixf(@transposed[0, 0]);
 end;
