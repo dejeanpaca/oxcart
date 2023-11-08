@@ -40,7 +40,8 @@ end;
 
 procedure hwriteln({%H-}logf: PLog; priority: longint; const s: string);
 begin
-   if(oxConsole.Console.Contents.a > 0) then begin
+   {if log file is closing we probably already have no buffer}
+   if(oxConsole.Console.Contents.a > 0) and (not logf^.Flags.Closing) then begin
       if(priority = logcINFO) then
          oxConsole.Console.i(s)
       else if(priority = logcWARNING) then

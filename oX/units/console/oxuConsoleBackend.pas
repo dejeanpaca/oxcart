@@ -1035,6 +1035,7 @@ end;
 procedure conTConsole.i(const s: string);
 begin
    RawWriteln(s, Colors.Statement);
+
    if(LogOutput <> nil) then
       LogOutput^.i(s);
 end;
