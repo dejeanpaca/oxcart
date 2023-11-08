@@ -91,7 +91,7 @@ begin
    {if we need to do an initial build, then do it}
    if(not oxedProject.Session.InitialBuildDone) and (oxedSettings.RequireRebuildOnOpen) then begin
       oxedProjectRunner.RunAfterBuild := true;
-      oxedBuild.RebuildTask();
+      oxedBuild.RebuildEditorTask();
       exit;
    end;
 

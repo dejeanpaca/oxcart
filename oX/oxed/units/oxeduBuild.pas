@@ -17,7 +17,7 @@ INTERFACE
       {app}
       uApp, appuActionEvents,
       {ox}
-      oxuThreadTask, oxuFeatures, oxuRenderer,
+      oxuThreadTask, oxuFeatures, oxuRenderer, oxeduEditorPlatform,
       {oxed}
       uOXED, oxeduConsole, oxeduPackageTypes, oxeduPackage, oxeduProject,
       oxeduPlatform, oxeduTasks, oxeduActions, oxeduSettings,
@@ -126,31 +126,26 @@ TYPE
       procedure MoveExecutable();
       {copy required run-time libraries for this build}
       procedure CopyLibraries();
-      {rebuild the entire project}
-      class procedure Rebuild(); static;
-      {build the part of project that changed}
-      class procedure Recode(); static;
-      {cleanup build and other temporary files}
-      class procedure Cleanup(); static;
-      {cleanup build and other temporary files}
-      class procedure RecreateFiles(); static;
 
       {run a rebuild in a task}
-      class procedure RebuildTask(); static;
+      class procedure RebuildEditorTask(); static;
       {run a recode in a task}
-      class procedure RecodeTask(); static;
+      class procedure RecodeEditorTask(); static;
       {run cleanup in a task}
-      class procedure CleanupTask(); static;
+      class procedure CleanupEditorTask(); static;
       {run recreate in a task}
-      class procedure RecreateTask(); static;
+      class procedure RecreateEditorTask(); static;
       {run cleanup in a task}
       class procedure RebuildThirdPartyTask(); static;
+
       {run cleanup in a task}
       class procedure BuildStandaloneTask(arch: oxedTPlatformArchitecture); static;
 
-      {run currently set build task}
-      procedure RunTask(taskType: oxedTBuildTaskType);
+      {run currently set build task (should only be called internally)}
+      procedure RunTask();
 
+      {run a task of the specified type and architecture}
+      procedure StartTask(taskType: oxedTBuildTaskType; architecture: oxedTPlatformArchitecture);
       {run a task of the specified type}
       procedure StartTask(taskType: oxedTBuildTaskType);
 
@@ -168,6 +163,9 @@ TYPE
       function GetFPCConfigFilename(): StdString;
       {get lpi filename based on current target}
       function GetLPIFilename(): StdString;
+
+      {Reset build targets and options. Should be called after a build so the next one doesn't use leftover settings.}
+      procedure Reset();
    end;
 
 VAR
@@ -204,7 +202,7 @@ procedure oxedTBuildTask.Run();
 begin
    inherited Run;
 
-   oxedBuild.RunTask(oxedBuild.BuildType);
+   oxedBuild.RunTask();
 end;
 
 procedure oxedTBuildTask.ThreadStart();
@@ -731,7 +729,6 @@ begin
    Result := Recreate(true);
 
    if(Result) then begin
-      oxedBuild.BuildMechanism := whatFor;
       Result := RecreateConfig(whatFor, true);
    end;
 end;
@@ -801,18 +798,26 @@ begin
    BuildExec.Output.Redirect := previousRedirect;
 end;
 
+function createPath(const name, path: StdString): boolean;
+begin
+   if(not FileUtils.DirectoryExists(path)) then begin
+      if(ForceDirectories(path)) then begin
+         log.v('Created ' + name + ' path: ' + path)
+      end else begin
+         FailBuild('Failed to create ' + name + ' path: ' + path);
+         exit(false);
+      end;
+   end;
+
+   Result := true;
+end;
+
 procedure oxedTBuildGlobal.RunBuild();
 var
    modeString,
    targetString: string;
 
 begin
-   if(not Buildable(true)) then
-      exit;
-
-   if(not oxedProject.Valid()) then
-      exit;
-
    if(BuildArch <> nil) then
       log.v('Building architecture: ' + BuildArch.Architecture)
    else
@@ -832,30 +837,17 @@ begin
       if(not FileUtils.DirectoryExists(TargetPath)) then
          BuildType := OXED_BUILD_TASK_REBUILD;
    end else begin
-      {create working area directory}
+      {remove target path}
+      if(FileUtils.DirectoryExists(TargetPath)) then
+         FileUtils.RmDir(TargetPath);
 
-      if(TargetPath <> WorkArea) then begin
+      {remove work area}
+      if(FileUtils.DirectoryExists(WorkArea)) then
          FileUtils.RmDir(WorkArea);
-
-         if(ForceDirectories(WorkArea)) then begin
-            log.v('Created working area directory: ' + WorkArea)
-         end else begin
-            FailBuild('Failed to create working area directory: ' + WorkArea);
-            exit;
-         end;
-      end;
-
-      {create target directory}
-
-      FileUtils.RmDir(TargetPath);
-
-      if(ForceDirectories(TargetPath)) then
-         log.v('Created directory: ' + TargetPath)
-      else begin
-         FailBuild('Failed to create output directory: ' + TargetPath);
-         exit;
-      end;
    end;
+
+   createPath('work area', WorkArea);
+   createPath('target', TargetPath);
 
    if(BuildType = OXED_BUILD_TASK_REBUILD) then
       modeString := 'rebuild'
@@ -961,42 +953,22 @@ begin
       oxedConsole.i('Seems to be already clean');
 end;
 
-class procedure oxedTBuildGlobal.Rebuild();
-begin
-   oxedBuild.RunTask(OXED_BUILD_TASK_REBUILD);
-end;
-
-class procedure oxedTBuildGlobal.Recode();
-begin
-   oxedBuild.RunTask(OXED_BUILD_TASK_RECODE);
-end;
-
-class procedure oxedTBuildGlobal.Cleanup();
-begin
-   oxedBuild.RunTask(OXED_BUILD_TASK_CLEANUP);
-end;
-
-class procedure oxedTBuildGlobal.RecreateFiles();
-begin
-   oxedBuild.RunTask(OXED_BUILD_TASK_RECREATE);
-end;
-
-class procedure oxedTBuildGlobal.RebuildTask();
+class procedure oxedTBuildGlobal.RebuildEditorTask();
 begin
    oxedBuild.StartTask(OXED_BUILD_TASK_REBUILD);
 end;
 
-class procedure oxedTBuildGlobal.RecodeTask();
+class procedure oxedTBuildGlobal.RecodeEditorTask();
 begin
    oxedBuild.StartTask(OXED_BUILD_TASK_RECODE);
 end;
 
-class procedure oxedTBuildGlobal.CleanupTask();
+class procedure oxedTBuildGlobal.CleanupEditorTask();
 begin
    oxedBuild.StartTask(OXED_BUILD_TASK_CLEANUP);
 end;
 
-class procedure oxedTBuildGlobal.RecreateTask();
+class procedure oxedTBuildGlobal.RecreateEditorTask();
 begin
    oxedBuild.StartTask(OXED_BUILD_TASK_RECREATE);
 end;
@@ -1039,23 +1011,16 @@ begin
    oxedBuild.RecreateConfig(OXED_BUILD_VIA_LAZ, true);
 end;
 
-procedure oxedTBuildGlobal.RunTask(taskType: oxedTBuildTaskType);
+procedure oxedTBuildGlobal.RunTask();
 begin
-   if(not oxedBuild.Buildable(true)) then
+   if(not oxedBuild.Buildable(true)) or (not oxedProject.Valid()) then begin
+      Reset();
       exit;
+   end;
 
    BuildStart := Now;
 
    build.ResetOptions();
-
-   if(taskType <> OXED_BUILD_TASK_STANDALONE) then
-      BuildTarget := OXED_BUILD_LIB
-   else
-      BuildTarget := OXED_BUILD_STANDALONE;
-
-   BuildType := taskType;
-   BuildMechanism := OXED_BUILD_VIA_FPC;
-
    build.Options.IsLibrary := IsLibrary();
 
    {determine if we need third party units}
@@ -1115,13 +1080,22 @@ begin
       RunBuild();
    end;
 
+   Reset();
    log.v('oxed > Build task done');
+end;
+
+procedure oxedTBuildGlobal.StartTask(taskType: oxedTBuildTaskType; architecture: oxedTPlatformArchitecture);
+begin
+   BuildArch := architecture;
+   StartTask(taskType);
 end;
 
 procedure oxedTBuildGlobal.StartTask(taskType: oxedTBuildTaskType);
 begin
-   if(not Buildable()) then
+   if(not oxedBuild.Buildable(true)) or (not oxedProject.Valid()) then begin
+      Reset();
       exit;
+   end;
 
    RunAfterScan := false;
 
@@ -1187,9 +1161,13 @@ end;
 
 function oxedTBuildGlobal.GetPlatformPath(const base: StdString): StdString;
 begin
-   if(BuildTarget <> OXED_BUILD_STANDALONE) then
-      Result := oxedProject.TempPath
-   else
+   if(BuildTarget = OXED_BUILD_LIB) then begin
+      {we're building for editor}
+      if(BuildArch = nil) or (BuildArch = oxedEditorPlatform.Architecture) then
+         Result := oxedProject.TempPath
+      else
+         Result := oxedProject.TempPath + BuildArch.GetPlatformString() + DirectorySeparator;
+   end else
       Result := IncludeTrailingPathDelimiterNonEmpty(base) + oxedBuild.BuildArch.GetPlatformString() + DirectorySeparator;
 end;
 
@@ -1217,6 +1195,14 @@ begin
       Result := oxPROJECT_LIB_LPI
    else
       Result := oxPROJECT_MAIN_LPI;
+end;
+
+procedure oxedTBuildGlobal.Reset();
+begin
+   BuildType := OXED_BUILD_TASK_RECODE;
+   BuildTarget := OXED_BUILD_LIB;
+   BuildArch := oxedEditorPlatform.Architecture;
+   BuildMechanism := OXED_BUILD_VIA_FPC;
 end;
 
 procedure CreateSourceFile(const fn: string);
@@ -1251,10 +1237,10 @@ INITIALIZATION
 
    oxedBuild.BuildTarget := OXED_BUILD_LIB;
 
-   oxedActions.BUILD := appActionEvents.SetCallback(@oxedBuild.RebuildTask);
-   oxedActions.RECODE := appActionEvents.SetCallback(@oxedBuild.RecodeTask);
-   oxedActions.RECREATE := appActionEvents.SetCallback(@oxedBuild.RecreateTask);
-   oxedActions.CLEANUP := appActionEvents.SetCallback(@oxedBuild.CleanupTask);
+   oxedActions.BUILD := appActionEvents.SetCallback(@oxedBuild.RebuildEditorTask);
+   oxedActions.RECODE := appActionEvents.SetCallback(@oxedBuild.RecodeEditorTask);
+   oxedActions.RECREATE := appActionEvents.SetCallback(@oxedBuild.RecreateEditorTask);
+   oxedActions.CLEANUP := appActionEvents.SetCallback(@oxedBuild.CleanupEditorTask);
    oxedActions.REBUILD_THIRD_PARTY := appActionEvents.SetCallback(@oxedBuild.RebuildThirdPartyTask);
 
    oxedProjectScanner.OnDone.Add(@onScanDone);
