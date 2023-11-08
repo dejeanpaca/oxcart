@@ -37,9 +37,6 @@ TYPE
       {associated window}
       AssociatedWindow: oxTWindow;
 
-      {write version to the splash screen}
-      WriteVersion: boolean;
-
       constructor Create; override;
       destructor Destroy; override;
 
@@ -74,6 +71,9 @@ TYPE
    { oxTBasicSplashScreen }
 
    oxTBasicSplashScreen = class(oxTSplashScreen)
+      {write version to the splash screen}
+      WriteVersion: boolean;
+
       {splash screen texture}
       Texture: record
          Path: string;
@@ -143,6 +143,8 @@ var
    dotsString: ShortString;
 
 begin
+   uiWindow.RenderPrepare(AssociatedWindow);
+
    oxui.Material.Apply();
 
    if(Texture.Texture <> nil) then begin
@@ -173,6 +175,9 @@ begin
 
       dotsString := '';
       AddLeadingPadding(dotsString, '.', dots);
+
+      if(WriteVersion) then
+         f.Write(round(w * 0.5), round(h * 0.5), GetVersionString());
 
       f.Write(AssociatedWindow.Dimensions.w - (f.GetWidth() * 3) {%H-}- round(w * 0.5), round(h * 0.5), dotsString);
 
@@ -205,59 +210,31 @@ begin
    Load();
 end;
 
-procedure oxTSplashScreen.Load;
+procedure oxTSplashScreen.Load();
 begin
 end;
 
-procedure oxTSplashScreen.Unload;
+procedure oxTSplashScreen.Unload();
 begin
 
 end;
 
-procedure oxTSplashScreen.Render;
-var
-   f: oxTFont;
-   w, h: loopint;
-
-procedure RenderStuff();
-begin
-   oxRenderer.ClearColor(ClearColor);
-   oxRenderer.Clear(ClearBits);
-   uiWindow.RenderPrepare(AssociatedWindow);
-
-   RenderContent();
-
-   if(WriteVersion) then begin
-      f := oxf.GetDefault();
-      f.Start();
-
-      oxui.Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
-      oxRender.EnableBlend();
-      w := f.GetWidth();
-      h := f.GetHeight();
-      f.Write(round(w * 0.5), round(h * 0.5), GetVersionString());
-
-      oxf.Stop();
-   end;
-end;
-
-procedure SwapBuffers();
-begin
-   oxTRenderer(AssociatedWindow.Renderer).SwapBuffers(AssociatedWindow);
-end;
-
+procedure oxTSplashScreen.Render();
 begin
    oxCurrentMaterial := oxMaterial.Default;
    if(oxCurrentMaterial.Shader = nil) then
       exit;
 
    if(AssociatedWindow <> nil) then begin
-      RenderStuff();
-      SwapBuffers();
+      oxRenderer.ClearColor(ClearColor);
+      oxRenderer.Clear(ClearBits);
+
+      RenderContent();
+      oxTRenderer(AssociatedWindow.Renderer).SwapBuffers(AssociatedWindow);
    end;
 end;
 
-procedure oxTSplashScreen.RenderContent;
+procedure oxTSplashScreen.RenderContent();
 begin
 end;
 
@@ -269,18 +246,18 @@ begin
 end;
 
 
-procedure oxTSplashScreen.Update;
+procedure oxTSplashScreen.Update();
 begin
 end;
 
-procedure oxTSplashScreen.WaitForDisplayTime;
+procedure oxTSplashScreen.WaitForDisplayTime();
 begin
    repeat
       oxRun.Sleep();
    until timer.Cur() > (StartTime + DisplayTime);
 end;
 
-procedure oxTSplashScreen.Run;
+procedure oxTSplashScreen.Run();
 begin
    Update();
    Render();
@@ -298,7 +275,7 @@ begin
    Unload();
 end;
 
-function oxTSplashScreen.GetVersionString: string;
+function oxTSplashScreen.GetVersionString(): string;
 begin
    result := ox.GetVersionString();
 end;
