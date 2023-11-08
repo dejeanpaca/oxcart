@@ -45,6 +45,10 @@ TYPE
       procedure Add(const item: StdString);
       {select an item by its index}
       procedure SelectItem(item: longint);
+      {select first item}
+      procedure SelectFirst();
+      {select last item}
+      procedure SelectLast();
       {remove all items}
       procedure Clear();
       {remove the current item}
@@ -195,6 +199,18 @@ begin
       CurrentItem := item;
       SelectedItemChanged();
    end;
+end;
+
+procedure wdgTDropDownList.SelectFirst();
+begin
+   if(GetItemCount() > 0) then
+      SelectItem(0);
+end;
+
+procedure wdgTDropDownList.SelectLast();
+begin
+   if(GetItemCount() > 0) then
+      SelectItem(GetItemCount() - 1);
 end;
 
 procedure wdgTDropDownList.Clear();
