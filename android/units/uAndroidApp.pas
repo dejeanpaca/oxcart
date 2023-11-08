@@ -9,11 +9,24 @@ UNIT uAndroidApp;
 INTERFACE
 
    USES
+     uStd,
      android_native_app_glue;
 
 VAR
    AndroidApp: Pandroid_app;
 
+function androidGetInternalStorage(): StdString;
+
 IMPLEMENTATION
+
+function androidGetInternalStorage(): StdString;
+begin
+   Result := AndroidApp^.activity^.internalDataPath;
+end;
+
+function androidGetExternalStorage(): StdString;
+begin
+   Result := AndroidApp^.activity^.externalDataPath;
+end;
 
 END.
