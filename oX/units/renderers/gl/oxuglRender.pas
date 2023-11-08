@@ -294,7 +294,7 @@ begin
       {$IFNDEF GLES}
       glDrawElements(oglPrimitiveTranslate[GLenum(primitive)], count, GL_UNSIGNED_INT, indices);
       {$ELSE}
-      glDrawElements(oglPrimitiveTranslate[GLenum(primitive)], count, GL_UNSIGNED_INT, PGLvoid(indices));
+      glDrawElements(oglPrimitiveTranslate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, PGLvoid(indices));
       {$ENDIF}
 
    {$IFDEF DEBUG}LastUsedIndices := indices;{$ENDIF}
