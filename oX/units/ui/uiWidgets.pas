@@ -997,6 +997,9 @@ begin
 
    Include(Properties, wdgpDESTROY_IN_PROGRESS);
 
+   {started to destroy}
+   OnDestroy();
+
    {dispose sub-widgets, if any}
    uiWidget.Dispose(Widgets);
 

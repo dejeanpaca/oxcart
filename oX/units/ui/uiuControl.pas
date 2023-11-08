@@ -173,6 +173,9 @@ TYPE
       {called after rendering}
       procedure OnPostRender(); virtual;
 
+      {called when started destroying this control}
+      procedure OnDestroy(); virtual;
+
    protected
       {unusable width and height}
       UnusableHeight,
@@ -497,6 +500,11 @@ begin
 end;
 
 procedure uiTControl.OnPostRender();
+begin
+
+end;
+
+procedure uiTControl.OnDestroy();
 begin
 
 end;
