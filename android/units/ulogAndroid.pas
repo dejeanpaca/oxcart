@@ -17,7 +17,7 @@ TYPE
 
    TAndroidLogHandler = object(TLogHandler)
       constructor Create();
-      procedure Writeln({%H-}log: PLog; priority: longint; const s: StdString); virtual;
+      procedure Writeln({%H-}logf: PLog; priority: longint; const s: StdString); virtual;
       procedure WritelnRaw({%H-}log: PLog; const s: StdString); virtual;
       procedure EnterSection({%H-}log: PLog; const s: StdString; collapsed: boolean); virtual;
    end;
@@ -50,9 +50,14 @@ begin
    NeedOpen := false;
 end;
 
-procedure TAndroidLogHandler.Writeln(log: PLog; priority: longint; const s: StdString);
+procedure TAndroidLogHandler.Writeln(logf: PLog; priority: longint; const s: StdString);
 begin
-   SysLogWrite(androidPriorities[priority], PAnsiChar(s));
+   {add tabs to signify a section}
+   if(logf^.SectionLevel > 0) then begin
+      SysLogWrite(androidPriorities[priority], PAnsiChar(copy(log.SpaceString, 1, logf^.SectionLevel * 2) + s));
+   end else
+   {level 0 section needs no tabs}
+      SysLogWrite(androidPriorities[priority], PAnsiChar(s));
 end;
 
 procedure TAndroidLogHandler.WritelnRaw(log: PLog; const s: StdString);
@@ -62,7 +67,7 @@ end;
 
 procedure TAndroidLogHandler.EnterSection(log: PLog; const s: StdString; collapsed: boolean);
 begin
-   SysLogWrite(ANDROID_LOG_INFO, PAnsiChar(s));
+   log^.HandlerWriteln(logcINFO, '> ' + s, true);
 end;
 
 INITIALIZATION
