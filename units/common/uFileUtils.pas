@@ -47,7 +47,7 @@ CONST
 TYPE
    { TFileTraverse }
 
-   TFileTraverse = class
+   TFileTraverse = record
    public
       {extensions which are only to be included in processing (whitelist)}
       Extensions: array of string;
@@ -60,7 +60,8 @@ TYPE
       {called when a file is found with matching extension (if any), if returns false traversal is stopped}
       OnFile: function(const fn: string): boolean;
 
-      constructor Create;
+      procedure Initialize();
+      class procedure Initialize(out traverse: TFileTraverse); static;
 
       {processes a tree with a starting path}
       procedure Run(const startPath: string);
@@ -1192,9 +1193,15 @@ end;
 
 { TFileTraverse }
 
-constructor TFileTraverse.Create;
+procedure TFileTraverse.Initialize();
 begin
    Recursive := true;
+end;
+
+class procedure TFileTraverse.Initialize(out traverse: TFileTraverse);
+begin
+   ZeroPtr(@traverse, SizeOf(traverse));
+   traverse.Initialize();
 end;
 
 procedure TFileTraverse.Run(const startPath: string);
