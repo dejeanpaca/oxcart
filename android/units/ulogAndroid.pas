@@ -48,6 +48,7 @@ begin
    FileExtension := '';
    NoHeader := true;
    NeedOpen := false;
+   ThreadSafe := true;
 end;
 
 procedure TAndroidLogHandler.Writeln(logf: PLog; priority: longint; const s: StdString);
