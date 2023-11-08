@@ -34,7 +34,8 @@ TYPE
       vPos,
       vView,
       vUp,
-      vRight: TVector3;
+      vRight,
+      vTarget: TVector3;
 
       Rotation: TVector3f;
       {camera radius}
@@ -83,6 +84,8 @@ TYPE
       procedure GetPointerRay(x, y: single; out origin, endPosition: TVector3f; const projection: oxTProjection);
    end;
 
+   { oxTCameraCursorControl }
+
    oxTCameraCursorControl = record
       {last pointer position}
       LastPointerPosition: TVector2f;
@@ -93,6 +96,8 @@ TYPE
       procedure Start();
       {cursor control}
       procedure Control(wnd: uiTWindow; var camera: oxTCamera; center: boolean = true);
+      {cursor control}
+      procedure OrbitControl(wnd: uiTWindow; var camera: oxTCamera; center: boolean = true);
    end;
 
 VAR
@@ -306,7 +311,12 @@ end;
 
 procedure oxTCameraCursorControl.Control(wnd: uiTWindow; var camera: oxTCamera; center: boolean);
 var
-   mx, my, ox, oy, nx, ny: single;
+   mx,
+   my,
+   ox,
+   oy,
+   nx,
+   ny: single;
 
 begin
    ox := 0;
@@ -336,6 +346,52 @@ begin
       LastPointerPosition[1] := ny;
 
       Camera.IncPitchYaw(-my / CursorAngleSpeed, mx / CursorAngleSpeed);
+   end;
+end;
+
+procedure oxTCameraCursorControl.OrbitControl(wnd: uiTWindow; var camera: oxTCamera; center: boolean);
+var
+   mx,
+   my,
+   ox,
+   oy,
+   nx,
+   ny: single;
+
+begin
+   ox := 0;
+   oy := 0;
+
+   if(center) then
+      appm.GetPosition(nil, ox, oy);
+
+   if(ox <> LastPointerPosition[0]) or (oy <> LastPointerPosition[1]) then begin
+      if(center) then
+         wnd.SetPointerCentered()
+      else begin
+         ox := LastPointerPosition[0];
+         oy := LastPointerPosition[1];
+      end;
+
+      appm.GetPosition(nil, nx, ny);
+      if(center) then begin
+         mx := nx - ox;
+         my := ny - oy;
+      end else begin
+         mx := ox - nx;
+         my := oy - ny;
+      end;
+
+      LastPointerPosition[0] := nx;
+      LastPointerPosition[1] := ny;
+
+      vmRotateAroundPoint(mx / CursorAngleSpeed / 3.14, 0, 1, 0, vmvZero3f, Camera.vPos);
+      vmRotateAroundPoint(-my / CursorAngleSpeed / 3.14, 1, 0, 0, vmvZero3f, Camera.vPos);
+
+      Camera.vView :=  (Camera.vPos - vmvZero3f) * -1.0;
+      Camera.vView.Normalize();
+
+      Camera.UpFromView();
    end;
 end;
 
