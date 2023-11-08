@@ -24,6 +24,7 @@ TYPE
       function Initialize(): boolean; override;
 
       function MakeWindow({%H-}wnd: oxTWindow): boolean; override;
+      function DestroyWindow(wnd: oxTWindow): boolean; override;
 
       procedure ProcessEvents(); override;
    end;
@@ -162,6 +163,12 @@ begin
    end;
 
    Result := true;
+end;
+
+function oxTAndroidPlatform.DestroyWindow(wnd: oxTWindow): boolean;
+begin
+   if(wnd.Renderer <> nil) then
+      oxTRenderer(wnd.Renderer).DeInitWindow(wnd);
 end;
 
 procedure oxTAndroidPlatform.ProcessEvents();
