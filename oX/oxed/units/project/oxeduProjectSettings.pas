@@ -119,10 +119,10 @@ INITIALIZATION
    dvGroup.Add(dvMainUnit, 'main_unit', dtcSTRING, @oxedProject.MainUnit, [dvarNOTIFY_WRITE]);
    dvMainUnit.pNotify := @dvMainUnitNotify;
 
-   dvGroup.Add(dvRunParameter, 'run_parameter', dtcSTRING, @stringValue, [dvarNOTIFY_WRITE]);
+   dvGroup.Add(dvRunParameter, 'run_parameter', dtcSTRING, @stringValue, [dvarNOTIFY_READ, dvarNOTIFY_WRITE]);
    dvRunParameter.pNotify := @dvRunParameterNotify;
 
-   dvGroup.Add(dvFeature, 'feature', dtcSTRING, @stringValue, [dvarNOTIFY_WRITE]);
+   dvGroup.Add(dvFeature, 'feature', dtcSTRING, @stringValue, [dvarNOTIFY_READ, dvarNOTIFY_WRITE]);
    dvFeature.pNotify := @dvFeatureNotify;
 
    oxedProjectSettingsFile.Create(dvGroup);
