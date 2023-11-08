@@ -152,6 +152,7 @@ TYPE
          function MouseOver(px, py: longint): longint;
          procedure Recalculate();
          procedure ButtonDo(const item: wdgTToolbarItem);
+         procedure OnHintChanged(); override;
    end;
 
    { wdgTToolbarGlobal }
@@ -379,15 +380,10 @@ procedure wdgTToolbar.Hover(x, y: longint; what: uiTHoverEvent);
 begin
    if(what <> uiHOVER_NO) then begin
       HighlightedItem := MouseOver(x, y);
-
-      if(HighlightedItem > -1) then begin
-         Hint := Items.List[HighlightedItem].Hint;
-         exit;
-      end;
    end else
       HighlightedItem := -1;
 
-   Hint := '';
+   OnHintChanged();
 end;
 
 procedure wdgTToolbar.Point(var e: appTMouseEvent; x, y: longint);
@@ -535,6 +531,16 @@ begin
    {call the callback last, in case the callback destroys the widget or container}
    if(wdgpENABLED in Properties) then
       item.Callback.Call(Self);
+end;
+
+procedure wdgTToolbar.OnHintChanged();
+begin
+   inherited OnHintChanged();
+
+   if(HighlightedItem > -1) then
+      Hint := Items.List[HighlightedItem].Hint
+   else
+      Hint := '';
 end;
 
 procedure wdgTToolbar.ParentSizeChange();
