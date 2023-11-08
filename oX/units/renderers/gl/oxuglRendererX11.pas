@@ -28,6 +28,8 @@ TYPE
 
       constructor Create();
 
+      function RaiseError(): loopint; virtual;
+
       procedure OnInitialize(); virtual;
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
       procedure SwapBuffers(wnd: oglTWindow); virtual;
@@ -192,6 +194,11 @@ end;
 constructor oxglxTGlobal.Create();
 begin
    Name := 'x11';
+end;
+
+function oxglxTGlobal.RaiseError(): loopint;
+begin
+   Result := x11.GetError(false);
 end;
 
 procedure oxglxTGlobal.OnInitialize();
