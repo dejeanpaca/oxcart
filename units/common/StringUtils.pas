@@ -2269,8 +2269,8 @@ var
 begin
    Result := '';
 
-   for i := 0 to High(List) do begin
-      if(i < High(List)) then
+   for i := 0 to n - 1 do begin
+      if(i < n - 1) then
          Result := Result + List[i] + separator
       else
          Result := Result + List[i];
@@ -2284,7 +2284,7 @@ var
 begin
    Result := '';
 
-   for i := 0 to High(List) do begin
+   for i := 0 to n - 1 do begin
       Result := Result + List[i];
    end;
 end;
