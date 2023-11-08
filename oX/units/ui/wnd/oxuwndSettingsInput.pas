@@ -13,7 +13,7 @@ INTERFACE
       {app}
       uApp, appuController,
       {ox}
-      uOX, oxuTypes, oxuRunRoutines, oxuwndSettings, oxuwndInputControllerInfo,
+      uOX, oxuRunRoutines, oxuwndSettings, oxuwndInputControllerInfo,
       {ui}
       uiWidgets, uiuWidget, wdguLabel, wdguButton, wdguDivisor;
 
@@ -73,9 +73,9 @@ begin
 
    if(appControllers.List.n > 0) then begin
       for i := 0 to appControllers.List.n - 1 do begin
-         wdgButton.Add(appControllers.List[i].GetName());
          uiWidget.Create.Instance := wdgTControllerTestButton;
-         btn := wdgButton.Add('Information / Test', uiWidget.LastRect.RightOf(), oxNullDimensions, 0);
+         btn := wdgButton.Add(appControllers.List[i].GetName());
+
          wdgTControllerTestButton(btn).ControllerIndex := i;
          btn.UseCallback(@testController);
       end;
