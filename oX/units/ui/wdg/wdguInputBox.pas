@@ -559,14 +559,14 @@ function uiTWidgetInputBoxGlobal.Add(const Initial: string;
             const Pos: oxTPoint; const Dim: oxTDimensions): wdgTInputBox;
 
 begin
-   result := wdgTInputBox(uiWidget.Add(internal, Pos, Dim));
+   Result := wdgTInputBox(uiWidget.Add(internal, Pos, Dim));
 
-   if(result <> nil) then begin
+   if(Result <> nil) then begin
       {setup the text}
-      result.SetText(Initial, 0);
+      Result.SetText(Initial, 0);
       Result.AutoSize();
 
-      result.ibUpdate();
+      Result.ibUpdate();
    end;
 end;
 
@@ -604,10 +604,9 @@ begin
    Placeholder := newPlaceholder;
 end;
 
-
 function wdgTInputBox.GetText(): string;
 begin
-   result := Content;
+   Result := Content;
 end;
 
 procedure wdgTInputBox.Clear();
