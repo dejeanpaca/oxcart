@@ -28,19 +28,6 @@ CONST
    oxvCameraRight: TVector3     = (1.0, 0.0, 0.0);
 
 TYPE
-   {camera mode}
-   oxTCameraMode = (
-      oxCAMERA_MODE_DIRECTION,
-      oxCAMERA_MODE_TARGET
-   );
-
-   {camera style}
-   oxTCameraStyle = (
-      oxCAMERA_STYLE_FREE, {the camera is free to turn in any direction}
-      oxCAMERA_STYLE_FPS, {the camera will have limited rotation on x axis}
-      oxCAMERA_STYLE_LIMIT {the camera will have limitations on all specified axes}
-   );
-
    { oxTCamera }
 
    oxTCamera = class(oxTSerializable)
@@ -50,10 +37,6 @@ TYPE
       vView,
       vUp,
       vRight: TVector3;
-
-      {mode and style}
-      Mode: oxTCameraMode;
-      Style: oxTCameraStyle;
 
       Rotation: TVector3f;
       {camera radius}
@@ -311,9 +294,6 @@ begin
 
    SetupRotation();
 
-   Mode := oxCAMERA_MODE_DIRECTION;
-   Style := oxCAMERA_STYLE_FREE;
-
    Transform := oxTTransform.Instance();
 end;
 
@@ -376,9 +356,6 @@ INITIALIZATION
    serialization.AddProperty('vView', @oxTCamera(nil).vView, oxSerialization.Types.Vector3f);
    serialization.AddProperty('vUp', @oxTCamera(nil).vUp, oxSerialization.Types.Vector3f);
    serialization.AddProperty('vRight', @oxTCamera(nil).vRight, oxSerialization.Types.Vector3f);
-
-   serialization.AddProperty('Mode', @oxTCamera(nil).Mode, oxSerialization.Types.Enum);
-   serialization.AddProperty('Style', @oxTCamera(nil).Style, oxSerialization.Types.Enum);
 
    serialization.AddProperty('Rotation', @oxTCamera(nil).Rotation, oxSerialization.Types.Vector3f);
    serialization.AddProperty('Radius', @oxTCamera(nil).Radius, oxSerialization.Types.Single);
