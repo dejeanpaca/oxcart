@@ -176,7 +176,7 @@ TYPE
       {$ENDIF}
 
       constructor Create(); virtual;
-      destructor Destroy; override;
+      destructor Destroy(); override;
 
       {mark the resource as used (increase the reference count)}
       procedure MarkUsed();
@@ -367,9 +367,10 @@ begin
    {$IFDEF OX_RESOURCE_DEBUG}
    DebugAllocationPoint := DumpCallStack(1);
    {$ENDIF}
+   ReferenceCount := 1;
 end;
 
-destructor oxTResource.Destroy;
+destructor oxTResource.Destroy();
 begin
    inherited Destroy;
 
