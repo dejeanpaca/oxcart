@@ -139,6 +139,8 @@ INTERFACE
       {console, requires UI}
       oxuConsole,
       oxuConsoleLog,
+      oxuconDefaultCommands,
+      oxuconHelp,
       oxuconAbout,
       oxuconDVar,
       oxuconWindow,

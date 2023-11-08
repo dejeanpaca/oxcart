@@ -14,12 +14,12 @@ UNIT oxuConsole;
 INTERFACE
 
    USES
-     sysutils, uStd, uLog, uColors, StringUtils, udvars, dvaruFile, vmVector, ConsoleUtils,
+     sysutils, uStd, uLog, uColors, StringUtils, udvars, dvaruFile, vmVector,
      {app}
-     uAppInfo, appuKeys, appuEvents, appuKeyEvents, appuPaths, appuActionEvents,
+     uAppInfo, appuKeys, appuEvents, appuKeyEvents, appuPaths,
      {oX}
-     uOX, oxuTypes, oxuGlobalKeys, oxuFont, oxuWindow, oxuRun, oxuRunRoutines,
-     oxuConsoleBackend, oxuWindowTypes, oxuWindows, oxuRenderUtilities,
+     uOX, oxuTypes, oxuGlobalKeys, oxuFont, oxuWindow, oxuRunRoutines,
+     oxuConsoleBackend, oxuWindowTypes, oxuRenderUtilities,
      {ui}
      uiuBase, oxuUI, uiuDraw, uiuTypes, uiuWindowTypes, uiuWindow, uiuSkinTypes,
      uiuControl, uiuWidget, uiWidgets, uiuSkin, wdguInputBox;
@@ -72,27 +72,14 @@ TYPE
 
       function GetIBStatusWidth(): loopint;
       function GetIBLeftOffset(): loopint;
+
+      procedure AdjustSize();
    end;
 
 VAR
    oxConsole: oxTConsoleGlobal;
 
 IMPLEMENTATION
-
-CONST
-   cidCON            = 00;
-   cidQUIT           = 01;
-   cidCLEAR_CONSOLE  = 02;
-   cidRESTART        = 03;
-   cidHELP           = 04;
-
-   conCommands: array[0..4] of conTCommand = (
-      (sID: 'con'; sHelp: 'console setup'; nID: cidCON),
-      (sID: 'quit'; sHelp: 'quit the program'; nID: cidQUIT),
-      (sID: 'clear_console'; sHelp: 'clears the attached console (terminal) output'; nID: cidCLEAR_CONSOLE),
-      (sID: 'restart'; sHelp: 'Restarts the program'; nID: cidRESTART),
-      (sID: 'help'; sHelp: 'show help'; nID: cidHELP)
-   );
 
 TYPE
    oxTConsoleData = record
@@ -114,7 +101,6 @@ VAR
    WDGID_CONSOLE_IB: uiTControlID;
 
    consoleInputSkin: uiTWidgetSkin;
-   conHandler: conTHandler;
 
    dvgConsoleHistory,
    dvgConsole: TDVarGroup;
@@ -146,28 +132,6 @@ begin
       data.MaxLines        := (clientTotal div data.fh);
       data.MaxVisibleChars := oxConsole.Window.Dimensions.w div oxConsole.Font.GetWidth() - 4;
    end;
-end;
-
-procedure adjustSize();
-var
-   h: loopint;
-
-begin
-   h := 0;
-
-   if(oxConsole.Window = nil) then
-      exit;
-
-   {calculate window height}
-   if(not oxConsole.Fullscreen) then
-      h := round(oxConsole.Height * oxConsole.Window.Parent.Dimensions.h)
-   else
-      h := oxConsole.Window.Parent.Dimensions.h;
-
-   oxConsole.Window.Move(0, uiTWindow(oxConsole.Window.Parent).Dimensions.h - 1);
-   oxConsole.Window.Resize(oxConsole.Window.Parent.Dimensions.w, h);
-
-   adjustInput();
 end;
 
 { oxTConsoleInputBox }
@@ -255,6 +219,28 @@ begin
    end;
 end;
 
+procedure oxTConsoleGlobal.AdjustSize();
+var
+   h: loopint;
+
+begin
+   h := 0;
+
+   if(oxConsole.Window = nil) then
+      exit;
+
+   {calculate window height}
+   if(not oxConsole.Fullscreen) then
+      h := round(oxConsole.Height * oxConsole.Window.Parent.Dimensions.h)
+   else
+      h := oxConsole.Window.Parent.Dimensions.h;
+
+   oxConsole.Window.Move(0, uiTWindow(oxConsole.Window.Parent).Dimensions.h - 1);
+   oxConsole.Window.Resize(oxConsole.Window.Parent.Dimensions.w, h);
+
+   adjustInput();
+end;
+
 { CONSOLE CONTROL }
 
 function parentResize({%H-}wnd: uiTwindow; const e: appTEvent): loopint;
@@ -262,99 +248,8 @@ begin
    Result := -1;
 
    if(uiWindow.GetNotification(e) = uiWINDOW_RESIZE) then
-      adjustSize();
+      oxConsole.AdjustSize();
 end;
-
-{ CONSOLE COMMAND HANDLER }
-
-procedure consoleWriteSettings();
-begin
-   oxConsole.Console.i('   Alpha enabled : ' + sf(oxConsole.Alpha) + '.');
-   oxConsole.Console.i('   Alpha value   : ' + sf(oxConsole.Colors.Background[3]));
-   oxConsole.Console.i('   Fullscreen    : ' + sf(oxConsole.Fullscreen) + '.');
-end;
-
-procedure conWriteInvalidArgument();
-begin
-   oxConsole.Console.w('The specified argument or value is not valid.');
-end;
-
-procedure conWriteInsufficientArguments();
-begin
-   oxConsole.Console.w('Insufficient arguments.');
-end;
-
-procedure consoleCommand(var con: conTConsole);
-var
-   i: loopint;
-   cmd: StdString;
-
-begin
-   if(con.arguments.n > 1) then begin
-      cmd := LowerCase(con.arguments.list[1]);
-      con.SkipHistoryCurrent := true;
-
-      if(cmd = 'info') then begin
-         con.i('Console information: ');
-         consoleWriteSettings();
-         oxConsole.Console.i();
-      end else if(cmd = 'history') then begin
-         for i := 0 to (con.History.Entries.n - 1) do
-            con.s(con.History.Entries.List[i]);
-      end else if(cmd = 'fullscreen') then begin
-         oxConsole.Fullscreen := not oxConsole.Fullscreen;
-         log.i('Console fullscreen set to: ' + sf(oxConsole.Fullscreen));
-         adjustSize();
-      end else
-         con.w('Unknown or unsupported console command.');
-   end else
-      con.w('No console command arguments specified.');
-end;
-
-procedure consoleHelp(var con: conTConsole);
-var
-   i: loopint;
-   handler: conPHandler;
-
-begin
-   handler := con.CommandHandlers.s;
-
-   while(handler <> nil) do begin
-      for i := 0 to handler^.nCommands -1 do begin
-         if(handler^.Commands^[i].sHelp <> '') then
-            log.i(handler^.Commands^[i].sID + ' > `' + handler^.Commands^[i].sHelp)
-         else
-            log.i(handler^.Commands^[i].sID);
-      end;
-
-      handler := handler^.Next;
-   end;
-
-   for i := 0 to con.Commands.n - 1 do begin
-      log.i(con.Commands.List[i].sID);
-   end;
-
-   log.i();
-end;
-
-procedure oxconCommandNotify(var con: conTConsole);
-begin
-   case con.CommandID of
-      cidCON:
-         consoleCommand(con);
-      cidQUIT:
-         appActionEvents.QueueQuitEvent();
-      cidRESTART:
-         oxRun.Restart();
-      cidCLEAR_CONSOLE:
-         ConsoleUtils.console.Clear();
-      cidHELP:
-         consoleHelp(con);
-      else
-         con.e('Error: Unknown console command.');
-   end;
-end;
-
 
 { RENDERING }
 
@@ -607,7 +502,7 @@ begin
       oxConsole.wdgInput.Skin := @consoleInputSkin;
       oxConsole.wdgInput.SetFont(oxui.GetDefaultFont());
 
-      adjustSize();
+      oxConsole.AdjustSize();
 
       {prepare console for input and display}
       oxConsole.Console.Select();
@@ -678,8 +573,6 @@ begin
    {initialize the console}
    oxConsole.Console.Initialize();
 
-   {add the command handler}
-   oxConsole.Console.AddHandler(conHandler, conTCommandNotifyProc(@oxconCommandNotify), conCommands);
 
    {hook the console global key handler}
    oxGlobalKeys.Hook(congkHandler);
