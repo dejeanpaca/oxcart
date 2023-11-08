@@ -155,6 +155,7 @@ TYPE
       function CheckType(index: loopint; uniformType: oxTShaderUniformType; alternativeType: oxTShaderUniformType = oxunfSHADER_NONE): boolean;
       {$IFDEF OX_DEBUG}
       function DebugCheckType(index: loopint; uniformType: oxTShaderUniformType; alternativeType: oxTShaderUniformType = oxunfSHADER_NONE): boolean;
+      procedure DebugFailedProp(index: loopint; const prop: string = '');
       procedure DebugFailedType(index: loopint; const what: string);
       {$ENDIF}
 
@@ -318,7 +319,7 @@ begin
       SetValue(index, @c4f);
    {$IFDEF OX_DEBUG}
    end else begin
-      DebugFailedType(index, 'unsupported type (rgb, rgba, rgbf, rgbaf)');
+      DebugFailedProp(index, 'unsupported type (rgb, rgba, rgbf, rgbaf)');
    {$ENDIF}
    end;
 end;
@@ -436,6 +437,13 @@ var
 
 begin
    index := GetShaderIndex(valueName);
+
+   {$IFDEF OX_DEBUG}
+   if(index = -1) then
+      DebugFailedProp(index, valueName)
+   else
+   {$ENDIF}
+
    SetValue(index, value);
 end;
 
@@ -445,6 +453,13 @@ var
 
 begin
    index := GetShaderIndex(colorName);
+
+   {$IFDEF OX_DEBUG}
+   if(index = -1) then
+      DebugFailedProp(index, colorName)
+   else
+   {$ENDIF}
+
    SetColor(index, c);
 end;
 
@@ -454,6 +469,13 @@ var
 
 begin
    index := GetShaderIndex(colorName);
+
+   {$IFDEF OX_DEBUG}
+   if(index = -1) then
+      DebugFailedProp(index, colorName)
+   else
+   {$ENDIF}
+
    SetColor(index, c);
 end;
 
@@ -463,6 +485,13 @@ var
 
 begin
    index := GetShaderIndex(colorName);
+
+   {$IFDEF OX_DEBUG}
+   if(index = -1) then
+      DebugFailedProp(index, colorName)
+   else
+   {$ENDIF}
+
    SetColor(index, c);
 end;
 
@@ -472,6 +501,13 @@ var
 
 begin
    index := GetShaderIndex(colorName);
+
+   {$IFDEF OX_DEBUG}
+   if(index = -1) then
+      DebugFailedProp(index, colorName)
+   else
+   {$ENDIF}
+
    SetColor(index, c);
 end;
 
@@ -481,6 +517,13 @@ var
 
 begin
    index := GetShaderIndex(what);
+
+   {$IFDEF OX_DEBUG}
+   if(index = -1) then
+      DebugFailedProp(index, what)
+   else
+   {$ENDIF}
+
    SetFloat(index, c);
 end;
 
@@ -490,6 +533,13 @@ var
 
 begin
    index := GetShaderIndex(what);
+
+   {$IFDEF OX_DEBUG}
+   if(index = -1) then
+      DebugFailedProp(index, what)
+   else
+   {$ENDIF}
+
    SetFloat(index, c);
 end;
 
@@ -499,6 +549,13 @@ var
 
 begin
    index := GetShaderIndex(what);
+
+   {$IFDEF OX_DEBUG}
+   if(index = -1) then
+      DebugFailedProp(index, what)
+   else
+   {$ENDIF}
+
    SetTexture(index, t);
 end;
 
@@ -602,7 +659,12 @@ begin
    if(index > -1) then begin
       SetColor(index, c);
       Shader.SetColor3ub(index, c);
-   end;
+   end
+   {$IFDEF OX_DEBUG}
+      else
+         DebugFailedProp(index, colorName);
+   {$ENDIF}
+
 end;
 
 procedure oxTMaterial.ApplyColor(const colorName: string; c: TColor4ub);
@@ -615,7 +677,11 @@ begin
    if(index > -1) then begin
       SetColor(index, c);
       Shader.SetColor4ub(index, c);
-   end;
+   end
+   {$IFDEF OX_DEBUG}
+      else
+         DebugFailedProp(index, colorName);
+   {$ENDIF}
 end;
 
 procedure oxTMaterial.ApplyColor(const colorName: string; c: TColor3f);
@@ -628,7 +694,11 @@ begin
    if(index > -1) then begin
       SetColor(index, c);
       Shader.SetVector3f(index, c);
-   end;
+   end
+   {$IFDEF OX_DEBUG}
+      else
+         DebugFailedProp(index, colorName);
+   {$ENDIF}
 end;
 
 procedure oxTMaterial.ApplyColor(const colorName: string; c: TColor4f);
@@ -641,7 +711,11 @@ begin
    if(index > -1) then begin
       SetColor(index, c);
       Shader.SetColor4f(index, c);
-   end;
+   end
+   {$IFDEF OX_DEBUG}
+      else
+         DebugFailedProp(index, colorName);
+   {$ENDIF}
 end;
 
 procedure oxTMaterial.ApplyColor(const colorName: string; r, g, b, a: byte);
@@ -659,7 +733,11 @@ begin
       c[3] := a;
       SetColor(index, c);
       Shader.SetColor4ub(index, c);
-   end;
+   end
+   {$IFDEF OX_DEBUG}
+      else
+         DebugFailedProp(index, colorName);
+   {$ENDIF}
 end;
 
 procedure oxTMaterial.ApplyColor(const colorName: string; r, g, b, a: single);
@@ -677,7 +755,11 @@ begin
       c[3] := a;
       SetColor(index, c);
       Shader.SetVector4f(index, c);
-   end;
+   end
+   {$IFDEF OX_DEBUG}
+      else
+         DebugFailedProp(index, colorName);
+   {$ENDIF}
 end;
 
 procedure oxTMaterial.ApplyFloat(const what: string; c: single);
@@ -690,7 +772,11 @@ begin
    if(index > -1) then begin
       SetFloat(index, c);
       Shader.SetFloat(index, c);
-   end;
+   end
+   {$IFDEF OX_DEBUG}
+      else
+         DebugFailedProp(index, what);
+   {$ENDIF}
 end;
 
 procedure oxTMaterial.ApplyFloat(const what: string; c: double);
@@ -703,7 +789,11 @@ begin
    if(index > -1) then begin
       SetFloat(index, c);
       Shader.SetFloat(index, c);
-   end;
+   end
+   {$IFDEF OX_DEBUG}
+      else
+         DebugFailedProp(index, what);
+   {$ENDIF}
 end;
 
 procedure oxTMaterial.ApplyTexture(const what: string; t: oxTTexture);
@@ -716,7 +806,11 @@ begin
    if(index > -1) then begin
       SetTexture(index, t);
       Shader.SetTexture(index, t);
-   end;
+   end
+   {$IFDEF OX_DEBUG}
+      else
+         DebugFailedProp(index, what);
+   {$ENDIF}
 end;
 
 procedure oxTMaterial.Apply();
@@ -934,9 +1028,16 @@ end;
 
 {$ENDIF}
 
+procedure oxTMaterial.DebugFailedProp(index: loopint; const prop: string);
+begin
+   if(index < 0) then
+      log.w('Material(' + Name +  ') has no property ' + prop)
+end;
+
 procedure oxTMaterial.DebugFailedType(index: loopint; const what: string);
 begin
-   log.w('Material(' + Name +  ') index ' + sf(index) + ' failed check: ' + what)
+   if(index > -1) then
+      log.w('Material(' + Name +  ') index ' + sf(index) + ' failed check: ' + what)
 end;
 
 function oxTMaterial.GetLoader(): POObject;
