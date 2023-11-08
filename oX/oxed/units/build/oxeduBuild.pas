@@ -661,6 +661,19 @@ var
    config: TBuildFPCConfiguration;
    symbols: TSimpleStringList;
 
+   function getDefaultObjectsPath(const path: string): boolean;
+   begin
+      Result := false;
+
+      if(DirectoryExists(path)) then begin
+         config.Add();
+         config.Add('### default objects path for linker');
+         config.Add('-Fl' + path);
+
+         Result := true;
+      end;
+   end;
+
 begin
    TBuildFPCConfiguration.Initialize(config);
 
@@ -675,10 +688,9 @@ begin
    {$IFDEF LINUX}
    fn := '/usr/lib/gcc/x86_64-redhat-linux/10/';
 
-   if(DirectoryExists(fn)) then begin
-      config.Add();
-      config.Add('### default objects path for linker');
-      config.Add('-Fl' + fn);
+   if(not getDefaultObjectsPath(fn)) then begin
+      fn := '/usr/lib/gcc/x86_64-redhat-linux/11/';
+      getDefaultObjectsPath(fn);
    end;
    {$ENDIF}
 
