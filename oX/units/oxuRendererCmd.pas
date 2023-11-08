@@ -22,13 +22,11 @@ function processParam(const {%H-}paramKey: StdString; var {%H-}params: array of 
 begin
    Result := true;
 
-   if(n = 0) then begin
+   if(n = 0) then
       oxrDefaultWindowSettings.Software := true;
-   end else
-      log.e('Did not specify ' + paramHandler.ParamKey + ' parameter value');
 end;
 
 INITIALIZATION
-   parameters.AddHandler(paramHandler, 'renderer.software', '-renderer.software', @processParam);
+   parameters.AddHandler(paramHandler, 'renderer.software', '-renderer.software', @processParam, 0);
 
 END.

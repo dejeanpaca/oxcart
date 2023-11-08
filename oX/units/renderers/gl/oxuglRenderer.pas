@@ -212,7 +212,7 @@ begin
       end;
    end;
 
-   Result := wnd.Errorcode = 0;
+   Result := wnd.ErrorCode = 0;
 end;
 
 function oxglTRenderer.PreInitWindow(wnd: oxTWindow): boolean;
