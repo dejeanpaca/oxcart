@@ -19,6 +19,29 @@ INTERFACE
       oxuComponent, oxuCameraComponent, oxuRenderComponent;
 
 TYPE
+   oxTSceneRenderOrderEntry = record
+      Name: StdString;
+      Index: loopint;
+   end;
+
+   oxTSceneRenderOrderEntryList = specialize TSimpleList<oxTSceneRenderOrderEntry>;
+
+   oxPSceneRenderOrder = ^oxTSceneRenderOrder;
+
+   { oxTSceneRenderOrder }
+
+   oxTSceneRenderOrder = record
+      List: oxTSceneRenderOrderEntryList;
+
+      procedure Initialize(out order: oxTSceneRenderOrder);
+
+      {sort entries in this order by index}
+      procedure Sort();
+      {add an entry to this order}
+      procedure Add(const name: StdString);
+      {clear all entries in this order}
+      procedure Clear();
+   end;
 
    { oxTSceneRenderParameters }
 
@@ -28,6 +51,9 @@ TYPE
       Projection: oxPProjection;
       Camera: oxPCamera;
       Entity: oxTEntity;
+
+      {TODO: Set the given order}
+      RenderOrder: oxPSceneRenderOrder;
 
       class procedure Init(out p: oxTSceneRenderParameters;
          setProjection: oxPProjection = nil; setCamera: oxPCamera = nil); static;
@@ -76,6 +102,35 @@ VAR
    oxSceneRender: oxTSceneRender;
 
 IMPLEMENTATION
+
+{ oxTSceneRenderOrder }
+
+procedure oxTSceneRenderOrder.Initialize(out order: oxTSceneRenderOrder);
+begin
+   ZeroOut(order, SizeOf(order));
+   oxTSceneRenderOrderEntryList.InitializeValues(order.List, 64);
+end;
+
+procedure oxTSceneRenderOrder.Sort();
+begin
+   {TODO: Implement sorting}
+end;
+
+procedure oxTSceneRenderOrder.Add(const name: StdString);
+var
+   entry: oxTSceneRenderOrderEntry;
+
+begin
+   entry.Index := List.n;
+   entry.Name := name;
+
+   List.Add(entry);
+end;
+
+procedure oxTSceneRenderOrder.Clear();
+begin
+   List.Dispose();
+end;
 
 { oxTSceneRenderParameters }
 
@@ -176,15 +231,18 @@ begin
    {$ENDIF}
 
    if(layers.n > 0) then begin
+      {TODO: Render layers by given params.RenderOrder}
+
       for i := 0 to layers.n - 1 do begin
          RenderLayer(oxTRenderLayerComponent(layers.List[i]), params, cameras);
       end;
+   end else begin
+      for i := 0 to (cameras.n - 1) do begin
+         RenderCamera(params, oxTCameraComponent(cameras.List[i]));
+      end;
    end;
 
-   for i := 0 to (cameras.n - 1) do begin
-      RenderCamera(params, oxTCameraComponent(cameras.List[i]));
-   end;
-
+   layers.Dispose();
    cameras.Dispose();
 
    OnEnd();
