@@ -408,12 +408,14 @@ begin
    Result.Add('OX_DEBUG');
    Result.Add('DEBUG');
    {$ENDIF}
+
    if oxedBuild.IsLibrary() then begin
       Result.Add('LIBRARY');
 
       if oxedBuild.InEditor then begin
          Result.Add('OX_LIBRARY');
          Result.Add('OX_LIBRARY_SUPPORT');
+         Result.Add('OXED');
       end;
 
       if(oxedBuild.InEditor) then begin
@@ -423,7 +425,6 @@ begin
       end;
    end;
 
-   Result.Add('OXED');
    Result.Add('OX_NO_DEFAULT_FEATURES');
 
    if oxedProject.Session.DebugResources then
