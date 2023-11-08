@@ -48,7 +48,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\units"/>
-      <OtherUnitFiles Value="..\..\units\3rdparty;..\..\units\common;..\..\units\common\log;..\..\units\win;..\units;..\..\units\VectorMachine;..\..\units\uFile;..\..\units\uFile\yPak;..\..\units;..\..\units\linux;..\..\units\var;..\..\units\udVars;..\..\units\parsers\simple;..\units\input;..\units\console;..\units\scene;..\units\ui\wnd;..\units\ui;..\units\ui\wdg;..\units\platforms\win;..\units\platforms\unix;..\units\render;..\units\renderers\gl;..\units\renderers\console;..\units\components;..\units\renderers\vulkan;units;..\..\android\units;..\..\build\units;..\units\mdl;..\units\media;..\units\platforms;..\units\platforms\android;..\units\q3;..\units\renderers;..\units\renderers\dx;..\..\units\binfileutils;..\..\units\dTVideo;..\..\units\parsers;..\..\units\parsers\ini;..\..\units\parsers\q3;units\components;units\ui;units\platforms;units\project;..\units\platforms\oxed;..\units\media\al;plugins\tests;..\..\components\dimg\units;..\..\components\app\units;..\..\components\app\units\android;..\..\components\app\units\controllers;..\..\components\app\units\keys;..\..\components\app\units\linux;..\..\components\app\units\mouse;..\..\components\app\units\win;..\..\3rdparty\bgrabitmap;..\..\3rdparty\dglOpenGL;..\..\3rdparty\dx;..\..\3rdparty\openal;..\..\3rdparty\Vulkan;..\..\units\parsers\json;..\..\units\parsers\scopes;..\..\components\dAL\units;..\units\platforms\osx"/>
+      <OtherUnitFiles Value="..\..\units\3rdparty;..\..\units\common;..\..\units\common\log;..\..\units\win;..\units;..\..\units\VectorMachine;..\..\units\uFile;..\..\units\uFile\yPak;..\..\units;..\..\units\linux;..\..\units\udVars;..\..\units\parsers\simple;..\units\input;..\units\console;..\units\scene;..\units\ui\wnd;..\units\ui;..\units\ui\wdg;..\units\platforms\win;..\units\platforms\unix;..\units\render;..\units\renderers\gl;..\units\renderers\console;..\units\components;..\units\renderers\vulkan;units;..\..\android\units;..\..\build\units;..\units\mdl;..\units\media;..\units\platforms;..\units\platforms\android;..\units\q3;..\units\renderers;..\units\renderers\dx;..\..\units\dTVideo;..\..\units\parsers;..\..\units\parsers\ini;..\..\units\parsers\q3;units\components;units\ui;units\platforms;units\project;..\units\platforms\oxed;..\units\media\al;plugins\tests;..\..\components\dimg\units;..\..\components\app\units;..\..\components\app\units\android;..\..\components\app\units\controllers;..\..\components\app\units\keys;..\..\components\app\units\linux;..\..\components\app\units\mouse;..\..\components\app\units\win;..\..\3rdparty\bgrabitmap;..\..\3rdparty\dglOpenGL;..\..\3rdparty\dx;..\..\3rdparty\openal;..\..\3rdparty\Vulkan;..\..\units\parsers\json;..\..\units\parsers\scopes;..\units\platforms\osx;..\units\lib"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
@@ -80,7 +80,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="11">
+    <Exceptions Count="12">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -114,6 +114,9 @@
       <Item11>
         <Name Value="RunError(201)"/>
       </Item11>
+      <Item12>
+        <Name Value="EProcess"/>
+      </Item12>
     </Exceptions>
   </Debugging>
 </CONFIG>
