@@ -12,7 +12,7 @@ INTERFACE
 
    USES uStd, oxeduRecents,
       {oX}
-      oxuTypes, oxuwndSplash,
+      oxuTypes, oxuwndSplash, oxuRunRoutines,
       {ui}
       oxuUI, uiuContextMenu, uiuWidget, uiuControl,
       {widgets}
@@ -108,11 +108,14 @@ begin
       oxwndSplash.Close();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    oxwndSplash.OnInit.Add(@InitSplash);
    oxwndSplash.ShowBuildInformation := true;
 
-   oxui.BaseInitializationProcs.dAdd('oxed.splash', @DeInitialize);
+   oxui.BaseInitializationProcs.dAdd(initRoutines, 'oxed.splash', @DeInitialize);
 
    oxedMenubar.OnInit.Add(@initMenu);
 

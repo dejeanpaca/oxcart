@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, StringUtils, uColors, appuEvents,
       {oX}
-      oxuTypes, oxuUI, oxuWindows, oxuWindow,
+      oxuRunRoutines, oxuTypes, oxuUI, oxuWindows, oxuWindow,
       {ui}
       uiuTypes, oxuFont, uiuWindowTypes, uiuWidget, uiuControl, uiuSkin, uiuDraw;
 
@@ -1476,8 +1476,9 @@ procedure uiTWidgetInternal.Register(const name: string; initProc: TProcedure);
 begin
    uiWidget.Init(self, CopyAfter(name, '.'));
 
-   if(initProc <> nil) then
-      oxui.BaseInitializationProcs.iAdd(name, initProc);
+   if(initProc <> nil) then begin
+      oxui.BaseInitializationProcs.iAdd(InitRoutines, name, initProc);
+   end;
 
    inc(oxui.nWidgetTypes);
 end;
@@ -1494,10 +1495,13 @@ begin
    Result := (wdg <> nil) and (wdg.ID.ID = id.ID);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    uiWidget.evh := appEvents.AddHandler(uiWidget.EventHandler, 'ox.widget', @eventAction);
 
-   oxui.BaseInitializationProcs.Add('widgets', @InitWidgets, @DeInitWidgets, 100);
+   oxui.BaseInitializationProcs.Add(initRoutines, 'widgets', @InitWidgets, @DeInitWidgets);
    InitDummyWidgetClass();
 
 END.

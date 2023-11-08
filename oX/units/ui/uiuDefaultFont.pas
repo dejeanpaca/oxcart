@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uLog,
       {ox}
-      oxuPaths, oxuFont,
+      oxuPaths, oxuFont, oxuRunRoutines,
       oxuUI, oxuFreetypeFonts;
 
 TYPE
@@ -66,10 +66,13 @@ begin
    uiDefaultFont.Deinitialize();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    uiDefaultFont.Path := oxPaths.Fonts + 'Inconsolata.ttf';
    uiDefaultFont.Size := 12;
 
-   oxui.InitializationProcs.Add('default_font', @initialize, @deinitialize);
+   oxui.InitializationProcs.Add(initRoutines, 'default_font', @initialize, @deinitialize);
 
 END.

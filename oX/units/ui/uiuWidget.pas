@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uColors,
       {oX}
-      oxuTypes,
+      oxuTypes, oxuRunRoutines,
       {ui}
       uiuControl, uiuControls, uiuTypes, oxuFont, uiuWindowTypes;
 
@@ -238,6 +238,7 @@ TYPE
       NonSelectable: boolean; {not a selectable widget}
 
       SkinDescriptor: uiPWidgetSkinDescriptor;
+      InitRoutines: oxTRunRoutine;
 
       Instance: uiTWidgetClassType;
    end;

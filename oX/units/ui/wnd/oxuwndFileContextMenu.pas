@@ -14,8 +14,10 @@ INTERFACE
       sysutils, uStd, StringUtils, uFileUtils,
       {app}
       uApp, appuEvents, appuActionEvents,
+      {ox}
+      oxuRunRoutines,
       {ui}
-      oxuUI, uiuTypes, uiuWidget, uiuContextMenu, uiuWidgetWindow, uiuMessageBox, uiuFiles;
+      oxuUI,  uiuTypes, uiuWidget, uiuContextMenu, uiuWidgetWindow, uiuMessageBox, uiuFiles;
 
 TYPE
    uiTFileContextMenuTarget = (
@@ -343,7 +345,10 @@ begin
    OpenMenu := Menu;
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxui.BaseInitializationProcs.Add('ox.wnd.file_context_menu', @init, @deinit);
+   oxui.BaseInitializationProcs.Add(initRoutines, 'ox.wnd.file_context_menu', @init, @deinit);
 
 END.
