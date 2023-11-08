@@ -390,6 +390,9 @@ begin
    if(ftFont <> nil) then begin
       Result := CreateFont(ftFont, size, base, charCount);
 
+      if(Result <> nil) then
+         Result.fn := path;
+
       if(fontLoaded) then
          FreeObject(ftFont);
    end;
