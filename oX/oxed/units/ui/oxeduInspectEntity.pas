@@ -64,7 +64,6 @@ TYPE
       procedure SetEntity(newEntity: oxTEntity);
 
       procedure Open(wnd: oxedTWindow); override;
-      procedure Close({%H-}wnd: oxedTWindow); override;
       procedure SizeChanged(wnd: oxedTWindow); override;
 
       procedure CreateVector(const caption: string; var v: oxedTInspectorWindowTransformWidgets; onChange: wdgTInputBoxOnChangeMethod = nil);
@@ -77,6 +76,20 @@ VAR
    oxedInspectEntity: oxedTInspectEntity;
 
 IMPLEMENTATION
+
+function controlEnable(wdg: uiTWidget; what: longword): longint;
+begin
+   Result := -1;
+
+   if(what = wdgcCHECKBOX_TOGGLE) then begin
+      oxedInspectEntity.Entity.Enabled := wdgTCheckbox(wdg).Checked();
+   end;
+end;
+
+procedure nameChanged(wdg: wdgTInputBox);
+begin
+   oxedInspectEntity.Entity.Name := wdg.GetText();
+end;
 
 { oxedTInspectorWindowTransformWidgets }
 
@@ -190,7 +203,9 @@ begin
    inspector.wdg.Header.SetTarget();
 
    wdg.Enable := wdgCheckbox.Add('');
+   wdg.Enable.SetControlMethod(@controlEnable);
    wdg.Name := wdgInputBox.Add('');
+   wdg.Name.OnTextChanged := @nameChanged;
 
    uiWidget.PopTarget();
 
@@ -211,11 +226,6 @@ begin
    uiWidget.PopTarget();
 
    SetEntity(nil);
-end;
-
-procedure oxedTInspectEntity.Close(wnd: oxedTWindow);
-begin
-
 end;
 
 procedure oxedTInspectEntity.SetEntity(newEntity: oxTEntity);
@@ -351,6 +361,16 @@ begin
       wdg.Position.SetValue(Entity.vPosition, false);
       wdg.Rotation.SetValue(Entity.vRotation, false);
       wdg.Scale.SetValue(Entity.vScale, false);
+
+      if(Entity.Name <> wdg.Name.GetText()) then begin
+         if(not wdg.Name.IsSelected()) then
+            wdg.Name.SetText(Entity.Name);
+      end;
+
+      if(Entity.Enabled <> wdg.Enable.Checked()) then begin
+         if(not wdg.Enable.IsSelected()) then
+            wdg.Enable.Check(Entity.Enabled);
+      end;
    end;
 end;
 
