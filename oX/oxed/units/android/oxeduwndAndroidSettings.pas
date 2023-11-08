@@ -95,6 +95,6 @@ begin
 end;
 
 INITIALIZATION
-   oxed.Init.Add('settings', @init);
+   oxed.Init.Add('android.settings', @init);
 
 END.
