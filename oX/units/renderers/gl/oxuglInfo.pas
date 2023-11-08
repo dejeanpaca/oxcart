@@ -12,7 +12,7 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uLog, {$IFNDEF OX_LIBRARY}StringUtils,{$ENDIF}
       {ox}
-      oxuOGL, oxuglExtensions;
+      oxuOGL, oxuglExtensions, oxuRenderer;
 
 CONST
    ogleVERSION_OK            = 0;
@@ -20,6 +20,7 @@ CONST
    ogleVERSION_UNSUPPORTED   = 2;
 
 procedure oglGetInformation(wnd: oglTWindow);
+procedure oglLogInformation(wnd: oglTWindow);
 function oglVersionCheck(wnd: oglTWindow): longint;
 
 IMPLEMENTATION
@@ -69,6 +70,15 @@ begin
       {$ENDIF}
    end;
 
+   oglExtensions.Get(wnd);
+   {$ELSE}
+   wnd.Info := oglTWindow(wnd.ExternalWindow.oxwParent).Info;
+   oglExtensions.Get(wnd);
+   {$ENDIF}
+end;
+
+procedure oglLogInformation(wnd: oglTWindow);
+begin
    log.Collapsed('OpenGL Information');
       log.i('Renderer: ' + wnd.Info.Renderer);
       log.i('Vendor: ' + wnd.Info.Vendor);
@@ -83,6 +93,7 @@ begin
       log.i('Maximum Texture Size: ' + sf(wnd.Limits.MaxTextureSize) + 'x' + sf(wnd.Limits.MaxTextureSize));
       log.i('Maximum Lights: ' + sf(wnd.Limits.MaxLights));
       log.i('Maximum Clip Planes: ' + sf(wnd.Limits.MaxClipPlanes));
+      log.i('Supports non power of two textures: ' + sf(oxTRenderer(wnd.Renderer).Properties.Textures.Npot));
       log.Leave();
       log.Enter('Stack depths');
       log.i('Projection Stack: ' + sf(wnd.Limits.MaxProjectionStackDepth));
@@ -91,11 +102,7 @@ begin
       log.Leave();
    log.Leave();
 
-   oglExtensions.Get(wnd);
-   {$ELSE}
-   wnd.Info := oglTWindow(wnd.ExternalWindow.oxwParent).Info;
-   oglExtensions.Get(wnd);
-   {$ENDIF}
+   oglExtensions.Log(wnd);
 end;
 
 function oglVersionCheck(wnd: oglTWindow): longint;

@@ -9,7 +9,7 @@ UNIT oxuglFeatures;
 INTERFACE
 
    USES
-      uLog, StringUtils,
+      uLog,
       {ox}
       uOX, oxuRunRoutines,
       {gl}
@@ -18,7 +18,7 @@ INTERFACE
 IMPLEMENTATION
 
 VAR
-   glInitRoutines: oxTRunRoutine;
+   initRoutine: oxTRunRoutine;
 
 procedure getFeatures();
 var
@@ -33,18 +33,11 @@ begin
    glr.Properties.Textures.Npot := false;
    glr.Properties.Textures.WarnedNpot := true;
    {$ENDIF}
-
-   log.v('Supports non power of two textures: ' + sf(glr.Properties.Textures.Npot));
-end;
-
-procedure initGl();
-begin
-   getFeatures();
 end;
 
 procedure init();
 begin
-   oxglRenderer.AfterInit.Add(glInitRoutines, 'gl.fpshader', @initGl);
+   oxglRenderer.AfterInit.Add(initRoutine, 'gl.features', @getFeatures);
 end;
 
 INITIALIZATION

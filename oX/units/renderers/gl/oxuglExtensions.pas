@@ -49,6 +49,7 @@ TYPE
       {$ENDIF}
 
       procedure Get({%H-}wnd: oxTWindow);
+      procedure Log({%H-}wnd: oxTwindow);
       function PlatformSupported(i: loopint): boolean;
       function Supported(i: loopint): boolean;
       function FindDescriptor(const ext: string): loopint;
@@ -64,7 +65,7 @@ VAR
 
 IMPLEMENTATION
 
-procedure GetExts(i: longint; const ext: string);
+procedure GetExts({%H-}i: longint; const ext: string);
 var
    id: loopint;
 
@@ -73,8 +74,6 @@ begin
 
    if(id > -1) then
       oglcExtensionDescriptors[id].Present := true;
-
-   log.i(sf(i) + ':' + ext);
 end;
 
 procedure oglTExtensions.Get(wnd: oxTWindow);
@@ -87,21 +86,43 @@ begin
    pExtensions := @oglcExtensionDescriptors;
 
    {$IFNDEF OX_LIBRARY}
-   log.Collapsed('OpenGL Extensions');
-
    exts := pChar(glGetString(GL_EXTENSIONS));
 
    strList.ProcessSpaceSeparated(exts, @GetExts);
 
-   if(GetPlatformSpecific <> nil) then
+   if(GetPlatformSpecific <> nil) then begin
       GetPlatformSpecific(wnd);
-
-   log.Leave();
+   end;
    {$ELSE}
    pExtensions := pExternal^.pExtensions;
    platformSpecific := pExternal^.PlatformSpecific;
    nPlatformSpecific := pExternal^.nPlatformSpecific;
    {$ENDIF}
+end;
+
+procedure oglTExtensions.Log(wnd: oxTwindow);
+var
+   i: loopint;
+
+begin
+  uLog.log.Collapsed('OpenGL Extensions');
+
+  writeln(pExtensions = nil);
+
+  for i := 0 to oglnExtensionDescriptors - 1 do begin
+     if(pExtensions[i].Present) then
+        uLog.log.i(sf(i) + ': ' + pExtensions[i].Name);
+  end;
+
+  uLog.log.Collapsed('Platform extensions');
+
+  for i := 0 to nPlatformSpecific - 1 do begin
+      if(PlatformSpecific[i].Present) then
+         uLog.log.i(sf(i) + ': ' + PlatformSpecific[i].Name);
+  end;
+
+  uLog.log.Leave();
+  uLog.log.Leave();
 end;
 
 function oglTExtensions.PlatformSupported(i: loopint): boolean;

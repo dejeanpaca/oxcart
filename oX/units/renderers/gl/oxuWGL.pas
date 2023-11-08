@@ -8,7 +8,7 @@ UNIT oxuWGL;
 
 INTERFACE
 
-   USES uLog, StringUtils, ustrList,
+   USES ustrList,
       {$INCLUDE usesglext.inc},
       oxuWindowTypes, oxuglExtensions, oxuWindowsOS;
 
@@ -90,16 +90,15 @@ CONST
 
 IMPLEMENTATION
 
-procedure GetExts(i: longint; const ext: string);
+procedure GetExts({%H-}i: longint; const ext: string);
 var
    id: longint;
 
 begin
    id := oglExtensions.FindDescriptor(wglExtensions, ext);
+
    if(id > -1) then
       wglExtensions[id].Present := true;
-
-   log.i(sf(i) + ':' + ext);
 end;
 
 procedure GetExtensions(wnd: oxTWindow);
@@ -109,13 +108,8 @@ var
 begin
    if(wglGetExtensionsStringARB <> nil) then begin
       exts := wglGetExtensionsStringARB(winosTWindow(wnd).wd.dc);
-
-      log.Enter('WGL');
-
       strList.ProcessSpaceSeparated(exts, @GetExts);
-      log.Leave();
-   end else
-      log.w('There seems to be no WGL extensions.');
+   end;
 end;
 
 INITIALIZATION
