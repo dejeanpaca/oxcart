@@ -94,37 +94,9 @@ VAR
 
    {mouse button state}
    mButtonState: longword;
+   mWheelDelta: loopint;
 
    pendingResetKeys: boolean = false;
-
-{ MOUSE HANDLER }
-function winmGetX(): longint;
-var
-   p: Windows.POINT = (x: 0; y: 0);
-
-begin
-   Windows.GetCursorPos(p);
-   Result := p.x;
-end;
-
-function winmGetY(): longint;
-var
-   p: Windows.POINT = (x: 0; y: 0);
-
-begin
-   Windows.GetCursorPos(p);
-   Result := p.y;
-end;
-
-procedure winmSetXY(x, y: longint);
-begin
-   Windows.SetCursorPos(x, y);
-end;
-
-procedure winmHide();
-begin
-   Windows.ShowCursor(FALSE);
-end;
 
 { KEY }
 procedure resetKeys();
@@ -270,12 +242,29 @@ begin
    end;
 end;
 
-procedure queueMouseEvent(wnd: oxTWindow; wParam: longint; action, Button: longword);
+procedure queueMouseEvent(wnd: oxTWindow; wParam, lParam: longint; action, Button: longword);
 var
    mEvent: appTMouseEvent;
    e: appPEvent;
+   delta: loopint;
 
 begin
+   if(action = appmcWHEEL) then begin
+      delta := SmallInt(Hi(wParam));
+
+      {if change of direction, zero accumulated delta}
+      if(delta <= -(WHEEL_DELTA div 2)) and (mWheelDelta > 0) then
+         mWheelDelta := 0
+      else if(delta >= (WHEEL_DELTA div 2)) and (mWheelDelta < 0) then
+         mWheelDelta := 0;
+
+      mWheelDelta := mWheelDelta + delta;
+
+      {wait until we have a WHEEL_DELTA accumulated value}
+      if(Abs(mWheelDelta) < WHEEL_DELTA) then
+         exit;
+   end;
+
    if(action = appmcPRESSED) then
       mButtonState := mButtonState or Button
    else if(action = appmcRELEASED) then
@@ -288,11 +277,19 @@ begin
    mEvent.bState := mButtonState;
    mEvent.Button := Button;
 
-   mEvent.x := winmGetX();
-   mEvent.y := winmGetY();
+   mEvent.x := SmallInt(lo(lParam));
+   mEvent.y := wnd.Dimensions.h - 1 - SmallInt(hi(lParam));
 
-   if(action = appmcWHEEL) then
-      mEvent.Value := shortint(Hi(wParam)) div WHEEL_DELTA;
+   if(action = appmcWHEEL) then begin
+      {count our values}
+      mEvent.Value := mWheelDelta div WHEEL_DELTA;
+
+      {remove current delta from accumulated}
+      if(mWheelDelta > 0) then
+         mWheelDelta := mWheelDelta - abs(mEvent.Value) * WHEEL_DELTA
+      else if(mWheelDelta < 0) then
+         mWheelDelta := mWheelDelta + abs(mEvent.Value) * WHEEL_DELTA;
+   end;
 
    e := appMouseEvents.Queue(mEvent);
    e^.wnd := wnd;
@@ -336,27 +333,27 @@ begin
 
       {left mouse button}
       WM_LBUTTONDOWN:
-         queueMouseEvent(wnd, WParam, appmcPRESSED, appmcLEFT);
+         queueMouseEvent(wnd, WParam, LParam, appmcPRESSED, appmcLEFT);
 
       WM_LBUTTONUP:
-         queueMouseEvent(wnd, WParam, appmcRELEASED, appmcLEFT);
+         queueMouseEvent(wnd, WParam, LParam, appmcRELEASED, appmcLEFT);
 
       {right mouse button}
       WM_RBUTTONDOWN:
-         queueMouseEvent(wnd, WParam, appmcPRESSED, appmcRIGHT);
+         queueMouseEvent(wnd, WParam, LParam, appmcPRESSED, appmcRIGHT);
 
       WM_RBUTTONUP:
-         queueMouseEvent(wnd, WParam, appmcRELEASED, appmcRIGHT);
+         queueMouseEvent(wnd, WParam, LParam, appmcRELEASED, appmcRIGHT);
 
       {middle mouse button}
       WM_MBUTTONDOWN:
-         queueMouseEvent(wnd, WParam, appmcPRESSED, appmcMIDDLE);
+         queueMouseEvent(wnd, WParam, LParam, appmcPRESSED, appmcMIDDLE);
 
       WM_MBUTTONUP:
-         queueMouseEvent(wnd, WParam, appmcRELEASED, appmcMIDDLE);
+         queueMouseEvent(wnd, WParam, LParam, appmcRELEASED, appmcMIDDLE);
 
       WM_MOUSEWHEEL:
-         queueMouseEvent(wnd, WParam, appmcWHEEL, 0);
+         queueMouseEvent(wnd, WParam, LParam, appmcWHEEL, 0);
 
       WM_MOUSEMOVE: begin
          mbts := 0;
@@ -370,7 +367,7 @@ begin
          if(wParam and MK_MBUTTON > 0) then
             mbts := mbts or appmcMIDDLE;
 
-         queueMouseEvent(wnd, WParam, appmcMOVED, mbts);
+         queueMouseEvent(wnd, WParam, LParam, appmcMOVED, mbts);
       end;
 
       WM_SETFOCUS: begin
