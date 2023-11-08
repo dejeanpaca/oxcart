@@ -176,6 +176,8 @@ begin
 
    uiWidget.ClearTarget();
 
+   AddDivisor();
+
    Revert();
 end;
 
