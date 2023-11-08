@@ -15,7 +15,7 @@ INTERFACE
       {app}
       uApp, appuEvents, appuActionEvents,
       {ui}
-      oxuUI, uiuTypes, uiuWidget, uiuContextMenu, uiuWidgetWindow, uiuMessageBox;
+      oxuUI, uiuTypes, uiuWidget, uiuContextMenu, uiuWidgetWindow, uiuMessageBox, uiuFiles;
 
 TYPE
    uiTFileContextMenuTarget = (
@@ -307,13 +307,23 @@ begin
    uiTFileContextMenuMessageBoxWindow(mbwWindow).Parameters := getWindow(wdg).Parameters;
 end;
 
+procedure clearMessagesOnStartToggle({%H-}wdg: uiTWidget; {%H-}menu: TObject; item: uiPContextMenuItem);
+begin
+   uiFileSettings.ShowHiddenFiles := item^.IsChecked();
+end;
+
 procedure oxwndTFileContextMenu.SetupItems(m: uiTContextMenu);
+var
+   item: uiPContextMenuItem;
+
 begin
    m.AddItem('Show in file manager', Events.SHOW_IN_FILE_MANAGER, @showInFileManager);
    m.AddItem('Open', Events.OPEN_FILE, @openFile);
    m.AddItem('Rename', Events.RENAME_FILE, @renameFile);
    m.AddItem('Delete', Events.DELETE_FILE, @deleteFile);
    m.AddItem('Create Directory', Events.CREATE_DIRECTORY, @createDirectory);
+   item := m.AddCheckbox('Show hidden files', uiFileSettings.ShowHiddenFiles);
+   item^.Callback := @clearMessagesOnStartToggle;
 end;
 
 procedure oxwndTFileContextMenu.Initialize();
