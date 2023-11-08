@@ -594,7 +594,7 @@ end;
 
 function TBitSet16Helper.GetBit(Index: Byte): Boolean;
 begin
-   Result := ((Self shr Index) and 1) = 1;
+   Result := Self and (1 shl Index) > 0;
 end;
 
 { TBitSetHelper }
@@ -647,7 +647,7 @@ end;
 
 function TBitSetHelper.GetBit(Index: Byte): Boolean;
 begin
-   Result := ((Self shr Index) and 1) = 1;
+   Result := Self and (1 shl Index) > 0;
 end;
 
 { TBitSet64Helper }
@@ -700,7 +700,7 @@ end;
 
 function TBitSet64Helper.GetBit(Index: Byte): Boolean;
 begin
-   Result := ((Self shr Index) and 1) = 1;
+   Result := Self and (1 shl Index) > 0;
 end;
 
 { TSimpleList }
