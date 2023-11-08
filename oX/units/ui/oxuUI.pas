@@ -122,7 +122,7 @@ TYPE
 
       WindowMove: oxTPoint;
 
-      {material used for the UI}
+      {Material used for the UI}
       Material: oxTMaterial;
       {default font, if nil then oxf.Default is used}
       Font: oxTFont;
@@ -255,7 +255,7 @@ begin
 
    {make sure that no window is selected}
    mSelect.l             := -1;
-   select.l              := -1;
+   Select.l              := -1;
 
    mSelectHoverTime := timer.Cur();
    mLastEventTime := timer.Cur();

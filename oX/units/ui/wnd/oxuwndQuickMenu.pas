@@ -10,15 +10,15 @@ UNIT oxuwndQuickMenu;
 
 INTERFACE
 
-USES
-   {app}
-   appuActionEvents, appuKeys,
-   {oX}
-   oxuTypes, oxuwndAbout, oxuwndSettings, oxuWindowTypes, oxuGlobalKeys,
-   {ui}
-   oxuUI, uiuTypes, uiuWindow, uiuWidget, uiWidgets, uiuWindowTypes, uiuControl,
-   {widgets}
-   wdguInputBox, wdguButton;
+   USES
+      {app}
+      appuActionEvents, appuKeys,
+      {oX}
+      oxuTypes, oxuwndAbout, oxuwndSettings, oxuWindowTypes, oxuGlobalKeys,
+      {ui}
+      oxuUI, uiuTypes, uiuWindow, uiuWidget, uiWidgets, uiuWindowTypes, uiuControl,
+      {widgets}
+      wdguInputBox, wdguButton;
 
 TYPE
 
@@ -72,7 +72,7 @@ var
 
    y: longint = 0;
 
-procedure setupwidget();
+procedure setupWidget();
 begin
    wdg.SetPosition(wdgPOSITION_HORIZONTAL_LEFT).
       SetSize(wdgWIDTH_MAX_HORIZONTAL);
@@ -80,33 +80,38 @@ end;
 
 begin
    {add the label}
-   if(createWidgets <> nil) then
-      createWidgets(wnd);
+   if(CreateWidgets <> nil) then
+      CreateWidgets(wnd);
 
-   if(doCreateWidgets) then begin
+   if(DoCreateWidgets) then begin
       dim.w := 90;
-      dim.h := buttonHeight;
+      dim.h := ButtonHeight;
 
-      y := buttonSpacing;
+      y := ButtonSpacing;
 
-      if(includeSettings) then begin
+      if(IncludeSettings) then begin
          wdg := wdgButton.Add('Settings', oxPoint(25, y * 4), dim, @oxwndSettings.Open).
             SetID(wdgID.SETTINGS);
-         setupwidget();
+
+         setupWidget();
       end;
 
-      if(includeAbout) then begin
+      if(IncludeAbout) then begin
          wdg := wdgButton.Add('About', oxPoint(25, y * 3), dim, @oxwndAbout.Open).
             SetID(wdgID.ABOUT);
-         setupwidget();
+
+         setupWidget();
       end;
 
       wdg := wdgButton.Add('Quit', oxPoint(25, y * 2), dim, appACTION_QUIT).
          SetID(wdgID.QUIT);
-      setupwidget();
+
+      setupWidget();
+
       wdg := wdgButton.Add('Close', oxPoint(25, y), dim, @Close).
          SetID(wdgID.CLOSE);
-      setupwidget();
+
+      setupWidget();
    end;
 
    uiWidget.ClearTarget();
@@ -118,8 +123,8 @@ var
    uiwnd: uiTWindow;
 
 begin
-   oxui.setUseWindow(useWindow);
-   uiwnd := oxui.getUseWindow();
+   oxui.SetUseWindow(useWindow);
+   uiwnd := oxui.GetUseWindow();
 
    {position the window}
    x := 10;
@@ -189,13 +194,13 @@ INITIALIZATION
    oxwndQuickMenu.wdgID.ABOUT := uiControl.GetID('ox.quickmenu.about');
    oxwndQuickMenu.wdgID.SETTINGS := uiControl.GetID('ox.quickmenu.settings');
 
-   oxwndQuickMenu.dimensions.w   := 200;
-   oxwndQuickMenu.dimensions.h   := 240;
-   oxwndQuickMenu.buttonHeight   := 24;
-   oxwndQuickMenu.buttonSpacing  := 25;
-   oxwndQuickMenu.doCreateWidgets := true;
-   oxwndQuickMenu.includeAbout    := true;
-   oxwndQuickMenu.includeSettings := true;
+   oxwndQuickMenu.Dimensions.w   := 200;
+   oxwndQuickMenu.Dimensions.h   := 240;
+   oxwndQuickMenu.ButtonHeight   := 24;
+   oxwndQuickMenu.ButtonSpacing  := 25;
+   oxwndQuickMenu.DoCreateWidgets := true;
+   oxwndQuickMenu.IncludeAbout    := true;
+   oxwndQuickMenu.IncludeSettings := true;
 
    oxGlobalKeys.Hook(qmgkHandler);
 END.
