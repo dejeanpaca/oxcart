@@ -22,16 +22,19 @@ USES
    oxuRenderer,
    oxuWindowTypes, oxuwndBase,
    {ui}
-   uiuControl, uiuWindow, uiWidgets, uiuWidget,
+   uiuControl, uiuWindow, uiWidgets, uiuWidget, uiuTypes,
    oxuwndSystemInformation,
    {widgets}
-   wdguLabel, wdguButton, wdguDivisor;
+   wdguLabel, wdguButton, wdguDivisor, wdguLink;
 
 TYPE
 
    { oxTAboutWindow }
 
    oxTAboutWindow = class(oxTWindowBase)
+      Copyright: string;
+      Links: array[0..3] of uiTLink;
+
       constructor Create(); override;
 
       protected
@@ -53,12 +56,20 @@ procedure oxTAboutWindow.AddWidgets();
 var
    btnMI,
    btnOk: wdgTButton;
+   i: loopint;
 
 begin
    {add the label}
    wdgLabel.Add(appInfo.GetVersionString(0));
    wdgLabel.Add(ox.GetVersionString(0));
-   wdgLabel.Add('Copyright (c) Dejan Boras');
+
+   if(Copyright <> '') then
+      wdgLabel.Add(Copyright);
+
+   for i := 0 to high(Links) do begin
+      if(Links[i].Link <> '')  then
+         wdgLink.Add(Links[i]);
+   end;
 
    wdgDivisor.Add('Information', uiWidget.LastRect.BelowOf());
 
@@ -80,12 +91,20 @@ begin
    btnMI.SetPosition(wdgPOSITION_HORIZONTAL_LEFT);
 end;
 
-constructor oxTAboutWindow.Create;
+constructor oxTAboutWindow.Create();
 begin
    ID := uiControl.GetID('ox.about');
    Width := 450;
    Height := 200;
    Title := 'About';
+
+   Copyright := 'Copyright (c) Dejan Boras';
+
+   Links[0].Caption := '=> Github';
+   Links[0].Link := 'https://github.com/dejeanpaca/oxcart';
+
+   Links[1].Caption := '=> Site';
+   Links[1].Link := 'https://dbx7.net/';
 
    inherited;
 end;
@@ -113,6 +132,8 @@ begin
 end;
 
 INITIALIZATION
+
+
    ox.Init.Add('ox.about', @initialize, @deinitialize);
 
 END.
