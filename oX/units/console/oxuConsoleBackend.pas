@@ -347,21 +347,6 @@ VAR
 
 IMPLEMENTATION
 
-CONST
-   cidCLEAR = 00;
-
-   defaultCommands: array[0..1] of conTCommand = (
-      (sid: 'cls'; sHelp: 'clear console'; nID: cidCLEAR),
-      (sid: 'clear'; sHelp: 'clear console'; nID: cidCLEAR)
-   );
-
-procedure defaultCommandNotify(var con: conTConsole);
-begin
-   case con.CommandID of
-      cidCLEAR: con.Clear();
-   end;
-end;
-
 { conTSimpleCommand }
 
 class procedure conTSimpleCommand.Initialize(out c: conTSimpleCommand);
@@ -405,9 +390,6 @@ begin
    {call the initialization routine}
    if Action(CON_ACTION_INITIALIZE) = CON_RESULT_FALSE then
       exit;
-
-   {add the default command handler}
-   AddHandler(DefaultCommandsHandler, conTCommandNotifyProc(@defaultCommandNotify), defaultCommands);
 
    {console initialized}
    Initialized := true;

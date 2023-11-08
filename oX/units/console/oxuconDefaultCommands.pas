@@ -18,12 +18,15 @@ INTERFACE
 IMPLEMENTATION
 
 CONST
-   cidCON            = 00;
-   cidQUIT           = 01;
-   cidCLEAR_CONSOLE  = 02;
-   cidRESTART        = 03;
+   cidCLEAR          = 00;
+   cidCON            = 01;
+   cidQUIT           = 02;
+   cidCLEAR_CONSOLE  = 03;
+   cidRESTART        = 04;
 
-   conCommands: array[0..3] of conTCommand = (
+   conCommands: array[0..5] of conTCommand = (
+      (sID: 'clear'; sHelp: 'clear console'; nID: cidCLEAR),
+      (sID: 'cls'; sHelp: 'clear console'; nID: cidCLEAR),
       (sID: 'con'; sHelp: 'console setup'; nID: cidCON),
       (sID: 'quit'; sHelp: 'quit the program'; nID: cidQUIT),
       (sID: 'clear_console'; sHelp: 'clears the attached console (terminal) output'; nID: cidCLEAR_CONSOLE),
@@ -80,6 +83,8 @@ end;
 procedure conCommandNotify(var con: conTConsole);
 begin
    case con.CommandID of
+      cidCLEAR:
+         con.Clear();
       cidCON:
          consoleCommand(con);
       cidQUIT:
