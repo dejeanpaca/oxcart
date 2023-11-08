@@ -119,8 +119,13 @@ begin
       {make sure we're not given any object}
       {$IFDEF OX_RESOURCE_DEBUG}
       if(res.ReferenceCount = 0) then begin
-         log.W('Tried to dispose resource with a zero reference count ' + res.Path);
-         log.w(res.DebugAllocationPoint);
+         log.w('Tried to dispose resource with a zero reference count ' + res.Path);
+         log.w('Allocated at: ' + res.DebugAllocationPoint);
+
+         if(res.DebugFreePoint <> '') then
+            log.w('Freed at: ' + res.DebugFreePoint)
+         else
+            log.w('Current: ' + DumpCallStack(1));
       end;
       {$ELSE}
       assert(res.ReferenceCount > 0, 'Tried to dispose resource with a zero reference count');
@@ -138,6 +143,8 @@ begin
          Self.Free(oxTResource(res));
       end;
       {$ENDIF}
+
+      oxTResource(res) := nil;
    end;
 end;
 
@@ -162,7 +169,7 @@ begin
       log.w('Resource ' + res.Path + ' already freed (' + sf(res.ReferenceCount) + '), ' + res.ClassName);
 
       if(res.DebugAllocationPoint <> '') then
-         log.w('Freed at: ' + res.DebugFreePoint);
+         log.w('Disposed at: ' + DumpCallStack(1));
    end;
 
    res.DebugFreed := true;
