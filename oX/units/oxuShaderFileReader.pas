@@ -21,7 +21,7 @@ VAR
    ext: fhTExtension;
    handler: fhTHandler;
 
-procedure handleFile(var f: TFile; var data: oxTFileRWData; var {%H-}shaderData: oxTShaderFileData);
+procedure handleFile(var f: TFile; var data: oxTFileRWData);
 var
    s,
    key,
@@ -133,7 +133,7 @@ end;
 
 procedure handle(data: pointer);
 begin
-   handleFile(oxTFileRWData(data^).f^, oxTFileRWData(data^), oxPShaderFileData(oxTFileRWData(data^).External)^);
+   handleFile(oxTFileRWData(data^).f^, oxTFileRWData(data^));
 end;
 
 procedure init();
