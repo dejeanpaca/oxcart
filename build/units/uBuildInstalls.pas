@@ -809,6 +809,16 @@ begin
    BuildInstalls.ReInitialize();
 end;
 
+procedure deinitialize();
+begin
+   BuildInstalls.CurrentPlatform := nil;
+   BuildInstalls.CurrentLazarus := nil;
+
+   BuildInstalls.DefaultPlatform := nil;
+   BuildInstalls.DefaultLazarus := nil;
+   BuildInstalls.Platforms.Dispose();
+end;
+
 INITIALIZATION
    BuildInstalls.Platforms.Initialize(BuildInstalls.Platforms);
    BuildInstalls.Lazarus.Initialize(BuildInstalls.Lazarus);
@@ -816,4 +826,5 @@ INITIALIZATION
    build.OnReinitialize.Add(@reinitialize);
    build.OnInitializeStart.Add(@initializeStart);
    build.OnInitialize.Add(@initialize);
+   build.OnDeinitialize.Add(@deinitialize);
 END.
