@@ -744,6 +744,6 @@ INITIALIZATION
    wdgTabs.HeaderHeight := 40;
    wdgTabs.HeaderWidth := 80;
 
-   wdgTabs.internal.Register('widget.tabs', @init, @deinit);
+   wdgTabs.internal.Register('tabs', @init, @deinit);
 
 END.

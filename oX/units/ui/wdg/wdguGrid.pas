@@ -784,7 +784,7 @@ begin
 end;
 
 INITIALIZATION
-   wdgGrid.Internal.Register('widget.grid', @init, @deinit);
-   wdgStringGrid.Internal.Register('widget.stringgrid', @initString, @deinitString);
+   wdgGrid.Internal.Register('grid', @init, @deinit);
+   wdgStringGrid.Internal.Register('string_grid', @initString, @deinitString);
 
 END.

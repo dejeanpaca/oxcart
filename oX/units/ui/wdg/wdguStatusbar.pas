@@ -108,7 +108,7 @@ begin
 end;
 
 INITIALIZATION
-   wdgStatusbar.Internal.Register('widget.statusbar', @init, @deinit);
+   wdgStatusbar.Internal.Register('statusbar', @init, @deinit);
 
    wdgStatusbar.Height := wdgWORKBAR_HEIGHT;
    wdgStatusbar.Color.Assign(255, 127, 0, 255);

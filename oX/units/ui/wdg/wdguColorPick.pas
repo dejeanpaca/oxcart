@@ -80,6 +80,6 @@ begin
 end;
 
 INITIALIZATION
-   wdgColorPick.Internal.Register('widget.color_pick', @init, @deinit);
+   wdgColorPick.Internal.Register('color_pick', @init, @deinit);
 
 END.

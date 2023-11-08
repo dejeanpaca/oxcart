@@ -179,7 +179,7 @@ begin
 end;
 
 INITIALIZATION
-   wdgWorkbar.Internal.Register('widget.workbar', @init, @deinit);
+   wdgWorkbar.Internal.Register('workbar', @init, @deinit);
 
    wdgWorkbar.Height := wdgWORKBAR_HEIGHT;
    wdgWorkbar.Shadows := true;

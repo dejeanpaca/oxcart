@@ -156,7 +156,6 @@ TYPE
 
    wdgTToolbarGlobal = class(specialize wdgTBase<wdgTToolbar>)
       Internal: uiTWidgetClass; static;
-      SkinDescriptor: uiTWidgetSkinDescriptor; static;
 
       {default height}
       Height: longint; static;
@@ -669,7 +668,6 @@ end;
 
 procedure init();
 begin
-   wdgToolbar.Internal.SkinDescriptor := @wdgToolbar.SkinDescriptor;
    wdgToolbar.Internal.Done(wdgTToolbar);
 
    wdgToolbar := wdgTToolbarGlobal.Create(wdgToolbar.Internal);
@@ -681,11 +679,9 @@ begin
 end;
 
 INITIALIZATION
-   wdgToolbar.Internal.Register('widget.Toolbar', @init, @deinit);
    wdgToolbar.Height := wdgWORKBAR_HEIGHT;
 
-   uiTWidgetSkinDescriptor.Initialize(wdgToolbar.SkinDescriptor, 'toolbar');
-   wdgToolbar.SkinDescriptor.UseColors(wdgToolbarSkinColorDescriptor);
-
+   wdgToolbar.Internal.Register('toolbar', @init, @deinit);
+   wdgToolbar.Internal.SkinDescriptor.UseColors(wdgToolbarSkinColorDescriptor);
 
 END.

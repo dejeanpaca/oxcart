@@ -131,6 +131,6 @@ begin
 end;
 
 INITIALIZATION
-   wdgSceneRender.Internal.Register('widget.scene_render', @init, @deinit);
+   wdgSceneRender.Internal.Register('scene_render', @init, @deinit);
 
 END.

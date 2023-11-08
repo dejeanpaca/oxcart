@@ -484,6 +484,6 @@ begin
 end;
 
 INITIALIZATION
-   wdgHierarchyList.Internal.Register('widget.hierarchylist', @init, @deinit);
+   wdgHierarchyList.Internal.Register('hierarchy_list', @init, @deinit);
 
 END.

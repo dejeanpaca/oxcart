@@ -21,6 +21,25 @@ INTERFACE
 CONST
    wdgcCHECKBOX_TOGGLE                          = $0001;
 
+   wdgscCHECKBOX_REGULAR = 0;
+   wdgscCHECKBOX_REGULAR_DISABLED = 1;
+   wdgscCHECKBOX_HOVER   = 2;
+
+   wdgCheckboxSkinColorDescriptor: array[0..2] of uiTWidgetSkinColorDescriptor = (
+       (
+          Name: 'regular';
+          Color: (96, 96, 96, 255)
+       ),
+       (
+          Name: 'regular_disabled';
+          Color: (48, 48, 48, 255)
+       ),
+       (
+          Name: 'highlight';
+          Color: (0, 153, 204, 255)
+       )
+    );
+
 TYPE
    { wdgTCheckbox }
 
@@ -57,6 +76,7 @@ TYPE
 
    wdgTCheckboxGlobal = class(specialize wdgTBase<wdgTCheckbox>)
       Internal: uiTWidgetClass; static;
+
       Width,
       Height: longint; static;
       LineWidth: single; static;
@@ -310,6 +330,8 @@ INITIALIZATION
 
    wdgCheckbox.DisabledColor.Assign(96, 96, 96, 255);
    wdgCheckbox.CheckedColor.Assign(32, 91, 32, 255);
-   wdgCheckbox.Internal.Register('widget.checkbox', @init, @deinit);
+
+   wdgCheckbox.Internal.Register('checkbox', @init, @deinit);
+   wdgCheckbox.Internal.SkinDescriptor.UseColors(wdgCheckboxSkinColorDescriptor);
 
 END.

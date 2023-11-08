@@ -402,6 +402,6 @@ end;
 
 INITIALIZATION
    wdgTitleButtons.ButtonSizeRatio := 0.9;
-   wdgTitleButtons.Internal.Register('widget.title_buttons', @init, @deinit);
+   wdgTitleButtons.Internal.Register('title_buttons', @init, @deinit);
 
 END.

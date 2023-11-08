@@ -1586,7 +1586,7 @@ begin
 end;
 
 INITIALIZATION
-   wdgList.Internal.Register('widget.list', @init, @deinit);
-   wdgStringList.Internal.Register('widget.stringlist', @initString, @deinitString);
+   wdgList.Internal.Register('.list', @init, @deinit);
+   wdgStringList.Internal.Register('string_list', @initString, @deinitString);
 
 END.

@@ -950,9 +950,9 @@ begin
 end;
 
 INITIALIZATION
-   wdgFileList.Internal.Register('widget.filelist', @init, @deinit);
-   wdgFileGrid.Internal.Register('widget.filegrid', @initGrid, @deinitGrid);
-   wdgHierarchicalFileList.Internal.Register('widget.hierarchicalfilelist', @initHierarchical, @deinitHierarchical);
+   wdgFileList.Internal.Register('file_list', @init, @deinit);
+   wdgFileGrid.Internal.Register('file_grid', @initGrid, @deinitGrid);
+   wdgHierarchicalFileList.Internal.Register('hierarchical_file_list', @initHierarchical, @deinitHierarchical);
 
    wdgFileGrid.FileNameLines := 2;
 

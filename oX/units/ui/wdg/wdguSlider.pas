@@ -88,6 +88,6 @@ begin
 end;
 
 INITIALIZATION
-   wdgSlider.Internal.Register('widget.slider', @init, @deinit);
+   wdgSlider.Internal.Register('slider', @init, @deinit);
 
 END.

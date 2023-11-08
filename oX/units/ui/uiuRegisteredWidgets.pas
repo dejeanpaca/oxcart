@@ -61,10 +61,11 @@ procedure InitDummyWidgetClass();
 begin
    ZeroOut(uiRegisteredWidgets.DummyWidgetClass, SizeOf(uiTWidgetClass));
 
-   uiRegisteredWidgets.DummyWidgetClass.sName        := 'wdgDUMMY';
+   uiRegisteredWidgets.DummyWidgetClass.sName := 'wdgDUMMY';
    uiRegisteredWidgets.DummyWidgetClass.SelectOnAdd  := true;
    uiRegisteredWidgets.DummyWidgetClass.Instance := uiTWidget;
-   uiRegisteredWidgets.DummyWidgetClass.SkinDescriptor := nil;
+
+   uiTWidgetSkinDescriptor.Initialize(uiRegisteredWidgets.DummyWidgetClass.SkinDescriptor);
 end;
 
 
@@ -87,8 +88,8 @@ begin
 
       skin := oxui.GetDefaultSkin();
 
-      if(WidgetClasses[n]^.SkinDescriptor <> nil) then
-         uiSkin.SetupWidget(skin, skin.wdgSkins[n], WidgetClasses[n]^.SkinDescriptor^);
+      if(WidgetClasses[n]^.SkinDescriptor.Name <> '') then
+         uiSkin.SetupWidget(skin, skin.wdgSkins[n], WidgetClasses[n]^.SkinDescriptor);
    end;
 end;
 
@@ -147,6 +148,8 @@ begin
    end;
 
    inc(uiRegisteredWidgets.nWidgetTypes);
+
+   uiTWidgetSkinDescriptor.Initialize(SkinDescriptor, name);
 end;
 
 procedure uiTWidgetInternal.Done(widgetClass: uiTWidgetClassType);

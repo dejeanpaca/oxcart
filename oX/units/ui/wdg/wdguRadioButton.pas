@@ -184,6 +184,6 @@ INITIALIZATION
    wdgRadioButton.CaptionSpace := 4;
    wdgRadioButton.clrDisabled.Assign(96, 96, 96, 255);
 
-   wdgRadioButton.Internal.Register('widget.radiobutton', @init, @deinit);
+   wdgRadioButton.Internal.Register('radio_button', @init, @deinit);
 
 END.

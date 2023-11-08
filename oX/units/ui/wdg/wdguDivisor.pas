@@ -208,6 +208,6 @@ begin
 end;
 
 INITIALIZATION
-   wdgDivisor.internal.Register('widget.link', @init, @deinit);
+   wdgDivisor.Internal.Register('divisor', @init, @deinit);
 
 END.

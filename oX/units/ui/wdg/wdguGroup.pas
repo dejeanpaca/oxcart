@@ -122,6 +122,6 @@ begin
 end;
 
 INITIALIZATION
-   wdgGroup.Internal.Register('widget.group', @init, @deinit);
+   wdgGroup.Internal.Register('group', @init, @deinit);
 
 END.

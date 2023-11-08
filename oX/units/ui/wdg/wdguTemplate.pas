@@ -61,6 +61,6 @@ begin
 end;
 
 INITIALIZATION
-   wdgTemplate.Internal.Register('widget.template', @init, @deinit);
+   wdgTemplate.Internal.Register('template', @init, @deinit);
 
 END.

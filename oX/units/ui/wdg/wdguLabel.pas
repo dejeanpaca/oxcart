@@ -248,6 +248,6 @@ begin
 end;
 
 INITIALIZATION
-   wdgLabel.Internal.Register('widget.label', @init, @deinit);
+   wdgLabel.Internal.Register('label', @init, @deinit);
 
 END.

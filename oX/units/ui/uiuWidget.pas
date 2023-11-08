@@ -254,7 +254,7 @@ TYPE
       SelectOnAdd, {select when widget added}
       NonSelectable: boolean; {not a selectable widget}
 
-      SkinDescriptor: uiPWidgetSkinDescriptor;
+      SkinDescriptor: uiTWidgetSkinDescriptor;
       InitRoutines: oxTRunRoutine;
 
       Instance: uiTWidgetClassType;
