@@ -247,7 +247,9 @@ begin
    StoreOutput(p);
 
    if((p.ExitStatus = 0) and (p.ExitCode = 0)) then begin
-      Output.ExecutableName := build.GetExecutableName(ExtractFilePath(path) + ExtractFileNameNoExt(path), build.Options.IsLibrary);
+      Output.ExecutableName := build.GetExecutableName(ExtractFilePath(path) +
+         ExtractFileNameNoExt(path), build.Options.IsLibrary);
+
       Output.Success := true;
       log.k('build > Building successful');
    end else begin
