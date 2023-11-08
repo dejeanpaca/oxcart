@@ -267,6 +267,9 @@ var
    renderer: oxTSceneRenderer;
 
 begin
+   if(not oxSceneRender.RenderAutomatically) then
+      exit;
+
    sceneWindow := oxSceneRender.Scenes[wnd.Index];
    renderer := sceneWindow.Renderer;
 
@@ -283,7 +286,7 @@ procedure init();
 begin
    oxSceneRender.Default := oxTSceneRenderer.Create();
 
-   if(oxSceneManagement.Enabled) then
+   if(oxSceneManagement.Enabled) and (oxSceneRender.RenderAutomatically) then
       oxWindows.OnRender.Add(@render);
 end;
 
