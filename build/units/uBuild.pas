@@ -87,6 +87,15 @@ TYPE
          Rebuild: boolean;
       end;
 
+      Checks: record
+         IO,
+         Range,
+         Overflow,
+         Stack,
+         Assertions,
+         VerifyMethodCalls: boolean;
+      end;
+
       Units,
       Includes,
       Symbols,
