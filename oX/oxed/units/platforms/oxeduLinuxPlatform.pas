@@ -21,14 +21,14 @@ TYPE
    { oxedTLinuxPlatform }
 
    oxedTLinuxPlatform = class(oxedTPlatform)
-      constructor Create; override;
+      constructor Create(); override;
    end;
 
 IMPLEMENTATION
 
 { oxedTLinuxPlatform }
 
-constructor oxedTLinuxPlatform.Create;
+constructor oxedTLinuxPlatform.Create();
 begin
    inherited;
 
