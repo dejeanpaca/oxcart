@@ -970,8 +970,6 @@ begin
    if(Features.FindByName('freetype') <> nil) then begin
       if(not CopyLibrary('freetype-6.dll', 'freetype.dll')) then
          exit(false);
-
-      requireZlib := true;
    end;
 
    if(requireZlib) then
