@@ -30,7 +30,7 @@ TYPE
    appTDirectInputControllerDevice = class(appTControllerDevice)
       FileName: string;
 
-      procedure Run(); override;
+      procedure Update(); override;
       procedure DeInitialize(); override;
    end;
 
@@ -41,7 +41,7 @@ VAR
 
 { appTDirectInputControllerDevice }
 
-procedure appTDirectInputControllerDevice.Run();
+procedure appTDirectInputControllerDevice.Update();
 begin
 end;
 

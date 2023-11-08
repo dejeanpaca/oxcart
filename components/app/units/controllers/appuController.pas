@@ -11,7 +11,7 @@ UNIT appuController;
 INTERFACE
 
    USES
-      uStd, uLog, StringUtils,
+      uStd, uLog, StringUtils, vmMath,
       {app}
       uApp, appuEvents, appuInputTypes,
       {ox}
@@ -139,7 +139,11 @@ TYPE
       AxisCount,
       TriggerCount,
       HatCount,
-      ButtonCount: longint;
+      ButtonCount,
+      {trigger value range}
+      TriggerValueRange,
+      {axis value range}
+      AxisValueRange: longint;
 
       {dead zone for axis/trigger}
       DeadZone: single;
@@ -155,6 +159,9 @@ TYPE
          KeyState: TBitSet64;
          {more detailed key state}
          Keys: appiTKeyStates;
+         {hat state}
+         Hat: array[0..3] of appiTKeyState;
+         {key properties}
          KeyProperties: array[0..appMAX_CONTROLLER_BUTTONS] of appiTKeyState;
          {state of all axes}
          Triggers: array[0..appMAX_CONTROLLER_AXES - 1] of appiTAxisState;
@@ -170,8 +177,9 @@ TYPE
       procedure LogDevice(); virtual;
       procedure DeInitialize(); virtual;
 
+      procedure UpdateStart();
       {run individual devices (input collection, connection detection, ...)}
-      procedure Run(); virtual;
+      procedure Update(); virtual;
 
       {called when the device is disconnected}
       procedure Disconnected();
@@ -185,6 +193,13 @@ TYPE
 
       {get normalized value for axis or trigger}
       function GetNormalizedValue(rawValue: loopint): appiTAxisState;
+
+      {set the pressed state of a button}
+      procedure SetButtonPressedState(index: loopint; pressed: boolean);
+      {set the pressed state of a trigger}
+      procedure SetTriggerState(index: loopint; raw: loopint);
+      {set the state of an axis}
+      procedure SetAxisState(index: loopint; raw: loopint);
    end;
 
    { appTControllerEvent }
@@ -355,6 +370,7 @@ begin
    DeviceIndex := -1;
    DeadZone := 0.1;
    DeadZoneStretch := true;
+   TriggerValueRange := 32767;
 
    State.Keys.SetupKeys(appMAX_CONTROLLER_BUTTONS, @State.KeyProperties);
 end;
@@ -372,9 +388,14 @@ begin
 
 end;
 
-procedure appTControllerDevice.Run();
+procedure appTControllerDevice.UpdateStart();
 begin
+   State.Keys.UpdateCycle();
+   Updated := false;
+end;
 
+procedure appTControllerDevice.Update();
+begin
 end;
 
 procedure appTControllerDevice.Disconnected();
@@ -435,6 +456,28 @@ begin
       Result := Result * -1;
 end;
 
+procedure appTControllerDevice.SetButtonPressedState(index: loopint; pressed: boolean);
+begin
+   if(pressed) then
+      State.KeyState.SetBit(index)
+   else
+      State.KeyState.ClearBit(index);
+
+   State.Keys.Process(index, pressed);
+end;
+
+procedure appTControllerDevice.SetTriggerState(index: loopint; raw: loopint);
+begin
+   State.Triggers[index].AssignRaw(raw, TriggerValueRange);
+   vmClamp(State.Triggers[index], -1.0, 1.0);
+end;
+
+procedure appTControllerDevice.SetAxisState(index: loopint; raw: loopint);
+begin
+   State.Axes[index].AssignRaw(raw, AxisValueRange);
+   vmClamp(State.Triggers[index], -1.0, 1.0);
+end;
+
 { appTControllerHandler }
 
 constructor appTControllerHandler.Create();
@@ -464,7 +507,7 @@ var
 begin
    if(appControllers.List.n > 0) then begin
       for i := 0 to (appControllers.List.n - 1) do begin
-         appControllers.List.List[i].Run();
+         appControllers.List.List[i].Update();
       end;
    end;
 end;
