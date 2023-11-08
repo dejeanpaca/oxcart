@@ -73,9 +73,9 @@ VAR
 
 procedure oxedTAndroidSettings.ProjectReset();
 begin
-  Project.PackageName := '';
-  Project.ManualFileManagement := false;
-  Project.ProjectFilesPath := '';
+   Project.PackageName := '';
+   Project.ManualFileManagement := false;
+   Project.ProjectFilesPath := '';
 end;
 
 procedure oxedTAndroidSettings.Validate();
