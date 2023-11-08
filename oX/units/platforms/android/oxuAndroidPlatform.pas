@@ -70,10 +70,8 @@ begin
       end;
    end else if(cmd = APP_CMD_TERM_WINDOW) then begin
       if(ox.Started) then begin
-         oxTRenderer(oxWindow.Current.Renderer).DestroyContext(oxWindow.Current.RenderingContext);
-         oxTRenderer(oxWindow.Current.Renderer).DestroyContext(oxWindow.Current.ThreadRenderingContext);
+         oxTRenderer(oxWindow.Current.Renderer).DestroyAllRenderingContexts(oxWindow.Current);
          oxWindow.Current.RenderingContext := -1;
-         oxWindow.Current.ThreadRenderingContext := -1;
          oxTRenderer(oxWindow.Current.Renderer).DeInitWindow(oxWindow.Current);
       end;
    end else if(cmd = APP_CMD_GAINED_FOCUS) then begin
