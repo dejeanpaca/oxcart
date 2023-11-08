@@ -10,7 +10,7 @@ INTERFACE
 
    USES
       ctypes, jni, native_activity, asset_manager, android_log_helper,
-      uStd, StringUtils, uFile, uAndroid, uAndroidAssetFile;
+      uStd, StringUtils, uFile, uAndroid, uAndroidAssetFile, ufhUnix;
 
 TYPE
 
@@ -94,6 +94,8 @@ var
 begin
    Result := false;
    fFile.Init(f);
+
+   unxfResetError();
 
    {assign a standard file handler}
    f.AssignHandler(androidAssetFileHandler);

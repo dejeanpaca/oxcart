@@ -41,21 +41,22 @@ VAR
 
    unixStdFileHandler: TFileStdHandler;
 
+procedure unxfResetError();
 function unxfIoErr(var f: TFile): longint;
 procedure fOpenUnix(var f: TFile; d: cint; offs, size: fileint); {normal file via descriptor}
 
 IMPLEMENTATION
 
+procedure unxfResetError();
+begin
+   fpseterrno(0);
+end;
+
 function unxfIoErr(var f: TFile): longint;
 begin
    f.IoError := fpgeterrno();
 
-   if(f.IoError = 30) and (f.fMode = fcfREAD) then
-      f.IoError := 0;
-
-   if(f.IoError = 0) then
-      exit(0)
-   else begin
+   if(f.IoError <> 0) then begin
       fpseterrno(0);
       f.Error := eIO;
    end;
@@ -189,7 +190,8 @@ var
    pos: fileint;
 
 begin
-   fpseterrno(0);
+   unxfResetError();
+
    f.Handle := FpOpen(f.fn, O_RdOnly);
 
    if(unxfIoErr(f) = 0) then begin
@@ -213,7 +215,7 @@ end;
 
 procedure TUnixFileHandler.New(var f: TFile);
 begin
-   fpseterrno(0);
+   unxfResetError();
 
    f.Handle := FpOpen(f.fn, O_WrOnly or O_Creat or O_Trunc);
 
@@ -272,7 +274,7 @@ begin
    if(unxfIoErr(f) = 0) then
       Result := res
    else
-      Result := -1;
+      Result := -f.IoError;
 end;
 
 procedure TUnixFileHandler.OnBufferSet(var f: TFile);
