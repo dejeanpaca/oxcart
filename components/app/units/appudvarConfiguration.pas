@@ -1,6 +1,5 @@
 {
-   appudvarConfiguration
-   app DVAR text configuration file support
+   appudvarConfiguration, app DVAR text configuration file support
    Copyright (C) 2012. Dejan Boras
 
    Started On:    08.01.2012.
@@ -12,24 +11,19 @@ UNIT appudvarConfiguration;
 INTERFACE
 
    USES
-     sysutils, uStd, uLog, udvars, dvaruFile,
-     uApp, appuPaths,
-     oxuRunRoutines;
+     udvars, uApp,
+     {ox}
+     oxuDvarFile;
 
 TYPE
 
    { appTDVarTextConfiguration }
 
    appTDVarTextConfiguration = record
-     FileName,
-     Path: StdString;
+      AutoLoad,
+      AutoSave: boolean;
 
-     AutoLoad,
-     AutoSave: boolean;
-
-     function GetFN(): StdString;
-     class procedure Load(); static;
-     class procedure Save(); static;
+      DvarFile: oxTDvarFile;
    end;
 
 VAR
@@ -37,52 +31,22 @@ VAR
 
 IMPLEMENTATION
 
-{ appTDVarTextConfiguration }
-
-function appTDVarTextConfiguration.GetFN(): StdString;
-begin
-   if(Path = '') then
-      Result := appPath.Configuration.Path + Filename
-   else
-      Result := Path + Filename;
-end;
-
-class procedure appTDVarTextConfiguration.Load();
-var
-   fn: StdString;
-
-begin
-   fn := appDVarTextConfiguration.GetFN();
-
-   dvarf.ReadText(fn);
-   log.i('dvar > loaded configuration file from: ' + fn);
-end;
-
-class procedure appTDVarTextConfiguration.Save();
-var
-   fn: StdString;
-
-begin
-   fn := appDVarTextConfiguration.GetFN();
-
-   dvarf.WriteText(fn);
-   log.i('dvar > wrote configuration file to: ' + fn);
-end;
-
 procedure Load();
 begin
    if(appDVarTextConfiguration.AutoLoad) then
-      appDVarTextConfiguration.Load()
+      appDVarTextConfiguration.DvarFile.Load();
 end;
 
 procedure Save();
 begin
    if(appDVarTextConfiguration.AutoSave) then
-      appDVarTextConfiguration.Save();
+      appDVarTextConfiguration.DvarFile.Save();
 end;
 
 INITIALIZATION
-   appDVarTextConfiguration.FileName := 'config.dvar';
+   appDVarTextConfiguration.DvarFile.Create();
+   appDVarTextConfiguration.DvarFile.FileName := 'config.dvar';
+   appDVarTextConfiguration.DvarFile.dvg := @dvar.dvars;
    appDVarTextConfiguration.AutoLoad := true;
    appDVarTextConfiguration.AutoSave := true;
 
