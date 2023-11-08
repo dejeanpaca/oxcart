@@ -88,7 +88,7 @@ begin
 
    Toolbar.AddSeparator();
 
-   Buttons.Translate := Toolbar.AddButton(oxedIcons.Create($f047), oxedActions.TOOL_TRANSLATE);
+   Buttons.Translate := Toolbar.AddButton(oxedIcons.Create($f245), oxedActions.TOOL_TRANSLATE);
    Buttons.Translate^.Hint := 'Move the selected object';
    Buttons.Translate^.Activate(true);
 

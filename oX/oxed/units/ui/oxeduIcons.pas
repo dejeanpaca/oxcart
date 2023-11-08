@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd,
       {ox}
-      uOX, oxuPaths, oxuFreetype, oxuTexture, oxuTexturePool, uiuContextMenu, oxuDefaultTexture,
+      uOX, oxuPaths, oxuTexture, oxuTexturePool, uiuContextMenu, oxuDefaultTexture,
       oxuGlyph,
       {oxed}
       uOXED, oxuFileIcons;
@@ -22,10 +22,12 @@ TYPE
    { oxedTIconsGlobal }
 
    oxedTIconsGlobal = record
+      DefaultContextMenuSize: loopint;
+
       function Create(c: longword; size: longint = 0; const name: string = ''): oxTTexture;
       function Create(const c: string; size: longint = 0): oxTTexture;
 
-      procedure Create(item: uiPContextMenuItem; c: longword; size: longint = 0);
+      procedure Create(item: uiPContextMenuItem; c: longword; const name: string = '');
    end;
 
 VAR
@@ -86,7 +88,7 @@ begin
    oxFileIcons.Add(tex, 'wmv');
 
    {git}
-   tex := oxedIcons.Create($f1d2{git});
+   tex := oxedIcons.Create('brands:61906' {git});
    oxFileIcons.Add(tex, 'gitignore');
 end;
 
@@ -105,12 +107,12 @@ begin
    Result := Create(0, size, c);
 end;
 
-procedure oxedTIconsGlobal.Create(item: uiPContextMenuItem; c: longword; size: longint);
+procedure oxedTIconsGlobal.Create(item: uiPContextMenuItem; c: longword; const name: string);
 var
    tex: oxTTexture;
 
 begin
-   tex := Create(c, size);
+   tex := Create(c, DefaultContextMenuSize, name);
 
    if(tex <> nil) then
       item^.SetGlyph(tex);
@@ -118,5 +120,6 @@ end;
 
 INITIALIZATION
    oxed.Init.iAdd('oxed.icons', @init);
+   oxedIcons.DefaultContextMenuSize := 32;
 
 END.

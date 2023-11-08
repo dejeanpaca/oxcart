@@ -125,18 +125,18 @@ begin
 
    if(CurrentEntity <> nil) and (CurrentEntity.Parent <> nil) then begin
       item := CurrentMenu.AddItem('Cut');
-      oxedIcons.Create(item, $f0c4, 32);
+      oxedIcons.Create(item, $f0c4);
       item := CurrentMenu.AddItem('Copy');
-      oxedIcons.Create(item, $f0c5, 32);
+      oxedIcons.Create(item, $f0c5);
       item := CurrentMenu.AddItem('Paste');
-      oxedIcons.Create(item, $f0ea, 32);
+      oxedIcons.Create(item, $f0ea);
 
       CurrentMenu.AddSeparator();
 
       item := CurrentMenu.AddItem('Rename', @RenameEntity);
-      oxedIcons.Create(item, $f031, 32);
+      oxedIcons.Create(item, $f031);
       item := CurrentMenu.AddItem('Delete', @deleteEntity);
-      oxedIcons.Create(item, $f00d, 32);
+      oxedIcons.Create(item, $f00d);
 
       CurrentMenu.AddSeparator();
    end;
@@ -200,19 +200,19 @@ begin
    item := oxedEntityMenu.AddToMenu('Empty', @newEntity);
 
    item := oxedEntityMenu.AddToMenu('Camera', @oxCameraEntity.Default);
-   oxedIcons.Create(item, $f03d, 32);
+   oxedIcons.Create(item, $f03d);
    item := oxedEntityMenu.AddToMenu('Light', @oxLightEntity.Default);
-   oxedIcons.Create(item, $f0eb, 32);
+   oxedIcons.Create(item, $f0eb);
 
    oxedEntityMenu.Menus.Primitives := oxedEntityMenu.Menus.Create.AddSub('Primitives');
 
    item := oxedEntityMenu.AddToMenu('Plane', @oxPrimitiveModelEntities.Plane, oxedEntityMenu.Menus.Primitives);
-   oxedIcons.Create(item, $f0c8, 32);
+   oxedIcons.Create(item, $f0c8);
 
    item := oxedEntityMenu.AddToMenu('Cube', @oxPrimitiveModelEntities.Cube, oxedEntityMenu.Menus.Primitives);
-   oxedIcons.Create(item, $f1b2, 32);
+   oxedIcons.Create(item, $f1b2);
    item := oxedEntityMenu.AddToMenu('Sphere', @oxPrimitiveModelEntities.Sphere, oxedEntityMenu.Menus.Primitives);
-   oxedIcons.Create(item, $f111, 32);
+   oxedIcons.Create(item, $f111);
 end;
 
 procedure deinit();
