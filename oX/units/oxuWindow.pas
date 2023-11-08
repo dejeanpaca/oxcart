@@ -79,7 +79,7 @@ end;
 
 procedure windowCreateCommon(wnd: oxTWindow);
 begin
-   oxRenderingContext.Viewport := @wnd.Viewport;
+   oxRenderingContext.UseWindow(wnd);
 
    if(not wnd.oxProperties.Context) then begin
       oxUIHooks.Select(wnd);
@@ -92,6 +92,8 @@ begin
       if(not wnd.oxProperties.Context) then
          oxUIHooks.UpdatePosition(wnd);
    end;
+
+   wnd.SetupViewport();
 end;
 
 {create a window which is only part of an external window (e.g. running in a library)}
