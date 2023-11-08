@@ -9,7 +9,8 @@ UNIT oxeduBuildLog;
 INTERFACE
 
    USES
-      uLog, StringUtils,
+      uStd, uLog, StringUtils,
+      {app}
       uAppInfo, appuLog,
       {oxed}
       oxeduConsole, uBuildExec;
@@ -27,6 +28,7 @@ TYPE
       procedure i(const what: string);
       procedure d(const what: string);
       procedure v(const what: string);
+      procedure s(priority: loopint; const what: string);
 
       procedure Collapsed(const what: string);
       procedure Leave();
@@ -101,6 +103,12 @@ procedure oxedTBuildLog.v(const what: string);
 begin
    Log.v(what);
    oxedConsole.con.v(what);
+end;
+
+procedure oxedTBuildLog.s(priority: loopint; const what: string);
+begin
+   Log.s(priority, what);
+   oxedConsole.con.log(priority, what);
 end;
 
 procedure oxedTBuildLog.Collapsed(const what: string);
