@@ -157,6 +157,10 @@ var
    event: appTControllerEvent;
 
 begin
+   {$IFDEF DEBUG}
+   jsevent.typ := 0;
+   {$ENDIF}
+
    repeat
       {no need for event to be initialized, since we read it}
       count := fpRead(fileHandle, {%H-}jsevent, SizeOf(js_event));
