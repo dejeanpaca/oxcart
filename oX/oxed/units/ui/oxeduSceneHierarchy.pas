@@ -409,6 +409,7 @@ end;
 procedure OnStop();
 begin
    setScene();
+   oxedScene.Unselect();
 end;
 
 INITIALIZATION
