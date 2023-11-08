@@ -236,8 +236,7 @@ end;
 procedure oxTWindowGlobal.DestroyRenderingContexts(wnd: oxTWindow);
 begin
    {destroy context}
-   if(wnd.RenderingContext > -1) then
-      oxTRenderer(wnd.Renderer).ClearContext(wnd.RenderingContext);
+   oxTRenderer(wnd.Renderer).ClearContext();
 
    oxTRenderer(wnd.Renderer).DestroyAllRenderingContexts(wnd);
    wnd.RenderingContext := -1;

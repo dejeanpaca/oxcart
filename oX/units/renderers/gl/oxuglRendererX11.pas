@@ -345,8 +345,13 @@ end;
 function oxglxTGlobal.ClearContext(wnd: oglTWindow): boolean;
 begin
    glXMakeCurrent(x11.DPY, 0, nil);
-   wnd.wd.LastError := x11.GetError();
-   Result := wnd.wd.LastError = 0;
+
+   if(wnd = nil) then begin
+      Result := x11.GetError() = 0;
+   end else begin
+      wnd.wd.LastError := x11.GetError();
+      Result := wnd.wd.LastError = 0;
+   end;
 end;
 
 function oxglxTGlobal.DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean;

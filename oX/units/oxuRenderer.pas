@@ -14,7 +14,7 @@ INTERFACE
       uStd, uColors, uLog, uImage, uComponentProvider, StringUtils, vmVector,
       {oX}
       uOX, oxuTypes, oxuWindowTypes, oxuGlobalInstances, oxuPlatform, oxuRunRoutines,
-      oxuRendererSettings;
+      oxuRendererSettings, oxuRenderingContext;
 
 TYPE
    { oxTRendererProperites }
@@ -140,7 +140,7 @@ TYPE
       function RenderingContextUsed(context: loopint): boolean;
       {get context}
       function InternalGetContext({%H-}wnd: oxTWindow; {%H-}shareContext: loopint = -1): loopint; virtual;
-      function GetRenderingContext({%H-}wnd: oxTWindow; {%H-}shareContext: loopint = -1): loopint; virtual;
+      function GetRenderingContext({%H-}wnd: oxTWindow; {%H-}shareContext: loopint = -1): loopint;
       function GetUnusedContext(): loopint; virtual;
       function GetContextString({%H-}index: loopint = 0): StdString; virtual;
       {set a context current}
@@ -149,11 +149,11 @@ TYPE
       {set a context current}
       procedure ContextCurrent(context: loopint; var {%H-}target: oxTRenderTarget);
       {clear context internal method}
-      procedure InternalClearContext({%H-}context: loopint); virtual;
+      procedure InternalClearContext(); virtual;
       {clear given context}
-      procedure ClearContext(context: loopint);
+      procedure ClearContext();
       {clear context but mark it as used}
-      procedure ClearContextUse(context: loopint);
+      procedure ClearContextUse();
       function DestroyContext({%H-}context: loopint): boolean; virtual;
 
       function RenderingContextCount(): loopint;
@@ -387,8 +387,7 @@ begin
       wnd.FromWindow(rtc);
 
       {sometimes, gl won't allow sharing lists or getting a context if we have one set currently}
-      if(wnd.RenderingContext > -1) then
-         ClearContext(wnd.RenderingContext);
+      ClearContext();
 
       {get new context}
       Result := InternalGetContext(wnd, shareContext);
@@ -452,25 +451,34 @@ begin
    ContextCurrent(rtc);
 end;
 
-procedure oxTRenderer.InternalClearContext(context: loopint);
+procedure oxTRenderer.InternalClearContext();
 begin
 
 end;
 
-procedure oxTRenderer.ClearContext(context: loopint);
+procedure oxTRenderer.ClearContext();
+var
+   rc: oxPRenderingContext;
+
 begin
-   if(context >= 0) then begin
-      assert(RenderingContexts[context].Used = true, 'Rendering context ' + sf(context) + ' cleared more than once, or was not current before');
-      RenderingContexts[context].Used := false;
-      InternalClearContext(context);
+   rc := @oxRenderingContext;
+
+   if(rc^.RC >= 0) then begin
+      RenderingContexts[rc^.RC].Used := false;
+      InternalClearContext();
    end;
 end;
 
-procedure oxTRenderer.ClearContextUse(context: loopint);
+procedure oxTRenderer.ClearContextUse();
+var
+   rc: oxPRenderingContext;
+
 begin
-   if(context >= 0) then begin
-      ClearContext(context);
-      RenderingContexts[context].Used := true;
+   rc := @oxRenderingContext;
+
+   if(rc^.RC >= 0) then begin
+      ClearContext();
+      RenderingContexts[rc^.RC].Used := true;
    end;
 end;
 
