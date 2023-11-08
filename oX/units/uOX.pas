@@ -49,7 +49,10 @@ TYPE
       {initialization failed}
       InitializationFailed: boolean;
 
+      {error code}
       Error: loopint;
+      {error description (if any)}
+      ErrorDescription: string;
 
       {list of all do routines}
       {called after base engine is initialized}
@@ -84,6 +87,8 @@ TYPE
       class function IsType(what, whatType: TClass): boolean; static;
       class function IsType(what: TObject; whatType: TClass): boolean; static;
       class procedure Assert(expression: boolean; const description: string); static;
+
+      function RaiseError(const description: string = ''; errorCode: loopint = oxeGENERAL): loopint;
    end;
 
 VAR
@@ -176,6 +181,18 @@ begin
    {$ELSE}
    system.Assert(expression, description);
    {$ENDIF}
+end;
+
+function oxTGlobal.RaiseError(const description: string; errorCode: loopint): loopint;
+begin
+   ErrorDescription := description;
+
+   if(Error = 0) and (errorCode <> 0) then
+      Error := errorCode;
+
+   Result := errorCode;
+
+   InitializationFailed := true;
 end;
 
 INITIALIZATION
