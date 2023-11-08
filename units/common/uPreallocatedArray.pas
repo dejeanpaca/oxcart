@@ -14,14 +14,15 @@ INTERFACE
       sysutils, uStd;
 
 TYPE
-   { TPreallocatedArrayListClass }
+   { TPrimitiveList }
 
    {helps to maintain a list of elements in an array}
+
+   { TPreallocatedArrayListClass }
+
    generic TPreallocatedArrayListClass<T> = class
       {step to increment the list size by}
       Increment: loopint;
-      {should memory be initialized when allocation is done}
-      InitializeMemory: boolean;
 
       {elements in the list}
       n,
@@ -36,6 +37,8 @@ TYPE
       procedure Allocate(count: loopint);
       {increase allocated number of elements by specified count (allocates to the multiple of Increment)}
       procedure AllocateInc(count: loopint);
+      {increase allocated number of elements by specified count (allocates to the multiple of Increment)}
+      procedure RequireAllocate(count: loopint);
       {allocates memory to insert count elements at given index, and moves out other elements to free the space}
       procedure InsertRange(index, count: loopint);
 
@@ -73,48 +76,29 @@ IMPLEMENTATION
 constructor TPreallocatedArrayListClass.Create();
 begin
    Increment := 32;
-   InitializeMemory := true;
 end;
 
 procedure TPreallocatedArrayListClass.Allocate(count: loopint);
-var
-   pa,
-   remainder: loopint;
-
 begin
    assert(Increment <> 0, 'Increment is zero for preallocated list');
-   pa := a;
+   assert(count <> 0, 'Tried to allocate 0 elements');
+
    a := count;
-
-   if(Increment > 0) then begin
-      remainder := a mod Increment;
-
-      if(remainder <> 0) then
-         a := a + Increment - remainder;
-   end;
 
    if(n > a) then
       n := a;
 
    SetLength(List, a);
-
-   {initialize memory}
-   if(InitializeMemory) then begin
-      if(pa = 0) then
-         ZeroPtr(@List[0], SizeOf(T) * (count))
-      else if(pa < a) then
-         ZeroPtr(@List[pa], SizeOf(T) * (a - pa))
-   end;
 end;
 
 procedure TPreallocatedArrayListClass.AllocateInc(count: loopint);
 var
-   pa,
    remainder: loopint;
 
 begin
    assert(Increment <> 0, 'Increment is zero for preallocated list');
-   pa := a;
+   assert(count <> 0, 'Tried to allocate 0 elements');
+
    inc(a, count);
 
    if(Increment > 0) then begin
@@ -126,9 +110,13 @@ begin
 
    SetLength(List, a);
 
-   {initialize memory}
-   if(InitializeMemory) then
-      ZeroPtr(@List[pa], SizeOf(T) * (a - pa));
+   assert((a = Length(List)) and (a <> 0), 'Preallocated list has invalid length');
+end;
+
+procedure TPreallocatedArrayListClass.RequireAllocate(count: loopint);
+begin
+   if(count > a) then
+      Allocate(count);
 end;
 
 procedure TPreallocatedArrayListClass.InsertRange(index, count: loopint);
@@ -181,18 +169,18 @@ end;
 
 function TPreallocatedArrayListClass.AddTo(var p, z: T): boolean;
 begin
-   result := AddTo(p);
+   Result := AddTo(p);
 
-   if(result) then
-      result := AddTo(z);
+   if(Result) then
+      Result := AddTo(z);
 end;
 
 function TPreallocatedArrayListClass.Add(p, z: T): boolean;
 begin
-   result := Add(p);
+   Result := Add(p);
 
-   if(result) then
-      result := Add(z);
+   if(Result) then
+      Result := Add(z);
 end;
 
 procedure TPreallocatedArrayListClass.Dispose();
@@ -251,11 +239,13 @@ end;
 
 function TPreallocatedArrayListClass.Exists(const what: T): boolean;
 begin
-   result := Find(what) > -1;
+   Result := Find(what) > -1;
 end;
 
 procedure TPreallocatedArrayListClass.SetSize(size: longint);
 begin
+   assert(size >= 0, 'Allocation cannot be set to negative value');
+
    n := size;
    a := size;
 
@@ -269,6 +259,5 @@ begin
    else
       Result := nil;
 end;
-
 
 END.
