@@ -176,9 +176,11 @@ TYPE
       function IsEnabled(): boolean;
    end;
 
+   oxPEntityGlobal = ^oxTEntityGlobal;
+
    { oxTEntityGlobal }
 
-   oxTEntityGlobal = class
+   oxTEntityGlobal = object
       OnCreate,
       OnDestroy,
       OnAdd,
@@ -192,8 +194,10 @@ TYPE
 
       {create a new empty entity}
       function New(const name: StdString = ''; component: oxTComponent = nil): oxTEntity; virtual;
+      {create a new empty entity}
+      procedure Remove(var entity: oxTEntity);
 
-      constructor Create;
+      constructor Create();
    end;
 
 VAR
@@ -204,11 +208,6 @@ IMPLEMENTATION
 function instance(): TObject;
 begin
    Result := oxTEntity.Create();
-end;
-
-function instanceGlobal(): TObject;
-begin
-   Result := oxTEntityGlobal.Create();
 end;
 
 { oxTComponentHelper }
@@ -871,7 +870,15 @@ begin
       Result.Add(component);
 end;
 
-constructor oxTEntityGlobal.Create;
+procedure oxTEntityGlobal.Remove(var entity: oxTEntity);
+begin
+   assert(entity.Parent <> nil, 'Tried to remove scene entity as a regular entity');
+
+   entity.Parent.Remove(entity);
+   entity := nil;
+end;
+
+constructor oxTEntityGlobal.Create();
 begin
    OnCreate.Initialize(OnCreate);
    OnDestroy.Initialize(OnDestroy);
@@ -918,10 +925,11 @@ begin
    oxEntity.Serialization.AddProperty('Renderable', @oxTEntity(nil).Renderable, oxSerialization.Types.Boolean);
    oxEntity.Serialization.PropertiesDone();
 
-   oxGlobalInstances.Add(oxTEntityGlobal, @oxEntity, @instanceGlobal)^.CopyOverReference := false;
+   oxGlobalInstances.Add('oxTEntityGlobal', @oxEntity)^.CopyOverReference := false;
 end;
 
 INITIALIZATION
+   oxEntity.Create();
    init();
 
 FINALIZATION
