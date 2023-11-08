@@ -713,7 +713,8 @@ end;
 
 function uiTWidgetGlobal.SelectNext(wnd: uiTWindow): boolean;
 var
-   s, i: longint;
+   s,
+   i: longint;
 
 label
    redo;
@@ -754,7 +755,8 @@ end;
 
 function uiTWidgetGlobal.SelectPrevious(wnd: uiTWindow): boolean;
 var
-   i, s: longint;
+   i,
+   s: longint;
 
 label
    redo;
@@ -985,7 +987,8 @@ end;
 
 function uiTWidgetHelper.SetSize(Properties: TBitSet): uiTWidget;
 var
-   p, d: longint;
+   p,
+   d: longint;
 
 begin
    {set maximum horizontal width for widget}
@@ -1193,6 +1196,7 @@ begin
    target.Window := nil;
    target.Widget := nil;
    target.Font := nil;
+
    ClearTargetCP();
 end;
 
