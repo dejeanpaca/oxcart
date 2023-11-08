@@ -100,6 +100,14 @@ TYPE
       {get the world matrix}
       procedure GetWorldScale(out p: TVector3f);
 
+      {call component load methods}
+      procedure LoadComponents();
+      {call component load methods in children recursively}
+      procedure LoadComponentsInChildren();
+      {call component start methods}
+      procedure StartComponents();
+      {call component start methods in children recursively}
+      procedure StartComponentsInChildren();
       {update the entity}
       procedure UpdateComponents();
       {update children}
@@ -556,6 +564,46 @@ begin
 
       cur := cur.Parent;
    until (cur = nil);
+end;
+
+procedure oxTEntity.LoadComponents();
+var
+   i: longint;
+
+begin
+   for i := 0 to (Components.n - 1) do
+      Components.List[i].Load();
+end;
+
+procedure oxTEntity.LoadComponentsInChildren();
+var
+   i: longint;
+
+begin
+   LoadComponents();
+
+   for i := 0 to (Children.n - 1) do
+      oxTEntity(Children.List[i]).LoadComponentsInChildren();
+end;
+
+procedure oxTEntity.StartComponents();
+var
+   i: longint;
+
+begin
+   for i := 0 to (Components.n - 1) do
+      Components.List[i].Start();
+end;
+
+procedure oxTEntity.StartComponentsInChildren();
+var
+   i: longint;
+
+begin
+   StartComponents();
+
+   for i := 0 to (Children.n - 1) do
+      oxTEntity(Children.List[i]).StartComponentsInChildren();
 end;
 
 procedure oxTEntity.UpdateComponents();
