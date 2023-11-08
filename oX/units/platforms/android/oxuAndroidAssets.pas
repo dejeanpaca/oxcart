@@ -9,7 +9,7 @@ UNIT oxuAndroidAssets;
 INTERFACE
 
    USES
-      uStd, uFile,
+      uStd, uFile, ypkuFS,
       {android}
       uAndroidAssets, android_log_helper;
 
@@ -38,16 +38,19 @@ var
 begin
    fn := 'data.ypk';
 
-   if(androidAssetManager.Open(fn, fData)) then
-      logi('Opened assets file')
-   else
+   if(androidAssetManager.Open(fn, fData)) then begin
+      logi('Opened assets file');
+
+      if(ypkfs.Add(fData) = nil) then
+         loge('Failed to add file to ypkfs: ' + fn);
+   end else
       loge('Failed to open assets file: ' + fn);
 end;
 
 procedure oxTAndroidAssets.DeInitialize();
 begin
    if(fData.IsOpened()) then
-      fData.Close();
+      fData.CloseAndDestroy();
 end;
 
 END.
