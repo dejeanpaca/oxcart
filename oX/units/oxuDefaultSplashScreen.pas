@@ -84,6 +84,6 @@ begin
 end;
 
 INITIALIZATION
-   oxSplashScreen.StartupInstance := oxTBasicSplashScreen;
+   oxSplashScreen.StartupInstance := oxTDefaultSplashScreen;
 
 END.
