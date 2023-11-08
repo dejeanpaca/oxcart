@@ -1,8 +1,6 @@
 {
    oxuwndInputControllerInfo, controller information/test window
    Copyright (C) 2019. Dejan Boras
-
-   TODO: Close window if controller disconnected
 }
 
 {$INCLUDE oxdefines.inc}
@@ -183,7 +181,14 @@ var
    i: loopint;
 
 begin
-   if(Controller = nil) or (not Controller.Updated) then
+   {if controller is not valid, quit}
+   if(Controller = nil) or ((Controller <> nil) and (not Controller.Valid)) then begin
+      Close();
+      exit;
+   end;
+
+   {if no change, do nothing}
+   if(not Controller.Updated) then
       exit;
 
    for i := 0 to Controller.ButtonCount - 1 do begin
