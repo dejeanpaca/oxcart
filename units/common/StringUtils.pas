@@ -31,6 +31,7 @@ TYPE
 
    TStringArrayHelper = type helper for TStringArray
       function GetSingleString(separator: StdString): StdString;
+      function GetSingleString(): StdString;
    end;
 
    { TPackedStrings }
@@ -2190,17 +2191,23 @@ var
 begin
    Result := '';
 
-   if(separator <> '') then begin
-      for i := 0 to High(Self) do begin
-         if(i < High(Self)) then
-            Result := Result + Self[i] + separator
-         else
-            Result := Result + Self[i];
-      end;
-   end else begin
-      for i := 0 to High(Self) do begin
+   for i := 0 to High(Self) do begin
+      if(i < High(Self)) then
+         Result := Result + Self[i] + separator
+      else
          Result := Result + Self[i];
-      end;
+   end;
+end;
+
+function TStringArrayHelper.GetSingleString(): StdString;
+var
+   i: loopint;
+
+begin
+   Result := '';
+
+   for i := 0 to High(Self) do begin
+      Result := Result + Self[i];
    end;
 end;
 
