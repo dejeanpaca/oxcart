@@ -41,7 +41,7 @@ TYPE
    { oxTProjection }
 
    oxTProjection = record
-      Name: string;
+      Name: StdString;
 
       {is the projection ortographic}
       IsOrtographic,

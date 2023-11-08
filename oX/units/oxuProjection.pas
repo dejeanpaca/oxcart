@@ -13,7 +13,9 @@ INTERFACE
    USES
       uStd, uColors, vmVector, uLog,
       {oX}
-      oxuAspect, oxuProjectionType, oxuTypes, oxuRenderer, oxuRender, oxuTransform, oxuWindowTypes;
+      oxuAspect, oxuProjectionType, oxuTypes, oxuWindowTypes,
+      oxuSerialization,
+      oxuRenderer, oxuRender, oxuTransform;
 
 TYPE
 
@@ -96,6 +98,9 @@ VAR
    oxProjection: oxPProjection;
 
 IMPLEMENTATION
+
+VAR
+   serialization: oxTSerialization;
 
 class procedure oxTProjectionHelper.Create(out projection: oxTProjection);
 begin
@@ -405,5 +410,19 @@ begin
 
    Result := true;
 end;
+
+INITIALIZATION
+   serialization := oxTSerialization.CreateRecord('oxTProjection');
+
+   serialization.AddProperty('Name', @oxTProjection(nil^).Name, oxSerialization.Types.tString);
+   serialization.AddProperty('IsOrtographic', @oxTProjection(nil^).IsOrtographic, oxSerialization.Types.Boolean);
+
+   {TODO: Complete serialization
+    serialization.AddProperty('Position', @oxTProjection(nil^).Position, oxSerialization.Types.TPoint);
+    serialization.AddProperty('Offset', @oxTProjection(nil^).Offset, oxSerialization.Types.TPoint);
+    serialization.AddProperty('Dimensions', @oxTProjection(nil^).Dimensions, oxSerialization.Types.TDimensions);}
+
+FINALIZATION
+   FreeObject(serialization);
 
 END.
