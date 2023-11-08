@@ -11,7 +11,7 @@ UNIT uOX;
 INTERFACE
 
    USES
-      uStd, uInit, uAppInfo, udvars;
+      uStd, uInit, uAppInfo, udvars, oxuRunRoutines;
 
 CONST
    oxEngineName               = 'oX';
@@ -55,12 +55,12 @@ TYPE
       OnStart,
       {called after initialization, but before start to load required resources}
       OnLoad,
-      {called before events are processed (pre-run)}
+      {called before events are processes}
       OnPreEvents,
-      {called each run cycle}
+      {called on run}
       OnRun,
       {called on the end of the run cylce (after OnRun)}
-      OnRunAfter: TProcedures;
+      OnRunAfter: oxTRunRoutines;
 
       {preinitialization routines (before renderer/window is created)}
       PreInit,
@@ -124,15 +124,6 @@ INITIALIZATION
 
    ox.AppProcs.Init('ox.appprocs');
    ox.AppProcs.DontDetermineState();
-
-   TProcedures.Initialize(ox.OnPreInitialize);
-   TProcedures.Initialize(ox.OnInitialize);
-   TProcedures.Initialize(ox.OnDeinitialize);
-   TProcedures.Initialize(ox.OnLoad);
-   TProcedures.Initialize(ox.OnStart);
-   TProcedures.Initialize(ox.OnPreEvents);
-   TProcedures.Initialize(ox.OnRun);
-   TProcedures.Initialize(ox.OnRunAfter);
 
    ox.AppProcs.Init('ox.app');
 

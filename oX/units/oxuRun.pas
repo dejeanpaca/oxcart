@@ -24,11 +24,6 @@ TYPE
      {restart instead of quitting}
      RestartFlag: boolean;
 
-     {called before events are processes}
-     OnPreEvents,
-     {called on run}
-     RunRoutines: oxTRunRoutines;
-
      {perform initialization before running}
      function Initialize(): boolean;
      {start running}
@@ -148,13 +143,10 @@ function oxTRunGlobal.GoCycle(dosleep: boolean): boolean;
 begin
    Result := true;
 
-   OnPreEvents.Call();
    ox.OnPreEvents.Call();
 
    oxPlatform.ProcessEvents();
    ControlEvents();
-
-   RunRoutines.Call();
 
    ox.OnRun.Call();
 
@@ -229,22 +221,22 @@ begin
 end;
 procedure oxTRunGlobal.AddRoutine(var routine: oxTRunRoutine);
 begin
-   RunRoutines.Add(routine);
+   ox.OnRun.Add(routine);
 end;
 
 procedure oxTRunGlobal.AddRoutine(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
 begin
-   RunRoutines.Add(routine, name, exec);
+   ox.OnRun.Add(routine, name, exec);
 end;
 
 procedure oxTRunGlobal.AddPreRoutine(var routine: oxTRunRoutine);
 begin
-   OnPreEvents.Add(routine);
+   ox.OnPreEvents.Add(routine);
 end;
 
 procedure oxTRunGlobal.AddPreRoutine(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
 begin
-   OnPreEvents.Add(routine, name, exec);
+   ox.OnPreEvents.Add(routine, name, exec);
 end;
 
 END.

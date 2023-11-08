@@ -15,7 +15,7 @@ INTERFACE
    USES
       uStd, uLog,
       {ox}
-      uOX, oxuPaths,
+      uOX, oxuPaths, oxuRunRoutines,
       {oxed}
       uOXED, oxeduSettings, oxeduRecents,
       oxeduWindow, oxeduSplash, oxeduSplashScreen, oxeduSettingsWindow, oxeduIcons,
@@ -90,8 +90,12 @@ begin
    oxed.Init.dCall();
 end;
 
+VAR
+   initRoutine,
+   deinitRoutine: oxTRunRoutine;
+
 INITIALIZATION
-   ox.OnInitialize.Add(@oxedInitialize);
-   ox.OnDeinitialize.Add(@oxedDeinitialize);
+   ox.OnInitialize.Add(initRoutine, 'oxed.init', @oxedInitialize);
+   ox.OnDeinitialize.Add(deinitRoutine, 'oxed.deinit', @oxedDeinitialize);
 
 END.

@@ -15,7 +15,7 @@ INTERFACE
       {app}
       appuMouse,
       {oX}
-      uOX, oxuWindow, oxuWindows, oxuRenderer, oxuRenderers, oxuTypes, oxuResourcePool,
+      uOX, oxuWindow, oxuWindows, oxuRenderer, oxuRenderers, oxuTypes, oxuResourcePool, oxuRunRoutines,
       oxuShader, oxuMaterial, oxuFont,
       {ui}
       uiuTypes, uiuControl, uiuWindowTypes, uiuWidget;
@@ -377,11 +377,14 @@ begin
    oxui.Material.MarkPermanent();
 end;
 
+VAR
+   routine: oxTRunRoutine;
+
 INITIALIZATION
    oxui := oxTUI.Create();
    oxRenderers.PostUseRoutines.Add(@onUse);
 
-   ox.OnRun.Add(@updateControls);
+   ox.OnRun.Add(routine, 'ui.update_controls', @updateControls);
 
    ox.dvar.Add('ui', oxTUI.dvg);
 

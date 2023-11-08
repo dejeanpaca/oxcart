@@ -15,9 +15,12 @@ INTERFACE
    USES
       uTiming, uStd, uColors, vmVector, StringUtils,
       {oX}
-      uOX, oxuUI, oxuTypes, oxuTexture, oxuTextureGenerate, oxuPaths, oxuRenderer, oxuRender, oxuThreadTask, oxuMaterial,
-      oxuWindowTypes, oxuFont, oxumPrimitive, oxuWindow, oxuTransform, oxuResourcePool, oxuPrimitives, oxuRun,
-      uiuWindow;
+      uOX, oxuTypes, oxuWindowTypes,
+      oxuTexture, oxuTextureGenerate, oxuPaths, oxuRenderer, oxuRender, oxuThreadTask,
+      oxuMaterial, oxuFont, oxumPrimitive, oxuWindow, oxuTransform, oxuResourcePool, oxuPrimitives,
+      oxuRun, oxuRunRoutines,
+      {ui}
+      oxuUI, uiuWindow;
 
 CONST
    oxSPLASH_SCREEN_DEFAULT_DISPLAY_TIME = 2000;
@@ -342,6 +345,9 @@ begin
    end;
 end;
 
+VAR
+   preInitializeRoutine,
+   startRoutine: oxTRunRoutine;
 
 INITIALIZATION
    oxSplashScreen.StartupInstance := oxTDefaultSplashScreen;
@@ -350,6 +356,6 @@ INITIALIZATION
    oxSplashScreen.StartupThreaded := true;
    {$ENDIF}
 
-   ox.OnPreInitialize.Add(@splashInitialize);
-   ox.OnStart.Add(@splashStart);
+   ox.OnPreInitialize.Add(preInitializeRoutine, 'ox.splash_initialize', @splashInitialize);
+   ox.OnStart.Add(startRoutine, 'ox.splash_start', @splashStart);
 END.
