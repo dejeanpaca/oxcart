@@ -44,8 +44,7 @@ VAR
    dvMainUnit,
    dvRunParameter,
    dvFeature,
-   dvLineEndings,
-   dvPackage: TDVar;
+   dvLineEndings: TDVar;
 
    stringValue: StdString;
 
@@ -123,29 +122,6 @@ begin
    end;
 end;
 
-procedure dvPackageNotify(var context: TDVarNotificationContext);
-var
-   i: loopint;
-
-begin
-   if(context.What = DVAR_NOTIFICATION_READ) then begin
-      if(stringValue[1] = '@') then
-         oxedProject.AddPackage(copy(stringValue, 2, Length(stringValue) - 1))
-      else
-         oxedProject.AddPackagePath(stringValue);
-   end else if(context.What = DVAR_NOTIFICATION_WRITE) then begin
-      context.Result := 0;
-
-      for i := 0 to oxedProject.Packages.n - 1 do begin
-         if(oxedProject.Packages.List[i].Path = '') then
-            dvarPFileData(context.f)^.Write(context.Parent, dvPackage, '@' + oxedProject.Packages.List[i].Name)
-         else
-            dvarPFileData(context.f)^.Write(context.Parent, dvPackage, oxedProject.Packages.List[i].Path);
-      end;
-   end;
-end;
-
-
 procedure dvMainUnitNotify(var context: TDVarNotificationContext);
 begin
    if(context.What = DVAR_NOTIFICATION_WRITE) then begin
@@ -175,8 +151,5 @@ INITIALIZATION
 
    dvGroup.Add(dvFeature, 'feature', dtcSTRING, @stringValue, [dvarNOTIFY_WRITE]);
    dvFeature.pNotify := @dvFeatureNotify;
-
-   dvGroup.Add(dvPackage, 'package', dtcSTRING, @stringValue, [dvarNOTIFY_WRITE]);
-   dvPackage.pNotify := @dvPackageNotify;
 
 END.
