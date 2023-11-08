@@ -112,10 +112,12 @@ function onDirectory(const fd: TFileTraverseData): boolean;
 begin
    Result := true;
 
-   if(fd.f.Name = oxPROJECT_TEMP_DIRECTORY) then
+   {ignore project config directory}
+   if(fd.f.Name = oxedProject.Path + oxPROJECT_DIRECTORY) then
       exit(false);
 
-   if(fd.f.Name = oxPROJECT_DIRECTORY) then
+   {ignore project temporary directory}
+   if(fd.f.Name = oxedProject.Path + oxPROJECT_TEMP_DIRECTORY) then
       exit(false);
 end;
 
