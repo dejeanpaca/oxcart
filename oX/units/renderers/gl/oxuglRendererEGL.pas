@@ -178,26 +178,32 @@ var
    glrc: oglTRenderingContext;
 
 begin
-   if(context.Target^.Typ = oxRENDER_TARGET_WINDOW) then begin
+   if(wnd.wd.Display = <> EGL_NO_DISPLAY) then
+      exit;
+
+   if(context.Target^.Typ = oxRENDER_TARGET_WINDOW) and then begin
       wnd := oglTWindow(context.Target^.Target);
 
       glrc := oxglRenderer.glRenderingContexts[context.RenderContext];
 
-      if(context.ContextType = oxRENDER_TARGET_CONTEXT_RENDER) then
-         Result := eglMakeCurrent(wnd.wd.Display, wnd.wd.Surface, wnd.wd.Surface, glrc) <> EGL_FALSE
-      else
-         Result := eglMakeCurrent(wnd.wd.Display, EGL_NO_SURFACE, EGL_NO_SURFACE, glrc) <> EGL_FALSE
+      Result := eglMakeCurrent(wnd.wd.Display, wnd.wd.Surface, wnd.wd.Surface, glrc) <> EGL_FALSE
    end;
 end;
 
 function oxglTEGL.ClearContext(wnd: oglTWindow): boolean;
 begin
-   Result := eglMakeCurrent(wnd.wd.Display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) <> EGL_FALSE;
+   if(wnd.wd.Display <> EGL_NO_DISPLAY) then
+      Result := eglMakeCurrent(wnd.wd.Display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) <> EGL_FALSE
+   else
+      Result := true;
 end;
 
 function oxglTEGL.DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean;
 begin
-   Result := eglDestroyContext(wnd.wd.Display, context) <> EGL_FALSE;
+   if(wnd.wd.Display <> EGL_NO_DISPLAY) then
+      Result := eglDestroyContext(wnd.wd.Display, context) <> EGL_FALSE
+   else
+      Result := true;
 end;
 
 procedure oxglTEGL.SwapBuffers(wnd: oglTWindow);
