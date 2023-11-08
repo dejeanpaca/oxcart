@@ -46,7 +46,9 @@ TYPE
      {always show on start, regardless of the ShowOnStart setting}
      AlwaysShowOnStart,
      {show build information}
-     ShowBuildInformation: boolean; static;
+     ShowBuildInformation,
+     {show information over image}
+     InformationOverImage: boolean; static;
 
      BackgroundColor: TColor4ub;
 
@@ -96,20 +98,28 @@ var
 begin
    splashHeight := round(oxwndSplash.Width * 0.5625);
 
-   wdgLabel.Add(appInfo.GetVersionString(), oxPoint(wdgDEFAULT_SPACING, Window.Dimensions.h - 10), oxNullDimensions);
-   if(ShowBuildInformation) then begin
-      wdg := wdgLabel.Add(BuildInformation, oxPoint(wdgDEFAULT_SPACING, Window.Dimensions.h - 20), oxNullDimensions);
-      wdg.Color := wdg.Color.Darken(0.3);
-      wdg := wdgLabel.Add({$I %Date%}, oxPoint(0, Window.Dimensions.h - 20), oxNullDimensions).SetPosition(wdgPOSITION_HORIZONTAL_RIGHT);
-      wdg.Color := wdg.Color.Darken(0.3);
-      top := window.Dimensions.h - 35;
+   if(not oxTSplashWindow.InformationOverImage) then begin
+      if(ShowBuildInformation) then
+         top := window.Dimensions.h - 25
+      else
+         top := window.Dimensions.h - 35;
    end else
-      top := window.Dimensions.h - 25;
+      top := window.Dimensions.h;
 
    wdg := wdgImage.Add(ImageFileName, oxPoint(0, top), oxDimensions(oxwndSplash.Width, splashHeight));
    Exclude(wdg.Properties, wdgpSELECTABLE);
 
+   wdgLabel.Add(appInfo.GetVersionString(), oxPoint(wdgDEFAULT_SPACING, Window.Dimensions.h - 6), oxNullDimensions);
+
    SplashImageEnd := wdg.Position.y - wdg.Dimensions.h - wdgDEFAULT_SPACING;
+
+   if(ShowBuildInformation) then begin
+      wdg := wdgLabel.Add(BuildInformation, oxPoint(wdgDEFAULT_SPACING, Window.Dimensions.h - 20), oxNullDimensions);
+      wdg.Color := wdg.Color.Darken(0.3);
+
+      wdg := wdgLabel.Add({$I %Date%}, oxPoint(0, Window.Dimensions.h - 20), oxNullDimensions).SetPosition(wdgPOSITION_HORIZONTAL_RIGHT);
+      wdg.Color := wdg.Color.Darken(0.3);
+   end;
 
    if(not AlwaysShowOnStart) then
       wdgCheckbox.Add('Show on start', oxPoint(wdgDEFAULT_SPACING, 15), oxwndSplash.ShowOnStart).
@@ -207,6 +217,7 @@ INITIALIZATION
    oxTSplashWindow.Link := '';
    oxTSplashWindow.LinkCaption := '';
    oxTSplashWindow.BuildInformation := {$I %FPCTarget%} + ' (fpc ' + {$INCLUDE %FPCVersion%} + ')';
+   oxTSplashWindow.InformationOverImage := true;
 
    TProcedures.Initialize(oxTSplashWindow.OnInit, 8);
 
