@@ -214,11 +214,12 @@ begin
 
    if(not CustomDrawnContainer) then begin
       surfaceColor := GetColor(wdgscINPUT_SURFACE);
+      borderColor := GetColor(wdgscINPUT_BORDER);
 
-      if (not IsSelected()) and (not Hovering()) then
-         borderColor := GetColor(wdgscINPUT_BORDER)
-      else
-         borderColor := GetColor(wdgscINPUT_BORDER_SELECTED);
+      if(IsEnabled()) then begin
+         if (IsSelected()) and (Hovering()) then
+            borderColor := GetColor(wdgscINPUT_BORDER);
+      end;
 
       uiRenderWidget.Box(uiTWidget(self), surfaceColor, borderColor, renderProperties, uiTWindow(wnd).opacity)
    end else
@@ -253,7 +254,7 @@ begin
 
    {render the input cursor}
    if(not CustomDrawnCursor) then begin
-      if (IsSelected()) and (timer.Cur() mod 1000 > 500) then begin
+      if IsEnabled() and IsSelected() and (timer.Cur() mod 1000 > 500) then begin
          SetColor(wdgscINPUT_CURSOR);
 
          if(InputCursorType = wdgINPUT_BOX_CURSOR_NORMAL) then
