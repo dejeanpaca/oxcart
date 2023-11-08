@@ -48,17 +48,19 @@ end;
 function can_build(const specific: string): boolean;
 begin
   {build if specified this, or nothing specified}
-  result := ((specific = build_what) or (build_what = '')) and (specific <> '');
-
-  if(result) then
-     log.w('Building: ' + specific);
+  Result := (specific = build_what) or (build_what = '');
 end;
 
 procedure build_tool(var tool: TTool; pas: boolean);
 begin
+   if(tool.Path = '') then
+      exit;
+
    BuildExec.ResetOutput();
 
-   if can_build(tool.Name) then begin
+   if (build_what = 'tools') or can_build(tool.Name) then begin
+      log.w('Building: ' + tool.Name);
+
       if pas then
          BuildExec.PasTool(tool.Path)
       else begin
@@ -90,14 +92,14 @@ begin
    log.v('Lazarus: ' + BuildInstalls.CurrentLazarus^.Path);
    log.v('');
 
-   for i := 0 to length(laz_tools) - 1 do begin
+   for i := 0 to high(laz_tools) do begin
       build_tool(laz_tools[i], false);
 
       if(quitOnFail) and (fail_count > 0) then
          exit;
    end;
 
-   for i := 0 to length(pas_tools) - 1 do begin
+   for i := 0 to high(pas_tools) - 1 do begin
       build_tool(pas_tools[i], true);
 
       if(quitOnFail) and (fail_count > 0) then
