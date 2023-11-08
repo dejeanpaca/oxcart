@@ -9,22 +9,29 @@ UNIT uBuildFPCConfig;
 INTERFACE
 
    USES
-      uStd, uFileUtils,
+      uStd, StringUtils, uFileUtils,
       uBuild;
 
 TYPE
+
+   { TBuildFPCConfiguration }
+
    TBuildFPCConfiguration = record
-      procedure GenerateFile(const fn: StdString);
+      class function GenerateFile(config: TStringArray; const fn: StdString): boolean; static;
+      class function GenerateFile(config: TSimpleStringList; const fn: StdString): boolean; static;
    end;
 
 IMPLEMENTATION
 
-procedure TBuildFPCConfiguration.GenerateFile(const fn: StdString);
-var
-   cfg: TAppendableString;
-
+class function TBuildFPCConfiguration.GenerateFile(config: TStringArray; const fn: StdString): boolean;
 begin
-   FileUtils.WriteString(fn, cfg);
+   Result := FileUtils.WriteStrings(fn, config) >= 0;
+end;
+
+class function TBuildFPCConfiguration.GenerateFile(config: TSimpleStringList;
+   const fn: StdString): boolean;
+begin
+   Result := GenerateFile(config.List, fn);
 end;
 
 END.
