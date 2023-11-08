@@ -70,6 +70,8 @@ TYPE
 
       function GetSummary(): TStringArray; override;
       function GetPlatformErrorDescription(error: loopint): StdString;
+
+      function CheckError(): StdString; override;
   end;
 
 VAR
@@ -443,6 +445,19 @@ end;
 function oxglTRenderer.GetPlatformErrorDescription(error: loopint): StdString;
 begin
    Result := glPlatform^.Name + ' error: ' + glPlatform^.GetErrorDescription(error);
+end;
+
+function oxglTRenderer.CheckError(): StdString;
+var
+   glerr: loopint;
+
+begin
+   glerr := ogl.eRaise();
+
+   if(glerr <> 0) then
+      Result := ogl.ErrorString(glerr)
+   else
+      Result := '';
 end;
 
 procedure init();
