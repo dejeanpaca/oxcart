@@ -1,5 +1,5 @@
 {
-   uStd, standard resources unit(something like system unit)
+   uStd, standard resources unit (something like system unit)
    Copyright (C) Dejan Boras 2011.
 }
 
@@ -452,7 +452,6 @@ begin
       end;
    end;
 end;
-
 
 { TAppendableStringHelper }
 
