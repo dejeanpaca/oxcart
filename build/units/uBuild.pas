@@ -312,7 +312,6 @@ begin
 
       Tools.Path := '~/bin/';
       {$ELSEIF DEFINED(WINDOWS)}
-      {TODO: Determine default fpc path for windows}
       if(VerboseLog) then
          log.v('build > auto tools/build defaults for windows');
 
