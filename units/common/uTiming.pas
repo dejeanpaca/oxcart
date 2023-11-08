@@ -76,6 +76,10 @@ TYPE
 
       {gets a random time interval (floating point) between minTime and maxTime}
       class function GetRandomIntervalf(const minTime, maxTime: single): Single; static;
+      {get elapsed time between two timedates}
+      class function Elapsed(const t1, t2: TDateTime): longint; static;
+      {get elapsed time between two timedates as a float}
+      class function Elapsedf(const t1, t2: TDateTime): single; static;
    end;
 
    { TDateTimeHelper }
@@ -286,6 +290,16 @@ end;
 class function TTimerData.GetRandomIntervalf(const minTime, maxTime: single): Single;
 begin
    result := minTime + (random() * (maxTime - minTime));
+end;
+
+class function TTimerData.Elapsed(const t1, t2: TDateTime): longint;
+begin
+   Result := DateTimeToTimestamp(t2).Time - DateTimeToTimestamp(t1).Time;
+end;
+
+class function TTimerData.Elapsedf(const t1, t2: TDateTime): single;
+begin
+   Result := (DateTimeToTimestamp(t2).Time - DateTimeToTimestamp(t1).Time) / 1000;
 end;
 
 
