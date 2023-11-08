@@ -13,20 +13,9 @@ INTERFACE
    USES
       uStd, vmVector,
       {ox}
-      oxuTransform, oxuSerialization;
+      oxuTransform, oxuSerialization, oxuComponentDescriptors;
 
 TYPE
-   oxPComponentDescriptor = ^oxTComponentDescriptor;
-
-   { oxTComponentDescriptor }
-
-   oxTComponentDescriptor = object
-      Id,
-      Name: string;
-
-      constructor Create(const newId: string);
-   end;
-
    { oxTComponent }
 
    oxTComponent = class(oxTSerializable)
@@ -71,21 +60,6 @@ TYPE
    end;
 
 IMPLEMENTATION
-
-VAR
-   GenericDescriptor: oxTComponentDescriptor;
-
-{ oxTComponentDescriptor }
-
-constructor oxTComponentDescriptor.Create(const newId: string);
-begin
-   if(newId = '') then
-      Id := 'unknown'
-   else
-      Id := newId;
-
-   Name := Id;
-end;
 
 { oxTComponentsListHelper }
 
@@ -166,10 +140,8 @@ end;
 
 function oxTComponent.GetDescriptor(): oxPComponentDescriptor;
 begin
-   Result := @GenericDescriptor;
+   Result := @oxComponentDescriptors.Unknown;
 end;
 
-INITIALIZATION
-   GenericDescriptor.Create('unknown');
 
 END.
