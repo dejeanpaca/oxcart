@@ -12,7 +12,7 @@ INTERFACE
       uStd,
       {oX}
       uOX, oxuWindowTypes, oxuWindow, oxuGlobalInstances,
-      oxuViewport, oxuRenderer, oxuRenderingContext,
+      oxuTimer, oxuViewport, oxuRenderer, oxuRenderingContext,
       oxuWindows, oxuUIHooks,
       {$IFDEF OX_LIBRARY}
       oxuRenderers,
@@ -28,6 +28,7 @@ TYPE
    oxTWindowRender = object
       {if true, the OnOverrideRender callbacks will be called and no rendering will be done by default}
       OverrideRender: Boolean;
+      Rendered: boolean;
 
       constructor Create();
 
@@ -77,6 +78,11 @@ end;
 {All window(s)}
 procedure oxTWindowRender.Window(wnd: oxTWindow);
 begin
+   Rendered := false;
+
+   if(not oxRenderingTimer.Elapsed()) then
+      exit;
+
    if(not OverrideRender) then begin
       StartRender(wnd);
 
@@ -88,6 +94,8 @@ begin
       {$ENDIF}
 
       wnd.Viewport.Done();
+
+      Rendered := true;
    end else
       oxWindows.OnOverrideRender.Call(wnd);
 end;
