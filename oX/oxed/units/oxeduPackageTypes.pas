@@ -42,7 +42,7 @@ TYPE
       function IsSupported(const platform: StdString; isLibrary: boolean = false): boolean;
 
       {loads path properties from .package file if any is present}
-      procedure LoadPathProps();
+      procedure LoadPathProperties();
    end;
 
    { oxedTPackagePathHelper }
@@ -94,7 +94,7 @@ begin
    Result := Platforms.IsSupported(platform, isLibrary);
 end;
 
-procedure oxedTPackagePath.LoadPathProps();
+procedure oxedTPackagePath.LoadPathProperties();
 var
    fn: StdString;
    kv: TStringPairs;
@@ -197,7 +197,7 @@ begin
    Add(units);
    Result := GetLast();
 
-   Result^.LoadPathProps();
+   Result^.LoadPathProperties();
 end;
 
 function oxedTPackagePathsHelper.FindPackagePath(const p: StdString): oxedPPackagePath;
