@@ -184,6 +184,7 @@ TYPE
       {called when the device is disconnected}
       procedure Disconnected();
 
+      {get name of the device}
       function GetName(): string;
 
       {get button pressure (how pressed it is)}
@@ -507,6 +508,7 @@ var
 begin
    if(appControllers.List.n > 0) then begin
       for i := 0 to (appControllers.List.n - 1) do begin
+         appControllers.List.List[i].UpdateStart();
          appControllers.List.List[i].Update();
       end;
    end;
