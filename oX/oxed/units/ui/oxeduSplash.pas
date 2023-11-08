@@ -14,7 +14,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuwndSplash,
       {ui}
-      oxuUI, uiuContextMenu, uiuWidget,
+      oxuUI, uiuContextMenu, uiuWidget, uiuControl,
       {widgets}
       wdguButton,
       {oxed}
@@ -25,6 +25,11 @@ IMPLEMENTATION
 VAR
    splashMenu: uiTContextMenu;
    wdgRecents: wdgTButton;
+
+procedure openNew();
+begin
+   oxedProjectManagement.New();
+end;
 
 procedure openQuick();
 begin
@@ -75,8 +80,12 @@ begin
 
    dimensions.Assign(160, 25);
 
-   wdgRecents := wdgButton.Add('Quick', oxPoint(5, oxwndSplash.SplashImageEnd), dimensions, @openQuick);
-   button := wdgButton.Add('Open Last Session', oxPoint(5, oxwndSplash.SplashImageEnd - dimensions.h - wdgDEFAULT_SPACING), dimensions, @openLastSession);
+   button := wdgButton.Add('New', oxPoint(wdgDEFAULT_SPACING, oxwndSplash.SplashImageEnd), dimensions, @openNew);
+   button.SetButtonPosition([uiCONTROL_GRID_TOP]);
+   wdgRecents := wdgButton.Add('Quick', oxPoint(wdgDEFAULT_SPACING, button.BelowOf(0)), dimensions, @openQuick);
+   wdgRecents.SetButtonPosition([uiCONTROL_GRID_MIDDLE   ]);
+   button := wdgButton.Add('Open Last Session', oxPoint(wdgDEFAULT_SPACING, wdgRecents.BelowOf(0)), dimensions, @openLastSession);
+   button.SetButtonPosition([uiCONTROL_GRID_BOTTOM]);
 
    if((oxedProject <> nil) and (oxedProject.Path = oxedRecents.LastOpen)) or (oxedRecents.LastOpen = '') then
       button.Enable(false);

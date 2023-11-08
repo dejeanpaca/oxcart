@@ -15,7 +15,7 @@ INTERFACE
       {ox}
       uOX, oxuTypes, oxuwndBase, oxuThreadTask,
       {ui}
-      uiuWidget, uiWidgets, uiuContextMenu,
+      uiuWidget, uiWidgets, uiuContextMenu, uiuControl,
       {wdg}
       wdguCheckboxHierarchy, wdguDivisor, wdguButton, wdguList, wdguCheckbox,
       {oxed}
@@ -138,12 +138,12 @@ begin
 
    handler := oxedTTestsWindow(BaseHandler);
 
-   if(handler.wdg.Ok <> nil) then begin
+   if(handler <> nil) and (handler.wdg.Ok <> nil) then begin
       handler.wdg.IncludeOx.SetPosition(wdgPOSITION_HORIZONTAL_LEFT or wdgPOSITION_VERTICAL_TOP);
       handler.wdg.IncludeOx.SetControlMethod(@controlIncludeOxCheckbox);
 
       handler.wdg.Ok.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT or wdgPOSITION_VERTICAL_BOTTOM);
-      handler.wdg.Scan.Move(handler.wdg.Ok.LeftOf() - handler.wdg.Scan.GetComputedWidth(), handler.wdg.Ok.Position.y);
+      handler.wdg.Scan.Move(handler.wdg.Ok.LeftOf(0) - handler.wdg.Scan.GetComputedWidth() + 1, handler.wdg.Ok.Position.y);
 
       handler.wdg.Divisor.Move(0, handler.wdg.Ok.AboveOf() + wdgDEFAULT_SPACING);
       handler.wdg.Divisor.AutoSize();
@@ -170,7 +170,9 @@ begin
    wdg.IncludeOx := wdgCheckbox.Add('Include oX tests', oxNullPoint, oxedTests.IncludeOx);
 
    wdg.Ok := wdgButton.Add('OK', oxNullPoint, oxNullDimensions, @Close);
+   wdg.Ok.SetButtonPosition([uiCONTROL_GRID_RIGHT]);
    wdg.Scan := wdgButton.Add('Scan', oxNullPoint, oxNullDimensions, @Scan);
+   wdg.Scan.SetButtonPosition([uiCONTROL_GRID_LEFT]);
 
    wdg.Divisor := wdgDivisor.Add('', oxNullPoint);
 
