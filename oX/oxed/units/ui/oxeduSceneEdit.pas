@@ -28,9 +28,9 @@ CONST
    OXED_LINE_GRID_LENGTH: single = 200;
 
    SELECT_LINE_LENGTH = 1.25;
-   CONE_RADIUS = 0.125;
-   CONE_LENGTH = 0.225;
-   CONE_DIVISIONS = 32;
+   CONE_RADIUS = 0.115;
+   CONE_LENGTH = 0.175;
+   CONE_DIVISIONS = 64;
 
    AxisColors: array[0..2] of TColor4f = (
       (1.0, 0.0, 0.0, 1.0),
@@ -269,12 +269,15 @@ var
 
 procedure RenderCone(index: loopint; const x, y, z: single; const rX, rY, rZ: single);
 begin
-   oxTransform.Translate(x, y, z);
-   oxTransform.Rotate(rX, rY, Rz);
-   oxTransform.Apply();
+   Transform.Translate(x, y, z);
+   Transform.Rotate(rX, rY, Rz);
+   Transform.Apply();
 
    Material.ApplyColor('color', AxisColors[index]);
    ConeModel.Render();
+
+   Transform.Rotate(-rX, -rY, -Rz);
+   Transform.Translate(-x, -y, -z);
 end;
 
 begin
@@ -330,6 +333,8 @@ begin
       p.Assign(0, 0, SELECT_LINE_LENGTH - CONE_LENGTH / 2);
       oxRenderUtilities.BBox(p, BBox);
    end;
+
+   Transform.Scale(distanceScale, distanceScale, distanceScale);
 
    RenderCone(0, {pos} SELECT_LINE_LENGTH - CONE_LENGTH, 0.0, 0.0, {rot} 0.0, 0.0, -90);
    RenderCone(1, {pos} 0.0, SELECT_LINE_LENGTH - CONE_LENGTH, 0.0, {rot} 0.0, 0.0, 0.0);
