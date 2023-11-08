@@ -310,9 +310,9 @@ implementation
 
 uses cmem;
 
-function strerror(i: longint): pchar; cdecl;
+function strerror(i: longint): ansistring; cdecl;
 begin
-   result := 'Undefined!';
+   result := sf(i);
 end;
 
 type
@@ -525,7 +525,7 @@ begin
         AInputQueue_finishEvent(app^.inputQueue, event, handled);
     end
     else
-        logf('Failure reading next input event: ' + sf(strerror(errno)));
+        logf('Failure reading next input event: ' + strerror(errno));
 end;
 
 procedure process_cmd(app: Pandroid_app; source: Pandroid_poll_source); cdecl;
@@ -594,8 +594,11 @@ begin
         move(pbyte(savedState)^, pbyte(android_app^.savedState)^, savedStateSize);
     end;
 
+    msgpipe[0] := 0;
+    msgpipe[1] := 0;
+
     if FpPipe(msgpipe) <> 0 then
-        logf('could not create pipe: ' + sf(strerror(errno)));
+        logf('could not create pipe: ' + strerror(errno));
 
     android_app^.msgread := msgpipe[0];
     android_app^.msgwrite := msgpipe[1];
