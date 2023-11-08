@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd,
       {oX}
-      oxuTypes, oxuResourcePool, oxuMaterial;
+      oxuResourcePool, oxuMaterial;
 
 TYPE
    oxPSkin = ^oxTSkin;

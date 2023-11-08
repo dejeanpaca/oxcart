@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uLog, StringUtils,
       {oX}
-      uOX, oxuTypes, oxuWindowTypes, oxuWindow, oxuUIHooks, oxuGlobalInstances,
+      uOX, oxuWindowTypes, oxuWindow, oxuUIHooks, oxuGlobalInstances,
       oxuProjection, oxuRenderer, oxuWindowSettings,
       {$IFDEF OX_LIBRARY}
       oxuRenderers,

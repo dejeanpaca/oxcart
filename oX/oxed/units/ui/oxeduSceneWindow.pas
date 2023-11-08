@@ -15,7 +15,7 @@ INTERFACE
       {app}
       appuKeys, appuMouse, appuActionEvents,
       {ox}
-      oxuTypes, oxuScene, oxuCamera, oxuCameraInput, oxuProjection, oxuProjectionType,
+      oxuScene, oxuCamera, oxuCameraInput, oxuProjection, oxuProjectionType,
       oxuWindowTypes, oxuRender, oxuRenderer, oxuSceneRender, oxuTimer, oxuEntity,
       {find a camera component}
       oxuCameraComponent,

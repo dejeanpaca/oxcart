@@ -18,7 +18,7 @@ INTERFACE
       uImage, imguOperations,
       {ox}
       uOX, oxuPaths, oxuGlobalInstances,
-      oxuTexture, oxuTextureGenerate, oxuTypes, oxuFont, oxuFreetype, uSimpleParser
+      oxuTexture, oxuTextureGenerate, oxuFont, oxuFreetype, uSimpleParser
       {$IFNDEF OX_LIBRARY}, oxuRunRoutines{$ENDIF};
 
 TYPE

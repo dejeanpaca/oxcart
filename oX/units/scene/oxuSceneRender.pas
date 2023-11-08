@@ -15,7 +15,7 @@ INTERFACE
       {ox}
       uOX, oxuRunRoutines,
       oxuProjectionType, oxuProjection,
-      oxuWindowTypes, oxuTypes, oxuCamera, oxuRender, oxuTransform, oxuWindows, oxuSerialization,
+      oxuWindowTypes, oxuCamera, oxuRender, oxuTransform, oxuWindows, oxuSerialization,
       oxuMaterial, oxuGlobalInstances,
       oxuScene, oxuEntity, oxuComponent, oxuCameraComponent, oxuRenderComponent;
 
