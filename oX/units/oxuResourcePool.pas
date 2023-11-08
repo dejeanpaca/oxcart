@@ -169,10 +169,11 @@ begin
       log.w('Resource ' + res.Path + ' already freed (' + sf(res.ReferenceCount) + '), ' + res.ClassName);
 
       if(res.DebugAllocationPoint <> '') then
-         log.w('Disposed at: ' + DumpCallStack(1));
-   end;
+         log.w('Allocated at: ' + res.DebugAllocationPoint);
 
-   res.DebugFreed := true;
+      log.w('Current: ' + DumpCallStack(1));
+      exit;
+   end;
 
    if(res.ReferenceCount = 0) then begin
       log.w('Resource ' + res.Path + ' should already have been freed (' + sf(res.ReferenceCount) + ', ' + res.ClassName + ')');
@@ -180,10 +181,17 @@ begin
       if(res.DebugAllocationPoint <> '') then
          log.w('Allocated at: ' + res.DebugAllocationPoint);
 
-      log.v('Called at ' + DumpCallStack(1));
+      if(res.DebugFreePoint <> '') then
+         log.w('Freed at: ' + res.DebugFreePoint);
+
+      log.v('Current at: ' + DumpCallStack(1));
    end;
 
-   oxTResource(resource).FreeInResourceMethod := true;
+   res.DebugFreed := true;
+   res.DebugFreePoint := DumpCallStack(1);
+   res.FreeInResourceMethod := true;
+
+   oxTResource(resource) := nil;
    exit;
    {$ENDIF}
 
