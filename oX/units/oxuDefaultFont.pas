@@ -9,9 +9,9 @@ UNIT oxuDefaultFont;
 INTERFACE
 
    USES
-      uLog, uError,
+      uLog,
       {$IFNDEF OX_LIBRARY}
-      sysutils, uStd, uFile, uFiles, uTiming,
+      sysutils, uStd, uError, uFile, uFiles, uTiming,
       {$ENDIF}
       {oX}
       uOX, oxuRunRoutines, oxuGlobalInstances,
