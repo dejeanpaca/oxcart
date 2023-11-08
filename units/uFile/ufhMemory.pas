@@ -44,22 +44,23 @@ end;
 function TMemoryFileHandler.Read(var f: TFile; out buf; count: fileint): fileint;
 begin
    {$IFNDEF DFILE_QND}
-   if(f.extData <> nil) then begin
+   if(f.ExtData <> nil) then begin
    {$ENDIF}
-      move((f.extData + f.fPosition)^, buf, count);
+      move((f.ExtData + f.fPosition)^, buf, count);
       Result := count;
    {$IFNDEF DFILE_QND}
-   end else
+   end else begin
       Result := -1;
+   end;
    {$ENDIF}
 end;
 
 function TMemoryFileHandler.Write(var f: TFile; const buf; count: fileint): fileint;
 begin
    {$IFNDEF DFILE_QND}
-   if(f.extData <> nil) then begin
+   if(f.ExtData <> nil) then begin
    {$ENDIF}
-      move(buf, (f.extData + f.fPosition)^, count);
+      move(buf, (f.ExtData + f.fPosition)^, count);
       Result := count;
    {$IFNDEF DFILE_QND}
    end else
