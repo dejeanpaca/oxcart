@@ -120,12 +120,12 @@ begin
       minimumLength := -1;
 
    if(ReadMethod = nil) then
-      exit(f.Error = 0);
+      exit(pF^.Error = 0);
 
    repeat
-      f.Readln(CurrentLine);
+      pF^.Readln(CurrentLine);
 
-      if(f.Error <> 0) then
+      if(pF^.Error <> 0) then
          break;
 
       {strip white space}
@@ -141,9 +141,9 @@ begin
              break;
          end;
       end;
-   until f.EOF();
+   until pF^.EOF();
 
-   Result := f.Error = 0;
+   Result := pF^.Error = 0;
 end;
 
 function TParseData.OnWrite(): boolean;
@@ -156,7 +156,7 @@ begin
       end;
    end;
 
-   Result := true;
+   Result := pF^.Error = 0;
 end;
 
 constructor TParseData.Create();
@@ -169,7 +169,7 @@ end;
 
 constructor TParseData.CreateKeyValue();
 begin
-   inherited;
+   inherited Create();
 
    KeyValueSeparator := '=';
    StripWhitespace := true;
@@ -201,7 +201,7 @@ end;
 
 procedure TParseData.WriteLine(const s: StdString);
 begin
-   f.Writeln(s);
+   pF^.Writeln(s);
 end;
 
 END.

@@ -19,7 +19,11 @@ TYPE
    TParserBase = object
       ErrorCode: loopint;
       ErrorDescription: StdString;
+
+      {internal file used when only a filename is provided}
       f: TFile;
+      {pointer to used file, for an external or external file}
+      pF: PFile;
 
       constructor Create();
 
@@ -61,18 +65,14 @@ end;
 
 function TParserBase.Read(var setF: TFile): boolean;
 begin
-   if(@f <> @setF) then
-      f := setF;
-
+   pF := @setF;
    Result := Read();
-
-   if(@f <> @setF) then
-      setF := f;
 end;
 
 function TParserBase.Read(const fn: StdString): boolean;
 begin
    f.Open(fn);
+
    if(f.Error = 0) then
       Result := Read(f)
    else
@@ -90,13 +90,8 @@ end;
 
 function TParserBase.Write(var setF: TFile): boolean;
 begin
-   if(@f <> @setF) then
-      f := setF;
-
+   pF := @setF;
    Result := Write();
-
-   if(@f <> @setF) then
-      setF := f;
 end;
 
 function TParserBase.Write(): boolean;
@@ -109,9 +104,10 @@ end;
 function TParserBase.Write(const fn: StdString): boolean;
 begin
    f.New(fn);
-   if(f.Error = 0) then begin
-      Result := Write(f);
-   end else
+
+   if(f.Error = 0) then
+      Result := Write(f)
+   else
       Result := false;
 
    f.CloseAndDestroy();
@@ -134,7 +130,7 @@ var
 begin
    Result := '';
 
-   if(f.Error <> 0) or (ErrorCode <> 0) then begin
+   if(pF^.Error <> 0) or (ErrorCode <> 0) then begin
       additional := '';
 
       if(ErrorCode <> 0) then begin
@@ -144,16 +140,16 @@ begin
             additional := ' ' + GetErrorCodeString(ErrorCode);
       end;
 
-      if(f.Error <> 0) then
-         additional := additional + ' {io: ' + f.GetErrorString() + '}';
+      if(pF^.Error <> 0) then
+         additional := additional + ' {io: ' + pF^.GetErrorString() + '}';
 
-      Result := prefix + f.fn + additional;
+      Result := prefix + pF^.fn + additional;
    end;
 end;
 
 procedure TParserBase.LogError(const start: StdString);
 begin
-   if(f.Error <> 0) or (ErrorCode <> 0) then begin
+   if(pF^.Error <> 0) or (ErrorCode <> 0) then begin
       log.e(GetErrorString(start));
    end;
 end;
