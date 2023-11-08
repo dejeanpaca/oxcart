@@ -10,7 +10,7 @@ INTERFACE
 
    USES
       process, pipes, SysUtils, StreamIO,
-      uStd, StringUtils;
+      uStd, uLog, ConsoleUtils, StringUtils;
 
 TYPE
    { TProcessUtils }
@@ -28,8 +28,41 @@ TYPE
       function GetOutputStrings(maxLines: loopint): TSimpleStringList;
    end;
 
+   { TProcessHelpers }
+
+   TProcessHelpers = record
+      OutputString: AnsiString;
+
+      procedure RunCommand(const exename: StdString; const commands: TStringArray);
+      procedure RunCommandCurrentDir(const exename: StdString; const commands: TStringArray);
+   end;
+
+VAR
+   ProcessHelpers: TProcessHelpers;
 
 IMPLEMENTATION
+
+{ TProcessHelpers }
+
+procedure TProcessHelpers.RunCommand(const exename: StdString; const commands: TStringArray);
+var
+   ansiCommands: array of String;
+
+begin
+   OutputString := '';
+   ansiCommands := commands.GetAnsiStrings();
+
+   if(not process.RunCommand(exename, ansiCommands, outputString)) then
+      log.e('Failed to run process: ' + exename);
+
+   if(outputString <> '') then
+      console.i(outputString);
+end;
+
+procedure TProcessHelpers.RunCommandCurrentDir(const exename: StdString; const commands: TStringArray);
+begin
+   RunCommand(IncludeTrailingPathDelimiterNonEmpty(GetCurrentDir()) + exename, commands);
+end;
 
 { TProcessHelper }
 
