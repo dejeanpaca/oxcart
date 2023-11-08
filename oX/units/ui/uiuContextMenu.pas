@@ -598,7 +598,7 @@ begin
       oxf.Stop();
    end else if (item^.ItemType = uiCONTEXT_MENU_SEPARATOR) then begin
       uiDraw.ClearTexture();
-      uiDrawUtilities.HorizontalDivisorSunken(wnd, r.x, r.y - (r.h div 2), r.x + r.w - 1, pSkin.Colors.Surface);
+      uiDrawUtilities.HorizontalDivisorSunken(wnd, r.x + 1, r.y - (r.h div 2), r.x + r.w - 1, pSkin.Colors.Surface);
    end;
 end;
 
