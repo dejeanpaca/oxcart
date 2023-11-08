@@ -129,6 +129,8 @@ begin
 
    patch.Sizes.BottomRight[0] := rows[2].right.w;
    patch.Sizes.BottomRight[1] := rows[2].right.h;
+
+   data.Result := patch;
 end;
 
 procedure handle(data: pointer);
