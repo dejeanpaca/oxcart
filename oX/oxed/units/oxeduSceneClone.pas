@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uLog,
       {ox}
-      oxuEntity, oxuScene, oxuWorld, oxuSceneRender,
+      oxuEntity, oxuScene, oxuWorld, oxuSceneManagement, oxuSceneRender,
       {oxed}
       oxeduProjectRunner, oxeduLib, oxeduMessages, oxeduScene, oxeduEntities;
 
