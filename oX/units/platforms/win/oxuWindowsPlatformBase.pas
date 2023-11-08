@@ -11,6 +11,7 @@ UNIT oxuWindowsPlatformBase;
 INTERFACE
 
    USES
+      uStd,
       {oX}
       {%H-}oxuPlatform,
       oxuWindowsOS,
@@ -36,7 +37,7 @@ TYPE
       end;
 
       function MessageBox(wParent: uiTWindow;
-         const Title, Say: string; Style: uiTMessageBoxStyle; Buttons: longword): longword; override;
+         const Title, Say: StdString; Style: uiTMessageBoxStyle; Buttons: longword): longword; override;
 
       procedure LoadCursor(var c: HCURSOR; cursorName: {$IFDEF UNICODE}PWideChar{$ELSE}PAnsiChar{$ENDIF});
       procedure LoadCursor(cursorType: uiTCursorType); override;
@@ -45,7 +46,7 @@ TYPE
 
 IMPLEMENTATION
 
-function oxTWindowsPlatformBase.MessageBox(wParent: uiTWindow; const Title, Say: string;
+function oxTWindowsPlatformBase.MessageBox(wParent: uiTWindow; const Title, Say: StdString;
    Style: uiTMessageBoxStyle; Buttons: longword): longword;
 begin
    result := winos.MessageBox(wParent, Title, Say, Style, Buttons);
