@@ -628,11 +628,20 @@ begin
 end;
 
 procedure BuildLPI(const whichLpi: string);
+var
+   previousRedirect: boolean;
+
 begin
    if(not oxedBuild.Buildable(true)) then
       exit;
 
+   previousRedirect := build.Output.Redirect;
+
+   build.Output.Redirect := true;
+
    uBuild.build.Laz(oxedProject.TempPath + whichLpi);
+
+   build.Output.Redirect := previousRedirect;
 end;
 
 procedure DoBuild();
@@ -885,6 +894,11 @@ begin
    end;
 end;
 
+procedure onOutputLine();
+begin
+   oxedMessages.v(build.Output.LastLine);
+end;
+
 VAR
    oxedInitRoutines: oxTRunRoutine;
 
@@ -905,5 +919,7 @@ INITIALIZATION
    oxedActions.OPEN_PROJECT_CONFIGURATION := appActionEvents.SetCallback(@oxedBuild.OpenProjectConfiguration);
 
    oxedProjectScanner.OnDone.Add(@onScanDone);
+
+   build.Output.OnLine.Add(@onOutputLine);
 
 END.
