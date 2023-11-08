@@ -25,6 +25,11 @@ var
    scene: oxTScene = nil;
 
 begin
+   if(not oxSceneManagement.Enabled) then begin
+      log.v('(lib) scene loading not enabled');
+      exit();
+   end;
+
    if(oxExternalGlobalInstances <> nil) then begin
       TTimerData.Init(timer);
       timer.InitStart();
