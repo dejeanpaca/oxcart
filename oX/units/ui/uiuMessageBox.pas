@@ -211,6 +211,7 @@ begin
 
    data.What := wnd.msgBox.What;
    data.Button := wnd.msgBox.ButtonResult;
+
    if(wnd.msgBox.wdg.Input <> nil) then
       data.Input := wnd.msgBox.wdg.Input.GetText();
 
@@ -353,7 +354,6 @@ begin
    wnd.msgBox.wdg.Input.SetPlaceholder('');
 end;
 
-
 procedure AddIcon();
 var
    icon: wdgTMessageBoxIcon;
@@ -394,8 +394,10 @@ begin
 
    AddLabel();
 
-   if(properties and uimbpINPUT > 0) then
+   if(properties and uimbpINPUT > 0) then begin
       AddInput();
+      wnd.msgBox.wdg.Input.SelectQueue();
+   end;
 
    if(style <> uimbsNONE) then
       AddIcon();
