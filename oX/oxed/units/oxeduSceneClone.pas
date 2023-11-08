@@ -42,19 +42,29 @@ procedure onStart();
 var
    sceneRender: oxTSceneRender;
    scene: oxTScene;
+   externalSceneManagement: oxPSceneManagement;
 
 begin
-   scene := oxTScene(oxLibReferences.FindInstance('oxTScene'));
-   oxWorld := scene.World;
-   oxSceneManagement.SetScene(scene);
+   externalSceneManagement := oxPSceneManagement(oxLibReferences.FindInstancePtr('oxTSceneManagement'));
 
-   sceneRender := oxTSceneRender(oxLibReferences.FindInstance('oxTSceneRender'));
+   if(externalSceneManagement = nil) then begin
+      oxedMessages.e('Could not find oxTSceneManagement instance in the library');
+      exit;
+   end;
 
-   if(sceneRender <> nil) then begin
-      sceneRender.Scenes[0].Scene := oxScene;
-      oxedLib.oxWindows.w[0].oxProperties.ApplyDefaultProjection := false;
-   end else
-      oxedMessages.e('Could not find ' + oxTSceneRender.ClassName + ' instance in the library');
+   if(externalSceneManagement^.Enabled) then begin
+      scene := oxTScene(oxLibReferences.FindInstance('oxTScene'));
+      oxWorld := scene.World;
+      oxSceneManagement.SetScene(scene);
+
+      sceneRender := oxTSceneRender(oxLibReferences.FindInstance('oxTSceneRender'));
+
+      if(sceneRender <> nil) then begin
+         sceneRender.Scenes[0].Scene := oxScene;
+         oxedLib.oxWindows.w[0].oxProperties.ApplyDefaultProjection := false;
+      end else
+         oxedMessages.e('Could not find ' + oxTSceneRender.ClassName + ' instance in the library');
+   end;
 end;
 
 procedure onStop();
