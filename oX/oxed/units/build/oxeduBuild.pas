@@ -381,7 +381,7 @@ begin
       Result.Add('-d' + oxedBuild.Features.List[i]^.Symbol);
    end;
 
-   if(oxedBuild.IsLibrary()) then begin
+   if(oxedBuild.InEditor) then begin
       Result.Add('-dLIBRARY');
       Result.Add('-dOX_LIBRARY');
    end;
