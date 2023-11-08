@@ -180,8 +180,7 @@ procedure oxedTProjectScannerTask.TaskStart();
 begin
    inherited TaskStart;
 
-   oxedProject.Units.Dispose();
-   oxedProject.IncludeFiles.Dispose();
+   oxedProject.MainPackage.DisposeList();
 end;
 
 procedure oxedTProjectScannerTask.ThreadStart();

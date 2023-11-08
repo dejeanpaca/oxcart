@@ -58,8 +58,7 @@ TYPE
       {has the project been modified}
       Modified: boolean;
 
-      Units,
-      IncludeFiles: oxedTPackageUnitList;
+      MainPackage: oxedTPackage;
 
       Packages: oxedTPackagesList;
 
@@ -141,8 +140,8 @@ begin
    Session.EnableConsole := true;
    LineEndings := oxedSettings.LineEndings;
 
-   Units.Initialize(Units);
-   IncludeFiles.Initialize(IncludeFiles);
+   oxedTPackage.Init(MainPackage);
+
    RunParameters.Initialize(RunParameters);
    BuildModes.Initialize(BuildModes);
    Symbols.Initialize(Symbols);
