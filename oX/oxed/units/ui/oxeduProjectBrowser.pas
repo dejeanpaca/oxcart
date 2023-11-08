@@ -106,7 +106,7 @@ begin
 
       Result := true;
    end else  if(k.Key.Equal(kcF2)) then begin
-      // rename
+      {TODO: Rename file}
    end else
       Result := inherited Key(k);
 end;
