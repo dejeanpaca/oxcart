@@ -19,6 +19,9 @@ TYPE
 
    oxTRenderLayerComponent = class(oxTComponent)
       public
+      {name of the render layer}
+      Name: StdString;
+
       constructor Create(); override;
       destructor Destroy(); override;
 
@@ -31,7 +34,6 @@ IMPLEMENTATION
 VAR
    serialization: oxTSerialization;
    descriptor: oxTComponentDescriptor;
-
 
 function instance(): TObject;
 begin
