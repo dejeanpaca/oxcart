@@ -9,7 +9,8 @@ UNIT oxeduPackageTypes;
 INTERFACE
 
    USES
-      uStd, StringUtils;
+      uStd, StringUtils, uFileUtils, uSimpleParser,
+      oxuFeatures;
 
 TYPE
    oxedTPackageUnit = record
@@ -25,7 +26,14 @@ TYPE
       Units: TSimpleStringList;
       Path: StdString;
 
+      Platforms: oxTFeaturePlatforms;
+
       class procedure Initialize(out p: oxedTPackagePath); static;
+
+      function IsSupported(const platform: StdString; isLibrary: boolean = false): boolean;
+
+      {loads path properties from .package file if any is present}
+      procedure LoadPathProps();
    end;
 
    { oxedTPackagePathHelper }
@@ -62,6 +70,47 @@ class procedure oxedTPackagePath.Initialize(out p: oxedTPackagePath);
 begin
    ZeroOut(p, SizeOf(p));
    p.Units.InitializeValues(p.Units);
+end;
+
+function oxedTPackagePath.IsSupported(const platform: StdString; isLibrary: boolean): boolean;
+begin
+   Result := Platforms.IsSupported(platform, isLibrary);
+end;
+
+procedure oxedTPackagePath.LoadPathProps();
+var
+   fn: StdString;
+   kv: TStringPairs;
+   key,
+   value: StdString;
+
+   i: loopint;
+   values: TStringArray;
+
+begin
+   fn := IncludeTrailingPathDelimiterNonEmpty(Path) + '.package';
+   TStringPairs.Initialize(kv);
+
+   if(FileUtils.Exists(fn) > 0) then begin
+      SimpleParser.LoadKeyValues(fn, kv);
+
+      for i := 0 to kv.n - 1 do begin
+         key := kv.List[i][0];
+         value := kv.List[i][1];
+
+         if(key = 'include') then begin
+            values := strExplode(value, ',');
+
+            if(Length(values) > 0) then
+               Platforms.SetIncluded(values);
+         end else if (key = 'exclude') then begin
+            values := strExplode(value, ',');
+
+            if(Length(values) > 0) then
+               Platforms.SetExcluded(values);
+         end;
+      end;
+   end;
 end;
 
 { oxedTPackagePathHelper }
@@ -116,6 +165,8 @@ begin
 
    Add(units);
    Result := GetLast();
+
+   Result^.LoadPathProps();
 end;
 
 function oxedTPackagePathsHelper.FindPackagePath(const p: StdString): oxedPPackagePath;
