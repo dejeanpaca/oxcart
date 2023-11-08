@@ -185,10 +185,12 @@ end;
 
 function oxTGlobal.RaiseError(const description: string; errorCode: loopint): loopint;
 begin
-   ErrorDescription := description;
+   log.e('ox > Error: ' + description + ' (' + HexStr(errorCode, 4) + ')');
 
-   if(Error = 0) and (errorCode <> 0) then
+   if(Error = 0) and (errorCode <> 0) then begin
+      ErrorDescription := description;
       Error := errorCode;
+   end;
 
    Result := errorCode;
 
