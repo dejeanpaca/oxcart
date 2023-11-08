@@ -11,7 +11,7 @@ UNIT oxeduProjectWalker;
 INTERFACE
 
    USES
-      sysutils, uStd, uError, uLog, uFileUtils,
+      sysutils, uStd, uError, uLog, uFileUtils, StringUtils,
       {app}
       appuActionEvents,
       {ox}
@@ -86,8 +86,11 @@ TYPE
       class function GetValidPath(const basePath, fullPath: StdString): StdString; static;
 
       protected
+         {handle a file, expected to return false on error}
          function HandleFile(var {%H-}f: oxedTProjectWalkerFile; const {%H-}fd: TFileTraverseData): boolean; virtual;
+         {handle a directory, expected to return false if the directory is to be skipped}
          function HandleDirectory(var {%H-}dir: StdString; const {%H-}fd: TFileTraverseData): boolean; virtual;
+         {handle a package, expected to return false on erro}
          function HandlePackage(var {%H-}package: oxedTPackage): boolean; virtual;
    end;
 

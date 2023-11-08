@@ -125,7 +125,7 @@ begin
 
    if(oxedAssets.ShouldIgnore(f.Extension)) then begin
       consoleLog.v('Ignoring: ' + fd.f.Name);
-      exit(False);
+      exit(True);
    end;
 
    oxedBuildLog.v('Deploying: ' + fd.f.Name);
