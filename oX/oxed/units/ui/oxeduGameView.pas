@@ -106,7 +106,7 @@ end;
 procedure GetMouseEvent(wnd: uiTWindow; var m: appTMouseEvent; x, y: longint);
 begin
    m.x := x;
-   m.y := wnd.Dimensions.h - y;
+   m.y := y;
 
    {TODO: Find the library window attached to this wnd and set it to the event}
 end;
