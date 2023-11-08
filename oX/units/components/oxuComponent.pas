@@ -21,6 +21,8 @@ TYPE
    oxTComponent = class(oxTSerializable)
       public
       Parent: oxTTransform;
+      {is a component enabled}
+      Enabled: boolean;
 
       constructor Create(); override;
 
@@ -78,7 +80,7 @@ end;
 
 constructor oxTComponent.Create();
 begin
-
+   Enabled := true;
 end;
 
 procedure oxTComponent.OnAdd();
