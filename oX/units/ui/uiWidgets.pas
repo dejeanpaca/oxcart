@@ -1090,13 +1090,6 @@ begin
    end;
 end;
 
-{automatically select a newly created window as a target}
-procedure onwndCreateSetTarget(wnd: uiTWindow);
-begin
-   uiWidget.SetTarget(wnd);
-end;
-
-
 {initializes widgets}
 procedure InitWidgets();
 begin
@@ -1122,7 +1115,6 @@ begin
    uiWidget.GridSize.h := wdgGRID_SIZE;
    uiWidget.DefaultProperties := [wdgpENABLED, wdgpVISIBLE, wdgpSELECTABLE];
 
-   uiWindow.OnCreate.Add(@onwndCreateSetTarget);
    uiWidget.GetCreateData(uiWidget.Create);
 
    uiRegisteredWidgets.Initialize();

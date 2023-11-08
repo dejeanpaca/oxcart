@@ -499,7 +499,7 @@ begin
 
    wnd.SetSkin(wnd.GetUI().GetDefaultSkin());
 
-   wnd.Background       := uiWindow.DefaultBackground;
+   wnd.Background := uiWindow.DefaultBackground;
 
    if(uiTSkin(wnd.Skin).Window.Textures.Background <> nil) then
       wnd.SetBackgroundTexture(uiTSkin(wnd.Skin).Window.Textures.Background, uiwBACKGROUND_TEX_FIT);
@@ -546,6 +546,7 @@ begin
    if(wnd.GetUI().Select.GetSelectedWnd() = nil) then
       wnd.Select();
 
+   uiWidget.SetTarget(wnd);
    uiWindow.OnCreate.Call(wnd);
 
    wnd.Initialize();
