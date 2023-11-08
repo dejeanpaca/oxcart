@@ -293,4 +293,3 @@ INITIALIZATION
    wdgCheckbox.Internal.Register('widget.checkbox', @initWidget);
 
 END.
-

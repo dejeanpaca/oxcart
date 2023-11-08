@@ -23,9 +23,10 @@ TYPE
    end;
 
    wdgTTemplateGlobal = class(specialize wdgTBase<wdgTTemplate>)
+     Internal: uiTWidgetClass; static;
+
      {adds a template widget to a window}
-     function Add(const Caption: StdString;
-                 const Pos: oxTPoint; const Dim: oxTDimensions): wdgTTemplate;
+     function Add(const Caption: StdString; const Pos: oxTPoint; const Dim: oxTDimensions): wdgTTemplate;
    end;
 
 
@@ -34,19 +35,15 @@ VAR
 
 IMPLEMENTATION
 
-VAR
-   internal: uiTWidgetClass;
-
 procedure InitWidget();
 begin
-   internal.Instance := wdgTTemplate;
-   internal.Done();
+   wdgTemplate.internal.Instance := wdgTTemplate;
+   wdgTemplate.internal.Done();
 
-   wdgTemplate := wdgTTemplateGlobal.Create(internal);
+   wdgTemplate := wdgTTemplateGlobal.Create(wdgTemplate.Internal);
 end;
 
-function wdgTTemplateGlobal.Add(const Caption: StdString;
-      const Pos: oxTPoint; const Dim: oxTDimensions): wdgTTemplate;
+function wdgTTemplateGlobal.Add(const Caption: StdString; const Pos: oxTPoint; const Dim: oxTDimensions): wdgTTemplate;
 
 begin
    Result := inherited AddInternal(Pos, Dim);
@@ -62,6 +59,6 @@ begin
 end;
 
 INITIALIZATION
-   internal.Register('widget.template', @InitWidget);
+   wdgTemplate.Internal.Register('widget.template', @InitWidget);
 
 END.

@@ -24,6 +24,7 @@ TYPE
    end;
 
    wdgTBlockGlobal = class(specialize wdgTBase<wdgTBlock>)
+      Internal: uiTWidgetClass; static;
    end;
 
 VAR
@@ -31,15 +32,12 @@ VAR
 
 IMPLEMENTATION
 
-VAR
-   internal: uiTWidgetClass;
-
 procedure initializeWidget();
 begin
-   internal.Instance := wdgTBlock;
-   internal.Done();
+   wdgBlock.Internal.Instance := wdgTBlock;
+   wdgBlock.Internal.Done();
 
-   wdgBlock := wdgTBlockGlobal.Create(internal);
+   wdgBlock := wdgTBlockGlobal.Create(wdgBlock.Internal);
 end;
 
 procedure wdgTBlock.Render();
@@ -51,7 +49,6 @@ begin
 end;
 
 INITIALIZATION
-   internal.Register('widget.block', @initializeWidget);
+   wdgBlock.Internal.Register('widget.block', @initializeWidget);
 
 END.
-

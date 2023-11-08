@@ -17,13 +17,15 @@ INTERFACE
       {ui}
       uiuWidget, uiWidgets,
       {wdg}
-      wdguHierarchyList, wdguCheckbox;
+      wdguHierarchyList, wdguCheckbox, wdguBase;
 
 TYPE
    { wdgTCheckboxHierarchy }
 
    wdgTCheckboxHierarchy = class(wdgTHierarchyList)
-      constructor Create; override;
+      Internal: uiTWidgetClass; static;
+
+      constructor Create(); override;
 
       procedure Initialize(); override;
 
@@ -39,20 +41,26 @@ TYPE
       procedure UpdateExpanderWidth();
    end;
 
-IMPLEMENTATION
+   wdgTCheckboxHierarchyGlobal = class(specialize wdgTBase<wdgTCheckboxHierarchy>)
+      Internal: uiTWidgetClass; static;
+   end;
 
 VAR
-   internal: uiTWidgetClass;
+   wdgCheckboxHierarchy: wdgTCheckboxHierarchyGlobal;
+
+IMPLEMENTATION
 
 procedure InitWidget();
 begin
-   internal.Instance := wdgTCheckboxHierarchy;
-   internal.Done();
+   wdgCheckboxHierarchy.Internal.Instance := wdgTCheckboxHierarchy;
+   wdgCheckboxHierarchy.Internal.Done();
+
+   wdgCheckboxHierarchy := wdgTCheckboxHierarchyGlobal.Create(wdgCheckboxHierarchy.Internal);
 end;
 
 { wdgTCheckboxHierarchy }
 
-constructor wdgTCheckboxHierarchy.Create;
+constructor wdgTCheckboxHierarchy.Create();
 begin
    inherited Create;
 end;
@@ -102,6 +110,6 @@ end;
 
 
 INITIALIZATION
-   internal.Register('widget.checkboxhierarchy', @InitWidget);
+   wdgCheckboxHierarchy.Internal.Register('widget.checkboxhierarchy', @InitWidget);
 
 END.

@@ -17,7 +17,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuwndColorPicker, uiuWindowTypes,
       {ui}
-      uiuWidget, uiWidgets, uiuWidgetRender;
+      uiuWidget, uiWidgets, uiuWidgetRender, wdguBase;
 
 
 TYPE
@@ -33,22 +33,21 @@ TYPE
       procedure DeInitialize(); override;
    end;
 
-   uiTWidgetColorPickGlobal = record
-     function Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTColorPick;
+   wdgTColorPickGlobal = class(specialize wdgTBase<wdgTColorPick>)
+      Internal: uiTWidgetClass; static;
    end;
 
 VAR
-   wdgColorPick: uiTWidgetColorPickGlobal;
+   wdgColorPick: wdgTColorPickGlobal;
 
 IMPLEMENTATION
 
-VAR
-   internal: uiTWidgetClass;
-
 procedure initializeWidget();
 begin
-   internal.Instance := wdgTColorPick;
-   internal.Done();
+   wdgColorPick.Internal.Instance := wdgTColorPick;
+   wdgColorPick.Internal.Done();
+
+   wdgColorPick := wdgTColorPickGlobal.Create(wdgColorPick.Internal);
 end;
 
 procedure wdgTColorPick.Render();
@@ -78,13 +77,7 @@ begin
       oxwndColorPicker.ObjectCallback := nil;
 end;
 
-function uiTWidgetColorPickGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTColorPick;
-begin
-   result := wdgTColorPick(uiWidget.Add(internal, Pos, Dim));
-end;
-
 INITIALIZATION
-   internal.Register('widget.color_pick', @initializeWidget);
+   wdgColorPick..Register('widget.color_pick', @initializeWidget);
 
 END.
-

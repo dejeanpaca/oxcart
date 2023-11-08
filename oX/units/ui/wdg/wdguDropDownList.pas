@@ -20,7 +20,7 @@ INTERFACE
       uiuWindowTypes, uiuSkinTypes,
       uiuWidget, uiWidgets, uiuDraw, uiuWidgetWindow, uiuWindow,
       {}
-      wdguList;
+      wdguList, wdguBase;
 
 TYPE
    wdgTDropDownListItems = specialize TPreallocatedArrayList<string>;
@@ -81,20 +81,25 @@ TYPE
       procedure RenderItem(index: loopint; r: oxTRect); override;
 
       protected
-         procedure FontChanged(); override;
          procedure ItemClicked(idx: loopint; button: TBitSet = appmcLEFT); override;
    end;
 
    { wdgTDropDownListGlobal }
 
-   wdgTDropDownListGlobal = record
-      DropAreaWidth: longint;
+   wdgTDropDownListGlobal = class(specialize wdgTBase<wdgTDropDownList>)
+      Internal: uiTWidgetClass; static;
+      DropAreaWidth: longint; static;
+   end;
 
-      class function Add(const position: oxTPoint; const dimensions: oxTDimensions): wdgTDropDownList; static;
+   { wdgTDropDownListMenuGlobal }
+
+   wdgTDropDownListMenuGlobal = class(specialize wdgTBase<wdgTDropDownListMenu>)
+      Internal: uiTWidgetClass; static;
    end;
 
 VAR
    wdgDropDownList: wdgTDropDownListGlobal;
+   wdgDropDownListMenu: wdgTDropDownListMenuGlobal;
 
 IMPLEMENTATION
 
@@ -105,20 +110,20 @@ CONST
    MENU_ITEM_HEIGHT           = 18;
    MENU_ITEM_PADDING          = 3;
 
-VAR
-   internal,
-   internalMenu: uiTWidgetClass;
-
 procedure initializeWidget();
 begin
-   internal.Instance := wdgTDropDownList;
-   internal.Done();
+   wdgDropDownList.Internal.Instance := wdgTDropDownList;
+   wdgDropDownList.Internal.Done();
+
+   wdgDropDownList := wdgTDropDownListGlobal.Create(wdgDropDownList.Internal);
 end;
 
 procedure initializeMenuWidget();
 begin
-   internalMenu.Instance := wdgTDropDownListMenu;
-   internalMenu.Done();
+   wdgDropDownListMenu.Internal.Instance := wdgTDropDownListMenu;
+   wdgDropDownListMenu.Internal.Done();
+
+   wdgDropDownListMenu := wdgTDropDownListMenuGlobal.Create(wdgDropDownListMenu.Internal);
 end;
 
 { wdgTDropDownListMenu }
@@ -172,10 +177,6 @@ begin
    dec(ir.w, ItemPadding * 2);
 
    oxf.GetSelected().WriteCentered(List.GetValue(index), ir, [oxfpCenterVertical]);
-end;
-
-procedure wdgTDropDownListMenu.FontChanged;
-begin
 end;
 
 procedure wdgTDropDownListMenu.ItemClicked(idx: loopint;  button: TBitSet);
@@ -316,7 +317,7 @@ begin
    origin.Properties := WDG_WINDOW_CREATE_BELOW;
 
    MenuWindow.ExternalData := self;
-   MenuWindow.CreateFrom(origin, internalMenu, d.w, d.h);
+   MenuWindow.CreateFrom(origin, wdgDropDownListMenu.Internal, d.w, d.h);
 end;
 
 procedure wdgTDropDownList.CloseMenu();
@@ -326,11 +327,11 @@ end;
 
 function wdgTDropDownList.GetMenuDimensions(): oxTDimensions;
 begin
-   result.w := Dimensions.w;
-   result.h := (GetItemCount() * ItemHeight) + (2 + MENU_PADDING_SIZE * 2);
+   Result.w := Dimensions.w;
+   Result.h := (GetItemCount() * ItemHeight) + (2 + MENU_PADDING_SIZE * 2);
 
    if(GetItemCount() > 1) then
-      inc(result.h, MENU_VERTICAL_SEPARATION * (GetItemCount() - 1));
+      inc(Result.h, MENU_VERTICAL_SEPARATION * (GetItemCount() - 1));
 end;
 
 procedure wdgTDropDownList.DeInitialize;
@@ -345,16 +346,9 @@ begin
 
 end;
 
-{ wdgTDropDownListGlobal }
-
-class function wdgTDropDownListGlobal.Add(const position: oxTPoint; const dimensions: oxTDimensions): wdgTDropDownList;
-begin
-   result := wdgTDropDownList(uiWidget.Add(internal, position, dimensions));
-end;
-
 INITIALIZATION
-   internal.Register('widget.drop_down_list', @initializeWidget);
-   internalMenu.Register('widget.drop_down_list_menu', @initializeMenuWidget);
+   wdgDropDownList.Internal.Register('widget.drop_down_list', @initializeWidget);
+   wdgDropDownListMenu.Internal.Register('widget.drop_down_list_menu', @initializeMenuWidget);
 
    wdgDropDownList.DropAreaWidth := 16;
 

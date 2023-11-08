@@ -18,8 +18,8 @@ INTERFACE
       oxuTypes, oxuRender, oxuTransform, oxuTexture, oxuTextureGenerate, oxumPrimitive,
       oxuFont, oxuResourcePool,
       {ui}
-      uiuTypes, uiuWidget, uiWidgets, uiuWindowTypes, uiuWindow,
-      wdguButton, wdguImage;
+      uiuTypes, uiuWidget, uiWidgets, uiuWindowTypes, uiuWindow, uiuSkinTypes, oxuMaterial, oxuUI,
+      wdguBase, wdguButton, wdguImage;
 
 CONST
 
@@ -99,7 +99,9 @@ TYPE
 
    { wdgTImageButtonGlobal }
 
-   wdgTImageButtonGlobal = record
+   wdgTImageButtonGlobal = class(specialize wdgTBase<wdgTImageButton>)
+      Internal: uiTWidgetClass; static;
+
       function Add(const fn: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions; action: TEventID = 0): wdgTImageButton;
 
@@ -117,9 +119,6 @@ VAR
    wdgImageButton: wdgTImageButtonGlobal;
 
 IMPLEMENTATION
-
-VAR
-   internal: uiTWidgetClass;
 
 { wdgTImageButton }
 
@@ -233,7 +232,7 @@ begin
       oxTransform.Apply();
 
       Quad.Render();
-      oxRender.DisableTexture();
+      oxui.Material.ApplyTexture('texture', nil);
 
       oxTransform.Apply(m);
    end;
@@ -241,9 +240,11 @@ begin
    {render caption if any}
    if(Caption <> '') then begin
       f.Start();
-            SetColorBlendedEnabled(uiTWindow(wnd).Skin.Colors.Text, uiTWindow(wnd).Skin.DisabledColors.Text);
+      SetColorBlendedEnabled(
+         uiTSkin(uiTWindow(wnd).Skin).Colors.Text,
+         uiTSkin(uiTWindow(wnd).Skin).DisabledColors.Text);
 
-         f.Write(x + w - captionLength, captionY, Caption);
+      f.Write(x + w - captionLength, captionY, Caption);
       oxf.Stop();
    end;
 end;
@@ -264,7 +265,8 @@ end;
 
 procedure wdgTImageButton.CalculateQuad();
 var
-   w, h: loopint;
+   w,
+   h: loopint;
 
 begin
    if(Texture.Has()) then begin
@@ -283,7 +285,7 @@ begin
       Quad.Quad();
 
       Quad.Scale(round(w / 2), round(h / 2), 0);
-      Quad.Offset(round(w / 2), -round(h / 2), 0);
+      Quad.Translate(round(w / 2), -round(h / 2), 0);
    end;
 end;
 
@@ -355,9 +357,11 @@ end;
 
 procedure InitWidget();
 begin
-   internal.Instance := wdgTImageButton;
-   internal.SkinDescriptor := @wdgImageButtonSkinDescriptor;
-   internal.Done();
+   wdgImageButton.Internal.Instance := wdgTImageButton;
+   wdgImageButton.internal.SkinDescriptor := @wdgImageButtonSkinDescriptor;
+   wdgImageButton.internal.Done();
+
+   wdgImageButton := wdgTImageButtonGlobal.Create(wdgImageButton.Internal);
 end;
 
 function wdgTImageButtonGlobal.Add(const fn: StdString;
@@ -371,14 +375,15 @@ function wdgTImageButtonGlobal.Add(const fn: StdString; const Caption: StdString
    const Pos: oxTPoint; const Dim: oxTDimensions; action: TEventID = 0): wdgTImageButton;
 
 begin
-   Result := wdgTImageButton(uiWidget.Add(internal, Pos, Dim));
+   Result := inherited AddInternal(Pos, Dim);
 
    if(Result <> nil) then begin
       Result.SetCaption(Caption);
       Result.SetImage(fn);
       Result.ActionEvent := action;
 
-      Result.AutoSize();
+      AddDone(Result);
+
       Result.CalculateQuad();
    end;
 end;
@@ -397,6 +402,6 @@ begin
 end;
 
 INITIALIZATION
-   internal.Register('widget.image_button', @InitWidget);
+   wdgImageButton.Internal.Register('widget.image_button', @InitWidget);
 
 END.

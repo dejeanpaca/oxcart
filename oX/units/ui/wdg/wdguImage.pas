@@ -16,7 +16,7 @@ INTERFACE
       oxuTypes, oxuRender, oxuTransform, oxuTexture, oxuTextureGenerate, oxumPrimitive, oxuPaths, oxuPrimitives,
       oxuResourcePool, oxuUI,
       {ui}
-      uiuWidget, uiWidgets, uiuDraw, uiuWindow;
+      uiuWidget, uiWidgets, uiuDraw, uiuWindow, wdguBase;
 
 TYPE
 
@@ -63,21 +63,20 @@ TYPE
       procedure SizeChanged(); override;
    end;
 
-   { uiTWidgetImageGlobal }
+   { wdgTImageGlobal }
 
-   uiTWidgetImageGlobal = record
+   wdgTImageGlobal = class(specialize wdgTBase<wdgTImage>)
+      Internal: uiTWidgetClass; static;
+
       {adds a image to a window}
       function Add(const fn: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions): wdgTImage;
    end;
 
 VAR
-   wdgImage: uiTWidgetImageGlobal;
+   wdgImage: wdgTImageGlobal;
 
 IMPLEMENTATION
-
-VAR
-   internal: uiTWidgetClass;
 
 { wdgTImageTexture }
 
@@ -184,21 +183,25 @@ end;
 
 procedure InitWidget();
 begin
-   internal.Instance := wdgTImage;
-   internal.Done();
+   wdgImage.Internal.Instance := wdgTImage;
+   wdgImage.Internal.Done();
+
+   wdgImage := wdgTImageGlobal.Create(wdgImage.Internal);
 end;
 
-function uiTWidgetImageGlobal.Add(const fn: StdString;
+function wdgTImageGlobal.Add(const fn: StdString;
       const Pos: oxTPoint; const Dim: oxTDimensions): wdgTImage;
 
 begin
-   Result := wdgTImage(uiWidget.Add(internal, Pos, Dim));
+   Result := inherited AddInternal(Pos, Dim);
 
-   if(Result <> nil) then
+   if(Result <> nil) then begin
       Result.SetImage(fn);
+      AddDone(Result);
+   end;
 end;
 
 INITIALIZATION
-   internal.Register('widget.image', @InitWidget);
+   wdgImage.Internal.Register('widget.image', @InitWidget);
 
 END.

@@ -20,7 +20,7 @@ INTERFACE
       uiuTypes, uiuWindowTypes, uiuWidget, uiWidgets, uiuSkinTypes,
       uiuDraw, uiuWidgetRender, uiuWindow, uiuSettings,
       uiuPointer,
-      wdguScrollbar;
+      wdguBase, wdguScrollbar;
 
 TYPE
    wdgTListGlyph = record
@@ -273,7 +273,7 @@ TYPE
 
       procedure SetFontColor(index: loopint);
 
-      procedure UpdateItemHeight; override;
+      procedure UpdateItemHeight(); override;
 
       protected
          procedure FontChanged(); override;
@@ -304,7 +304,7 @@ TYPE
 
       procedure RemoveAll(); override;
 
-      destructor Destroy; override;
+      destructor Destroy(); override;
 
       protected
          ItemsExternal: boolean;
@@ -315,21 +315,20 @@ TYPE
    { wdgTStringItemList }
 
    wdgTStringItemList = class(wdgTStringList)
-      constructor Create; override;
+      constructor Create(); override;
    end;
 
    { wdgTListGlobal }
 
-   wdgTListGlobal = record
-      function Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTList;
+   wdgTListGlobal = class(specialize wdgTBase<wdgTList>)
+      Internal: uiTWidgetClass; static;
    end;
 
    { wdgTStringListGlobal }
 
-   wdgTStringListGlobal = record
-      function Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTStringList;
+   wdgTStringListGlobal = class(specialize wdgTBase<wdgTStringList>)
+      Internal: uiTWidgetClass; static;
    end;
-
 
 VAR
    wdgList: wdgTListGlobal;
@@ -337,13 +336,9 @@ VAR
 
 IMPLEMENTATION
 
-VAR
-   internal: uiTWidgetClass;
-   internalString: uiTWidgetClass;
-
 { wdgTStringItemList }
 
-constructor wdgTStringItemList.Create;
+constructor wdgTStringItemList.Create();
 begin
    inherited Create;
 
@@ -393,7 +388,7 @@ begin
    end;
 end;
 
-procedure wdgTStringListBase.UpdateItemHeight;
+procedure wdgTStringListBase.UpdateItemHeight();
 var
    h: loopint;
 
@@ -521,7 +516,7 @@ begin
    Result := Load();
 end;
 
-destructor wdgTStringList.Destroy;
+destructor wdgTStringList.Destroy();
 begin
    inherited Destroy;
 
@@ -536,20 +531,6 @@ begin
 
    if(updateWidget) and (not (wdgpDESTROY_IN_PROGRESS in Properties)) then
       ItemsChanged();
-end;
-
-{ wdgTStringListGlobal }
-
-function wdgTStringListGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTStringList;
-begin
-   Result := wdgTStringList(uiWidget.Add(internalString, Pos, Dim));
-end;
-
-{ wdgTListGlobal }
-
-function wdgTListGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTList;
-begin
-   Result := wdgTList(uiWidget.Add(internal, Pos, Dim));
 end;
 
 constructor wdgTList.Create();
@@ -1593,18 +1574,22 @@ end;
 
 procedure InitWidget();
 begin
-   internal.Instance := wdgTList;
-   internal.Done();
+   wdgList.Internal.Instance := wdgTList;
+   wdgList.Internal.Done();
+
+   wdgList := wdgTListGlobal.Create(wdgList.Internal);
 end;
 
 procedure InitStringWidget();
 begin
-   internalString.Instance := wdgTStringList;
-   internalString.Done();
+   wdgStringList.Internal.Instance := wdgTStringList;
+   wdgStringList.Internal.Done();
+
+   wdgStringList := wdgTStringListGlobal.Create(wdgStringList.Internal);
 end;
 
-
 INITIALIZATION
-   internal.Register('widget.list', @InitWidget);
-   internal.Register('widget.stringlist', @InitStringWidget);
+   wdgList.Internal.Register('widget.list', @InitWidget);
+   wdgStringList.Internal.Register('widget.stringlist', @InitStringWidget);
+
 END.

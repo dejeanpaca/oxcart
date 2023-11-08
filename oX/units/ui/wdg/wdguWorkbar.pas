@@ -16,7 +16,8 @@ INTERFACE
       oxuTypes,
       {ui}
       uiuWindowTypes, uiuSkinTypes,
-      uiuWidget, uiWidgets, uiuDraw, uiuWindow, uiuControl;
+      uiuWidget, uiWidgets, uiuDraw, uiuWindow, uiuControl,
+      wdguBase;
 
 CONST
    wdgWORKBAR_HEIGHT = 20;
@@ -50,13 +51,17 @@ TYPE
 
    { wdgTWorkbarGlobal }
 
-   wdgTWorkbarGlobal = record
-      {default height}
-      Height: longint;
-      Shadows: boolean;
+   wdgTWorkbarGlobal = class(specialize wdgTBase<wdgTWorkbar>)
+      Internal: uiTWidgetClass; static;
 
-      class function Add(wnd: uiTWindow): wdgTWorkbar; static;
-      class function Add(): wdgTWorkbar; static;
+      {default height}
+      Height: longint; static;
+      Shadows: boolean; static;
+
+      function Add(wnd: uiTWindow): wdgTWorkbar;
+
+      protected
+         procedure OnAdd(wdg: wdgTWorkbar); override;
    end;
 
 VAR
@@ -64,13 +69,12 @@ VAR
 
 IMPLEMENTATION
 
-VAR
-   internal: uiTWidgetClass;
-
 procedure initializeWidget();
 begin
-   internal.Instance := wdgTWorkbar;
-   internal.Done();
+   wdgWorkbar.Internal.Instance := wdgTWorkbar;
+   wdgWorkbar.Internal.Done();
+
+   wdgWorkbar := wdgTWorkbarGlobal.Create(wdgWorkbar.Internal);
 end;
 
 { wdgTWorkbar }
@@ -161,23 +165,21 @@ end;
 
 { wdgTWorkbarGlobal }
 
-class function wdgTWorkbarGlobal.Add(wnd: uiTWindow): wdgTWorkbar;
+function wdgTWorkbarGlobal.Add(wnd: uiTWindow): wdgTWorkbar;
 begin
    uiWidget.SetTarget(wnd);
-   result := Add();
+   Result := inherited Add();
 end;
 
-class function wdgTWorkbarGlobal.Add(): wdgTWorkbar;
+procedure wdgTWorkbarGlobal.OnAdd(wdg: wdgTWorkbar);
 begin
-   result := wdgTWorkbar(uiWidget.Add(internal, oxNullPoint, oxNullDimensions));
-   result.AutoPosition();
+   wdg.AutoPosition();
 end;
 
 INITIALIZATION
-   internal.Register('widget.workbar', @initializeWidget);
+   wdgWorkbar.Internal.Register('widget.workbar', @initializeWidget);
 
    wdgWorkbar.Height := wdgWORKBAR_HEIGHT;
    wdgWorkbar.Shadows := true;
 
 END.
-

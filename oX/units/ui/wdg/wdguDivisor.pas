@@ -16,7 +16,7 @@ INTERFACE
       oxuTypes, oxuFont,
       {ui}
       uiuWindowTypes, uiuSkinTypes,
-      uiuWidget, uiWidgets, uiuDraw, uiuWindow;
+      uiuWidget, uiWidgets, uiuDraw, uiuWindow, wdguBase;
 
 
 TYPE
@@ -41,8 +41,9 @@ TYPE
 
    { wdgTLinkGlobal }
 
-   wdgTDivisorGlobal = record
-      DefaultColor: TColor4ub;
+   wdgTDivisorGlobal = class(specialize wdgTBase<wdgTDivisor>)
+      Internal: uiTWidgetClass; static;
+      DefaultColor: TColor4ub; static;
 
       function Add(const Caption: StdString;
                  const Pos: oxTPoint; Vertical: boolean = false): wdgTDivisor;
@@ -53,14 +54,13 @@ VAR
 
 IMPLEMENTATION
 
-VAR
-   internal: uiTWidgetClass;
-
 procedure InitWidget();
 begin
-   internal.Instance := wdgTDivisor;
-   internal.NonSelectable := true;
-   internal.Done();
+   wdgDivisor.Internal.Instance := wdgTDivisor;
+   wdgDivisor.Internal.NonSelectable := true;
+   wdgDivisor.Internal.Done();
+
+   wdgDivisor := wdgTDivisorGlobal.Create(wdgDivisor.Internal);
 end;
 
 { wdgTDivisor }
@@ -192,19 +192,22 @@ var
 
 begin
    lastRectX := uiWidget.LastRect.r.x;
-   Result := wdgTDivisor(uiWidget.Add(internal, Pos, oxNullDimensions));
+   Result := inherited AddInternal(Pos);
 
    if(Result <> nil) then begin
       Result.SetCaption(Caption);
+
       if(Vertical) then
          Include(Result.Properties, wdgpTRUE);
 
       Result.CorrectPosition();
-      Result.AutoSize();
+      AddDone(Result);
+
       uiWidget.LastRect.r.x := lastRectX;
    end;
 end;
 
 INITIALIZATION
-   internal.Register('widget.link', @InitWidget);
+   wdgDivisor.internal.Register('widget.link', @InitWidget);
+
 END.

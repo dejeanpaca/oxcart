@@ -11,13 +11,14 @@ UNIT wdguTextEdit;
 INTERFACE
 
    USES
-      uStd, StringUtils, uTiming, uColors, uLog,
+      uStd, StringUtils, uTiming, uColors, uLog, uFile, uFiles,
       {app}
       appuKeys, appuRegional,
       {oX}
       oxuTypes, oxuFont,
       {ui}
-      uiuDraw, uiuWidget, uiWidgets, uiuWidgetRender, uiuTypes, uiuWindowTypes, wdguInputBox, uFile, uFiles;
+      uiuDraw, uiuWidget, uiWidgets, uiuWidgetRender, uiuTypes, uiuWindowTypes,
+      wdguBase, wdguInputBox;
 
 TYPE
    { wdgTTextEdit }
@@ -100,26 +101,24 @@ TYPE
             procedure FontChanged(); override;
    end;
 
-   { uiTWidgetTextEditGlobal }
+   { wdgTTextEditGlobal }
 
-   uiTWidgetTextEditGlobal = record
-      {adds a input-box to a window}
-      function Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTTextEdit;
+   wdgTTextEditGlobal = class(specialize wdgTBase<wdgTTextEdit>)
+      Internal: uiTWidgetClass; static;
    end;
 
 VAR
-   wdgTextEdit: uiTWidgetTextEditGlobal;
+   wdgTextEdit: wdgTTextEditGlobal;
 
 IMPLEMENTATION
 
-VAR
-   internal: uiTWidgetClass;
-
 procedure InitWidget();
 begin
-   internal.Instance := wdgTTextEdit;
-   internal.SkinDescriptor := @wdgInputSkinDescriptor;
-   internal.Done();
+   wdgTextEdit.Internal.Instance := wdgTTextEdit;
+   wdgTextEdit.Internal.SkinDescriptor := @wdgInputSkinDescriptor;
+   wdgTextEdit.Internal.Done();
+
+   wdgTextEdit :=  wdgTTextEditGlobal.Create(wdgTextEdit.Internal);
 end;
 
 { wdgTTextEdit }
@@ -613,17 +612,7 @@ begin
    ib.VerticalSpacing := CachedFont.GetHeight() div 8;
 end;
 
-function uiTWidgetTextEditGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTTextEdit;
-
-begin
-   result := wdgTTextEdit(uiWidget.Add(internal, Pos, Dim));
-
-   if(result <> nil) then begin
-      Result.AutoSize();
-   end;
-end;
-
 INITIALIZATION
-   internal.Register('widget.textedit', @InitWidget);
+   wdgTextEdit.Internal.Register('widget.textedit', @InitWidget);
 
 END.

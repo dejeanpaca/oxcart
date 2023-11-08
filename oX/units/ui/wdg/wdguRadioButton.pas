@@ -17,7 +17,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont, oxumPrimitive, oxuTexture, oxuTransform,
       {ui}
-      uiuWindowTypes, uiuWindow, uiuWidget, uiWidgets;
+      uiuWindowTypes, uiuWindow, uiuWidget, uiWidgets, uiuSkinTypes,
+      wdguBase;
 
 TYPE
 
@@ -37,11 +38,15 @@ TYPE
 
    { wdgTRadioButtonGlobal }
 
-   wdgTRadioButtonGlobal = record
-      Diameter, CaptionSpace: longint;
-      Inner, Outer: oxTPrimitiveModel;
+   wdgTRadioButtonGlobal = class(specialize wdgTBase<wdgTRadioButton>)
+      Internal: uiTWidgetClass; static;
 
-      clrDisabled: TColor4ub;
+      Diameter,
+      CaptionSpace: longint; static;
+      Inner,
+      Outer: oxTPrimitiveModel; static;
+
+      clrDisabled: TColor4ub; static;
 
       procedure SetSize(w, h: longint);
 
@@ -54,10 +59,6 @@ VAR
    wdgRadioButton: wdgTRadioButtonGlobal;
 
 IMPLEMENTATION
-
-VAR
-   internal: uiTWidgetClass;
-
 
 procedure wdgTRadioButton.Point(var e: appTMouseEvent; {%H-}x, {%H-}y: longint);
 begin
@@ -78,11 +79,11 @@ begin
    oxTransform.Translate(Position.x + offset, Position.y - offset, 0);
    oxTransform.Apply();
 
-   SetColor(uiTWindow(wnd).Skin.Colors.Highlight);
+   SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Highlight);
 
    wdgRadioButton.Outer.Render();
 
-   // if selected, choose the inner one
+   {if selected, choose the inner one}
    if(wdgpTRUE in Properties) then
       wdgRadioButton.Inner.Render();
 
@@ -123,7 +124,7 @@ var
 begin
    w := GetWidgetsContainer();
 
-   // go through widgets
+   {go through widgets}
    for i := 0 to w^.w.n - 1 do begin
       if (uiTWidget(w^.w.List[i]).Group = Group) and (w^.w.List[i].ClassType = wdgTRadioButton) then
          Exclude(wdgTRadioButton(w^.w.List[i]).Properties, wdgpTRUE);
@@ -131,13 +132,15 @@ begin
 
    Include(Properties, wdgpTRUE);
 
-   // TODO: Send events about state change perhaps
+   {TODO: Send events about state change perhaps}
 end;
 
 procedure InitWidget();
 begin
-   internal.Instance := wdgTRadioButton;
-   internal.Done();
+   wdgRadioButton.Internal.Instance := wdgTRadioButton;
+   wdgRadioButton.Internal.Done();
+
+   wdgRadioButton := wdgTRadioButtonGlobal.Create(wdgRadioButton.Internal);
 end;
 
 procedure wdgTRadioButtonGlobal.SetSize(w, h: longint);
@@ -154,21 +157,21 @@ function wdgTRadioButtonGlobal.Add(const Caption: StdString;
          value: boolean = false): wdgTRadioButton;
 
 begin
-   result := wdgTRadioButton(uiWidget.Add(internal, Pos, oxDimensions(0, 0)));
+   Result := wdgTRadioButton(uiWidget.Add(internal, Pos, oxDimensions(0, 0)));
 
-   if(result <> nil) then begin
-      result.SetCaption(Caption);
+   if(Result <> nil) then begin
+      Result.SetCaption(Caption);
 
       if(value) then
-         result.Mark();
+         Result.Mark();
 
-      if(result.Dimensions.h = 0) then
-         result.Dimensions.h := wdgRadioButton.Diameter;
+      if(Result.Dimensions.h = 0) then
+         Result.Dimensions.h := wdgRadioButton.Diameter;
 
-      if(result.Dimensions.w = 0) then begin
-         result.Dimensions.w := wdgRadioButton.Diameter + wdgRadioButton.CaptionSpace;
+      if(Result.Dimensions.w = 0) then begin
+         Result.Dimensions.w := wdgRadioButton.Diameter + wdgRadioButton.CaptionSpace;
 
-         inc(result.Dimensions.w, result.CachedFont.GetLength(Caption));
+         inc(Result.Dimensions.w, Result.CachedFont.GetLength(Caption));
       end;
    end;
 end;
@@ -178,6 +181,7 @@ INITIALIZATION
    wdgRadioButton.SetSize(16, 16);
    wdgRadioButton.CaptionSpace := 4;
    wdgRadioButton.clrDisabled.Assign(96, 96, 96, 255);
-   internal.Register('widget.radiobutton', @InitWidget);
-END.
 
+   wdgRadioButton.Internal.Register('widget.radiobutton', @InitWidget);
+
+END.

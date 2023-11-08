@@ -17,7 +17,8 @@ INTERFACE
       oxuFont, oxuTypes,
       {ui}
       uiuControl, uiuControls, uiuWindowTypes, uiuSkinTypes,
-      oxuUI, uiuWidget, uiWidgets, uiuDraw, wdguEmpty;
+      oxuUI, uiuWidget, uiWidgets, uiuDraw,
+      wdguBase, wdguEmpty;
 
 TYPE
 
@@ -136,19 +137,21 @@ TYPE
          procedure SizeChanged(); override;
    end;
 
-   { uiTWidgetTabsGlobal }
+   { wdgTTabsGlobal }
 
-   uiTWidgetTabsGlobal = record
+   wdgTTabsGlobal = class(specialize wdgTBase<wdgTTabs>)
+      Internal: uiTWidgetClass; static;
+
       HeaderHeight,
       HeaderWidth,
-      HeaderNonSelectedDecrease: loopint;
+      HeaderNonSelectedDecrease: loopint; static;
 
       {adds a tabs widget to a window}
       function Add(const Pos: oxTPoint; const Dim: oxTDimensions; vertical: boolean = false): wdgTTabs;
    end;
 
 VAR
-   wdgTabs: uiTWidgetTabsGlobal;
+   wdgTabs: wdgTTabsGlobal;
 
 IMPLEMENTATION
 
@@ -157,9 +160,6 @@ CONST
    ON_NOTHING        = 0; {point is nowhere on the tab}
    ON_TAB_HEADER     = 1; {point is on the tab header}
    {ON_TAB_HEADER + number of tab (0..n-1) is returned by onWhat}
-
-VAR
-   internal: uiTWidgetClass;
 
 { wdgTTabContainer }
 
@@ -170,10 +170,10 @@ var
 begin
    inherited DeInitialize;
 
-   tabs := wdgTTabs(TabsParent);
+   Tabs := wdgTTabs(TabsParent);
 
    if(tabs.Tabs.t.n > 0) then
-      Widgets := tabs.Tabs.t.List[0].Widgets;
+      Widgets := Tabs.Tabs.t.List[0].Widgets;
 end;
 
 function wdgTTabs.OnWhat(x, y: longint; out tabIndex: loopint): longint;
@@ -502,10 +502,10 @@ end;
 
 procedure InitWidget();
 begin
-   {class}
-   internal.Instance := wdgTTabs;
+   wdgTabs.Internal.Instance := wdgTTabs;
+   wdgTabs.Internal.Done();
 
-   internal.Done();
+   wdgTabs := wdgTTabsGlobal.Create(wdgTabs.Internal);
 end;
 
 {recalculate the size of the individual tabs}
@@ -590,7 +590,7 @@ begin
       SetupContainer();
 end;
 
-function uiTWidgetTabsGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions; vertical: boolean): wdgTTabs;
+function wdgTTabsGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions; vertical: boolean): wdgTTabs;
 begin
    Result := wdgTTabs(uiWidget.Add(internal, Pos, Dim));
    Result.Vertical := vertical;
@@ -785,5 +785,6 @@ INITIALIZATION
    wdgTabs.HeaderWidth := 80;
    wdgTabs.HeaderNonSelectedDecrease := 2;
 
-   internal.Register('widget.tabs', @InitWidget);
+   wdgTabs.internal.Register('widget.tabs', @InitWidget);
+
 END.

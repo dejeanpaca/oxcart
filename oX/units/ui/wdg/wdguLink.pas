@@ -17,7 +17,8 @@ INTERFACE
       oxuTypes,
       {ui}
       uiuTypes, uiuSkinTypes,
-      uiuWidget, uiWidgets, wdguLabel;
+      uiuWidget, uiWidgets,
+      wdguLabel, wdguBase;
 
 CONST
   wdgscLINK_TEXT      = 0;
@@ -80,8 +81,9 @@ TYPE
 
    { wdgTLinkGlobal }
 
-   wdgTLinkGlobal = record
-      DefaultColor: TColor4ub;
+   wdgTLinkGlobal = class(specialize wdgTBase<wdgTLink>)
+      Internal: uiTWidgetClass; static;
+      DefaultColor: TColor4ub; static;
 
       function Add(const Caption: StdString; const Link: StdString;
                  const Pos: oxTPoint; const Dim: oxTDimensions): wdgTLink;
@@ -92,14 +94,13 @@ VAR
 
 IMPLEMENTATION
 
-VAR
-   internal: uiTWidgetClass;
-
 procedure InitWidget();
 begin
-   internal.Instance := wdgTLink;
-   internal.skinDescriptor := @wdgLinkSkinDescriptor;
-   internal.Done();
+   wdgLink.Internal.Instance := wdgTLink;
+   wdgLink.Internal.skinDescriptor := @wdgLinkSkinDescriptor;
+   wdgLink.Internal.Done();
+
+   wdgLink := wdgTLinkGlobal.Create(wdgLink.Internal);
 end;
 
 { wdgTLink }
@@ -145,17 +146,18 @@ end;
 function wdgTLinkGlobal.Add(const Caption: StdString; const Link: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions): wdgTLink;
 begin
-   result := wdgTLink(uiWidget.Add(internal, Pos, Dim));
+   Result := AddInternal(Pos, Dim);
 
-   if(result <> nil) then begin
-      result.SetCaption(Caption);
-      result.SetLink(Link);
+   if(Result <> nil) then begin
+      Result.SetCaption(Caption);
+      Result.SetLink(Link);
 
-      result.AutoSize();
+      AddDone(Result);
    end;
 end;
 
 INITIALIZATION
    wdgLink.DefaultColor := cBlue4ub;
-   internal.Register('widget.link', @InitWidget);
+   wdgLink.Internal.Register('widget.link', @InitWidget);
+
 END.

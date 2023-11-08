@@ -19,7 +19,7 @@ INTERFACE
       {ui}
       oxuUI, uiuTypes, uiuWindowTypes, uiuSkinTypes,
       uiuWidget, uiWidgets, uiuWindow, uiuDraw,
-      wdguList;
+      wdguBase, wdguList;
 
 CONST
    wdgHIERARCHY_LIST_INDENTATION_WIDTH = 20;
@@ -102,15 +102,21 @@ TYPE
          procedure CollapseData({%H-}index, {%H-}count: loopint); virtual;
    end;
 
-IMPLEMENTATION
+   wdgTHierarchyListGlobal = class(specialize wdgTBase<wdgTHierarchyList>)
+      Internal: uiTWidgetClass; static;
+   end;
 
 VAR
-   internal: uiTWidgetClass;
+   wdgHierarchyList: wdgTHierarchyListGlobal;
+
+IMPLEMENTATION
 
 procedure InitWidget();
 begin
-   internal.Instance := wdgTHierarchyList;
-   internal.Done();
+   wdgHierarchyList.Internal.Instance := wdgTHierarchyList;
+   wdgHierarchyList.Internal.Done();
+
+   wdgHierarchyList := wdgTHierarchyListGlobal.Create(wdgHierarchyList.Internal);
 end;
 
 { wdgTHierarchyList }
@@ -480,6 +486,6 @@ begin
 end;
 
 INITIALIZATION
-   internal.Register('widget.hierarchylist', @InitWidget);
+   wdgHierarchyList.Internal.Register('widget.hierarchylist', @InitWidget);
 
 END.

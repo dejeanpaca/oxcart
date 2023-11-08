@@ -325,4 +325,3 @@ INITIALIZATION
    wdgButton.Internal.Register('widget.button', @InitWidget);
 
 END.
-
