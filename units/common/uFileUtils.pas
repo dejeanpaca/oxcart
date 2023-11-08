@@ -79,6 +79,7 @@ TYPE
       procedure From(const s: TUnicodeSearchRec);
       class procedure From(out f: TFileDescriptor; const s: TSearchRec); static;
       class procedure From(out f: TFileDescriptor; const s: TUnicodeSearchRec); static;
+      class procedure Initialize(out f: TFileDescriptor); static;
    end;
 
    {list of file descriptors}
@@ -361,10 +362,15 @@ end;
 
 function TFileDescriptor.IsHidden(): boolean;
 begin
-   Result := (Name[1] = '.') and (Name <> '..') and (Name <> '.');
+   {$IFDEF UNIX}
+   if(Name <> '') then
+      Result := (Name[1] = '.') and (Name <> '..') and (Name <> '.')
+   else
+      Result := '';
+   {$ENDIF}
 
    {$IFDEF WINDOWS}
-   Result := Result or (Attr and faHiddenWindows > 0);
+   Result := Attr and faHiddenWindows > 0;
    {$ENDIF}
 end;
 
@@ -402,6 +408,11 @@ class procedure TFileDescriptor.From(out f: TFileDescriptor; const s: TUnicodeSe
 begin
    ZeroOut(f, SizeOf(f));
    f.From(s);
+end;
+
+class procedure TFileDescriptor.Initialize(out f: TFileDescriptor);
+begin
+   ZeroOut(f, SizeOf(f));
 end;
 
 class function TFileUtilsGlobal.ValidHandle(handle: THandle): boolean;
@@ -1428,9 +1439,10 @@ var
    searchRec: TUnicodeSearchRec;
 
 begin
-   FindFirst(UnicodeString(fn), faAnyFile or faDirectory, searchRec);
-
-   TFileDescriptor.From(f, searchRec);
+   if(FindFirst(UnicodeString(fn), faAnyFile or faDirectory, searchRec) = 0) then
+      TFileDescriptor.From(f, searchRec)
+   else
+      TFileDescriptor.Initialize(f);
 
    FindClose(searchRec);
 end;
