@@ -89,7 +89,9 @@ TYPE
       {current build mechanism}
       BuildMechanism: oxedTBuildMechanism;
       {is the last build ok}
-      BuildOk: boolean;
+      BuildOk,
+      {is it intended to run within the editor (yes, in case it is library and editor arch)}
+      InEditor: boolean;
 
       {properties of the current build task, determined based on Build* settings}
       Props: record
@@ -309,7 +311,7 @@ begin
    for i := 0 to oxFeatures.List.n - 1 do begin
       feature := @oxFeatures.List.List[i];
 
-      if(oxFeatures.IsSupportedFeature(feature^, BuildInstalls.CurrentPlatform^.OS, isLibrary)) then begin
+      if(oxFeatures.IsSupportedFeature(feature^, BuildInstalls.CurrentPlatform^.OS, IsLibrary())) then begin
          if(lib) then begin
             {skip renderer features as we'll include only a single renderer}
             if(pos('renderer.', feature^.Name) = 1) then
@@ -651,12 +653,19 @@ var
 begin
    u.Name := oxedProject.Identifier;
    u.Header := getSourceHeader();
-   u.sUses := GetUsesString() + ',';
-   u.sUses.Add('{library}');
-   u.sUses.Add('oxuDynlib');
-   u.sExports := 'ox_library_load,';
-   u.sExports.Add('ox_library_unload,');
-   u.sExports.Add('ox_library_version');
+
+   u.sUses := GetUsesString();
+
+   if(oxedBuild.InEditor) then begin
+      u.sUses := u.sUses + ',';
+      u.sUses.Add('{library}');
+      u.sUses.Add('oxuDynlib');
+
+      u.sExports := 'ox_library_load,';
+      u.sExports.Add('ox_library_unload,');
+      u.sExports.Add('ox_library_version');
+   end;
+
    u.sInitialization.Add('{$INCLUDE ./appinfo.inc}');
 
    p := u.BuildLibrary();
@@ -1127,6 +1136,8 @@ begin
    WorkArea := GetWorkingAreaPath();
    Features := GetFeatures();
 
+   InEditor := IsLibrary() and (BuildArch.Name = 'editor');
+
    {$IFOPT D+}
    build.IncludeDebugInfo := true;
    {$ELSE}
@@ -1305,6 +1316,7 @@ procedure oxedTBuildGlobal.Reset();
 begin
    PreviousBuildArch := nil;
    BuildOk := false;
+   InEditor := false;
    BuildType := OXED_BUILD_TASK_RECODE;
    BuildTarget := OXED_BUILD_LIB;
    BuildArch := oxedEditorPlatform.Architecture;
