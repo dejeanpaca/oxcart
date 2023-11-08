@@ -164,16 +164,11 @@ TYPE
 
    wdgTFileListGlobal = record
       DirectoryColor: TColor4ub;
-      {sort files}
-      Sort: boolean;
 
       function Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTFileList;
 
       {get the file icon for a given file descriptor}
       function GetFileIcon(const f: TFileDescriptor): wdgTListGlyph;
-
-      {sort files}
-      procedure SortFiles(var files: TFileDescriptorList);
    end;
 
    { wdgTFileGridGlobal }
@@ -407,12 +402,13 @@ begin
    if(DirectoriesOnly) then
       props := props or FILE_FIND_ALL_ONLY_DIRECTORIES;
 
-   if(ShowHiddenFiles) or (uiFileSettings.ShowHiddenFiles) then
+   if(ShowHiddenFiles) or (uiFiles.ShowHiddenFiles) then
       props := props or FILE_FIND_ALL_HIDDEN;
 
    CurrentFiles.Dispose();
    FileUtils.FindAll(p + Pattern, FileAttributes, CurrentFiles, props);
-   wdgFileList.SortFiles(CurrentFiles);
+
+   uiFiles.SortFiles(CurrentFiles);
 
    Result.Initialize(Result, CurrentFiles.n);
 
@@ -737,12 +733,12 @@ begin
    if(DirectoriesOnly) then
       props := props or FILE_FIND_ALL_ONLY_DIRECTORIES;
 
-   if(ShowHiddenFiles) or (uiFileSettings.ShowHiddenFiles) then
+   if(ShowHiddenFiles) or (uiFiles.ShowHiddenFiles) then
       props := props or FILE_FIND_ALL_HIDDEN;
 
    Files.Dispose();
    FileUtils.FindAll(CurrentPath + Pattern, FileAttributes, Files, props);
-   wdgFileList.SortFiles(Files);
+   uiFiles.SortFiles(Files);
 
    Assigned();
    OnPathChanged();
@@ -891,14 +887,6 @@ begin
       Result.Color := Result.Color.Darken(0.2);
 end;
 
-procedure wdgTFileListGlobal.SortFiles(var files: TFileDescriptorList);
-begin
-   if(Sort) then
-      FileUtils.Sort(files, uiFileSettings.SortFoldersFirst)
-   else if(uiFileSettings.SortFoldersFirst) then
-      FileUtils.SortDirectoriesFirst(files);
-end;
-
 { wdgTFileGridGlobal }
 
 function wdgTFileGridGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions): wdgTFileGrid;
@@ -935,8 +923,6 @@ INITIALIZATION
    internal.Register('widget.filelist', @InitWidget);
    internal.Register('widget.filegrid', @InitGridWidget);
    internal.Register('widget.hierarchicalfilelist', @InitHierarchicalWidget);
-
-   wdgFileList.Sort := true;
 
    wdgFileGrid.FileNameLines := 2;
 

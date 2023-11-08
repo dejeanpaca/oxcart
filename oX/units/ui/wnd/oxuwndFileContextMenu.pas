@@ -312,7 +312,7 @@ end;
 
 procedure clearMessagesOnStartToggle({%H-}wdg: uiTWidget; {%H-}menu: TObject; item: uiPContextMenuItem);
 begin
-   uiFileSettings.ShowHiddenFiles := item^.IsChecked();
+   uiFiles.ShowHiddenFiles := item^.IsChecked();
 end;
 
 procedure oxwndTFileContextMenu.SetupItems(m: uiTContextMenu);
@@ -326,7 +326,7 @@ begin
    m.AddItem('Delete', Events.DELETE_FILE, @deleteFile);
    m.AddItem('Create Directory', Events.CREATE_DIRECTORY, @createDirectory);
 
-   item := m.AddCheckbox('Show hidden files', uiFileSettings.ShowHiddenFiles);
+   item := m.AddCheckbox('Show hidden files', uiFiles.ShowHiddenFiles);
    item^.Callback := @clearMessagesOnStartToggle;
 end;
 
