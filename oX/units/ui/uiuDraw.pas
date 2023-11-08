@@ -12,8 +12,10 @@ INTERFACE
       uStd, uColors, vmVector,
       {oX}
       oxuTypes, oxuRender, oxuRenderUtilities,
-      oxuPrimitives, oxuTransform, oxuUI, oxuTexture, oxuWindow,
-      oxuViewportType;
+      oxuPrimitives, oxuTransform, oxuTexture, oxuWindow, oxuViewportType,
+      oxumPrimitive,
+      {ui}
+      oxuUI, uiuBase;
 
 CONST
    uiMAX_SCISSOR_STACK = 64;
@@ -32,6 +34,9 @@ TYPE
       ScissorStackIndex: loopint;
       ScissorStack: array[0..uiMAX_SCISSOR_STACK - 1] of uiTScissorStackElement;
 
+      mCircle,
+      mDisk: oxTPrimitiveModel;
+
       procedure Box(x1, y1, x2, y2: single);
       {draw box at the specified point and dimensions}
       procedure Box(const p: oxTPoint; const d: oxTDimensions);
@@ -45,6 +50,9 @@ TYPE
       procedure Rect(const r: oxTRect);
       procedure Point(x1, y1: single);
       procedure Points(var p: array of TVector2f);
+
+      procedure Circle(x1, y1, radius: Single);
+      procedure Disk(x1, y1, radius: Single);
 
       procedure CorrectPoints(p: PVector2f; count: loopint);
       procedure CorrectPoints(p: PVector3f; count: loopint);
@@ -253,6 +261,30 @@ begin
    oxRender.Points(p);
 end;
 
+procedure uiTDraw.Circle(x1, y1, radius: Single);
+begin
+   oxTransform.vPosition.Assign(x1, y1, 0.0);
+   oxTransform.vScale.Assign(radius, radius, 0.0);
+   oxTransform.SetupMatrix();
+
+   mCircle.Render();
+
+   oxTransform.Identity();
+   oxTransform.Apply();
+end;
+
+procedure uiTDraw.Disk(x1, y1, radius: Single);
+begin
+   oxTransform.vPosition.Assign(x1, y1, 0.0);
+   oxTransform.vScale.Assign(radius, radius, 0.0);
+   oxTransform.SetupMatrix();
+
+   mDisk.Render();
+
+   oxTransform.Identity();
+   oxTransform.Apply();
+end;
+
 procedure uiTDraw.CorrectPoints(p: PVector2f; count: loopint);
 var
    i: loopint;
@@ -417,7 +449,22 @@ begin
    oxRenderUtilities.Quad(tex);
 end;
 
+procedure init();
+begin
+   {TODO: Get subdivisions from UI settings}
+
+   uiDraw.mCircle.InitCircle(1.0, 64);
+   uiDraw.mDisk.InitDisk(1.0, 64);
+end;
+
+procedure deinit();
+begin
+   uiDraw.mCircle.Dispose();
+   uiDraw.mDisk.Dispose();
+end;
+
 INITIALIZATION
+   ui.InitializationProcs.Add('draw', @init, @deinit);
    uiDraw.UseScissoring := true;
 
 END.
