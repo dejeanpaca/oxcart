@@ -24,23 +24,21 @@ TYPE
    { oxedTGameViewWindow }
 
    oxedTGameViewWindow = class(oxedTSceneWindow)
-      constructor Create; override;
-
-      procedure Render; override;
+      procedure Render(); override;
 
       function Key(var k: appTKeyEvent): boolean; override;
       procedure Point(var e: appTMouseEvent; {%H-}x, {%H-}y: longint); override;
       procedure Hover(x, y: longint; {%H-}what: uiTHoverEvent); override;
 
-      procedure Initialize; override;
+      procedure Initialize(); override;
 
-      procedure OnActivate; override;
+      procedure OnActivate(); override;
       procedure OnDeactivate(); override;
 
       protected
-         procedure RPositionChanged; override;
-         procedure PositionChanged; override;
-         procedure SizeChanged; override;
+         procedure RPositionChanged(); override;
+         procedure PositionChanged(); override;
+         procedure SizeChanged(); override;
    end;
 
    oxedTGameView = class(oxedTWindowClass)
@@ -78,14 +76,7 @@ end;
 
 { oxedTSceneViewWindow }
 
-constructor oxedTGameViewWindow.Create;
-begin
-   inherited Create;
-
-   RenderAllCameras := true;
-end;
-
-procedure oxedTGameViewWindow.Render;
+procedure oxedTGameViewWindow.Render();
 begin
    {we don't render anything, as the game will render itself}
    if(oxedTProjectRunner.CanRender()) then begin
@@ -144,18 +135,15 @@ begin
    end;
 end;
 
-procedure oxedTGameViewWindow.Initialize;
+procedure oxedTGameViewWindow.Initialize();
 begin
    inherited Initialize;
 
    oxWindows.ExternalWindows.Dispose();
    oxWindows.ExternalWindows.Add(Self);
-
-   SceneRenderer := oxSceneRender.Default;
-   SceneRenderer.Scene := Scene;
 end;
 
-procedure oxedTGameViewWindow.OnActivate;
+procedure oxedTGameViewWindow.OnActivate();
 begin
    inherited OnActivate;
 
@@ -171,25 +159,25 @@ begin
       oxedLib.Settings^.Focused := false;
 end;
 
-procedure oxedTGameViewWindow.RPositionChanged;
+procedure oxedTGameViewWindow.RPositionChanged();
 begin
-   inherited RPositionChanged;
+   inherited;
 
    if(oxedLib.oxWindows <> nil) then
       oxedLib.oxWindows^.w[0].SetupProjection();
 end;
 
-procedure oxedTGameViewWindow.PositionChanged;
+procedure oxedTGameViewWindow.PositionChanged();
 begin
-   inherited PositionChanged;
+   inherited;
 
    if(oxedLib.oxWindows <> nil) then
       oxedLib.oxWindows^.w[0].SetupProjection();
 end;
 
-procedure oxedTGameViewWindow.SizeChanged;
+procedure oxedTGameViewWindow.SizeChanged();
 begin
-   inherited SizeChanged;
+   inherited;
 
    if(oxedLib.oxWindows <> nil) then begin
       oxedLib.oxWindows^.w[0].SetDimensions(Dimensions.w, Dimensions.h, false);

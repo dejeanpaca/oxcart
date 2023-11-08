@@ -195,10 +195,12 @@ begin
    Material.Name := 'oxed.scene_edit';
    Material.MarkPermanent();
 
-   SceneRenderer := oxedTSceneEditRenderer.Create();
-   SceneRenderer.Scene := Scene;
-   oxedTSceneEditRenderer(SceneRenderer).Material := Material;
-   oxedTSceneEditRenderer(SceneRenderer).Window := Self;
+   wdg.SceneRender.SceneRenderer := oxedTSceneEditRenderer.Create();
+   wdg.SceneRender.SceneRenderer.Scene := wdg.SceneRender.Scene;
+   wdg.SceneRender.RenderSceneCameras := false;
+
+   oxedTSceneEditRenderer(wdg.SceneRender.SceneRenderer).Material := Material;
+   oxedTSceneEditRenderer(wdg.SceneRender.SceneRenderer).Window := Self;
 end;
 
 procedure oxedTSceneEditWindow.DeInitialize();
@@ -223,9 +225,9 @@ begin
       oxedThingies.InitParams(componentRenderParams);
 
       componentRenderParams.Window := Self;
-      componentRenderParams.Camera := @Camera;
-      componentRenderParams.Projection := @Projection;
-      componentRenderParams.Scene := Scene;
+      componentRenderParams.Camera := @wdg.SceneRender.Camera;
+      componentRenderParams.Projection := @wdg.SceneRender.Projection;
+      componentRenderParams.Scene := wdg.SceneRender.Scene;
       componentRenderParams.Entity := oxedScene.SelectedEntity;
 
       oxedScene.SelectedComponentPairs.Call(componentRenderParams);
@@ -263,20 +265,22 @@ var
    camMatrix,
    tempMatrix: TMatrix4f;
    BBox: TBoundingBox;
+   camera: oxPCamera;
 
 procedure RenderCone(index: loopint; const x, y, z: single; const rX, rY, rZ: single);
 begin
-   Camera.Transform.Matrix := tempMatrix;
-   Camera.Transform.Translate(x, y, z);
+   Camera^.Transform.Matrix := tempMatrix;
+   Camera^.Transform.Translate(x, y, z);
 
-   Camera.Transform.Rotate(rX, rY, Rz);
+   Camera^.Transform.Rotate(rX, rY, Rz);
 
-   Camera.Transform.Apply();
+   Camera^.Transform.Apply();
    Material.ApplyColor('color', AxisColors[index]);
    ConeModel.Render();
 end;
 
 begin
+   camera := @wdg.SceneRender.Camera;
    Material.Apply();
 
    oxedScene.SelectedEntity.GetWorldPosition(p);
@@ -289,9 +293,9 @@ begin
    Transform.vScale.Assign(distanceScale, distanceScale, distanceScale);
    Transform.SetupMatrix();
 
-   camMatrix := Camera.Transform.Matrix;
-   Camera.Transform.Matrix := Camera.Transform.Matrix * Transform.Matrix;
-   Camera.Transform.Apply();
+   camMatrix := Camera^.Transform.Matrix;
+   Camera^.Transform.Matrix := Camera^.Transform.Matrix * Transform.Matrix;
+   Camera^.Transform.Apply();
 
    oxRender.LineWidth(3.0);
 
@@ -304,7 +308,7 @@ begin
 
    oxRender.LineWidth(1.0);
 
-   tempMatrix := Camera.Transform.Matrix;
+   tempMatrix := Camera^.Transform.Matrix;
 
    if(oxedSettings.Debug.RenderSelectorBBox) then begin
       BBox := vmBBoxZero;
@@ -331,7 +335,7 @@ begin
    Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
    oxRender.DepthDefault();
 
-   Camera.Transform.Apply(camMatrix);
+   Camera^.Transform.Apply(camMatrix);
 end;
 
 procedure oxedTSceneEditWindow.RenderGlyphs(const componentPairs: oxedTThingieComponentPairs);
@@ -370,15 +374,18 @@ var
    distanceScale: single;
    pMatrix,
    camMatrix: TMatrix4f;
+   camera: oxPCamera;
 
 begin
+   camera := @wdg.SceneRender.Camera;
+
    entity.GetWorldPosition(p);
    entity.GetWorldRotation(rotation);
 
    Transform.vPosition := p;
    Transform.vRotation := rotation;
 
-   distance := Camera.vPos.Distance(p);
+   distance := camera^.vPos.Distance(p);
    if(not oxedThingies.Glyphs3D) then
       distanceScale := distance * OXED_GLYPH_DISTANCE_SCALE
    else
@@ -387,28 +394,28 @@ begin
    Transform.vScale.Assign(distanceScale, distanceScale, distanceScale);
    Transform.SetupMatrix();
 
-   camMatrix := Camera.Transform.Matrix;
-   Camera.Transform.Matrix := Camera.Transform.Matrix * Transform.Matrix;
-   pMatrix := Camera.Transform.Matrix;
+   camMatrix := camera^.Transform.Matrix;
+   camera^.Transform.Matrix := camera^.Transform.Matrix * Transform.Matrix;
+   pMatrix := camera^.Transform.Matrix;
 
-   Camera.Transform.Apply();
+   camera^.Transform.Apply();
 
    oxRenderingUtilities.StartQuad(component^.Glyph.Texture);
 
    {shadow}
-   Camera.Transform.Scale(1.15, 1.15, 1);
-   Camera.Transform.Apply();
+   camera^.Transform.Scale(1.15, 1.15, 1);
+   camera^.Transform.Apply();
 
    Material.ApplyColor('color', 0.0, 0.0, 0.0, 0.75);
    oxRenderingUtilities.Quad();
 
    {glyph}
-   Camera.Transform.Apply(pMatrix);
+   camera^.Transform.Apply(pMatrix);
 
    Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
    oxRenderingUtilities.Quad();
 
-   Camera.Transform.Matrix := camMatrix;
+   camera^.Transform.Matrix := camMatrix;
 end;
 
 procedure oxedTSceneEditWindow.RenderGlyphDone();
@@ -421,7 +428,7 @@ end;
 
 function oxedTSceneEditWindow.GetDistanceScale(const p: TVector3f): single;
 begin
-   Result := Camera.vPos.Distance(p) * OXED_DISTANCE_SCALE;
+   Result := wdg.SceneRender.Camera.vPos.Distance(p) * OXED_DISTANCE_SCALE;
 end;
 
 function oxedTSceneEditWindow.OrbitControl(var e: appTMouseEvent): boolean;
@@ -449,7 +456,7 @@ begin
    end;
 
    if(CameraOrbitMode) then begin
-      CursorControl.OrbitControl(Self, camera, oxedSettings.PointerCenterEnable);
+      CursorControl.OrbitControl(Self, wdg.SceneRender.Camera, oxedSettings.PointerCenterEnable);
       exit(true);
    end;
 
@@ -460,17 +467,20 @@ procedure oxedTSceneEditWindow.Point(var e: appTMouseEvent; x, y: longint);
 var
    enter,
    leave: TVector3f;
+   camera: oxPCamera;
 
 begin
    if(OrbitControl(e)) then
       exit;
 
+   camera := @wdg.SceneRender.Camera;
+
    {move camera forward/backward in view direction via the scroll wheel}
    if(e.IsWheel()) then begin
       if(not appk.Shift()) then
-         Camera.vPos := Camera.vPos + (Camera.vView * -1.0 * e.Value * oxedSettings.CameraScrollSpeed)
+         camera^.vPos := camera^.vPos + (camera^.vView * -1.0 * e.Value * oxedSettings.CameraScrollSpeed)
       else
-         Camera.vPos := Camera.vPos + (Camera.vUp * -1.0 * e.Value * oxedSettings.CameraScrollSpeed);
+         camera^.vPos := camera^.vPos + (camera^.vUp * -1.0 * e.Value * oxedSettings.CameraScrollSpeed);
    end;
 
    inherited Point(e, x, y);
@@ -479,7 +489,7 @@ begin
       {selection translation}
       if(oxedScene.SelectedEntity <> nil) then begin
          if(CurrentTool = OXED_SCENE_EDIT_TOOL_TRANSLATE) then begin
-            Camera.GetPointerRay(x, y, SelectionRay.Origin, SelectionRay.EndPosition, Projection);
+            camera^.GetPointerRay(x, y, SelectionRay.Origin, SelectionRay.EndPosition, wdg.SceneRender.Projection);
 
             UpdateAxisBBoxes();
 

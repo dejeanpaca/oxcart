@@ -20,7 +20,6 @@ TYPE
    { oxedTSceneViewWindow }
 
    oxedTSceneViewWindow = class(oxedTSceneWindow)
-      procedure Initialize; override;
    end;
 
    oxedTSceneView = class(oxedTWindowClass)
@@ -49,16 +48,6 @@ end;
 procedure deinit();
 begin
    FreeObject(oxedSceneView);
-end;
-
-{ oxedTSceneViewWindow }
-
-procedure oxedTSceneViewWindow.Initialize;
-begin
-   inherited Initialize;
-
-   SceneRenderer := oxSceneRender.Default;
-   SceneRenderer.Scene := Scene;
 end;
 
 INITIALIZATION

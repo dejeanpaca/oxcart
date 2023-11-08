@@ -19,12 +19,19 @@ INTERFACE
       oxuCameraComponent,
       {ui}
       uiuTypes, uiuWindowTypes, uiuWindow, uiuDraw, uiWidgets, uiuWindowRender,
-      wdguLabel,
+      wdguLabel, wdguSceneRender,
       {oxed}
       uOXED, oxeduSettings, oxeduWindow, oxeduMenubar, oxeduActions, oxeduProjectRunner, oxeduProject, oxeduSceneClone,
       oxeduEntities;
 
 TYPE
+
+   { wdgTOXEDSceneWindowRenderer }
+
+   wdgTOXEDSceneWindowRenderer = class(wdgTSceneRender)
+      procedure OnSceneRenderEnd(); override;
+      procedure DeInitialize(); override;
+   end;
 
    { wdgTOXEDSceneWindowStateLabel }
 
@@ -35,15 +42,6 @@ TYPE
    { oxedTSceneWindow }
 
    oxedTSceneWindow = class(oxedTWindow)
-      {the scene we view in this window}
-      Scene: oxTScene;
-      {window projection}
-      Projection: oxTProjection;
-      {window camera}
-      Camera: oxTCamera;
-
-      {shouls we render all cameras}
-      RenderAllCameras: boolean;
       {does the window control the camera}
       ControlCamera,
       {is the camera in a rotate mode currently}
@@ -51,22 +49,19 @@ TYPE
       {should the state widget ever be enabled (e.g. not needed in edit windows)}
       StateWidgetEnabled: boolean;
 
-      {a renderer for the scene}
-      SceneRenderer: oxTSceneRenderer;
-
-      wdgState: wdgTLabel;
+      wdg: record
+         State: wdgTLabel;
+         SceneRender: wdgTSceneRender;
+      end;
 
       constructor Create(); override;
-      destructor Destroy(); override;
 
       procedure Initialize(); override;
       procedure DeInitialize; override;
 
-      procedure Render(); override;
       procedure CleanupRender();
       function Key(var k: appTKeyEvent): boolean; override;
       procedure Point(var e: appTMouseEvent; {%H-}x, {%H-}y: longint); override;
-      procedure SetupProjection();
       procedure Update(); override;
 
       procedure SceneRenderEnd(); virtual;
@@ -75,6 +70,7 @@ TYPE
 
       procedure UpdateStateWidget();
       procedure PositionStateWidget();
+      procedure UpdateSceneRenderWidget();
 
       procedure OnActivate(); override;
 
@@ -98,13 +94,28 @@ VAR
 
 IMPLEMENTATION
 
+{ wdgTOXEDSceneWindowRenderer }
+
+procedure wdgTOXEDSceneWindowRenderer.OnSceneRenderEnd();
+begin
+   {call inherited scene render end}
+   oxedTSceneWindow(wnd).SceneRenderEnd();
+end;
+
+procedure wdgTOXEDSceneWindowRenderer.DeInitialize();
+begin
+   inherited DeInitialize();
+
+   oxedTSceneWindow(wnd).wdg.SceneRender := nil;
+end;
+
 { wdgTOXEDSceneWindowStateLabel }
 
 procedure wdgTOXEDSceneWindowStateLabel.DeInitialize();
 begin
    inherited DeInitialize();
 
-   oxedTSceneWindow(wnd).wdgState := nil;
+   oxedTSceneWindow(wnd).wdg.State := nil;
 end;
 
 { oxedTSceneWindow }
@@ -113,33 +124,21 @@ constructor oxedTSceneWindow.Create();
 begin
    inherited;
 
-   Projection.Initialize();
-
-   {use the global scene by default}
-   Scene := oxScene;
-
-   {create our own camera}
-   Camera.Initialize();
-
-   ResetCamera();
    ControlCamera := true;
    StateWidgetEnabled := true;
 end;
 
-destructor oxedTSceneWindow.Destroy();
+procedure oxedTSceneWindow.Initialize();
 begin
    inherited;
 
-   if(SceneRenderer <> oxSceneRender.Default) then
-      FreeObject(SceneRenderer);
-end;
-
-procedure oxedTSceneWindow.Initialize();
-begin
-   inherited Initialize;
-
    Background.Typ := uiwBACKGROUND_NONE;
    oxedSceneWindows.List.Add(Self);
+
+   wdg.SceneRender := wdgSceneRender.Add();
+
+   ResetCamera();
+   UpdateSceneRenderWidget();
 end;
 
 procedure oxedTSceneWindow.DeInitialize;
@@ -149,33 +148,10 @@ var
 begin
    inherited DeInitialize;
 
-   Camera.Dispose();
-
    index := oxedSceneWindows.List.Find(Self);
 
    if(index > -1) then
       oxedSceneWindows.List.Remove(index);
-end;
-
-procedure oxedTSceneWindow.Render();
-var
-   params: oxTSceneRenderParameters;
-
-begin
-   inherited;
-
-   if(oxedProject = nil) then
-      exit;
-
-   if(not RenderAllCameras) then begin
-      oxTSceneRenderParameters.Init(params, @Projection, @Camera);
-      SceneRenderer.RenderCamera(params);
-   end else
-      SceneRenderer.Render(Projection);
-
-   SceneRenderEnd();
-
-   CleanupRender();
 end;
 
 procedure oxedTSceneWindow.CleanupRender();
@@ -226,18 +202,14 @@ begin
    end;
 
    if(CameraRotateMode) then
-      CursorControl.Control(uiTWindow(self), Camera, oxedSettings.PointerCenterEnable);
-end;
-
-procedure oxedTSceneWindow.SetupProjection();
-begin
-   Projection.SetViewport(RPosition, Dimensions);
+      CursorControl.Control(uiTWindow(self), wdg.SceneRender.Camera, oxedSettings.PointerCenterEnable);
 end;
 
 procedure oxedTSceneWindow.Update();
 var
    distance: single = 1;
    interpolated: single = 0;
+   camera: oxPCamera;
 
 begin
    if(ControlCamera) and (IsSelected()) then begin
@@ -247,31 +219,32 @@ begin
       if(appk.Shift()) then
          distance := 5;
 
+      camera := @wdg.SceneRender.Camera;
       distance := distance * oxedSettings.CameraSpeed * oxBaseTime.Flow;
 
       interpolated := appk.Interpolated(kcW, kcUP);
       if(interpolated <> 0) then {forward}
-         Camera.MoveForward(distance * interpolated);
+         camera^.MoveForward(distance * interpolated);
 
       interpolated := appk.Interpolated(kcS, kcDOWN);
       if(interpolated <> 0) then {back}
-         Camera.MoveForward(-distance * interpolated);
+         camera^.MoveForward(-distance * interpolated);
 
       interpolated := appk.Interpolated(kcA, kcLEFT);
       if(interpolated <> 0) then {left}
-         Camera.Strafe(-distance * interpolated);
+         camera^.Strafe(-distance * interpolated);
 
       interpolated := appk.Interpolated(kcD, kcRIGHT);
       if(interpolated <> 0) then {right}
-         Camera.Strafe(distance * interpolated);
+         camera^.Strafe(distance * interpolated);
 
       interpolated := appk.Interpolated(kcPGUP);
       if(interpolated <> 0) then {up}
-         Camera.MoveVertical(distance * interpolated);
+         camera^.MoveVertical(distance * interpolated);
 
       interpolated := appk.Interpolated(kcPGDN);
       if(interpolated <> 0) then {down}
-         Camera.MoveVertical(-distance * interpolated);
+         camera^.MoveVertical(-distance * interpolated);
    end;
 end;
 
@@ -282,17 +255,14 @@ end;
 
 procedure oxedTSceneWindow.ResetCamera();
 begin
-   Camera.Reset();
-   Camera.vPos.Assign(0, 0, 5);
+   wdg.SceneRender.Camera.Reset();
+   wdg.SceneRender.Camera.vPos.Assign(0, 0, 5);
 end;
 
 procedure oxedTSceneWindow.SceneChange();
 begin
-   if(SceneRenderer <> nil) then begin
-      SceneRenderer.Scene := Scene;
-
+   if(wdg.SceneRender.SceneRenderer <> nil) then
       UpdateStateWidget();
-   end;
 end;
 
 procedure oxedTSceneWindow.UpdateStateWidget();
@@ -306,8 +276,8 @@ begin
    if(not StateWidgetEnabled) then
       exit;
 
-   if(Scene <> nil) then begin
-      cam := oxTCameraComponent(Scene.GetComponentInChildren('oxTCameraComponent'));
+   if(wdg.SceneRender.Scene <> nil) then begin
+      cam := oxTCameraComponent(wdg.SceneRender.Scene.GetComponentInChildren('oxTCameraComponent'));
 
       if(cam = nil) then
          state := 'No camera in scene';
@@ -315,29 +285,35 @@ begin
       state := 'No scene set for window';
 
    if(state <> '') then begin
-      if(wdgState = nil) then begin
+      if(wdg.State = nil) then begin
          uiWidget.SetTarget(Self);
          uiWidget.Create.Instance := wdgTOXEDSceneWindowStateLabel;
-         wdgState := wdgLabel.Add('');
+         wdg.State := wdgLabel.Add('');
       end;
 
-      wdgState.SetCaption(state);
-      wdgState.SetVisible();
+      wdg.State.SetCaption(state);
+      wdg.State.SetVisible();
 
       PositionStateWidget();
    end else begin
-      if(wdgState <> nil) then
-         wdgState.Hide();
+      if(wdg.State <> nil) then
+         wdg.State.Hide();
    end;
 end;
 
 procedure oxedTSceneWindow.PositionStateWidget();
 begin
-   if(wdgState <> nil) then begin
-      wdgState.AutoSize();
-      wdgState.CenterVertically();
-      wdgState.CenterHorizontally();
+   if(wdg.State <> nil) then begin
+      wdg.State.AutoSize();
+      wdg.State.CenterVertically();
+      wdg.State.CenterHorizontally();
    end;
+end;
+
+procedure oxedTSceneWindow.UpdateSceneRenderWidget();
+begin
+   wdg.SceneRender.Move(0, Dimensions.h - 1);
+   wdg.SceneRender.Resize(Dimensions);
 end;
 
 procedure oxedTSceneWindow.OnActivate();
@@ -351,15 +327,15 @@ procedure oxedTSceneWindow.SizeChanged();
 begin
    inherited SizeChanged;
 
-   SetupProjection();
    PositionStateWidget();
+   UpdateSceneRenderWidget();
 end;
 
 procedure oxedTSceneWindow.RPositionChanged;
 begin
    inherited RPositionChanged;
 
-   SetupProjection();
+   UpdateSceneRenderWidget();
 end;
 
 procedure resetCamera();
@@ -374,7 +350,7 @@ var
 
 begin
    for i := 0 to oxedSceneWindows.List.n - 1 do begin
-      oxedSceneWindows.List[i].Scene := oxScene;
+      oxedSceneWindows.List[i].wdg.SceneRender.Scene := oxScene;
       oxedSceneWindows.List[i].SceneChange();
    end;
 end;
