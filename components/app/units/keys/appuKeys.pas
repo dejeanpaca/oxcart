@@ -13,7 +13,7 @@ INTERFACE
    USES
       sysutils, StringUtils, uStd,
       {app}
-      appukcNames;
+      appuInputTypes, appukcNames;
 
 CONST
    {key state and modifier constants}
@@ -38,17 +38,6 @@ CONST
    appkcDEFAULT_LIST_SIZE     = 32;
    {keys pressed}
    appkcKEYS_PRESSED_SIZE     = 256;
-
-   { key properties }
-   {key is pressed}
-   kpPRESSED                  = $01;
-   {key was pressed previous cycle}
-   kpWAS_PRESSED              = $02;
-   {key was just pressed in current cycle}
-   kpCYCLE_PRESSED            = $04;
-   {key was pressed and released in the same cycle}
-   kpPRESSED_RELEASED         = $08;
-
 
    {list of keycodes}
    {$INCLUDE ./KeyCodes.inc}
