@@ -29,6 +29,7 @@ TYPE
 
       function Add(const Pos: oxTPoint; const Dim: oxTDimensions): T;
       function Add(const Pos: oxTPoint): T;
+      function Add(): T;
 
       protected
       function AddInternal(const Pos: oxTPoint; const Dim: oxTDimensions): T;
@@ -36,7 +37,9 @@ TYPE
       function AddInternal(): T;
 
       {called when adding is done}
-      function AddDone(wdg: uiTWidget): T;
+      function AddDone(wdg: T): T;
+
+      procedure OnAdd({%H-}wdg: T); virtual;
    end;
 
 IMPLEMENTATION
@@ -64,6 +67,14 @@ begin
       AddDone(Result);
 end;
 
+function wdgTBase.Add(): T;
+begin
+   Result := AddInternal();
+
+   if(Result <> nil) then
+      AddDone(Result);
+end;
+
 function wdgTBase.AddInternal(const Pos: oxTPoint; const Dim: oxTDimensions): T;
 begin
   Result := T(uiWidget.Add(pInternal^, Pos, Dim));
@@ -79,12 +90,18 @@ begin
   Result := AddInternal(uiWidget.LastRect.BelowOf(), oxNullDimensions);
 end;
 
-function wdgTBase.AddDone(wdg: uiTWidget): T;
+function wdgTBase.AddDone(wdg: T): T;
 begin
+   OnAdd(wdg);
+
    if(wdg <> nil) then
-      wdg.AutoSize();
+      uiTWidget(wdg).AutoSize();
 
    Result := T(wdg);
+end;
+
+procedure wdgTBase.OnAdd(wdg: T);
+begin
 end;
 
 END.
