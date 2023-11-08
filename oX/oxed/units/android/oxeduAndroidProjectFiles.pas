@@ -9,7 +9,7 @@ UNIT oxeduAndroidProjectFiles;
 INTERFACE
 
    USES
-      uStd, uLog, uFileUtils, StringUtils, uBuild,
+      uStd, uLog, uFileUtils, uDirectoryCopier, StringUtils, uBuild,
       {oxed}
       oxeduProject, oxeduAndroidSettings;
 
@@ -69,7 +69,7 @@ begin
    log.v('Android project files template source: ' + source);
    log.i('Deploying android project files to: ' + path);
 
-   FileUtils.CopyDirectory(source, path);
+   CopyDirectory(source, path);
 end;
 
 procedure oxedTAndroidProjectFiles.UpdateValues(const destination: StdString);

@@ -9,7 +9,7 @@ UNIT oxeduBuildAssets;
 INTERFACE
 
    USES
-      sysutils, uStd, uLog, uFileUtils, StringUtils,
+      sysutils, uStd, uLog, uFileUtils, uFileTraverse, StringUtils,
       {oxed}
       uOXED, oxeduBuildLog,
       oxeduPackage, oxeduPackageTypes,
