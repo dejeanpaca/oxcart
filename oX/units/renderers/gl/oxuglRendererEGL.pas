@@ -227,8 +227,8 @@ var
 
 begin
    if(wnd.wd.Display <> nil) and (wnd.wd.Surface <> nil) and (wnd.wd.ValidSurface) then begin
-      error := eglSwapBuffers(wnd.wd.Display, wnd.wd.Surface);
-      if(error <> EGL_TRUE) then begin
+      if(eglSwapBuffers(wnd.wd.Display, wnd.wd.Surface) <> EGL_TRUE) then begin
+         error := RaiseError();
          wnd.wd.ValidSurface := false;
          log.e('egl > Cannot swap buffers on surface ' + sf(wnd.wd.Surface) + ', egl error: ' + HexStr(error, 4));
       end;
