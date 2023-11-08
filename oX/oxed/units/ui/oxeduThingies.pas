@@ -19,7 +19,7 @@ INTERFACE
       {ui}
       uiuWindowTypes,
       {oxed}
-      uOXED, oxeduIcons, oxeduComponent;
+      uOXED, oxeduIcons, oxeduComponent, oxeduComponentGlyph;
 
 TYPE
    {scene edit render parameters}
@@ -42,6 +42,8 @@ TYPE
       Component: oxedPComponent;
       {render only when selected}
       Selected: boolean;
+      {glyph for this thingie}
+      Glyph: oxedPComponentGlyph;
 
       {render}
       procedure Render(var {%H-}parameters: oxedTThingieRenderParameters); virtual;
