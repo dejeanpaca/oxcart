@@ -8,6 +8,10 @@ UNIT uLPIBuild;
 
 INTERFACE
 
+   USES
+      uStd, uLog, uFileUtils,
+      uBuildEXec, uLPI;
+
 TYPE
    { TLPIBuild }
 
