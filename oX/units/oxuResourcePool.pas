@@ -39,8 +39,6 @@ TYPE
    { oxTResourceGlobal }
 
    oxTResourceGlobal = record
-      {mark a resource as used (increase reference count)}
-      procedure Used(resource: oxTResource);
       {destroy a resource (destroys the object if reference count 0 or less)}
       procedure Destroy(var resource);
       {free resource object}
@@ -53,11 +51,6 @@ VAR
 IMPLEMENTATION
 
 { oxTResourceGlobal }
-
-procedure oxTResourceGlobal.Used(resource: oxTResource);
-begin
-   inc(resource.ReferenceCount);
-end;
 
 procedure oxTResourceGlobal.Destroy(var resource);
 var
