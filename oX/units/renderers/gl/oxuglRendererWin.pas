@@ -21,7 +21,7 @@ TYPE
 
    oxglTPlatformWGL = object(oxglTPlatform)
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
-
+      procedure OnInitWindow({%H-}wnd: oglTWindow); virtual;
       procedure SwapBuffers(wnd: oglTWindow); virtual;
       function GetContext(wnd: oglTWindow; shareContext: HGLRC): HGLRC; virtual;
       function ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
@@ -331,6 +331,13 @@ begin
       exit(false);
 
    Result := true;
+end;
+
+procedure oxglTPlatformWGL.OnInitWindow(wnd: oglTWindow);
+begin
+   {$IF NOT DEFINED(GLES)}
+   wglChoosePixelFormatARB := TwglChoosePixelFormatARB(wglGetProcAddress('wglChoosePixelFormatARB'));
+   {$ENDIF}
 end;
 
 procedure oxglTPlatformWGL.SwapBuffers(wnd: oglTWindow);

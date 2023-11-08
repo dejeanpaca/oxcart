@@ -19,7 +19,9 @@ TYPE
    oxglTPlatform = object
       constructor Create();
 
+      procedure OnInitialize(); virtual;
       function PreInitWindow({%H-}wnd: oglTWindow): boolean; virtual;
+      procedure OnInitWindow({%H-}wnd: oglTWindow); virtual;
       procedure SwapBuffers({%H-}wnd: oglTWindow); virtual;
       function GetContext({%H-}wnd: oglTWindow; {%H-}shareContext: oglTRenderingContext): oglTRenderingContext; virtual;
       function ContextCurrent({%H-}wnd: oglTWindow; {%H-}context: oglTRenderingContext): boolean; virtual;
@@ -36,9 +38,19 @@ begin
 
 end;
 
+procedure oxglTPlatform.OnInitialize();
+begin
+
+end;
+
 function oxglTPlatform.PreInitWindow(wnd: oglTWindow): boolean;
 begin
    Result := false;
+end;
+
+procedure oxglTPlatform.OnInitWindow(wnd: oglTWindow);
+begin
+
 end;
 
 procedure oxglTPlatform.SwapBuffers(wnd: oglTWindow);

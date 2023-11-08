@@ -19,13 +19,8 @@ INTERFACE
       {ox}
       uOX, oxuRunRoutines, oxuWindowTypes, oxuTypes, oxuRenderer, oxuRenderers, oxuWindows,
       {renderer.gl}
-      oxuOGL, oxuglExtensions, oxuglInfo, oxuglRendererPlatform,
-      {$IFNDEF OX_LIBRARY}
-      oxuglLog
-      {$ENDIF}
-      {platform specific}
-      {$IFDEF X11}, GLX, oxuX11Platform, oxuglRendererX11{$ENDIF}
-      {$IFDEF COCOA}, oxuglCocoa, oxuCocoaPlatform, oxuglRendererCocoa{$ENDIF};
+      oxuOGL, oxuglExtensions, oxuglInfo, oxuglRendererPlatform
+      {$IFNDEF OX_LIBRARY}, oxuglLog{$ENDIF};
 
 TYPE
    { oxglTRenderer }
@@ -112,12 +107,7 @@ begin
    {initialize opengl}
    ogl.InitializePre();
 
-   {$IFDEF X11}
-   oxglx.InitGLX();
-   {$ENDIF}
-   {$IFDEF COCOA}
-   oxglCocoa.InitGL();
-   {$ENDIF}
+   glPlatform^.OnInitialize();
 end;
 
 procedure oxglTRenderer.OnDeInitialize();
@@ -149,9 +139,7 @@ begin
    ContextCurrent(wnd.RenderingContext);
    ogl.ActivateRenderingContext();
 
-   {$IF DEFINED(WINDOWS) AND (NOT DEFINED(GLES))}
-   wglChoosePixelFormatARB := TwglChoosePixelFormatARB(wglGetProcAddress('wglChoosePixelFormatARB'));
-   {$ENDIF}
+   glPlatform^.OnInitWindow(oglTWindow(wnd));
 
    Result := true;
 end;
@@ -290,14 +278,6 @@ begin
 
       glPlatform^.ContextCurrent(wnd, glRenderingContexts[context]);
 
-      {$IFDEF X11}
-      glXMakeCurrent(x11.DPY, wnd.wd.h, glRenderingContexts[context]);
-      wnd.wd.LastError := x11.GetError();
-      {$ENDIF}
-      {$IFDEF COCOA}
-      {TODO: Implement}
-      {$ENDIF}
-
       RenderingContexts[context].Used := true;
    end;
 end;
@@ -311,15 +291,6 @@ begin
       wnd := oglTWindow(RenderingContexts[context].Window);
 
       glPlatform^.ClearContext(wnd);
-
-      {$IFDEF X11}
-      glXMakeCurrent(x11.DPY, 0, nil);
-      wnd.wd.LastError := x11.GetError();
-      {$ENDIF}
-
-      {$IFDEF COCOA}
-      {TODO: Implement}
-      {$ENDIF}
 
       RenderingContexts[context].Used := false;
    end;
@@ -342,18 +313,7 @@ begin
    RemoveContext(context);
 
    if(ogl.ValidRC(rc)) then begin
-      glPlatform^.DestroyContext(wnd, rc);
-
-      {$IFDEF X11}
-      glXDestroyContext(x11.DPY, rc);
-      wnd.wd.LastError := x11.GetError();
-      {$ENDIF}
-
-      {$IFDEF COCOA}
-      {TODO: Implement}
-      {$ENDIF}
-
-      Result := wnd.wd.LastError = 0;
+      Result := glPlatform^.DestroyContext(wnd, rc);
 
       glRenderingContexts[context] := oglRenderingContextNull;
    end;
