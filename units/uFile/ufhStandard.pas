@@ -8,7 +8,8 @@ UNIT ufhStandard;
 
 INTERFACE
 
-   USES uStd, uFileUtils, uFile;
+   USES
+      uStd, uFileUtils, uFile;
 
 TYPE
 
@@ -57,20 +58,12 @@ TYPE
 
 {STANDARD FILE HANDLER}
 
-function getCopyBuffer(): pbyte;
-var
-   buf: pbyte = nil;
-
-begin
-   GetMem(buf, fFile.CopyBufferSize);
-   Result := buf;
-end;
-
 function fCopy(const src: StdString; var dst: TFile): longint;
 var
    buf: pbyte;
    f: file;
-   bread: fileint;
+   bread,
+   bufferSize,
    total: fileint;
 
    procedure cleanup();
@@ -85,24 +78,24 @@ begin
    total    := 0;
    Result   := eNONE;
 
-   buf := getCopyBuffer();
+   bufferSize := fFile.GetBuffer(buf);
+
    if(buf <> nil) then begin
       {open source file}
-      Assign(f, src);
-      Reset(f, 1);
+      FileReset(f, src);
 
       if(ioerror() = 0) then begin
          Seek(f, 0);
          {copy}
          repeat
-            blockread(f, buf^, fFile.CopyBufferSize, bread);
+            blockread(f, buf^, bufferSize, bread);
             total := total + bread;
 
             if(ioerror() = 0) then begin
                if(bread > 0) then begin
                   dst.Write(buf^, bread);
 
-                  if(dst.error <> 0) then begin
+                  if(dst.Error <> 0) then begin
                      cleanup();
                      exit;
                   end;
@@ -110,24 +103,29 @@ begin
                   break;
             end else begin
                cleanup();
-               exit(eIO);
+               exit(-eIO);
             end;
          until eof(f);
 
          cleanup();
       end else begin
          cleanup();
-         exit(eIO);
+         exit(-eIO);
       end;
    end;
+
+   Result := total;
 end;
 
 function fCopy(var src: TFile; const dst: StdString; size: fileint): longint;
 var
    f: file;
    buf: pbyte;
-   bsize: fileint;
-   siz, rd: fileint;
+   bufferSize,
+   bwrite,
+   total: fileint;
+   siz,
+   rd: fileint;
 
    procedure cleanup();
    begin
@@ -136,42 +134,47 @@ var
    end;
 
 begin
-   buf      := getCopyBuffer();
+   bufferSize := fFile.GetBuffer(buf);
    Result   := eNONE;
+   total    := 0;
+   bwrite   := 0;
 
-   if(src.error = 0) then begin
+   if(src.Error = 0) then begin
       {create file}
-      assign(f, dst);
-      rewrite(f, 1);
+      FileRewrite(f, dst);
 
       if(ioerror() = 0) then begin
          siz := size;
-         bsize := fFile.CopyBufferSize;
 
          {copy}
          repeat
-            rd := bsize;
+            rd := bufferSize;
             if(rd > siz) then
                rd := siz;
 
             src.Read(buf^, rd);
-            if(src.error = 0) then begin
-               blockwrite(f, buf^, rd);
+            if(src.Error = 0) then begin
+               blockwrite(f, buf^, rd, bwrite);
+               total := total + bwrite;
 
                if(ioerror() <> 0) then begin
                   cleanup();
-                  exit(eIO);
+                  exit(-eIO);
                end;
 
                dec(siz, rd);
             end else break;
          until (siz <= 0);
-      end else
-         Result := eIO;
+      end else begin
+         cleanup();
+         exit(-eIO);
+      end;
 
       {done}
       cleanup();
    end;
+
+   Result := total;
 end;
 
 { TStandardFileHandler }
@@ -185,7 +188,7 @@ end;
 
 procedure TStandardFileHandler.Make(var f: TFile);
 begin
-   system.new(stdPData(f.pData));
+   system.New(stdPData(f.pData));
 
    if(f.pData <> nil) then
       Zero(f.pData^, SizeOf(stdTData))
