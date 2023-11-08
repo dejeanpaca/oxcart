@@ -1081,9 +1081,9 @@ begin
    threadId := GetThreadID();
 
    if(threadId = MainThreadId) then
-      Result := HexStr(threadId, SizeOf(TThreadID) * 2)
+      Result := 'main'
    else
-      Result := 'main';
+      Result := HexStr(threadId, SizeOf(TThreadID) * 2);
 end;
 
 {$ENDIF}
