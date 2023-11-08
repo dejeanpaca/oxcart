@@ -121,6 +121,8 @@ begin
          f.fSizeLimit   := length;
          f.fOffset      := start;
 
+         f.Seek(0);
+
          exit(True);
       end else
          loge('Failed to open asset file descriptor: ' + path + ' (returned: ' + sf(handle) + ')');
