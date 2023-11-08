@@ -68,6 +68,7 @@ TYPE
       procedure Initialize(); override;
       procedure DeInitialize(); override;
       procedure SceneRenderEnd(); override;
+      procedure ResetCamera(); override;
 
       procedure UpdateAxisBBoxes();
       procedure RenderSelectAxes();
@@ -235,6 +236,13 @@ begin
 
       oxedScene.SelectedComponentPairs.Call(componentRenderParams);
    end;
+end;
+
+procedure oxedTSceneEditWindow.ResetCamera();
+begin
+   wdg.SceneRender.Camera.Reset();
+   wdg.SceneRender.Camera.IncPitchYaw(-30, -30);
+   wdg.SceneRender.Camera.vPos.Assign(10, 7.5, 15);
 end;
 
 procedure oxedTSceneEditWindow.UpdateAxisBBoxes();

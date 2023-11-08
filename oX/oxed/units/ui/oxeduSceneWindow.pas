@@ -64,7 +64,7 @@ TYPE
       procedure Update(); override;
 
       procedure SceneRenderEnd(); virtual;
-      procedure ResetCamera();
+      procedure ResetCamera(); virtual;
       procedure SceneChange(); virtual;
 
       procedure UpdateStateWidget();
