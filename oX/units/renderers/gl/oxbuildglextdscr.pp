@@ -79,6 +79,7 @@ begin
       writeln(f);
 
       writeln(f, 'TYPE');
+      writeln(f, '   oglPExtensionDescriptors = ^oglTExtensionDescriptors');
       writeln(f, '   oglTExtensionDescriptors = array[0 .. oglnExtensionDescriptors - 1] of oglTExtensionDescriptor;');
       writeln(f);
       writeln(f, 'CONST');

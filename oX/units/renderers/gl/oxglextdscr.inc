@@ -60,6 +60,7 @@
    cGL_ARB_debug_output = 54;
 
 TYPE
+   oglPExtensionDescriptors = ^oglTExtensionDescriptors;
    oglTExtensionDescriptors = array[0 .. oglnExtensionDescriptors - 1] of oglTExtensionDescriptor;
 
 CONST

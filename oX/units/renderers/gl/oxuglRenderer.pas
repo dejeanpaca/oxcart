@@ -29,7 +29,9 @@ TYPE
 
    oxglTRenderer = class(oxTRenderer)
       glRenderingContexts: array[0..oxMAXIMUM_RENDER_CONTEXT] of oglTRenderingContext;
+      {$IFDEF OX_LIBRARY_SUPPORT}
       pExtensions: oglPExtensions;
+      {$ENDIF}
 
       procedure OnInitialize(); override;
       procedure OnDeInitialize(); override;
@@ -78,9 +80,11 @@ IMPLEMENTATION
 
 procedure oxglTRenderer.OnInitialize();
 begin
-   pExtensions := @oglExtensions;
-   {$IFDEF OX_LIBRARY}
-   oglExtensions.pExternal := oxglTRenderer(ExternalRenderer).pExtensions;
+   {$IFDEF OX_LIBRARY_SUPPORT}
+   if(not ox.LibraryMode) then
+      pExtensions := @oglExtensions
+   else
+      pExtensions := oxglTRenderer(ExternalRenderer).pExtensions;
    {$ENDIF}
 
    {initialize opengl}
@@ -174,6 +178,7 @@ end;
 function oxglTRenderer.SetupWindow(wnd: oxTWindow): boolean;
 begin
    errorCode := 0;
+   oglExtensions.pExternal := pExtensions;
 
    if(ox.LibraryMode) then begin
       {in library mode, we haven't done any of this as the window was not created}
@@ -187,12 +192,14 @@ begin
    if(ogl.eRaise() <> 0) then
       log.w('gl > Errors while setting up state');
 
-   if(not ox.LibraryMode) then begin
-      {get information from OpenGL}
-      oglGetInformation(oglTWindow(wnd));
-      if(ogl.eRaise() <> 0) then
-         log.w('gl > Errors while getting information');
+   {get information from OpenGL}
+   oglGetInformation(oglTWindow(wnd));
+   if(ogl.eRaise() <> 0) then begin
+      log.w('gl > Errors while getting information');
+      exit(false);
+   end;
 
+   if(not ox.LibraryMode) then begin
       {check if versions match}
       if(oglVersionCheck(oglTWindow(wnd)) = ogleVERSION_UNSUPPORTED) then begin
          wnd.errorDescription := 'Got OpenGL version ' +
