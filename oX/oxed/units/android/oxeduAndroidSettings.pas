@@ -15,7 +15,8 @@ INTERFACE
       oxeduAndroid;
 
 CONST
-   OXED_ANDROID_DEFAULT_TARGET_VERSION = 21;
+   {android 5.1 is our default target version}
+   OXED_ANDROID_DEFAULT_TARGET_VERSION = 22;
 
 TYPE
    { oxedTAndroidSettings }
