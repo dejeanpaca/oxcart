@@ -4,12 +4,18 @@
 }
 
 {$INCLUDE oxheader.inc}
+
+{$IFNDEF OX_RESOURCE_DEBUG}
+   {$UNDEF OX_RESOURCE_DEBUG_CALLSTACK}
+{$ENDIF}
+
 UNIT oxuResourcePool;
 
 INTERFACE
 
    USES
-      {$IFDEF OX_RESOURCE_DEBUG}StringUtils, uLog, uError, {$ENDIF}
+      {$IFDEF OX_RESOURCE_DEBUG}StringUtils, uLog, {$ENDIF}
+      {$IFDEF OX_RESOURCE_DEBUG_CALLSTACK}uError, {$ENDIF}
       uStd,
       {ox}
       uOX, oxuTypes, oxuResourceLoader;
@@ -103,7 +109,7 @@ var
    res: oxTResource absolute resource;
 
 begin
-   {make sure we're not given any object}
+   {make sure we're given an object}
    if(TObject(resource) = nil) then
       exit;
 
@@ -114,13 +120,15 @@ begin
       {$IFDEF OX_RESOURCE_DEBUG}
       {check if this resource is not allocated}
       if(res.ReferenceCount = 0) then begin
-         log.w('Tried to dispose resource with a zero reference count ' + res.Path);
+         log.w('Tried to dispose resource with a zero reference count: ' + res.Path);
+         {$IFDEF OX_RESOURCE_DEBUG_CALLSTACK}
          log.w('Allocated at: ' + res.DebugAllocationPoint);
 
          if(res.DebugFreePoint <> '') then
             log.w('Freed at: ' + res.DebugFreePoint)
          else
             log.w('Current: ' + DumpCallStack(1));
+         {$ENDIF}
       end;
       {$ELSE}
       ox.Assert(res.ReferenceCount > 0, 'Tried to dispose resource with a zero reference count');
@@ -164,16 +172,19 @@ begin
    if(res.DebugFreed) then begin
       log.w('Resource already freed: ' + res.Path + ' (' + res.ClassName + ', ' + sf(res.ReferenceCount) + ')');
 
+      {$IFDEF OX_RESOURCE_DEBUG_CALLSTACK}
       if(res.DebugAllocationPoint <> '') then
          log.w('Allocated at: ' + res.DebugAllocationPoint);
 
       log.w('Current: ' + DumpCallStack(1));
+      {$ENDIF}
       exit;
    end;
 
    if(res.ReferenceCount = 0) then begin
       log.w('Resource should already have been freed: ' + res.Path + ' (' + res.ClassName + ', ' + sf(res.ReferenceCount) + ')');
 
+      {$IFDEF OX_RESOURCE_DEBUG_CALLSTACK}
       if(res.DebugAllocationPoint <> '') then
          log.w('Allocated at: ' + res.DebugAllocationPoint);
 
@@ -181,10 +192,13 @@ begin
          log.w('Freed at: ' + res.DebugFreePoint);
 
       log.v('Current at: ' + DumpCallStack(1));
+      {$ENDIF}
    end;
 
    res.DebugFreed := true;
+   {$IFDEF OX_RESOURCE_DEBUG_CALLSTACK}
    res.DebugFreePoint := DumpCallStack(1);
+   {$ENDIF}
    res.FreeInResourceMethod := true;
 
    oxTResource(resource) := nil;
