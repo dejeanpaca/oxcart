@@ -13,11 +13,7 @@ USES
    {app}
    appuMouse,
    {oX}
-   uOX, oxuTypes, oxuRunRoutines, oxuResourcePool,
-   {$IFDEF OX_FEATURE_CONSOLE}
-   oxuConsoleBackend,
-   {$ENDIF}
-   oxuwndBase,
+   uOX, oxuTypes, oxuRunRoutines, oxuResourcePool, oxuwndBase,
    {ui}
    uiuControl, uiuWindow, uiWidgets, uiuWidget,
    {widgets}
@@ -157,6 +153,10 @@ begin
    Title := 'Resource inspector';
    Instance := oxuiTResourceInspectorWindow;
 
+   {$IFDEF OX_FEATURE_CONSOLE}
+   ConsoleOpenCommand := 'wnd:resource_inspector';
+   {$ENDIF}
+
    inherited Create;
 end;
 
@@ -165,21 +165,9 @@ begin
    inherited;
 end;
 
-{$IFDEF OX_FEATURE_CONSOLE}
-procedure consoleCallback({%H-}con: conPConsole);
-begin
-   oxwndResourceInspector.Open();
-end;
-{$ENDIF}
-
 procedure Initialize();
 begin
    oxwndResourceInspector.Create();
-
-   {$IFDEF OX_FEATURE_CONSOLE}
-   if(console.Selected <> nil) then
-      console.Selected^.AddCommand('wnd:resource_inspector', @consoleCallback);
-   {$ENDIF}
 end;
 
 procedure deinitialize();

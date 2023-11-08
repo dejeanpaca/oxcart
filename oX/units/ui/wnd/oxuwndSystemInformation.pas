@@ -13,11 +13,7 @@ USES
    {app}
    uAppInfo, appuSysInfoBase,
    {oX}
-   uOX, oxuTypes, oxuRunRoutines, oxuRenderer,
-   {$IFDEF OX_FEATURE_CONSOLE}
-   oxuConsoleBackend,
-   {$ENDIF}
-   oxuwndBase,
+   uOX, oxuTypes, oxuRunRoutines, oxuRenderer, oxuwndBase,
    {ui}
    uiuControl, uiuWindow, uiWidgets, uiuWidget,
    {widgets}
@@ -87,24 +83,16 @@ begin
    Height := 200;
    Title := 'System Information';
 
+   {$IFDEF OX_FEATURE_CONSOLE}
+   ConsoleOpenCommand := 'wnd:sysinfo';
+   {$ENDIF}
+
    inherited;
 end;
-
-{$IFDEF OX_FEATURE_CONSOLE}
-procedure consoleCallback({%H-}con: conPConsole);
-begin
-   oxwndSystemInformation.Open();
-end;
-{$ENDIF}
 
 procedure Initialize();
 begin
    oxwndSystemInformation.Create();
-
-   {$IFDEF OX_FEATURE_CONSOLE}
-   if(console.Selected <> nil) then
-      console.Selected^.AddCommand('wnd:sysinfo', @consoleCallback);
-   {$ENDIF}
 end;
 
 procedure deinitialize();
