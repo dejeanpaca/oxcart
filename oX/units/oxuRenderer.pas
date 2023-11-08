@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, uColors, uLog, uImage, uComponentProvider, StringUtils, vmVector,
       {oX}
-      oxuTypes, oxuWindowTypes, oxuGlobalInstances, oxuPlatform, oxuRunRoutines;
+      uOX, oxuTypes, oxuWindowTypes, oxuGlobalInstances, oxuPlatform, oxuRunRoutines;
 
 TYPE
    { oxTRendererProperites }
@@ -216,7 +216,8 @@ end;
 
 procedure oxTRenderer.AfterInitialize();
 begin
-   AfterInit.iCall();
+   if(not ox.InitializationFailed) then
+      AfterInit.iCall();
 end;
 
 procedure oxTRenderer.AfterDeinitialize();
