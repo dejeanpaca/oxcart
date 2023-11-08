@@ -230,6 +230,12 @@ TYPE
       uiWINDOW_POINTER_SIZE_BR
    );
 
+   uiTLink = record
+      Caption,
+      Link,
+      Summary: string;
+   end;
+
 VAR
    {event handler}
    uievhWINDOW: appTEventHandler;
