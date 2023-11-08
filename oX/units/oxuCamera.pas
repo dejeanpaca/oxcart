@@ -37,7 +37,6 @@ TYPE
       vRight,
       vTarget: TVector3;
 
-      Rotation: TVector3f;
       {camera radius}
       Radius: single;
 
@@ -62,8 +61,6 @@ TYPE
 
       {set camera to pitch and yaw (assuming standard up vector)}
       procedure PitchYaw(pitch, yaw: single);
-      {reset pitch yaw from the existing angles}
-      procedure PitchYaw();
       {set forward (view) from rotation (in degrees)}
       procedure ForwardFromRotation(const newRotation: TVector3f);
       {increase camera angles by pitch and yaw (assuming standard up vector)}
@@ -72,8 +69,6 @@ TYPE
       {create the up vector from the view vector}
       procedure UpFromView();
 
-      {setup angles from the view and up vectors}
-      procedure SetupRotation();
       {get pitch, yaw and roll}
       procedure GetRotationAngles(out v: TVector3f);
 
@@ -155,19 +150,12 @@ begin
    ForwardFromRotation(vRot);
 end;
 
-procedure oxTCamera.PitchYaw();
-begin
-   ForwardFromRotation(Rotation);
-end;
-
 procedure oxTCamera.ForwardFromRotation(const newRotation: TVector3f);
 var
    pitch,
    yaw: single;
 
 begin
-   Rotation := newRotation;
-
    pitch := newRotation[0] * vmcToRad;
    yaw   := newRotation[1] * vmcToRad;
 
@@ -181,21 +169,26 @@ begin
 end;
 
 procedure oxTCamera.IncPitchYaw(pitch, yaw: single);
+var
+   rotation: TVector3f;
+
 begin
-   Rotation[0] := Rotation[0] + pitch;
-   Rotation[1] := Rotation[1] + yaw;
+   GetrotationAngles(rotation);
 
-   if(Rotation[0] >= 0) then
-      Rotation[0] := Rotation[0] mod 360.0
+   rotation[0] := rotation[0] + pitch;
+   rotation[1] := rotation[1] + yaw;
+
+   if(rotation[0] >= 0) then
+      rotation[0] := rotation[0] mod 360.0
    else
-      Rotation[0] := -(abs(Rotation[0]) mod 360.0);
+      rotation[0] := -(abs(rotation[0]) mod 360.0);
 
-   if(Rotation[1] >= 0) then
-      Rotation[1] := Rotation[1] mod 360.0
+   if(rotation[1] >= 0) then
+      rotation[1] := rotation[1] mod 360.0
    else
-      Rotation[1] := -(abs(Rotation[1]) mod 360.0);
+      rotation[1] := -(abs(rotation[1]) mod 360.0);
 
-   PitchYaw(Rotation[0], Rotation[1]);
+   PitchYaw(rotation[0], rotation[1]);
 end;
 
 procedure oxTCamera.UpFromView();
@@ -205,11 +198,6 @@ begin
    vRight := vUp.Cross(vView).Normalized();
 
    vUp := vView.Cross(vRight).Normalized();
-end;
-
-procedure oxTCamera.SetupRotation();
-begin
-   GetRotationAngles(Rotation);
 end;
 
 procedure oxTCamera.GetRotationAngles(out v: TVector3f);
@@ -317,8 +305,6 @@ begin
    vUp    := oxvCameraUp;
    vRight := oxvCameraRight;
 
-   SetupRotation();
-
    Transform := oxTTransform.Instance();
 end;
 
@@ -414,8 +400,6 @@ begin
       Camera.vView.Normalize();
 
       Camera.vRight := Camera.vView.Cross(Camera.vUp);
-
-      camera.SetupRotation();
    end;
 end;
 
@@ -427,7 +411,6 @@ INITIALIZATION
    serialization.AddProperty('vUp', @oxTCamera(nil^).vUp, oxSerialization.Types.Vector3f);
    serialization.AddProperty('vRight', @oxTCamera(nil^).vRight, oxSerialization.Types.Vector3f);
 
-   serialization.AddProperty('Rotation', @oxTCamera(nil^).Rotation, oxSerialization.Types.Vector3f);
    serialization.AddProperty('Radius', @oxTCamera(nil^).Radius, oxSerialization.Types.Single);
 
 FINALIZATION
