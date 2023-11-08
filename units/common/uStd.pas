@@ -12,6 +12,13 @@ INTERFACE
       sysutils
       {$IFDEF UNIX}, BaseUnix{$ENDIF};
 
+TYPE
+   TNilEnum = (
+      NIL_ENUM
+   );
+
+   TNilSet = set of TNilEnum;
+
 CONST
    EmptyShortString: string[1] = '';
 
