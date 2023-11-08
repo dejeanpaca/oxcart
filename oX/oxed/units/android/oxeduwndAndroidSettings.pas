@@ -1,12 +1,12 @@
 {
-   oxeduAndroidSettingsWindow, oxed android settings window
+   oxeduwndAndroidSettings, oxed android settings window
    Copyright (C) 2019. Dejan Boras
 
    Started On:    17.06.2019.
 }
 
 {$INCLUDE oxdefines.inc}
-UNIT oxeduAndroidSettingsWindow;
+UNIT oxeduwndAndroidSettings;
 
 INTERFACE
 
@@ -42,8 +42,8 @@ begin
    if(p <> nil) then
       p.Enabled := wdg.Enabled.Checked();
 
-   oxedAndroidSettings.PackageName := wdg.PackageName.GetText();
-   oxedAndroidSettings.ManualFileManagement := wdg.ManualFileManagement.Checked();
+   oxedAndroidSettings.Project.PackageName := wdg.PackageName.GetText();
+   oxedAndroidSettings.Project.ManualFileManagement := wdg.ManualFileManagement.Checked();
 end;
 
 procedure revertCallback();
@@ -56,8 +56,8 @@ begin
    if(p <> nil) then
       wdg.Enabled.Check(p.Enabled);
 
-   wdg.PackageName.SetText(oxedAndroidSettings.PackageName);
-   wdg.ManualFileManagement.Check(oxedAndroidSettings.ManualFileManagement);
+   wdg.PackageName.SetText(oxedAndroidSettings.Project.PackageName);
+   wdg.ManualFileManagement.Check(oxedAndroidSettings.Project.ManualFileManagement);
 end;
 
 procedure InitSettings();
@@ -85,7 +85,7 @@ begin
    uiWidget.LastRect.GoBelow();
 
    wdg.ManualFileManagement := wdgCheckbox.Add('Manual file management (aka do it yourself)').
-      Check(oxedAndroidSettings.ManualFileManagement);
+      Check(oxedAndroidSettings.Project.ManualFileManagement);
 end;
 
 procedure init();
