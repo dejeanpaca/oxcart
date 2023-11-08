@@ -6,6 +6,8 @@
 }
 
 {$INCLUDE oxdefines.inc}
+{$INCLUDE oxfeaturedefines.inc}
+
 UNIT oxuFreetypeFonts;
 
 INTERFACE
@@ -93,7 +95,7 @@ begin
       font := oxTFreetypeFont.Create();
       font.FontName := name;
       font.Face := face;
-      font.Scalable := face^.face_flags and  FT_FACE_FLAG_SCALABLE > 0;
+      font.Scalable := face^.face_flags and FT_FACE_FLAG_SCALABLE > 0;
       font.AlphaType := AlphaType;
 
       if(keep) then
