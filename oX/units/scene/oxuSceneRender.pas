@@ -17,7 +17,7 @@ INTERFACE
       oxuProjectionType, oxuProjection,
       oxuWindowTypes, oxuCamera, oxuRender, oxuTransform, oxuWindows, oxuSerialization,
       oxuMaterial, oxuGlobalInstances,
-      oxuScene, oxuEntity, oxuSceneManagement,
+      oxuScene, oxuEntity, oxuSceneManagement, oxuRenderLayerComponent,
       oxuComponent, oxuCameraComponent, oxuRenderComponent;
 
 TYPE
@@ -37,7 +37,10 @@ TYPE
    oxTSceneRenderer = class
       Scene: oxTScene;
 
-      procedure RenderCamera(var params: oxTSceneRenderParameters);
+      procedure RenderLayer(layer: oxTRenderLayerComponent; var params: oxTSceneRenderParameters; const cameras: oxTComponentsList);
+
+      procedure RenderCamera(var params: oxTSceneRenderParameters; camera: oxTCameraComponent; entity: oxTEntity = nil);
+      procedure RenderCamera(var params: oxTSceneRenderParameters; entity: oxTEntity = nil);
       procedure Render(const projection: oxTProjection);
 
       procedure RenderEntities(const entities: oxTEntities; var params: oxTSceneRenderParameters);
@@ -96,8 +99,36 @@ end;
 
 { oxTSceneRenderer }
 
-procedure oxTSceneRenderer.RenderCamera(var params: oxTSceneRenderParameters);
+procedure oxTSceneRenderer.RenderLayer(layer: oxTRenderLayerComponent; var params: oxTSceneRenderParameters; const cameras: oxTComponentsList);
+var
+   i: loopint;
+
 begin
+   for i := 0 to cameras.n - 1 do begin
+      RenderCamera(params, oxTCameraComponent(cameras.List[i]), oxTEntity(layer.Parent));
+   end;
+end;
+
+procedure oxTSceneRenderer.RenderCamera(var params: oxTSceneRenderParameters; camera: oxTCameraComponent; entity: oxTEntity);
+begin
+   if(not oxTEntity(camera.Parent).Enabled) or (not camera.Enabled) then
+      exit;
+
+   params.Camera := @camera.Camera;
+
+   if(camera.UseSceneProjection) then
+      params.Projection := @params.Projection
+   else
+      params.Projection := @camera.Projection;
+
+   RenderCamera(params);
+end;
+
+procedure oxTSceneRenderer.RenderCamera(var params: oxTSceneRenderParameters; entity: oxTEntity);
+begin
+   if(entity = nil) then
+      entity := Scene;
+
    params.Projection^.ClearColor := Scene.World.ClearColor;
 
    params.Projection^.Apply();
@@ -111,7 +142,7 @@ begin
    oxMaterial.Default.Apply();
 
    CameraBegin(params);
-   RenderEntities(Scene.Children, params);
+   RenderEntities(entity.Children, params);
    CameraEnd(params);
 end;
 
@@ -122,6 +153,8 @@ var
    cameraComponent: oxTCameraComponent;
    params: oxTSceneRenderParameters;
 
+   layers: oxTComponentsList;
+
 begin
    if(Scene = nil) then
       exit;
@@ -129,25 +162,24 @@ begin
    OnBegin();
 
    cameras.Initialize(cameras);
+   layers.Initialize(layers);
 
    Scene.GetComponentsInChildren(oxTCameraComponent, cameras);
+   Scene.GetComponents(oxTRenderLayerComponent, layers);
 
    oxTSceneRenderParameters.Init(params);
    params.Projection := @projection;
 
+   if(layers.n > 0) then begin
+      for i := 0 to layers.n - 1 do begin
+         params.Projection := projection;
+         RenderLayer(oxTRenderLayerComponent(layers.List[i]), params, cameras);
+      end;
+   end;
+
    for i := 0 to (cameras.n - 1) do begin
-      if(not oxTEntity(cameras.List[i].Parent).Enabled) then
-         continue;
-
-      cameraComponent := oxTCameraComponent(cameras.List[i]);
-      params.Camera := @cameraComponent.Camera;
-
-      if(cameraComponent.UseSceneProjection) then
-         params.Projection := @projection
-      else
-         params.Projection := @cameraComponent.Projection;
-
-      RenderCamera(params);
+      params.Projection := projection;
+      RenderCamera(params, oxTCameraComponent(cameras.List[i]), nil);
    end;
 
    cameras.Dispose();
