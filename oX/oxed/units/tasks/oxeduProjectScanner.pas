@@ -88,10 +88,6 @@ var
 begin
    Result := true;
 
-   {ignore stuff in the temp directory}
-   if(Pos(oxPROJECT_TEMP_DIRECTORY, fd.f.Name) = 1) then
-      exit;
-
    ext := ExtractFileExt(fd.f.Name);
    f.FileName := fd.f.Name;
    f.Extension := ext;
