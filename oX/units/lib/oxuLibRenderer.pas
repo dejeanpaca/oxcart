@@ -44,7 +44,7 @@ begin
       oxTRenderer(oxTWindow(externalWindows^.ExternalWindows.List[0].oxwParent).Renderer).Name;
 
    log.v('Lib using renderer: ' + oxRenderers.vSelectedRenderer);
-   oxRenderers.SetRenderer();
+   oxRenderers.SetInitial();
 end;
 
 END.
