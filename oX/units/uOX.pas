@@ -55,6 +55,8 @@ TYPE
       OnStart,
       {called after initialization, but before start to load required resources}
       OnLoad,
+      {called before events are processed (pre-run)}
+      OnPreEvents,
       {called each run cycle}
       OnRun,
       {called on the end of the run cylce (after OnRun)}
@@ -128,6 +130,7 @@ INITIALIZATION
    TProcedures.Initialize(ox.OnDeinitialize);
    TProcedures.Initialize(ox.OnLoad);
    TProcedures.Initialize(ox.OnStart);
+   TProcedures.Initialize(ox.OnPreEvents);
    TProcedures.Initialize(ox.OnRun);
    TProcedures.Initialize(ox.OnRunAfter);
 
