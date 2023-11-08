@@ -294,8 +294,8 @@ TYPE
 
       procedure InitDefaults();
 
-      procedure Initialize(rvm: TVideoMode);
-      procedure Initialize();
+      function Initialize(rvm: TVideoMode): boolean;
+      function Initialize(): boolean;
       procedure Deinitialize();
 
       {mode set}
@@ -885,18 +885,19 @@ begin
    SetModeBuffer();
 end;
 
-procedure TVideoGlobal.Initialize(rvm: TVideoMode);
+function TVideoGlobal.Initialize(rvm: TVideoMode): boolean;
 begin
-   Initialize();
+   Result := Initialize();
 
-   if(Error = 0) then
+   if(Result) then
       {set mode}
       SetMode(rvm)
 end;
 
-procedure TVideoGlobal.Initialize();
+function TVideoGlobal.Initialize(): boolean;
 begin
    ErrorReset();
+   Result := false;
 
    if(not Initialized) then begin
       {we can't have output into the terminal}
@@ -907,7 +908,7 @@ begin
 
       if(video.ErrorCode <> vioOk) then begin
          eRaise(tveINIT_FAIL);
-         exit;
+         exit(false);
       end;
 
       tvGlobal.DC.GetDriverCapabilities();
@@ -917,7 +918,7 @@ begin
       InitDefaults();
 
       if(Error <> 0) then
-         exit;
+         exit(false);
 
       Initialized := true;
       log.i('tv > initialized: ' + tvCurrent.Mode.ToString());
@@ -925,6 +926,8 @@ begin
       tvCurrent.GotoXY();
 
       video.SetCursorType(crHidden);
+
+      Result := Error = eNONE;
    end;
 end;
 
