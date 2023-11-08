@@ -1241,9 +1241,11 @@ begin
    {start off empty}
    oxedBuildLog.Log.Reset();
 
-   if(not SetupFPCPlatform()) then begin
-      Reset();
-      exit;
+   if(BuildBinary) then begin
+      if(not SetupFPCPlatform()) then begin
+         Reset();
+         exit;
+      end;
    end;
 
    {we start off assuming things are fine}
