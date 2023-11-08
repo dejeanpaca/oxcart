@@ -128,6 +128,7 @@ INTERFACE
       oxuconWindow,
       oxuconKeyMappings,
       oxuconInput,
+      oxuconOpenPath,
       {$ENDIF}
 
       {$IFDEF OX_FEATURE_MODELS}
