@@ -161,7 +161,10 @@ begin
    if(assetPath = '') then
       assetPath := tryDetermineAssetPath(GetCurrentDir());
 
-   oxAssetPaths.Add(assetPath);
+   if(assetPath <> '') then begin
+      log.v('ox > Auto determined asset path: ' + assetPath);
+      oxAssetPaths.Add(assetPath);
+   end;
    {$ENDIF}
 end;
 
