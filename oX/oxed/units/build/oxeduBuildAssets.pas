@@ -24,7 +24,9 @@ TYPE
       {source path, includes package path (or full path to the transformed file)}
       Source,
       {full destination path}
-      Target: StdString;
+      Target,
+      {relative path as it would end up within the built project}
+      RelativePath: StdString;
    end;
 
    {this class handles deploying the actual assets, after they've been processed}
@@ -138,6 +140,7 @@ begin
 
    aF.Source := f.PackagePath + f.PackageFileName;
    aF.Target := oxedBuildAssets.CurrentTarget + f.PackageFileName;
+   aF.RelativePath := f.PackageFileName;
 
    aF.CurrentPackage := oxedBuildAssets.Current.Package;
 
