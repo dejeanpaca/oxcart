@@ -121,67 +121,67 @@ TYPE
       class function ValidHandle(handle: THandle): boolean; static; inline;
 
       {check if a file exists and return its size, otherwise return -1}
-      function Exists(const fn: string): fileint;
+      class function Exists(const fn: string): fileint; static;
       {gets the size of a specified file, or returns -1 if an error occurs (note: will reset file position)}
-      function hFileSize(const f: THandle): fileint;
+      class function hFileSize(const f: THandle): fileint; static;
       {checks if a directory exists}
-      function DirectoryExists(const dir: string): boolean;
+      class function DirectoryExists(const dir: string): boolean; static;
       {checks if a directory is empty}
-      function DirectoryEmpty(const dir: string): boolean;
+      class function DirectoryEmpty(const dir: string): boolean; static;
       {tells if the specified path contains sub-directories}
-      function ContainsDirectories(const dir: string): boolean;
+      class function ContainsDirectories(const dir: string): boolean; static;
       {create the specified directory (unlike CreateDir, returns true if directory already exists)}
-      function CreateDirectory(const dir: string): boolean;
+      class function CreateDirectory(const dir: string): boolean; static;
       {remove directory recusively, returns true if succeeds, returns false if any files/paths failed to delete}
-      function RmDir(const dir: string): boolean;
+      class function RmDir(const dir: string): boolean; static;
 
       {create a file, returns true if successful}
-      function Create(const fn: string): boolean;
+      class function Create(const fn: string): boolean; static;
       {erase a file, returns true if successful}
-      function Erase(const fn: string): boolean;
+      class function Erase(const fn: string): boolean; static;
 
       {copy a file from source to destination}
-      function Copy(const source, destination: string): longint;
+      class function Copy(const source, destination: string): longint; static;
 
       {normalize path, correct directory separators and replace special characters}
-      procedure NormalizePath(var s: string);
+      class procedure NormalizePath(var s: string); static;
       {do everything NormalizePath() does and also include trailing delimiter}
-      procedure NormalizePathEx(var s: string);
+      class procedure NormalizePathEx(var s: string); static;
 
       {load a file as a string}
-      function LoadString(const fn: string; out data: string): fileint;
+      class function LoadString(const fn: string; out data: string): fileint; static;
       {load file}
-      function Load(const fn: string; out data: pointer): fileint;
+      class function Load(const fn: string; out data: pointer): fileint; static;
 
       {load string from a pipe file (or regular file)}
-      function LoadStringPipe(const fn: string; out data: string): fileint;
+      class function LoadStringPipe(const fn: string; out data: string): fileint; static;
 
       {write a file}
-      function CreateFile(const fn: string): longint;
+      class function CreateFile(const fn: string): longint; static;
       {write a file}
-      function Write(const fn: string; var data; size: fileint): longint;
+      class function Write(const fn: string; var data; size: fileint): longint; static;
       {write a file}
-      function WriteString(const fn: string; const data: string): longint;
+      class function WriteString(const fn: string; const data: string): longint; static;
 
       {save specified memory to file}
-      function SaveMem(const fn: string; var m; size: int64): int64;
+      class function SaveMem(const fn: string; var m; size: int64): int64; static;
       {load file to memory, with the specified amount of bytes}
-      function LoadToMem(const fn: string; var m; size: int64): int64;
+      class function LoadToMem(const fn: string; var m; size: int64): int64; static;
       {load file to memory, and allocate enough memory to fit the file}
-      function LoadToMemAlloc(const fn: string; var m: pointer): int64;
+      class function LoadToMemAlloc(const fn: string; var m: pointer): int64; static;
 
       {tells if a file is a hidden file}
-      function IsHiddenFile(f: TRawbyteSearchRec): boolean;
+      class function IsHiddenFile(f: TRawbyteSearchRec): boolean; static;
 
       {find all files in a path and return them as a list of file descriptors, returns 0 if no error}
-      function FindAll(const path: string; attr: longint; out list: TFileDescriptorList; properties: TBitSet = 0): longint;
-      function FindAll(const path: string; out list: TFileDescriptorList; properties: TBitSet = 0): longint;
-      function FindDirectories(const path: string; attr: longint; out list: TFileDescriptorList; properties: TBitSet = 0): longint;
+      class function FindAll(const path: string; attr: longint; out list: TFileDescriptorList; properties: TBitSet = 0): longint; static;
+      class function FindAll(const path: string; out list: TFileDescriptorList; properties: TBitSet = 0): longint; static;
+      class function FindDirectories(const path: string; attr: longint; out list: TFileDescriptorList; properties: TBitSet = 0): longint; static;
 
       {sort files}
-      procedure Sort(var list: TFileDescriptorList; directoriesFirst: boolean = true; caseSensitive: boolean = false);
+      class procedure Sort(var list: TFileDescriptorList; directoriesFirst: boolean = true; caseSensitive: boolean = false); static;
       {only sorts directories to be first}
-      procedure SortDirectoriesFirst(var list: TFileDescriptorList);
+      class procedure SortDirectoriesFirst(var list: TFileDescriptorList); static; static;
    end;
 
 VAR
@@ -223,7 +223,7 @@ begin
    {$ENDIF}
 end;
 
-function TFileUtilsGlobal.Exists(const fn: string): fileint;
+class function TFileUtilsGlobal.Exists(const fn: string): fileint;
 var
    f: file;
 
@@ -246,19 +246,19 @@ begin
       result := -1;
 end;
 
-function TFileUtilsGlobal.hFileSize(const f: THandle): fileint;
+class function TFileUtilsGlobal.hFileSize(const f: THandle): fileint;
 begin
    Result := FileSeek(f, fileint(0), fsFromEnd);
    if(Result <> -1) then
       FileSeek(f, fileint(0), fsFromBeginning);
 end;
 
-function TFileUtilsGlobal.DirectoryExists(const dir: string): boolean;
+class function TFileUtilsGlobal.DirectoryExists(const dir: string): boolean;
 begin
    result := sysutils.DirectoryExists(dir);
 end;
 
-function TFileUtilsGlobal.DirectoryEmpty(const dir: string): boolean;
+class function TFileUtilsGlobal.DirectoryEmpty(const dir: string): boolean;
 var
    f: TRawbyteSearchRec;
    error: longint;
@@ -284,7 +284,7 @@ begin
    exit(false);
 end;
 
-function TFileUtilsGlobal.ContainsDirectories(const dir: string): boolean;
+class function TFileUtilsGlobal.ContainsDirectories(const dir: string): boolean;
 var
    f: TRawbyteSearchRec;
    error: longint;
@@ -307,7 +307,7 @@ begin
    exit(false);
 end;
 
-function TFileUtilsGlobal.CreateDirectory(const dir: string): boolean;
+class function TFileUtilsGlobal.CreateDirectory(const dir: string): boolean;
 begin
    {first find if the path exists}
    if(not DirectoryExists(dir)) then
@@ -316,7 +316,7 @@ begin
       result := true;
 end;
 
-function RmDirChildren(const dir: string): boolean;
+class function RmDirChildren(const dir: string): boolean;
 var
    src: TSearchRec;
    code: longint;
@@ -362,12 +362,12 @@ begin
    FindClose(src);
 end;
 
-function TFileUtilsGlobal.RmDir(const dir: string): boolean;
+class function TFileUtilsGlobal.RmDir(const dir: string): boolean;
 begin
    result := RmDirChildren(ExcludeTrailingPathDelimiter(dir));
 end;
 
-function TFileUtilsGlobal.Create(const fn: string): boolean;
+class function TFileUtilsGlobal.Create(const fn: string): boolean;
 var
    f: file;
 
@@ -387,12 +387,12 @@ begin
    exit(false);
 end;
 
-function TFileUtilsGlobal.Erase(const fn: string): boolean;
+class function TFileUtilsGlobal.Erase(const fn: string): boolean;
 begin
    result := DeleteFile(fn);
 end;
 
-function TFileUtilsGlobal.Copy(const source, destination: string): longint;
+class function TFileUtilsGlobal.Copy(const source, destination: string): longint;
 const
   BUFFER_SIZE = 32768;
 
@@ -459,7 +459,7 @@ begin
    ioErrorIgn();
 end;
 
-procedure TFileUtilsGlobal.NormalizePath(var s: string);
+class procedure TFileUtilsGlobal.NormalizePath(var s: string);
 begin
    ReplaceDirSeparators(s);
 
@@ -467,7 +467,7 @@ begin
       s := StringReplace(s, '~', homePath, []);
 end;
 
-procedure TFileUtilsGlobal.NormalizePathEx(var s: string);
+class procedure TFileUtilsGlobal.NormalizePathEx(var s: string);
 begin
    NormalizePath(s);
 
@@ -475,7 +475,7 @@ begin
       s := IncludeTrailingPathDelimiter(s);
 end;
 
-function TFileUtilsGlobal.LoadString(const fn: string; out data: string): fileint;
+class function TFileUtilsGlobal.LoadString(const fn: string; out data: string): fileint;
 var
    f: file;
    size,
@@ -537,7 +537,7 @@ begin
       Result := -error;
 end;
 
-function TFileUtilsGlobal.Load(const fn: string; out data: pointer): fileint;
+class function TFileUtilsGlobal.Load(const fn: string; out data: pointer): fileint;
 var
    f: file;
    size,
@@ -594,7 +594,7 @@ begin
       result := -error;
 end;
 
-function TFileUtilsGlobal.LoadStringPipe(const fn: string; out data: string): fileint;
+class function TFileUtilsGlobal.LoadStringPipe(const fn: string; out data: string): fileint;
 var
    buffer: array[0..32767] of char;
    f: THandle;
@@ -674,7 +674,7 @@ begin
    Result := TotalSize;
 end;
 
-function TFileUtilsGlobal.CreateFile(const fn: string): longint;
+class function TFileUtilsGlobal.CreateFile(const fn: string): longint;
 var
    f: file;
    error: loopint;
@@ -702,7 +702,7 @@ begin
       Result := 0;
 end;
 
-function TFileUtilsGlobal.Write(const fn: string; var data; size: fileint): longint;
+class function TFileUtilsGlobal.Write(const fn: string; var data; size: fileint): longint;
 var
    f: file;
    countWritten: int64;
@@ -747,7 +747,7 @@ begin
       Result := eNONE;
 end;
 
-function TFileUtilsGlobal.WriteString(const fn: string; const data: string): longint;
+class function TFileUtilsGlobal.WriteString(const fn: string; const data: string): longint;
 begin
    if(data <> '') then
       result := Write(fn, (@data[1])^, Length(data))
@@ -755,7 +755,7 @@ begin
       result := CreateFile(fn);
 end;
 
-function TFileUtilsGlobal.SaveMem(const fn: string; var m; size: int64): int64;
+class function TFileUtilsGlobal.SaveMem(const fn: string; var m; size: int64): int64;
 var
    f: file;
    brw: int64 = 0;
@@ -789,7 +789,7 @@ begin
    result := brw;
 end;
 
-function TFileUtilsGlobal.LoadToMem(const fn: string; var m; size: int64): int64;
+class function TFileUtilsGlobal.LoadToMem(const fn: string; var m; size: int64): int64;
 var
    f: file;
    br: int64 = 0;
@@ -840,7 +840,7 @@ begin
    cleanup();
 end;
 
-function TFileUtilsGlobal.LoadToMemAlloc(const fn: string; var m: pointer): int64;
+class function TFileUtilsGlobal.LoadToMemAlloc(const fn: string; var m: pointer): int64;
 var
    f: file;
    br: int64 = 0;
@@ -890,7 +890,7 @@ begin
    cleanup();
 end;
 
-function TFileUtilsGlobal.IsHiddenFile(f: TRawbyteSearchRec): boolean;
+class function TFileUtilsGlobal.IsHiddenFile(f: TRawbyteSearchRec): boolean;
 begin
    Result := (f.Name[1] = '.') and (f.Name <> '..') and (f.Name <> '.');
 
@@ -899,7 +899,7 @@ begin
    {$ENDIF}
 end;
 
-function TFileUtilsGlobal.FindAll(const path: string; attr: longint; out list: TFileDescriptorList; properties: TBitSet): longint;
+class function TFileUtilsGlobal.FindAll(const path: string; attr: longint; out list: TFileDescriptorList; properties: TBitSet): longint;
 var
    f: TRawbyteSearchRec;
    error: longint;
@@ -953,17 +953,17 @@ begin
    result := error;
 end;
 
-function TFileUtilsGlobal.FindAll(const path: string; out list: TFileDescriptorList; properties: TBitSet): longint;
+class function TFileUtilsGlobal.FindAll(const path: string; out list: TFileDescriptorList; properties: TBitSet): longint;
 begin
    result := FindAll(path, faDirectory or faReadOnly, list, properties);
 end;
 
-function TFileUtilsGlobal.FindDirectories(const path: string; attr: longint; out list: TFileDescriptorList; properties: TBitSet): longint;
+class function TFileUtilsGlobal.FindDirectories(const path: string; attr: longint; out list: TFileDescriptorList; properties: TBitSet): longint;
 begin
    result := FindAll(path, attr, list, properties or FILE_FIND_ALL_ONLY_DIRECTORIES);
 end;
 
-procedure TFileUtilsGlobal.Sort(var list: TFileDescriptorList; directoriesFirst: boolean; caseSensitive: boolean);
+class procedure TFileUtilsGlobal.Sort(var list: TFileDescriptorList; directoriesFirst: boolean; caseSensitive: boolean);
 Var
    i,
    j,
@@ -1082,7 +1082,7 @@ Begin
    end;
 end;
 
-procedure TFileUtilsGlobal.SortDirectoriesFirst(var list: TFileDescriptorList);
+class procedure TFileUtilsGlobal.SortDirectoriesFirst(var list: TFileDescriptorList);
 Var
    i,
    j,
@@ -1117,6 +1117,57 @@ Begin
 
       step := step div 2;
    end;
+end;
+
+{ TFileTraverse }
+
+procedure TFileTraverse.Initialize();
+begin
+   Recursive := true;
+end;
+
+class procedure TFileTraverse.Initialize(out traverse: TFileTraverse);
+begin
+   ZeroPtr(@traverse, SizeOf(traverse));
+   traverse.Initialize();
+end;
+
+procedure TFileTraverse.Run(const startPath: string);
+begin
+   path           := startPath;
+   stopTraverse   := false;
+   Running        := true;
+
+   RunDirectory('');
+   Running := false;
+end;
+
+procedure TFileTraverse.Run();
+begin
+   Run('');
+end;
+
+procedure TFileTraverse.AddExtension(const ext: string);
+begin
+   SetLength(Extensions, Length(Extensions) + 1);
+   Extensions[Length(Extensions) - 1] := ext;
+end;
+
+procedure TFileTraverse.ExcludeExtension(const ext: string);
+begin
+   SetLength(ExtensionsBlacklist, Length(ExtensionsBlacklist) + 1);
+   ExtensionsBlacklist[Length(ExtensionsBlacklist) - 1] := ext;
+end;
+
+procedure TFileTraverse.ResetExtensions();
+begin
+   SetLength(ExtensionsBlacklist, 0);
+   SetLength(Extensions, 0);
+end;
+
+procedure TFileTraverse.Stop();
+begin
+   stopTraverse := true;
 end;
 
 procedure TFileTraverse.RunDirectory(const name: string);
@@ -1193,57 +1244,6 @@ begin
 
    {we're done}
    FindClose(src);
-end;
-
-{ TFileTraverse }
-
-procedure TFileTraverse.Initialize();
-begin
-   Recursive := true;
-end;
-
-class procedure TFileTraverse.Initialize(out traverse: TFileTraverse);
-begin
-   ZeroPtr(@traverse, SizeOf(traverse));
-   traverse.Initialize();
-end;
-
-procedure TFileTraverse.Run(const startPath: string);
-begin
-   path           := startPath;
-   stopTraverse   := false;
-   Running        := true;
-
-   RunDirectory('');
-   Running := false;
-end;
-
-procedure TFileTraverse.Run();
-begin
-   Run('');
-end;
-
-procedure TFileTraverse.AddExtension(const ext: string);
-begin
-   SetLength(Extensions, Length(Extensions) + 1);
-   Extensions[Length(Extensions) - 1] := ext;
-end;
-
-procedure TFileTraverse.ExcludeExtension(const ext: string);
-begin
-   SetLength(ExtensionsBlacklist, Length(ExtensionsBlacklist) + 1);
-   ExtensionsBlacklist[Length(ExtensionsBlacklist) - 1] := ext;
-end;
-
-procedure TFileTraverse.ResetExtensions();
-begin
-   SetLength(ExtensionsBlacklist, 0);
-   SetLength(Extensions, 0);
-end;
-
-procedure TFileTraverse.Stop();
-begin
-   stopTraverse := true;
 end;
 
 INITIALIZATION
