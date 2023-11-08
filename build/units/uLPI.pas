@@ -345,9 +345,9 @@ var
 
 begin
    if(compiler.applyConventions) then
-      compiler.target.RemoveAttribute('applyConventions')
+      compiler.targetFilename.RemoveAttribute('ApplyConventions')
    else
-      compiler.target.SetAttributeValue('applyConventions', false);
+      compiler.targetFilename.SetAttributeValue('ApplyConventions', false);
 
    for i := 0 to SourceData.PackageList.n - 1 do begin
       AddRequiredPackage(SourceData.PackageList.List[i]);
