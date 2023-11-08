@@ -29,7 +29,7 @@ TYPE
 
       OnUpdate: TProcedures;
 
-      function FindRecent(const path: StdString): boolean;
+      function FindRecent(const path: StdString): loopint;
       {validates given path (checks if exists)}
       function Validate(const path: StdString): boolean;
 
@@ -81,7 +81,7 @@ end;
 
 { oxedTRecents }
 
-function oxedTRecents.FindRecent(const path: StdString): boolean;
+function oxedTRecents.FindRecent(const path: StdString): loopint;
 var
    i: loopint;
    {$IFDEF WINDOWS}
@@ -96,34 +96,44 @@ begin
    for i := 0 to List.n - 1 do begin
       {$IFDEF WINDOWS}
       if(LowerCase(List[i]) = lpath) then
-         exit(true);
+         exit(i);
       {$ELSE}
       if(List[i] = path) then
-         exit(true);
+         exit(i);
       {$ENDIF}
    end;
 
-   Result := false;
+   Result := -1;
 end;
 
 function oxedTRecents.Validate(const path: StdString): boolean;
 begin
-   if(not Directories) then begin
-     Result := FileUtils.Exists(path) > 0;
-   end else begin
-     Result := FileUtils.DirectoryExists(path);
-   end;
+   if(not Directories) then
+      Result := FileUtils.Exists(path) > 0
+   else
+      Result := FileUtils.DirectoryExists(path);
 end;
 
 procedure oxedTRecents.Add(const path: StdString);
 var
    correctPath: StdString;
+   index: loopint;
 
 begin
    correctPath := ExcludeTrailingPathDelimiter(path);
 
-   if(FindRecent(correctPath)) then
+   {check if already exists}
+   index := FindRecent(correctPath);
+
+   if(index > -1) then begin
+      {move to top if already exists}
+      if(index > 0) then begin
+         List.Remove(index);
+         List.Insert(0, correctPath);
+      end;
+
       exit;
+   end;
 
    if(oxedRecents.Validate(correctPath)) then
       List.Add(correctPath);
