@@ -1,8 +1,6 @@
 {
    oxeduAndroidBuild
    Copyright (C) 2020. Dejan Boras
-
-   TODO: Fail build if missing ndk, sdk, or android project files
 }
 
 {$INCLUDE oxdefines.inc}
@@ -80,6 +78,7 @@ end;
 procedure buildStartRun();
 var
    arch: oxedTAndroidPlatformArchitecture;
+   path: StdString;
 
 begin
    arch := isAndroidBuild();
@@ -87,12 +86,50 @@ begin
    if(arch = nil) then
       exit;
 
-   build.FPCOptions.CompilerUtilitiesPath := IncludeTrailingPathDelimiterNonEmpty(oxedAndroidSettings.GetNDKPath()) +
+   { check for the ndk }
+
+   path := oxedAndroidSettings.GetNDKPath();
+
+   if(not FileUtils.DirectoryExists(path)) then begin
+      oxedBuild.Fail('Cannot find ndk path at: ' + path);
+      exit;
+   end;
+
+   { check for the android app }
+
+   path := oxedAndroidSettings.GetAppPath();
+
+   if(not FileUtils.DirectoryExists(path)) then begin
+      oxedBuild.Fail('Cannot find android app path at: ' + path);
+      exit;
+   end;
+
+   { set the toolchain path }
+
+   path := IncludeTrailingPathDelimiterNonEmpty(oxedAndroidSettings.GetNDKPath()) +
       'toolchains' +  DirSep + arch.ToolChainPath + DirSep;
 
-   if(arch.LibPath <> '') then
-      build.Libraries.Add(IncludeTrailingPathDelimiterNonEmpty(oxedAndroidSettings.GetNDKPath()) +
-      'platforms' + DirSep + 'android-' + sf(oxedAndroidSettings.Project.TargetVersion) + DirSep + 'arch-' + arch.LibPath + DirSep);
+   if(not FileUtils.DirectoryExists(path)) then begin
+       oxedBuild.Fail('Cannot find toolchain utilities at: ' + path);
+       exit;
+   end;
+
+   path := build.FPCOptions.CompilerUtilitiesPath;
+
+   { set the library path, if any }
+
+   if(arch.LibPath <> '') then begin
+      path := IncludeTrailingPathDelimiterNonEmpty(oxedAndroidSettings.GetNDKPath()) +
+         'platforms' + DirSep + 'android-' + sf(oxedAndroidSettings.Project.TargetVersion) +
+            DirSep + 'arch-' + arch.LibPath + DirSep;
+
+      if(not FileUtils.DirectoryExists(path)) then begin
+         oxedBuild.Fail('Cannot find libraries at: ' + path);
+         exit;
+      end;
+
+      build.Libraries.Add(path);
+   end;
 end;
 
 procedure buildFinish();
@@ -112,20 +149,17 @@ begin
    source := oxedBuild.GetTargetExecutableFileName();
    appPath := oxedAndroidSettings.GetAppPath();
 
-   if(FileUtils.DirectoryExists(appPath)) then begin
-     targetPath := appPath + DirSep + 'libs' + DirSep + arch.LibTarget;
+   targetPath := appPath + DirSep + 'libs' + DirSep + arch.LibTarget;
 
-     if(ForceDirectories(targetPath)) then begin
-         targetPath := targetPath + DirSep + 'libmain.so';
+   if(ForceDirectories(targetPath)) then begin
+      targetPath := targetPath + DirSep + 'libmain.so';
 
-         if(FileUtils.Copy(source, targetPath) > 0) then
-            oxedBuildLog.k('Copied library from "' + source + '" to "' + targetPath + '"')
-         else
-            oxedBuild.Fail('Failed to copy library from "' + source + '" to "' + targetPath + '"');
-     end else
-        oxedBuild.Fail('Cannot create libs directory at: ' + targetPath);
+      if(FileUtils.Copy(source, targetPath) > 0) then
+         oxedBuildLog.k('Copied library from "' + source + '" to "' + targetPath + '"')
+      else
+         oxedBuild.Fail('Failed to copy library from "' + source + '" to "' + targetPath + '"');
    end else
-      oxedBuild.Fail('Cannot find android project app path at: ' + appPath);
+      oxedBuild.Fail('Cannot create libs directory at: ' + targetPath);
 end;
 
 procedure init();
