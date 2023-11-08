@@ -23,6 +23,7 @@ TYPE
    { oxTSceneRenderParameters }
 
    oxTSceneRenderParameters = record
+      Scene: oxTScene;
       Viewport: oxPViewport;
       Projection: oxPProjection;
       Camera: oxPCamera;
@@ -34,16 +35,11 @@ TYPE
 
    { oxTSceneRenderer }
    oxTSceneRenderer = class
-      Scene: oxTScene;
-      Viewport: oxPViewport;
-
-      constructor Create();
-
       procedure RenderLayer(layer: oxTRenderLayerComponent; var params: oxTSceneRenderParameters; const cameras: oxTComponentsList);
 
       procedure RenderCamera(var params: oxTSceneRenderParameters; camera: oxTCameraComponent; entity: oxTEntity = nil);
       procedure RenderCamera(var params: oxTSceneRenderParameters; entity: oxTEntity = nil);
-      procedure Render(const projection: oxTProjection);
+      procedure Render(var params: oxTSceneRenderParameters);
 
       procedure RenderEntities(const entities: oxTEntities; var params: oxTSceneRenderParameters);
       procedure RenderEntity(var params: oxTSceneRenderParameters); virtual;
@@ -107,11 +103,6 @@ end;
 
 { oxTSceneRenderer }
 
-constructor oxTSceneRenderer.Create();
-begin
-   Scene := oxScene;
-end;
-
 procedure oxTSceneRenderer.RenderLayer(layer: oxTRenderLayerComponent; var params: oxTSceneRenderParameters; const cameras: oxTComponentsList);
 var
    i: loopint;
@@ -125,14 +116,14 @@ end;
 procedure oxTSceneRenderer.RenderCamera(var params: oxTSceneRenderParameters; camera: oxTCameraComponent; entity: oxTEntity);
 begin
    if(entity = nil) then
-      entity := Scene;
+      entity := params.Scene;
 
    if(not entity.Enabled) or (not camera.IsEnabled()) then
       exit;
 
    params.Camera := @camera.Camera;
    params.Projection := @camera.Projection;
-   params.Projection^.Viewport := Viewport;
+   params.Projection^.Viewport := params.Viewport;
    params.Projection^.UpdateViewport();
 
    RenderCamera(params, entity);
@@ -141,9 +132,9 @@ end;
 procedure oxTSceneRenderer.RenderCamera(var params: oxTSceneRenderParameters; entity: oxTEntity);
 begin
    if(entity = nil) then
-      entity := Scene;
+      entity := params.Scene;
 
-   params.Viewport^.ClearColor := Scene.World.ClearColor;
+   params.Viewport^.ClearColor := params.Scene.World.ClearColor;
    params.Viewport^.Apply();
 
    params.Projection^.Apply();
@@ -161,16 +152,14 @@ begin
    CameraEnd(params);
 end;
 
-procedure oxTSceneRenderer.Render(const projection: oxTProjection);
+procedure oxTSceneRenderer.Render(var params: oxTSceneRenderParameters);
 var
    i: longint;
    cameras: oxTComponentsList;
-   params: oxTSceneRenderParameters;
-
    layers: oxTComponentsList;
 
 begin
-   if(Scene = nil) then
+   if(params.Scene = nil) then
       exit;
 
    OnBegin();
@@ -179,20 +168,15 @@ begin
    layers.Initialize(layers);
 
    {$IFNDEF OX_LIBRARY}
-   Scene.GetComponentsInChildren(oxTCameraComponent, cameras);
-   Scene.GetComponents(oxTRenderLayerComponent, layers);
+   params.Scene.GetComponentsInChildren(oxTCameraComponent, cameras);
+   params.Scene.GetComponents(oxTRenderLayerComponent, layers);
    {$ELSE}
-   Scene.GetComponentsInChildren('oxTCameraComponent', cameras);
-   Scene.GetComponents('oxTRenderLayerComponent', layers);
+   params.Scene.GetComponentsInChildren('oxTCameraComponent', cameras);
+   params.Scene.GetComponents('oxTRenderLayerComponent', layers);
    {$ENDIF}
-
-   oxTSceneRenderParameters.Init(params);
-   params.Projection := @projection;
-   params.Viewport := Viewport;
 
    if(layers.n > 0) then begin
       for i := 0 to layers.n - 1 do begin
-         params.Projection := @projection;
          RenderLayer(oxTRenderLayerComponent(layers.List[i]), params, cameras);
       end;
    end;
@@ -272,7 +256,7 @@ procedure render(wnd: oxTWindow);
 var
    sceneWindow: oxTSceneRenderWindow;
    renderer: oxTSceneRenderer;
-   projection: oxTProjection;
+   params: oxTSceneRenderParameters;
 
 begin
    if(not oxSceneRender.RenderAutomatically) then
@@ -285,14 +269,10 @@ begin
       renderer := oxSceneRender.Default;
 
    if(sceneWindow.Scene <> nil) then begin
-//      wnd.oxProperties.ApplyDefaultViewport := false;
-      renderer.Scene := sceneWindow.Scene;
+      oxTSceneRenderParameters.Init(params);
+      params.Scene := sceneWindow.Scene;
 
-      if(oxProjection = nil) then begin
-         oxTProjection.Create(projection);
-         renderer.Render(projection);
-      end else
-         renderer.Render(oxProjection^);
+      renderer.Render(params);
    end;
 end;
 

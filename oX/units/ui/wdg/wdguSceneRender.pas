@@ -105,15 +105,14 @@ begin
 
    ProjectionStart();
 
-   SceneRenderer.Viewport := @Viewport;
-   SceneRenderer.Scene := Scene;
-
    oxTSceneRenderParameters.Init(params, @Projection, @Camera);
+   params.Viewport := @Viewport;
+   params.Scene := Scene;
 
    if(not RenderSceneCameras) then
       SceneRenderer.RenderCamera(params)
    else
-      SceneRenderer.Render(Projection);
+      SceneRenderer.Render(params);
 
    OnSceneRenderEnd();
 
