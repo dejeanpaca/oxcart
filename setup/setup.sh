@@ -7,7 +7,7 @@ cd $DIR
 # compile setup
 lazbuild setup.lpi
 
-if [ $? -e 0 ]; then
+if[ $? -e 0 ]; then
     # run setup
    ./setup $@
 fi
