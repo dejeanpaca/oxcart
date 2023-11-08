@@ -27,7 +27,7 @@ uses asset_manager,input,native_window,rect,jni,ctypes;
  }
 type
   PANativeActivityCallbacks = ^ANativeActivityCallbacks;
-  ANativeActivity = packed record
+  ANativeActivity = record
     (**
      * Pointer to the callback function table of the native application.
      * You can set the functions here to your own callbacks.  The callbacks
@@ -52,7 +52,7 @@ type
     (**
      * Path to this application's internal data directory.
       *)
-    internalDataPath : Pchar;
+    internalDataPath,
     (**
      * Path to this application's external (removable/mountable) data directory.
       *)
@@ -60,7 +60,7 @@ type
     (**
      * The platform's SDK version code.
       *)
-    sdkVersion : longword;
+    sdkVersion : cint32;
     (**
      * This is the native instance of the application.  It is not used by
      * the framework, but can be set by the application to its own instance
@@ -72,6 +72,12 @@ type
      * uses this to access binary assets bundled inside its own .apk file.
       *)
     assetManager : PAAssetManager;
+    (**
+     * Available starting with Honeycomb: path to the directory containing
+     * the application's OBB files (if any).  If the app doesn't have any
+     * OBB files, this directory may not exist.
+     *)
+    obbPath: PChar;
   end;
 
 
