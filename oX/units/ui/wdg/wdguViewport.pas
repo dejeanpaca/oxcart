@@ -28,7 +28,7 @@ TYPE
       procedure UpdateViewport();
 
       procedure SizeChanged(); override;
-      procedure PositionChanged(); override;
+      procedure RPositionChanged(); override;
    end;
 
    wdgTViewportGlobal = class(specialize wdgTBase<wdgTViewport>)
@@ -80,7 +80,7 @@ begin
    UpdateViewport();
 end;
 
-procedure wdgTViewport.PositionChanged();
+procedure wdgTViewport.RPositionChanged();
 begin
    UpdateViewport();
 end;
