@@ -264,12 +264,14 @@ begin
 
    {set event action, if not determined it's a wheel action already}
    if(m.Action <> appmcWHEEL) then begin
-      case event._type of
-         x.ButtonPress:
-            m.Action    := appmcPRESSED;
-         x.ButtonRelease:
-            m.Action  := appmcRELEASED;
-      end;
+      if(event._type = x.ButtonPress) then
+         m.Action := appmcPRESSED
+      else if(event._type = x.ButtonRelease) then
+         m.Action  := appmcRELEASED;
+   end else begin
+      {ignore release wheel events so we don't have two scroll events}
+      if event._type = x.ButtonPress then
+         exit;
    end;
 
    {set button state}
