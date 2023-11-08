@@ -46,6 +46,11 @@ var
 begin
    elapsedTime := Now();
 
+   if(RC = -1) then begin
+      ox.RaiseError('No RC for main init task', oxeRENDERER);
+      exit();
+   end;
+
    {call initialization routines}
    ox.Init.iCall();
 
