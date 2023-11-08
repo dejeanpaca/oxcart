@@ -2,7 +2,8 @@
 PROGRAM setup;
 
 USES
-   sysutils, uStd, uLog, ParamUtils, uBuild, uFileUtils, uLPI;
+   sysutils, uStd, uLog, ParamUtils, uFileUtils,
+   uBuild, uBuildLibraries, uLPI;
 
 {$R *.res}
 
@@ -27,7 +28,7 @@ BEGIN
    log.v('Current working directory: ' + GetCurrentDir());
 
    build.Initialize();
-   build.Libraries.OptimizationLevel := 3;
+   build.OptimizationLevel := build.GetOptimizationLevelByName('sse3');
    lpi.Initialize();
 
    if(parameters.FindFlag('oxed')) then
