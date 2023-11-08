@@ -276,11 +276,29 @@ TYPE
    );
 
    {render target}
+   oxPRenderTarget = ^oxTRenderTarget;
    oxTRenderTarget = record
       {the render target (window or texture)}
       Target: TObject;
       {type of the render target}
       Typ: oxTRenderTargetType;
+   end;
+
+   {render target context type, indicates what the render context is used for this render target}
+   oxTRenderTargetContext = (
+      {we'll use this context (generate textures, shaders, ..., but no rendering)}
+      oxRENDER_TARGET_CONTEXT_USE,
+      {we'll use this context for rendering}
+      oxRENDER_TARGET_CONTEXT_RENDER
+   );
+
+   {render target context, to be used for render context setup with a render target}
+   oxTRenderTargetContext = record
+      Target: oxPRenderTarget;
+      {what will the context be used for}
+      ContextType: oxTRenderTargetContext;
+      {render context used with this render target}
+      RenderContext: loopint;
    end;
 
 CONST
