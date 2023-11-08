@@ -155,7 +155,7 @@ begin
 
    {start the thread}
    oxRenderThread.StartThread(AssociatedWindow, RC);
-   log.v('(t: ' + getThreadIdentifier() + ') Started thread: ' + Name);
+   log.v('(t: ' + getThreadIdentifier() + ') Started thread: ' + GetName());
 end;
 
 procedure oxTRenderTask.TaskStop();
@@ -164,7 +164,7 @@ begin
 
    oxRenderThread.StopThread(AssociatedWindow);
 
-   log.v('(t: ' + getThreadIdentifier() + ') Ended render thread: ' + Name);
+   log.v('(t: ' + getThreadIdentifier() + ') Ended render thread: ' + GetName());
 end;
 
 procedure oxTRenderTask.ThreadStart();
@@ -176,14 +176,14 @@ begin
 
    {get an RC to render this task}
    RC := renderer.GetRenderingContext(AssociatedWindow);
-   log.v('(t: ' + getThreadIdentifier() + ') Render task: ' + Name + ' got RC: ' + sf(RC));
+   log.v('(t: ' + getThreadIdentifier() + ') Render task: ' + GetName() + ' got RC: ' + sf(RC));
 
-   log.v('(t: ' + getThreadIdentifier() + ') Started render task: ' + Name);
+   log.v('(t: ' + getThreadIdentifier() + ') Started render task: ' + GetName());
 end;
 
 procedure oxTRenderTask.ThreadDone();
 begin
-   log.v('(t: ' + getThreadIdentifier() + ') Done render task: ' + Name);
+   log.v('(t: ' + getThreadIdentifier() + ') Done render task: ' + GetName());
 end;
 
 END.
