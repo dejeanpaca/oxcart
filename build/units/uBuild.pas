@@ -1526,7 +1526,7 @@ begin
    Result := strutils.AnsiContainsStr(path, '..');
 end;
 
-var
+VAR
    Walker: TFileTraverse;
 
 function onUnit(const fn: string): boolean;
@@ -1565,9 +1565,6 @@ procedure scanUnits(const startPath: string);
 begin
    log.v('build > Will scan path for units: ' + startPath);
 
-   if(Walker = nil) then
-      Walker := TFileTraverse.Create();
-
    Walker.ResetExtensions();
 
    Walker.AddExtension('.pas');
@@ -1579,9 +1576,6 @@ end;
 procedure scanIncludes(const startPath: string);
 begin
    log.v('build > Will scan path for includes: ' + startPath);
-
-   if(Walker = nil) then
-      Walker := TFileTraverse.Create();
 
    Walker.ResetExtensions();
 
@@ -1723,6 +1717,8 @@ begin
 end;
 
 INITIALIZATION
+   TFileTraverse.Initialize(Walker);
+
    build.WriteLog := true;
    build.ConfigPath := 'default';
 

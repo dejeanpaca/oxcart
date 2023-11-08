@@ -1173,10 +1173,13 @@ end;
 { WINDOW MANAGEMENT }
 procedure uiTWindowHelper.Move(x, y: longint);
 begin
-   Position.x := x;
-   Position.y := y;
+   if(x <> Position.x) or (y <> Position.y) then begin
+      Position.x := x;
+      Position.y := y;
 
-   UpdatePositions();
+      Notification(uiWINDOW_MOVE);
+      UpdatePositions();
+   end;
 end;
 
 procedure uiTWindowHelper.Move(position: oxTPoint);
@@ -1207,6 +1210,9 @@ begin
 end;
 
 procedure uiTWindowHelper.Resize(w, h: longint; ignoreRestrictions: boolean);
+var
+   horizontalMove: boolean;
+
 begin
    if(not ignoreRestrictions) then begin
       AdjustSizesWithRestrictions(w, h);
@@ -1218,14 +1224,22 @@ begin
          h := 0;
    end;
 
-   PreviousDimensions := Dimensions;
-   Dimensions.w := w;
-   Dimensions.h := h;
+   horizontalMove := h <> Dimensions.h;
 
-   Notification(uiWINDOW_RESIZE);
-   SizeChanged();
+   if(w <> Dimensions.w) or (horizontalMove) then begin
+      PreviousDimensions := Dimensions;
+      Dimensions.w := w;
+      Dimensions.h := h;
 
-   UpdateParentSize(false);
+      Notification(uiWINDOW_RESIZE);
+      SizeChanged();
+
+      if(horizontalMove) then
+         {we have to update RPositions and other data}
+         UpdatePositions();
+
+      UpdateParentSize(false);
+   end;
 end;
 
 procedure uiTWindowHelper.Resize(newSize: oxTDimensions; ignoreRestrictions: boolean = false);

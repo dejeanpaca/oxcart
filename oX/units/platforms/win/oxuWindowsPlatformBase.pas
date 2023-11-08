@@ -54,7 +54,7 @@ end;
 procedure oxTWindowsPlatformBase.LoadCursor(var c: HCURSOR; cursorName: {$IFDEF UNICODE}PWideChar{$ELSE}PAnsiChar{$ENDIF});
 begin
    if(c = 0) then
-      c := windows.LoadCursor(0, cursorName);
+      c := Windows.LoadCursor(0, cursorName);
 end;
 
 procedure oxTWindowsPlatformBase.LoadCursor(cursorType: uiTCursorType);
@@ -85,7 +85,7 @@ begin
          LoadCursor(Cursors.ResizeTRBL, windows.IDC_SIZENESW);
    end else if(cursorType = uiCURSOR_TYPE_RESIZE_BL) then begin
       if(Cursors.ResizeTRBL = 0) then
-         LoadCursor(Cursors.ResizeTRBL, windows.IDC_SIZENWSE);
+         LoadCursor(Cursors.ResizeTRBL, windows.IDC_SIZENESW);
    end else if(cursorType = uiCURSOR_TYPE_RESIZE_BR) then begin
       if(Cursors.ResizeTLBR = 0) then
          LoadCursor(Cursors.ResizeTLBR, windows.IDC_SIZENWSE);
