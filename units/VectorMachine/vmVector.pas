@@ -30,6 +30,7 @@ INTERFACE
 CONST
    {PI}
    vmcPi             = 3.1415926535897932384626433832795;
+   vmcHalfPi         = 3.1415926535897932384626433832795 / 2;
    vmcToDeg          = 180 / vmcPi;
    vmcToRad          = vmcPi / 180;
 
@@ -473,7 +474,7 @@ CONST
    );
 
    vmBBoxZero: TBoundingBox = (
-      (0, 0, 0),
+      (0, 0, 0), 
       (0, 0, 0)
    );
 
