@@ -876,9 +876,14 @@ end;
 procedure wdgTFileList.OnGridHover(index: loopint);
 begin
    if(index > -1) then
-      SetHint('Name: ' + Files.List[index].Name + #13 +
-         'Size: ' + getiecByteSizeHumanReadable(Files.List[index].Size) + #13 +
-         'Modified time: ' + uiTFiles.GetModifiedTime(Files.List[index].Time, Today, true))
+      if(not Files.List[index].IsDirectory()) then begin
+        SetHint('Name: ' + Files.List[index].Name + #13 +
+           'Size: ' + getiecByteSizeHumanReadable(Files.List[index].Size) + #13 +
+           'Modified time: ' + uiTFiles.GetModifiedTime(Files.List[index].Time, Today, true));
+      end else begin
+        SetHint('Name: ' + Files.List[index].Name + #13 +
+           'Modified time: ' + uiTFiles.GetModifiedTime(Files.List[index].Time, Today, true));
+      end
    else
       SetHint('');
 end;
