@@ -91,6 +91,9 @@ var
 begin
    ProjectionStart();
 
+   if(Viewport.Changed) then
+      Projection.UpdateViewport();
+
    SceneRenderer.Scene := Scene;
 
    if(not RenderSceneCameras) then begin
