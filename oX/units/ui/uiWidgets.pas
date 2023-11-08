@@ -95,6 +95,7 @@ TYPE
       {move widget}
       function Move(x, y: longint): uiTWidget;
       function Move(const p: oxTPoint): uiTWidget;
+      function MoveOffset(x, y: loopint): uiTWidget;
 
       {NOTE: -1 spacing means automatic spacing}
 
@@ -1334,20 +1335,26 @@ end;
 
 function uiTWidgetHelper.Move(x, y: longint): uiTWidget;
 begin
-   Position.x := x;
-   Position.y := y;
+   if(Position.x <> x) or (Position.y <> y) then begin
+      Position.x := x;
+      Position.y := y;
+
+      PositionUpdate();
+      PositionChanged();
+   end;
 
    uiWidget.LastRect.Assign(Position, Dimensions);
-
-   PositionUpdate();
-   PositionChanged();
-
    Result := Self;
 end;
 
 function uiTWidgetHelper.Move(const p: oxTPoint): uiTWidget;
 begin
    Result := Move(p.x, p.y);
+end;
+
+function uiTWidgetHelper.MoveOffset(x, y: loopint): uiTWidget;
+begin
+   Result := Move(Position.x + x, Position.y + y);
 end;
 
 function uiTWidgetHelper.MoveBelow(wdg: uiTWidget; spacing: longint): uiTWidget;
@@ -1402,21 +1409,22 @@ end;
 
 function uiTWidgetHelper.Resize(w, h: longint): uiTWidget;
 begin
-   PreviousDimensions := Dimensions;
+   if(w <> Dimensions.w) or (h <> Dimensions.h) then begin
+      PreviousDimensions := Dimensions;
 
-   Dimensions.w := w;
-   Dimensions.h := h;
+      Dimensions.w := w;
+      Dimensions.h := h;
 
-   DimensionsSet := true;
+      DimensionsSet := true;
+
+      SizeChanged();
+      UpdateParentSize(false);
+
+      if(Parent <> nil) then
+         PositionUpdate();
+   end;
 
    uiWidget.LastRect.Assign(Position, Dimensions);
-
-   SizeChanged();
-   UpdateParentSize(false);
-
-   if(Parent <> nil) then
-      PositionUpdate();
-
    Result := Self;
 end;
 
