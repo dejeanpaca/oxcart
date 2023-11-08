@@ -29,6 +29,9 @@ TYPE
 
    {a handler for controllers}
    appTControllerHandler = object
+      {automatically rescan for controllers (if this process is slow, should be disabled)}
+      AutoRescan: boolean;
+
       constructor Create();
 
       {initialize all devices}
@@ -192,7 +195,7 @@ begin
    {check for new/reconnected devices}
    if(appControllers.RescanInterval.Elapsed()) then begin
       for i := 0 to appControllers.nHandlers - 1 do begin
-         if(appControllers.Handlers[i] <> nil) then
+         if(appControllers.Handlers[i] <> nil) and (appControllers.Handlers[i]^.AutoRescan) then
             appControllers.Handlers[i]^.Rescan();
       end;
    end;
@@ -269,7 +272,7 @@ end;
 
 constructor appTControllerHandler.Create();
 begin
-
+   AutoRescan := true;;
 end;
 
 procedure appTControllerHandler.Initialize();
