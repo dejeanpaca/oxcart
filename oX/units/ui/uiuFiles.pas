@@ -11,29 +11,49 @@ UNIT uiuFiles;
 INTERFACE
 
    USES
-      udvars, uStd,
+      udvars, uStd, uFileUtils,
       {ox}
       oxuUI;
 
 TYPE
-   uiTFileSettings = record
+
+   { uiTFiles }
+
+   uiTFiles = record
+      Sort,
       SortFoldersFirst,
       ShowHiddenFiles: boolean;
+
+      {sort files}
+      procedure SortFiles(var files: TFileDescriptorList);
    end;
 
 VAR
-  uiFileSettings: uiTFileSettings;
+  uiFiles: uiTFiles;
 
 IMPLEMENTATION
 
 VAR
+   dvSortFiles,
    dvSortFoldersFirst,
    dvShowHiddenFiles: TDVar;
 
-INITIALIZATION
-   uiFileSettings.SortFoldersFirst := true;
+{ uiTFileSettings }
 
-   oxTUI.dvg.Add(dvSortFoldersFirst, 'sort_folders_first', dtcBOOL, @uiFileSettings.SortFoldersFirst);
-   oxTUI.dvg.Add(dvShowHiddenFiles, 'show_hidden_files', dtcBOOL, @uiFileSettings.ShowHiddenFiles);
+procedure uiTFiles.SortFiles(var files: TFileDescriptorList);
+begin
+  if(Sort) then
+     FileUtils.Sort(files, SortFoldersFirst)
+  else if(SortFoldersFirst) then
+     FileUtils.SortDirectoriesFirst(files);
+end;
+
+INITIALIZATION
+   uiFiles.SortFoldersFirst := true;
+   uiFiles.Sort := true;
+
+   oxTUI.dvg.Add(dvSortFiles, 'sort_files', dtcBOOL, @uiFiles.Sort);
+   oxTUI.dvg.Add(dvSortFoldersFirst, 'sort_folders_first', dtcBOOL, @uiFiles.SortFoldersFirst);
+   oxTUI.dvg.Add(dvShowHiddenFiles, 'show_hidden_files', dtcBOOL, @uiFiles.ShowHiddenFiles);
 
 END.
