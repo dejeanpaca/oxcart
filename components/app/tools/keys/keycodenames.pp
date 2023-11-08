@@ -110,14 +110,13 @@ begin
       if(Length(kcnames[i].kcName) > 0) then begin
          s := 'kcs' + copy(kcnames[i].kcName, 3, 255);
 
-         ls := '   ' + s + ': string[' + sf(Length(kcnames[i].kcName)) + '] = ''' +
+         s := '   ' + s + ': string[' + sf(Length(kcnames[i].kcName)) + '] = ''' +
             kcnames[i].kcName + ''';';
 
-         s := sf(i);
-         AddLeadingPadding(s, '0', 3);
+         ls := sf(i);
+         AddLeadingPadding(ls, '0', 3);
 
-         ls := ls + s;
-         p.WriteLine(' {' + ls + '}');
+         p.WriteLine(s + ' {' + ls + '}');
       end;
    end;
 
@@ -128,10 +127,6 @@ begin
    p.WriteLine('   kcKeyCodeNames: array[0..appkcKeyCodeNames-1] of pshortstring = (');
 
    for i := 0 to maxKeycodes do begin
-      s := sf(i);
-      AddLeadingPadding(s, '0', 3);
-      p.WriteLine('{' + s + '}');
-
       if(Length(kcnames[i].kcName) > 0) then begin
          s := '@kcs' + copy(kcnames[i].kcName, 3, 255);
       end else
@@ -140,7 +135,10 @@ begin
       if(i < maxKeycodes) then
          s := s + ',';
 
-      p.WriteLine(s);
+      ls := sf(i);
+      AddLeadingPadding(ls, '0', 3);
+
+      p.WriteLine('{' + ls + '}' + s);
    end;
 
    p.WriteLine(');');
