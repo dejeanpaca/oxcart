@@ -13,7 +13,8 @@ INTERFACE
      {app}
      uAppInfo, uApp, appuLog, appudvarConfiguration,
      {oX}
-     uOX, oxuPlatform, oxuWindows, oxuUIHooks, oxuGlobalInstances, oxuPlatforms,
+     uOX, oxuWindow, oxuWindows,
+     oxuPlatform, oxuUIHooks, oxuGlobalInstances, oxuPlatforms,
      oxuRenderer, oxuRenderers,
      {$IFNDEF OX_LIBRARY}
      oxuContextWindow,
@@ -190,6 +191,11 @@ begin
    {finish renderer initialization}
    oxRenderers.Use(oxRenderer);
    oxRenderer.AfterInitialize();
+
+   {$IFNDEF NO_THREADS}
+   {get an additional rendering context}
+   oxRenderer.GetContext(oxWindow.Current);
+   {$ENDIF}
 
    {$IFNDEF OX_LIBRARY}
    if(oxContextWindow.Require) then begin
