@@ -1,6 +1,8 @@
 {
    oxuRenderer, oX renderer
    Copyright (C) 2013. Dejan Boras
+
+   TODO: Maybe sort out rendering context handling
 }
 
 {$INCLUDE oxheader.inc}
@@ -9,7 +11,7 @@ UNIT oxuRenderer;
 INTERFACE
 
    USES
-      uStd, uColors, uLog, uImage, uComponentProvider, StringUtils, vmVector,
+      uStd, uError, uColors, uLog, uImage, uComponentProvider, StringUtils, vmVector,
       {oX}
       uOX, oxuTypes, oxuWindowTypes, oxuGlobalInstances, oxuPlatform, oxuRunRoutines,
       oxuRendererSettings;
@@ -132,7 +134,8 @@ TYPE
       {check if the specified rendering context is already used}
       function RenderingContextUsed(context: loopint): boolean;
       {get context}
-      function GetContext({%H-}wnd: oxTWindow; {%H-}shareContext: loopint = 0): loopint; virtual;
+      function GetContext({%H-}wnd: oxTWindow; {%H-}shareContext: loopint = -1): loopint; virtual;
+      function GetRenderingContext({%H-}wnd: oxTWindow; {%H-}shareContext: loopint = -1): loopint; virtual;
       function GetUnusedContext(): loopint; virtual;
       function GetContextString({%H-}index: loopint = 0): StdString; virtual;
       procedure ContextCurrent(context: loopint); virtual;
@@ -333,10 +336,23 @@ end;
 
 function oxTRenderer.GetContext(wnd: oxTWindow; shareContext: loopint): loopint;
 begin
+   Result := -1;
+end;
+
+function oxTRenderer.GetRenderingContext(wnd: oxTWindow; shareContext: loopint): loopint;
+begin
    Result := GetUnusedContext();
 
-   if(Result < 0) then
-      Result := AddRenderingContext(wnd);
+   if(Result < 0) then begin
+      if(shareContext = -1) then begin
+         {we always share a context with the first one}
+         if(RenderingContexts[0].Window <> nil) then begin
+            shareContext := 0;
+         end;
+      end;
+
+      Result := GetContext(wnd, shareContext);
+   end;
 end;
 
 function oxTRenderer.GetUnusedContext(): loopint;

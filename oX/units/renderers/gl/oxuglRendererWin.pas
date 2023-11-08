@@ -8,7 +8,8 @@ UNIT oxuglRendererWin;
 
 INTERFACE
 
-	USES uStd, uLog, StringUtils,
+	USES
+     uStd, uLog, StringUtils,
      {$INCLUDE usesglext.inc},
      windows, oxuWindowsOS, oxuRenderer,
      oxuOGL, oxuglExtensions, oxuglRendererPlatform, oxuglRenderer, oxuglWindow
