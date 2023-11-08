@@ -25,8 +25,19 @@ TYPE
       procedure OnBufferSet(var f: TFile); virtual;
    end;
 
+   { TBufferedAndroidAssetFileHandler }
+
+   TBufferedAndroidAssetFileHandler = object(TUnixBufferedFileHandler)
+      constructor Create();
+
+      procedure Open(var f: TFile); virtual;
+      procedure Close(var f: TFile); virtual;
+      procedure OnBufferSet(var f: TFile); virtual;
+   end;
+
 VAR
    androidAssetFileHandler: TAndroidAssetFileHandler;
+   androidBufferedAssetFileHandler: TBufferedAndroidAssetFileHandler;
 
 IMPLEMENTATION
 
@@ -56,10 +67,52 @@ end;
 
 procedure TAndroidAssetFileHandler.OnBufferSet(var f: TFile);
 begin
-   {NOTE: We don't support buffered handler swapping here}
+   {if buffering set}
+   if(f.bSize > 0) then
+      f.pHandler := @androidBufferedAssetFileHandler
+   {if buffering not set}
+   else
+      f.pHandler := @androidAssetFileHandler;
+end;
+
+{ TBufferedAndroidAssetFileHandler }
+
+constructor TBufferedAndroidAssetFileHandler.Create();
+begin
+   inherited;
+
+   Name := 'android_buffered_asset';
+   UseBuffering := true;
+end;
+
+procedure TBufferedAndroidAssetFileHandler.Open(var f: TFile);
+begin
+   f.AutoSetBuffer();
+end;
+
+procedure TBufferedAndroidAssetFileHandler.Close(var f: TFile);
+begin
+   if(f.Handle > 0) then begin
+      FpClose(f.Handle);
+      unxfIoErr(f);
+   end;
+
+   if(f.ExtData <> nil) then
+      AAsset_close(PAAsset(f.ExtData));
+end;
+
+procedure TBufferedAndroidAssetFileHandler.OnBufferSet(var f: TFile);
+begin
+   {if buffering set}
+   if(f.bSize > 0) then
+      f.pHandler := @androidBufferedAssetFileHandler
+   {if buffering not set}
+   else
+      f.pHandler := @androidAssetFileHandler;
 end;
 
 INITIALIZATION
    androidAssetFileHandler.Create();
+   androidBufferedAssetFileHandler.Create();
 
 END.
