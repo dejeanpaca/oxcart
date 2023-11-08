@@ -16,7 +16,7 @@ INTERFACE
       oxuSceneRender, oxuWindows, oxuWindow,
       oxuKeyboardControl, oxuPointerControl, oxuGlobalKeys,
       {ui}
-      uiuTypes, uiuWindow, uiuWindowTypes, oxuUI,
+      uiuTypes, uiuWindow, oxuUI,
       {oxed}
       uOXED, oxeduSettings, oxeduSceneWindow, oxeduMenubar, oxeduWindow, oxeduProjectRunner, oxeduLib;
 
@@ -103,7 +103,7 @@ begin
    end;
 end;
 
-procedure GetMouseEvent(wnd: uiTWindow; var m: appTMouseEvent; x, y: longint);
+procedure GetMouseEvent(var m: appTMouseEvent; x, y: longint);
 begin
    m.x := x;
    m.y := y;
@@ -118,7 +118,7 @@ var
 begin
    if(projectPointer <> nil) then begin
       newM := e; {use copy so the original is not modified}
-      GetMouseEvent(Self, newM, x, y);
+      GetMouseEvent(newM, x, y);
       projectPointer.Handle(nil, newM);
    end;
 end;
@@ -131,7 +131,7 @@ begin
    if(projectPointer <> nil) then begin
       appm.Init(newM);
       newM.Action := appmcMOVED;
-      GetMouseEvent(Self, newM, x, y);
+      GetMouseEvent(newM, x, y);
       projectPointer.Handle(nil, newM);
    end;
 end;
