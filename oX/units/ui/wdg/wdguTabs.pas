@@ -36,7 +36,7 @@ TYPE
       {tab title}
       Title,
       {tab ID}
-      ID: string;
+      ID: StdString;
 
       {relative horizontal position}
       x,
@@ -84,13 +84,13 @@ TYPE
       procedure SetSelectedColor(associated: uiTControl = nil);
 
       {add a tab}
-      function AddTab(const Title: string; const tabID: string = ''): wdgPTabEntry;
+      function AddTab(const Title: StdString; const tabID: StdString = ''): wdgPTabEntry;
       {should be called when done adding widgets completely}
       procedure Done();
       {checks if there is a tab with the specified id, and returns its index}
-      function HasTab(const tabID: string): longint;
+      function HasTab(const tabID: StdString): longint;
       {selects the specified tab}
-      function Select(const tabID: string): boolean;
+      function Select(const tabID: StdString): boolean;
       {select tab by its index number}
       function SelectByNum(index: longint): boolean;
       {select tab by its index number}
@@ -591,7 +591,7 @@ begin
       Result.HeaderWidth := wdgTabs.HeaderWidth;
 end;
 
-function wdgTTabs.AddTab(const Title: string; const tabID: string): wdgPTabEntry;
+function wdgTTabs.AddTab(const Title: StdString; const tabID: StdString): wdgPTabEntry;
 var
    t: wdgTTabEntry;
 
@@ -642,7 +642,7 @@ begin
       SelectByNum(0);
 end;
 
-function wdgTTabs.HasTab(const tabID: string): longint;
+function wdgTTabs.HasTab(const tabID: StdString): longint;
 var
    i: longint;
 
@@ -655,7 +655,7 @@ begin
 end;
 
 {select a tab}
-function wdgTTabs.Select(const tabID: string): boolean;
+function wdgTTabs.Select(const tabID: StdString): boolean;
 var
    i: longint;
 

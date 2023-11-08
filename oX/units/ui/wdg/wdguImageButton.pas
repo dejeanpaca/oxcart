@@ -77,7 +77,7 @@ TYPE
 
       procedure Render(); override;
 
-      procedure SetImage(const fn: string);
+      procedure SetImage(const fn: StdString);
       procedure SetImage(tex: oxTTexture);
       procedure CalculateQuad();
 
@@ -100,16 +100,16 @@ TYPE
    { wdgTImageButtonGlobal }
 
    wdgTImageButtonGlobal = record
-      function Add(const fn: string;
+      function Add(const fn: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions; action: TEventID = 0): wdgTImageButton;
 
-      function Add(const fn: string; const Caption: string;
+      function Add(const fn: StdString; const Caption: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions; action: TEventID = 0): wdgTImageButton;
 
-      function Add(const fn: string;
+      function Add(const fn: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions; callback: TProcedure): wdgTImageButton;
 
-      function Add(const fn: string; const Caption: string;
+      function Add(const fn: StdString; const Caption: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions; callback: TProcedure): wdgTImageButton;
    end;
 
@@ -248,7 +248,7 @@ begin
    end;
 end;
 
-procedure wdgTImageButton.SetImage(const fn: string);
+procedure wdgTImageButton.SetImage(const fn: StdString);
 begin
    if(Texture.SetImage(fn)) then
       CalculateQuad();
@@ -360,14 +360,14 @@ begin
    internal.Done();
 end;
 
-function wdgTImageButtonGlobal.Add(const fn: string;
+function wdgTImageButtonGlobal.Add(const fn: StdString;
       const Pos: oxTPoint; const Dim: oxTDimensions; action: TEventID = 0): wdgTImageButton;
 
 begin
    Result := Add(fn, '', Pos, Dim, action);
 end;
 
-function wdgTImageButtonGlobal.Add(const fn: string; const Caption: string;
+function wdgTImageButtonGlobal.Add(const fn: StdString; const Caption: StdString;
    const Pos: oxTPoint; const Dim: oxTDimensions; action: TEventID = 0): wdgTImageButton;
 
 begin
@@ -383,13 +383,13 @@ begin
    end;
 end;
 
-function wdgTImageButtonGlobal.Add(const fn: string; const Pos: oxTPoint;
+function wdgTImageButtonGlobal.Add(const fn: StdString; const Pos: oxTPoint;
    const Dim: oxTDimensions; callback: TProcedure): wdgTImageButton;
 begin
    Result := Add(fn, '', Pos, Dim, callback);
 end;
 
-function wdgTImageButtonGlobal.Add(const fn: string; const Caption: string;
+function wdgTImageButtonGlobal.Add(const fn: StdString; const Caption: StdString;
    const Pos: oxTPoint; const Dim: oxTDimensions; callback: TProcedure): wdgTImageButton;
 begin
    Result := Add(fn, Caption, Pos, Dim, 0);

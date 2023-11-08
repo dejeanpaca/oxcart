@@ -23,7 +23,7 @@ TYPE
 
    uiTWidgetTemplateGlobal = record
      {adds a template widget to a window}
-     function Add(var wnd: uiTWindow; const Caption: string;
+     function Add(var wnd: uiTWindow; const Caption: StdString;
                  const Pos: oxTPoint; const Dim: oxTDimensions): wdgTTemplate;
    end;
 
@@ -42,7 +42,7 @@ begin
    internal.Done();
 end;
 
-function uiTWidgetTemplateGlobal.Add(var wnd: uiTWindow; const Caption: string;
+function uiTWidgetTemplateGlobal.Add(var wnd: uiTWindow; const Caption: StdString;
       const Pos: oxTPoint; const Dim: oxTDimensions): wdgTTemplate;
 
 begin

@@ -44,7 +44,7 @@ TYPE
       constructor Create(); override;
 
       {add an item to the list}
-      procedure Add(const item: string);
+      procedure Add(const item: StdString);
       {select an item by its index}
       procedure SelectItem(item: longint);
       {remove all items}
@@ -55,7 +55,7 @@ TYPE
       procedure Render(); override;
       procedure Point(var e: appTMouseEvent; {%H-}x, {%H-}y: longint); override;
 
-      function GetValue(index: loopint): string;
+      function GetValue(index: loopint): StdString;
       function GetItemCount(): loopint;
 
       procedure ShowMenu();
@@ -202,7 +202,7 @@ begin
    Items.InitializeValues(Items);
 end;
 
-procedure wdgTDropDownList.Add(const item: string);
+procedure wdgTDropDownList.Add(const item: StdString);
 begin
    Items.Add(item);
 end;
@@ -290,7 +290,7 @@ begin
       ShowMenu();
 end;
 
-function wdgTDropDownList.GetValue(index: loopint): string;
+function wdgTDropDownList.GetValue(index: loopint): StdString;
 begin
    Result := Items.List[index];
 end;
