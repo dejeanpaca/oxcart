@@ -23,7 +23,7 @@ CONST
 
    IEC_BINARY_SIZE_MAX_SUFFIX    = 8;
 
-   iecBinarySizeUnitSuffixes: array[0..8] of string = (
+   iecBinarySizeUnitSuffixes: array[0..8] of StdString = (
       'B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'
    );
 
@@ -41,36 +41,36 @@ CONST
 
    SI_BINARY_SIZE_MAX_SUFFIX = 8;
 
-   siBinarySizeUnitSuffixes: array[0..8] of string = (
+   siBinarySizeUnitSuffixes: array[0..8] of StdString = (
       'B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'
    );
 
 { get suffix strings }
-function getiecSuffixString(suffix: longint): string;
-function getsiSuffixString(suffix: longint): string;
+function getiecSuffixString(suffix: longint): StdString;
+function getsiSuffixString(suffix: longint): StdString;
 
 { get binary size string }
 
-function getiecBinarySizeString(size: int64; suffix: longint; decimals: longint = 1): string;
-function getsiBinarySizeString(size: int64; suffix: longint; decimals: longint = 1): string;
+function getiecBinarySizeString(size: int64; suffix: longint; decimals: longint = 1): StdString;
+function getsiBinarySizeString(size: int64; suffix: longint; decimals: longint = 1): StdString;
 
 { get binary size string with suffix }
 
-function getiecBinarySizeSuffixString(size: int64; suffix: longint; decimals: longint = 1; const separator: string = ' '): string;
-function getsiBinarySizeSuffixString(size: int64; suffix: longint; decimals: longint = 1; const separator: string = ' '): string;
+function getiecBinarySizeSuffixString(size: int64; suffix: longint; decimals: longint = 1; const separator: StdString = ' '): StdString;
+function getsiBinarySizeSuffixString(size: int64; suffix: longint; decimals: longint = 1; const separator: StdString = ' '): StdString;
 
 {get human readable versions for byte size}
-function getiecByteSizeHumanReadable(byteCount: int64; decimals: loopint = 1; const separator: string = ' '): string;
-function getsiByteSizeHumanReadable(byteCount: int64; decimals: loopint = 1; const separator: string = ' '): string;
+function getiecByteSizeHumanReadable(byteCount: int64; decimals: loopint = 1; const separator: StdString = ' '): StdString;
+function getsiByteSizeHumanReadable(byteCount: int64; decimals: loopint = 1; const separator: StdString = ' '): StdString;
 
 {same as above, except it shows iec units with SI suffixes (compute IEC and lie it's SI)}
-function getiecByteSizeHumanReadableSI(byteCount: int64; decimals: loopint = 1; const separator: string = ' '): string;
+function getiecByteSizeHumanReadableSI(byteCount: int64; decimals: loopint = 1; const separator: StdString = ' '): StdString;
 
 IMPLEMENTATION
 
 { get binary size string }
 
-function getiecSuffixString(suffix: longint): string;
+function getiecSuffixString(suffix: longint): StdString;
 begin
    if(suffix >= 0) and (suffix <= high(iecBinarySizeUnitSuffixes)) then
       Result := iecBinarySizeUnitSuffixes[suffix]
@@ -78,7 +78,7 @@ begin
       Result := '?';
 end;
 
-function getsiSuffixString(suffix: longint): string;
+function getsiSuffixString(suffix: longint): StdString;
 begin
    if(suffix >= 0) and (suffix <= high(siBinarySizeUnitSuffixes)) then
       Result := siBinarySizeUnitSuffixes[suffix]
@@ -86,76 +86,77 @@ begin
       Result := '?';
 end;
 
-function getiecBinarySizeString(size: int64; suffix: longint; decimals: longint): string;
+function getiecBinarySizeString(size: int64; suffix: longint; decimals: longint): StdString;
 var
    floatSize: double;
 
 begin
    if(suffix < IEC_BINARY_SIZE_MAX_SUFFIX) then begin
       if(suffix = 0) then
-         result      := sf(size)
+         Result := sf(size)
       else begin
-         floatSize   := size / power(1024, suffix);
-         result      := sf(floatSize, decimals);
+         floatSize := size / power(1024, suffix);
+         Result := sf(floatSize, decimals);
       end;
    end else
-      result         := sf(size);
+      Result := sf(size);
 end;
 
-function getsiBinarySizeString(size: int64; suffix: longint; decimals: longint): string;
+function getsiBinarySizeString(size: int64; suffix: longint; decimals: longint): StdString;
 var
    floatSize: double;
 
 begin
    if(suffix < SI_BINARY_SIZE_MAX_SUFFIX) then begin
       if(suffix = 0) then
-         result      := sf(size)
+         Result := sf(size)
       else begin
-         floatSize   := size / power(1000, suffix);
-         result      := sf(floatSize, decimals);
+         floatSize := size / power(1000, suffix);
+         Result := sf(floatSize, decimals);
       end;
    end else
-      result         := sf(size);
+      Result := sf(size);
 end;
 
 { get binary size string with suffix }
 
-function getiecBinarySizeSuffixString(size: int64; suffix: longint; decimals: longint; const separator: string): string;
+function getiecBinarySizeSuffixString(size: int64; suffix: longint; decimals: longint; const separator: StdString): StdString;
 var
    floatSize: double;
 
 begin
    if(suffix < IEC_BINARY_SIZE_MAX_SUFFIX) then begin
       if(suffix = 0) then
-         result      := sf(size) + separator + iecBinarySizeUnitSuffixes[suffix]
+         Result := sf(size) + separator + iecBinarySizeUnitSuffixes[suffix]
       else begin
-         floatSize   := size / power(1024, suffix);
-         result      := sf(floatSize, decimals) + separator + iecBinarySizeUnitSuffixes[suffix];
+         floatSize := size / power(1024, suffix);
+         Result := sf(floatSize, decimals) + separator + iecBinarySizeUnitSuffixes[suffix];
       end;
    end else
-      result         := sf(size) + separator + 'B';
+      Result := sf(size) + separator + 'B';
 end;
 
-function getsiBinarySizeSuffixString(size: int64; suffix: longint; decimals: longint; const separator: string): string;
+function getsiBinarySizeSuffixString(size: int64; suffix: longint; decimals: longint; const separator: StdString): StdString;
 var
    floatSize: double;
 
 begin
    if(suffix < SI_BINARY_SIZE_MAX_SUFFIX) then begin
       if(suffix = 0) then
-         result      := sf(size) + separator + siBinarySizeUnitSuffixes[suffix]
+         Result := sf(size) + separator + siBinarySizeUnitSuffixes[suffix]
       else begin
-         floatSize   := size / power(1000, suffix);
-         result      := sf(floatSize, decimals) + separator + siBinarySizeUnitSuffixes[suffix];
+         floatSize := size / power(1000, suffix);
+         Result := sf(floatSize, decimals) + separator + siBinarySizeUnitSuffixes[suffix];
       end;
    end else
-      result         := sf(size) + separator + 'B';
+      Result := sf(size) + separator + 'B';
 end;
 
 
-function getiecByteSizeHumanReadable(byteCount: int64; decimals: loopint; const separator: string): string;
+function getiecByteSizeHumanReadable(byteCount: int64; decimals: loopint; const separator: StdString): StdString;
 var
-   bytes, place: int64;
+   bytes,
+   place: int64;
    num: double;
 
 begin
@@ -165,16 +166,17 @@ begin
       num := RoundTo(bytes / power(1024, place), -decimals);
 
       if(place > 0) then
-         result := FormatFloat('', sign(byteCount) * num) + separator + iecBinarySizeUnitSuffixes[place]
+         Result := FormatFloat('', sign(byteCount) * num) + separator + iecBinarySizeUnitSuffixes[place]
       else
-        result := sf(byteCount) + separator + 'B';
+         Result := sf(byteCount) + separator + 'B';
    end else
-      result := '0' + separator + 'B';
+      Result := '0' + separator + 'B';
 end;
 
-function getsiByteSizeHumanReadable(byteCount: int64; decimals: loopint; const separator: string): string;
+function getsiByteSizeHumanReadable(byteCount: int64; decimals: loopint; const separator: StdString): StdString;
 var
-   bytes, place: int64;
+   bytes,
+   place: int64;
    num: double;
 
 begin
@@ -184,16 +186,17 @@ begin
       num := RoundTo(bytes / power(1000, place), -decimals);
 
       if(place > 0) then
-         result := FormatFloat('', sign(byteCount) * num) + separator + iecBinarySizeUnitSuffixes[place]
+         Result := FormatFloat('', sign(byteCount) * num) + separator + iecBinarySizeUnitSuffixes[place]
       else
-        result := sf(byteCount) + separator + 'B';
+        Result := sf(byteCount) + separator + 'B';
    end else
-      result := '0B';
+      Result := '0B';
 end;
 
-function getiecByteSizeHumanReadableSI(byteCount: int64; decimals: loopint; const separator: string): string;
+function getiecByteSizeHumanReadableSI(byteCount: int64; decimals: loopint; const separator: StdString): StdString;
 var
-   bytes, place: int64;
+   bytes,
+   place: int64;
    num: double;
 
 begin
@@ -203,11 +206,11 @@ begin
       num := RoundTo(bytes / power(1024, place), -decimals);
 
       if(place > 0) then
-         result := FormatFloat('', sign(byteCount) * num) + separator + siBinarySizeUnitSuffixes[place]
+         Result := FormatFloat('', sign(byteCount) * num) + separator + siBinarySizeUnitSuffixes[place]
       else
-        result := sf(byteCount) + separator + 'B';
+        Result := sf(byteCount) + separator + 'B';
    end else
-      result := '0' + separator + 'B';
+      Result := '0' + separator + 'B';
 end;
 
 END.
