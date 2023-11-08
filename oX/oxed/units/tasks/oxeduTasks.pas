@@ -11,9 +11,9 @@ INTERFACE
    USES
       uStd,
       {ox}
-      oxuRunRoutines, oxuThreadTask,
+      oxuRunRoutines, oxuThreadTask, oxuThreadJobs,
       {oxed}
-      uOXED;
+      uOX, uOXED;
 
 TYPE
    { oxedTBaseTask }
@@ -44,10 +44,15 @@ TYPE
       OnTaskDone,
       OnTaskStart: TProcedures;
 
+      PrimaryTasks: oxTTaskQueue;
+
       procedure Add(task: oxedTTask);
       procedure Remove(task: oxedTTask);
       procedure TaskStarted(task: oxedTTask);
       procedure TaskDone(task: oxedTTask);
+
+      {queue a task to the primary queue}
+      procedure Queue(task: oxedTTask);
 
       {are any tasks of the specified type running}
       function Running(taskType: TClass; exceptType: TClass = nil; foregroundOnly: boolean = true): loopint;
@@ -144,6 +149,11 @@ begin
    end;
 end;
 
+procedure oxedTTasks.Queue(task: oxedTTask);
+begin
+   PrimaryTasks.QueueAdd(task);
+end;
+
 function oxedTTasks.Running(taskType: TClass; exceptType: TClass; foregroundOnly: boolean): loopint;
  var
     i: loopint;
@@ -182,17 +192,30 @@ begin
    end;
 end;
 
+procedure init();
+begin
+   oxedTasks.PrimaryTasks.Initialize();
+end;
+
 procedure deinit();
 begin
+   oxedTasks.PrimaryTasks.DeInitialize();
    oxedTasks.List.Dispose();
 end;
 
+procedure update();
+begin
+   oxedTasks.PrimaryTasks.Update();
+end;
+
 INITIALIZATION
-   oxed.Init.dAdd('oxed.tasks', @deinit);
+   oxed.Init.Add('oxed.tasks', @init, @deinit);
 
    oxedTasks.List.InitializeValues(oxedTasks.List);
 
    TProcedures.InitializeValues(oxedTasks.OnTaskDone);
    TProcedures.InitializeValues(oxedTasks.OnTaskStart);
+
+   ox.OnRun.Add('oxed.tasks', @update);
 
 END.
