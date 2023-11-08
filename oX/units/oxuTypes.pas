@@ -189,6 +189,9 @@ TYPE
 
       {get normalized path}
       function GetPath(): StdString;
+
+      {get the resource loader for this resource type}
+      function GetLoader(): POObject;
    end;
 
    oxTResourceClass = class of oxTResource;
@@ -409,6 +412,11 @@ begin
 
    if(Result <> '') then
       Result := IncludeTrailingPathDelimiter(Result);
+end;
+
+function oxTResource.GetLoader(): POObject;
+begin
+   Result := nil;
 end;
 
 { oxTRectf }
