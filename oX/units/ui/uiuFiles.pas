@@ -9,7 +9,7 @@ UNIT uiuFiles;
 INTERFACE
 
    USES
-      udvars, uStd, uColors, uFileUtils,
+      sysutils, udvars, uStd, uColors, uFileUtils, uTiming,
       {ox}
       uiuUI;
 
@@ -27,6 +27,8 @@ TYPE
 
       {sort files}
       procedure SortFiles(var files: TFileDescriptorList);
+      {get file modified time as string}
+      class function GetModifiedTime(givenTime: longint; today: TDateTime = 0; full: boolean = false): StdString; static;
    end;
 
 VAR
@@ -48,6 +50,25 @@ begin
      FileUtils.Sort(files, SortFoldersFirst)
   else if(SortFoldersFirst) then
      FileUtils.SortDirectoriesFirst(files);
+end;
+
+class function uiTFiles.GetModifiedTime(givenTime: longint; today: TDateTime; full: boolean): StdString;
+var
+   time: TDateTime;
+
+begin
+   time := FileDateToDateTime(givenTime);
+
+   if(today = 0) then
+      today := Date();
+
+   if(not full) then begin
+      if(not today.MatchingDay(time)) then
+         Result := DateToStr(time)
+      else
+         Result := TimeToStr(time);
+   end else
+      Result := DateTimeToStr(time);
 end;
 
 INITIALIZATION
