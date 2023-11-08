@@ -19,7 +19,7 @@ INTERFACE
       {ox}
       oxuThreadTask, oxuFeatures, oxuRenderer,
       {oxed}
-      uOXED, oxeduMessages, oxeduProject, oxeduPlatform, oxeduTasks, oxeduActions, oxeduSettings, oxeduProjectScanner;
+      uOXED, oxeduMessages, oxeduPackageTypes, oxeduProject, oxeduPlatform, oxeduTasks, oxeduActions, oxeduSettings, oxeduProjectScanner;
 
 CONST
    OXED_BUILD_3RDPARTY_PATH = '3rdparty';
@@ -374,7 +374,7 @@ begin
    Result := BuildTarget <> OXED_BUILD_STANDALONE;
 end;
 
-function getRelativePath(const unitFile: oxedTProjectUnit): string;
+function getRelativePath(const unitFile: oxedTPackageUnit): string;
 begin
    Result := ExtractRelativepath(oxedBuild.WorkingArea, oxedProject.Path + ExtractFilePath(unitFile.Path));
 end;

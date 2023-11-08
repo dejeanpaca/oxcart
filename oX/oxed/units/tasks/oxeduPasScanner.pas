@@ -12,8 +12,10 @@ INTERFACE
 
    USES
       uLog, sysutils, Classes, uStd, StringUtils, uBuild,
+      {pas}
       PScanner, PParser, PasTree,
-      oxeduProject, oxeduProjectScanner;
+      {oxed}
+      oxeduPackageTypes, oxeduProject, oxeduProjectScanner;
 
 TYPE
    oxedTPasScanResult = record
@@ -115,7 +117,7 @@ end;
 
 procedure onFile(var f: oxedTScannerFile);
 var
-   unitFile: oxedTProjectUnit;
+   unitFile: oxedTPackageUnit;
 
 begin
    unitFile.Name := ExtractFileNameNoExt(f.FileName);
