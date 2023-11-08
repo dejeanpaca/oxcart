@@ -1,5 +1,3 @@
-{NOTE: Ignore warnings for oxuDefaults because it is used, even though fpc may complain it is not}
-
 {$IFDEF UNIX}
    {$IFNDEF NO_THREADS}
    cthreads,
