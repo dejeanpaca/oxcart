@@ -191,9 +191,15 @@ TYPE
       function GetButtonPressure(index: loopint): single;
       {is a button pressed}
       function IsButtonPressed(index: loopint): boolean;
+      {get axis value}
+      function GetAxisValue(index: loopint): single;
+      {get axis value}
+      function GetUnitAxisValue(index: loopint): single;
+      {get trigger value}
+      function GetTriggerValue(index: loopint): single;
 
       {get normalized value for axis or trigger}
-      function GetNormalizedValue(rawValue: loopint): appiTAxisState;
+      function GetNormalizedValue(rawValue: loopint; max: loopint = 32767): appiTAxisState;
 
       {set the pressed state of a button}
       procedure SetButtonPressedState(index: loopint; pressed: boolean);
@@ -236,8 +242,6 @@ TYPE
       procedure DeInitialize(); virtual;
       {perform run operations}
       procedure Run(); virtual;
-      {run individual controllers}
-      procedure RunControllers();
       {reinitialize all devices}
       procedure Reset(); virtual;
 
@@ -275,6 +279,9 @@ TYPE
 
       procedure Add(device: appTControllerDevice);
       procedure Reset();
+
+      {run individual controllers}
+      procedure UpdateControllers();
 
       function GetByIndex(index: loopint): appTControllerDevice;
 
@@ -339,6 +346,19 @@ begin
    for i := 0 to nHandlers - 1 do begin
       if(Handlers[i] <> nil) then
          Handlers[i]^.Reset();
+   end;
+end;
+
+procedure appTControllers.UpdateControllers();
+var
+   i: loopint;
+
+begin
+   if(appControllers.List.n > 0) then begin
+      for i := 0 to (appControllers.List.n - 1) do begin
+         appControllers.List.List[i].UpdateStart();
+         appControllers.List.List[i].Update();
+      end;
    end;
 end;
 
@@ -417,7 +437,7 @@ function appTControllerDevice.GetButtonPressure(index: loopint): single;
 begin
    Result := 0;
 
-   if(index > 0) and (index < ButtonCount) then begin
+   if(index >= 0) and (index < ButtonCount) then begin
       if(State.KeyState.GetBit(index)) then
          Result := 1.0;
    end;
@@ -433,10 +453,35 @@ begin
    end;
 end;
 
-function appTControllerDevice.GetNormalizedValue(rawValue: loopint): appiTAxisState;
+function appTControllerDevice.GetAxisValue(index: loopint): single;
+begin
+   Result := 0;
+
+   if(index >= 0) and (index < AxisCount) then
+      Result := State.Axes[index];
+end;
+
+function appTControllerDevice.GetUnitAxisValue(index: loopint): single;
+begin
+   Result := 0.5;
+
+   if(index >= 0) and (index < AxisCount) then begin
+      Result := (State.Axes[index] + 1.0) / 2;
+   end;
+end;
+
+function appTControllerDevice.GetTriggerValue(index: loopint): single;
+begin
+   Result := 0;
+
+   if(index >= 0) and (index < TriggerCount) then
+      Result := State.Triggers[index];
+end;
+
+function appTControllerDevice.GetNormalizedValue(rawValue: loopint; max: loopint): appiTAxisState;
 begin
    {get positive raw value}
-   Result := appiTAxisState.GetRaw(abs(rawValue), 32767);
+   Result := appiTAxisState.GetRaw(abs(rawValue), max);
 
    {dead zone means 0}
    if(Result < DeadZone) then begin
@@ -459,24 +504,30 @@ end;
 
 procedure appTControllerDevice.SetButtonPressedState(index: loopint; pressed: boolean);
 begin
-   if(pressed) then
-      State.KeyState.SetBit(index)
-   else
-      State.KeyState.ClearBit(index);
+   if(index >= 0) and (index < ButtonCount) then begin
+      if(pressed) then
+         State.KeyState.SetBit(index)
+      else
+         State.KeyState.ClearBit(index);
 
-   State.Keys.Process(index, pressed);
+      State.Keys.Process(index, pressed);
+   end;
 end;
 
 procedure appTControllerDevice.SetTriggerState(index: loopint; raw: loopint);
 begin
-   State.Triggers[index].AssignRaw(raw, TriggerValueRange);
-   vmClamp(State.Triggers[index], -1.0, 1.0);
+   if(index >= 0) and (index < TriggerCount) then begin
+      State.Triggers[index].AssignRaw(raw, TriggerValueRange);
+      vmClamp(State.Triggers[index], -1.0, 1.0);
+   end;
 end;
 
 procedure appTControllerDevice.SetAxisState(index: loopint; raw: loopint);
 begin
-   State.Axes[index].AssignRaw(raw, AxisValueRange);
-   vmClamp(State.Triggers[index], -1.0, 1.0);
+   if(index >= 0) and (index < AxisCount) then begin
+      State.Axes[index].AssignRaw(raw, AxisValueRange);
+      vmClamp(State.Triggers[index], -1.0, 1.0);
+   end;
 end;
 
 { appTControllerHandler }
@@ -498,20 +549,6 @@ end;
 
 procedure appTControllerHandler.Run();
 begin
-   RunControllers();
-end;
-
-procedure appTControllerHandler.RunControllers();
-var
-   i: loopint;
-
-begin
-   if(appControllers.List.n > 0) then begin
-      for i := 0 to (appControllers.List.n - 1) do begin
-         appControllers.List.List[i].UpdateStart();
-         appControllers.List.List[i].Update();
-      end;
-   end;
 end;
 
 procedure appTControllerHandler.Reset();
@@ -550,6 +587,8 @@ begin
       if(appControllers.Handlers[i] <> nil) then
          appControllers.Handlers[i]^.Run();
    end;
+
+   appControllers.UpdateControllers();
 
    checkForDisconnected();
 end;
