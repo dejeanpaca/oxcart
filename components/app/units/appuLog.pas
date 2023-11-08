@@ -23,7 +23,9 @@ TYPE
       SetupCallback: TProcedure;
 
       {skip initialization}
-      SkipInit: boolean;
+      SkipInit,
+      {are we initialized}
+      Initialized: boolean;
 
       procedure Initialize();
       {use a new setup callback and return the old one}
@@ -43,6 +45,9 @@ var
 {$ENDIF}
 
 begin
+   if(Initialized) then
+      exit;
+
    stdlog.Handler := log.Handler.pDefault;
 
    {quit if already initialized}
@@ -73,6 +78,8 @@ begin
    {call other log setup routines}
    if(SetupCallback <> nil) then
       SetupCallback();
+
+   Initialized := true;
 end;
 
 function appTLog.UseSetupCallback(callback: TProcedure): TProcedure;
