@@ -118,10 +118,10 @@ IMPLEMENTATION
 
 class function oxTTextureGlobal.IsPot(w, h: longint): boolean;
 begin
-   if(w > 0) and (h > 0) then begin
-      result := vmIsPow2(w) and vmIsPow2(h);
-   end else
-      result := false;
+   if(w > 0) and (h > 0) then
+      Result := (PopCnt(dword(w)) = 1) and (PopCnt(dword(h)) = 1)
+   else
+      Result := false;
 end;
 
 function oxTTextureGlobal.Instance(): oxTTexture;
@@ -225,7 +225,7 @@ end;
 
 function oxTTexture.HasAlpha: boolean;
 begin
-   result := Properties.IsSet(oxTEXTURE_HAS_ALPHA);
+   Result := Properties.IsSet(oxTEXTURE_HAS_ALPHA);
 end;
 
 procedure oxTTexture.Delete;
