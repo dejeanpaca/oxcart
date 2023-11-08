@@ -5,7 +5,6 @@
    Started On:    29.12.2013.
 }
 {$INCLUDE oxdefines.inc}
-{$INCLUDE oxfeaturedefines.inc}
 
 {$IFNDEF OX_RENDERER_GL}
    {$FATAL Included gl renderer, with no OX_RENDERER_GL defined}

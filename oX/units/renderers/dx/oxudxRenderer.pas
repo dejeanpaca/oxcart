@@ -6,7 +6,6 @@
 }
 
 {$INCLUDE oxdefines.inc}
-{$INCLUDE oxfeaturedefines.inc}
 
 {$IFNDEF OX_RENDERER_DX11}
    {$FATAL Included dx renderer, with no OX_RENDERER_DX11 defined}
