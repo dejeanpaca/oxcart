@@ -89,6 +89,9 @@ TYPE
       procedure SetRotation(const v: TVector3f);
       procedure RotateValues(x, y, z: Single);
 
+      {set local rotatiin}
+      procedure RotateLocal(x, y, z: single);
+
       {set scale}
       procedure SetScale(x, y, z: single);
       procedure SetScale(const v: TVector3f);
@@ -516,6 +519,26 @@ begin
    vRotation[2] := vRotation[2] + z;
 
    SetRotation(vRotation);
+end;
+
+procedure oxTEntity.RotateLocal(x, y, z: single);
+var
+   fwd,
+   up,
+   right: TVector3f;
+
+begin
+   fwd := GetForward();
+   up := GetUp();
+   right := GetRight();
+
+   Rotate(z, fwd[0], fwd[1], fwd[2]);
+   Rotate(y, up[0], up[1], up[2]);
+   Rotate(x, right[0], right[1], right[2]);
+
+   GetEuler(vRotation[0], vRotation[1], vRotation[2]);
+
+   UpdateComponentRotation();
 end;
 
 procedure oxTEntity.SetScale(x, y, z: single);
