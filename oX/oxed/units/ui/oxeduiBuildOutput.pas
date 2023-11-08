@@ -19,9 +19,9 @@ procedure onOutputLine();
 begin
    if(oxedSettings.ShowBuildOutput) then begin
       if (Pos('Error:',  BuildExec.Output.LastLine) > 0) or (Pos('Fatal:',  BuildExec.Output.LastLine) > 0) then
-         oxedConsole.e(BuildExec.Output.LastLine)
+         oxedConsole.ne(BuildExec.Output.LastLine)
       else
-         oxedConsole.v(BuildExec.Output.LastLine);
+         oxedConsole.nv(BuildExec.Output.LastLine);
    end;
 end;
 
