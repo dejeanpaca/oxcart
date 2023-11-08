@@ -14,7 +14,7 @@ PROGRAM Shader;
       uApp, uColors, vmVector,
       {oX}
       oxuWindowTypes, oxuWindows, oxuFont, oxuProjection, oxuRender, oxuPaths, oxuShaderFile,
-      oxuRenderer, oxuTransform, oxuShader, uiuDraw, uiuWindow;
+      oxuRenderer, oxuTransform, oxuShader, uiuDraw, uiuWindow, uiuWindowRender;
 
 VAR
    shd: oxTShader;
@@ -23,7 +23,7 @@ procedure Render(wnd: oxTWindow);
 begin
    wnd.Projection.ClearColor.Assign(0.2, 0.2, 0.5, 1.0);
 
-   uiWindow.RenderPrepare(wnd);
+   uiWindowRender.Prepare(wnd);
 end;
 
 procedure Initialize();
@@ -38,14 +38,13 @@ end;
 
 procedure init();
 begin
-   ox.OnInitialize.Add(@Initialize);
-   ox.OnDeinitialize.Add(@DeInitialize);
+   ox.OnInitialize.Add('initialize', @Initialize, @DeInitialize);
    oxWindows.onRender.Add(@Render);
 end;
 
 BEGIN
    appInfo.setName('shader');
-   ox.AppProcs.iAdd('app', @init);
+   ox.PreInit.Add('app', @init);
 
    oxRun.Go();
 END.
