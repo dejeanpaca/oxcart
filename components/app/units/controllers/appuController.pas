@@ -27,24 +27,29 @@ TYPE
    end;
 
 CONST
-   {no mapped function}
-   appCONTROLLER_NONE = 0;
-
    {controller direction}
    appCONTROLLER_DIRECTION_NONE        = 0;
+
    appCONTROLLER_DIRECTION_UP          = 1;
    appCONTROLLER_DIRECTION_DOWN        = 2;
-   appCONTROLLER_DIRECTION_LEFT        = 3;
-   appCONTROLLER_DIRECTION_RIGHT       = 4;
-   appCONTROLLER_DIRECTION_UP_LEFT     = 5;
-   appCONTROLLER_DIRECTION_UP_RIGHT    = 6;
-   appCONTROLLER_DIRECTION_DOWN_LEFT   = 7;
-   appCONTROLLER_DIRECTION_DOWN_RIGHT  = 8;
+   appCONTROLLER_DIRECTION_LEFT        = 4;
+   appCONTROLLER_DIRECTION_RIGHT       = 8;
 
+   appCONTROLLER_DIRECTION_UP_LEFT     = appCONTROLLER_DIRECTION_UP or appCONTROLLER_DIRECTION_LEFT;
+   appCONTROLLER_DIRECTION_UP_RIGHT    = appCONTROLLER_DIRECTION_UP or appCONTROLLER_DIRECTION_RIGHT;
+   appCONTROLLER_DIRECTION_DOWN_LEFT   = appCONTROLLER_DIRECTION_DOWN or appCONTROLLER_DIRECTION_LEFT;
+   appCONTROLLER_DIRECTION_DOWN_RIGHT  = appCONTROLLER_DIRECTION_DOWN or appCONTROLLER_DIRECTION_RIGHT;
+
+   {dpad buttons}
    appbCONTROLLER_DPAD_UP     = 0;
    appbCONTROLLER_DPAD_RIGHT  = 1;
    appbCONTROLLER_DPAD_DOWN   = 2;
    appbCONTROLLER_DPAD_LEFT   = 3;
+
+   {controller functions}
+
+   {no mapped function}
+   appCONTROLLER_NONE = 0;
 
    {directional buttons}
    appCONTROLLER_DPAD_UP               = 1;
@@ -52,17 +57,30 @@ CONST
    appCONTROLLER_DPAD_LEFT             = 3;
    appCONTROLLER_DPAD_RIGHT            = 4;
 
+   {combined directions}
+   appCONTROLLER_DPAD_UP_DOWN          = 5;
+   appCONTROLLER_DPAD_LEFT_RIGHT       = 6;
+
+   {buttons}
    appCONTROLLER_A                     = 5;
+   appCONTROLLER_PS_X                  = 5;
    appCONTROLLER_B                     = 6;
+   appCONTROLLER_PS_O                  = 6;
    appCONTROLLER_X                     = 7;
+   appCONTROLLER_PS_SQUARE             = 7;
    appCONTROLLER_Y                     = 8;
+   appCONTROLLER_PS_TRIANGLE           = 8;
 
    appCONTROLLER_BACK                  = 9;
+   appCONTROLLER_SELECT                = 9;
    appCONTROLLER_START                 = 10;
+   appCONTROLLER_MENU                  = 10;
    appCONTROLLER_HOME                  = 11;
 
    appCONTROLLER_LEFT_SHOULDER         = 12;
+   appCONTROLLER_L1                    = 12;
    appCONTROLLER_RIGHT_SHOULDER        = 13;
+   appCONTROLLER_R1                    = 13;
 
    appCONTROLLER_LEFT_STICK_CLICK      = 14;
    appCONTROLLER_LEFT_STICK_X          = 15;
@@ -73,7 +91,9 @@ CONST
    appCONTROLLER_RIGHT_STICK_CLICK     = 19;
 
    appCONTROLLER_LEFT_TRIGGER          = 20;
+   appCONTROLLER_L2                    = 20;
    appCONTROLLER_RIGHT_TRIGGER         = 21;
+   appCONTROLLER_R2                    = 21;
 
    {namings for functions}
    appCONTROLLER_FUNCTIONS: array[0..41] of appTControllerFunctionDescriptor = (
@@ -150,6 +170,8 @@ TYPE
       appCONTROLLER_EVENT_TRIGGER
    );
 
+   appTControllerInputFunction = loopint;
+
    {what does an axis represent}
    appTControllerAxisRemapType = (
       {it's an actual axis}
@@ -174,7 +196,7 @@ TYPE
 
    appPControllerDeviceMapping = ^appTControllerDeviceMapping;
 
-   appTControllerDeviceSetting = record
+   appTControllerDeviceSettings = record
       {how many axes this device has}
       AxisCount,
       {how many buttons this device has}
@@ -203,13 +225,18 @@ TYPE
       {string used to recognize this device (from the controller device name)}
       RecognitionString: StdString;
 
-      Settings: appTControllerDeviceSetting;
+      {device settings for this mapping}
+      Settings: appTControllerDeviceSettings;
 
       {should we remap axes (if true, also need to set RemappedAxisCount to the proper value)}
       RemapAxes: boolean;
 
+      {axis remappings, to invert axes or convert to trigger or dpad}
       AxisRemaps: array[0..appMAX_CONTROLLER_AXES - 1] of appTControllerAxisRemap;
+      {button functions}
+      ButtonFunctions: array[0..appMAX_CONTROLLER_BUTTONS - 1] of appTControllerInputFunction;
 
+      {next mapping in the mappings list}
       Next: appPControllerDeviceMapping;
 
       class procedure Initialize(out m: appTControllerDeviceMapping); static;
@@ -237,7 +264,7 @@ TYPE
       {stretch trigger non dead zone value to full range}
       TriggerDeadZoneStretch: boolean;
 
-      Settings: appTControllerDeviceSetting;
+      Settings: appTControllerDeviceSettings;
 
       {has the device state been updated}
       Updated,
@@ -453,6 +480,7 @@ IMPLEMENTATION
 class procedure appTControllerDeviceMapping.Initialize(out m: appTControllerDeviceMapping);
 begin
    m := appControllerDeviceGenericMapping;
+   m.Settings.ButtonCount := -1;
 end;
 
 { appTOnControllerEventRoutinesHelper }
@@ -497,6 +525,7 @@ end;
 procedure appTControllers.Add(device: appTControllerDevice);
 var
    m: appPControllerDeviceMapping;
+   ps: appTControllerDeviceSettings;
 
 begin
    List.Add(device);
@@ -512,7 +541,11 @@ begin
    if(m <> @appControllerDeviceGenericMapping) then begin
       log.v('Mapped device to: ' + device.GetMappingId());
 
+      ps := device.Settings;
       device.Settings := m^.Settings;
+
+      if(m^.Settings.ButtonCount = -1) then
+         device.Settings.ButtonCount := ps.ButtonCount;
    end;
 
    {TODO: Get device initial state}
@@ -859,31 +892,24 @@ var
    v: TVector2;
 
 begin
-   v := vmvZero2;
+   if(direction <> appCONTROLLER_DIRECTION_NONE) then begin
+      v := vmvZero2;
 
-   if(direction = appCONTROLLER_DIRECTION_UP) then begin
-      v[1] := +1;
-   end else if(direction = appCONTROLLER_DIRECTION_DOWN) then begin
-      v[1] := -1;
-   end else if(direction = appCONTROLLER_DIRECTION_LEFT) then begin
-      v[0] := -1;
-   end else if(direction = appCONTROLLER_DIRECTION_RIGHT) then begin
-      v[0] := +1;
-   end else if(direction = appCONTROLLER_DIRECTION_UP_LEFT) then begin
-      v[0] := -1;
-      v[1] := +1;
-   end else if(direction = appCONTROLLER_DIRECTION_UP_RIGHT) then begin
-      v[0] := +1;
-      v[1] := +1;
-   end else if(direction = appCONTROLLER_DIRECTION_DOWN_LEFT) then begin
-      v[0] := -1;
-      v[1] := -1;
-   end else if(direction = appCONTROLLER_DIRECTION_DOWN_RIGHT) then begin
-      v[0] := 1;
-      v[1] := -1
-   end;
+      if(direction and appCONTROLLER_DIRECTION_UP > 0) then
+         v[1] := +1;
 
-   Result := v.Normalized();
+      if(direction and appCONTROLLER_DIRECTION_DOWN > 0) then
+         v[1] := -1;
+
+      if(direction and appCONTROLLER_DIRECTION_LEFT > 0) then
+         v[0] := -1;
+
+      if(direction and appCONTROLLER_DIRECTION_RIGHT > 0) then
+         v[0] := +1;
+
+      Result := v.Normalized();
+   end else
+      Result := vmvZero2;
 end;
 
 function appTControllerDevice.GetDPadDirectionVector(): TVector2;
@@ -1029,6 +1055,22 @@ begin
       m.AxisRemaps[i].RemapType := appCONTROLLER_AXIS_IS_AXIS;
       m.AxisRemaps[i].Index := i;
    end;
+
+   m.Settings.DPadPresent := true;
+
+   m.Settings.AxisGroupCount := 2;
+
+   m.Settings.AxisGroups[0][0] := 0;
+   m.Settings.AxisGroups[0][1] := 1;
+
+   m.Settings.AxisGroups[1][0] := 2;
+   m.Settings.AxisGroups[1][1] := 3;
+
+   m.AxisRemaps[0].Func := appCONTROLLER_LEFT_STICK_X;
+   m.AxisRemaps[1].Func := appCONTROLLER_LEFT_STICK_Y;
+
+   m.AxisRemaps[2].Func := appCONTROLLER_RIGHT_STICK_X;
+   m.AxisRemaps[3].Func := appCONTROLLER_RIGHT_STICK_Y;
 end;
 
 INITIALIZATION
