@@ -125,6 +125,12 @@ VAR
    dvHeight: TDVar;
    currentHistory: StdString;
 
+procedure adjustInput();
+begin
+   oxConsole.wdgInput.Resize(oxConsole.Window.Dimensions.w - oxConsole.GetIBLeftOffset(), oxConsole.IbHeight);
+   oxConsole.wdgInput.Move(oxConsole.GetIBLeftOffset() + 1, oxConsole.ibHeight);
+end;
+
 procedure consoleReconfigure();
 var
    clientTotal: longint = 0;
@@ -134,7 +140,8 @@ begin
       data.fh              := oxConsole.Font.GetHeight() + 2;
 
       data.OutputStartY    := oxConsole.Font.GetHeight() + 4 + oxConsole.StatusHeight;
-      clientTotal          := (oxConsole.Window.Dimensions.h - (oxConsole.wdgInput.Dimensions.h + 4 + oxConsole.StatusHeight));
+      clientTotal          := (oxConsole.Window.Dimensions.h -
+         (oxConsole.wdgInput.Dimensions.h + 4 + oxConsole.StatusHeight));
 
       data.MaxLines        := (clientTotal div data.fh);
       data.MaxVisibleChars := oxConsole.Window.Dimensions.w div oxConsole.Font.GetWidth() - 4;
@@ -160,7 +167,7 @@ begin
    oxConsole.Window.Move(0, uiTWindow(oxConsole.Window.Parent).Dimensions.h - 1);
    oxConsole.Window.Resize(oxConsole.Window.Parent.Dimensions.w, h);
 
-   oxConsole.wdgInput.Resize(oxConsole.Window.Dimensions.w - oxConsole.GetIBLeftOffset(), oxConsole.IbHeight);
+   adjustInput();
 end;
 
 { oxTConsoleInputBox }
@@ -212,7 +219,9 @@ procedure oxTConsoleGlobal.SetFont(newFont: oxTFont);
 begin
    if(newFont <> nil) then begin
       oxConsole.Font := newFont;
+      wdgInput.SetFont(newFont);
       consoleReconfigure();
+      adjustInput();
    end;
 end;
 
@@ -392,8 +401,8 @@ begin
          w := oxConsole.IbHeight div 2;
 
          width := oxConsole.GetIBStatusWidth();
-         y := wnd.RPosition.y - wnd.Dimensions.h + 3;
-         y2 := y + oxConsole.IbHeight - 3;
+         y := wnd.RPosition.y - wnd.Dimensions.h;
+         y2 := y + oxConsole.IbHeight - 1;
 
          r.x := x;
          r.y := y2;
@@ -408,9 +417,9 @@ begin
 
          x := wnd.RPosition.x + width;
 
-         t[2].Assign(x, y2, 0);
-         t[1].Assign(x + w, y + w, 0);
-         t[0].Assign(x, y, 0);
+         t[2].Assign(x, y2 + 2, 0);
+         t[1].Assign(x + w, y + w + 1, 0);
+         t[0].Assign(x, y + 1, 0);
 
          oxRenderUtilities.Triangle(t[0], t[1], t[2]);
       end;
@@ -589,12 +598,13 @@ begin
       uiWidget.SetTargetCP(@consoleWidgetControl);
 
       uiWidget.Create.Instance := oxTConsoleInputBox;
-      oxConsole.wdgInput := wdgTInputBox(wdgInputBox.Add('', oxPoint(oxConsole.GetIBLeftOffset() + 1, oxConsole.ibHeight),
-         oxDimensions(oxConsole.Window.Dimensions.w, oxConsole.ibHeight)).SetID(WDGID_CONSOLE_IB));
+      oxConsole.wdgInput := wdgTInputBox(wdgInputBox.Add('', oxNullPoint,
+         oxNullDimensions).SetID(WDGID_CONSOLE_IB));
 
       oxConsole.wdgInput.CustomDrawnContainer := true;
       oxConsole.wdgInput.InputCursorType := wdgINPUT_BOX_CURSOR_BLOCK;
       oxConsole.wdgInput.Skin := @consoleInputSkin;
+      oxConsole.wdgInput.SetFont(oxui.GetDefaultFont());
 
       adjustSize();
 
@@ -709,7 +719,8 @@ begin
    if(context.What = DVAR_NOTIFICATION_WRITE) then begin
       context.Result := 0;
 
-      dvarPFileData(context.f)^.Write(context.Parent, dvHistory, oxConsole.Console.History.Entries.List, oxConsole.Console.History.Entries.n);
+      dvarPFileData(context.f)^.Write(context.Parent, dvHistory, oxConsole.Console.History.Entries.List,
+         oxConsole.Console.History.Entries.n);
    end;
 end;
 
@@ -736,7 +747,7 @@ INITIALIZATION
    oxConsole.Colors.Background.Assign(32, 32, 32, 232);
    oxConsole.Colors.StatusBackground.Assign(21, 21, 64, 255);
    oxConsole.Colors.InputBackground.Assign(5, 5, 13, 232);
-   oxConsole.Colors.InputText.Assign(255, 255, 255, 255);
+   oxConsole.Colors.InputText := cWhite4ub;
    oxConsole.Colors.InputCursor.Assign(232, 232, 255, 255);
    oxConsole.Colors.InputStatus.Assign(63, 63, 127, 255);
    oxConsole.Console.Colors.Statement.Assign(192, 192, 255, 255);
@@ -748,17 +759,18 @@ INITIALIZATION
    oxConsole.WindowId := uiControl.GetID('ox.console');
    WDGID_CONSOLE_IB := uiControl.GetID('ox.console.inputbox');
 
-   {console dvar}
+   {console history dvar}
    dvar.Init(dvgConsoleHistory);
    dvgConsoleHistory.Name := 'console';
-   dvgConsoleHistory.Add(dvHistory, 'history', dtcSTRING, @currentHistory);
+   dvgConsoleHistory.pNotify := @dvSaveHandler;
 
+   dvgConsoleHistory.Add(dvHistory, 'history', dtcSTRING, @currentHistory);
+   dvHistory.pNotify := @dvHistoryNotify;
+
+   {console settings dvar}
    ox.dvar.Add('console', dvgConsole);
    dvgConsole.Add(dvWriteTime, 'write_time', dtcBOOL, @oxConsole.WriteTime);
    dvgConsole.Add(dvFullscreen, 'fullscreen', dtcBOOL, @oxConsole.Fullscreen);
    dvgConsole.Add(dvHeight, 'height', dtcSINGLE, @oxConsole.Height);
 
-   dvHistory.pNotify := @dvHistoryNotify;
-
-   dvgConsoleHistory.pNotify := @dvSaveHandler;
 END.
