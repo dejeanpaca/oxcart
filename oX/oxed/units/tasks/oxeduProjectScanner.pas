@@ -149,7 +149,7 @@ begin
    with oxedProjectScanner do begin
       TFileTraverse.Initialize(Walker);
 
-      Walker.OnFileDescriptor := @scanFile;
+      Walker.OnFile:= @scanFile;
       Walker.OnDirectory := @onDirectory;
 
       Task := oxedTProjectScannerTask.Create();
