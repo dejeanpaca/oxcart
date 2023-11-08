@@ -200,10 +200,17 @@ begin
    x2 := x2 + 1.0;
    y2 := y2 + 1.0;
 
-   {%H-}v[0].Assign(x1 - 0.5, y1);
-   v[1].Assign(x2, y1);
-   v[2].Assign(x2, y2);
-   v[3].Assign(x1, y2);
+   v[0][0] := x1 - 0.5;
+   v[0][1] := y1;
+
+   v[1][0] := x2;
+   v[1][1] := y1;
+
+   v[2][0] := x2;
+   v[2][1] := y2;
+
+   v[3][0] := x1;
+   v[3][1] := y2;
 
    oxRender.LineLoop(v);
 end;
