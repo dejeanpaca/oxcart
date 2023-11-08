@@ -93,6 +93,7 @@ TYPE
 
       {build parameters}
       Parameters: record
+         PreIncludeUses,
          IncludeUses,
          ExportSymbols: TSimpleStringList;
       end;
@@ -633,73 +634,6 @@ begin
    oxedBuildLog.v('Using cmem: ' + sf(Result));
 end;
 
-function GetUsesString(): TAppendableString;
-
-   procedure processPackage(var p: oxedTPackage);
-   var
-      i,
-      j,
-      total: loopint;
-      idx: loopint;
-      ppath: oxedPPackagePath;
-
-   begin
-      total := 0;
-
-      {first, get total number of units supported for this build}
-      for i := 0 to p.Units.n - 1 do begin
-         ppath := @p.Units.List[i];
-
-         if(ppath^.IsSupported(oxedBuild.BuildOS, oxedBuild.IsLibrary())) then
-            inc(total, ppath^.Units.n);
-      end;
-
-      {include all supported units}
-      idx := 0;
-      for i := 0 to p.Units.n - 1 do begin
-         ppath := @p.Units.List[i];
-
-         if(ppath^.IsSupported(oxedBuild.BuildOS, oxedBuild.IsLibrary())) then begin
-            for j := 0 to ppath^.Units.n - 1 do begin
-               if(idx < total - 1) then
-                  Result.Add('   {%H-}' + ppath^.Units.List[j] + ',')
-               else
-                  Result.Add('   {%H-}' + ppath^.Units.List[j]);
-
-               inc(idx);
-            end;
-         end;
-      end;
-   end;
-
-begin
-   Result := '';
-
-   if(isCMEM()) then begin
-      {include cmem only if not already included by something else}
-      Result.Add('{$IF NOT DECLARED(calloc)}cmem,{$ENDIF}');
-   end;
-
-   Result.Add('{$INCLUDE oxappuses.inc}');
-
-   if(oxedProject.MainUnit <> '') then begin
-      if(not oxedProject.NilProject) then
-         Result := Result + ',';
-
-      Result.Add('{main unit}');
-      Result.Add('    {%H-}' + oxedProject.MainUnit);
-   end else begin
-      if(oxedProject.MainPackage.Units.n > 0) then begin
-         if(not oxedProject.NilProject) then
-            Result := Result + ',';
-
-         Result.Add('{units}');
-
-         processPackage(oxedProject.MainPackage);
-      end;
-   end;
-end;
-
 procedure CreateIncludesList(const list: TSimpleStringList; var s: TAppendableString; prefix: StdString = '');
 var
    i: loopint;
@@ -719,16 +653,82 @@ begin
    end;
 end;
 
-function CreateUsesString(): TAppendableString;
-begin
-   Result := GetUsesString();
+procedure GetUsesUnits(var units: TSimpleStringList);
+var
+   i: loopint;
 
-   if oxedBuild.Parameters.IncludeUses.n > 0 then begin
-      if(not oxedProject.NilProject) or (Result <> '') then
-         Result := Result + ',';
+   procedure processPackage(var p: oxedTPackage);
+   var
+      i,
+      j: loopint;
+      ppath: oxedPPackagePath;
 
-      CreateIncludesList(oxedBuild.Parameters.IncludeUses, Result, '   ');
+   begin
+      {include all supported units}
+      for i := 0 to p.Units.n - 1 do begin
+         ppath := @p.Units.List[i];
+
+         if(ppath^.IsSupported(oxedBuild.BuildOS, oxedBuild.IsLibrary())) then begin
+            for j := 0 to ppath^.Units.n - 1 do begin
+               units.Add(ppath^.Units.List[j]);
+            end;
+         end;
+      end;
    end;
+
+begin
+   if(oxedBuild.Parameters.PreIncludeUses.n > 0) then begin
+     units.Add('{build included first}');
+
+     for i := 0 to oxedBuild.Parameters.PreIncludeUses.n - 1 do begin
+        units.Add(oxedBuild.Parameters.PreIncludeUses.List[i]);
+     end;
+   end;
+
+   if(oxedProject.MainUnit <> '') then begin
+      units.Add('{main unit}');
+      units.Add(oxedProject.MainUnit);
+   end else begin
+      if(oxedProject.MainPackage.Units.n > 0) then begin
+         units.Add('{project units}');
+         processPackage(oxedProject.MainPackage);
+      end;
+   end;
+
+   if(oxedBuild.Parameters.IncludeUses.n > 0) then begin
+      units.Add('{build included}');
+
+      for i := 0 to oxedBuild.Parameters.IncludeUses.n - 1 do begin
+         units.Add(oxedBuild.Parameters.IncludeUses.List[i]);
+      end;
+   end;
+
+end;
+
+function GetUsesString(): TAppendableString;
+var
+   units: TSimpleStringList;
+
+begin
+   Result := '';
+
+   if(isCMEM()) then begin
+      {include cmem only if not already included by something else}
+      Result.Add('{$IF NOT DECLARED(calloc)}cmem,{$ENDIF}');
+   end;
+
+   Result.Add('{$INCLUDE oxappuses.inc}');
+
+   if(not oxedProject.NilProject) then
+      Result := Result + ',';
+
+   TSimpleStringList.Initialize(units, 128);
+
+   GetUsesUnits(units);
+
+   CreateIncludesList(units, Result, '   ');
+
+   units.Dispose();
 end;
 
 procedure SetupSource(out u: TPascalSourceBuilder);
@@ -738,7 +738,7 @@ begin
    u.Header := getSourceHeader();
    u.Name := oxedProject.Identifier;
 
-   u.sUses := CreateUsesString();
+   u.sUses := GetUsesString();
    CreateIncludesList(oxedBuild.Parameters.ExportSymbols, u.sExports, '   ');
 end;
 
@@ -1487,6 +1487,7 @@ INITIALIZATION
    TProcedures.InitializeValues(oxedBuild.OnDone);
 
    TSimpleStringList.InitializeValues(oxedBuild.Parameters.ExportSymbols);
+   TSimpleStringList.InitializeValues(oxedBuild.Parameters.PreIncludeUses);
    TSimpleStringList.InitializeValues(oxedBuild.Parameters.IncludeUses);
 
    oxedProjectScanner.OnDone.Add(@onScanDone);
