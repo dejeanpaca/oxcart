@@ -125,6 +125,9 @@ TYPE
 
       {is the project valid}
       function Valid(): boolean;
+
+      function GetConfigFilePath(const fn: string): string;
+      function GetTempFilePath(const fn: string): string;
    end;
 
 VAR
@@ -235,6 +238,16 @@ end;
 function oxedTProject.Valid(): boolean;
 begin
    Result := (Name <> '') and (Identifier <> '');
+end;
+
+function oxedTProject.GetConfigFilePath(const fn: string): string;
+begin
+   Result := ConfigPath + fn;
+end;
+
+function oxedTProject.GetTempFilePath(const fn: string): string;
+begin
+   Result := oxedProject.TempPath + fn;
 end;
 
 INITIALIZATION

@@ -26,14 +26,11 @@ TYPE
    { oxedTProjectSession }
 
    oxedTProjectSession = record
-      function GetFn(): string;
+      class function GetFn(): string; static;
 
-      procedure Load();
-      procedure Save();
+      class procedure Load(); static;
+      class procedure Save(); static;
    end;
-
-VAR
-   oxedProjectSession: oxedTProjectSession;
 
 IMPLEMENTATION
 
@@ -46,9 +43,9 @@ VAR
 
 { oxedTProjectSession }
 
-function oxedTProjectSession.GetFn(): string;
+class function oxedTProjectSession.GetFn(): string;
 begin
-   result := oxedProject.TempPath + OXED_PROJECT_SESSION_FILE;
+   Result := oxedProject.GetTempFilePath(OXED_PROJECT_SESSION_FILE);
 end;
 
 procedure UpdateVars();
@@ -59,14 +56,14 @@ begin
    dvEnableConsole.Update(oxedProject.Session.EnableConsole);
 end;
 
-procedure oxedTProjectSession.Load();
+class procedure oxedTProjectSession.Load();
 begin
    UpdateVars();
 
    dvarf.ReadText(dvGroup, GetFn());
 end;
 
-procedure oxedTProjectSession.Save();
+class procedure oxedTProjectSession.Save();
 begin
    UpdateVars();
    oxedProject.RecreateTempDirectory();
