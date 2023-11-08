@@ -163,7 +163,7 @@ TYPE
          procedure OnStopDrag(); virtual;
    end;
 
-   uiTPreallocatedWindowListArray = specialize TSimpleList<uiTWindow>;
+   uiTSimpleWindowList = specialize TSimpleList<uiTWindow>;
 
    { WINDOW HANDLERS }
    uiTWindowKeyHandler  = function(var key: appTKeyEvent; wnd: uiTWindow): boolean;

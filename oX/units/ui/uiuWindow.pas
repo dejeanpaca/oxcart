@@ -273,14 +273,14 @@ TYPE
       procedure SetPointerCentered();
 
       {find all windows lined up horizontally with us}
-      function FindHorizontalLineup(fitWithin: boolean = false): uiTPreallocatedWindowListArray;
+      function FindHorizontalLineup(fitWithin: boolean = false): uiTSimpleWindowList;
       {find all windows lined up horizontally with us}
-      function FindVerticalLineup(fitWithin: boolean = false): uiTPreallocatedWindowListArray;
+      function FindVerticalLineup(fitWithin: boolean = false): uiTSimpleWindowList;
 
       {find all windows of a given type}
-      function FindType(wndType: uiTWindowClass): uiTPreallocatedWindowListArray;
+      function FindType(wndType: uiTWindowClass): uiTSimpleWindowList;
       {find all windows of a given type recursively}
-      procedure FindTypeRecursive(wndType: uiTWindowClass; var windows: uiTPreallocatedWindowListArray);
+      procedure FindTypeRecursive(wndType: uiTWindowClass; var windows: uiTSimpleWindowList);
 
       {find a parent of the specified type, otherwise returns nil}
       function GetParentOfType(whatType: uiTWindowClass): uiTWindow;
@@ -288,14 +288,14 @@ TYPE
       function IsType(whatType: uiTWindowClass): boolean;
    end;
 
-   { uiTPreallocatedWindowListArrayHelper }
+   { uiTSimpleWindowListHelper }
 
-   uiTPreallocatedWindowListArrayHelper = record helper for uiTPreallocatedWindowListArray
-      function FindLeftOf(x: loopint): uiTPreallocatedWindowListArray;
-      function FindRightOf(x: loopint): uiTPreallocatedWindowListArray;
+   uiTSimpleWindowListHelper = record helper for uiTSimpleWindowList
+      function FindLeftOf(x: loopint): uiTSimpleWindowList;
+      function FindRightOf(x: loopint): uiTSimpleWindowList;
 
-      function FindAbove(y: loopint): uiTPreallocatedWindowListArray;
-      function FindBelow(y: loopint): uiTPreallocatedWindowListArray;
+      function FindAbove(y: loopint): uiTSimpleWindowList;
+      function FindBelow(y: loopint): uiTSimpleWindowList;
 
       {get total width (including non-client) of all windows}
       function GetTotalWidth(): loopint;
@@ -483,9 +483,9 @@ begin
    Result := (wnd <> nil) and (wnd.ID.ID = id.ID);
 end;
 
-{ uiTPreallocatedWindowListArrayHelper }
+{ uiTSimpleWindowListHelper }
 
-function uiTPreallocatedWindowListArrayHelper.FindLeftOf(x: loopint): uiTPreallocatedWindowListArray;
+function uiTSimpleWindowListHelper.FindLeftOf(x: loopint): uiTSimpleWindowList;
 var
    i: loopint;
 
@@ -498,7 +498,7 @@ begin
    end;
 end;
 
-function uiTPreallocatedWindowListArrayHelper.FindRightOf(x: loopint): uiTPreallocatedWindowListArray;
+function uiTSimpleWindowListHelper.FindRightOf(x: loopint): uiTSimpleWindowList;
 var
    i: loopint;
 
@@ -511,7 +511,7 @@ begin
    end;
 end;
 
-function uiTPreallocatedWindowListArrayHelper.FindAbove(y: loopint): uiTPreallocatedWindowListArray;
+function uiTSimpleWindowListHelper.FindAbove(y: loopint): uiTSimpleWindowList;
 var
    i: loopint;
 
@@ -524,7 +524,7 @@ begin
    end;
 end;
 
-function uiTPreallocatedWindowListArrayHelper.FindBelow(y: loopint): uiTPreallocatedWindowListArray;
+function uiTSimpleWindowListHelper.FindBelow(y: loopint): uiTSimpleWindowList;
 var
    i: loopint;
 
@@ -537,7 +537,7 @@ begin
    end;
 end;
 
-function uiTPreallocatedWindowListArrayHelper.GetTotalWidth: loopint;
+function uiTSimpleWindowListHelper.GetTotalWidth: loopint;
 var
    i: loopint;
 
@@ -549,7 +549,7 @@ begin
    end;
 end;
 
-function uiTPreallocatedWindowListArrayHelper.GetTotalHeight: loopint;
+function uiTSimpleWindowListHelper.GetTotalHeight: loopint;
 var
    i: loopint;
 
@@ -561,7 +561,7 @@ begin
    end;
 end;
 
-function uiTPreallocatedWindowListArrayHelper.GetLeftWidthFrom(px: loopint): loopint;
+function uiTSimpleWindowListHelper.GetLeftWidthFrom(px: loopint): loopint;
 var
    i,
    leftMost: loopint;
@@ -577,7 +577,7 @@ begin
    end;
 end;
 
-function uiTPreallocatedWindowListArrayHelper.GetRightWidthFrom(px: loopint): loopint;
+function uiTSimpleWindowListHelper.GetRightWidthFrom(px: loopint): loopint;
 var
    i,
    rightMost: loopint;
@@ -593,7 +593,7 @@ begin
    end;
 end;
 
-function uiTPreallocatedWindowListArrayHelper.GetAboveHeightFrom(py: loopint): loopint;
+function uiTSimpleWindowListHelper.GetAboveHeightFrom(py: loopint): loopint;
 var
    i,
    aboveMost: loopint;
@@ -609,7 +609,7 @@ begin
    end;
 end;
 
-function uiTPreallocatedWindowListArrayHelper.GetBelowHeightFrom(py: loopint): loopint;
+function uiTSimpleWindowListHelper.GetBelowHeightFrom(py: loopint): loopint;
 var
    i,
    belowMost: loopint;
@@ -2005,7 +2005,7 @@ begin
    appm.SetPosition(oxwParent, x, y);
 end;
 
-function uiTWindowHelper.FindHorizontalLineup(fitWithin: boolean): uiTPreallocatedWindowListArray;
+function uiTWindowHelper.FindHorizontalLineup(fitWithin: boolean): uiTSimpleWindowList;
 var
    i: loopint;
    source,
@@ -2027,7 +2027,7 @@ begin
    end;
 end;
 
-function uiTWindowHelper.FindVerticalLineup(fitWithin: boolean): uiTPreallocatedWindowListArray;
+function uiTWindowHelper.FindVerticalLineup(fitWithin: boolean): uiTSimpleWindowList;
 var
    i: loopint;
    source,
@@ -2049,7 +2049,7 @@ begin
    end;
 end;
 
-function uiTWindowHelper.FindType(wndType: uiTWindowClass): uiTPreallocatedWindowListArray;
+function uiTWindowHelper.FindType(wndType: uiTWindowClass): uiTSimpleWindowList;
 var
    i: loopint;
    cur: uiTWindow;
@@ -2067,7 +2067,7 @@ begin
    end;
 end;
 
-procedure uiTWindowHelper.FindTypeRecursive(wndType: uiTWindowClass; var windows: uiTPreallocatedWindowListArray);
+procedure uiTWindowHelper.FindTypeRecursive(wndType: uiTWindowClass; var windows: uiTSimpleWindowList);
 var
    i: loopint;
    cur: uiTWindow;
