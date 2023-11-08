@@ -299,7 +299,7 @@ begin
       end;
    end;
 
-   Result := @potentialParent;
+   Result := potentialParent;
 end;
 
 function oxedTPackagePathsHelper.AssociateParent(const p: oxedTPackagePath): oxedPPackagePath;
@@ -329,7 +329,7 @@ begin
       end;
    end;
 
-   Result := @potentialParent;
+   Result := potentialParent;
 end;
 
 procedure oxedTPackagePathsHelper.Destroy();
