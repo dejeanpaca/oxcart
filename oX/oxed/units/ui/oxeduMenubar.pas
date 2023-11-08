@@ -289,13 +289,16 @@ end;
 procedure oxedTMenubarGlobal.UpdateRecents();
 var
    i: longint;
+   item: uiPContextMenuItem;
 
 begin
    Recents.RemoveAll();
 
    if(oxedRecents.List.n > 0) then begin
-      for i := 0 to (oxedRecents.List.n - 1) do
-         Recents.AddItem(oxedRecents.List.list[i], 0, @openRecentCallback);
+      for i := 0 to (oxedRecents.List.n - 1) do begin
+         item := Recents.AddItem(oxedRecents.List.List[i], 0, @openRecentCallback);
+         item^.Index := i;
+      end;
 
       Recents.AddSeparator();
       Recents.AddItem('Clear all', CLEAR_RECENTS_EVENT);
