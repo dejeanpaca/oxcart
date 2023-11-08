@@ -23,6 +23,8 @@ INTERFACE
       {build}
       oxeduBuild, oxeduPlatform, oxeduWindowsPlatform, oxeduLinuxPlatform, oxeduProjectRunner, oxeduSceneClone,
       oxeduProjectScanner, oxeduPasScanner,
+      {additional}
+      oxeduBuildEvents,
       {windows}
       oxeduMenubar, oxeduProjectManagement, oxeduMessages,
       oxuwndBuildSettings, oxeduToolbar, oxeduWorkbar, oxeduStatusbar, oxeduDockableArea, oxeduMenuToolbar,
