@@ -51,8 +51,10 @@ TYPE
       procedure DeInitialize(); override;
 
       function HasItems(index: loopint): boolean;
+      function GetItemCount(index: loopint): loopint;
 
       protected
+         procedure GetItemRect(index: loopint; out r: oxTRect);
          function GetMenuItemWidth(which: loopint): loopint;
          function OnWhere(x, y: loopint): loopint;
          procedure ShowMenu(idx: loopint);
@@ -149,11 +151,10 @@ var
 
    i,
    selectedItemCount,
-   currentMenuHighlight: loopint;
+   hoveredItemCount: loopint;
 
    colors: uiPSkinColorSet;
 
-   selected,
    current: uiPContextMenuItem;
 
    dim,
@@ -201,44 +202,17 @@ begin
 
    f := CachedFont;
 
-   currentMenuHighlight := SelectedMenu;
-   if(HoveredMenu > -1) then
-      currentMenuHighlight := HoveredMenu;
-
-   selectedItemCount := 0;
-
-   selected := nil;
-
-   if(currentMenuHighlight <> -1) then begin
-      selected := @Menus.Items.List[currentMenuHighlight];
-
-      if(selected^.Sub <> nil) then
-         selectedItemCount := uiTContextMenu(Menus.Items[currentMenuHighlight].Sub).Items.n;
-   end;
+   selectedItemCount := GetItemCount(SelectedMenu);
+   hoveredItemCount := GetItemCount(HoveredMenu);
 
    if (selectedItemCount > 0) or (uiContextMenu.Owner = Self) then begin
-      r.x := RPosition.x + PaddingLeft;
-
-      if(currentMenuHighlight > 0) then begin
-         for i := 0 to (currentMenuHighlight - 1) do
-            inc(r.x, f.GetLength(Menus.Items.List[i].Caption) + Separation);
-
-         dec(r.x, Separation div 2);
-      end;
-
-      r.h := Dimensions.h - 4;
-      r.y := RPosition.y - 2;
-      r.w := f.GetLength(selected^.Caption);
-
-      if(currentMenuHighlight > 0) then
-         inc(r.w, Separation)
-      else begin
-         dec(r.x, PaddingLeft);
-         inc(r.w, Separation div 2);
-         inc(r.w, PaddingLeft);
-      end;
-
+      GetItemRect(SelectedMenu, r);
       uiRenderWidget.Box(r, colors^.Highlight, colors^.Highlight);
+   end;
+
+   if (hoveredItemCount > 0) and (SelectedMenu <> HoveredMenu) then begin
+      GetItemRect(HoveredMenu, r);
+      uiRenderWidget.Box(r, colors^.Focal, colors^.Focal);
    end;
 
    {return to start position}
@@ -255,7 +229,7 @@ begin
 
       if(current^.Properties.IsSet(uiCONTEXT_MENU_ITEM_ENABLED)) and
       (uiTContextMenu(current^.Sub).Items.n > 0) then begin
-         if(i <> currentMenuHighlight) then
+         if(i <> SelectedMenu) then
             SetColorBlended(colors^.Text)
          else
             SetColorBlended(colors^.TextInHighlight);
@@ -338,7 +312,49 @@ end;
 
 function wdgTMenubar.HasItems(index: loopint): boolean;
 begin
-   Result := (Menus.Items.List[index].Sub <> nil) and (uiTContextMenu(Menus.Items.List[index].Sub).Items.n > 0);
+   Result := GetItemCount(index) > 0;
+end;
+
+function wdgTMenubar.GetItemCount(index: loopint): loopint;
+var
+   selected: uiPContextMenuItem;
+
+begin
+   Result := 0;
+
+   if(Menus <> nil) and (index > -1) and (index < Menus.Items.n) then begin
+      selected := @Menus.Items.List[index];
+
+      if(selected^.Sub <> nil) then
+         Result := uiTContextMenu(Menus.Items[index].Sub).Items.n;
+   end;
+end;
+
+procedure wdgTMenubar.GetItemRect(index: loopint; out r: oxTRect);
+var
+   i: loopint;
+
+begin
+   r.x := RPosition.x + PaddingLeft;
+
+   if(index > 0) then begin
+      for i := 0 to (index - 1) do
+         inc(r.x, CachedFont.GetLength(Menus.Items.List[i].Caption) + Separation);
+
+      dec(r.x, Separation div 2);
+   end;
+
+   r.h := Dimensions.h - 4;
+   r.y := RPosition.y - 2;
+   r.w := CachedFont.GetLength(Menus.Items.List[index].Caption);
+
+   if(index > 0) then
+      inc(r.w, Separation)
+   else begin
+      dec(r.x, PaddingLeft);
+      inc(r.w, Separation div 2);
+      inc(r.w, PaddingLeft);
+   end;
 end;
 
 function wdgTMenubar.GetMenuItemWidth(which: loopint): loopint;
