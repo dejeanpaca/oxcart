@@ -89,6 +89,9 @@ TYPE
       function CreateGlyphImage(c: longword; out glyphImage: imgTImage; size: longint = 12; index: FT_UInt = 0): oxTFreetypeFontGlyphData;
       function CreateGlyphTexture(c: longword; out tex: oxTTexture; size: longint = 12; index: FT_UInt = 0): oxTFreetypeFontGlyphData;
 
+      function GetGlyphData(const name: string; size: longint = 12): oxTFreetypeFontGlyphData;
+      function GetGlyphData(c: longword; size: longint = 12; index: FT_UInt = 0): oxTFreetypeFontGlyphData;
+
       function CreateGlyphImage(const name: string; out glyphImage: imgTImage; size: longint = 12): oxTFreetypeFontGlyphData;
       function CreateGlyphTexture(const name: string; out tex: oxTTexture; size: longint = 12): oxTFreetypeFontGlyphData;
    end;
@@ -332,6 +335,38 @@ begin
       oxTextureGenerate.Generate(glyphImage, tex);
 
    img.Dispose(glyphImage);
+end;
+
+function oxTFreetypeFont.GetGlyphData(const name: string; size: longint): oxTFreetypeFontGlyphData;
+var
+   index: FT_UInt;
+
+begin
+   {$IFDEF OX_FEATURE_FREETYPE}
+   index := FT_Get_Name_Index(Face, PChar(name));
+
+   if(index > 0) then
+      Result := GetGlyphData(0, size, index)
+   else
+   {$ENDIF}
+   ZeroOut(Result, SizeOf(Result));
+end;
+
+function oxTFreetypeFont.GetGlyphData(c: longword; size: longint; index: FT_UInt): oxTFreetypeFontGlyphData;
+var
+   bmp: oxTFreetypeBitmap;
+
+begin
+   bmp := GetGlyphGray(c, size, index);
+
+   if(bmp.Data <> nil) then begin
+      Result.BearingX := bmp.BearingX;
+      Result.BearingY := bmp.BearingY;
+      Result.Advance := bmp.Advance;
+
+      FreeMem(bmp.Data);
+   end else
+      ZeroPtr(@Result, SizeOf(Result));
 end;
 
 function oxTFreetypeFont.CreateGlyphImage(const name: string; out glyphImage: imgTImage; size: longint): oxTFreetypeFontGlyphData;
