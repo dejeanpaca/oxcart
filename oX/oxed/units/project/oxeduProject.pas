@@ -15,7 +15,7 @@ INTERFACE
       {ox}
       oxuScene,
       {oxed}
-      uOXED;
+      uOXED, oxeduSettings;
 
 TYPE
    oxedPProjectUnit = ^oxedTProjectUnit;
@@ -167,7 +167,7 @@ begin
    SetIdentifier(Name);
    Session.IncludeThirdPartyUnits := true;
    Session.EnableConsole := true;
-   LineEndings := 'lf';
+   LineEndings := oxedSettings.LineEndings;
 
    Units.Initialize(Units);
    IncludeFiles.Initialize(IncludeFiles);
