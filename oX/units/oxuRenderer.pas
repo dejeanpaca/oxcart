@@ -146,6 +146,8 @@ TYPE
       procedure ContextCurrent(const {%H-}context: oxTRenderTargetContext); virtual;
       procedure ContextCurrent(context: loopint; var {%H-}target: oxTRenderTarget);
       procedure ClearContext(context: loopint); virtual;
+      {clear context but mark it as used}
+      procedure ClearContextUse(context: loopint);
       function DestroyContext({%H-}context: loopint): boolean; virtual;
 
       function RenderingContextCount(): loopint;
@@ -433,6 +435,14 @@ begin
    if(context >= 0) then begin
       assert(RenderingContexts[context].Used = true, 'Rendering context ' + sf(context) + ' cleared more than once, or was not current before');
       RenderingContexts[context].Used := false;
+   end;
+end;
+
+procedure oxTRenderer.ClearContextUse(context: loopint);
+begin
+   if(context >= 0) then begin
+      ClearContext(context);
+      RenderingContexts[context].Used := true;
    end;
 end;
 
