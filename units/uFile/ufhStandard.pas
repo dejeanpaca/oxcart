@@ -44,8 +44,8 @@ VAR
    stdStdFileHandler: TFileStdHandler;
 
 {Copy from a source file to destination. Returns error code.}
-function fCopy(const src: StdString; var dst: TFile): longint;
-function fCopy(var src: TFile; const dst: StdString; size: fileint): longint;
+function fCopy(const src: StdString; var dst: TFile): fileint;
+function fCopy(var src: TFile; const dst: StdString; size: fileint): fileint;
 
 IMPLEMENTATION
 
@@ -58,7 +58,7 @@ TYPE
 
 {STANDARD FILE HANDLER}
 
-function fCopy(const src: StdString; var dst: TFile): longint;
+function fCopy(const src: StdString; var dst: TFile): fileint;
 var
    buf: pbyte;
    f: file;
@@ -76,7 +76,7 @@ var
 begin
    bread    := 0;
    total    := 0;
-   Result   := eNONE;
+   Result   := 0;
 
    bufferSize := fFile.GetBuffer(buf);
 
@@ -97,7 +97,7 @@ begin
 
                   if(dst.Error <> 0) then begin
                      cleanup();
-                     exit;
+                     exit(-dst.Error);
                   end;
                end else
                   break;
@@ -117,7 +117,7 @@ begin
    Result := total;
 end;
 
-function fCopy(var src: TFile; const dst: StdString; size: fileint): longint;
+function fCopy(var src: TFile; const dst: StdString; size: fileint): fileint;
 var
    f: file;
    buf: pbyte;
