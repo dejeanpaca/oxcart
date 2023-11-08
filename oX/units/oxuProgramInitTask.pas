@@ -20,7 +20,10 @@ TYPE
 
    { oxTInitTask }
 
+   { oxTProgramInitTask }
+
    oxTProgramInitTask = class(oxTInitTask)
+      constructor Create(); override;
       procedure Run(); override;
    end;
 
@@ -39,6 +42,13 @@ VAR
 IMPLEMENTATION
 
 { oxTInitTask }
+
+constructor oxTProgramInitTask.Create();
+begin
+   inherited Create();
+
+   Name := 'ProgramInitTask';
+end;
 
 procedure oxTProgramInitTask.Run();
 var

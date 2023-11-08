@@ -21,6 +21,7 @@ TYPE
    { oxTInitTask }
 
    oxTInitTask = class(oxTRenderTask)
+      constructor Create(); override;
       procedure Render(); override;
       procedure Run(); override;
    end;
@@ -40,6 +41,14 @@ IMPLEMENTATION
 
 { oxTInitTask }
 
+constructor oxTInitTask.Create();
+begin
+   inherited Create();
+
+   Name := 'InitTask';
+   SetAsSingleRun();
+end;
+
 procedure oxTInitTask.Render();
 begin
     {render nothing for the initialization task}
@@ -51,8 +60,10 @@ var
 
 begin
    elapsedTime := Now();
+
    {call initialization routines}
    ox.Init.iCall();
+
    if(ox.Error <> 0) then begin
       if(ox.ErrorDescription = '') then
          ox.RaiseError('Initialization failed', ox.Error);
@@ -70,7 +81,6 @@ begin
    log.Leave();
 
    ox.Initialized := true;
-   self.Stop();
 end;
 
 { oxTInitTaskGlobal }
