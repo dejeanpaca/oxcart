@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uFile, uFileHandlers,
       {oX}
-      uOX, oxuRunRoutines, oxuFile, oxuScene;
+      oxuFile, oxuScene;
 
 TYPE
    { oxTSceneFileOptions }
@@ -101,7 +101,6 @@ procedure writeHandle({%H-}data: pointer);
 begin
    {TODO: Implement writing scene file}
 end;
-
 
 INITIALIZATION
    oxfScene.Create();

@@ -22,7 +22,6 @@ INTERFACE
       vmVector,
       uFile, uFileHandlers,
       {oX}
-      uOX, oxuRunRoutines,
       oxuTexture, oxuSkins, oxuModel, oxuModelFile, oxuFile, oxuMesh, oxuMaterial;
 
 CONST
@@ -725,13 +724,8 @@ begin
    end;
 end;
 
-procedure init();
-begin
+INITIALIZATION
    oxfModel.Readers.RegisterHandler(m3DSLoader, '3DS', @m3dsLoad);
    oxfModel.Readers.RegisterExt(m3DSExt, '.3ds', @m3DSLoader);
-end;
-
-INITIALIZATION
-   ox.Init.Add('model.3ds', @init);
 
 END.
