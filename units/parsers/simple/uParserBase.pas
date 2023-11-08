@@ -38,7 +38,8 @@ TYPE
       function OnWrite(): boolean; virtual;
       function OnRead(): boolean; virtual;
 
-      procedure logError(const start: string);
+      function GetErrorString(const prefix: string = ''): string;
+      procedure LogError(const start: string);
    end;
 
 IMPLEMENTATION
@@ -132,7 +133,7 @@ begin
    Result := true;
 end;
 
-procedure TParserBase.logError(const start: string);
+function TParserBase.GetErrorString(const prefix: string): string;
 var
    additional: string;
 
@@ -150,7 +151,14 @@ begin
       if(f.Error <> 0) then
          additional := additional + ' {io: ' + f.GetErrorString() + '}';
 
-      log.e(start + f.fn + additional);
+      Result := prefix + f.fn + additional;
+   end;
+end;
+
+procedure TParserBase.LogError(const start: string);
+begin
+   if(f.Error <> 0) or (ErrorCode <> 0) then begin
+      log.e(GetErrorString(start));
    end;
 end;
 
