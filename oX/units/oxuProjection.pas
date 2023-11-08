@@ -59,6 +59,8 @@ TYPE
       procedure QuickOrtho2DZero();
 
       {set properties of perspective projection}
+      procedure Perspective(fovY, aspect, zNear, zFar: single);
+      {set properties of perspective projection}
       procedure Perspective(fovY, zNear, zFar: single);
       {set default perspective properties}
       procedure DefaultPerspective();
@@ -67,6 +69,8 @@ TYPE
 
       {get settings from another projection}
       procedure From(const source: oxTProjection);
+
+      procedure UpdateViewport();
 
       {get normalized pointer coordinates}
       function Unproject(x, y, z: single; const view: TMatrix4f; out world: TVector3f): boolean;
@@ -125,7 +129,7 @@ begin
    if(not p.IsOrtographic) then begin
       if(Viewport <> nil) then
          {perspective}
-         ProjectionMatrix := oxTTransform.PerspectiveFrustum(p.FovY, Viewport^.a.Aspect, p.ZNear, p.ZFar)
+         ProjectionMatrix := oxTTransform.PerspectiveFrustum(p.FovY, p.Aspect, p.ZNear, p.ZFar)
    end else
       {orthographic}
       ProjectionMatrix := oxTTransform.OrthoFrustum(p.l, p.r, p.b, p.t, p.ZNear, p.ZFar);
@@ -193,40 +197,33 @@ begin
 end;
 
 procedure oxTProjectionHelper.QuickPerspective(fovY, zNear, zFar: single);
-var
-   m: TMatrix4f;
-
 begin
-   m := oxTTransform.PerspectiveFrustum(fovY, Viewport^.a.Aspect, zNear, zFar);
-   oxRenderer.SetProjectionMatrix(m);
+   Perspective(fovY, zNear, zFar);
 end;
 
 procedure oxTProjectionHelper.QuickOrtho2D();
-var
-   m: TMatrix4f;
-
 begin
-   m := oxTTransform.OrthoFrustum(-Viewport^.Dimensions.w div 2, Viewport^.Dimensions.w div 2,
-      -Viewport^.Dimensions.h div 2, Viewport^.Dimensions.h div 2, -1.0, 1.0);
-   oxRenderer.SetProjectionMatrix(m);
+   Ortho(-Viewport^.Dimensions.w div 2, Viewport^.Dimensions.w div 2, Viewport^.Dimensions.h div 2, Viewport^.Dimensions.h div 2, -1.0, 1.0);
 end;
 
 procedure oxTProjectionHelper.QuickOrtho2DZero();
-var
-   m: TMatrix4f;
-
 begin
-   m := oxTTransform.OrthoFrustum(0, Viewport^.Dimensions.w, 0, Viewport^.Dimensions.h, -1.0, 1.0);
-   oxRenderer.SetProjectionMatrix(m);
+   Ortho(0, Viewport^.Dimensions.w, 0, Viewport^.Dimensions.h, -1.0, 1.0);
+end;
+
+procedure oxTProjectionHelper.Perspective(fovY, aspect, zNear, zFar: single);
+begin
+   p.FovY := fovY;
+   p.IsOrtographic := false;
+   p.Aspect := aspect;
+
+   SetZ(zNear, zFar);
+   SetProjectionMatrix();
 end;
 
 procedure oxTProjectionHelper.Perspective(fovY, zNear, zFar: single);
 begin
-   p.FovY := fovY;
-   p.IsOrtographic := false;
-
-   SetZ(zNear, zFar);
-   SetProjectionMatrix();
+   Perspective(fovY, Viewport^.a.Aspect, zNear, zFar);
 end;
 
 procedure oxTProjectionHelper.DefaultPerspective();
@@ -246,6 +243,12 @@ end;
 procedure oxTProjectionHelper.From(const source: oxTProjection);
 begin
    Self := source;
+end;
+
+procedure oxTProjectionHelper.UpdateViewport();
+begin
+   if(not IsOrtographic) then
+      Perspective(p.FovY, Viewport^.a.Aspect, p.ZNear, p.ZFar);
 end;
 
 function oxTProjectionHelper.Unproject(x, y, z: single; const view: TMatrix4f; out world: TVector3f): boolean;
