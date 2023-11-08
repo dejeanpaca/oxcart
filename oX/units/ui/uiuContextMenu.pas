@@ -302,6 +302,9 @@ end;
 
 procedure uiTContextMenuItem.Enable(enabled: boolean);
 begin
+   if(@Self = nil) then
+      exit;
+
    if(enabled) then
       Properties.Prop(uiCONTEXT_MENU_ITEM_ENABLED)
    else
@@ -310,6 +313,9 @@ end;
 
 procedure uiTContextMenuItem.Disable();
 begin
+   if(@Self = nil) then
+      exit;
+
    Properties.Clear(uiCONTEXT_MENU_ITEM_ENABLED);
 end;
 
