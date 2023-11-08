@@ -50,12 +50,15 @@ TYPE
       {build configuration path}
       ConfigPath: StdString;
 
-      TargetOS,
-      TargetCPU,
+      {fpc target options}
+      Target: record
+         OS,
+         CPU,
 
-      CPUType,
-      FPUType,
-      BinUtilsPrefix: StdString;
+         CPUType,
+         FPUType,
+         BinUtilsPrefix: StdString;
+      end;
 
       {debug information}
       Debug: record
@@ -379,16 +382,24 @@ end;
 
 procedure TBuildSystem.ResetOptions();
 begin
-   TargetOS := '';
-   TargetCPU := '';
+   Target.OS := '';
+   Target.CPU := '';
+   Target.CPUType := '';
+   Target.FPUType := '';
+   Target.BinUtilsPrefix := '';
+
    Debug.Include := false;
    Debug.LineInfo := false;
    Debug.External := false;
+
    OptimizationLevel := 0;
 
-   CPUType := '';
-   FPUType := '';
-   BinUtilsPrefix := '';
+   Checks.IO := false;
+   Checks.Range := false;
+   Checks.Overflow := false;
+   Checks.Stack := false;
+   Checks.Assertions := false;
+   Checks.VerifyMethodCalls := false;
 
    FPCOptions.CompilerMode := 'objfpc';
    FPCOptions.UnitOutputPath := '';
@@ -400,6 +411,8 @@ begin
    FPCOptions.ReferenceCountedString := true;
    FPCOptions.TurnOnInlining := true;
    FPCOptions.PositionIndependentCode := false;
+
+   Optimization.Level := 1;
 
    Libraries.Dispose();
 
