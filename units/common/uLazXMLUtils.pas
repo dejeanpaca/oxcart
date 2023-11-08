@@ -28,6 +28,8 @@ TYPE
       function GetAttributeValue(const name: string; const defaultValue: string): string;
       function GetAttributeBool(const name: string; defaultValue: Boolean): Boolean;
 
+      function AttributeExists(const name: string): Boolean;
+
       function CreateChild(const name: string): TDOMNode;
    end;
 
@@ -118,6 +120,11 @@ begin
       Result := LowerCase(value) = 'true';
    end else
       Result := defaultValue;
+end;
+
+function TLazXMLDOMHelper.AttributeExists(const name: string): Boolean;
+begin
+   Result := Attributes.GetNamedItem(name) <> nil;
 end;
 
 function TLazXMLDOMHelper.CreateChild(const name: string): TDOMNode;
