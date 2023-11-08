@@ -12,12 +12,13 @@ INTERFACE
       ctypes, looper, input, android_native_app_glue, android_keycodes,
       uStd,
       {app}
-      uApp, appuKeys, appuKeyEvents, appuMouse, appuMouseEvents, appuActionEvents,
-      uiuTypes, uiuWindowTypes,
+      uApp, appuEvents, appuKeys, appuKeyEvents, appuMouse, appuMouseEvents, appuActionEvents,
       {oX}
       uOX, oxuRun, oxuInit,
-      oxuWindow, oxuWindowHelper, uiuWindow,
-      oxuPlatform, oxuPlatforms, oxuWindowTypes, oxuRenderer;
+      oxuWindow, oxuWindowHelper,
+      oxuPlatform, oxuPlatforms, oxuWindowTypes, oxuRenderer,
+      {ui}
+      uiuTypes, uiuWindowTypes, uiuWindow;
 
 TYPE
    { oxTAndroidPlatform }
@@ -90,6 +91,7 @@ end;
 procedure getKeyEvent(kc, action, etype: cint32);
 var
    k: appTKey;
+   e: appPEvent;
 
 begin
    if(kc = AKEYCODE_BACK) then begin
@@ -108,7 +110,8 @@ begin
    if(action <> AKEY_STATE_UP) then
       k.State.Prop(kmDOWN);
 
-   appKeyEvents.Queue(k);
+   e := appKeyEvents.Queue(k);
+   e^.wnd := oxWindow.Current;
 end;
 
 procedure getMotionEvent(kc, action, etype: cint32; event: PAInputEvent);
@@ -118,6 +121,7 @@ var
    x, y: single;
 
    m: appTMouseEvent;
+   e: appPEvent;
 
 begin
    pointerCount := AMotionEvent_getPointerCount(event);
@@ -134,11 +138,12 @@ begin
       m.Button := appmcLEFT;
 
       if(action = AKEY_EVENT_ACTION_UP) then
-         m.Action := appmcPRESSED
+         m.Action := appmcRELEASED
       else
-         m.Action := appmcRELEASED;
+         m.Action := appmcPRESSED;
 
-      appMouseEvents.Queue(m);
+      e := appMouseEvents.Queue(m);
+      e^.wnd := oxWindow.Current;
    end;
 end;
 
