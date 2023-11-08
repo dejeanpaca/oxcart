@@ -81,6 +81,9 @@ begin
    if(uiCONTROL_GRID_MIDDLE_HORIZONTAL in pos) then
       Result.Clear(wdgRENDER_LINE_LEFT);
 
+   if(uiCONTROL_GRID_BOTTOM in pos) then
+      Result.Clear(wdgRENDER_CORNER_TL or wdgRENDER_CORNER_TR);
+
    {top | left}
    if(pos = [uiCONTROL_GRID_TOP, uiCONTROL_GRID_LEFT]) then begin
       Result.Clear(wdgRENDER_CORNER_BL);
