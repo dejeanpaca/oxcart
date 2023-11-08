@@ -2,10 +2,10 @@
 PROGRAM testtool;
 
    USES
-      uLog, ParamUtils, uFileUtils,
+      uStd, uLog, ParamUtils, uFileUtils,
       uBuild, uTest, uTestRunner;
 
-function processParams(const {%H-}pstr: string; const lstr: string): boolean;
+function processParams(const {%H-}pstr: StdString; const lstr: StdString): boolean;
 begin
    if(lstr = '-file') then
       TestRunner.FileName := parameters.Next()
