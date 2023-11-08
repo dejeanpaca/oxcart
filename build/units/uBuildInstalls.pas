@@ -48,6 +48,9 @@ TYPE
 
       {load everything for this platform from the fpc executable}
       function Load(): boolean;
+
+      {setup default optimization levels }
+      procedure SetupDefaultOptimizationLevels();
    end;
 
    TBuildPlatforms = specialize TSimpleList<TBuildPlatform>;
@@ -183,8 +186,7 @@ var
 begin
    defaultPlatform.Initialize(defaultPlatform);
    defaultPlatform.Name := 'default';
-   defaultPlatform.Platform := build.BuiltWithTarget;
-   build.GetBuiltWithTarget().Separate(defaultPlatform.CPU, defaultPlatform.OS);
+   defaultPlatform.SetPlatform(build.BuiltWithTarget);
 
    BuildInstalls.Platforms.Dispose();
    BuildInstalls.Platforms.Add(defaultPlatform);
@@ -333,6 +335,8 @@ procedure TBuildPlatform.SetPlatform(newPlatform: TFPCPlatformString);
 begin
    Platform := newPlatform;
    Platform.Separate(CPU, OS);
+
+   SetupDefaultOptimizationLevels();
 end;
 
 function TBuildPlatform.Execute(const param: StdString; out output: StdString): boolean;
@@ -413,6 +417,21 @@ begin
    end;
 
    Result := true;
+end;
+
+procedure TBuildPlatform.SetupDefaultOptimizationLevels();
+begin
+   if(OptimizationLevels.n = 0) then begin
+      OptimizationLevels.Add('none');
+
+      if(CPU = 'i386') or (CPU = 'x86-64') then begin
+         if(OS = 'win32') or (OS = 'win64') then begin
+            OptimizationLevels.Add('sse');
+            OptimizationLevels.Add('sse2');
+            OptimizationLevels.Add('sse3');
+         end;
+      end;
+   end;
 end;
 
 { TBuildSystemInstalls }
@@ -698,22 +717,12 @@ begin
       if(build.VerboseLog) then
          log.v('build > using auto defaults for lazarus install');
    end;
-
-   if(DefaultPlatform^.OptimizationLevels.n = 0) then begin
-      DefaultPlatform^.OptimizationLevels.Add('none');
-
-      {$IF DEFINED(CPUX86_64) OR DEFINED(CPUX86_32)}
-      DefaultPlatform^.OptimizationLevels.Add('sse');
-      DefaultPlatform^.OptimizationLevels.Add('sse2');
-      DefaultPlatform^.OptimizationLevels.Add('sse3');
-      {$ENDIF}
-   end;
 end;
 
 function TBuildSystemInstalls.GetOptimizationLevelName(level: loopint): StdString;
 begin
-   if(level > 0) and (level <= CurrentPlatform^.OptimizationLevels.n) then
-      Result := CurrentPlatform^.OptimizationLevels.List[level - 1]
+   if(level >= 0) and (level < CurrentPlatform^.OptimizationLevels.n) then
+      Result := CurrentPlatform^.OptimizationLevels.List[level]
    else
       Result := '';
 end;
