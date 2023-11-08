@@ -138,6 +138,6 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ox.Init.iAdd(initRoutines, 'settings', @init);
+   ox.Init.Add(initRoutines, 'settings', @init);
 
 END.

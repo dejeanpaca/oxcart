@@ -70,6 +70,6 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ox.Init.iAdd(initRoutines, 'console.input', @Initialize);
+   ox.Init.Add(initRoutines, 'console.input', @Initialize);
 
 END.

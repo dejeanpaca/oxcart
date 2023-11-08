@@ -54,6 +54,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.iAdd(initRoutines, 'ox.gl.fos', @init);
+   ox.PreInit.Add(initRoutines, 'ox.gl.fos', @init);
 
 END.

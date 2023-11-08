@@ -112,7 +112,7 @@ VAR
    oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxed.Init.iAdd(oxedInitRoutines, 'settings', @init);
+   oxed.Init.Add(oxedInitRoutines, 'settings', @init);
 
 END.
 

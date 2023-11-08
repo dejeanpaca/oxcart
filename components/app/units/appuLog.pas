@@ -80,6 +80,6 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   app.InitializationProcs.iAdd(initRoutines, 'log', @initialize);
+   app.InitializationProcs.Add(initRoutines, 'log', @initialize);
 
 END.

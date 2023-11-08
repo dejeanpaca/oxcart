@@ -303,7 +303,7 @@ VAR
 
 INITIALIZATION
    ui.BaseInitializationProcs.Add(initRoutines, 'skin', @Initialize, @DeInitialize);
-   ui.InitializationProcs.iAdd(loadRoutines, 'skin.load', @skinLoad);
+   ui.InitializationProcs.Add(loadRoutines, 'skin.load', @skinLoad);
 
 END.
 

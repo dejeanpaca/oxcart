@@ -1336,7 +1336,7 @@ VAR
 INITIALIZATION
    init();
 
-   ox.Init.iAdd(initRoutines, 'ox.serialization', @initSerialization);
+   ox.Init.Add(initRoutines, 'ox.serialization', @initSerialization);
 
    oxGlobalInstances.Add('oxTSerializationManager', @oxSerialization);
 

@@ -136,6 +136,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.iAdd(initRoutines, 'ox.gl.render', @preinit);
+   ox.PreInit.Add(initRoutines, 'ox.gl.render', @preinit);
 
 END.

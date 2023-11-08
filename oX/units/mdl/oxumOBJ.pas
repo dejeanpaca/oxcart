@@ -528,6 +528,6 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ox.Init.iAdd(initRoutines, 'model.obj', @init);
+   ox.Init.Add(initRoutines, 'model.obj', @init);
 
 END.

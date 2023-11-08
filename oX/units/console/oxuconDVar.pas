@@ -221,6 +221,6 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ox.Init.iAdd(initRoutines, 'console.dvar', @Initialize);
+   ox.Init.Add(initRoutines, 'console.dvar', @Initialize);
 
 END.

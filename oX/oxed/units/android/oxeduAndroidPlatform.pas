@@ -48,6 +48,6 @@ VAR
    oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxed.Init.iAdd(oxedInitRoutines, 'platform.android', @init);
+   oxed.Init.Add(oxedInitRoutines, 'platform.android', @init);
 
 END.

@@ -174,6 +174,6 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   ox.Init.iAdd(initRoutines, 'console.window', @Initialize);
+   ox.Init.Add(initRoutines, 'console.window', @Initialize);
 
 END.
