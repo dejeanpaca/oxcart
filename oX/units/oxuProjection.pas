@@ -80,6 +80,8 @@ TYPE
       procedure From(const source: oxTProjection);
       {set viewport from window}
       procedure UpdateFromWindow(wnd: oxTWindow);
+      {set viewport from window}
+      class procedure CreateFromWindow(out p: oxTProjection; wnd: oxTWindow); static;
 
       {get normalized pointer coordinates}
       procedure GetNormalizedPointerCoordinates(x, y: single; out n: TVector2f);
@@ -342,8 +344,14 @@ procedure oxTProjectionHelper.UpdateFromWindow(wnd: oxTWindow);
 begin
    if(UpdateFromSource) then begin
       SetViewport(0, 0, wnd.Dimensions.w, wnd.Dimensions.h);
-      SetViewportf(Positionf.x, Positionf.y, Dimensionsf.w, Dimensionsf.h);
    end;
+end;
+
+class procedure oxTProjectionHelper.CreateFromWindow(out p: oxTProjection; wnd: oxTWindow);
+begin
+   oxTProjection.Create(p);
+   p.From(wnd.Projection);
+   p.UpdateFromWindow(wnd);
 end;
 
 procedure oxTProjectionHelper.GetNormalizedPointerCoordinates(x, y: single; out n: TVector2f);
