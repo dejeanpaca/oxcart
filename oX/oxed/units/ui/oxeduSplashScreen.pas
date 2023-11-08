@@ -30,7 +30,7 @@ constructor oxedTSplashScreen.Create;
 begin
    inherited Create;
 
-   Texture.Path := oxPaths.data + 'splash.png';
+   Texture.Path := oxPaths.Data + 'splash.png';
    DisplayTime := 0;
 end;
 
@@ -43,4 +43,3 @@ INITIALIZATION
    oxSplashScreen.StartupInstance := oxedTSplashScreen;
 
 END.
-
