@@ -57,14 +57,23 @@ TYPE
       procedure Call(var f: oxedTScannerFile);
    end;
 
+   { oxedTProjectScannerCurrent }
+
+   {holds information about the current state of the project scanner while a scan is done}
+   oxedTProjectScannerCurrent = record
+      Package: oxedPPackage;
+      Path: StdString;
+
+      procedure FormFile(out f: oxedTScannerFile; const fd: TFileDescriptor);
+   end;
+
    { oxedTProjectScannerGlobal }
 
    oxedTProjectScannerGlobal = record
       Walker: TFileTraverse;
       Task: oxedTProjectScannerTask;
 
-      CurrentPackage: oxedPPackage;
-      CurrentPath: StdString;
+      Current: oxedTProjectScannerCurrent;
 
       OnStart,
       OnDone: TProcedures;
@@ -87,21 +96,12 @@ IMPLEMENTATION
 
 function scanFile(const fd: TFileTraverseData): boolean;
 var
-   ext: StdString;
    f: oxedTScannerFile;
 
 begin
    Result := true;
 
-   ext := ExtractFileExt(fd.f.Name);
-   f.FileName := fd.f.Name;
-   f.Extension := ext;
-   f.fd := fd.f;
-
-   f.Package := oxedProjectScanner.CurrentPackage;
-   f.PackagePath := oxedProjectScanner.CurrentPath;
-   f.PackageFileName := ExtractRelativepath(f.PackagePath, f.FileName);
-   f.ProjectFileName := oxedProject.GetPackageRelativePath(f.Package^) + f.PackageFileName;
+   oxedProjectScanner.Current.FormFile(f, fd.f);
 
    oxedProjectScanner.OnFile.Call(f);
 
@@ -117,16 +117,32 @@ var
 begin
    Result := true;
 
-   dir := oxedProjectScanner.GetValidPath(oxedProjectScanner.CurrentPath, fd.f.Name);
+   dir := oxedProjectScanner.GetValidPath(oxedProjectScanner.Current.Path, fd.f.Name);
 
    if(dir <> '') then begin
       {load package path properties if we have any}
       if(FileExists(fd.f.Name + DirSep + OX_PACKAGE_PROPS_FILE_NAME)) then begin
-         path := oxedProjectScanner.CurrentPackage^.Paths.Get(dir);
-         path^.LoadPathProperties(oxedProjectScanner.CurrentPath);
+         path := oxedProjectScanner.Current.Package^.Paths.Get(dir);
+         path^.LoadPathProperties(oxedProjectScanner.Current.Path);
       end;
    end else
       Result := false;
+end;
+
+{ oxedTProjectScannerCurrent }
+
+procedure oxedTProjectScannerCurrent.FormFile(out f: oxedTScannerFile; const fd: TFileDescriptor);
+begin
+   ZeroOut(f, SizeOf(f));
+
+   f.FileName := fd.Name;
+   f.Extension := ExtractFileExt(fd.Name);
+   f.fd := fd;
+
+   f.Package := Package;
+   f.PackagePath := Path;
+   f.PackageFileName := ExtractRelativepath(f.PackagePath, f.FileName);
+   f.ProjectFileName := oxedProject.GetPackageRelativePath(f.Package^) + f.PackageFileName;
 end;
 
 { oxedTScannerOnFileProceduresHelper }
@@ -215,11 +231,11 @@ var
 
 procedure scanPackage(var p: oxedTPackage);
 begin
-   oxedProjectScanner.CurrentPackage := @p;
-   oxedProjectScanner.CurrentPath := oxedProject.GetPackagePath(p);
+   oxedProjectScanner.Current.Package := @p;
+   oxedProjectScanner.Current.Path := oxedProject.GetPackagePath(p);
 
-   log.v('Scanning: ' + oxedProjectScanner.CurrentPath);
-   oxedProjectScanner.Walker.Run(oxedProjectScanner.CurrentPath);
+   log.v('Scanning: ' + oxedProjectScanner.Current.Path);
+   oxedProjectScanner.Walker.Run(oxedProjectScanner.Current.Path);
 end;
 
 begin
@@ -242,7 +258,7 @@ begin
       end;
    end;
 
-   oxedProjectScanner.CurrentPackage := nil;
+   oxedProjectScanner.Current.Package := nil;
 
    oxedProject.Session.InitialScanDone := true;
    log.v('Done project scan');
