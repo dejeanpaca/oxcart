@@ -10,6 +10,12 @@ This is still a major `WORK IN PROGRESS` and may go nowhere, as it is purely a h
 
 Look into `setup.md` to learn how to setup and build the engine.
 
+## Free Pascal & Lazarus
+
+- We require FPC 3.2.2 and Lazarus 2.2.0. Older versions may work but are not supported.
+- The engine will try to find and use the FPC/Lazarus you have installed, if it is in the default location (e.g. C:\lazarus). The editor (OXED)) should use the same FPC for building projects as the version it was built with.
+- You can further configure what fpc/lazarus you use via the build configuration (look in the `build/documentation` directory).
+
 ## Units
 
 The units folder contains the extended run-time library.
