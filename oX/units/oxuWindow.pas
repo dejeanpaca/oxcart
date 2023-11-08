@@ -245,6 +245,8 @@ begin
          oxPlatform.DestroyWindow(wnd);
          {$ENDIF}
       end;
+
+      wnd.oxProperties.Created := false;
    end;
 end;
 
