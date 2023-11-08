@@ -76,6 +76,8 @@ TYPE
 
       {checks if the path is valid (not ignored or excluded)}
       function ValidPath(const packagePath, fullPath: StdString): Boolean;
+      {get valid path}
+      function GetValidPath(const basePath, fullPath: StdString): StdString;
    end;
 
 VAR
@@ -115,16 +117,16 @@ var
 begin
    Result := true;
 
-   dir := copy(fd.f.Name, Length(oxedProjectScanner.CurrentPath) + 1, Length(fd.f.Name));
+   dir := oxedProjectScanner.GetValidPath(oxedProjectScanner.CurrentPath, fd.f.Name);
 
-   if(oxedProjectScanner.ValidPath(dir, fd.f.Name)) then
-      exit(false);
-
-   {load package path properties if we have any}
-   if(FileExists(fd.f.Name + DirectorySeparator + OX_PACKAGE_PROPS_FILE_NAME)) then begin
-      path := oxedProjectScanner.CurrentPackage^.Paths.Get(dir);
-      path^.LoadPathProperties(oxedProjectScanner.CurrentPath);
-   end;
+   if(dir <> '') then begin
+      {load package path properties if we have any}
+      if(FileExists(fd.f.Name + DirectorySeparator + OX_PACKAGE_PROPS_FILE_NAME)) then begin
+         path := oxedProjectScanner.CurrentPackage^.Paths.Get(dir);
+         path^.LoadPathProperties(oxedProjectScanner.CurrentPath);
+      end;
+   end else
+      Result := false;
 end;
 
 { oxedTScannerOnFileProceduresHelper }
@@ -188,6 +190,14 @@ begin
    {ignore directory if included in ignore lists}
    if(oxedAssets.ShouldIgnoreDirectory(packagePath)) then
       exit(False);
+end;
+
+function oxedTProjectScannerGlobal.GetValidPath(const basePath, fullPath: StdString): StdString;
+begin
+   Result := Copy(fullPath, Length(basePath) + 1, Length(fullPath));
+
+   if(not oxedProjectScanner.ValidPath(Result, fullPath)) then
+      exit('');
 end;
 
 { TBuildTask }
