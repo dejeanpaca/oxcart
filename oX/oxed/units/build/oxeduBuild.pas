@@ -108,6 +108,11 @@ TYPE
          ExportSymbols: TSimpleStringList;
       end;
 
+      Options: record
+         {completely rebuild standalone}
+         StandaloneRebuild: boolean;
+      end;
+
       BuildCPU,
       BuildOS: StdString;
 
@@ -969,9 +974,11 @@ begin
       if(FileUtils.DirectoryExists(TargetPath)) then
          FileUtils.RmDir(TargetPath);
 
-      {remove work area}
-      if(FileUtils.DirectoryExists(WorkArea)) then
-         FileUtils.RmDir(WorkArea);
+      if(Options.StandaloneRebuild) then begin
+         {remove work area}
+         if(FileUtils.DirectoryExists(WorkArea)) then
+            FileUtils.RmDir(WorkArea);
+      end;
    end;
 
    oxedProject.RecreateTempDirectory();
@@ -1306,7 +1313,7 @@ begin
    end else if(BuildType = OXED_BUILD_TASK_REBUILD_THIRD_PARTY) then begin
       RebuildThirdParty();
    end else if(BuildType = OXED_BUILD_TASK_STANDALONE) then begin
-      build.Options.Rebuild := true;
+      build.Options.Rebuild := Options.StandaloneRebuild;
       RunBuild();
    end;
 
