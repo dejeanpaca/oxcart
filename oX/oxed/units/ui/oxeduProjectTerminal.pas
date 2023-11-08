@@ -37,10 +37,7 @@ begin
    end;
 
    {found git bash}
-   if(path <> '') then begin
-      SetLength(commands, 1);
-      commands[0] := '--cd-to-home';
-   end else
+   if(path = '') then
       path := 'cmd.exe';
    {$ENDIF}
 
