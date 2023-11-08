@@ -5,7 +5,7 @@
    Started On:    30.04.2011.
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT appuPaths;
 
 INTERFACE

@@ -5,7 +5,7 @@
    Started On:    20.04.2018.
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT appuRegional;
 
 INTERFACE

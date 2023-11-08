@@ -5,7 +5,7 @@
    Started On:    01.03.2007.
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT uApp;
 
 INTERFACE

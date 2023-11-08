@@ -7,7 +7,7 @@
    NOTE: An action with value 0 indicates no action.
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT appuActionEvents;
 
 INTERFACE
@@ -263,4 +263,5 @@ INITIALIZATION
    evhpACTION_EVENTS := appEvents.AddHandler(appActionEvents.evh, 'action', @actionAction);
 
    appACTION_QUIT := appActionEvents.SetCallback(@quitApp);
+
 END.

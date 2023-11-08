@@ -5,7 +5,7 @@
    Started On:    14.03.2009.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT appuKeyEvents;
 
 INTERFACE

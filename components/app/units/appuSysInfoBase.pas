@@ -5,7 +5,7 @@
    Started On:    09.10.2012.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT appuSysInfoBase;
 
 INTERFACE

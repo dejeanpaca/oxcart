@@ -6,7 +6,7 @@
    Started On:    08.01.2012.
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxdefines.inc}
 UNIT appudvarConfiguration;
 
 INTERFACE

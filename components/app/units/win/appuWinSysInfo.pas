@@ -2,7 +2,7 @@
    Started On:		   09.10.2012.
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxdefines.inc}
 UNIT appuWinSysInfo;
 
 INTERFACE
