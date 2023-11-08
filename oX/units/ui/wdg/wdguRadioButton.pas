@@ -9,13 +9,13 @@ UNIT wdguRadioButton;
 INTERFACE
 
    USES
-      uStd, uColors, vmVector,
+      uStd, uColors, vmMath,
       {app}
       appuKeys, appuMouse,
       {oX}
-      oxuTypes, oxuFont, oxumPrimitive, oxuTexture, oxuTransform,
+      oxuTypes, oxuFont, oxumPrimitive, oxuTexture, oxuTransform, oxuRender,
       {ui}
-      uiuWindowTypes, uiuWindow, uiuSkinTypes,
+      uiuWindowTypes, uiuWindow, uiuSkinTypes, uiuDraw,
       uiuWidget, uiWidgets, uiuRegisteredWidgets,
       wdguBase;
 
@@ -40,10 +40,11 @@ TYPE
    wdgTRadioButtonGlobal = object(specialize wdgTBase<wdgTRadioButton>)
       Diameter,
       CaptionSpace: longint; static;
-      Inner,
-      Outer: oxTPrimitiveModel; static;
 
       clrDisabled: TColor4ub; static;
+
+      InnerRatio,
+      OuterRatio: single;
 
       procedure SetSize(w, h: longint);
 
@@ -66,32 +67,27 @@ end;
 procedure wdgTRadioButton.Render();
 var
    f: oxTFont;
-   offset: longint;
-   m: TMatrix4f;
+   radius: single;
 
 begin
-   offset := wdgRadioButton.Diameter div 2;
-
-   m := oxTransform.Matrix;
-   oxTransform.Translate(Position.x + offset, Position.y - offset, 0);
-   oxTransform.Apply();
+   radius := vmMin(Dimensions.w, Dimensions.h) / 2;
 
    SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Highlight);
 
-   wdgRadioButton.Outer.Render();
+   uiDraw.Circle(Position.x + radius, Position.y - radius, radius * wdgRadioButton.OuterRatio);
 
    {if selected, choose the inner one}
    if(wdgpTRUE in Properties) then
-      wdgRadioButton.Inner.Render();
-
-   oxTransform.Apply(m);
+      uiDraw.Disk(Position.x + radius, Position.y - radius, radius * wdgRadioButton.InnerRatio);
 
    if(Caption <> '') then begin
+      SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Text);
+
       f := CachedFont;
-      offset := abs((wdgRadioButton.Diameter - f.GetHeight()) div 2) + f.GetHeight();
+      radius := abs((wdgRadioButton.Diameter - f.GetHeight()) div 2) + f.GetHeight();
 
       f.Start();
-      f.Write(RPosition.x + wdgRadioButton.Diameter + wdgRadioButton.CaptionSpace, RPosition.y - offset, Caption);
+      f.Write(RPosition.x + wdgRadioButton.Diameter + wdgRadioButton.CaptionSpace, RPosition.y - radius, Caption);
       oxf.Stop();
    end;
 end;
@@ -136,9 +132,6 @@ procedure wdgTRadioButtonGlobal.SetSize(w, h: longint);
 begin
    Diameter := w;
    Diameter := h;
-
-   Inner.InitDisk((Diameter / 2) * 0.75, 32);
-   Outer.InitCircle(Diameter / 2, 32);
 end;
 
 function wdgTRadioButtonGlobal.Add(const Caption: StdString;
@@ -167,8 +160,10 @@ end;
 
 INITIALIZATION
    wdgRadioButton.Create('radio_button');
-   wdgRadioButton.SetSize(16, 16);
+   wdgRadioButton.SetSize(20, 20);
    wdgRadioButton.CaptionSpace := 4;
    wdgRadioButton.clrDisabled.Assign(96, 96, 96, 255);
+   wdgRadioButton.InnerRatio := 0.65;
+   wdgRadioButton.OuterRatio := 0.85;
 
 END.
