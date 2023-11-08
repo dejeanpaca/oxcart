@@ -8,7 +8,8 @@ UNIT ypkuFS;
 
 INTERFACE
 
-   USES uStd, ufhStandard, {$IFDEF UNIX}BaseUnix, ufhUnix, {$ENDIF}
+   USES
+      uStd, ufhStandard, {$IFDEF UNIX}BaseUnix, ufhUnix, {$ENDIF}
       uLog, StringUtils,
       uFileUtils, uFile, {%H-}uFiles, ufhSub, uyPakFile;
 
@@ -19,6 +20,8 @@ TYPE
 
    ypkTFSFile = record
       f: TFile;
+      {ypk file handler}
+      ypkf: ypkTFile;
       {blob size}
       BlobSize: fileint;
       {blob memory containing file names}
@@ -34,6 +37,8 @@ TYPE
       function Find(var e: ypkfTEntries; const fn: string): longint;
    end;
 
+   { ypkTFileSystemGlobal }
+
    ypkTFileSystemGlobal = record
       {default buffer size set for fs files, 0 means no buffer}
       BufferSize: fileint;
@@ -45,9 +50,10 @@ TYPE
 
       {add a file to the vfs file list}
       function Add(const fn: StdString): ypkPFSFile;
+      {add a file to the vfs file list}
+      function Add(var f: TFile): ypkPFSFile;
       {$IFDEF UNIX}
       function Add(d: cint; offs, size: fileint): ypkPFSFile;
-      function Add(handleID: longint; d: cint; offs, size: fileint): ypkPFSFile;
       {$ENDIF}
       {add a pool of ypk files to the vfs file list}
       procedure AddPool(const fn: StdString);
@@ -91,12 +97,12 @@ var
    e: StdString;
 
 begin
-   e := 'ypkError: ' + sf(ypkf.Error) + ', fError:' + sf(fs.f.Error);
+   e := 'ypkError: ' + sf(fs.ypkf.Error) + ', fError: ' + fs.f.GetErrorString();
 
    if(ioE <> 0) then
       e := e + ', ioE:' + sf(ioE);
 
-   log.e(tag + 'Error(' + e + '): ' + fs.f.fn);
+   log.e(tag + 'Error (' + e + '): ' + fs.f.fn);
 
    if(s <> '') then
       log.e('Description: ' + s);
@@ -106,6 +112,9 @@ procedure InitFSFile(var fs: ypkTFSFile);
 begin
    ZeroOut(fs, SizeOf(fs));
    fFile.Init(fs.f);
+
+   fs.ypkf.Initialize(fs.ypkf);
+   fs.ypkf.f := @fs.f;
 end;
 
 function getFile(): longint;
@@ -120,6 +129,8 @@ begin
    {get an index to a fs pointer}
    filesystem.Add(f);
    InitFSFile(f^);
+
+   Result := filesystem.n - 1;
 end;
 
 function ypkfsAdd(var fs: ypkTFSFile): ypkPFSFile;
@@ -129,21 +140,28 @@ var
 begin
    Result := nil;
 
-   ypkf.ReadHeader(fs.f, hdr);
+   fs.ypkf.ReadHeader(hdr);
 
-   if(fs.f.error = 0) then begin
-      ypkf.ReadBlob(fs.f, fs.Blob, fs.BlobSize);
-      ypkf.ReadEntries(fs.f, fs.Entries, hdr.Files);
+   if(fs.f.Error <> 0) then begin
+      writeLog(fs, 'Failed reading ypk header.');
+      exit(nil);
+   end;
 
-      if(fs.f.Error = 0) then begin
-         Result := @fs;
+   if(fs.ypkf.Error <> 0) then begin
+      writeLog(fs, 'Invalid ypk header.');
+      exit(nil);
+   end;
 
-         log.i(tag + 'Loaded file successfully: ' + fs.f.fn + '(handleID: ' + sf(fs.f.handleID) +
-            ', files: ' + sf(hdr.Files) + ', offs: ' + sf(fs.f.fOffset) + ', size: ' + sf(fs.f.fSize) + ')');
-      end else
-         writeLog(fs, 'Cannot read entries.')
+   fs.ypkf.ReadBlob(fs.Blob, fs.BlobSize);
+   fs.ypkf.ReadEntries(fs.Entries, hdr.Files);
+
+   if(fs.f.Error = 0) then begin
+      Result := @fs;
+
+      log.i(tag + 'Loaded file successfully: ' + fs.f.fn +
+         ', files: ' + sf(hdr.Files) + ', offs: ' + sf(fs.f.fOffset) + ', size: ' + sf(fs.f.fSize) + ')');
    end else
-      writeLog(fs, 'Invalid or unsupported file header.')
+      writeLog(fs, 'Cannot read blob or entries.')
 end;
 
 function ypkTFileSystemGlobal.Add(const fn: StdString): ypkPFSFile;
@@ -174,13 +192,35 @@ begin
    end;
 end;
 
-{$IFDEF UNIX}
-function ypkTFileSystemGlobal.Add(d: cint; offs, size: fileint): ypkPFSFile;
+function ypkTFileSystemGlobal.Add(var f: TFile): ypkPFSFile;
+var
+   fsidx: longint;
+   fs: ypkPFSFile;
+
 begin
-   result := Add(-1, d, offs, size);
+   Result := nil;
+
+   fsidx := getFile();
+
+   if(fsidx > -1) then begin
+      fs := filesystem.List[fsidx];
+
+      {set the file}
+      fs^.f := f;
+
+      if(fs^.f.Error = 0) then begin
+         if(BufferSize > 0) then
+            fs^.f.Buffer(BufferSize);
+
+         Result := ypkfsAdd(fs^);
+      end else
+         writeLog(fs^, 'Given ypks file already has an error: ' + fs^.f.GetErrorString())
+   end else
+      log.e('Cannot get an ypkfs file in the list');
 end;
 
-function ypkTFileSystemGlobal.Add(handleID: longint; d: cint; offs, size: fileint): ypkPFSFile;
+{$IFDEF UNIX}
+function ypkTFileSystemGlobal.Add(d: cint; offs, size: fileint): ypkPFSFile;
 var
    fsidx: longint;
    fs: ypkPFSFile;
@@ -197,7 +237,6 @@ begin
       fOpenUnix(fs^.f, d, offs, size);
 
       if(fs^.f.Error = 0) then begin
-         fs^.f.HandleID := handleID;
          Result := ypkfsAdd(fs^);
       end else
          writeLog(fs^, 'Cannot open file.')
