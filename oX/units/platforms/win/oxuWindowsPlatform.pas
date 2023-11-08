@@ -521,6 +521,7 @@ begin
    {try to center the window on screen}
    if(uiwndpAUTO_CENTER in wnd.Properties) then begin
       wnd.GetPlatform().GetCenterPosition(wnd, wnd.Position);
+
       r.Left := wnd.Position.x;
       r.Top := wnd.Position.y;
    end;
@@ -1012,12 +1013,14 @@ end;
 procedure oxTWindowsPlatform.GetCenterPosition(wnd: oxTWindow; out p: oxTPoint);
 var
    dvmd: DEVMODE;
+   d: oxTDimensions;
 
 begin
+   d := wnd.GetTotalDimensions();
    EnumDisplaySettings(nil, ENUM_CURRENT_SETTINGS, @dvmd);
 
-   p.x := dvmd.dmPelsWidth div 2  - wnd.Dimensions.w div 2;
-   p.y := dvmd.dmPelsHeight div 2 - wnd.Dimensions.h div 2;
+   p.x := dvmd.dmPelsWidth div 2  - d.w div 2;
+   p.y := dvmd.dmPelsHeight div 2 - d.h div 2;
 end;
 
 function oxTWindowsPlatform.SetSystemIcon(wnd: oxTWindow; const fn: string): loopint;
