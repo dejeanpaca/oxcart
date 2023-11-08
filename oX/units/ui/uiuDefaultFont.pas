@@ -41,7 +41,7 @@ var
 
 begin
    assetPath := oxAssetPaths.Find(Path);
-   Font := oxFreetypeManager.CreateFont(assetPath, 14);
+   Font := oxFreetypeManager.CreateFont(assetPath, Size);
 
    if(Font <> nil) then
       log.v('ui > Loaded default font: ' + assetPath)
@@ -68,7 +68,7 @@ end;
 
 INITIALIZATION
    uiDefaultFont.Path := oxPaths.Fonts + 'Inconsolata.ttf';
-   uiDefaultFont.Size := 11;
+   uiDefaultFont.Size := 12;
 
    oxui.InitializationProcs.Add('default_font', @initialize, @deinitialize);
 
