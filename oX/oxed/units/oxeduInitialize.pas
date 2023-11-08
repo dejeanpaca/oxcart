@@ -20,6 +20,7 @@ INTERFACE
       oxeduThingies,
       {build}
       oxeduBuild, oxeduBuildEditor,
+      oxeduBuildAssetsCopy,
       oxeduPlatform,
       oxeduProjectPlatforms,
       {$IFNDEF OXED_BUILD}
