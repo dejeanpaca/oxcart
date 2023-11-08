@@ -181,6 +181,9 @@ TYPE
       {set a new parent and call the ParentChanged event}
       procedure SetParent(newParent: uiTControl);
 
+      {get scaled integer}
+      class function GetScaled(w: loopint; x: single): loopint; static;
+
    protected
       {unusable width and height}
       UnusableHeight,
@@ -502,6 +505,14 @@ procedure uiTControl.SetParent(newParent: uiTControl);
 begin
    Parent := newParent;
    ParentChanged();
+end;
+
+class function uiTControl.GetScaled(w: loopint; x: single): loopint;
+begin
+   if(x = 1) then
+      Result := w
+   else
+      Result := round(w * x);
 end;
 
 procedure uiTControl.PaddingChanged();
