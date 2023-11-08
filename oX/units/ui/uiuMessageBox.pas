@@ -171,31 +171,31 @@ CONST
 
    ButtonDescriptors: array[0..uimbcNBUTTONS - 1] of TButtonDescriptor = (
       (
-         sCaption: 'OK'; 
+         sCaption: 'OK';
          wdgID: @WDGID_OK
       ),
       (
-         sCaption: 'Cancel'; 
+         sCaption: 'Cancel';
          wdgID: @WDGID_CANCEL
       ),
       (
-         sCaption: 'Yes'; 
+         sCaption: 'Yes';
          wdgID: @WDGID_YES
       ),
       (
-         sCaption: 'No'; 
+         sCaption: 'No';
          wdgID: @WDGID_NO
       ),
       (
-         sCaption: 'Retry'; 
+         sCaption: 'Retry';
          wdgID: @WDGID_RETRY
       ),
       (
-         sCaption: 'Ignore'; 
+         sCaption: 'Ignore';
          wdgID: @WDGID_IGNORE
       ),
       (
-         sCaption: 'Abort'; 
+         sCaption: 'Abort';
          wdgID: @WDGID_ABORT
       )
    );
@@ -356,10 +356,6 @@ begin
       oxPoint(wdgDEFAULT_SPACING, labelWidget.BelowOf()),
       oxDimensions(wnd.Dimensions.w - wdgDEFAULT_SPACING * 2, h)).
       SetID(WDGID_TEXT));
-
-   wnd.MessageBox.wdg.Input.AutoSetWidgetDimensions(True);
-
-   wnd.MessageBox.wdg.Input.SetPlaceholder('');
 end;
 
 procedure AddIcon();
