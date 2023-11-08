@@ -286,7 +286,6 @@ procedure oxedTSceneWindow.ResetCamera();
 begin
    Camera.Reset();
    Camera.vPos.Assign(0, 0, 5);
-   Camera.SetupRotation();
 end;
 
 procedure oxedTSceneWindow.SceneChange();
