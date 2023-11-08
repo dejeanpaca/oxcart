@@ -93,19 +93,11 @@ end;
 { oxedTIconsGlobal }
 
 function oxedTIconsGlobal.Create(c: longword; size: longint; const name: string): oxTTexture;
-var
-   map: oxPGlyphMap = nil;
-
 begin
    if(name = '') then
-      map := oxGlyphs.Load(c)
+      Result := oxGlyphs.Load(c, size)
    else
-      map := oxGlyphs.Load(name, name, size);
-
-   if(map <> nil) then
-      exit(map^.GetTexture());
-
-   Result := nil;
+      Result := oxGlyphs.Load(name, size);
 end;
 
 function oxedTIconsGlobal.Create(const c: string; size: longint): oxTTexture;
