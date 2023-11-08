@@ -149,7 +149,7 @@ begin
       wnd.wd.Surface := eglCreateWindowSurface(wnd.wd.Display, config, AndroidApp^.window, nil);
 
       if(wnd.wd.Surface = nil) then begin
-         wnd.RaiseError('Failed to create window surface');
+         wnd.RaiseError('Failed to create window surface, egl error: ' + HexStr(RaiseError(), 4));
          exit(false);
       end;
 
@@ -166,14 +166,16 @@ end;
 
 function oxglTEGL.OnDeInitWindow(wnd: oglTWindow): boolean;
 begin
-   if(wnd.wd.Surface <> EGL_NO_SURFACE) then begin
-      eglDestroySurface(wnd.wd.Display, wnd.wd.Surface);
-      wnd.wd.Surface := EGL_NO_SURFACE;
-   end;
+   if(not oxglRenderer.PreserveRCs) then begin
+      if(wnd.wd.Surface <> EGL_NO_SURFACE) then begin
+         eglDestroySurface(wnd.wd.Display, wnd.wd.Surface);
+         wnd.wd.Surface := EGL_NO_SURFACE;
+      end;
 
-   if(wnd.wd.Display <> EGL_NO_DISPLAY) then begin
-      eglTerminate(wnd.wd.Display);
-      wnd.wd.Display := EGL_NO_DISPLAY;
+      if(wnd.wd.Display <> EGL_NO_DISPLAY) then begin
+         eglTerminate(wnd.wd.Display);
+         wnd.wd.Display := EGL_NO_DISPLAY;
+      end;
    end;
 
    Result := true;

@@ -137,7 +137,8 @@ var
    rtc: oxTRenderTargetContext;
 
 begin
-   wnd.RenderingContext := GetRenderingContext(wnd);
+   if(not PreserveRCs) or (wnd.RenderingContext = -1) then
+      wnd.RenderingContext := GetRenderingContext(wnd);
 
    if(wnd.RenderingContext = -1) or (wnd.ErrorCode <> 0) then begin
       if(wnd.ErrorCode = 0) then
@@ -259,6 +260,7 @@ begin
    if(ogl.ValidRC(rc)) then begin
       Result := AddRenderingContext(wnd);
       glRenderingContexts[Result] := rc;
+      log.v('gl > Created rendering context: glrc ' + sf(rc));
    end else begin
       error := glPlatform^.RaiseError();
       wnd.RaiseError(eFAIL, 'Not a valid rendering context ' + GetPlatformErrorDescription(error));
@@ -280,7 +282,7 @@ begin
    rc := context.RenderContext;
 
    if(rc >= 0) then begin
-      log.v('gl > Set render context ' + sf(rc) +  ' current');
+      log.v('gl > Set render context ' + sf(rc) +  ' (glrc: ' + sf(glRenderingContexts[rc]) + ') current');
 
       error := 0;
 
