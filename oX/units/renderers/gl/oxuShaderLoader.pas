@@ -45,6 +45,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add('ox.gl.shader_loader', @init);
+   ox.PreInit.Add('gl.shader_loader', @init);
 
 END.

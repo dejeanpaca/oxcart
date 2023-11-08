@@ -23,7 +23,7 @@ IMPLEMENTATION
 
 function componentReturn(): TObject;
 begin
-   result := oxglMaterial.Create();
+   Result := oxglMaterial.Create();
 end;
 
 procedure init();
@@ -32,6 +32,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add('ox.gl.material', @init);
+   ox.PreInit.Add('gl.material', @init);
 
 END.

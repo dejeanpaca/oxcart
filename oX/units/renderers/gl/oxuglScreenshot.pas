@@ -55,6 +55,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add('ox.gl.screenshot', @init, @deinit);
+   ox.PreInit.Add('gl.screenshot', @init, @deinit);
 
 END.

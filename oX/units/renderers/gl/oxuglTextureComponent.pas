@@ -38,7 +38,7 @@ VAR
 
 function idComponentReturn(): TObject;
 begin
-   result := oglTextureID;
+   Result := oglTextureID;
 end;
 
 { oglTextureIDComponent }
@@ -80,7 +80,7 @@ end;
 
 function componentReturn(): TObject;
 begin
-   result := oglTTextureComponent.Create();
+   Result := oglTTextureComponent.Create();
 end;
 
 procedure init();
@@ -96,6 +96,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add('ox.gl.texture_component', @init, @deinit);
+   ox.PreInit.Add('gl.texture_component', @init, @deinit);
 
 END.
