@@ -52,6 +52,38 @@ TYPE
    );
 
 TYPE
+   {describes a file}
+   PFileDescriptor = ^TFileDescriptor;
+
+   { TFileDescriptor }
+
+   TFileDescriptor = record
+      {file name}
+      Name: StdString;
+      {last modification time}
+      Time: LongInt;
+      {file size}
+      Size: Int64;
+      {file attributes}
+      Attr: TBitSet;
+
+      {tells whether this is a directory}
+      function IsDirectory(): boolean;
+      {tells whether this is a file}
+      function IsFile(): boolean;
+      {is the file a hidden file}
+      function IsHidden(): boolean;
+
+      procedure From(const s: TSearchRec);
+      procedure From(const s: TUnicodeSearchRec);
+      class procedure From(out f: TFileDescriptor; const s: TSearchRec); static;
+      class procedure From(out f: TFileDescriptor; const s: TUnicodeSearchRec); static;
+   end;
+
+   {list of file descriptors}
+   PFileDescriptorList = ^TFileDescriptorList;
+   TFileDescriptorList = specialize TSimpleList<TFileDescriptor>;
+
    { TFileTraverse }
 
    TFileTraverse = record
@@ -93,38 +125,6 @@ TYPE
       {processes an individual directory (called recursively)}
       procedure RunDirectory(const name: StdString);
    end;
-
-   {describes a file}
-   PFileDescriptor = ^TFileDescriptor;
-
-   { TFileDescriptor }
-
-   TFileDescriptor = record
-      {file name}
-      Name: StdString;
-      {last modification time}
-      Time: LongInt;
-      {file size}
-      Size: Int64;
-      {file attributes}
-      Attr: TBitSet;
-
-      {tells whether this is a directory}
-      function IsDirectory(): boolean;
-      {tells whether this is a file}
-      function IsFile(): boolean;
-      {is the file a hidden file}
-      function IsHidden(): boolean;
-
-      procedure From(const s: TSearchRec);
-      procedure From(const s: TUnicodeSearchRec);
-      class procedure From(out f: TFileDescriptor; const s: TSearchRec); static;
-      class procedure From(out f: TFileDescriptor; const s: TUnicodeSearchRec); static;
-   end;
-
-   {list of file descriptors}
-   PFileDescriptorList = ^TFileDescriptorList;
-   TFileDescriptorList = specialize TSimpleList<TFileDescriptor>;
 
    { TFileUtilsGlobal }
 
@@ -196,6 +196,10 @@ TYPE
       class procedure Sort(var list: TFileDescriptorList; directoriesFirst: boolean = true; caseSensitive: boolean = false); static;
       {only sorts directories to be first}
       class procedure SortDirectoriesFirst(var list: TFileDescriptorList); static; static;
+
+      {get information about a file}
+      procedure GetFileInfo(const fn: string; out f: TFileDescriptor);
+      procedure GetFileInfo(const fn: StdString; out f: TFileDescriptor);
    end;
 
 VAR
@@ -1145,6 +1149,30 @@ Begin
 
       step := step div 2;
    end;
+end;
+
+procedure TFileUtilsGlobal.GetFileInfo(const fn: string; out f: TFileDescriptor);
+var
+   searchRec: TSearchRec;
+
+begin
+   FindFirst(fn, faAnyFile or faDirectory, searchRec);
+
+   TFileDescriptor.From(f, searchRec);
+
+   FindClose(searchRec);
+end;
+
+procedure TFileUtilsGlobal.GetFileInfo(const fn: StdString; out f: TFileDescriptor);
+var
+   searchRec: TUnicodeSearchRec;
+
+begin
+   FindFirst(UnicodeString(fn), faAnyFile or faDirectory, searchRec);
+
+   TFileDescriptor.From(f, searchRec);
+
+   FindClose(searchRec);
 end;
 
 { TFileTraverse }
