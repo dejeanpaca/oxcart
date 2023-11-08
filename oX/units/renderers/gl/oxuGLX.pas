@@ -46,7 +46,7 @@ begin
    log.i(sf(i) + ':' + ext);
 end;
 
-procedure getExtensions({%H-}wnd: oxTWindow);
+procedure getExtensions();
 var
    exts: pChar;
 
