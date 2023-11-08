@@ -21,13 +21,12 @@ INTERFACE
 
 TYPE
    dvarPFileData = ^dvarTFileData;
-   dvarPFileOnSaveList = ^dvarTFileOnSaveList;
 
    { dvarTFileOptions }
 
    dvarPFileOptions = ^dvarTFileOptions;
    dvarTFileOptions = record
-      OnSave: dvarPFileOnSaveList;
+
    end;
 
    { dvarTFileData }
@@ -50,34 +49,9 @@ TYPE
       function Write(const parent: StdString; var v: TDVar; items: pstring; count: longint = 0): boolean;
    end;
 
-   {called when a matching group is saved}
-   dvarTFileSaveHandler = procedure(var dv: dvarTFileData; const parent: StdString);
-
-   {handler associated with a dvar group, called when the dv is matched while saving}
-   dvarTFileOnSave = record
-      dv: PDVarGroup;
-      handler: dvarTFileSaveHandler;
-   end;
-
-   {list of handlers for dvar saving}
-   dvarTFileOnSaveList = specialize TPreallocatedArrayList<dvarTFileOnSave>;
-
-   {helpful utilities for save handlers}
-
-   { dvarTFileOnSaveListHelper }
-
-   dvarTFileOnSaveListHelper = record helper for dvarTFileOnSaveList
-      {add a save handler for the specified dvar group}
-      procedure Add(dv: PDVarGroup; handler: dvarTFileSaveHandler);
-      {returns a handler for the matching dv, or nil if nothing found}
-      function Match(dv: PDVarGroup): dvarTFileSaveHandler;
-   end;
-
    { dvarTFileGlobal }
 
    dvarTFileGlobal = record
-      OnSave: dvarTFileOnSaveList;
-
       procedure InitializeOptions(out options: dvarTFileOptions);
 
       procedure Notify(pdvar: PDvar; f: dvarPFileData; what: loopint);
@@ -108,13 +82,13 @@ var
 begin
    Result := true;
 
-   pd := dvarTFileData(parseData.externalData^).dv;
+   pd := dvarTFileData(parseData.ExternalData^).dv;
 
-   key := CopyToDel(parseData.currentLine, '=');
+   key := CopyToDel(parseData.CurrentLine, '=');
    StripWhitespace(key);
 
    if(key <> '') and (key[1] <> '#') then begin
-      value := parseData.currentLine;
+      value := parseData.CurrentLine;
       StripWhitespace(value);
 
       pvar := pd^.Get(key);
@@ -130,37 +104,9 @@ begin
    end;
 end;
 
-{ dvarTFileOnSaveListHelper }
-
-procedure dvarTFileOnSaveListHelper.Add(dv: PDVarGroup; handler: dvarTFileSaveHandler);
-var
-   entry: dvarTFileOnSave;
-
-begin
-   entry.dv := dv;
-   entry.handler := handler;
-
-   inherited Add(entry);
-end;
-
-function dvarTFileOnSaveListHelper.Match(dv: PDVarGroup): dvarTFileSaveHandler;
-var
-   i: longint;
-
-begin
-   if(n > 0) then
-      for i := 0 to (n - 1) do begin
-         if(list[i].dv = dv) then
-            exit(list[i].handler);
-      end;
-
-   Result := nil;
-end;
-
 procedure dvarTFileGlobal.InitializeOptions(out options: dvarTFileOptions);
 begin
-   ZeroOut(options, SizeOf(options));
-   options.OnSave := @OnSave;
+   ZeroPtr(@options, SizeOf(options));
 end;
 
 procedure dvarTFileGlobal.Notify(pdvar: PDVar; f: dvarPFileData; what: loopint);
@@ -195,7 +141,7 @@ begin
    data.Options := options^;
 
    TParseData.Init(data.Parser);
-   data.Parser.externalData := @data;
+   data.Parser.ExternalData := @data;
    data.Parser.Read(fn, TParseMethod(@readTextFile));
 end;
 
@@ -211,7 +157,7 @@ function dvarTFileData.Write(const parent: StdString; var g: TDVarGroup): boolea
 var
    curGroup: PDVarGroup;
    curVar: PDVar = nil;
-   matchHandler: dvarTFileSaveHandler;
+   context: TDVarNotificationContext;
 
 begin
    Result := true;
@@ -225,24 +171,24 @@ begin
    until (curVar = nil);
 
    {go through all sub groups}
-   curGroup := g.sub.s;
+   curGroup := g.Sub.s;
 
-   if(Options.OnSave <> nil) then begin
-      if(curGroup <> nil) then repeat
-         {check if we have any handlers for this group}
-         matchHandler := Options.OnSave^.Match(curGroup);
+   if(curGroup <> nil) then begin
+      repeat
+         if(curGroup^.pNotify <> nil) then begin
+            TDVarNotificationContext.Initialize(context);
+            context.f := @Self;
+            context.Group := curGroup;
+            context.Parent := parent;
+            context.What := DVAR_NOTIFICATION_WRITE;
+            context.Result := -1;
 
-         {write group or call its handler}
-         if(matchHandler = nil) then
-            Write(parent + curGroup^.Name + '.', curGroup^)
-         else
-            matchHandler(self, parent + curGroup^.Name + '.');
+            curGroup^.pNotify(context);
 
-         curGroup := curGroup^.Next;
-      until (curGroup = nil);
-   end else begin
-      if(curGroup <> nil) then repeat
-         Write(parent + curGroup^.Name + '.', curGroup^);
+            if(context.Result = -1) then
+               Write(parent + curGroup^.Name + '.', curGroup^);
+         end else
+            Write(parent + curGroup^.Name + '.', curGroup^);
 
          curGroup := curGroup^.Next;
       until (curGroup = nil);
@@ -312,19 +258,19 @@ var
    rootGroup: TDVarGroup;
 
 begin
-   pd := dvarTFileData(parseData.externalData^).dv;
+   pd := dvarTFileData(parseData.ExternalData^).dv;
 
    parseData.WriteLine('# DVAR');
    parseData.WriteLine('');
 
    if(pd^.Name = '.') then
-      dvarTFileData(parseData.externalData^).Write('', pd^)
+      dvarTFileData(parseData.ExternalData^).Write('', pd^)
    else begin
       {create a parent group for a group that doesn't have one}
       rootGroup := dvar.RootGroup;
       rootGroup.sub.s := pd;
 
-      dvarTFileData(parseData.externalData^).Write('', rootGroup);
+      dvarTFileData(parseData.ExternalData^).Write('', rootGroup);
    end;
 
    Result := true;
@@ -348,7 +294,7 @@ begin
 
    if(dv.sub.s <> nil) or (dv.vs <> nil) then begin
       TParseData.Init(data.Parser);
-      data.Parser.externalData := @data;
+      data.Parser.ExternalData := @data;
       data.Parser.Write(fn, TParseMethod(@writeTextFile));
    end;
 end;
@@ -358,8 +304,4 @@ begin
    WriteText(dvar.dvars, fn);
 end;
 
-INITIALIZATION
-   dvarTFileOnSaveList.Initialize(dvarf.OnSave);
-
 END.
-
