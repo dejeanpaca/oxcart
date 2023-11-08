@@ -5,3 +5,4 @@ project.short_name = tests
 project.identifier = tests
 project.organization = ox
 project.organization_short = ox
+project.main_unit = gltransform
