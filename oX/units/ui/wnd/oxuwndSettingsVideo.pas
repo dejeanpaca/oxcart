@@ -25,7 +25,9 @@ VAR
       Aspect,
       Resolutions,
       RefreshRate,
-      ColorDepth: wdgTDropDownList;
+      ColorDepth,
+      RenderScale,
+      FrameLimiter: wdgTDropDownList;
    end;
 
 procedure revertSettings();
@@ -72,6 +74,8 @@ begin
    list.Add('Fullscreen');
    list.Add('Windowed Fullscreen');
 
+   list.SelectItem(0);
+
    uiWidget.LastRect.GoLeft();
 
    { settings }
@@ -87,6 +91,8 @@ begin
    list.Add('16:9');
    list.Add('16:10');
    list.Add('18:9');
+
+   list.SelectItem(1);
 
    { resolution }
 
@@ -104,6 +110,8 @@ begin
    list.Add('2560x1440');
    list.Add('3840x2160');
 
+   list.SelectItem(3);
+
    { refresh rate }
 
    list := wdgDropDownList.Add(uiWidget.LastRect.RightOf(), oxDimensions(60, 20));
@@ -118,6 +126,8 @@ begin
    list.Add('144');
    list.Add('240');
 
+   list.SelectItem(2);
+
    { color depth }
 
    list := wdgDropDownList.Add(uiWidget.LastRect.RightOf(), oxDimensions(60, 20));
@@ -125,6 +135,58 @@ begin
 
    list.Add('16');
    list.Add('32');
+
+   list.SelectItem(1);
+
+   uiWidget.LastRect.NextLine();
+
+   { render scale }
+
+   wdgLabel.Add('Render scale');
+
+   list := wdgDropDownList.Add(uiWidget.LastRect.RightOf());
+   wdg.RenderScale := list;
+
+   list.Add('0.5');
+   list.Add('0.6');
+   list.Add('0.7');
+   list.Add('0.8');
+   list.Add('0.9');
+   list.Add('1.0');
+   list.Add('1.1');
+   list.Add('1.2');
+   list.Add('1.3');
+   list.Add('1.4');
+   list.Add('1.5');
+   list.Add('1.6');
+   list.Add('1.7');
+   list.Add('1.8');
+   list.Add('1.9');
+   list.Add('2.0');
+
+   list.AutoSetDimensions(true);
+
+   list.SelectItem(5);
+
+   uiWidget.LastRect.NextLine();
+
+   { frame limiting }
+
+   wdgLabel.Add('Frame limiter');
+
+   list := wdgDropDownList.Add(uiWidget.LastRect.RightOf());
+   wdg.FrameLimiter := list;
+
+   list.Add('Unlimited');
+   list.Add('Custom');
+   list.Add('30');
+   list.Add('60');
+   list.Add('120');
+   list.Add('144');
+
+   list.AutoSetDimensions(true);
+
+   list.SelectItem(3);
 end;
 
 procedure init();
