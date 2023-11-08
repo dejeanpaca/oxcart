@@ -13,7 +13,8 @@ INTERFACE
    USES
       uStd, uLog, uTiming, StringUtils,
       {ox}
-      uOX, oxuGlobalInstances, oxuEntity, oxuScene, oxuWorld, oxuSceneLoader, oxuSceneClone, oxuSerialization;
+      uOX, oxuRunRoutines,
+      oxuGlobalInstances, oxuEntity, oxuScene, oxuWorld, oxuSceneLoader, oxuSceneClone, oxuSerialization;
 
 IMPLEMENTATION
 
@@ -62,7 +63,10 @@ begin
    end;
 end;
 
+VAR
+   routine: oxTRunRoutine;
+
 INITIALIZATION
-   ox.OnLoad.Add(@start);
+   ox.OnLoad.Add(routine, 'oxlib.scene_loader', @start);
 
 END.
