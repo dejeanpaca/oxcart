@@ -1223,7 +1223,7 @@ begin
 
       if(i > 0) then begin
          {extract the extension and return it}
-         Result := copy(st, i, 255);
+         Result := copy(st, i, Length(st) - i + 1);
       end else
          Result := '';
    end else
