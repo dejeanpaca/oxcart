@@ -122,8 +122,6 @@ begin
    appLog.Initialize();
 
    androidAssetManager.Get(app^.activity);
-   oxAndroidAssets.Initialize();
-
    oxAndroidPlatform.Startup();
    State := STATE_INITIALIZE;
 

@@ -19,11 +19,14 @@ USES
 IMPLEMENTATION
 
 procedure init();
+{$IFNDEF MOBILE}
 var
    base,
-     path: StdString;
+   path: StdString;
+{$ENDIF}
 
 begin
+   {$IFNDEF MOBILE}
    base := 'data.ypk';
    path := oxPaths.Find(base);
 
@@ -31,6 +34,11 @@ begin
       ypkfs.Add(path)
    else
       log.e('Could not find ' + base + ' pack file');
+   {$ELSE}
+      {$IFDEF ANDROID}
+      oxAndroidAssets.Initialize();
+      {$ENDIF}
+   {$ENDIF}
 end;
 
 procedure deinit();
