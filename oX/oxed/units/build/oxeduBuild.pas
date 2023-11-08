@@ -404,13 +404,13 @@ var
    idx: loopint;
 
 begin
-   for idx := 0 to p.UnitPaths.n - 1 do begin
-      relativePath := getRelativePath(path, p.UnitPaths.List[idx]);
+   for idx := 0 to p.Units.n - 1 do begin
+      relativePath := getRelativePath(path, p.Units.List[idx].Path);
       f.AddUnitPath(relativePath);
    end;
 
-   for idx := 0 to p.IncludePaths.n - 1 do begin
-      relativePath := getRelativePath(path, p.IncludePaths.List[idx]);
+   for idx := 0 to p.IncludeFiles.n - 1 do begin
+      relativePath := getRelativePath(path, p.IncludeFiles.List[idx].Path);
       f.AddIncludePath(relativePath);
    end;
 end;
@@ -511,12 +511,12 @@ begin
    config.Add('# Path: ' + path);
    config.Add('');
 
-   for i := 0 to package.UnitPaths.n - 1 do begin;
-      config.Add('-Fu' + getAbsolutePath(path, package.UnitPaths.List[i]));
+   for i := 0 to package.Units.n - 1 do begin;
+      config.Add('-Fu' + getAbsolutePath(path, package.Units.List[i].Path));
    end;
 
-   for i := 0 to package.IncludePaths.n - 1 do begin;
-      config.Add('-Fi' + getAbsolutePath(path, package.IncludePaths.List[i]));
+   for i := 0 to package.IncludeFiles.n - 1 do begin;
+      config.Add('-Fi' + getAbsolutePath(path, package.IncludeFiles.List[i].Path));
    end;
 end;
 
@@ -602,13 +602,19 @@ function GetUsesString(): TAppendableString;
    procedure processPackage(var p: oxedTPackage);
    var
       i: loopint;
+      idx: loopint;
+      ppath: oxedPPackagePath;
 
    begin
       for i := 0 to p.Units.n - 1 do begin
-         if(i < p.Units.n - 1) then
-            Result.Add('   {%H-}' + p.Units.List[i].Name + ',')
-         else
-            Result.Add('   {%H-}' + p.Units.List[i].Name);
+         ppath := @p.Units.List[i];
+
+         for idx := 0 to ppath^.Units.n - 1 do begin
+           if(i < p.Units.n - 1) or (idx < ppath^.Units.n - 1) then
+              Result.Add('   {%H-}' + ppath^.Units.List[idx] + ',')
+           else
+              Result.Add('   {%H-}' + ppath^.Units.List[idx]);
+         end;
       end;
    end;
 
@@ -706,7 +712,7 @@ begin
 
    {check if main unit exists}
    if(oxedProject.MainUnit <> '') then begin
-      if(oxedProject.MainPackage.Units.Find(oxedProject.MainUnit) = nil) then begin
+      if(oxedProject.MainPackage.Units.FindPackagePath(oxedProject.MainUnit) = nil) then begin
          oxedBuildLog.e('Specified main unit ' + oxedProject.MainUnit + ' not found.');
          exit(false);
       end;

@@ -14,7 +14,7 @@ INTERFACE
       {pas}
       PScanner, PParser, PasTree,
       {oxed}
-      oxeduPackageTypes, oxeduProject, oxeduProjectScanner;
+      oxeduPackage, oxeduPackageTypes, oxeduProject, oxeduProjectScanner;
 
 TYPE
    oxedTPasScanResult = record
@@ -110,9 +110,9 @@ begin
    unitFile.Path := f.PackageFileName;
 
    if(f.Extension = '.pas') then begin
-      f.Package^.AddUnit(unitFile)
+      f.Package^.Units.AddUnit(unitFile)
    end else if(f.Extension = '.inc') then
-      f.Package^.AddInclude(unitFile);
+      f.Package^.IncludeFiles.AddUnit(unitFile);
 end;
 
 procedure onStart();
