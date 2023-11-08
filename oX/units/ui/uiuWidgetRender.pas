@@ -67,6 +67,18 @@ var
 begin
    Result := wdgRENDER_CORNERS_ALL or wdgRENDER_LINES_ALL;
 
+   if(pos = [uiCONTROL_GRID_MIDDLE]) then begin
+      Result.Clear(wdgRENDER_CORNERS_ALL);
+      Result.Clear(wdgRENDER_LINE_BOTTOM);
+      exit;
+   end;
+
+   if(pos = [uiCONTROL_GRID_MIDDLE, uiCONTROL_GRID_MIDDLE_HORIZONTAL]) or (pos = [uiCONTROL_GRID_MIDDLE_HORIZONTAL]) then begin
+      Result.Clear(wdgRENDER_CORNERS_ALL);
+      Result.Clear(wdgRENDER_LINE_RIGHT);
+      exit;
+   end;
+
    if(uiCONTROL_GRID_TOP in pos) then begin
       Result.Clear(wdgRENDER_CORNER_BL or wdgRENDER_CORNER_BR or wdgRENDER_LINE_BOTTOM);
 
