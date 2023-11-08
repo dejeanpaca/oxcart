@@ -96,6 +96,7 @@ end;
 
 procedure oxTTextComponent.GetBoundingBox(out bbox: TBoundingBox);
 begin
+   bbox := vmBBoxZero;
    {TODO: Implement bounding box calculation}
 end;
 
