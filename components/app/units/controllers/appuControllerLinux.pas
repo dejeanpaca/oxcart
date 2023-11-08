@@ -182,11 +182,7 @@ begin
             State.Keys.Process(jsevent.number, event.Value > 0);
          end else  if(jsevent.typ and JS_EVENT_AXIS > 0) then begin
             event.Typ := appCONTROLLER_EVENT_AXIS;
-
-            if(jsevent.value = 0) then
-               State.Axes[jsevent.number] := 0
-            else
-               State.Axes[jsevent.number] := 1 / 32767 * jsevent.value;
+            State.Axes[jsevent.number].AssignRaw(jsevent.value);
 
             event.Value := State.Axes[jsevent.number];
          end;

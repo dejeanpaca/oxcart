@@ -150,9 +150,9 @@ TYPE
          Keys: appiTKeyStates;
          KeyProperties: array[0..appMAX_CONTROLLER_BUTTONS] of appiTKeyState;
          {state of all axes}
-         Triggers: array[0..appMAX_CONTROLLER_AXES - 1] of single;
+         Triggers: array[0..appMAX_CONTROLLER_AXES - 1] of appiTAxisState;
          {state of all axes}
-         Axes: array[0..appMAX_CONTROLLER_AXES - 1] of single;
+         Axes: array[0..appMAX_CONTROLLER_AXES - 1] of appiTAxisState;
       end;
 
       constructor Create(); virtual;
