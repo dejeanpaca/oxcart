@@ -45,8 +45,8 @@ BEGIN
 
    if(isMode(MODE_RESOURCES)) then begin
       log.i('Building resources');
-      ProcessHelpers.RunCommand('file2code', ['-pas', '-lf', 'data/fonts/default/font.tga', 'units/resources/default_font.inc', 'default_font']);
-      ProcessHelpers.RunCommand('file2code', ['-pas', '-lf', 'data/textures/default/default.tga', 'units/resources/default_texture.inc', 'default_texture']);
+      ProcessHelpers.RunCommand('file2code', ['-pas', '-lf', 'data/internal/font/font.tga', 'units/resources/default_font.inc', 'default_font']);
+      ProcessHelpers.RunCommand('file2code', ['-pas', '-lf', 'data/internal/default.tga', 'units/resources/default_texture.inc', 'default_texture']);
       log.i('Done building resources');
    end;
 
