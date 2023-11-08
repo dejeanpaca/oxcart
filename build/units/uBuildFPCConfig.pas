@@ -30,6 +30,8 @@ TYPE
 
       {add a new config line}
       procedure Add(const s: StdString); inline;
+      {add a new config line}
+      procedure Add(var from: TSimpleStringList); inline;
       {construct a config from build configuration}
       procedure Construct();
 
@@ -127,6 +129,16 @@ end;
 procedure TBuildFPCConfiguration.Add(const s: StdString);
 begin
    Config.Add(s);
+end;
+
+procedure TBuildFPCConfiguration.Add(var from: TSimpleStringList);
+var
+   i: loopint;
+
+begin
+   for i := 0 to from.n - 1 do begin
+      Config.Add(from.List[i]);
+   end;
 end;
 
 procedure TBuildFPCConfiguration.Construct();
