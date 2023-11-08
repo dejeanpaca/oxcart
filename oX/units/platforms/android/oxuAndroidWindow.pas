@@ -16,10 +16,10 @@ INTERFACE
 TYPE
    androidTWindow = class(oxTWindow)
       wd: record
-         surface: EGLSurface;
-         context: EGLContext;
-         display: EGLDisplay;
-         config: EGLConfig;
+         Surface: EGLSurface;
+         Context: EGLContext;
+         Display: EGLDisplay;
+         Config: EGLConfig;
       end;
    end;
 

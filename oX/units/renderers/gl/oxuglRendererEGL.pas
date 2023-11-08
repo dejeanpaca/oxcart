@@ -27,7 +27,6 @@ TYPE
 
       procedure OnInitialize(); virtual;
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
-      procedure OnInitWindow(wnd: oglTWindow); virtual;
       function GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext; virtual;
       function ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
       function DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
@@ -72,10 +71,10 @@ var
 begin
    log.v('preinit');
    Result := false;
-   wnd.wd.display := eglGetDisplay(EGL_DEFAULT_DISPLAY);
+   wnd.wd.Display := eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
-   if(wnd.wd.display <> nil) then
-      eglInitialize(wnd.wd.display, nil, nil)
+   if(wnd.wd.Display <> nil) then
+      eglInitialize(wnd.wd.Display, nil, nil)
    else begin
       log.e('Failed to get default EGL display');
       exit(false);
@@ -83,9 +82,9 @@ begin
 
    supportedConfigs := nil;
 
-   eglChooseConfig(wnd.wd.display, attribs, nil, 0, @numConfigs);
+   eglChooseConfig(wnd.wd.Display, attribs, nil, 0, @numConfigs);
    SetLength(supportedConfigs, numConfigs);
-   eglChooseConfig(wnd.wd.display, attribs, @supportedConfigs[0], numConfigs, @numConfigs);
+   eglChooseConfig(wnd.wd.Display, attribs, @supportedConfigs[0], numConfigs, @numConfigs);
 
    config := nil;
 
@@ -95,10 +94,10 @@ begin
 
        cfg := supportedConfigs[i];
 
-       if ((eglGetConfigAttrib(wnd.wd.display, cfg, EGL_RED_SIZE, @r) <> 0) and
-           (eglGetConfigAttrib(wnd.wd.display, cfg, EGL_GREEN_SIZE, @g) <> 0) and
-           (eglGetConfigAttrib(wnd.wd.display, cfg, EGL_BLUE_SIZE,  @b) <> 0) and
-           (eglGetConfigAttrib(wnd.wd.display, cfg, EGL_DEPTH_SIZE, @d) <> 0) and
+       if ((eglGetConfigAttrib(wnd.wd.Display, cfg, EGL_RED_SIZE, @r) <> 0) and
+           (eglGetConfigAttrib(wnd.wd.Display, cfg, EGL_GREEN_SIZE, @g) <> 0) and
+           (eglGetConfigAttrib(wnd.wd.Display, cfg, EGL_BLUE_SIZE,  @b) <> 0) and
+           (eglGetConfigAttrib(wnd.wd.Display, cfg, EGL_DEPTH_SIZE, @d) <> 0) and
            (r = 8) and (g = 8) and (b = 8) and (d = 0) )  then begin
                config := supportedConfigs[i];
                break;
@@ -115,25 +114,25 @@ begin
 
    log.i('found config');
 
-   if eglGetConfigAttrib(wnd.wd.display, config, EGL_NATIVE_VISUAL_ID, @format) = EGL_FALSE then begin
+   if eglGetConfigAttrib(wnd.wd.Display, config, EGL_NATIVE_VISUAL_ID, @format) = EGL_FALSE then begin
       wnd.RaiseError('Failed to get EGL_NATIVE_VISUAL_ID');
       exit(false);
    end;
 
-   wnd.wd.config := config;
+   wnd.wd.Config := config;
 
    log.i('getting window: ' + sf(AndroidApp));
-   surface := eglCreateWindowSurface(wnd.wd.display, config, AndroidApp^.window, nil);
+   surface := eglCreateWindowSurface(wnd.wd.Display, config, AndroidApp^.window, nil);
 
    if(surface = nil) then begin
       wnd.RaiseError('Failed to create window surface');
       exit(false);
    end;
 
-   wnd.wd.surface := surface;
+   wnd.wd.Surface := surface;
 
-   eglQuerySurface(wnd.wd.display, surface, EGL_WIDTH, @w);
-   eglQuerySurface(wnd.wd.display, surface, EGL_HEIGHT, @h);
+   eglQuerySurface(wnd.wd.Display, surface, EGL_WIDTH, @w);
+   eglQuerySurface(wnd.wd.Display, surface, EGL_HEIGHT, @h);
 
    log.i('dimensions: ' + sf(w) + 'x' + sf(h));
    wnd.Dimensions.Assign(w, h);
@@ -141,32 +140,28 @@ begin
    Result := true;
 end;
 
-procedure oxglTEGL.OnInitWindow(wnd: oglTWindow);
-begin
-end;
-
 function oxglTEGL.GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext;
 begin
-   if(wnd.wd.display <> nil) and (wnd.wd.config <> nil) then
-      Result := eglCreateContext(wnd.wd.display, wnd.wd.config, shareContext, nil)
+   if(wnd.wd.Display <> nil) and (wnd.wd.Config <> nil) then
+      Result := eglCreateContext(wnd.wd.Display, wnd.wd.Config, shareContext, nil)
    else
       Result := nil;
 end;
 
 function oxglTEGL.ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean;
 begin
-   Result := eglMakeCurrent(wnd.wd.display, wnd.wd.surface, wnd.wd.surface, context) <> EGL_FALSE;
+   Result := eglMakeCurrent(wnd.wd.Display, wnd.wd.Surface, wnd.wd.Surface, context) <> EGL_FALSE;
 end;
 
 function oxglTEGL.DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean;
 begin
-   Result := eglDestroyContext(wnd.wd.display, context) <> EGL_FALSE;
+   Result := eglDestroyContext(wnd.wd.Display, context) <> EGL_FALSE;
 end;
 
 procedure oxglTEGL.SwapBuffers(wnd: oglTWindow);
 begin
-   if(wnd.wd.display <> nil) and (wnd.wd.surface <> nil) then
-      eglSwapBuffers(wnd.wd.display, wnd.wd.surface);
+   if(wnd.wd.Display <> nil) and (wnd.wd.Surface <> nil) then
+      eglSwapBuffers(wnd.wd.Display, wnd.wd.Surface);
 end;
 
 INITIALIZATION

@@ -22,6 +22,9 @@ TYPE
          Warned32NotSupported: boolean;
       end;
 
+      {is this a GLES renderer}
+      GLES: boolean;
+
       Renderer,
       Vendor,
       sVersion: string;
