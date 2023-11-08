@@ -295,10 +295,6 @@ begin
       appDVarTextConfiguration.Save();
    end;
 
-   {done with UI}
-   if(oxui <> nil) then
-      oxui.Deinitialize();
-
    {perform initial de-initialization step}
    ox.OnDeinitialize.Call();
    log.i('oxDeinitialize complete');
@@ -318,12 +314,17 @@ begin
          oxUIHooks.DestroyWindow(oxWindows.w[0]);
    end;
 
+   {done with UI}
+   if(oxui <> nil) then
+      oxui.Deinitialize();
+
+   {call any de-initializers}
+   ox.Init.dCall();
+
    {de-initialize UI}
    if(oxui <> nil) then
       oxui.BaseDeInitialize();
 
-   {call any de-initializers}
-   ox.Init.dCall();
    ox.BaseInit.dCall();
    log.i('Called de-initialization routines');
 
