@@ -75,11 +75,13 @@ begin
    E := TSimpleParseEngine.Create;
 
    try
+      log.v('Parsing: ' + fn);
+
       commandLine := fn + ' ' + fpcCommandLine;
       M := ParseSource(E, commandLine, {$I %FPCTARGETOS%}, {$I %FPCTargetCPU});
 
       if(M.InterfaceSection <> nil) then
-        Result.IsUnit := true;
+         Result.IsUnit := true;
 
       FreeAndNil(M);
    except

@@ -70,7 +70,6 @@ begin
    with oxedProjectScanner do begin
       Walker := TFileTraverse.Create();
       Walker.AddExtension('.pas');
-      Walker.AddExtension('.pp');
       Walker.AddExtension('.inc');
 
       Walker.onFile := @scanFile;
