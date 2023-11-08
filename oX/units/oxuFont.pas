@@ -125,6 +125,9 @@ TYPE
 
       {assigns a TFD to a font}
       procedure Assign(const tfd: oxTTFD);
+
+      {checks if the font is valid}
+      function Valid(): boolean;
    end;
 
    { oxTFontGlobal }
@@ -333,7 +336,7 @@ procedure oxTFont.Start();
 begin
    Select();
 
-   if(buf.Built) then begin
+   if(Valid()) then begin
       oxTransform.Identity();
 
       oxRender.BlendFunction(oxBLEND_ALPHA);
@@ -376,7 +379,7 @@ var
 begin
    Result := false;
 
-   if(oxTex.ValidId(Texture) and (buf.Built)) then begin
+   if(Valid()) then begin
       len := Length(s);
 
       {don't overflow our buffers}
@@ -488,7 +491,7 @@ var
    m: TMatrix4f;
 
 begin
-   if(oxTex.ValidId(Texture) and (buf.Built)) then begin
+   if(Valid()) then begin
       m := oxTransform.Matrix;
       len := Length(s);
 
@@ -828,6 +831,11 @@ begin
    lines     := tfd.Lines;
 
    texname   := tfd.TextureName;
+end;
+
+function oxTFont.Valid(): boolean;
+begin
+   Result := oxTex.ValidId(Texture) and buf.Built;
 end;
 
 { oxTFontGlobal }
