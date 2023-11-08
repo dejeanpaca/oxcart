@@ -23,8 +23,6 @@ TYPE
       Projection: oxTProjection;
       Camera: oxTCamera;
 
-      UseSceneProjection: boolean;
-
       constructor Create(); override;
       destructor Destroy(); override;
 
@@ -37,9 +35,6 @@ TYPE
 
       {get the descriptor for this component}
       function GetDescriptor(): oxPComponentDescriptor; override;
-
-      {get projection used by this camera}
-      function GetProjection(): oxPProjection;
    end;
 
 IMPLEMENTATION
@@ -61,7 +56,6 @@ begin
 
    Camera.Initialize();
    Projection.Initialize(oxViewport);
-   UseSceneProjection := true;
 end;
 
 destructor oxTCameraComponent.Destroy();
@@ -98,14 +92,6 @@ end;
 function oxTCameraComponent.GetDescriptor(): oxPComponentDescriptor;
 begin
    Result := @descriptor;
-end;
-
-function oxTCameraComponent.GetProjection(): oxPProjection;
-begin
-   Result := @Projection;
-
-   if(UseSceneProjection) then
-      Result := oxProjection;
 end;
 
 INITIALIZATION
