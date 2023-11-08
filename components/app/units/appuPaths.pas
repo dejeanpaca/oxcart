@@ -164,53 +164,46 @@ begin
    {$ENDIF}
 end;
 
-{create the configuration directory}
-function appTPath.CreateConfiguration(): boolean;
+function createConfigDirectory(const Preset: StdString; local: boolean; out Path: StdString): boolean;
 var
    createdPath: StdString;
 
 begin
-   if(not Configuration.Created) then begin
-      if(Configuration.Preset = '') then begin
-         {determine name of the configuration directory from app info}
-         createdPath := GetConfigurationPath(appInfo)
-      end else
-         createdPath := Configuration.Preset;
+   Result := true;
 
-      Configuration.Path := IncludeTrailingPathDelimiter(createdPath);
+   if(Preset = '') then begin
+      {determine name of the configuration directory from app info}
+      createdPath := appPath.GetConfigurationPath(appInfo, local)
+   end else
+      createdPath := Preset;
 
-      if(Configuration.UseLocal) then begin
-        if(Configuration.PresetLocal = '') then begin
-           {determine name of the configuration directory from app info}
-           createdPath := GetConfigurationPath(appInfo, true)
-        end else
-           createdPath := Configuration.Preset;
+   Path := IncludeTrailingPathDelimiter(createdPath);
 
-        Configuration.Local := IncludeTrailingPathDelimiter(createdPath);
-
-        {create the local configuration directory}
-        if(Configuration.Local <> '') then begin
-          if(not FileUtils.DirectoryExists(Configuration.Local)) then begin
-             if(not ForceDirectories(Configuration.Local)) then
-                console.e('Failed to create local configuration directory: ' + Configuration.Local);
-           end;
+   {create the local configuration directory}
+   if(Path <> '') then begin
+     if(not FileUtils.DirectoryExists(Path)) then begin
+        if(not ForceDirectories(Path)) then begin
+           console.e('Failed to create configuration directory: ' + Path);
+           Result := false;
         end;
       end;
+   end else
+      Result := false;
+end;
 
-      {create the configuration directory}
-      if(not FileUtils.DirectoryExists(Configuration.Path))  then begin
-         if(ForceDirectories(Configuration.Path)) then
-            Configuration.Created := true
-      end else
-         Configuration.Created := true;
+{create the configuration directory}
+function appTPath.CreateConfiguration(): boolean;
+begin
+   if(not Configuration.Created) then begin
+      if(Configuration.UseLocal) then
+         createConfigDirectory(Configuration.PresetLocal, true, Configuration.Local);
 
-      if(not Configuration.Created) then begin
-         Configuration.Path := '';
+      Configuration.Created := createConfigDirectory(Configuration.Preset, false, Configuration.Path);
 
-         console.e('Failed to create configuration directory: ' + Configuration.Path);
-      end else begin
+      if(not Configuration.Created) then
+         Configuration.Path := ''
+      else
          console.i('Created configuration directory: ' + Configuration.Path);
-      end;
    end;
 
    Result := Configuration.Created;
