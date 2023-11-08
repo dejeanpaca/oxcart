@@ -49,7 +49,7 @@ TYPE
       {reset when new project is created, opened or closed}
       procedure ProjectReset(); virtual;
       {get settings group}
-      function GetDvarGroup(): PDVarGroup;
+      function GetDvarGroup(): PDVarGroup; virtual;
 
       {called when the project is loaded}
       procedure Load(); virtual;

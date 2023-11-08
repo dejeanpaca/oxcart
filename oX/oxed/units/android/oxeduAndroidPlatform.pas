@@ -24,7 +24,7 @@ TYPE
       constructor Create(); override;
 
       procedure ProjectReset(); override;
-      function GetDvarGroup(): PDVarGroup;
+      function GetDvarGroup(): PDVarGroup; override;
    end;
 
 IMPLEMENTATION
