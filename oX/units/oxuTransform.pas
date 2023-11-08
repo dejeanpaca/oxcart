@@ -53,14 +53,14 @@ TYPE
 
       procedure Rotate(const angles: TVector3f);
       procedure Rotate(x, y, z: single);
-      procedure Rotate(w, x, y, z: single); virtual;
-      procedure GetRotateMatrix(w, x, y, z: single; out m: TMatrix4f); virtual;
+      procedure Rotate(w, x, y, z: single);
+      procedure GetRotationMatrix(w, x, y, z: single; out m: TMatrix4f); virtual;
       procedure RotateX(w: single); virtual;
       procedure RotateY(w: single); virtual;
       procedure RotateZ(w: single); virtual;
-      procedure GetRotateMatrixX(w: single; out m: TMatrix4f); virtual;
-      procedure GetRotateMatrixY(w: single; out m: TMatrix4f); virtual;
-      procedure GetRotateMatrixZ(w: single; out m: TMatrix4f); virtual;
+      procedure GetRotationMatrixX(w: single; out m: TMatrix4f); virtual;
+      procedure GetRotationMatrixY(w: single; out m: TMatrix4f); virtual;
+      procedure GetRotationMatrixZ(w: single; out m: TMatrix4f); virtual;
 
       procedure Scale(x, y, z: single); virtual;
       procedure GetScaleMatrix(x, y, z: single; out m: TMatrix4f); virtual;
@@ -224,41 +224,15 @@ end;
 
 procedure oxTTransform.Rotate(w, x, y, z: single);
 var
-   c,
-   s,
-   cx,
-   cy,
-   cz: single;
    m: TMatrix4f;
 
 begin
-   w := w * vmcToRad;
-
-   c := cos(w);
-   s := sin(w);
-
-   cx := x * (1 - c);
-   cy := y * (1 - c);
-   cz := z * (1 - c);
-
-   m := vmmUnit4;
-
-   m[0][0] := (x * cx) + c;
-   m[0][1] := (x * cy) - z * s;
-   m[0][2] := (x * cz) + y * s;
-
-   m[1][0] := (y * cx) + z * s;
-   m[1][1] := (y * cy) + c;
-   m[1][2] := (y * cz) - x * s;
-
-   m[2][0] := (z * cx) - y * s;
-   m[2][1] := (z * cy) + x * s;
-   m[2][2] := (z * cz) + c;
+   GetRotationMatrix(w, x, y, z, m);
 
    RotationMatrix := m * RotationMatrix;
 end;
 
-procedure oxTTransform.GetRotateMatrix(w, x, y, z: single; out m: TMatrix4f);
+procedure oxTTransform.GetRotationMatrix(w, x, y, z: single; out m: TMatrix4f);
 var
    c,
    s,
@@ -357,7 +331,7 @@ begin
    RotationMatrix := RotationMatrix * m;
 end;
 
-procedure oxTTransform.GetRotateMatrixX(w: single; out m: TMatrix4f);
+procedure oxTTransform.GetRotationMatrixX(w: single; out m: TMatrix4f);
 var
    cosw,
    sinw: single;
@@ -375,7 +349,7 @@ begin
    m[2][2] := cosw;
 end;
 
-procedure oxTTransform.GetRotateMatrixY(w: single; out m: TMatrix4f);
+procedure oxTTransform.GetRotationMatrixY(w: single; out m: TMatrix4f);
 var
    cosw,
    sinw: single;
@@ -393,7 +367,7 @@ begin
    m[2][2] := cosw;
 end;
 
-procedure oxTTransform.GetRotateMatrixZ(w: single; out m: TMatrix4f);
+procedure oxTTransform.GetRotationMatrixZ(w: single; out m: TMatrix4f);
 var
    cosw,
    sinw: single;
