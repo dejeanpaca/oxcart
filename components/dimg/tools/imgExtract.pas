@@ -8,8 +8,9 @@
 {$MODE OBJFPC}{$H+}{$I-}
 PROGRAM imgExtract;
 
-   USES dStd, dError, ConsoleUtils,
-   dImage, dBMP, dTGA, dJPEG, dPCX, dPNM, dWAL, dPNG, dSGIRGB;
+   USES
+      uStd, ConsoleUtils,
+      uImage, {$INCLUDE imgIncludeAllLoaders.inc};
 
 CONST
    dcProgramName: string      = 'imgExtract';
@@ -70,8 +71,7 @@ begin
    end;
 
    {open the palette file}
-   Assign(dataFile, dataFileName);
-   Rewrite(dataFile, 1);
+   FileRewrite(dataFile, dataFileName);
    if(ioerror <> 0) then begin
       console.e('Cannot create the palette file.');
       halt(1);

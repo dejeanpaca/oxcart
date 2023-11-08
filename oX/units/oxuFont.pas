@@ -857,7 +857,7 @@ begin
    CPLine    := tfd.CPLine;
    Lines     := tfd.Lines;
 
-   texname   := tfd.TextureName;
+   TexName   := tfd.TextureName;
 end;
 
 function oxTFont.Valid(): boolean;

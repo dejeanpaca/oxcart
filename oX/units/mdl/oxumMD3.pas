@@ -158,6 +158,7 @@ begin
 
    if(ld.ioE <> 0) then
       ld.errCode := eIO;
+
    result := ld.ioE;
 end;
 
@@ -502,9 +503,8 @@ begin
    pHdr := ld.Data;
 
    {open the file}
-   Assign(file(ld.f^), filename);
-   Reset(file(ld.f^), 1);
-   if(ioerr(ld) <> 0) then begin
+   ld.ioE := FileReset(file(ld.f^), filename);
+   if(ld.ioE <> 0) then begin
       logFile();
       raiseError(ld, eIO); 
       exit;
@@ -932,10 +932,11 @@ begin
    Idx := 0;
 
    {open the shader  file}
-   Assign(f, FileName);
-   Reset(f);
-   if(ioerr(ld) <> 0) then begin
-      logFile(); exit;
+   ld.ioE := FileReset(f, FileName);
+   if(ld.ioE <> 0) then begin
+      raiseError(ld, eIO);
+      logFile();
+      exit;
    end;
 
    {process all lines}
