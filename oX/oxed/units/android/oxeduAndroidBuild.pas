@@ -133,13 +133,17 @@ begin
 
    { add units }
 
-   oxedBuild.Parameters.IncludeUses.Add('android_native_app_glue');
+   if(not oxedAndroidSettings.Project.ExcludeDefaultMain) then
+      oxedBuild.Parameters.IncludeUses.Add('android_native_app_glue')
+   else
+      oxedBuild.Parameters.PreIncludeUses.Add('android_native_app_glue');
+
    oxedBuild.Parameters.ExportSymbols.Add('ANativeActivity_onCreate');
 
-   if(not oxedAndroidSettings.Project.ExcludeDefaultMain) then begin
+   if(not oxedAndroidSettings.Project.ExcludeDefaultMain) then
       oxedBuild.Parameters.IncludeUses.Add('oxuAndroidMain');
-      oxedBuild.Parameters.ExportSymbols.Add('android_main');
-   end;
+
+   oxedBuild.Parameters.ExportSymbols.Add('android_main');
 
    {disable external symbols as we can't use those on android}
    build.Debug.External := false;
