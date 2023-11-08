@@ -174,6 +174,10 @@ TYPE
       function Context(): boolean;
       {checks whether a key with the specified keycode is pressed}
       function IsPressed(KeyCode: longint): boolean;
+      {checks whether a key with the specified keycode was just released}
+      function Released(KeyCode: longint): boolean;
+      {checks whether a key with the specified keycode was just pressed}
+      function JustPressed(KeyCode: longint): boolean;
       {checks whether a key with the specified keycode was pressed}
       function WasPressed(KeyCode: longint): boolean;
       {checks whether a key with the specified keycode was pressed in this cycle}
@@ -546,6 +550,22 @@ function appTKeyGlobal.IsPressed(KeyCode: longint): boolean;
 begin
    if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
       Result := appk.Properties[KeyCode].IsSet(kpPRESSED)
+   else
+      Result := false;
+end;
+
+function appTKeyGlobal.Released(KeyCode: longint): boolean;
+begin
+   if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
+      Result := appk.Properties[KeyCode].IsSet(kpWAS_PRESSED) and (not appk.Properties[KeyCode].IsSet(kpPRESSED))
+   else
+      Result := false;
+end;
+
+function appTKeyGlobal.JustPressed(KeyCode: longint): boolean;
+begin
+   if(KeyCode >= -1) and (KeyCode < appkcKEYS_PRESSED_SIZE) then
+      Result := (not appk.Properties[KeyCode].IsSet(kpWAS_PRESSED)) and appk.Properties[KeyCode].IsSet(kpPRESSED)
    else
       Result := false;
 end;
