@@ -41,14 +41,12 @@ IMPLEMENTATION
 
 procedure showInformation();
 begin
-
 end;
 
 procedure oxTAboutWindow.AddWidgets();
 var
    btnMI,
    btnOk: wdgTButton;
-
 
 begin
    {add the label}
@@ -83,7 +81,7 @@ begin
    Height := 200;
    Title := 'About';
 
-   inherited Create;
+   inherited;
 end;
 
 procedure consoleCallback({%H-}con: conPConsole);

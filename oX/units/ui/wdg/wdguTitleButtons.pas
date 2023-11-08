@@ -11,7 +11,7 @@ UNIT wdguTitleButtons;
 INTERFACE
 
    USES
-      uColors,
+      uStd, uColors,
       {app}
       appuMouse,
       {oX}
@@ -25,9 +25,9 @@ TYPE
    wdgTTitleTButton = record
       x, {x offset}
       w,  {specific width}
-      which: longint; {ID}
-      highlighted: boolean;
-      btmask: dword;
+      Which: loopint; {ID}
+      Highlighted: boolean;
+      Mask: dword;
    end;
 
 
@@ -39,26 +39,25 @@ TYPE
       procedure Hover({%H-}x, {%H-}y: longint; what: uiTHoverEvent); override;
       procedure Action(action: uiTWidgetEvents); override;
 
-      procedure SizeChanged; override;
-      procedure ParentSizeChange; override;
+      procedure SizeChanged(); override;
+      procedure ParentSizeChange(); override;
 
    protected
-      procedure FontChanged; override;
+      procedure FontChanged(); override;
 
    private
-      buttons: record
-         n: longint; {number of buttons}
-
+      Buttons: record
+         n, {number of Buttons}
          h, {default height}
          w, {default width}
-         spc: longint; {spacing}
+         Spacing: loopint; {spacing}
 
          b: array[0..uiwcbNMAX-1] of wdgTTitleTButton;
       end;
 
       procedure Calculate();
-      function onWhere(x: longint): longint;
-      procedure unHighlight();
+      function OnWhere(x: loopint): loopint;
+      procedure UnHighlight();
    end;
 
    uiTWidgetTitleButtonsGlobal = record
@@ -77,22 +76,21 @@ VAR
 
 {NOTE: the specific width is currently the same for any button}
 
-
 procedure wdgTTitleButtons.Point(var e: appTMouseEvent; x, {%H-}y: longint);
 var
    whaton: longint;
 
 begin
    if(e.button = appmcLEFT) then begin
-      whaton := onWhere(x);
+      whaton := OnWhere(x);
 
       if(whaton <> -1) then begin
          if(e.Action = appmcPRESSED) then
-            buttons.b[whaton].highlighted := true
+            Buttons.b[whaton].Highlighted := true
          else  if(e.Action = appmcRELEASED) then begin
-            buttons.b[whaton].highlighted := false;
+            Buttons.b[whaton].Highlighted := false;
 
-            case buttons.b[whaton].which of
+            case Buttons.b[whaton].Which of
                uiwBUTTON_CLOSE:
                   uiTWindow(wnd).Close();
                uiwBUTTON_MINIMIZE:
@@ -131,29 +129,28 @@ var
    pSkin: uiTSkin;
 
    x,
-   i: longint;
-
-   y1: longint;
+   i,
+   y1: loopint;
 
    f: oxTFont;
    r: oxTRect;
 
-   pwnd: uiTWindow;
+   pWnd: uiTWindow;
    colors: uiPWindowSkinColors;
 
    scale: single;
 
 begin
-   pwnd := uiTWindow(wnd);
-   pSkin := uiTSkin(pwnd.Skin);
+   pWnd := uiTWindow(wnd);
+   pSkin := uiTSkin(pWnd.Skin);
 
-   if(pwnd.IsSelected()) then
+   if(pWnd.IsSelected()) then
       colors := @pSkin.Window.Colors
    else
       colors := @pSkin.Window.InactiveColors;
 
-   if(pwnd.Frame <> uiwFRAME_STYLE_NONE) and (pSkin <> nil) then begin
-      if(buttons.n > 0) then begin
+   if(pWnd.Frame <> uiwFRAME_STYLE_NONE) and (pSkin <> nil) then begin
+      if(Buttons.n > 0) then begin
          {set button color}
          SetColor(cWhite4ub);
 
@@ -162,25 +159,25 @@ begin
 
          f := CachedFont;
          f.Start();
-         scale := (buttons.h) / f.GetHeight();
+         scale := (Buttons.h) / f.GetHeight();
          f.Scale(scale, scale);
 
-         {render all the buttons}
-         for i := 0 to (buttons.n - 1) do begin
-            r.x := x + buttons.b[i].x;
+         {render all the Buttons}
+         for i := 0 to (Buttons.n - 1) do begin
+            r.x := x + Buttons.b[i].x;
             r.y := y1;
-            r.w := buttons.w;
-            r.h := buttons.h;
+            r.w := Buttons.w;
+            r.h := Buttons.h;
 
             if(r.x + r.w < wnd.RPosition.x) or (r.x + r.w > wnd.RPosition.x + wnd.Dimensions.w) then
                continue;
 
-            if(not buttons.b[i].highlighted) then
-               pwnd.SetColorBlended(colors^.cTitleBt)
+            if(not Buttons.b[i].Highlighted) then
+               pWnd.SetColorBlended(colors^.cTitleBt)
             else
-               pwnd.SetColorBlended(colors^.cTitleBtHighlight);
+               pWnd.SetColorBlended(colors^.cTitleBtHighlight);
 
-            f.WriteCentered(pSkin.Window.cTitleBtSymbols[buttons.b[i].which], r, oxfpCenterHV);
+            f.WriteCentered(pSkin.Window.cTitleBtSymbols[Buttons.b[i].Which], r, oxfpCenterHV);
          end;
 
          f.Scale(1, 1);
@@ -194,7 +191,7 @@ procedure wdgTTitleButtons.Hover({%H-}x, {%H-}y: longint; what: uiTHoverEvent);
 begin
    if(wdgpENABLED in Properties) then begin
       if(what = uiHOVER_NO) then
-         unHighlight();
+         UnHighlight();
    end;
 end;
 
@@ -204,18 +201,18 @@ begin
       if(action = uiwdgACTION_MOVE) then
          Calculate()
       else if(action = uiwdgACTION_DEACTIVATE) then
-         unHighlight();
+         UnHighlight();
    end;
 end;
 
-procedure wdgTTitleButtons.SizeChanged;
+procedure wdgTTitleButtons.SizeChanged();
 begin
    inherited SizeChanged;
 
    Calculate();
 end;
 
-procedure wdgTTitleButtons.ParentSizeChange;
+procedure wdgTTitleButtons.ParentSizeChange();
 begin
    inherited ParentSizeChange;
 
@@ -225,114 +222,114 @@ end;
 {calculate the properties of the title buttons}
 procedure wdgTTitleButtons.Calculate();
 var
-   pwnd: uiTWindow;
-   pskin: uiTSkin;
+   pWnd: uiTWindow;
+   pSkin: uiTSkin;
    i,
    n,
    x,
-   totalWidth: longint;
-   th: longint; {title height}
+   totalWidth,
+   titleHeight: loopint; {title height}
 
 begin
-   pwnd := uiTWindow(wnd);
+   pWnd := uiTWindow(wnd);
 
-   if(pwnd = nil) then
+   if(pWnd = nil) then
       exit;
 
-   pSkin := uiTSkin(pwnd.Skin);
-   if(pwnd.Frame <> uiwFRAME_STYLE_NONE) and (pSkin <> nil) then begin
-      th := pwnd.GetTitleHeight();
+   pSkin := uiTSkin(pWnd.Skin);
+   if(pWnd.Frame <> uiwFRAME_STYLE_NONE) and (pSkin <> nil) then begin
+      titleHeight := pWnd.GetTitleHeight();
 
-      {get the dimensions of individual buttons}
+      {get the dimensions of individual Buttons}
       if(wdgTitleButtons.ButtonSizeRatio > 0) then
-         buttons.h := round(th * wdgTitleButtons.ButtonSizeRatio)
+         Buttons.h := round(titleHeight * wdgTitleButtons.ButtonSizeRatio)
       else
-         buttons.h := CachedFont.GetHeight();
+         Buttons.h := CachedFont.GetHeight();
 
-      buttons.w := buttons.h;
+      Buttons.w := Buttons.h;
 
-      buttons.spc := 1; {set the spacing}
+      Buttons.Spacing := 1; {set the spacing}
 
-      {figure out how many buttons there are and their properties}
+      {figure out how many Buttons there are and their properties}
       n := 0;
       x := 0;
       totalWidth := 0;
 
       for i := uiwcBUTTON_MAX downto 0 do begin
-         if(pwnd.Buttons and (1 shl i) > 0) then begin
-            buttons.b[n].highlighted := false;
-            buttons.b[n].x           := x;
-            buttons.b[n].w           := buttons.w;
-            buttons.b[n].which       := i;
-            buttons.b[n].btmask      := 1 shl i;
+         if(pWnd.Buttons and (1 shl i) > 0) then begin
+            Buttons.b[n].Highlighted := false;
+            Buttons.b[n].x           := x;
+            Buttons.b[n].w           := Buttons.w;
+            Buttons.b[n].Which       := i;
+            Buttons.b[n].Mask      := 1 shl i;
 
-            inc(x, buttons.b[n].w + buttons.spc); {move the offset}
-            inc(totalWidth, buttons.b[n].w + buttons.spc);
+            inc(x, Buttons.b[n].w + Buttons.Spacing); {move the offset}
+            inc(totalWidth, Buttons.b[n].w + Buttons.Spacing);
             inc(n);
          end;
       end;
 
       {there is no spacing after the last button needed}
       if(totalWidth > 0) then
-         dec(totalWidth, buttons.spc);
+         dec(totalWidth, Buttons.Spacing);
 
-      buttons.n := n; {set the number of buttons}
+      Buttons.n := n; {set the number of Buttons}
 
       {calculate the total dimensions of the widget}
-      Dimensions.h := buttons.h;
+      Dimensions.h := Buttons.h;
       Dimensions.w := totalWidth;
 
       {need to determine the position of the widget}
-      Position.y := pwnd.Dimensions.h + (th + buttons.h) div 2;
-      Position.x := pwnd.Dimensions.w - totalWidth - uiTWindow(wnd).GetFrameWidth() -
+      Position.y := pWnd.Dimensions.h + (titleHeight + Buttons.h) div 2;
+      Position.x := pWnd.Dimensions.w - totalWidth - uiTWindow(wnd).GetFrameWidth() -
          {move away from the b}
-         (round((buttons.h)) div 4);
+         (round((Buttons.h)) div 4);
 
       {update widgets relative position}
       PositionUpdate();
    end;
 end;
 
-function wdgTTitleButtons.onWhere(x: longint): longint;
+function wdgTTitleButtons.OnWhere(x: loopint): loopint;
 var
-   i, p: longint;
+   i,
+   p: loopint;
 
 begin
-   result := -1;
+   Result := -1;
 
-   {note: this routine will only check horizontally, as all buttons
-   cover the vertical dimensions of the widget}
+   {NOTE: this routine will only check horizontally, as all Buttons cover the vertical dimensions of the widget}
 
    p := 0;
 
-   for i := 0 to (buttons.n - 1) do begin
+   for i := 0 to (Buttons.n - 1) do begin
       {let's see of the pointer is within this button}
-      if(x >= p) and (x < p + buttons.b[i].w) then
+      if(x >= p) and (x < p + Buttons.b[i].w) then
          exit(i);
 
       {go to the next button}
-      inc(p, buttons.b[i].w + buttons.spc);
+      inc(p, Buttons.b[i].w + Buttons.Spacing);
    end;
 end;
 
-procedure wdgTTitleButtons.unHighlight();
+procedure wdgTTitleButtons.UnHighlight();
 var
-   i: longint;
+   i: loopint;
 
 begin
-   for i := 0 to (buttons.n - 1) do
-      buttons.b[i].highlighted := false;
+   for i := 0 to (Buttons.n - 1) do
+      Buttons.b[i].Highlighted := false;
 end;
 
-procedure wdgTTitleButtons.FontChanged;
+procedure wdgTTitleButtons.FontChanged();
 begin
    Calculate();
 end;
 
 procedure initWidget();
 begin
-   internal.SelectOnAdd     := false;
-   internal.NonSelectable   := true;
+   internal.SelectOnAdd := false;
+   internal.NonSelectable := true;
    internal.Instance := wdgTTitleButtons;
 
    internal.Done();
@@ -342,6 +339,6 @@ end;
 
 INITIALIZATION
    wdgTitleButtons.ButtonSizeRatio := 0;
-   internal.Register('widget.titlebuttons', @InitWidget);
+   internal.Register('widget.title_buttons', @InitWidget);
 
 END.
