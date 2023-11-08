@@ -150,12 +150,12 @@ TYPE
       {entry history}
       History: record
          Pos: longint;
-         Entries: TPreallocatedStringArrayList;
+         Entries: TSimpleStringList;
          EntryChanged: boolean;
       end;
 
       {arguments}
-      Arguments: TPreallocatedStringArrayList;
+      Arguments: TSimpleStringList;
 
       {entry handlers}
       EntryHandlers: conTEntryHandlerFuncs;

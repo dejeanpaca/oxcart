@@ -375,7 +375,7 @@ begin
 end;
 
 VAR
-   previousBuildUnits: TPreallocatedStringArrayList;
+   previousBuildUnits: TSimpleStringList;
 
 procedure setupBuildUnits();
 var

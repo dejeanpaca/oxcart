@@ -41,7 +41,7 @@ TYPE
       GlyphCode: longword;
 
       {compiler symbols to use when building}
-      CompilerSymbols: TPreallocatedStringArrayList;
+      CompilerSymbols: TSimpleStringList;
 
       constructor Create(); virtual;
 

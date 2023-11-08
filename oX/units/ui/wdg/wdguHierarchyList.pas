@@ -70,7 +70,7 @@ TYPE
       function GetItem(index: loopint): pointer;
 
       {get sub items of the given item, and if given item is nil, return the top level items}
-      function GetSubItems({%H-}index: loopint; {%H-}ref: pointer): TPreallocatedPointerArrayList; virtual;
+      function GetSubItems({%H-}index: loopint; {%H-}ref: pointer): TSimplePointerList; virtual;
       {find the index of the given item}
       function Find(item: pointer): loopint;
 
@@ -94,10 +94,10 @@ TYPE
          {width of the current font character}
          FontWidth: loopint;
 
-         procedure ExpandTo(const items: TPreallocatedPointerArrayList; index: loopint; l: loopint);
+         procedure ExpandTo(const items: TSimplePointerList; index: loopint; l: loopint);
 
          {expand data list with the given items at given index}
-         procedure ExpandData(const {%H-}items: TPreallocatedPointerArrayList; {%H-}index: loopint); virtual;
+         procedure ExpandData(const {%H-}items: TSimplePointerList; {%H-}index: loopint); virtual;
          {collapses the specified data range}
          procedure CollapseData({%H-}index, {%H-}count: loopint); virtual;
    end;
@@ -219,7 +219,7 @@ end;
 
 procedure wdgTHierarchyList.Load();
 var
-   items: TPreallocatedPointerArrayList;
+   items: TSimplePointerList;
 
 begin
    if(Visible.n > 0) then begin
@@ -261,7 +261,7 @@ end;
 
 procedure wdgTHierarchyList.ItemClicked(index: loopint;  button: TBitSet);
 var
-   items: TPreallocatedPointerArrayList;
+   items: TSimplePointerList;
 
 function expandedClicked(): boolean;
 var
@@ -327,7 +327,7 @@ begin
       result := nil;
 end;
 
-function wdgTHierarchyList.GetSubItems(index: loopint; ref: pointer): TPreallocatedPointerArrayList;
+function wdgTHierarchyList.GetSubItems(index: loopint; ref: pointer): TSimplePointerList;
 begin
    Result.Initialize(Result);
 end;
@@ -345,7 +345,7 @@ begin
    result := -1;
 end;
 
-procedure wdgTHierarchyList.ExpandTo(const items: TPreallocatedPointerArrayList; index: loopint; l: loopint);
+procedure wdgTHierarchyList.ExpandTo(const items: TSimplePointerList; index: loopint; l: loopint);
 var
    i: loopint;
 
@@ -400,7 +400,7 @@ end;
 
 procedure wdgTHierarchyList.Expand(index: loopint);
 var
-   items: TPreallocatedPointerArrayList;
+   items: TSimplePointerList;
 
 begin
    if(Expandable(index) and (not Expanded(index))) then begin
@@ -414,7 +414,7 @@ end;
 
 procedure wdgTHierarchyList.AddItem(index: loopint; item: pointer);
 var
-   items: TPreallocatedPointerArrayList;
+   items: TSimplePointerList;
    l, i: longint;
 
 begin
@@ -474,7 +474,7 @@ begin
    inherited FontChanged;
 end;
 
-procedure wdgTHierarchyList.ExpandData(const items: TPreallocatedPointerArrayList; index: loopint);
+procedure wdgTHierarchyList.ExpandData(const items: TSimplePointerList; index: loopint);
 begin
 
 end;

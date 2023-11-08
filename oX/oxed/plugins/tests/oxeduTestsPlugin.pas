@@ -39,7 +39,7 @@ TYPE
 
    oxedTTests = record
       {list of paths in which to run tests}
-      Paths: TPreallocatedStringArrayList;
+      Paths: TSimpleStringList;
       Task: oxedTTestsTask;
       TaskType: oxedTTestTaskType;
 

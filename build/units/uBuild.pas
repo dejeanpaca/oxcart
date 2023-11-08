@@ -40,7 +40,7 @@ TYPE
       ConfigPath,
       {fpc version}
       Version: StdString;
-      OptimizationLevels: TPreallocatedStringArrayList;
+      OptimizationLevels: TSimpleStringList;
 
       class procedure Initialize(out p: TBuildPlatform); static;
       function GetName(): StdString;
@@ -150,7 +150,7 @@ TYPE
 
       Units,
       Includes,
-      Symbols: TPreallocatedStringArrayList;
+      Symbols: TSimpleStringList;
 
       Libraries: record
          Source,
@@ -160,7 +160,7 @@ TYPE
 
       CurrentPlatform: PBuildPlatform;
       CurrentLazarus: PBuildLazarusInstall;
-      OptimizationLevels: TPreallocatedStringArrayList;
+      OptimizationLevels: TSimpleStringList;
 
       DefaultPlatform: PBuildPlatform;
       DefaultLazarus: PBuildLazarusInstall;
@@ -219,9 +219,9 @@ TYPE
       function FPCINPathEnv(): boolean;
 
       {get the semicolon separated includes path from a list of strings relative the base path}
-      function GetIncludesPath(const basePath: StdString; const paths: TPreallocatedStringArrayList): StdString;
+      function GetIncludesPath(const basePath: StdString; const paths: TSimpleStringList): StdString;
       {get the semicolon separated includes path from a list of strings relative the base path, including the existing items}
-      function GetIncludesPath(const basePath: StdString; const paths: TPreallocatedStringArrayList; const existing: StdString): StdString;
+      function GetIncludesPath(const basePath: StdString; const paths: TSimpleStringList; const existing: StdString): StdString;
 
       {stores the output of a build process into the output structure}
       procedure StoreOutput(p: TProcess);
@@ -1134,7 +1134,7 @@ begin
    exit(Pos(DirectorySeparator + 'fpc', path) <> 0)
 end;
 
-function TBuildSystem.GetIncludesPath(const basePath: StdString; const paths: TPreallocatedStringArrayList): StdString;
+function TBuildSystem.GetIncludesPath(const basePath: StdString; const paths: TSimpleStringList): StdString;
 var
    p, relative: StdString;
    i: longint;
@@ -1156,13 +1156,13 @@ begin
    Result := p;
 end;
 
-function TBuildSystem.GetIncludesPath(const basePath: StdString; const paths: TPreallocatedStringArrayList; const existing: StdString): StdString;
+function TBuildSystem.GetIncludesPath(const basePath: StdString; const paths: TSimpleStringList; const existing: StdString): StdString;
 var
    p, relative: StdString;
    existingItems: TStringArray;
    i, j: longint;
    exists: boolean;
-   newPaths: TPreallocatedStringArrayList;
+   newPaths: TSimpleStringList;
 
 begin
    existingItems := strExplode(existing, ';');

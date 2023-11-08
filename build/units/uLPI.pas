@@ -119,8 +119,8 @@ TYPE
       end;
 
       SourceData: record
-         PackageList: TPreallocatedStringArrayList;
-         Symbols: TPreallocatedStringArrayList;
+         PackageList: TSimpleStringList;
+         Symbols: TSimpleStringList;
       end;
 
       procedure Initialize();
