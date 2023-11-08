@@ -424,7 +424,6 @@ begin
 
    {translate the key to a character}
    c := oxPlatform.TranslateKey(keyEvent);
-   c := appk.Translate(k, c);
 
    {handle keys}
    if(k.Equal(kcBACKSPACE)) then begin
