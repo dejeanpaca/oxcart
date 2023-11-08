@@ -236,7 +236,7 @@ begin
    p.ZNear := zNear;
    p.ZFar := zFar;
 
-   if(zNear <= 0.0) and (p.IsOrtographic) then
+   if(zNear <= 0.0) and (not p.IsOrtographic) then
       log.w('zNear value should not be 0 or less');
 end;
 
