@@ -101,9 +101,7 @@ TYPE
       procedure Write(x, y: single; const s: StdString);
       procedure WriteCentered(const s: StdString; const r: oxTRect);
       procedure WriteCentered(const s: StdString; const r: oxTRect; props: oxTFontPropertiesSet);
-      procedure WriteCenteredCxt(const s: StdString; props: oxTFontPropertiesSet);
       procedure WriteCenteredScaled(const s: StdString; const r: oxTRect; sx, sy: single);
-      procedure WriteCenteredScaledCxt(const s: StdString; sx, sy: single);
       procedure WriteInRect(const txt: StdString; const r: oxTRect; breakChars: boolean = true; multiline: boolean = true);
       procedure WriteInRect(const txt: StdString; const r: oxTRect; props: oxTFontPropertiesSet);
 
@@ -573,19 +571,6 @@ begin
    Write(r.x + x, r.y - r.h + y, s);
 end;
 
-procedure oxTFont.WriteCenteredCxt(const s: StdString; props: oxTFontPropertiesSet);
-var
-   rect: oxTRect;
-
-begin
-   rect.x := 0;
-   rect.y := oxProjection^.Dimensions.h - 1;
-   rect.w := oxProjection^.Dimensions.w;
-   rect.h := oxProjection^.Dimensions.h;
-
-   WriteCentered(s, rect, props);
-end;
-
 procedure oxTFont.WriteCenteredScaled(const s: StdString; const r: oxTRect; sx, sy: single);
 var
    x, y, w, h: single;
@@ -599,20 +584,6 @@ begin
 
    Scale(sx, sy);
    Write(r.x + x, r.y - y, s);
-   Scale(1.0, 1.0);
-end;
-
-procedure oxTFont.WriteCenteredScaledCxt(const s: StdString; sx, sy: single);
-var
-   rect: oxTRect;
-
-begin
-   rect.x := 0;
-   rect.y := oxProjection^.Dimensions.h - 1;
-   rect.w := oxProjection^.Dimensions.w;
-   rect.h := oxProjection^.Dimensions.h;
-
-   WriteCenteredScaled(s, rect, sx, sy);
    Scale(1.0, 1.0);
 end;
 
