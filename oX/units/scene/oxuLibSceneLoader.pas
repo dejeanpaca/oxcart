@@ -11,7 +11,7 @@ UNIT oxuLibSceneLoader;
 INTERFACE
 
    USES
-      uStd, uLog, uTiming, StringUtils,
+      uStd, uLog, uTiming,
       {ox}
       uOX, oxuRunRoutines,
       oxuGlobalInstances, oxuEntity, oxuScene, oxuWorld, oxuSceneLoader, oxuSceneClone, oxuSerialization;
@@ -59,7 +59,7 @@ begin
       if(ok) then
          log.i('Loaded scene (lib, elapsed: ' + timer.ElapsedfToString(3) + '): ' + oxScene.Name)
       else
-         log.i('Failed to load scene (lib, elapsed: ' + ElapsedfToString(3) + '): ' + oxScene.Name)
+         log.i('Failed to load scene (lib, elapsed: ' + timer.ElapsedfToString(3) + '): ' + oxScene.Name)
    end;
 end;
 
