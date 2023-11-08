@@ -217,7 +217,7 @@ begin
          project.units.root := project.root.FindNode('Units');
 
          if(project.units.root <> nil) then begin
-            project.units.unit0 := project.units.root.FindNode('Unit0');
+            project.units.unit0 := project.units.root.FindNode('Unit');
 
             if(project.units.unit0 <> nil) then
                project.units.unit0Filename := project.units.unit0.FindNode('Filename');
