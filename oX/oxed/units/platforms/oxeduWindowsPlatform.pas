@@ -24,7 +24,37 @@ TYPE
       constructor Create(); override;
    end;
 
+   { oxedTWin32PlatformArchitecture }
+
+   oxedTWin32PlatformArchitecture = class(oxedTPlatformArchitecture)
+      constructor Create(); override;
+   end;
+
+   { oxedTWin64PlatformArchitecture }
+
+   oxedTWin64PlatformArchitecture = class(oxedTPlatformArchitecture)
+      constructor Create(); override;
+   end;
+
 IMPLEMENTATION
+
+{ oxedTWin32PlatformArchitecture }
+
+constructor oxedTWin32PlatformArchitecture.Create();
+begin
+   Name := 'Windows 32';
+   Architecture := 'x86';
+   Platform := 'i386-win32';
+end;
+
+{ oxedTWin64PlatformArchitecture }
+
+constructor oxedTWin64PlatformArchitecture.Create();
+begin
+   Name := 'Windows 64';
+   Architecture := 'x86-64';
+   Platform := 'i386-win64';
+end;
 
 { oxedTWindowsPlatform }
 
@@ -38,8 +68,8 @@ begin
 
    Configuration := oxedTPlatformConfiguration.Create();
 
-   AddArchitecture('x86', 'x86');
-   AddArchitecture('x64', 'x86_x64');
+   AddArchitecture(oxedTWin32PlatformArchitecture.Create());
+   AddArchitecture(oxedTWin32PlatformArchitecture.Create());
 end;
 
 procedure init();

@@ -26,7 +26,22 @@ TYPE
       procedure Load(); override;
    end;
 
+   { oxedTEditorPlatformArchitecture }
+
+   oxedTEditorPlatformArchitecture = class(oxedTPlatformArchitecture)
+      constructor Create(); override;
+   end;
+
 IMPLEMENTATION
+
+{ oxedTEditorPlatformArchitecture }
+
+constructor oxedTEditorPlatformArchitecture.Create();
+begin
+   Name := 'editor';
+   Architecture := 'editor';
+   Platform := 'default';
+end;
 
 { oxedTEditorPlatform }
 
@@ -42,8 +57,7 @@ begin
    Enabled := true;
 
    Configuration := oxedTPlatformConfiguration.Create();
-
-   AddArchitecture('editor', 'editor');
+   AddArchitecture(oxedTPlatformArchitecture.Create());
 end;
 
 procedure oxedTEditorPlatform.Load();

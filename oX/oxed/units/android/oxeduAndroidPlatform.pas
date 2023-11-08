@@ -27,7 +27,23 @@ TYPE
       function GetDvarGroup(): PDVarGroup; override;
    end;
 
+   { oxedTAndroidPlatformArchitecture }
+
+   oxedTAndroidPlatformArchitecture = class(oxedTPlatformArchitecture)
+      constructor Create(); override;
+   end;
+
+
 IMPLEMENTATION
+
+{ oxedTAndroidPlatformArchitecture }
+
+constructor oxedTAndroidPlatformArchitecture.Create();
+begin
+   Name := 'Android';
+   Architecture := '';
+   Platform := 'arm-android';
+end;
 
 { oxedTAndroidPlatform }
 
@@ -41,7 +57,7 @@ begin
 
    Configuration := oxedTPlatformConfiguration.Create();
 
-   AddArchitecture('Default', '');
+   AddArchitecture(oxedTAndroidPlatformArchitecture.Create());
 end;
 
 procedure oxedTAndroidPlatform.ProjectReset();
