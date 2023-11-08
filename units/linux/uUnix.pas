@@ -9,7 +9,7 @@ UNIT uUnix;
 INTERFACE
 
    USES
-      ctypes, unix;
+      unix;
 
 function unxFpread(fd: cint; buf: pchar; nbytes: TSize): TSsize; external name 'FPC_SYSC_READ';
 function unxFpWrite(fd : cInt; buf: pChar; nbytes: TSize): TSsize;  external name 'FPC_SYSC_WRITE';
