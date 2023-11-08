@@ -52,7 +52,9 @@ TYPE
 
       Texture: oxTTexture;
       {characters are on a baseline on the texture}
-      TextureBaseline: boolean;
+      TextureBaseline,
+      {is the font monospace}
+      Monospace: boolean;
       {file name}
       fn: string;
 
@@ -176,9 +178,11 @@ IMPLEMENTATION
 
 constructor oxTFont.Create();
 begin
-   Chars    := 256;
-   Width       := 8;
-   Height       := 8;
+   Monospace := true;
+
+   Chars   := 256;
+   Width   := 8;
+   Height  := 8;
 
    vScale[0] := 1.0;
    vScale[1] := 1.0;
