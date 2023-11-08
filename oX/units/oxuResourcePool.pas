@@ -31,8 +31,10 @@ TYPE
    { oxTResourcePool }
 
    oxTResourcePool = class(oxTPreallocatedResourceArrayListClass)
-      constructor Create; override;
-      destructor Destroy; override;
+      Name: string;
+
+      constructor Create(); override;
+      destructor Destroy(); override;
 
       {mark all resources as used (increase their reference count)}
       procedure MarkAllUsed();
@@ -54,10 +56,13 @@ TYPE
       procedure Load(); virtual;
    end;
 
+   oxTResourcePoolList = specialize TPreallocatedArrayList<oxTResourcePool>;
+
    { oxTResourceGlobal }
 
    oxTResourceGlobal = record
       Loaders: oxTResourceLoaders;
+      Pools: oxTResourcePoolList;
 
       {load a resource}
       procedure Load(var resource);
@@ -70,6 +75,10 @@ TYPE
       procedure AddLoader(resourceType: oxTResourceClass; loader: oxTResourceLoaderRoutine);
       {find a resource loader by the given resource type}
       function FindLoader(resourceType: oxTResourceClass): oxPResourceLoader;
+
+      procedure Add(pool: oxTResourcePool);
+      function Find(pool: oxTResourcePool): loopint;
+      procedure Remove(pool: oxTResourcePool);
    end;
 
 VAR
@@ -234,17 +243,50 @@ begin
    Result := nil;
 end;
 
-{ oxTResourcePool }
-
-constructor oxTResourcePool.Create;
+procedure oxTResourceGlobal.Add(pool: oxTResourcePool);
 begin
-   Increment := oxRESOURCE_POOL_INCREMENT;
+   Pools.Add(pool);
 end;
 
-destructor oxTResourcePool.Destroy;
+function oxTResourceGlobal.Find(pool: oxTResourcePool): loopint;
+var
+   i: loopint;
+
+begin
+   for i := 0 to Pools.n - 1 do begin
+      if(Pools.List[i] = pool) then
+         exit(i);
+   end;
+
+   Result := -1;
+end;
+
+procedure oxTResourceGlobal.Remove(pool: oxTResourcePool);
+var
+   i: loopint;
+
+begin
+   i := Find(pool);
+
+   if(i > -1) then
+      Pools.Remove(i);
+end;
+
+{ oxTResourcePool }
+
+constructor oxTResourcePool.Create();
+begin
+   Increment := oxRESOURCE_POOL_INCREMENT;
+   Name := 'unknown';
+
+   oxResource.Add(Self);
+end;
+
+destructor oxTResourcePool.Destroy();
 begin
    inherited Destroy;
 
+   oxResource.Remove(Self);
    DisposeAll();
 end;
 
@@ -325,5 +367,6 @@ end;
 
 INITIALIZATION
    oxResource.Loaders.InitializeValues(oxResource.Loaders);
+   oxResource.Pools.InitializeValues(oxResource.Pools);
 
 END.
