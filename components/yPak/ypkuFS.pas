@@ -22,19 +22,8 @@ TYPE
       f: TFile;
       {ypk file handler}
       ypkf: ypkTFile;
-      {blob size}
-      BlobSize: fileint;
-      {blob memory containing file names}
-      Blob: PByte;
-      {ypk entries}
-      Entries: ypkfTEntries;
-
-      {correct file path separators for all entries}
-      procedure CorrectPaths();
-      {get file name for entry specified by index}
-      function GetFn(index: loopint): PShortString;
-      {finds a file with the specified name in the entries}
-      function Find(var e: ypkfTEntries; const fn: string): longint;
+      {ypk data}
+      data: ypkTData;
 
       {list all files}
       procedure ListFiles();
@@ -112,7 +101,7 @@ begin
    fFile.Init(fs.f);
 
    fs.ypkf.Initialize(fs.ypkf);
-   fs.Entries.InitializeValues(fs.Entries);
+   ypkTData.Initialize(fs.data);
    fs.ypkf.f := @fs.f;
 end;
 
@@ -151,21 +140,22 @@ begin
       exit(nil);
    end;
 
-   fs.BlobSize := hdr.BlobSize;
+   fs.data.BlobSize := hdr.BlobSize;
+   fs.data.Files := hdr.Files;
 
-   fs.ypkf.ReadBlob(fs.Blob, fs.BlobSize);
-   fs.ypkf.ReadEntries(fs.Entries, hdr.Files);
+   fs.ypkf.ReadBlob(fs.data);
+   fs.ypkf.ReadEntries(fs.data);
 
    if(fs.f.Error = 0) then begin
       Result := @fs;
 
       log.i(tag + 'Loaded file successfully: ' + fs.f.fn +
-         ', files: ' + sf(hdr.Files) + ', offs: ' + sf(fs.f.fOffset) + ', blob: ' + sf(fs.BlobSize) + ', size: ' + sf(fs.f.fSize) + ')');
+         ', files: ' + sf(hdr.Files) + ', offs: ' + sf(fs.f.fOffset) + ', blob: ' + sf(fs.data.BlobSize) + ', size: ' + sf(fs.f.fSize) + ')');
    end else
       writeLog(fs, 'Cannot read blob or entries.');
 
    {correct paths so they match our system}
-   fs.CorrectPaths();
+   fs.data.CorrectPaths();
 end;
 
 function ypkTFileSystemGlobal.Add(const fn: StdString): ypkPFSFile;
@@ -292,7 +282,7 @@ begin
    fs := ypkfs.Find(fn, entryIdx);
 
    if(entryIdx > -1) then
-      Result := fs^.Entries.List[entryIdx].Size
+      Result := fs^.data.Entries.List[entryIdx].Size
    else
       Result := -1;
 end;
@@ -309,12 +299,12 @@ begin
    fs := ypkfs.Find(fn, entryIdx);
 
    if(entryIdx > -1) then begin
-      entry := @fs^.Entries.List[entryIdx].Offset;
+      entry := @fs^.data.Entries.List[entryIdx].Offset;
 
       f.Open(fs^.f, entry^.Offset, entry^.Size);
       f.fn := f.fn + ':' + fn;
 
-      if(fs^.f.error = 0) then
+      if(fs^.f.Error = 0) then
          Result := fs^.f.Seek(entry^.Offset) > -1;
    end;
 end;
@@ -329,8 +319,8 @@ begin
    fs := Find(fn, entryIdx);
 
    if(entryIdx > -1) then begin
-      offs := fs^.Entries.List[entryIdx].Offset;
-      size := fs^.Entries.List[entryIdx].Size;
+      offs := fs^.data.Entries.List[entryIdx].Offset;
+      size := fs^.data.Entries.List[entryIdx].Size;
       exit(true);
    end;
 
@@ -348,7 +338,7 @@ begin
    if(filesystem.n > 0) then begin
       for i := (filesystem.n - 1) downto 0 do begin
          if(filesystem.List[i] <> nil) then begin
-            entryIdx := filesystem.List[i]^.Find(filesystem.List[i]^.Entries, fn);
+            entryIdx := filesystem.List[i]^.data.Find(fn);
 
             if(entryIdx > -1) then
                exit(filesystem.List[i]);
@@ -373,7 +363,7 @@ end;
 
 function ypkTFileSystemGlobal.FileCount(var fs: ypkTFSFile): longint;
 begin
-   Result := fs.Entries.n;
+   Result := fs.data.Entries.n;
 end;
 
 function ypkTFileSystemGlobal.FileCount(): longint;
@@ -384,53 +374,17 @@ var
 begin
    count := 0;
 
-   if(filesystem.n > 0) then
+   if(filesystem.n > 0) then begin
       for i := 0 to (filesystem.n - 1) do begin
          if(filesystem.List[i] <> nil) then
-            inc(count, filesystem.List[i]^.Entries.n);
+            inc(count, filesystem.List[i]^.data.Entries.n);
       end;
+   end;
 
    Result := 0;
 end;
 
 { ypkTFSFile }
-
-procedure ypkTFSFile.CorrectPaths();
-var
-   i: loopint;
-   fn: PShortString;
-
-begin
-   for i := 0 to Entries.n - 1 do begin
-      fn := GetFn(i);
-
-      ReplaceDirSeparators(fn^);
-   end;
-end;
-
-function ypkTFSFile.GetFn(index: loopint): PShortString;
-begin
-   Result := @EmptyShortString;
-
-   if(index >= 0) and (index < Entries.n) then begin
-      Result := PShortString(Blob + PtrInt(Entries.List[index].FileNameOffset));
-   end;
-end;
-
-function ypkTFSFile.Find(var e: ypkfTEntries; const fn: string): longint;
-var
-   i: longint;
-
-begin
-   if(e.n > 0) and (Blob <> nil) and (BlobSize > 0) then begin
-      for i := 0 to e.n - 1 do begin
-         if(GetFN(i)^ = fn) then
-            exit(i);
-      end;
-   end;
-
-   Result := -1;
-end;
 
 procedure ypkTFSFile.ListFiles();
 var
@@ -439,8 +393,8 @@ var
 begin
    log.i('ypkfs > ' + f.fn);
 
-   for i := 0 to Entries.n - 1 do begin
-      log.i('ypkfs > ' + GetFn(i)^);
+   for i := 0 to data.Entries.n - 1 do begin
+      log.i('ypkfs > ' + data.GetFn(i)^);
    end;
 
    log.i('ypkfs > done');
