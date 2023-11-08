@@ -219,7 +219,7 @@ begin
       {window colors}
       Colors.cTitle.Assign(84, 122, 201, 255);
       Colors.cTitleText  := cWhite4ub;
-      Colors.cBackground.Assign(32, 32, 32, 244);
+      Colors.cBackground.Assign(42, 42, 42, 244);
       Colors.cFrame := Colors.cTitle;
       Colors.cInnerFrame.Assign(16, 16, 16, 255);
       Colors.cTitleBt.Assign(255, 255, 255, 255); {close}
