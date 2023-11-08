@@ -389,22 +389,26 @@ begin
    Result.Add('DEBUG');
    {$ENDIF}
 
-   if(oxedProject.Session.DebugResources) then
+   if oxedProject.Session.DebugResources then
       Result.Add('OX_RESOURCE_DEBUG');
 
-   {$IFDEF NO_THREADS}
-   if(oxedBuild.IsLibrary()) then
+   if oxedBuild.IsLibrary() then begin
+      Result.Add('LIBRARY');
+
+      if(oxedBuild.InEditor) then begin
+      {$IFDEF NO_THREADS}
       Result.Add('NO_THREADS');
-   {$ENDIF}
+      {$ENDIF}
+      end;
+   end;
+
+   if oxedBuild.InEditor then begin
+      Result.Add('OX_LIBRARY');
+      Result.Add('OX_LIBRARY_SUPPORT');
+   end;
 
    for i := 0 to oxedBuild.Features.n - 1 do begin
       Result.Add(oxedBuild.Features.List[i]^.Symbol);
-   end;
-
-   if(oxedBuild.InEditor) then begin
-      Result.Add('LIBRARY');
-      Result.Add('OX_LIBRARY');
-      Result.Add('OX_LIBRARY_SUPPORT');
    end;
 end;
 
