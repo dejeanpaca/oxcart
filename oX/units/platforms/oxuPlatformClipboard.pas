@@ -33,7 +33,7 @@ TYPE
       {get a string from the clipboard, if any}
       function GetString(): StdString; virtual;
       {store a string to the clipboard}
-      function StoreString(const what: StdString): boolean; virtual;
+      function StoreString(const {%H-}what: StdString): boolean; virtual;
 
       class function GetComponent(): oxPPlatformClipboardComponent; static;
    end;
@@ -73,13 +73,13 @@ end;
 
 class function oxTPlatformClipboardComponent.GetComponent(): oxPPlatformClipboardComponent;
 begin
-   if(oxPlatformClipboard <> nil) then begin
+   if(oxPlatformClipboard = nil) then begin
       Result := oxPPlatformClipboardComponent(oxPlatform.GetComponent('clipboard'));
 
       if(Result = nil) then
          Result := @oxDefaultClipboardComponent;
 
-      Result := oxPlatformClipboard;
+      oxPlatformClipboard := Result;
    end else
       Result := oxPlatformClipboard;
 end;
