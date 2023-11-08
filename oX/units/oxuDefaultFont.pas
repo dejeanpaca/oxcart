@@ -78,8 +78,7 @@ begin
             oxDefaultFont.Font.Texture.Path := 'default';
             oxDefaultFont.Font.Texture.Name := 'default';
             oxDefaultFont.Font.Texture.MarkPermanent();
-         end else
-            log.e('oX > Failed to load default font ' + GetErrorCodeString(errorCode));
+         end;
 
          {set as default font in any case}
          if(oxf.Default = nil) then
@@ -93,7 +92,7 @@ begin
       if(errorCode = 0) then
          log.v('Loaded default font (elapsed: ' + elapsedTime.ElapsedfToString() + 's)')
       else
-         log.e('oX > Failed to load default font image file');
+         log.e('oX > Failed to load default font ' + GetErrorCodeString(errorCode));
    end;
 end;
 
