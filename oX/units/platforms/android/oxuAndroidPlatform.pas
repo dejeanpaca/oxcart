@@ -370,7 +370,7 @@ begin
    Result := false;
    glwnd := oglTWindow(wnd);
 
-   if eglGetConfigAttrib(glwnd.wd.Display, glwnd.wd.config, EGL_NATIVE_VISUAL_ID, @format) = EGL_FALSE then begin
+   if eglGetConfigAttrib(glwnd.wd.Display, glwnd.wd.Config, EGL_NATIVE_VISUAL_ID, @format) = EGL_FALSE then begin
       wnd.RaiseError('egl > Failed to get EGL_NATIVE_VISUAL_ID');
       exit(false);
    end;

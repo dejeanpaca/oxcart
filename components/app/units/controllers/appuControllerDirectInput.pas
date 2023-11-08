@@ -22,7 +22,7 @@ TYPE
       procedure Run(); virtual;
 
       private
-         procedure Add(const {%H-}fn: string);
+         procedure Add();
    end;
 
    { appTDirectInputControllerDevice }
@@ -59,7 +59,6 @@ end;
 
 procedure appTDirectInputControllerHandler.Reset();
 begin
-   inherited;
 end;
 
 procedure appTDirectInputControllerHandler.Run();
@@ -67,14 +66,12 @@ begin
    inherited Run();
 end;
 
-procedure appTDirectInputControllerHandler.Add(const fn: string);
+procedure appTDirectInputControllerHandler.Add();
 var
    device: appTDirectInputControllerDevice;
 
 begin
    device := appTDirectInputControllerDevice.Create();
-
-   // device.Initialize(fn);
 
    appControllers.Add(device);
 end;
