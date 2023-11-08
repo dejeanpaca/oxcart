@@ -30,7 +30,7 @@ begin
    glr := oxglRenderer;
 
    {$IFNDEF GLES}
-   glr.Properties.Textures.NonPowerOf2 := oglExtensions.Supported(-cGL_ARB_texture_non_power_of_two);
+   glr.Properties.Textures.NonPowerOf2 := oglExtensions.Supported(cGL_ARB_texture_non_power_of_two);
    {$ELSE}
    glr.Properties.Textures.NonPowerOf2 := false;
    glr.Properties.Textures.WarnedPot := true;
