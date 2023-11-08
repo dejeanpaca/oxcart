@@ -18,7 +18,7 @@ INTERFACE
       oxuTypes, oxuEntity, oxuComponent, oxuComponentDescriptors,
       {ui}
       uiuTypes, uiWidgets, uiuWidget,
-      wdguLabel, wdguWorkbar, wdguCheckbox, wdguInputBox, wdguGroup,
+      wdguLabel, wdguWorkbar, wdguCheckbox, wdguInputBox, wdguGroup, wdguButton,
       {oxed}
       uOXED, oxeduWindow, oxeduInspectorWindow, oxeduProjectRunner, oxeduEntities;
 
@@ -36,6 +36,8 @@ TYPE
       X,
       Y,
       Z: wdgTInputBox;
+
+      Reset: wdgTButton;
 
       procedure SetValue(w: wdgTInputBox; p, v: single; update: boolean = true; initial: boolean = false);
 
@@ -153,6 +155,24 @@ begin
       oxedInspectEntity.Entity.SetScale(x, y, z);
 end;
 
+procedure resetPosition();
+begin
+   if(oxedInspectEntity.Entity <> nil) then
+      oxedInspectEntity.Entity.SetPosition(0, 0, 0);
+end;
+
+procedure resetRotation();
+begin
+   if(oxedInspectEntity.Entity <> nil) then
+      oxedInspectEntity.Entity.SetRotation(0, 0, 0);
+end;
+
+procedure resetScale();
+begin
+   if(oxedInspectEntity.Entity <> nil) then
+      oxedInspectEntity.Entity.SetScale(1, 1, 1);
+end;
+
 { oxedTInspectorWindow }
 
 procedure oxedTInspectEntity.Open(wnd: oxedTWindow);
@@ -182,8 +202,11 @@ begin
    wdg.Transform.SetTarget();
 
    CreateVector('Position', wdg.Position, @positionChanged);
+   wdg.Position.Reset.Callback.Use(@resetPosition);
    CreateVector('Rotation', wdg.Rotation, @rotationChanged);
+   wdg.Rotation.Reset.Callback.Use(@resetRotation);
    CreateVector('Scale', wdg.Scale, @scaleChanged);
+   wdg.Scale.Reset.Callback.Use(@resetScale);
 
    uiWidget.PopTarget();
 
@@ -265,6 +288,8 @@ begin
    v.YLabel := wdgLabel.Add('Y', oxPoint(0, 0), oxNullDimensions);
    v.ZLabel := wdgLabel.Add('Z', oxPoint(0, 0), oxNullDimensions);
 
+   V.Reset := wdgButton.Add('R', oxPoint(0, 0), oxNullDimensions, 0);
+
    v.X := wdgInputBox.Add('0', oxPoint(0, 0), oxNullDimensions);
    v.X.InputType := wdgINPUT_BOX_TYPE_FLOAT;
    v.X.OnTextChanged := onChange;
@@ -283,31 +308,38 @@ var
    w,
    iw,
    parentW,
-   spacing: loopint;
+   spacing,
+   height: loopint;
 
 begin
    v.Lbl.Move(0, y - 2);
+   height := 15;
 
    parentW := wdg.Transform.Dimensions.w;
    spacing := 2;
 
-   w := (parentW - v.Lbl.CachedFont.GetLength('Position   ') - spacing * 3 - wdgDEFAULT_SPACING * 3) div 3;
+   v.Reset.AutoSize();
+
+   w := (parentW - v.Lbl.CachedFont.GetLength('Position   ') - spacing * 3 - wdgDEFAULT_SPACING * 4 - v.Reset.Dimensions.w) div 3;
    iw := w - v.XLabel.CachedFont.GetLength(v.XLabel.Caption);
 
-   v.Z.Move(parentW - wdgDEFAULT_SPACING - iw, y);
-   v.Z.Resize(iw, 15);
+   v.Reset.Move(parentW - wdgDEFAULT_SPACING - v.Reset.Dimensions.w, y);
+   v.Reset.ResizeHeight(height);
+
+   v.Z.Move(parentW - wdgDEFAULT_SPACING - iw - v.Reset.Dimensions.w - wdgDEFAULT_SPACING, y);
+   v.Z.Resize(iw, height);
    v.Z.GoToHome();
 
    v.ZLabel.Move(v.Z.LeftOf(0) - v.ZLabel.Dimensions.w, y - 2);
 
    v.Y.Move(v.ZLabel.LeftOf(0) - iw - spacing, y);
-   v.Y.Resize(iw, 15);
+   v.Y.Resize(iw, height);
    v.Y.GoToHome();
 
    v.YLabel.Move(v.Y.LeftOf(0) - v.YLabel.Dimensions.w, y - 2);
 
    v.X.Move(v.YLabel.LeftOf(0) - iw - spacing, y);
-   v.X.Resize(iw, 15);
+   v.X.Resize(iw, height);
    v.X.GoToHome();
 
    v.XLabel.Move(v.X.LeftOf(0) - v.XLabel.Dimensions.w, y - 2);
