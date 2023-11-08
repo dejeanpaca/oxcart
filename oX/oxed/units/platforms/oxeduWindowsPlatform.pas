@@ -69,7 +69,7 @@ begin
    Configuration := oxedTPlatformConfiguration.Create();
 
    AddArchitecture(oxedTWin32PlatformArchitecture.Create());
-   AddArchitecture(oxedTWin32PlatformArchitecture.Create());
+   AddArchitecture(oxedTWin64PlatformArchitecture.Create());
 end;
 
 procedure init();
