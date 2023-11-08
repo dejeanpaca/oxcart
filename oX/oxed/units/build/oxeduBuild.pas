@@ -1068,7 +1068,8 @@ procedure SetupFPCBuildOptions();
 var
    arch: oxedTPlatformArchitecture;
    cpu,
-   os: StdString;
+   os,
+   fn: StdString;
 
 begin
    arch := oxedBuild.BuildArch;
@@ -1106,6 +1107,12 @@ begin
 
    {optimization}
    build.Optimization.Level := 1;
+
+   {custom options file, if one is present in the config directory}
+   fn := oxedProject.GetConfigFilePath('fpc.cfg');
+
+   if(FileExists(fn)) then
+      build.CustomOptions.Add('#INCLUDE ' + fn);
 end;
 
 procedure oxedTBuildGlobal.RunTask();
