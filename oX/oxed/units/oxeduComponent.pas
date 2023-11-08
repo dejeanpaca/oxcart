@@ -62,6 +62,8 @@ var
    c: oxedTComponent;
 
 begin
+   assert(component <> nil, 'Trying to add a nil component');
+
    c.Initialize(c);
    c.Component := component;
 
