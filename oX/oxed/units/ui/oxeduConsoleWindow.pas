@@ -13,11 +13,11 @@ INTERFACE
       {ox}
       oxuTypes, oxuFont,
       {ui}
-      uiuControl, uiuTypes, uiuSkin,
+      uiuControl, uiuTypes, uiuSkin, uiuWindow,
       uiWidgets, wdguWorkbar, wdguToolbar, wdguList,
       {oxed}
       uOXED, oxeduSettings, oxeduWindow, oxeduMenubar, oxeduConsole, oxeduIcons,
-      oxeduProjectRunner, oxeduProjectManagement;
+      oxeduProjectRunner, oxeduProjectManagement, oxeduBuild;
 
 TYPE
 
@@ -213,6 +213,11 @@ begin
    oxedConsole.Clear();
 end;
 
+procedure onBuild();
+begin
+   if(oxedSettings.FocusConsoleOnBuild) and (oxedConsoleWindow.Instance <> nil) then
+      oxedConsoleWindow.Instance.Select();
+end;
 
 INITIALIZATION
    oxed.Init.Add('oxed.console_window', @init, @deinit);
@@ -220,6 +225,8 @@ INITIALIZATION
 
    oxedProjectRunner.OnBeforeStart.Add(@onStart);
    oxedProjectManagement.OnClosed.Add(@onProjectClose);
+
+   oxedBuild.OnPrepare.Add(@onBuild);
 
 END.
 

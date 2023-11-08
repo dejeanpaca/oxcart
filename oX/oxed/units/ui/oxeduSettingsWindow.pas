@@ -29,7 +29,8 @@ VAR
       HandleLibraryErrors,
       StartWithLastProject,
       ShowBuildOutput,
-      ShowNotifications: wdgTCheckbox;
+      ShowNotifications,
+      FocusConsoleOnBuild: wdgTCheckbox;
    end;
 
 procedure saveCallback();
@@ -60,6 +61,7 @@ begin
    wdg.StartWithLastProject.Check(oxedSettings.StartWithLastProject);
    wdg.ShowBuildOutput.Check(oxedSettings.ShowBuildOutput);
    wdg.ShowNotifications.Check(oxedSettings.ShowNotifications);
+   wdg.FocusConsoleOnBuild.Check(oxedSettings.FocusConsoleOnBuild);
 end;
 
 procedure InitSettings();
@@ -98,6 +100,8 @@ begin
 
    wdg.ShowBuildOutput := wdgCheckbox.Add('Show build output in the console window');
    wdg.ShowBuildOutput.SetHint('Show lazarus and fpc build output in the console window');
+
+   wdg.FocusConsoleOnBuild := wdgCheckbox.Add('Focus console window on build');
 end;
 
 procedure init();

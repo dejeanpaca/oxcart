@@ -40,7 +40,9 @@ TYPE
       {show build output in the console window}
       ShowBuildOutput,
       {show various toast notifications}
-      ShowNotifications: boolean;
+      ShowNotifications,
+      {focus console window when build starts}
+      FocusConsoleOnBuild: boolean;
 
       {line ending type}
       LineEndings: StdString;
@@ -70,7 +72,8 @@ VAR
    dvHandleLibraryErrors,
    dvStartWithLastProject,
    dvShowBuildOutput,
-   dvShowNotifications: TDVar;
+   dvShowNotifications,
+   dvFocusConsoleOnBuild: TDVar;
 
    dvgDebug: TDVarGroup;
    dvDebugRenderSelectorBBox: TDvar;
@@ -100,6 +103,7 @@ INITIALIZATION
    oxedSettings.StartWithLastProject := true;
    oxedSettings.ShowBuildOutput := true;
    oxedSettings.ShowNotifications := true;
+   oxedSettings.FocusConsoleOnBuild := true;
 
    dvgOXED.Add(dvCameraSpeed, 'camera_speed', dtcSINGLE, @oxedSettings.CameraSpeed);
    dvgOXED.Add(dvCameraAngleSpeed, 'camera_angle_speed', dtcSINGLE, @oxedSettings.CameraAngleSpeed);
@@ -114,6 +118,7 @@ INITIALIZATION
    dvgOXED.Add(dvStartWithLastProject, 'start_with_last_open_project', dtcBOOL, @oxedSettings.StartWithLastProject);
    dvgOXED.Add(dvShowBuildOutput, 'show_build_output', dtcBOOL, @oxedSettings.ShowBuildOutput);
    dvgOXED.Add(dvShowNotifications, 'show_notifications', dtcBOOL, @oxedSettings.ShowNotifications);
+   dvgOXED.Add(dvFocusConsoleOnBuild, 'focus_console_on_build', dtcBOOL, @oxedSettings.FocusConsoleOnBuild);
 
    dvgOXED.Add('debug', dvgDebug);
    dvgDebug.Add(dvDebugRenderSelectorBBox, 'render_selector_bbox', dtcBOOL, @oxedSettings.Debug.RenderSelectorBBox);
