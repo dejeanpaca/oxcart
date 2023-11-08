@@ -11,7 +11,7 @@ INTERFACE
    USES
       looper, input, android_native_app_glue, baseunix,
       egl, gles,
-      android_log_helper, uStd, StringUtils;
+      android_log_helper, uStd;
 
 procedure android_main(app: Pandroid_app); cdecl;
 

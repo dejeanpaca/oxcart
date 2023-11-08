@@ -3,7 +3,7 @@ UNIT libc_helper;
 INTERFACE
 
 USES
-   baseunix, unixtype;
+   unixtype;
 
 TYPE
    ppthread_t = ^pthread_t;
