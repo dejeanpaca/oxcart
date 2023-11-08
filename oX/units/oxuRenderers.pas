@@ -9,7 +9,7 @@ UNIT oxuRenderers;
 INTERFACE
 
    USES
-      StringUtils, uLog, uStd, udvars, ParamUtils,
+      StringUtils, uLog, uStd, udvars,
       {ox}
       uOX, oxuRunRoutines, oxuRenderer;
 
@@ -240,31 +240,6 @@ begin
    Result := -1;
 end;
 
-VAR
-   paramHandler: TParameterHandler;
-
-function processParam(const {%H-}paramKey: StdString; var params: array of StdString; n: longint): boolean;
-var
-   name: StdString;
-   renderer: oxTRenderer;
-
-begin
-   Result := false;
-
-   if(n = 1) then begin
-      name := LowerCase(params[0]);
-
-      renderer := oxRenderers.Find(name);
-      if(renderer <> nil) then begin
-         oxRenderers.OverrideRenderer := renderer;
-         log.i('Specified renderer: ' + renderer.Name);
-
-         exit(true);
-      end else
-         log.w('Could not find renderer: ' + params[0]);
-   end else
-      log.e('Did not specify ' + paramHandler.ParamKey + ' parameter value');
-end;
 
 INITIALIZATION
    oxTRunRoutines.Initialize(oxRenderers.Init);
@@ -274,7 +249,5 @@ INITIALIZATION
    TProcedures.Initialize(oxRenderers.StartRoutines);
 
    ox.dvar.Add(dvRenderer, 'renderer', dtcSTRING, @oxRenderers.vSelectedRenderer);
-
-   parameters.AddHandler(paramHandler, 'ox.renderer', '-ox.renderer', @processParam);
 
 END.
