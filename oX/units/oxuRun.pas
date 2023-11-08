@@ -13,9 +13,9 @@ INTERFACE
    USES
       uStd, uLog, sysutils, uTiming,
       {app}
-      uApp, appuRun, appuActionEvents,
+      uApp, appuActionEvents,
       {oX}
-      uOX, oxuInit, oxuWindows, oxuPlatform;
+      uOX, oxuInit, oxuWindows, oxuPlatform, oxuRunRoutines;
 
 TYPE
 
@@ -24,11 +24,11 @@ TYPE
    oxTRunGlobal = record
      {restart instead of quitting}
      RestartFlag: boolean;
-     {Routine called when a cycle is performed (take care if you override this)}
-     CycleRoutine: appTRunRoutine;
 
+     {called before running}
      PreRunRoutines,
-     RunRoutines: appTRunRoutines;
+     {called on run}
+     RunRoutines: oxTRunRoutines;
 
      {perform initialization before running}
      function Initialize(): boolean;
@@ -48,10 +48,10 @@ TYPE
      function HandleRestart(): boolean;
 
      {adds a run routine to the execution list}
-     procedure AddRoutine(var routine: appTRunRoutine);
-     procedure AddRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
-     procedure AddPreRoutine(var routine: appTRunRoutine);
-     procedure AddPreRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
+     procedure AddRoutine(var routine: oxTRunRoutine);
+     procedure AddRoutine(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
+     procedure AddPreRoutine(var routine: oxTRunRoutine);
+     procedure AddPreRoutine(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
    end;
 
 VAR
@@ -151,7 +151,7 @@ begin
    oxPlatform.ProcessEvents();
    RunRoutines.Call();
 
-   appRun.ControlEvents();
+   oxRunRoutines.ControlEvents();
 
    ox.OnRun.Call();
 
@@ -191,22 +191,22 @@ begin
    end;
 end;
 
-procedure oxTRunGlobal.AddRoutine(var routine: appTRunRoutine);
+procedure oxTRunGlobal.AddRoutine(var routine: oxTRunRoutine);
 begin
    RunRoutines.Add(routine);
 end;
 
-procedure oxTRunGlobal.AddRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
+procedure oxTRunGlobal.AddRoutine(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
 begin
    RunRoutines.Add(routine, name, exec);
 end;
 
-procedure oxTRunGlobal.AddPreRoutine(var routine: appTRunRoutine);
+procedure oxTRunGlobal.AddPreRoutine(var routine: oxTRunRoutine);
 begin
    PreRunRoutines.Add(routine);
 end;
 
-procedure oxTRunGlobal.AddPreRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
+procedure oxTRunGlobal.AddPreRoutine(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
 begin
    PreRunRoutines.Add(routine, name, exec);
 end;

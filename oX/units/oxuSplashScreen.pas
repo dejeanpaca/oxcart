@@ -14,7 +14,6 @@ INTERFACE
 
    USES
       uTiming, uStd, uColors, vmVector, StringUtils,
-      appuRun,
       {oX}
       uOX, oxuUI, oxuTypes, oxuTexture, oxuTextureGenerate, oxuPaths, oxuRenderer, oxuRender, oxuThreadTask, oxuMaterial,
       oxuWindowTypes, oxuFont, oxumPrimitive, oxuWindow, oxuTransform, oxuResourcePool, oxuPrimitives, oxuRun,

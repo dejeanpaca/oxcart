@@ -14,8 +14,10 @@ INTERFACE
 
    USES
       uStd, uLog, StringUtils,
-      uApp, appuRun, appuEvents,
-      oxuRun;
+      {app}
+      uApp, appuEvents,
+      {ox}
+      oxuRunRoutines, oxuRun;
 
 TYPE
    appTControllerFunctionDescriptor = record
@@ -371,7 +373,7 @@ begin
 end;
 
 CONST
-   runRoutine: appTRunRoutine = (name: 'input_controllers'; exec: @run; next: nil);
+   runRoutine: oxTRunRoutine = (name: 'input_controllers'; exec: @run; next: nil);
 
 INITIALIZATION
    oxRun.AddRoutine(runRoutine);

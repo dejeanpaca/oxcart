@@ -11,11 +11,11 @@ UNIT oxeduProjectRunner;
 INTERFACE
 
    USES
-      sysutils, uStd, appuRun, uTiming, uLog,
+      sysutils, uStd, uTiming, uLog,
       {app}
       appuActionEvents,
       {ox}
-      oxuRun, oxuWindows, oxuThreadTask,
+      oxuRun, oxuRunRoutines, oxuWindows, oxuThreadTask,
       {oxed}
       oxeduProject, oxeduMessages, oxeduLib, oxeduActions, oxeduBuild, oxeduSettings;
 
@@ -242,7 +242,7 @@ begin
 end;
 
 VAR
-   projectRunRoutine: appTRunRoutine;
+   projectRunRoutine: oxTRunRoutine;
 
 INITIALIZATION
    oxRun.AddRoutine(projectRunRoutine, 'oxed.project', @projectRun);
