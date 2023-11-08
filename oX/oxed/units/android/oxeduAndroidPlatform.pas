@@ -5,7 +5,7 @@
    TODO: Add support for library paths
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxeduAndroidPlatform;
 
 INTERFACE

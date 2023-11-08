@@ -6,7 +6,7 @@
    TODO: Add file operation buttons (delete, rename, create directory ...)
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxeduGenericFileInspector;
 
 INTERFACE
