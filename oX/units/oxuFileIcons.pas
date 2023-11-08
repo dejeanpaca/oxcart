@@ -73,7 +73,8 @@ begin
    oxResource.Destroy(GenericFile.Texture);
 
    GenericFile.Texture := tex;
-   tex.MarkUsed();
+   if(tex <> nil) then
+      tex.MarkUsed();
 end;
 
 procedure oxTFileIcons.SetDirectory(tex: oxTTexture);
@@ -81,7 +82,8 @@ begin
    oxResource.Destroy(GenericDirectory.Texture);
 
    GenericDirectory.Texture := tex;
-   tex.MarkUsed();
+   if(tex <> nil) then
+      tex.MarkUsed();
 end;
 
 function oxTFileIcons.GetFile(): oxTTexture;
