@@ -22,7 +22,11 @@ INTERFACE
       appuPaths,
       appuLog,
       {$IFNDEF NODVAR}appudvarConfiguration,{$ENDIF}
-      oxuSysInfo,
+      {$IFNDEF OX_LIBRARY}
+         appuSysInfo,
+      {$ELSE}
+        oxuSysInfo,
+      {$ENDIF}
 
       {image loaders}
       {$INCLUDE ../../components/dimg/units/imgIncludeAllLoaders.inc},
