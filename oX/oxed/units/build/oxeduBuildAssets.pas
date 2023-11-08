@@ -71,7 +71,7 @@ TYPE
       constructor Create(); override;
 
       {deploys asset files to the given target}
-      procedure Deploy(const useTarget: StdString);
+      function Deploy(const useTarget: StdString): boolean;
       {use the given deployer}
       procedure UseDeployer(const what: oxedTAssetsDeployer);
 
@@ -114,21 +114,34 @@ begin
    HandleOx := false;
 end;
 
-procedure oxedTBuildAssets.Deploy(const useTarget: StdString);
+function oxedTBuildAssets.Deploy(const useTarget: StdString): boolean;
 begin
+   Result := true;
    Target := IncludeTrailingPathDelimiter(useTarget);
    oxedBuildLog.i('Deploying asset files to ' + useTarget);
    FileCount := 0;
 
+   {create target directory if missing}
+   if(not FileUtils.DirectoryExists(useTarget)) then begin
+      if(not FileUtils.CreateDirectory(useTarget)) then begin
+         oxedBuildLog.e('Failed to create assets directory: ' + useTarget);
+         exit(false);
+      end;
+   end;
+
    if OnUseDeployer <> nil then
       OnUseDeployer();
 
+   {initialize deployer}
    Deployer.OnStart();
 
+   {call any pre deploy tasks}
    PreDeploy.Call();
 
+   {run}
    Run();
 
+   {we're done here}
    Deployer.OnDone();
    DeployerAssigned := false;
 
