@@ -386,7 +386,7 @@ begin
    end;
 end;
 
-procedure lpiLoadedCommon(var f: TLPIFile; IsLibrary: boolean = false);
+procedure lpiLoadedCommon(var f: TLPIFile);
 var
    i: loopint;
    relativePath: string;
@@ -463,7 +463,7 @@ end;
 
 procedure libLPILoaded(var f: TLPIFile);
 begin
-   lpiLoadedCommon(f, True);
+   lpiLoadedCommon(f);
 
    f.AddCustomOption('-dLIBRARY');
    f.AddCustomOption('-dOX_LIBRARY');
