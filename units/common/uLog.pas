@@ -108,6 +108,7 @@ TYPE
          Closing,
          AppendFailed,
          Error,
+         CloseChained,
          Ok: boolean;
       end;
 
@@ -532,7 +533,7 @@ end;
 
 procedure TLog.CloseChained();
 begin
-   if(ChainLog <> nil) then begin
+   if(ChainLog <> nil) and (flags.CloseChained) then begin
       ChainLog^.Close();
       ChainLog := nil;
    end;
@@ -1093,6 +1094,8 @@ INITIALIZATION
    {$IFNDEF NOLOG}
    Init();
    log.Init(stdlog);
+   {standard log closes all chained logs by default}
+   stdlog.Flags.CloseChained := true;
    log.Init(consoleLog);
 
    {setup html log}
