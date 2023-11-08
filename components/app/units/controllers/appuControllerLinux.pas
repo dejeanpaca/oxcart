@@ -5,7 +5,7 @@
    Started On:    08.09.2016.
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}{$I-}
+{$INCLUDE oxdefines.inc}
 UNIT appuControllerLinux;
 
 INTERFACE
@@ -32,7 +32,7 @@ TYPE
       FileName: string;
 
       procedure Initialize(const fn: string);
-      procedure Run();
+      procedure Run(); override;
       procedure DeInitialize(); override;
 
       private
@@ -148,7 +148,7 @@ begin
       log.e('Failed adding device: ' + fn + '. Unix error: ' + sf(ioerror()));
 end;
 
-procedure appTLinuxControllerDevice.Run;
+procedure appTLinuxControllerDevice.Run();
 var
    jsevent: js_event;
    count: int64;
@@ -205,7 +205,7 @@ begin
    until (true);
 end;
 
-procedure appTLinuxControllerDevice.DeInitialize;
+procedure appTLinuxControllerDevice.DeInitialize();
 begin
    inherited DeInitialize;
 
@@ -249,17 +249,8 @@ begin
 end;
 
 procedure appTLinuxControllerHandler.Run();
-var
-   i: longint;
-
 begin
    inherited Run();
-
-   if(appControllers.List.n > 0) then begin
-      for i := 0 to (appControllers.List.n - 1) do begin
-         appTLinuxControllerDevice(appControllers.List.List[i]).Run();
-      end;
-   end;
 end;
 
 procedure appTLinuxControllerHandler.Add(const fn: string);
