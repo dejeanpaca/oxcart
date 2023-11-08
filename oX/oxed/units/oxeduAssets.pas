@@ -11,7 +11,7 @@ UNIT oxeduAssets;
 INTERFACE
 
    USES
-      uStd, StringUtils, uLog,
+      uStd, StringUtils, uLog, uFilePathList,
       {ox}
       oxuPaths,
       {oxed}
@@ -26,7 +26,7 @@ TYPE
 
    oxedTAssetsIgnorePaths = record
       FileTypes,
-      Directories: TSimpleStringList;
+      Directories: TFilePathStringList;
 
       class procedure Initialize(out ig: oxedTAssetsIgnorePaths); static;
    end;
@@ -103,25 +103,25 @@ end;
 procedure oxedTAssets.AddFileIgnore(const path: StdString);
 begin
    if(path <> '') then
-      Ignore.FileTypes.AddUnique(path);
+      Ignore.FileTypes.AddUniquePath(path);
 end;
 
 procedure oxedTAssets.RemoveFileIgnore(const path: StdString);
 begin
    if(path <> '') then
-      Ignore.FileTypes.RemoveString(path);
+      Ignore.FileTypes.RemovePath(path);
 end;
 
 procedure oxedTAssets.AddDirectoryIgnore(const path: StdString);
 begin
    if(path <> '') then
-      Ignore.Directories.AddUnique(path);
+      Ignore.Directories.AddUniquePath(path);
 end;
 
 procedure oxedTAssets.RemoveDirectoryIgnore(const path: StdString);
 begin
    if(path <> '') then
-      Ignore.Directories.RemoveString(path);
+      Ignore.Directories.RemovePath(path);
 end;
 
 function oxedTAssets.IsLastPath(const path: StdString; var list: TSimpleStringList): boolean;
