@@ -9,7 +9,7 @@ UNIT oxeduBuildAssetsYPK;
 INTERFACE
 
    USES
-      uStd, sysutils, uFileUtils, StringUtils,
+      uStd, sysutils, uFileUtils, StringUtils, uLog,
       ypkuBuilder,
       {oxed}
       uOXED, oxeduProjectWalker,
@@ -77,7 +77,8 @@ end;
 
 function oxedTYPKAssetsDeployer.OnFile(var f: oxedTAssetBuildFile; var sf: oxedTProjectWalkerFile): boolean;
 begin
-   Builder.AddFile(f.Source, f.Target);
+   log.i(f.RelativePath);
+   Builder.AddFile(f.Source, f.RelativePath);
    Result := true;
 end;
 
