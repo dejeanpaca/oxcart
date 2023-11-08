@@ -198,6 +198,7 @@ var
 
 begin
    tabWnd := uiTDockableWindow(wnd);
+
    if(uiwndpDESTRUCTION_IN_PROGRESS in tabWnd.Properties) then
       exit;
 
@@ -695,7 +696,7 @@ begin
    newSize := trunc(d.w * ratio);
 
    if(not IsDockableArea(ofWnd)) then begin
-      ofWnd.Resize(d.w - newSize, d.h);
+      ofWnd.ResizeAdjusted(d.w - newSize, d.h);
       Move(ofWnd.Position.x, ofWnd.Position.y);
 
       ofWnd.Move(ofWnd.Position.x + newSize, ofWnd.Position.y);
@@ -721,7 +722,7 @@ begin
    newSize := trunc(d.w * ratio);
 
    if(not IsDockableArea(ofWnd)) then begin
-      ofWnd.Resize(d.w - newSize, d.h);
+      ofWnd.ResizeAdjusted(d.w - newSize, d.h);
       Move(ofWnd.Position.x + (d.w - newSize), ofWnd.Position.y);
 
       ResizeAdjusted(newSize, d.h);
@@ -749,7 +750,7 @@ begin
       Move(ofWnd.Position.x, ofWnd.Position.y);
       ResizeAdjusted(d.w, newSize);
 
-      ofWnd.ResizeAdjusted(d.w, d.h - newSize);
+      ofWnd.ResizeAdjusted(d.w, ofWnd.GetTotalDimensions().h - newSize);
       ofWnd.Move(ofWnd.Position.x, ofWnd.Position.y - newSize);
    end else begin
       Move(0, ofWnd.Dimensions.h - 1);
