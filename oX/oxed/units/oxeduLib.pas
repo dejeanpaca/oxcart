@@ -28,7 +28,6 @@ TYPE
       Routines: record
          Load: oxTLibraryLoadRoutine;
          Unload: oxTLibraryUnloadRoutine;
-         Version: oxTLibraryVersionRoutine;
       end;
 
       oxWindows: oxPWindows;
@@ -119,10 +118,8 @@ begin
    routines.Unload := oxTLibraryUnloadRoutine(dynlibs.GetProcedureAddress(Lib, 'ox_library_unload'));
 
    if(routines.Load = nil) then
-      exit('Library loaded, but no version routine found');
-   if(routines.Unload = nil) then
       exit('Library loaded, but no load routine found');
-   if(routines.Version = nil) then
+   if(routines.Unload = nil) then
       exit('Library loaded, but no unload routine found');
 
    oxLib := routines.Load();
