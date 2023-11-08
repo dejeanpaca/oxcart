@@ -60,7 +60,7 @@ end;
 
 function oxglTPlatform.GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext;
 begin
-   Result := 0;
+   Result := default(oglTRenderingContext);
 end;
 
 function oxglTPlatform.ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean;
