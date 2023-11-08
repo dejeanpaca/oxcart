@@ -2219,10 +2219,13 @@ INITIALIZATION
 
    if(uiWindow.OnCreate.Increment = 0) then
       uiTWindowGlobalOn.Initialize(uiWindow.OnCreate);
+
    if(uiWindow.OnDestroy.Increment = 0) then
       uiTWindowGlobalOn.Initialize(uiWindow.OnDestroy);
+
    if(uiWindow.OnPostRender.Increment = 0) then
       uiTWindowGlobalOn.Initialize(uiWindow.OnPostRender);
+
    if(uiWindow.OxwPostRender.Increment = 0) then
       uiTWindowGlobalOn.Initialize(uiWindow.OxwPostRender);
 
