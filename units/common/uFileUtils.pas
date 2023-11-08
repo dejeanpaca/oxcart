@@ -1222,7 +1222,7 @@ end;
 
 procedure TFileTraverse.RunDirectory(const name: StdString);
 var
-   src: TSearchRec;
+   src: TUnicodeSearchRec;
    i,
    result: longint;
    ext,
@@ -1238,7 +1238,7 @@ begin
    if(path = '') then
       result := FindFirst('*', faReadOnly or faDirectory, src)
    else
-      result := FindFirst(Path + DirectorySeparator + '*', faReadOnly or faDirectory, src);
+      result := FindFirst(UTF8Decode(Path + DirectorySeparator + '*'), faReadOnly or faDirectory, src);
 
    if(result = 0) then begin
       repeat
@@ -1247,10 +1247,10 @@ begin
             {found directory, recurse into it}
             if(src.Attr and faDirectory > 0) then begin
                if(Recursive) then
-                  RunDirectory(src.Name);
+                  RunDirectory(UTF8Encode(src.Name));
             end else begin
                ok    := true;
-               ext   := LowerCase(ExtractFileExt(src.Name));
+               ext   := UTF8Lower(ExtractFileExt(utf8string(UTF8Encode(src.Name))));
 
                {check if extension matches any on the blacklist (if there is a blacklist)}
                if(ExtensionsBlacklist <> nil) then begin
@@ -1272,9 +1272,9 @@ begin
                if(ok) then begin
                   {build filename}
                   if(path <> '') then
-                     fname := path + DirectorySeparator + src.Name
+                     fname := path + DirectorySeparator + UTF8Encode(src.Name)
                   else
-                     fname := src.Name;
+                     fname := UTF8Encode(src.Name);
 
                   {call OnFile to perform operations on the file}
                   if(OnFile <> nil) and (not OnFile(fname)) then
