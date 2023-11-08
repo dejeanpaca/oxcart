@@ -33,6 +33,7 @@ TYPE
       {list of procedures called when splash window is initialized}
       OnInit,
       PreAddTabs,
+      OnAddTabs,
       PostAddTabs: TProcedures;
 
       DefaultButtonWidth: loopint;
@@ -74,6 +75,7 @@ begin
 
    OnInit.InitializeValues(OnInit);
    PreAddTabs.InitializeValues(PreAddTabs);
+   OnAddTabs.InitializeValues(PreAddTabs);
    PostAddTabs.InitializeValues(PostAddTabs);
 
    OnSave.InitializeValues(OnSave);
@@ -110,6 +112,7 @@ begin
    Tabs := wdgTabs.Add(oxPoint(5, y), oxDimensions(Window.Dimensions.w - 10, Window.Dimensions.h - 40), true);
 
    PreAddTabs.Call();
+   OnAddTabs.Call();
 end;
 
 procedure oxTSettingsWindowBase.DoneTabs();
