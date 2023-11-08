@@ -11,6 +11,7 @@ UNIT oxuDefaults;
 INTERFACE
 
    USES
+      uStd,
       ufhStandard,
       { app }
       appuCtrlBreak,
@@ -134,5 +135,8 @@ INTERFACE
       oxuShaderFileReader;
 
 IMPLEMENTATION
+
+INITIALIZATION
+   Pass();
 
 END.
