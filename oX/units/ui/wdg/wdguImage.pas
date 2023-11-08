@@ -13,7 +13,7 @@ INTERFACE
    USES
       vmVector, uFile, uLog,
       {oX}
-      oxuTypes, oxuRender, oxuTransform, oxuTexture, oxuTextureGenerate, oxumPrimitive,
+      oxuTypes, oxuRender, oxuTransform, oxuTexture, oxuTextureGenerate, oxumPrimitive, oxuPaths, oxuPrimitives,
       oxuResourcePool, oxuUI,
       {ui}
       uiuWidget, uiWidgets, uiuDraw, uiuWindow;
@@ -82,13 +82,18 @@ VAR
 { wdgTImageTexture }
 
 function wdgTImageTexture.SetImage(const fn: string): boolean;
+var
+   path: String;
+
 begin
    Result := false;
    oxResource.Destroy(Texture);
    FileName := fn;
    Texture := nil;
 
-   oxTextureGenerate.Generate(fn, Texture);
+   path := oxAssetPaths.Find(fn);
+
+   oxTextureGenerate.Generate(path, Texture);
 
    if(Texture <> nil) then begin
       Texture.MarkUsed();
@@ -145,6 +150,8 @@ begin
    SetColor(Color);
 
    if(Texture.Has()) then begin
+      oxui.Material.ApplyTexture('texture', Texture.Texture);
+      oxRender.TextureCoords(QuadTexCoords[0]);
       Quad.Render();
       oxui.Material.ApplyTexture('texture', nil);
    end else
