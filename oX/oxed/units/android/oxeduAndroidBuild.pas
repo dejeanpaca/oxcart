@@ -16,7 +16,7 @@ INTERFACE
       uBuildInstalls, uBuild,
       {oxed}
       uOXED, oxeduBuild, oxeduBuildLog,
-      oxeduAndroidPlatform, oxeduAndroidSettings;
+      oxeduAndroidPlatform, oxeduAndroidSettings, oxeduAndroid;
 
 TYPE
    { oxedTAndroidBuild }
@@ -116,7 +116,9 @@ begin
    { set the toolchain path }
 
    path := IncludeTrailingPathDelimiterNonEmpty(oxedAndroidSettings.GetNDKPath()) +
-      'toolchains' +  DirSep + arch.ToolChainPath + DirSep;
+      'toolchains/' + arch.ToolChainPathPrefix + '/prebuilt/' + oxedTAndroidHelpers.HostPlatformPath() + '/bin';
+
+   ReplaceDirSeparators(path);
 
    if(not FileUtils.DirectoryExists(path)) then begin
        oxedBuild.Fail('Cannot find toolchain utilities at: ' + path);
@@ -127,10 +129,12 @@ begin
 
    { set the library path, if any }
 
-   if(arch.LibPath <> '') then begin
+   if(arch.LibTarget <> '') then begin
       path := IncludeTrailingPathDelimiterNonEmpty(oxedAndroidSettings.GetNDKPath()) +
-         'platforms' + DirSep + 'android-' + sf(oxedAndroidSettings.Project.TargetVersion) +
-            DirSep + 'arch-' + arch.LibPath + DirSep;
+         'toolchains/llvm/prebuilt/' + oxedTAndroidHelpers.HostPlatformPath() + '/sysroot/usr/lib/' + arch.LibTarget +
+         '/' + sf(oxedAndroidSettings.Project.TargetVersion) + '/';
+
+      ReplaceDirSeparators(path);
 
       if(not FileUtils.DirectoryExists(path)) then begin
          oxedBuild.Fail('Cannot find libraries at: ' + path);

@@ -8,6 +8,9 @@ UNIT oxeduAndroid;
 
 INTERFACE
 
+   USES
+      uStd;
+
 TYPE
    oxedTAndroidCPUType = (
       ANDROID_CPU_ARM,
@@ -26,6 +29,35 @@ CONST
       'x86_64'
    );
 
+TYPE
+
+   { oxedTAndroidHelpers }
+
+   oxedTAndroidHelpers = record
+      class function HostPlatformPath(): StdString; static;
+   end;
+
 IMPLEMENTATION
+
+{ oxedTAndroidHelpers }
+
+class function oxedTAndroidHelpers.HostPlatformPath(): StdString;
+begin
+   Result := '';
+
+   {$IF DEFINED(WINDOWS)}
+      {$IFDEF CPU64}
+      Result := 'windows-x86_64';
+      {$ELSE}
+      Result := 'windows-x86';
+      {$ENDIF}
+   {$ELSEIF DEFINED(LINUX)}
+      {$IFDEF CPU64}
+      Result := 'linux-x86_&4';
+      {$ELSE}
+      Result := 'linux-x86';
+      {$ENDIF}
+   {$ENDIF}
+end;
 
 END.
