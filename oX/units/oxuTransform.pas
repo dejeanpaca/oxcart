@@ -483,12 +483,12 @@ begin
            v[1] := arctan2(-m[2, 0], m[0, 0]);
            v[0] := arctan2(-m[1, 2], m[1, 1]);
        end else begin
-           v[2] := - (vmcPI / 2);
+           v[2] := - (vmcPi / 2);
            v[1] := - arctan2(m[2, 1], m[2, 2]);
            v[0] := 0;
        end;
    end else begin
-      v[2] := vmcPI / 2;
+      v[2] := vmcPi / 2;
       v[1] := arctan2(m[2, 1], m[2, 2]);
       v[0] := 0;
    end;
@@ -508,12 +508,12 @@ begin
            v[0] := arctan2(-m[1, 2], m[2, 2]);
            v[2] := arctan2(-m[0, 1], m[0, 0]);
        end else begin
-           v[1] := - (vmcPI / 2);
+           v[1] := - (vmcPi / 2);
            v[0] := - arctan2(m[1, 0], m[1, 1]);
            v[2] := 0;
        end;
    end else begin
-      v[1] := vmcPI / 2;
+      v[1] := vmcPi / 2;
       v[0] := arctan2(m[1, 0], m[1, 1]);
       v[2] := 0;
    end;
@@ -562,7 +562,7 @@ var
    fH: double;
 
 begin
-	fH := tan(fovY / 360 * vmcPI) * zNear;
+	fH := tan(fovY / 360 * vmcPi) * zNear;
 
 	fW := fH * aspect;
 

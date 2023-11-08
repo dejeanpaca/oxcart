@@ -226,7 +226,7 @@ begin
       Angle += vmAngle(v1, v2);
    end;
 
-   result := Angle >= (cMatchFactor * 2.0 * vmcPI);
+   result := Angle >= (cMatchFactor * 2.0 * vmcPi);
 end;
 
 function vmIntersectedPoly(var Poly, Line: array of TVector3;

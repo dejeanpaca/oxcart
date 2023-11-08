@@ -29,9 +29,9 @@ INTERFACE
 
 CONST
    {PI}
-   vmcPI             = 3.1415926535897932384626433832795;
-   vmcToDeg          = 180 / vmcPI;
-   vmcToRad          = vmcPI / 180;
+   vmcPi             = 3.1415926535897932384626433832795;
+   vmcToDeg          = 180 / vmcPi;
+   vmcToRad          = vmcPi / 180;
 
    {sphere classification constants}
    vmcBehind         = 0;
@@ -473,7 +473,7 @@ CONST
    );
 
    vmBBoxZero: TBoundingBox = (
-      (0, 0, 0), 
+      (0, 0, 0),
       (0, 0, 0)
    );
 

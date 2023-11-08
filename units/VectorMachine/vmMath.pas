@@ -142,7 +142,7 @@ var
    ft, f: single;
 
 begin
-   ft := z * vmcPI;
+   ft := z * vmcPi;
    f  := (1 - cos(ft)) * 0.5;
 
    result := a * (1 - f) + b * f;
