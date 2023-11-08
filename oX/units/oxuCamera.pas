@@ -168,7 +168,7 @@ end;
 procedure oxTCamera.SetForward(const newRotation: TVector3f);
 begin
    Rotation := newRotation;
-   vView := vmForwardFromRotation(rotation);
+   vView := vmForwardFromRotation(Rotation);
    UpFromView();
 end;
 
