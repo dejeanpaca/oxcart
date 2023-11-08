@@ -122,7 +122,7 @@ VAR
    dvWriteTime,
    dvFullscreen,
    dvHeight: TDVar;
-   currentHistory: string;
+   currentHistory: StdString;
 
 procedure consoleReconfigure();
 var
@@ -746,7 +746,8 @@ end;
 
 procedure dvHistoryNotify({%H-}p: PDVar; {%H-}what: longword);
 begin
-   oxConsole.Console.AddHistory(currentHistory);
+   if(not StringUtils.IsWhitespace(currentHistory)) then
+      oxConsole.Console.AddHistory(currentHistory);
 end;
 
 procedure uiInitialize();
