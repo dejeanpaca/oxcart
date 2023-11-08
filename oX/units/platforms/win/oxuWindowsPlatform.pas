@@ -146,55 +146,30 @@ begin
    key.Code := appkRemapCodes[Lo(Hi(LParam))];
 
    {set up the up/down state}
-   if(AMessage = WM_KEYDOWN) or (AMessage = WM_SYSKEYDOWN) then begin
+   if(AMessage = WM_KEYDOWN) or (AMessage = WM_SYSKEYDOWN) then
       key.State.Prop(kmDOWN);
-      appk.Pressed[key.Code] := true;
-   end else
-      appk.Pressed[key.Code] := false;
 
    {set global modifiers}
-   if(key.Code = kcCAPSLOCK) and (key.State.IsSet(kmDOWN)) then
-      appk.Modifiers.Prop(kmCAPS, appk.Modifiers.Toggle(kmCAPS));
+   if(key.Code = kcCAPSLOCK)
+      appk.Modifiers.Prop(kmCAPS, key.State.IsSet(kmDOWN));
 
-   if(key.Code = kcNUMLOCK) and (key.State.IsSet(kmDOWN)) then
-      appk.Modifiers.Prop(kmNUM, appk.Modifiers.Toggle(kmNUM));
+   if(key.Code = kcNUMLOCK)
+      appk.Modifiers.Prop(kmNUM, key.State.IsSet(kmDOWN));
 
-   if(key.Code = kmSCROLL) and (key.State.IsSet(kmDOWN)) then
-      appk.Modifiers.Prop(kmSCROLL, appk.Modifiers.Toggle(kmSCROLL));
+   if(key.Code = kmSCROLL)
+      appk.Modifiers.Prop(kmSCROLL, key.State.IsSet(kmDOWN));
 
-   {set key modifiers}
-   if(appk.Pressed[kcLSHIFT]) or (appk.Pressed[kcRSHIFT]) then begin
-      appk.Modifiers.Prop(kmSHIFT);
-      key.State.Prop(kmSHIFT);
-   end else
-      appk.Modifiers.Clear(kmSHIFT);
+   if(key.Code = kcLSHIFT) or (key.Code = kcRSHIFT)
+      appk.Modifiers.Prop(kmSHIFT, key.State.IsSet(kmDOWN));
 
-   if(appk.Pressed[kcLCTRL]) or (appk.Pressed[kcRCTRL]) then begin
-      appk.Modifiers.Prop(kmCONTROL);
-      key.State.Prop(kmCONTROL);
-   end else
-      appk.Modifiers.Clear(kmCONTROL);
+   if(key.Code = kcLCTRL) or (key.Code = kcRCTRL) then
+      appk.Modifiers.Prop(kmCONTROL, key.State.IsSet(kmDOWN));
 
-   if(appk.Pressed[kcLALT]) or (appk.Pressed[kcRALT]) then begin
-      appk.Modifiers.Prop(kmALT);
-      key.State.Prop(kmALT);
-   end else
-      appk.Modifiers.Clear(kmALT);
+   if(key.Code = kcLALT)then
+      appk.Modifiers.Prop(kmALT, key.State.IsSet(kmDOWN));
 
-   if(appk.Pressed[kcRALT]) then begin
-      appk.Modifiers.Prop(kmALTGR);
-      key.State.Prop(kmALTGR);
-   end else
-      key.State.Clear(kmALTGR);
-
-   if(appk.Modifiers.IsSet(kmCAPS)) then
-      key.State.Prop(kmCAPS);
-
-   if(appk.Modifiers.IsSet(kmNUM)) then
-      key.State.Prop(kmNUM);
-
-   if(appk.Modifiers.IsSet(kmSCROLL)) then
-      key.State.Prop(kmSCROLL);
+   if(key.Code = kcRALT) then
+      appk.Modifiers.Prop(kmALTGR, key.State.IsSet(kmDOWN));
 
    {add the key to the queue only if the key is pressed}
    if(key.Code <> 0) and (rCount > 0) then begin
