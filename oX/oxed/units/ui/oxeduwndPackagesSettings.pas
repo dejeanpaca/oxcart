@@ -65,6 +65,11 @@ begin
 
 end;
 
+procedure removeAll();
+begin
+
+end;
+
 { oxedTSettingsWindow }
 
 procedure Initialize();
@@ -83,6 +88,7 @@ begin
       UseCallback(@addPath).SetHint('Include a directory as a package');
 
    wdgButton.Add('Remove', uiWidget.LastRect.RightOf(), oxNullDimensions, @removePackage).SetHint('Remove the package selected in the list');
+   wdgButton.Add('Remove All', uiWidget.LastRect.RightOf(), oxNullDimensions, @removeAll).SetHint('Remove all packages from the list');
 
    uiWidget.LastRect.GoLeft();
 
