@@ -203,8 +203,6 @@ begin
 
    Add(units);
    Result := GetLast();
-
-   Result^.LoadPathProperties();
 end;
 
 function oxedTPackagePathsHelper.FindPackagePath(const p: StdString): oxedPPackagePath;
