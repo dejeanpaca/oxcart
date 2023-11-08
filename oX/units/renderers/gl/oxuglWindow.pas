@@ -12,10 +12,11 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uStd, uLog,
       {ox}
-      oxuOGL, oxuglRendererInfo,
-      {$IFDEF X11}GLX, oxuX11Platform{$ENDIF}
-      {$IFDEF WINDOWS}oxuWindowsOS{$ENDIF}
-      {$IFDEF COCOA}CocoaAll, oxuCocoaPlatform{$ENDIF};
+      oxuWindowTypes, oxuOGL, oxuglRendererInfo
+      {$IFNDEF ANDROID},{$ENDIF}
+      {$IF DEFINED(X11)}GLX, oxuX11Platform
+      {$ELSEIF DEFINED(WINDOWS)}oxuWindowsOS
+      {$ELSEIF DEFINED(COCOA)}CocoaAll, oxuCocoaPlatform{$ENDIF};
 
 TYPE
 
@@ -26,7 +27,12 @@ TYPE
 
    { oglTWindow }
 
-   oglTWindow = class({$IFDEF WINDOWS}winosTWindow{$ENDIF}{$IFDEF X11}x11TWindow{$ENDIF}{$IFDEF COCOA}cocoaTWindow{$ENDIF})
+   oglTWindow = class({$IF DEFINED(WINDOWS)}winosTWindow
+         {$ELSEIF DEFINED(X11)}x11TWindow
+         {$ELSEIF DEFINED(COCOA)}cocoaTWindow
+         {$ELSE}
+         oxTWindow
+         {$ENDIF})
       {$IFDEF X11}
       fbConfig: TGLXFBConfig;
       glxAttribs: TXAttrIntSimpleList;
