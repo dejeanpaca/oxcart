@@ -264,7 +264,7 @@ procedure Zero(var buf; size: loopint);
 procedure ZeroOut(out buf; size: loopint);
 procedure ZeroPtr(buf: pointer; size: loopint); inline;
 {pretend we zero out so the compiler doesn't complain for data we don't need to initialize}
-procedure FakeZeroOut(out {%H-}buf; {%H-}size: loopint);
+procedure FakeZeroOut(out {%H-}buf);
 
 { EXTENDED MEMORY MANAGEMENT }
 function MemAlignment(size: PtrInt; alignment: loopint = -1): ptrint;
@@ -393,7 +393,7 @@ begin
    end;
 end;
 
-procedure FakeZeroOut(out buf; size: loopint);
+procedure FakeZeroOut(out buf);
 begin
 
 end;
