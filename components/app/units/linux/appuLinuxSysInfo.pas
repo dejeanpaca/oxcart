@@ -221,6 +221,7 @@ begin
       ok := FileUtils.LoadStringPipe('/etc/' + platformNames[i], release);
 
       if(ok > 0) then begin
+         StringUtils.StripEndLine(release);
          appSI.SystemName := release;
          break;
       end;
@@ -229,8 +230,11 @@ begin
 
    {get kernel version}
    ok := FileUtils.LoadStringPipe('/proc/version', release);
-   if(ok > 0) then
+
+   if(ok > 0) then begin
+      StringUtils.StripEndLine(release);
       appSI.KernelVersion := release;
+   end;
 
    {get memory information}
    processKeyColonValueFile('/proc/meminfo', @memoryHandler);
