@@ -40,6 +40,8 @@ TYPE
       function AsyncCommand(const path: StdString; const commands: TStringArray; options: TProcessOptions = []): boolean;
       function RunCommandCurrentDir(const path: StdString; const commands: TStringArray; options: TProcessOptions = []): boolean;
 
+      procedure DisableLog();
+
       class procedure Initialize(out p: TProcessHelpers); static;
    end;
 
@@ -98,6 +100,12 @@ end;
 function TProcessHelpers.RunCommandCurrentDir(const path: StdString; const commands: TStringArray; options: TProcessOptions): boolean;
 begin
    Result := RunCommand(IncludeTrailingPathDelimiterNonEmpty(GetCurrentDir()) + path, commands, options);
+end;
+
+procedure TProcessHelpers.DisableLog();
+begin
+   LogOutput := false;
+   LogFailure := false;
 end;
 
 class procedure TProcessHelpers.Initialize(out p: TProcessHelpers);
