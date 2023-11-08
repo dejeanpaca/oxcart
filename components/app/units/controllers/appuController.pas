@@ -156,6 +156,8 @@ TYPE
 
       {called when the device is disconnected}
       procedure Disconnected();
+
+      function GetName(): string;
    end;
 
    { appTControllerEvent }
@@ -285,7 +287,7 @@ end;
 
 { appTControllerDevice }
 
-constructor appTControllerDevice.Create;
+constructor appTControllerDevice.Create();
 begin
    Valid := true;
 end;
@@ -296,15 +298,23 @@ begin
    log.i('Axis count: ' + sf(AxisCount));
 end;
 
-procedure appTControllerDevice.DeInitialize;
+procedure appTControllerDevice.DeInitialize();
 begin
 
 end;
 
-procedure appTControllerDevice.Disconnected;
+procedure appTControllerDevice.Disconnected();
 begin
    log.w('Input controller device seems disconnected: ' + Name);
    Valid := false;
+end;
+
+function appTControllerDevice.GetName(): string;
+begin
+   if(Name <> '') then
+      Result := Name
+   else
+      Result := 'Unknown';
 end;
 
 { appTControllerHandler }
