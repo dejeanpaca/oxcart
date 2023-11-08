@@ -37,6 +37,12 @@ VAR
    symbolParameters: array of string;
    quitOnFail: boolean = true;
 
+procedure fail(const reason: string);
+begin
+   log.e(reason);
+   halt(1);
+end;
+
 function can_build(const specific: string): boolean;
 begin
   {build if specified this, or nothing specified}
@@ -156,16 +162,13 @@ BEGIN
          build.Initialize();
       end;
 
-      if(not build.Initialized) then begin
-         log.e('Build system not initialized. Cannot perform setup.');
-         halt(1);
-      end;
+      if(not build.Initialized) then
+         fail('Build system not initialized. Cannot perform setup.');
    end;
 
    lpi.Initialize();
-   if(not lpi.Initialized) then begin
-      log.e('Failed to initialize lpi build system');
-   end;
+   if(not lpi.Initialized) then
+      fail('Failed to initialize lpi build system');
 
    processParameters();
 
@@ -176,10 +179,8 @@ BEGIN
    if (build_count > 0) or (fail_count > 0) then
       log.i(sf(build_count) + ' succeeded, ' + sf(fail_count) + ' failed');
 
-   if(quitOnFail) and (fail_count > 0) then begin
-      log.e('Quitting due to one or more failures');
-      exit;
-   end;
+   if(quitOnFail) and (fail_count > 0) then
+      fail('Quitting due to one or more failures');
 
    buildSymbolParameters();
 
