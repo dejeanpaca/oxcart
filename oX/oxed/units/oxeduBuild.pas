@@ -612,8 +612,8 @@ begin
    u.Header := getSourceHeader();
    u.Name := oxedProject.Identifier;
    u.sUses := GetUsesString();
-   u.sMain := '{$INCLUDE ./appinfo.inc}';
-   u.sMain.Add('oxRun.Go()');
+   u.sMain := '   {$INCLUDE ./appinfo.inc}';
+   u.sMain.Add('   oxRun.Go()');
 
    p := u.BuildProgram();
 

@@ -90,11 +90,10 @@ begin
       Result.Add(Header);
 
    Result.Add('PROGRAM ' + Name + ';');
+   Result.Add('');
 
    if(sUses <> '') then
-      AddUses(Result)
-   else
-      Result.Add('');
+      AddUses(Result);
 
    Result.Add('BEGIN');
 
@@ -118,9 +117,7 @@ begin
    Result.Add('');
 
    if(sUses <> '') then
-      AddUses(Result)
-   else
-      Result.Add('');
+      AddUses(Result);
 
    if(sInterface <> '') then begin
       Result.Add('');
