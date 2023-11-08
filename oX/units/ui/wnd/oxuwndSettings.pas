@@ -179,7 +179,7 @@ begin
    inherited Create;
 
    {open settings window}
-   oxKeyMappings.AddKey('ox.open_settings', 'Open settings', kcS, kmALT)^.
+   uiKeyMappings.AddKey('ox.open_settings', 'Open settings', kcS, kmALT)^.
       Action := OpenWindowAction;
 
    OnRevert.Add(@revertCallback);

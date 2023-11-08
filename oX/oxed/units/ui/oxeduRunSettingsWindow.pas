@@ -158,7 +158,7 @@ begin
 
    inherited Create;
 
-   oxKeyMappings.AddKey('ox.open_run_settings', 'Open settings', kcR, kmALT)^.
+   uiKeyMappings.AddKey('ox.open_run_settings', 'Open settings', kcR, kmALT)^.
       Action := OpenWindowAction;
 end;
 
