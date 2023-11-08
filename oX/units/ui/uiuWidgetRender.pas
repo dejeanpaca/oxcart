@@ -49,6 +49,7 @@ TYPE
       class procedure CurvedFrame(x1, y1, x2, y2: loopint); static;
       class procedure CurvedFrame(r: oxTRect); static;
       class procedure CurvedFrameCorners(x1, y1, x2, y2: loopint; corners: longword); static;
+      class procedure CurvedFrameCorners(const r: oxTRect; corners: longword); static;
 
       {render the widget surface with bound lines}
       class procedure Box(x1, y1, x2, y2: longint; const sColor, bColor: TColor4ub; properties: TBitSet = wdgRENDER_BLOCK_ALL; opacity: single = 1.0); static;
@@ -277,6 +278,11 @@ begin
          oxRender.DrawArrays(oxPRIMITIVE_LINES, lineCount * 2);
       end;
    end;
+end;
+
+class procedure uiRenderWidget.CurvedFrameCorners(const r: oxTRect; corners: longword);
+begin
+   CurvedFrameCorners(r.x, r.y, r.x + r.w -1, r.y + r.h - 1, corners);
 end;
 
 class procedure uiRenderWidget.Box(x1, y1, x2, y2: longint; const sColor, bColor: TColor4ub; properties: TBitSet = wdgRENDER_BLOCK_ALL; opacity: single = 1.0);
