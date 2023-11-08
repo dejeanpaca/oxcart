@@ -320,34 +320,14 @@ end;
 
 class function TBuildPlatform.Execute(const executablePath: StdString; const param: StdString; out output: StdString): boolean;
 var
-   process: TProcess;
+   p: TProcessHelpers;
 
 begin
-   Result := false;
-   output := '';
+   TProcessHelpers.Initialize(p);
+   p.DisableLog();
+   Result := p.RunCommand(executablePath, [param], [poWaitOnExit, poUsePipes]);
 
-   process := BuildInstalls.GetProcess();
-   process.Executable := executablePath;
-
-   if(param <> '') then
-      process.Parameters.Add(param);
-
-   process.Options := process.Options + [poUsePipes];
-
-   try
-      process.Execute();
-
-      output := process.GetOutputString();
-
-      Result := true;
-   except
-      on e: Exception do begin
-         Result := false;
-         output := '';
-      end;
-   end;
-
-   FreeObject(process);
+   output := p.OutputString;
 end;
 
 function TBuildPlatform.ReadVersion(): boolean;
@@ -373,7 +353,7 @@ begin
    fn := GetExecutablePath();
 
    if TBuildPlatform.Execute(fn, '-iW', v) then
-      log.v('Found executable for ' + GetName() + ' at ' + fn + '(version: ' + v + ')')
+      log.v('Found executable for ' + GetName() + ' at ' + fn + ' (version: ' + v + ')')
    else begin
       log.w('Cannot find executable for ' + GetName() + ' at ' + fn);
       exit(False);
