@@ -1,6 +1,6 @@
 PROGRAM test;
 
-   USES uLog, uTVideo, SysUtils;
+   USES uLog, uTVideo;
 
 BEGIN
    randomize();
