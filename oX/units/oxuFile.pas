@@ -11,7 +11,7 @@ UNIT oxuFile;
 INTERFACE
 
    USES
-     uStd, uLog, StringUtils,
+     uStd, uLog,
      {files}
      uFile, {%H-}uFiles, uFileHandlers,
      {oX}
@@ -150,7 +150,7 @@ begin
    end;
 
    if(Result <> 0) then begin
-      log.e('Error (' + GetErrorCodeName(Result) + ') reading file: ' +
+      log.e('Error (' + GetErrorCodeString(Result) + ') reading file: ' +
          f.fn + ' > ' + pdata^.ErrorDescription);
    end else begin
       {$IFDEF DEBUG}
@@ -245,7 +245,7 @@ begin
    end;
 
    if(Result <> 0) then begin
-      log.e('Error (' + GetErrorCodeName(Result) + ') writing file: ' + f.fn + ' > ' + pdata^.ErrorDescription);
+      log.e('Error (' + GetErrorCodeString(Result) + ') writing file: ' + f.fn + ' > ' + pdata^.ErrorDescription);
    end else begin
       {$IFDEF DEBUG}
       log.d('Write file: ' + f.fn);
