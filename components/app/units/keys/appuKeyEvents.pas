@@ -50,8 +50,9 @@ begin
 
       {is the key still pressed}
       appk.Properties[k.Code].Prop(kpPRESSED, k.IsPressed());
+      if(not k.IsPressed()) then
 
-      if(appk.Properties[k.Code].IsSet(kpCYCLE_PRESSED) and (not appk.Properties[k.Code].IsSet(kpPRESSED))) then
+      if(appk.Properties[k.Code].IsSet(kpCYCLE_PRESSED) and (not k.IsPressed())) then
          appk.Properties[k.Code].Prop(kpPRESSED_RELEASED);
 
       {set modifiers and only modifiers to the existing state}

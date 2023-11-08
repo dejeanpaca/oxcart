@@ -200,7 +200,8 @@ begin
       end;
 
       exit(true);
-   end;
+   end else if(keyEvent.Key.Equal(kcESC)) then
+      exit(false);
 
    Result := inherited Key(keyEvent);
 end;
@@ -507,7 +508,7 @@ begin
          oxConsole.wdgInput.Select();
    {handle [ESC, TILDE] keys}
    end else if(event.hID = @appKeyEvents.evh) then begin
-      key := appPKey(event.GetData())^.Key;
+      key := appPKeyEvent(event.GetData())^.Key;
 
       if(key.Equal(kcESC)) or (key.Equal(kcTILDE)) then begin
          if(key.Released()) then

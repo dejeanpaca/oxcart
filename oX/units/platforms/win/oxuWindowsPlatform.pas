@@ -75,6 +75,17 @@ TYPE
 
 IMPLEMENTATION
 
+CONST
+   scRSHIFT       = 54;
+   scBACKSLASH    = 86;
+   scCOMMA        = 51;
+   scPERIOD       = 52;
+   scLBRACKET     = 26;
+   scRBRACKET     = 27;
+   scAPOSTROPHE   = 40;
+   scSEMICOLON    = 39;
+   scSLASH        = 53;
+
 VAR
    {the window in the process of creation}
    wndCreate: oxTWindow = nil;
@@ -84,7 +95,7 @@ VAR
    {mouse button state}
    mButtonState: longword;
 
-   pendingResetModifierKeys: boolean = false;
+   pendingResetKeys: boolean = false;
 
 { MOUSE HANDLER }
 function winmGetX(): longint;
@@ -116,7 +127,7 @@ begin
 end;
 
 { KEY }
-procedure resetModifierKeys();
+procedure resetKeys();
 var
    kbState: TKeyboardState;
    i: loopint;
@@ -127,19 +138,19 @@ begin
 
    for i := 0 to high(kbState) do begin
       if(appkRemapCodes[i] <> 0) then begin
-         appk.Properties[appkRemapCodes[i]].Prop(kpPRESSED, hi(kbState[i]) <> 0);
+         appk.Properties[appkRemapCodes[i]].Prop(kpPRESSED, kbState[i] and $80 > 0);
       end;
    end;
 
-   appk.Modifiers.Prop(kmCAPS, kbState[VK_CAPITAL] and $0001 <> 0);
-   appk.Modifiers.Prop(kmSCROLL, kbState[VK_SCROLL] and $0001 <> 0);
-   appk.Modifiers.Prop(kmNUM, kbState[VK_NUMLOCK] and $0001 <> 0);
+   appk.Modifiers.Prop(kmCAPS, kbState[VK_CAPITAL] and $01 <> 0);
+   appk.Modifiers.Prop(kmSCROLL, kbState[VK_SCROLL] and $01 <> 0);
+   appk.Modifiers.Prop(kmNUM, kbState[VK_NUMLOCK] and $01 <> 0);
 
    appk.Modifiers.Prop(kmSHIFT, hi(kbState[VK_SHIFT]) <> 0);
    appk.Modifiers.Prop(kmCONTROL, hi(kbState[VK_CONTROL]) <> 0);
    appk.Modifiers.Prop(kmALT, hi(kbState[VK_MENU]) <> 0);
 
-   pendingResetModifierKeys := false;
+   pendingResetKeys := false;
 end;
 
 
@@ -159,27 +170,30 @@ begin
    end;
 end;
 
-procedure queueKeyEvent(wnd: oxTWindow; AMessage, LParam: longint);
+procedure queueKeyEvent(wnd: oxTWindow; AMessage, WParam, LParam: longint);
 var
    i,
-   rCount: longint;
+   rCount,
+   scanCode: longint;
    key: appTKey;
    ev: appPEvent;
    extended: boolean;
 
 begin
-   if(pendingResetModifierKeys) then
-      resetModifierKeys();
+   if(pendingResetKeys) then
+      resetKeys();
 
    rCount := lo(LParam);
 
    extended := LParam and (1 shl 24) > 0;
+   scanCode := Lo(Hi(LParam));
 
    {initialize the key}
    ZeroOut(key, SizeOf(key));
 
    {set the key code}
-   key.Code := appkRemapCodes[Lo(Hi(LParam))];
+   if(WParam < 256) then
+      key.Code := appkRemapCodes[WParam];
 
    if(extended) then begin
       if(key.Code = kcLALT) then
@@ -187,6 +201,33 @@ begin
       else if(key.Code = kcLCTRL) then
          key.Code := kcRCTRL;
    end;
+
+   if(scanCode = scRSHIFT) then
+      key.Code := kcRSHIFT;
+
+   if(scanCode = scBACKSLASH) then
+      key.Code := kcBACKSLASH;
+
+   if(scanCode = scCOMMA) then
+      key.Code := kcCOMMA;
+
+   if(scanCode = scPERIOD) then
+      key.Code := kcPERIOD;
+
+   if(scanCode = scLBRACKET) then
+      key.Code := kcLBRACKET;
+
+   if(scanCode = scRBRACKET) then
+      key.Code := kcRBRACKET;
+
+   if(scanCode = scAPOSTROPHE) then
+      key.Code := kcAPOSTROPHE;
+
+   if(scanCode = scSEMICOLON) then
+      key.Code := kcSEMICOLON;
+
+   if(scanCode = scSLASH) then
+      key.Code := kcSLASH;
 
    {set up the up/down state}
    if(AMessage = WM_KEYDOWN) or (AMessage = WM_SYSKEYDOWN) then
@@ -218,6 +259,7 @@ begin
    if(key.Code <> 0) and (rCount > 0) then begin
       for i := 0 to (rCount - 1) do begin
          ev := appKeyEvents.Queue(key);
+         appPKeyEvent(ev^.GetData())^.PlatformCode := WParam;
          ev^.wnd := wnd;
       end;
    end;
@@ -285,7 +327,7 @@ begin
 
       {a key has been pressed}
       WM_KEYDOWN, WM_KEYUP, WM_SYSKEYDOWN, WM_SYSKEYUP:
-         queueKeyEvent(wnd, AMessage, LParam);
+         queueKeyEvent(wnd, AMessage, WParam, LParam);
 
       {left mouse button}
       WM_LBUTTONDOWN:
@@ -327,8 +369,8 @@ begin
       end;
 
       WM_SETFOCUS: begin
-         resetModifierKeys();
-         pendingResetModifierKeys := true;
+         resetKeys();
+         pendingResetKeys := true;
       end;
 
       {system command has been issued}
