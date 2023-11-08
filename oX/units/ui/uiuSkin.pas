@@ -280,6 +280,7 @@ begin
 
       {general colors}
       Highlight.Assign(127, 127, 255, 255);
+      Focal.Assign(96, 96, 112, 255);
       Shadow := cBlack4ub;
       Surface.Assign(48, 48, 48, 255);
       LightSurface.Assign(80, 80, 80, 255);
