@@ -9,17 +9,21 @@ UNIT oxuInitialize;
 INTERFACE
 
    USES
-     sysutils, uStd, uLog, uTiming, ParamUtils,
-     {app}
-     uAppInfo, uApp, appuLog, appudvarConfiguration,
-     {oX}
-     uOX, oxuWindow, oxuWindows, oxuInitTask, oxuProgramInitTask,
-     oxuPlatform, oxuUIHooks, oxuGlobalInstances, oxuPlatforms,
-     oxuRenderer, oxuRenderers,
-     {$IF NOT DEFINED(OX_LIBRARY) AND NOT DEFINED(MOBILE)}
-     oxuContextWindow,
-     {$ENDIF}
-     uiuBase;
+      sysutils, uStd, uLog, uTiming, ParamUtils,
+      {app}
+      uAppInfo, uApp, appuLog, appudvarConfiguration,
+      {oX}
+      uOX, oxuWindow, oxuWindows, oxuInitTask, oxuProgramInitTask,
+      oxuPlatform, oxuUIHooks, oxuGlobalInstances, oxuPlatforms,
+      oxuRenderer, oxuRenderers,
+      {$IFDEF OX_LIBRARY}
+      oxuLibRenderer,
+      {$ELSE}
+         {$IF NOT DEFINED(MOBILE)}
+         oxuContextWindow,
+         {$ENDIF}
+      {$ENDIF}
+      uiuBase;
 
 TYPE
 
@@ -141,7 +145,11 @@ begin
    oxRenderers.Initialize();
 
    { set renderer to be used }
+   {$IFNDEF OX_LIBRARY}
    oxRenderers.SetRenderer();
+   {$ELSE}
+   oxLibRenderer.Setup();
+   {$ENDIF}
 
    assert(oxRenderer <> nil, 'ox renderer is not set during initialization');
 
