@@ -13,7 +13,7 @@ PROGRAM oxed;
    USES
       {$INCLUDE oxappuses.inc},
       {oxed}
-      uOXED, oxeduInitialize;
+      uOXED, oxeduInitialize, oxeduGenericFileInspector;
 
 {$R *.res}
 
