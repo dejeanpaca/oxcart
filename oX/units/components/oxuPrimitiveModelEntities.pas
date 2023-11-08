@@ -17,6 +17,7 @@ TYPE
    { oxTPrimitiveModelEntities }
 
    oxTPrimitiveModelEntities = record
+      class function Empty(): oxTEntity; static;
       class function Cube(): oxTEntity; static;
       class function Sphere(): oxTEntity; static;
       class function Plane(): oxTEntity; static;
@@ -40,6 +41,15 @@ begin
 end;
 
 { oxTPrimitiveModelEntities }
+
+class function oxTPrimitiveModelEntities.Empty(): oxTEntity;
+var
+   component: oxTPrimitiveModelComponent;
+
+begin
+   Result := getEntity('Empty', component);
+   component.Empty();
+end;
 
 class function oxTPrimitiveModelEntities.Cube(): oxTEntity;
 var

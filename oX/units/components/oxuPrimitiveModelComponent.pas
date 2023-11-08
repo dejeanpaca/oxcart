@@ -29,6 +29,7 @@ TYPE
 
       procedure GetBoundingBox(out bbox: TBoundingBox); override;
 
+      procedure Empty();
       procedure Cube();
       procedure Sphere();
       procedure Plane();
@@ -66,6 +67,11 @@ end;
 procedure oxTPrimitiveModelComponent.GetBoundingBox(out bbox: TBoundingBox);
 begin
    Model.Mesh.GetBoundingBox(bbox);
+end;
+
+procedure oxTPrimitiveModelComponent.Empty();
+begin
+   Model.Dispose();
 end;
 
 procedure oxTPrimitiveModelComponent.Cube();
