@@ -8,7 +8,7 @@ UNIT ypkuList;
 
 INTERFACE
 
-   USES uFile, uyPak, yPakU;
+   USES uFile, yPakU;
 
 procedure List();
 

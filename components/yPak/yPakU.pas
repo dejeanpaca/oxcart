@@ -23,10 +23,13 @@ VAR
   pak: record
      fn: string;
      f: TFile;
-     filterMode: longint;
-     included, excluded: string;
-     entries: ypkfTEntries;
+     FilterMode: longint;
+     Included,
+     Excluded: string;
+     Entries: ypkfTEntries;
   end;
+
+  ypkf: ypkTFile;
 
 procedure ypkfSetBuffer();
 
@@ -38,6 +41,8 @@ begin
 end;
 
 INITIALIZATION
-   pak.excluded := '.exe .ypk';
+   ypkTFile.Initialize(ypkf);
+   ypkf.f := @pak.f;
+   pak.Excluded := '.exe .ypk';
 
 END.

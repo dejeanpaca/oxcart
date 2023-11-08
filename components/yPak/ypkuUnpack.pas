@@ -8,8 +8,9 @@ UNIT ypkuUnpack;
 
 INTERFACE
 
-   USES sysutils, uStd, uFile, uFiles, ufhStandard, ConsoleUtils, StringUtils,
-     uyPak, yPakU;
+   USES
+      sysutils, uStd, uFile, uFiles, ufhStandard, ConsoleUtils, StringUtils,
+      yPakU, uyPakFile;
 
 procedure Unpack();
 
@@ -19,7 +20,7 @@ procedure CreateDirectories();
 var
    i: longint;
    s,
-     path: string;
+   path: string;
    ppath: string;
    lvl: longint;
 
@@ -27,9 +28,10 @@ begin
    ppath := '';
    lvl := 0;
 
-   for i := 0 to (pak.entries.n - 1) do begin
+   for i := 0 to (pak.Entries.n - 1) do begin
       {get path}
-      path := pak.entries.list[i].fn;
+      path := '';
+      // TODO: Get path
       writeln('creating: ', path);
       ReplaceDirSeparators(path);
       path := ExtractFilePath(path);
@@ -68,12 +70,14 @@ var
    fname: string;
 
 begin
-   for i := 0 to (pak.entries.n - 1) do begin
-      fname := pak.entries.list[i].fn;
+   for i := 0 to (pak.Entries.n - 1) do begin
+      // TODO: fname := pak.Entries.list[i].fn;
+      fname := '';
+
       ReplaceDirSeparators(fname);
       writeln('creating file: ', fname);
 
-      fCopy(pak.f, fname, pak.entries.list[i].size);
+      fCopy(pak.f, fname, pak.Entries.list[i].size);
 
       if(pak.f.error <> 0) or (ioE <> 0) then begin
          writeln('Error(', pak.f.error, ioE ,'): Cannot create file.');
@@ -84,7 +88,7 @@ end;
 
 procedure Unpack();
 var
-   hdr: ypkTHeader;
+   hdr: ypkfTHeader;
 
 begin
    writeln('Unpacking: ', pak.fn);
@@ -95,12 +99,12 @@ begin
       ypkfSetBuffer();
 
       {read header}
-      ypk.ReadHeader(pak.f, hdr);
-      if(ypk.error = 0) then begin
+      ypkf.ReadHeader(hdr);
+      if(pak.f.Error = 0) then begin
          writeln('Reading entries...');
-         ypk.ReadEntries(pak.f, pak.entries, hdr.Files);
+         ypkf.ReadEntries(pak.Entries, hdr.Files);
 
-         {read pak.entries}
+         {read pak.Entries}
          if(pak.f.error = 0)then begin
             if(hdr.Files > 0) then begin
                writeln('Done reading entries.');
@@ -122,7 +126,7 @@ begin
          end else
             console.e('Cannot read the YPAK file.');
       end else begin
-         console.e(sf(ypk.error) + ' - Header invalid or file unsupported.');
+         console.e(pak.f.GetErrorString() + ' - Header invalid or file unsupported.');
          writeln('ID:         ', hdr.ID);
          writeln('Endian:     ', hexstr(hdr.Endian, 4));
          writeln('Version:    ', hexstr(hdr.Version, 4));

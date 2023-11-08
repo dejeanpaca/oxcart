@@ -6,8 +6,9 @@
 {$INCLUDE oxheader.inc}
 PROGRAM yPakTool;
 
-   USES ConsoleUtils, ParamUtils, StringUtils, uKeyValueFile, uyPak, ufhStandard,
-      yPakU, ypkuPack, ypkuUnpack, ypkuList, ypkuDirSep;
+   USES
+      uStd, ConsoleUtils, ParamUtils, StringUtils, uSimpleParser,
+      yPakU, ypkuPack, ypkuUnpack, ypkuList, ypkuDirSep, uyPakFile;
 
 CONST
    { modes of operation }
@@ -17,16 +18,15 @@ CONST
    MODE_LIST      = $0003; {list files and information for a .ypk}
    MODE_DIRSEP    = $0004; {replace directory separator in filenames for a .ypk}
 
+   pakfnDefault = 'data.ypk';
+
 VAR
    mode: longint;
-   kvFile: TKeyValueFile;
 
 procedure ErrorHalt(const s: string);
 begin
    if(s <> '') then
       console.e(s);
-
-   kvFile.Dispose();
 
    halt(1);
 end;
@@ -41,8 +41,8 @@ end;
 
 procedure setFilterMode(f: longint);
 begin
-   if(pak.filterMode = FLTR_MODE_UNKNOWN) then
-      pak.filterMode := f
+   if(pak.FilterMode = FLTR_MODE_UNKNOWN) then
+      pak.FilterMode := f
    else
       ErrorHalt('You can specify only one mode (include or exclude).');
 end;
@@ -70,9 +70,9 @@ begin
       ErrorHalt('Directory separator character can be ''\'' or ''/''');
 end;
 
-function Params(const pstr: string; const lstr: string): boolean;
+function Params(const pstr: StdString; const lstr: StdString): boolean;
 var
-   s: string;
+   s: StdString;
 
 begin
    result := true;
@@ -90,11 +90,11 @@ begin
       {filter exclude}
       else if(lstr = '-e') then begin
          setFilterMode(FLTR_MODE_EXCLUDE);
-         pak.excluded := parameters.Next();
+         pak.Excluded := parameters.Next();
       {filter include}
       end else if(lstr = '-i') then begin
          setFilterMode(FLTR_MODE_INCLUDE);
-         pak.included := parameters.Next();
+         pak.Included := parameters.Next();
       {directory separator}
       end else if(lstr = '-d') then begin
          s := parameters.Next();
@@ -132,8 +132,8 @@ begin
       err := true;
    end;
 
-   if(pak.filterMode = FLTR_MODE_UNKNOWN) then
-      pak.filterMode := FLTR_MODE_EXCLUDE;
+   if(pak.FilterMode = FLTR_MODE_UNKNOWN) then
+      pak.FilterMode := FLTR_MODE_EXCLUDE;
 
    if(err) then
       ErrorHalt('');
@@ -143,23 +143,23 @@ procedure loadKV();
 var
    i: longint;
    key, value: string;
+   kv: TStringPairs;
 
 begin
-   keyValueFiles.Init(kvFile);
-   kvFile.separator := ' ';
-   kvFile.Load('ypakfile');
+   kv.Initialize(kv);
+   SimpleParser.LoadKeyValues('ypakfile', kv, ' ');
 
-   if(kvFile.list.n > 0) then begin
-      for i := 0 to kvFile.list.n - 1 do begin
-         key := kvFile.list.list[i].key;
-         value := kvFile.list.list[i].value;
+   if(kv.n > 0) then begin
+      for i := 0 to kv.n - 1 do begin
+         key := kv.List[i][0];
+         value := kv.List[i][1];
 
          if(key = 'fn') then
             pak.fn := value
          else if (key = 'i') then
-            pak.included := value
+            pak.Included := value
          else if (key = 'e') then
-            pak.excluded := value
+            pak.Excluded := value
          else if (key = 'd') then begin
             ypkDirSep := value[1];
             ValidateDirectorySeparator();
@@ -173,11 +173,11 @@ BEGIN
 
    if(ParamCount() > 0) then
       DoParams()
-   else if(kvFile.ioE <> 0) then
+   else
       ErrorHalt('No parameters provided.');
 
    {if there is an 'ypakfile' file in the current folder, then set mode to packing if none is set}
-   if(kvFile.ioE = 0) and (mode = MODE_UNKNOWN) then
+   if(mode = MODE_UNKNOWN) then
       mode := MODE_PACK;
 
    ReplaceDirSeparators(pak.fn);
@@ -192,6 +192,4 @@ BEGIN
       MODE_DIRSEP:
          ReplaceDirSep();
    end;
-
-   kvFile.Dispose();
 END.
