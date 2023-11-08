@@ -55,6 +55,8 @@ TYPE
 
       {run rendering in a separate thread, use instead of Start()}
       procedure RunThreaded(wnd: oxTWindow);
+      {restore rendering context to the associated window}
+      procedure RestoreRender();
 
       {called to update the splash screen (animate, calculate, and what else, but not render)}
       procedure Update(); virtual;
@@ -174,6 +176,15 @@ begin
    log.v('Started splash screen: ' + Name);
 end;
 
+procedure oxTSplashScreen.RestoreRender();
+var
+   rtc: oxTRenderTargetContext;
+
+begin
+   AssociatedWindow.FromWindow(rtc);
+   oxTRenderer(AssociatedWindow.Renderer).ContextCurrent(rtc);
+end;
+
 procedure oxTSplashScreen.Update();
 begin
 end;
@@ -216,9 +227,21 @@ begin
 end;
 
 procedure oxTSplashScreen.ThreadStart();
+var
+   rtc: oxTRenderTargetContext;
+   renderer: oxTRenderer;
+
 begin
+   renderer := oxTRenderer(AssociatedWindow.Renderer);
+
    {get an RC to render the splash screen}
-   RC := oxRenderer.GetRenderingContext(AssociatedWindow);
+   RC := renderer.GetRenderingContext(AssociatedWindow);
+
+   {mark current context for use only (since we'll render in the splash)}
+   AssociatedWindow.FromWindow(rtc);
+   rtc.ContextType := oxRENDER_TARGET_CONTEXT_USE;
+
+   renderer.ContextCurrent(rtc);
 end;
 
 { oxTBasicSplashScreen }
@@ -332,6 +355,7 @@ begin
    if(oxSplashScreen.Startup <> nil) then begin
       oxSplashScreen.Startup.WaitForDisplayTime();
       oxSplashScreen.Startup.StopWait();
+      oxSplashScreen.Startup.RestoreRender();
 
       oxThreadEvents.Destroy(oxTThreadTask(oxSplashScreen.Startup));
    end;
