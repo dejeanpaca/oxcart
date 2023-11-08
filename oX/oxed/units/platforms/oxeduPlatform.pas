@@ -55,7 +55,7 @@ TYPE
       constructor Create(); virtual;
       destructor Destroy; override;
 
-      procedure AddArchitecture(arch: oxedTPlatformArchitecture);
+      function AddArchitecture(arch: oxedTPlatformArchitecture): oxedTPlatformArchitecture;
 
       {reset when new project is created, opened or closed}
       procedure ProjectReset(); virtual;
@@ -159,10 +159,11 @@ begin
    Architectures.Dispose();
 end;
 
-procedure oxedTPlatform.AddArchitecture(arch: oxedTPlatformArchitecture);
+function oxedTPlatform.AddArchitecture(arch: oxedTPlatformArchitecture): oxedTPlatformArchitecture;
 begin
    Architectures.Add(arch);
    arch.PlatformObject := Self;
+   Result := arch;
 end;
 
 procedure oxedTPlatform.ProjectReset();
