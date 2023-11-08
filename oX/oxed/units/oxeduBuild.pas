@@ -284,8 +284,13 @@ begin
       feature := @oxFeatures.List.List[i];
 
       if(oxFeatures.IsSupportedFeature(feature^, platform, isLibrary)) then begin
-         if(isLibrary and (pos('renderer.', feature^.Name) = 1)) then
-            continue;
+         if(isLibrary) then begin
+            if(pos('renderer.', feature^.Name) = 1) then
+               continue;
+
+            if(not feature^.IsEnabled('library')) then
+               continue;
+         end;
 
          Result.Add(feature);
       end;
