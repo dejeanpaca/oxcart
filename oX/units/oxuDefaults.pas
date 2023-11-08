@@ -23,11 +23,7 @@ INTERFACE
       appuPaths,
       appuLog,
       {$IFNDEF NODVAR}appudvarConfiguration,{$ENDIF}
-      {$IFNDEF OX_LIBRARY}
-         appuSysInfo,
-      {$ELSE}
-        oxuSysInfo,
-      {$ENDIF}
+      oxuSysInfo,
 
       oxuSerializationTypes,
 
