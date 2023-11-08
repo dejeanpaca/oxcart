@@ -48,7 +48,7 @@ begin
    oxedProjectManagement.Open(oxedRecents.LastOpen);
 end;
 
-procedure InitSplash();
+procedure splashOpened();
 var
    i: longint;
    templates: uiTContextMenu;
@@ -106,7 +106,7 @@ begin
 end;
 
 INITIALIZATION
-   oxwndSplash.OnInit.Add(@InitSplash);
+   oxwndSplash.OnOpen.Add(@splashOpened);
    oxwndSplash.ShowBuildInformation := true;
    oxwndSplash.ImageFileName := 'oxed' + DirectorySeparator + 'data' + DirectorySeparator + 'oxed.jpg';
 

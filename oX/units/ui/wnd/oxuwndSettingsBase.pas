@@ -28,10 +28,13 @@ TYPE
    oxTSettingsWindowBase = object(oxTWindowBase)
       Tabs: wdgTTabs;
 
-      {list of procedures called when splash window is initialized}
-      OnInit,
+      {list of procedures called when window is opened}
+      OnOpen,
+      {before tabs are added}
       PreAddTabs,
+      {when adding tabs are added}
       OnAddTabs,
+      {post adding tabs}
       PostAddTabs: TProcedures;
 
       DefaultButtonWidth: loopint;
@@ -76,7 +79,7 @@ constructor oxTSettingsWindowBase.Create();
 begin
    inherited;
 
-   OnInit.InitializeValues(OnInit);
+   OnOpen.InitializeValues(OnOpen);
    PreAddTabs.InitializeValues(PreAddTabs);
    OnAddTabs.InitializeValues(OnAddTabs);
    PostAddTabs.InitializeValues(PostAddTabs);
@@ -213,7 +216,7 @@ begin
 
    if(Window <> nil) then
       {call OnInit methods }
-      OnInit.Call();
+      OnOpen.Call();
 
    Revert();
 end;
