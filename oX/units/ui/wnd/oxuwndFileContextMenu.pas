@@ -331,7 +331,9 @@ begin
    m.AddItem('Rename', Events.RENAME_FILE, @renameFile);
    item := m.AddItem('Delete', Events.DELETE_FILE, @deleteFile);
    item^.GlyphColor := uiSkin.StandardSkin.Colors.Delete;
-   m.AddItem('Create Directory', Events.CREATE_DIRECTORY, @createDirectory);
+
+   item := m.AddItem('Create Directory', Events.CREATE_DIRECTORY, @createDirectory);
+   item^.GlyphColor := uiFiles.DirectoryColor;
 
    item := m.AddCheckbox('Show hidden files', uiFiles.ShowHiddenFiles);
    item^.Callback := @clearMessagesOnStartToggle;
