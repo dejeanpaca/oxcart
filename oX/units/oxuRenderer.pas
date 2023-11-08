@@ -231,7 +231,7 @@ end;
 
 function oxTRenderer.InitWindow(wnd: oxTWindow): boolean;
 begin
-   result := true;
+   Result := true;
 end;
 
 {$IFDEF OX_LIBRARY}
@@ -243,17 +243,17 @@ end;
 
 function oxTRenderer.DeInitWindow(wnd: oxTWindow): boolean;
 begin
-   result := true;
+   Result := true;
 end;
 
 function oxTRenderer.SetupWindow(wnd: oxTWindow): boolean;
 begin
-   result := true;
+   Result := true;
 end;
 
 function oxTRenderer.PreInitWindow(wnd: oxTWindow): boolean;
 begin
-   result := true;
+   Result := true;
 end;
 
 procedure oxTRenderer.LogWindow(wnd: oxTWindow);
@@ -262,7 +262,7 @@ end;
 
 function oxTRenderer.ContextWindowRequired(): boolean;
 begin
-   result := false;
+   Result := false;
 end;
 
 procedure oxTRenderer.OnInitialize();
@@ -314,12 +314,12 @@ begin
    if(context >= 0) then
       exit(RenderingContexts[context].Used);
 
-   result := false;
+   Result := false;
 end;
 
 function oxTRenderer.GetContext(wnd: oxTWindow; shareContext: loopint): loopint;
 begin
-   result := AddRenderingContext(wnd);
+   Result := AddRenderingContext(wnd);
 end;
 
 function oxTRenderer.GetContextString(index: loopint): StdString;
@@ -345,7 +345,7 @@ end;
 function oxTRenderer.DestroyContext(context: loopint): boolean;
 begin
    RemoveContext(context);
-   result := true;
+   Result := true;
 end;
 
 procedure oxTRenderer.DestroyAllRenderingContexts(wnd: oxTWindow);
@@ -406,9 +406,9 @@ begin
    p := FindComponent(componentName);
 
    if(p <> nil) then
-      result := p^.return()
+      Result := p^.return()
    else
-      result := nil;
+      Result := nil;
 end;
 
 function oxTRenderer.FindComponent(const componentName: string): PSingleComponent;
