@@ -34,9 +34,9 @@ TYPE
       procedure Select({%H-}wnd: oxTWindow); virtual;
       procedure Render({%H-}wnd: oxTWindow); virtual;
 
-      procedure Minimize({%H-}wnd: oxTWindow); virtual;
-      procedure Maximize({%H-}wnd: oxTWindow); virtual;
-      procedure Restore({%H-}wnd: oxTWindow); virtual;
+      procedure Minimize({%H-}wnd: oxTWindow; fromSystem: boolean = false); virtual;
+      procedure Maximize({%H-}wnd: oxTWindow; fromSystem: boolean = false); virtual;
+      procedure Restore({%H-}wnd: oxTWindow; fromSystem: boolean = false); virtual;
    end;
 
    oxTUIHooksInstance = class of oxTUIHooks;
@@ -88,16 +88,16 @@ procedure oxTUIHooks.Render(wnd: oxTWindow);
 begin
 end;
 
-procedure oxTUIHooks.Minimize(wnd: oxTWindow);
+procedure oxTUIHooks.Minimize(wnd: oxTWindow; fromSystem: boolean);
 begin
 end;
 
-procedure oxTUIHooks.Maximize(wnd: oxTWindow);
+procedure oxTUIHooks.Maximize(wnd: oxTWindow; fromSystem: boolean);
 begin
 
 end;
 
-procedure oxTUIHooks.Restore(wnd: oxTWindow);
+procedure oxTUIHooks.Restore(wnd: oxTWindow; fromSystem: boolean);
 begin
 
 end;
