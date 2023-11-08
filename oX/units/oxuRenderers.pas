@@ -188,12 +188,13 @@ begin
       oxRenderer := oxNilRenderer;
 
    vSelectedRenderer := oxRenderer.Name;
-   log.i('Using renderer: ' + vSelectedRenderer);
+   log.i('Selected renderer: ' + vSelectedRenderer);
 end;
 
 procedure oxTRenderers.Use(renderer: oxTRenderer);
 begin
-   SelectRenderer(renderer);
+   oxRenderer := renderer;
+   log.i('Using renderer: ' + renderer.Name);
 
    oxRenderer.Use();
    UseRoutines.Call();
