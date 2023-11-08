@@ -113,8 +113,6 @@ begin
    Rotate(vRotation[2], 0, 0, 1);
    Rotate(vRotation[0], 1, 0, 0);
 
-   RotationMatrix := Matrix;
-
    Matrix := vmmUnit4;
 
    Translate(vPosition);
