@@ -34,9 +34,9 @@ TYPE
       procedure Select({%H-}wnd: oxTWindow); virtual;
       procedure Render({%H-}wnd: oxTWindow); virtual;
 
-      procedure Minimize({%H-}wnd: oxTWindow; fromSystem: boolean = false); virtual;
-      procedure Maximize({%H-}wnd: oxTWindow; fromSystem: boolean = false); virtual;
-      procedure Restore({%H-}wnd: oxTWindow; fromSystem: boolean = false); virtual;
+      procedure Minimize({%H-}wnd: oxTWindow; {%H-}fromSystem: boolean = false); virtual;
+      procedure Maximize({%H-}wnd: oxTWindow; {%H-}fromSystem: boolean = false); virtual;
+      procedure Restore({%H-}wnd: oxTWindow; {%H-}fromSystem: boolean = false); virtual;
    end;
 
    oxTUIHooksInstance = class of oxTUIHooks;
