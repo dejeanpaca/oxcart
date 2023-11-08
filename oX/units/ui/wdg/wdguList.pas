@@ -171,6 +171,8 @@ TYPE
       {select item with the specified index}
       procedure NavigateToItem(index: loopint);
 
+      procedure SetFontColor(index: longint);
+
       protected
          {current offset position}
          Offset,
@@ -271,8 +273,6 @@ TYPE
       procedure RenderStart(); override;
       procedure RenderDone(); override;
 
-      procedure SetFontColor(index: loopint);
-
       procedure UpdateItemHeight(); override;
 
       protected
@@ -369,23 +369,6 @@ end;
 procedure wdgTStringListBase.RenderDone();
 begin
    oxf.Stop();
-end;
-
-procedure wdgTStringListBase.SetFontColor(index: loopint);
-begin
-   if(HighlightHovered) then begin
-      if(Transparent) then begin
-         if(index <> HighlightedItem) then
-            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.Text)
-         else
-            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight);
-      end else begin
-         if(index <> HighlightedItem) then
-            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.InputText)
-         else
-            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight)
-      end;
-   end;
 end;
 
 procedure wdgTStringListBase.UpdateItemHeight();
@@ -1149,6 +1132,23 @@ begin
    ItemNavigated(index);
    if(NavigationIsSelection) then
       ItemSelected(SelectedItem);
+end;
+
+procedure wdgTList.SetFontColor(index: longint);
+begin
+   if(HighlightHovered) then begin
+      if(Transparent) then begin
+         if(index = HighlightedItem) then
+            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.Text)
+         else
+            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight);
+      end else begin
+         if(index <> HighlightedItem) then
+            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.InputText)
+         else
+            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight)
+      end;
+   end;
 end;
 
 procedure wdgTList.AdjustOffset();
