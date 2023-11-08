@@ -337,11 +337,9 @@ procedure onUse();
 begin
    FreeObject(oxui.Material);
 
-   oxui.Material := oxMaterial.Instance();
-   oxui.Material.AssignShader(oxShader.Default);
+   oxui.Material := oxMaterial.Make();
    oxui.Material.Name := 'ui';
    oxui.Material.MarkPermanent();
-   oxui.Material.FromShader();
 end;
 
 VAR
