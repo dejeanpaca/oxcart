@@ -13,15 +13,18 @@ INTERFACE
       {app}
       uApp, appuEvents, appuActionEvents,
       {oX}
-      uOX, oxuInitialize, oxuWindows, oxuPlatform, oxuRunRoutines, oxuWindowRender, oxuProgramInitTask,
-      oxuTimer;
+      uOX,
+      oxuInitialize, oxuWindows, oxuPlatform, oxuRunRoutines, oxuWindowRender, oxuProgramInitTask,
+      oxuTimer, oxuRenderingContext, oxuRenderer;
 
 TYPE
    { oxTRunGlobal }
 
    oxTRunGlobal = record
      {restart instead of quitting}
-     RestartFlag: boolean;
+     RestartFlag,
+     {debug log enabled}
+     LogDebugCycle: boolean;
 
      {perform initialization before running}
      function Initialize(): boolean;
@@ -104,7 +107,6 @@ begin
 
       if(initialized) then begin
          app.Active := true;
-         log.v('Active');
 
          {main loop}
          repeat
@@ -132,20 +134,42 @@ end;
 
 procedure oxTRunGlobal.GoCycle(dosleep: boolean);
 begin
+   if(LogDebugCycle) then
+      log.d('oxRun > PreEvents');
+   ox.OnPreEvents.LogVerbose := LogDebugCycle;
    ox.OnPreEvents.Call();
 
+   if(LogDebugCycle) then
+      log.d('oxRun > ProcessEvents');
    oxPlatform.ProcessEvents();
+
+   if(LogDebugCycle) then
+      log.d('oxRun > ControlEvents');
    ControlEvents();
 
+   if(LogDebugCycle) then
+      log.d('oxRun > OnRun');
+   ox.OnRun.LogVerbose := LogDebugCycle;
    ox.OnRun.Call();
 
    {render stuff}
    {$IFNDEF OX_LIBRARY}
-   if(IsReady()) then
+   if(IsReady()) then begin
+      if(LogDebugCycle) then
+         log.d('oxRun > Render');
+
       oxWindowRender.All();
+   end;
    {$ENDIF}
 
+   if(LogDebugCycle) then
+      log.d('oxRun > OnAfter');
+
+   ox.OnRunAfter.LogVerbose := LogDebugCycle;
    ox.OnRunAfter.Call();
+
+   if(LogDebugCycle) then
+      log.d('oxRun > Sleep');
 
    if(dosleep) then
       oxTimer.Sleep();
