@@ -911,8 +911,11 @@ begin
    ErrorReset();
 
    if(not Initialized) then begin
+      {we can't have output into the terminal}
+      consoleLog.Close();
+
       InitVideo();
-//      log.i('tv > init video');
+      log.i('tv > init video');
 
       if(video.ErrorCode <> vioOk) then begin
          eRaise(tveINIT_FAIL);
@@ -932,6 +935,8 @@ begin
       log.i('tv > initialized: ' + tvCurrent.Mode.ToString());
 
       tvCurrent.GotoXY();
+
+      video.SetCursorType(crHidden);
    end;
 end;
 
@@ -1100,7 +1105,7 @@ end;
 
 function TVideoCellHelper.GetColor(): byte;
 begin
-   TVideoAttribute(high(Self)).Break(result);
+   TVideoAttribute(hi(Self)).Break(result);
 end;
 
 function TVideoCellHelper.GetBkColor(): byte;
@@ -1108,12 +1113,12 @@ var
   color: byte = 0;
 
 begin
-   TVideoAttribute(high(Self)).Break(color, result);
+   TVideoAttribute(hi(Self)).Break(color, result);
 end;
 
 function TVideoCellHelper.GetBlink(): boolean;
 begin
-   Result := high(Self) and Video.Blink <> 0;
+   Result := hi(Self) and Video.Blink <> 0;
 end;
 
 {CHARACTER PLOTTING}
