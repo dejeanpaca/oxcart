@@ -179,7 +179,8 @@ begin
       end;
    end;
 
-   wdgDivisor.Add('', uiWidget.LastRect.BelowOf()).SetColor(cWhite4ub);
+   wdg := wdgDivisor.Add('', uiWidget.LastRect.BelowOf());
+   wdgTDivisor(wdg).SetOverrideColor(TColor4ub.Create(32, 32, 32, 255));
 
    {calculate status label position}
    y := Height - EdgeDistance;
