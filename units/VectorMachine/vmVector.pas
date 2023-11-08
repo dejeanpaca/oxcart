@@ -6,7 +6,7 @@
    perform math and related operations on vectors and similar data types.
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH TYPEHELPERS}
+{$INCLUDE oxheader.inc}
 UNIT vmVector;
 
 {$IFNDEF NO_VM_INLINE}
@@ -29,6 +29,7 @@ CONST
    {PI}
    vmcPi             = 3.1415926535897932384626433832795;
    vmcHalfPi         = 3.1415926535897932384626433832795 / 2;
+   vmcDoublePi       = vmcPi * 2;
    vmcToDeg          = 180 / vmcPi;
    vmcToRad          = vmcPi / 180;
 
@@ -287,6 +288,8 @@ TYPE
       function Transposed(): TMatrix4; {$IFDEF VM_INLINE_HELPERS}inline;{$ENDIF}
       function Inversed(): TMatrix4; {$IFDEF VM_INLINE_HELPERS}inline;{$ENDIF}
       function GetDeterminant(): single; {$IFDEF VM_INLINE_HELPERS}inline;{$ENDIF}
+      {convert rotation matrix to euler angles}
+      function RotationToEuler(): TVector3;
    end;
 
    { TBoundingBoxHelper }
@@ -2353,7 +2356,7 @@ begin
    Result[3][3] := Self[3][3];
 end;
 
-function TMatrix4Helper.Inversed: TMatrix4;
+function TMatrix4Helper.Inversed(): TMatrix4;
 var
    determinant: single;
 
@@ -2432,7 +2435,7 @@ begin
                                  Self[0,2] * (Self[1,0] * Self[2,1] - Self[1,1] * Self[2,0]));
 end;
 
-function TMatrix4Helper.GetDeterminant: single;
+function TMatrix4Helper.GetDeterminant(): single;
 begin
    Result := (Self[0,0] * Self[1,1] - Self[0,1] * Self[1,0]) * (Self[2,2] * Self[3,3] - Self[2,3] * Self[3,2]) -
              (Self[0,0] * Self[1,2] - Self[0,2] * Self[1,0]) * (Self[2,1] * Self[3,3] - Self[2,3] * Self[3,1]) +
@@ -2440,6 +2443,46 @@ begin
              (Self[0,1] * Self[1,2] - Self[0,2] * Self[1,1]) * (Self[2,0] * Self[3,3] - Self[2,3] * Self[3,0]) -
              (Self[0,1] * Self[1,3] - Self[0,3] * Self[1,1]) * (Self[2,0] * Self[3,2] - Self[2,2] * Self[3,0]) +
              (Self[0,2] * Self[1,3] - Self[0,3] * Self[1,2]) * (Self[2,0] * Self[3,1] - Self[2,1] * Self[3,0]);
+end;
+
+function TMatrix4Helper.RotationToEuler(): TVector3;
+var
+   rm: TMatrix4 absolute self;
+   C,
+   tx,
+   ty: Single;
+
+begin
+   Result[1] := arcsin(rm[2, 0]);
+   C := cos(Result[1]);
+
+   if(abs(C) > 0.0005) then begin
+      {no gimbal lock}
+      tx := rm[2, 2] / C;
+      ty := -rm[2, 1] / C;
+
+      Result[0] := ArcTan2(ty, tx);
+
+      tx := rm[0, 0] / C;
+      ty := -rm[1, 0] / C;
+
+      Result[2] := ArcTan2(ty, tx);
+   end else begin
+      Result[0] := 0.0;
+      tx := rm[1, 1];
+      ty := rm[0, 1];
+
+      Result[2] := ArcTan2(ty, tx);
+   end;
+
+   if (Result[0] < 0) then
+      Result[0] += vmcDoublePi;
+
+   if (Result[1] < 0) then
+      Result[1] += vmcDoublePi;
+
+   if (Result[2] < 0) then
+      Result[2] += vmcDoublePi;
 end;
 
 { TBoundingBoxHelper }
