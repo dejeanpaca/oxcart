@@ -51,7 +51,9 @@ begin
 
    uiWidget.LastRect.GoLeft();
 
-   wdgDivisor.Add('');
+   { resolution }
+
+   wdgDivisor.Add('Video settings');
 
    uiWidget.LastRect.GoLeft();
 
