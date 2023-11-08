@@ -214,7 +214,7 @@ begin
 
    p := GetToolProcess();
 
-   p.Executable := build.GetExecutableName(platform^.Path + 'fpc');
+   p.Executable := platform^.GetExecutablePath();
 
    if(fpcParameters = nil) then begin
       if(build.FPCOptions.UseConfig = '') then

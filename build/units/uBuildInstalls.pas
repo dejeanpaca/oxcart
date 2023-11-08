@@ -21,6 +21,7 @@ TYPE
       Name,
       Path,
       ConfigPath,
+      Executable,
       {fpc version}
       Version: StdString;
       Platform: TFPCPlatformString;
@@ -28,6 +29,7 @@ TYPE
 
       class procedure Initialize(out p: TBuildPlatform); static;
       function GetName(): StdString;
+      function GetExecutablePath(): StdString;
    end;
 
    TBuildPlatforms = specialize TSimpleList<TBuildPlatform>;
@@ -276,6 +278,14 @@ begin
 
    if(Name = 'default') then
       Result := build.GetBuiltWithTarget();
+end;
+
+function TBuildPlatform.GetExecutablePath(): StdString;
+begin
+   if(Executable <> '') then
+      Result := build.GetExecutableName(Path + 'fpc')
+   else
+      Result := Path + Executable;
 end;
 
 { TBuildSystemInstalls }
