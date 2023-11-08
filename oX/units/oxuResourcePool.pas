@@ -9,7 +9,7 @@ UNIT oxuResourcePool;
 INTERFACE
 
    USES
-      {$IFDEF OX_RESOURCE_DEBUG}StringUtils, uLog, {$ENDIF}
+      {$IFDEF OX_RESOURCE_DEBUG}StringUtils, uLog, uError, {$ENDIF}
       uStd,
       {ox}
       uOX, oxuTypes, oxuResourceLoader;
@@ -107,11 +107,12 @@ begin
    if(TObject(resource) = nil) then
       exit;
 
+   {make sure we're not given any object}
    ox.Assert(ox.IsType(TObject(resource), oxTResource), 'Tried to destroy resource which doesn''t inherit from oxTResource: ' + TObject(resource).ClassName);
 
    if(res <> nil) and (res.ReferenceCount <> -1) then begin
-      {make sure we're not given any object}
       {$IFDEF OX_RESOURCE_DEBUG}
+      {check if this resource is not allocated}
       if(res.ReferenceCount = 0) then begin
          log.w('Tried to dispose resource with a zero reference count ' + res.Path);
          log.w('Allocated at: ' + res.DebugAllocationPoint);
@@ -125,6 +126,7 @@ begin
       ox.Assert(res.ReferenceCount > 0, 'Tried to dispose resource with a zero reference count');
       {$ENDIF}
 
+      {one less user of object}
       if(res.ReferenceCount > 0) then
          dec(res.ReferenceCount);
 
@@ -157,10 +159,10 @@ begin
    {$IFDEF OX_RESOURCE_DEBUG}
    res := oxTResource(resource);
 
-   log.v('Resource freed: ' + res.Path + ' (' + sf(res.ReferenceCount) + ')');
+   log.v('Resource freed: ' + res.Path + ' (' + res.ClassName + ', ' + sf(res.ReferenceCount) + ')');
 
    if(res.DebugFreed) then begin
-      log.w('Resource ' + res.Path + ' already freed (' + sf(res.ReferenceCount) + '), ' + res.ClassName);
+      log.w('Resource already freed: ' + res.Path + ' (' + res.ClassName + ', ' + sf(res.ReferenceCount) + ')');
 
       if(res.DebugAllocationPoint <> '') then
          log.w('Allocated at: ' + res.DebugAllocationPoint);
@@ -170,7 +172,7 @@ begin
    end;
 
    if(res.ReferenceCount = 0) then begin
-      log.w('Resource ' + res.Path + ' should already have been freed (' + sf(res.ReferenceCount) + ', ' + res.ClassName + ')');
+      log.w('Resource should already have been freed: ' + res.Path + ' (' + res.ClassName + ', ' + sf(res.ReferenceCount) + ')');
 
       if(res.DebugAllocationPoint <> '') then
          log.w('Allocated at: ' + res.DebugAllocationPoint);
