@@ -29,7 +29,7 @@ TYPE
       {distance between another point}
       function Distance(p2: oxTPoint): loopint;
 
-      function ToString(): string;
+      function ToString(): StdString;
    end;
 
    { oxTPointf }
@@ -46,7 +46,7 @@ TYPE
       {distance between another point}
       function Distance(p2: oxTPointf): single;
 
-      function ToString(decimals: loopint = 0): string;
+      function ToString(decimals: loopint = 0): StdString;
    end;
 
    { oxTDimensions }
@@ -62,7 +62,7 @@ TYPE
       {tells if both dimensions have a positive value}
       function IsPositive(): boolean;
 
-      function ToString(): string;
+      function ToString(): StdString;
    end;
 
    { oxTDimensionsf }
@@ -78,7 +78,7 @@ TYPE
       {tells if both dimensions have a positive value}
       function IsPositive(): boolean;
 
-      function ToString(decimals: loopint = 0): string;
+      function ToString(decimals: loopint = 0): StdString;
    end;
 
    { oxTRect }
@@ -152,7 +152,7 @@ TYPE
       procedure SetRatio(r: single);
 
       {get a textual representation}
-      function ToString(): string;
+      function ToString(): StdString;
       {initialize record}
       class procedure Init(out p: oxTProgressIndicatorData); static;
    end;
@@ -162,13 +162,13 @@ TYPE
    { oxTResource }
 
    oxTResource = class
-      Path: string;
+      Path: StdString;
       ReferenceCount: loopint;
       Pool: TObject;
 
       {$IFDEF OX_RESOURCE_DEBUG}
       DebugAllocationPoint,
-      DebugFreePoint: string;
+      DebugFreePoint: StdString;
       {mark as freed without actually freeing}
       DebugFreed,
       {are we doing object free from a resource method}
@@ -185,10 +185,10 @@ TYPE
       {mark resource as unused (decrease the reference count)}
       procedure Unused();
 
-      function AddrToString(): string;
+      function AddrToString(): StdString;
 
       {get normalized path}
-      function GetPath(): string;
+      function GetPath(): StdString;
    end;
 
    oxTResourceClass = class of oxTResource;
@@ -328,7 +328,7 @@ begin
    Ratio := r;
 end;
 
-function oxTProgressIndicatorData.ToString(): string;
+function oxTProgressIndicatorData.ToString(): StdString;
 var
    s: TAppendableString;
 
@@ -398,12 +398,12 @@ begin
    dec(ReferenceCount);
 end;
 
-function oxTResource.AddrToString(): string;
+function oxTResource.AddrToString(): StdString;
 begin
    Result := addr2str(Self);
 end;
 
-function oxTResource.GetPath(): string;
+function oxTResource.GetPath(): StdString;
 begin
    Result := ExtractFilePath(Path);
 
@@ -545,7 +545,7 @@ begin
    Result := (w > 0) and (h > 0);
 end;
 
-function oxTDimensionsf.ToString(decimals: loopint): string;
+function oxTDimensionsf.ToString(decimals: loopint): StdString;
 begin
    Result := sf(w, decimals) + 'x' + sf(h, decimals);
 end;
@@ -587,7 +587,7 @@ begin
    Result := abs(p2.x - x) + abs(p2.y - y);
 end;
 
-function oxTPointf.ToString(decimals: loopint): string;
+function oxTPointf.ToString(decimals: loopint): StdString;
 begin
    Result := sf(x, decimals) + ', ' + sf(y, decimals);
 end;
@@ -629,9 +629,9 @@ begin
    Result := abs(p2.x - x) + abs(p2.y - y);
 end;
 
-function oxTPoint.ToString(): string;
+function oxTPoint.ToString(): StdString;
 begin
-   WriteStr(Result, x, 'x', y);
+   Result := sf(x) + 'x' + sf(y);
 end;
 
 { oxTRect }
@@ -751,9 +751,9 @@ begin
    Result := (w > 0) and (h > 0);
 end;
 
-function oxTDimensions.ToString: string;
+function oxTDimensions.ToString(): StdString;
 begin
-   WriteStr(Result, w, 'x', h);
+   Result := sf(w) + 'x' + sf(h);
 end;
 
 INITIALIZATION
