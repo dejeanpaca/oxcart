@@ -15,7 +15,7 @@ INTERFACE
       {app}
       appuEvents, appuActionEvents, appuKeyMappings, appuMouse,
       {oX}
-      oxuTypes, oxuFont, oxuRender, oxuUI, oxuTexture, oxuRenderUtilities, oxuResourcePool,
+      oxuTypes, oxuFont, oxuRender, oxuUI, oxuTexture, oxuResourcePool,
       {ui}
       uiuTypes, uiuWindowTypes, uiuSkinTypes,
       uiuWindow, uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuControl, uiuWidgetWindow,

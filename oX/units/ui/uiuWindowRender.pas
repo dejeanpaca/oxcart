@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuWindowTypes, oxuFont,
       oxuPrimitives, oxuTransform, oxuTexture,
-      oxuRenderer, oxuRender, oxuRenderUtilities,
+      oxuRenderer, oxuRender,
       {ui}
       oxuUI, uiuTypes, uiuSkinTypes,
       uiuWindowTypes, uiuWidget, uiuDraw, uiuDrawUtilities, uiWidgets, uiuWindow;
