@@ -13,6 +13,7 @@ INTERFACE
    USES
       uStd,
       {ox}
+      oxuRunRoutines,
       oxuLightComponent, oxeduEditRenderers, oxeduComponent, oxeduComponentGlyphs;
 
 TYPE
@@ -47,7 +48,10 @@ begin
    FreeObject(oxedLightEditRenderer);
 end;
 
+VAR
+   initRoutine: oxTRunRoutine;
+
 INITIALIZATION
-   oxedEditRenderers.Init.Add('light', @init, @deinit);
+   oxedEditRenderers.Init.Add(initRoutine, 'light', @init, @deinit);
 
 END.
