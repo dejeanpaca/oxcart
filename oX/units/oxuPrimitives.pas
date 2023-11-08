@@ -172,6 +172,11 @@ TYPE
       procedure Reindex(oldIndices: PWord; newIndices: PWord; count: loopint; oldVertex, newVertex: PVector3f);
       {reindex an array from old indices to new indices}
       procedure Reindex(oldIndices: PDWord; newIndices: PDWord; count: loopint; oldVertex, newVertex: PVector3f);
+
+      {reindex an array from old indices to new indices}
+      procedure Reindex(oldIndices: PWord; newIndices: PWord; count: loopint; oldVertex, newVertex: PVector2f);
+      {reindex an array from old indices to new indices}
+      procedure Reindex(oldIndices: PDWord; newIndices: PDWord; count: loopint; oldVertex, newVertex: PVector2f);
    end;
 
 VAR
@@ -331,6 +336,28 @@ end;
 
 procedure oxTPrimitivesGlobal.Reindex(oldIndices: PDWord; newIndices: PDWord;
    count: loopint; oldVertex, newVertex: PVector3f);
+var
+   i: loopint;
+
+begin
+   for i := 0 to count - 1 do begin
+     newVertex[newIndices[i]] := oldVertex[oldIndices[i]];
+   end;
+end;
+
+procedure oxTPrimitivesGlobal.Reindex(oldIndices: PWord; newIndices: PWord;
+   count: loopint; oldVertex, newVertex: PVector2f);
+var
+   i: loopint;
+
+begin
+   for i := 0 to count - 1 do begin
+     newVertex[newIndices[i]] := oldVertex[oldIndices[i]];
+   end;
+end;
+
+procedure oxTPrimitivesGlobal.Reindex(oldIndices: PDWord; newIndices: PDWord;
+   count: loopint; oldVertex, newVertex: PVector2f);
 var
    i: loopint;
 
