@@ -506,6 +506,7 @@ begin
 
    logv('Halting app');
    halt(0);
+
     // Can't touch android_app object after this.
 end;
 
@@ -518,8 +519,6 @@ begin
    event := nil;
 
    while AInputQueue_getEvent(app^.inputQueue, @event) >= 0 do begin
-      logv('New input event: type=' + sf(AInputEvent_getType(event)));
-
       if AInputQueue_preDispatchEvent(app^.inputQueue, event) <> 0 then
          continue;
 
