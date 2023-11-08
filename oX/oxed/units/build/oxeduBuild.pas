@@ -23,7 +23,7 @@ INTERFACE
       oxeduPlatform, oxeduTasks, oxeduSettings,
       oxeduAppInfo,oxeduProjectScanner,
       {build}
-      oxeduBuildLog, oxeduBuildAssets;
+      oxeduBuildLog, oxeduAssets, oxeduBuildAssets;
 
 CONST
    OXED_BUILD_3RDPARTY_PATH = '3rdparty';
@@ -270,7 +270,11 @@ begin
    end;
 
    if(not ok) then
-      fail('Failed to initialize build system');
+      fail('Failed to initialize build system')
+   else begin
+      {set ox package path to the root path}
+      oxedAssets.oxPackage.Path := build.RootPath;
+   end;
 end;
 
 { oxedTBuildGlobal }
@@ -429,6 +433,7 @@ begin
    f.compiler.applyConventions := false;
 
    if(oxedBuild.BuildType <> OXED_BUILD_TASK_REBUILD_THIRD_PARTY) then begin
+      processPackage(oxedAssets.oxPackage, oxedProject.Path);
       processPackage(oxedProject.MainPackage, oxedProject.Path);
 
       for i := 0 to oxedProject.Packages.n - 1 do begin
@@ -512,10 +517,13 @@ begin
       exit;
 
    config.Add('');
-   if(@package <> @oxedProject.MainPackage) then
-      config.Add('# Package: ' + package.Name)
-   else
-      config.Add('# Project: ' + package.Name);
+   if(@package <> @oxedAssets.oxPackage) then begin
+      if(@package <> @oxedProject.MainPackage) then
+         config.Add('# Package: ' + package.Name)
+      else
+         config.Add('# Project: ' + package.Name);
+   end else
+      config.Add('# OX');
 
    config.Add('# Path: ' + path);
    config.Add('');
@@ -534,6 +542,7 @@ var
    i: loopint;
 
 begin
+   InsertPackageIntoConfig(config, oxedAssets.oxPackage, oxedAssets.oxPackage.Path);
    InsertPackageIntoConfig(config, oxedProject.MainPackage, oxedProject.Path);
 
    for i := 0 to oxedProject.Packages.n - 1 do begin
@@ -1408,8 +1417,9 @@ INITIALIZATION
    TProcedures.InitializeValues(oxedBuild.OnFailed);
    TProcedures.InitializeValues(oxedBuild.OnDone);
 
-   oxedBuild.BuildTarget := OXED_BUILD_LIB;
-
    oxedProjectScanner.OnDone.Add(@onScanDone);
+
+   {don't load default units, we'll load ox units as a package}
+   BuildConfiguration.DoLoadUnits := false;
 
 END.

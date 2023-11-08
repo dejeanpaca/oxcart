@@ -36,6 +36,8 @@ TYPE
    oxedTAssets = record
       {a package containing oX data (assets)}
       oxDataPackage: oxedTPackage;
+      {a package containing oX code}
+      oxPackage: oxedTPackage;
 
       {ignore these file types when building (don't copy over)}
       Ignore,
@@ -120,12 +122,18 @@ end;
 
 procedure init();
 begin
-   oxedAssets.oxDataPackage.Id := 'ox';
+   oxedAssets.oxDataPackage.Id := 'ox_data';
    oxedAssets.oxDataPackage.Path := oxPaths.BasePath + 'data' + DirectorySeparator;
+
+   oxedAssets.oxPackage.Id := 'ox';
+   oxedAssets.oxPackage.Path := oxPaths.BasePath;
 end;
 
 INITIALIZATION
    oxed.Init.Add('assets', @init);
+
+   oxedTPackage.Init(oxedAssets.oxDataPackage);
+   oxedTPackage.Init(oxedAssets.oxPackage);
 
    oxedTAssetsIgnorePaths.Initialize(oxedAssets.Ignore);
    oxedTAssetsIgnorePaths.Initialize(oxedAssets.ProjectIgnore);
