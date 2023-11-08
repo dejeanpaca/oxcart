@@ -16,6 +16,7 @@ INTERFACE
       oxuTypes, oxuFont, oxuPlatform,
       {ui}
       uiuDraw, uiuWidget, uiuWindowTypes, uiuSkinTypes, uiuTypes,
+      oxuPlatformClipboard, uiuClipboard,
       uiWidgets, uiuRegisteredWidgets, uiuWidgetRender,
       wdguBase;
 
@@ -452,6 +453,21 @@ begin
          what := wdghINPUTBOX_ESCAPE;
 
       Result := Control(what) <> -1;
+   end else if(k.Equal(kcC, kmCONTROL)) then begin
+      {copy}
+      if(k.Released()) then
+         uiClipboard.StoreString(Content);
+   end else if(k.Equal(kcX, kmCONTROL)) then begin
+      {copy}
+      if(k.Released()) then begin
+         uiClipboard.StoreString(Content);
+         Clear();
+      end;
+   end else if(k.Equal(kcV, kmCONTROL)) then begin
+      {paste}
+      if(k.Released()) and (uiClipboard.HasContent() = OX_CLIPBOARD_TYPE_STRING) then begin
+         SetText(uiClipboard.GetString());
+      end;
    end else if(k.Equal(kcU, kmCONTROL)) then begin
       {clear any text before current position}
       if(not ReadOnly) and (k.Released()) then begin
