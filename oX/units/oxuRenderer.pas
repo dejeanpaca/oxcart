@@ -368,7 +368,7 @@ var
    c: TColor4f;
 
 begin
-   {%H-}c.Assign(r, g, b, a);
+   c := TColor4f.Create(r, g, b, a);
    ClearColor(c);
 end;
 
