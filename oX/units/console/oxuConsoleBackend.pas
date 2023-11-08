@@ -64,10 +64,18 @@ TYPE
 
    {COMMANDS}
    conTSimpleComandCallback = procedure(con: conPConsole);
+   conTSimpleObjectComandCallback = procedure(con: conPConsole) of object;
 
-   conTSimpleComand = record
+   conPSimpleCommand = ^conTSimpleCommand;
+
+   { conTSimpleCommand }
+
+   conTSimpleCommand = record
       sID: StdString;
       Callback: conTSimpleComandCallback;
+      ObjectCallback: conTSimpleObjectComandCallback;
+
+      class procedure Initialize(out c: conTSimpleCommand); static;
    end;
 
    {command notification procedure}
@@ -101,7 +109,7 @@ TYPE
 
    {CONSOLE RECORD}
 
-   conTSimpleCommands = specialize TSimpleList<conTSimpleComand>;
+   conTSimpleCommands = specialize TSimpleList<conTSimpleCommand>;
 
    { conTConsole }
 
@@ -235,7 +243,8 @@ TYPE
 
       {COMMAND HANDLERS}
       procedure AddCommand(const command: StdString; callback: conTSimpleComandCallback);
-      function FindCallback(const command: StdString): conTSimpleComandCallback;
+      procedure AddCommand(const command: StdString; callback: conTSimpleObjectComandCallback);
+      function FindCommand(const command: StdString): conPSimpleCommand;
 
       {adds a command handler}
       procedure AddHandler(var handler: conTHandler);
@@ -349,6 +358,13 @@ begin
       cidCLEAR:
          con.Clear();
    end;
+end;
+
+{ conTSimpleCommand }
+
+class procedure conTSimpleCommand.Initialize(out c: conTSimpleCommand);
+begin
+   ZeroOut(c, SizeOf(c));
 end;
 
 
@@ -552,17 +568,22 @@ end;
 
 function conTConsole.PerformSimpleCommand(): boolean;
 var
-   callback: conTSimpleComandCallback;
+   callback: conPSimpleCommand;
 
 begin
    Result := false;
 
    if(Arguments.n > 0) then begin
-      callback := FindCallback(Arguments.list[0]);
+      callback := FindCommand(Arguments.list[0]);
 
-      if(callback <> nil) then begin
-         callback(@self);
-         exit(true);
+      if callback <> nil then begin
+         if callback^.Callback <> nil then begin
+            callback^.Callback(@self);
+            exit(true);
+         end else if callback^.ObjectCallback <> nil then begin
+            callback^.ObjectCallback(@self);
+            exit(true);
+         end;
       end;
    end;
 end;
@@ -911,15 +932,31 @@ end;
 
 procedure conTConsole.AddCommand(const command: StdString; callback: conTSimpleComandCallback);
 var
-   cmd: conTSimpleComand;
+   cmd: conTSimpleCommand;
 
 begin
+   conTSimpleCommand.Initialize(cmd);
+
    cmd.sID := command;
    cmd.Callback := callback;
+
    Commands.Add(cmd);
 end;
 
-function conTConsole.FindCallback(const command: StdString): conTSimpleComandCallback;
+procedure conTConsole.AddCommand(const command: StdString; callback: conTSimpleObjectComandCallback);
+var
+   cmd: conTSimpleCommand;
+
+begin
+   conTSimpleCommand.Initialize(cmd);
+
+   cmd.sID := command;
+   cmd.ObjectCallback := callback;
+
+   Commands.Add(cmd);
+end;
+
+function conTConsole.FindCommand(const command: StdString): conPSimpleCommand;
 var
    ni: longint;
    sID: StdString;
@@ -930,7 +967,7 @@ begin
 
       for ni := 0 to (Commands.n - 1) do begin
          if(Commands.List[ni].sID = sID) then
-            exit(Commands.List[ni].Callback);
+            exit(@Commands.List[ni]);
       end;
    end;
 
