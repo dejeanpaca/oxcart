@@ -27,8 +27,8 @@ TYPE
    {scene edit render parameters}
    oxedTEditRenderParameters = record
       Window: uiTWindow;
-      Camera: oxTCamera;
-      Projection: oxTProjection;
+      Camera: oxPCamera;
+      Projection: oxPProjection;
       Scene: oxTScene;
       Entity: oxTEntity;
       ComponentObject: oxTComponent;

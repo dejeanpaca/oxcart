@@ -24,8 +24,8 @@ TYPE
    { oxTSceneRenderParameters }
 
    oxTSceneRenderParameters = record
-      Projection: oxTProjection;
-      Camera: oxTCamera;
+      Projection: oxPProjection;
+      Camera: oxPCamera;
       Entity: oxTEntity;
 
       class procedure Init(out p: oxTSceneRenderParameters;
@@ -82,14 +82,8 @@ class procedure oxTSceneRenderParameters.Init(out p: oxTSceneRenderParameters;
 begin
    ZeroOut(p, SizeOf(p));
 
-   p.Projection.Initialize();
-   p.Camera.Initialize();
-
-   if(setProjection <> nil) then
-      p.Projection.From(setProjection^);
-
-   if(setCamera <> nil) then
-      p.Camera := setCamera^;
+   p.Projection := setProjection;
+   p.Camera := setCamera;
 end;
 
 { oxTSceneRender }
@@ -103,10 +97,10 @@ end;
 
 procedure oxTSceneRenderer.RenderCamera(var params: oxTSceneRenderParameters);
 begin
-   params.Projection.ClearColor := Scene.World.ClearColor;
+   params.Projection^.ClearColor := Scene.World.ClearColor;
 
-   params.Projection.Apply();
-   params.Camera.LookAt();
+   params.Projection^.Apply();
+   params.Camera^.LookAt();
 
    oxTransform.Identity();
    oxTransform.Apply();
@@ -138,16 +132,16 @@ begin
    Scene.GetComponentsInChildren(oxTCameraComponent, cameras);
 
    oxTSceneRenderParameters.Init(params);
-   params.Projection := projection;
+   params.Projection := @projection;
 
    for i := 0 to (cameras.n - 1) do begin
       cameraComponent := oxTCameraComponent(cameras.List[i]);
-      params.Camera := cameraComponent.Camera;
+      params.Camera := @cameraComponent.Camera;
 
       if(cameraComponent.UseSceneProjection) then
-         params.Projection := projection
+         params.Projection := @projection
       else
-         params.Projection := cameraComponent.Projection;
+         params.Projection := @cameraComponent.Projection;
 
       RenderCamera(params);
    end;
@@ -178,16 +172,16 @@ var
 begin
    if(params.Entity.Renderable) then begin
       {backup matrix}
-      Matrix := params.Camera.Transform.Matrix;
+      Matrix := params.Camera^.Transform.Matrix;
 
       {apply entity matrix to cam matrix}
-      params.Camera.Transform.Matrix := params.Camera.Transform.Matrix * params.Entity.Matrix;
+      params.Camera^.Transform.Matrix := params.Camera^.Transform.Matrix * params.Entity.Matrix;
 
       for i := 0 to (params.Entity.Components.n - 1) do begin
          component := params.Entity.Components.List[i];
 
          if(oxTSerializable.IsClass(component.ClassParent, oxTRenderComponent)) then begin
-            params.Camera.Transform.Apply();
+            params.Camera^.Transform.Apply();
             oxTRenderComponent(component).Render();
          end;
       end;
@@ -195,7 +189,7 @@ begin
       RenderEntities(params.Entity.Children, params);
 
       {restore cam matrix}
-      params.Camera.Transform.Matrix := Matrix;
+      params.Camera^.Transform.Matrix := Matrix;
    end;
 end;
 
