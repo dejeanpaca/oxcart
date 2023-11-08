@@ -563,7 +563,7 @@ begin
    {$ELSEIF defined(COCOA)}
    Result := rc <> nil;
    {$ELSE}
-   Result := 0;
+   Result := false;
    {$ENDIF}
 end;
 
