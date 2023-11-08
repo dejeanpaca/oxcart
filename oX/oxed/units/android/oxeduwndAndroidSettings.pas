@@ -33,13 +33,13 @@ VAR
 
 procedure enableAndroidDeployWidgets(enabled: boolean);
 begin
-   wdg.EmulatorCPUType.Enable(enabled);
    wdg.ProjectFilesPath.Enable(enabled);
    wdg.DeployTemplate.Enable(enabled);
 end;
 
 procedure enableAndroidWidgets(enabled: boolean);
 begin
+   wdg.EmulatorCPUType.Enable(enabled);
    wdg.PackageName.Enable(enabled);
    wdg.ManualFileManagement.Enable(enabled);
    enableAndroidDeployWidgets(enabled and wdg.ManualFileManagement.Checked());
