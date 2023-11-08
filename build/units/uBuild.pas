@@ -108,6 +108,10 @@ TYPE
          PositionIndependentCode: boolean;
       end;
 
+      ExecutableOptions: record
+         ExcludeDefaultLibraryPath: boolean;
+      end;
+
       Options: record
          {we're building a library}
          IsLibrary,
@@ -427,6 +431,8 @@ begin
    FPCOptions.ReferenceCountedString := true;
    FPCOptions.TurnOnInlining := true;
    FPCOptions.PositionIndependentCode := false;
+
+   ExecutableOptions.ExcludeDefaultLibraryPath := false;
 
    Optimization.Level := 1;
 
