@@ -172,7 +172,6 @@ begin
    RunParameters.Initialize(RunParameters);
    BuildModes.Initialize(BuildModes);
    Symbols.Initialize(Symbols);
-   OnProjectModified.Initialize(OnProjectModified);
 end;
 
 procedure oxedTProject.SetPath(const newPath: string);
@@ -226,6 +225,7 @@ end;
 procedure oxedTProject.MarkModified(newModified: boolean);
 begin
    Modified := newModified;
+
    oxedTProject.OnProjectModified.Call();
 end;
 
