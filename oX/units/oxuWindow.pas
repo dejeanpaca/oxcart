@@ -75,9 +75,11 @@ begin
    {$IFDEF OX_LIBRARY}
    oxTRenderer(wnd.Renderer).InitWindowLibrary(wnd);
    {$ENDIF}
+
+   wnd.oxProperties.Created := true;
 end;
 
-procedure windowCreateCommon(wnd: oxTWindow);
+function windowCreateCommon(wnd: oxTWindow): boolean;
 begin
    oxRenderingContext.UseWindow(wnd);
 
@@ -94,6 +96,11 @@ begin
    end;
 
    wnd.SetupViewport();
+
+   Result := oxTRenderer(wnd.Renderer).SetupWindow(wnd);
+
+   if(Result) then
+      windowCreateFinalize(wnd);
 end;
 
 {create a window which is only part of an external window (e.g. running in a library)}
@@ -101,7 +108,6 @@ function windowCreateExternal(wnd: oxTWindow; externalWindow: uiTWindow): boolea
 var
    oxw: oXTWindow;
    renderer: oxTRenderer;
-   rendererOk: boolean;
 
 begin
    oxw := oxTWindow(externalWindow.oxwParent);
@@ -115,17 +121,10 @@ begin
 
    wnd.SetDimensions(externalWindow.Dimensions.w, externalWindow.Dimensions.h, false);
 
-   windowCreateCommon(wnd);
+   Result := windowCreateCommon(wnd);
 
-   rendererOk := renderer.SetupWindow(wnd);
-   wnd.oxProperties.Created := true;
-   Result := rendererOk;
-
-   if(rendererOk) then begin
-      windowCreateFinalize(wnd);
-
+   if(Result) then
       log.v('Created external window from: ' + externalWindow.Title);
-   end;
 end;
 
 function windowCreate(wnd: oxTWindow): boolean;
@@ -199,14 +198,8 @@ begin
       Result := true;
    end;
 
-   windowCreateCommon(wnd);
-
-   Result := renderer.SetupWindow(wnd);
-
-   if(Result) then begin
-      windowCreateFinalize(wnd);
-      wnd.oxProperties.Created := true;
-   end;
+   if(Result) then
+      Result := windowCreateCommon(wnd);
 
    log.Leave();
 end;
