@@ -27,6 +27,10 @@ IMPLEMENTATION
 
 procedure oglGetInformation();
 begin
+   {$IFDEF GLES}
+   oxglRendererInfo.GLES := true;
+   {$ENDIF}
+
    {$IFNDEF OX_LIBRARY}
    {get basic information}
    oxglRendererInfo.Renderer := ogl.GetString(GL_RENDERER);
@@ -42,13 +46,15 @@ begin
    oxglRendererInfo.iVersion := oxglRendererInfo.Version.Major * 100 + oxglRendererInfo.Version.Minor * 10;
 
    {get other information}
-   glGetIntegerv(GL_MAX_TEXTURE_SIZE,  @oxglRendererInfo.Limits.MaxTextureSize);
-   glGetIntegerv(GL_MAX_LIGHTS,        @oxglRendererInfo.Limits.MaxLights);
-   glGetIntegerv(GL_MAX_CLIP_PLANES,   @oxglRendererInfo.Limits.MaxClipPlanes);
+   glGetIntegerv(GL_MAX_TEXTURE_SIZE, @oxglRendererInfo.Limits.MaxTextureSize);
+   glGetIntegerv(GL_MAX_CLIP_PLANES, @oxglRendererInfo.Limits.MaxClipPlanes);
 
-   glGetIntegerv(GL_MAX_PROJECTION_STACK_DEPTH, @oxglRendererInfo.Limits.MaxProjectionStackDepth);
-   glGetIntegerv(GL_MAX_MODELVIEW_STACK_DEPTH,  @oxglRendererInfo.Limits.MaxModelViewStackDepth);
-   glGetIntegerv(GL_MAX_TEXTURE_STACK_DEPTH,    @oxglRendererInfo.Limits.maxTextureStackDepth);
+   if(not oxglRendererInfo.GLES) then begin
+      glGetIntegerv(GL_MAX_LIGHTS, @oxglRendererInfo.Limits.MaxLights);
+      glGetIntegerv(GL_MAX_PROJECTION_STACK_DEPTH, @oxglRendererInfo.Limits.MaxProjectionStackDepth);
+      glGetIntegerv(GL_MAX_MODELVIEW_STACK_DEPTH, @oxglRendererInfo.Limits.MaxModelViewStackDepth);
+      glGetIntegerv(GL_MAX_TEXTURE_STACK_DEPTH, @oxglRendererInfo.Limits.maxTextureStackDepth);
+   end;
 
    oxglRendererInfo.GLSL.Version := 'none';
    oxglRendererInfo.GLSL.Major := 0;
