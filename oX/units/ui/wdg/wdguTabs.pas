@@ -69,6 +69,8 @@ TYPE
          Container: wdgTTabContainer;
 
          LastPointerPosition: oxTPoint;
+         SurfaceOffset: oxTPoint;
+         SurfaceDimensions: oxTDimensions;
 
       constructor Create(); override;
       procedure OnDestroy(); override;
@@ -78,8 +80,6 @@ TYPE
       function Key(var k: appTKeyEvent): boolean; override;
       procedure Hover(x, y: longint; what: uiTHoverEvent); override;
 
-      procedure RenderHorizontal();
-      procedure RenderVertical();
       procedure Render(); override;
       procedure RenderTabHeader(const r: oxTRect; tabIndex: loopint; tabPosition: uiTControlGridPosition);
 
@@ -118,6 +118,9 @@ TYPE
 
       {called when a tab has a secondary click}
       procedure OnTabSecondaryClick({%H-}index: loopint); virtual;
+
+      {set tabs as vertical}
+      procedure SetVertical(useVertical: boolean);
 
       protected
          Tabs: record
@@ -296,11 +299,73 @@ begin
 end;
 
 procedure wdgTTabs.Render();
+var
+   i: loopint;
+
+   current: wdgPTabEntry;
+
+   f: oxTFont;
+   r: oxTRect;
+
+   pSkin: uiTSkin;
+
 begin
-   if(not Vertical) then
-      RenderHorizontal()
-   else
-      RenderVertical();
+   pSkin := GetSkinObject();
+
+   if(RenderSurface) then begin
+      r.x := RPosition.x + SurfaceOffset.x;
+      r.y := RPosition.y - SurfaceOffset.y;
+      r.w := SurfaceDimensions.w;
+      r.h := SurfaceDimensions.h;
+
+      {render surface border}
+      SetColor(pSkin.Colors.Border);
+      uiDraw.Rect(r);
+
+      {fill surface}
+      SetColor(pSkin.Colors.Surface);
+      r.x := r.x + 1;
+      r.y := r.y - 1;
+      r.w := r.w - 2;
+      r.h := r.h - 2;
+
+      uiDraw.Box(r);
+   end;
+
+   if(Tabs.t.n < 1) then
+      exit;
+
+   {render tab titles}
+   for i := 0 to (Tabs.t.n - 1) do begin
+      current :=  @Tabs.t.List[i];
+      r.x := RPosition.x + current^.x;
+      r.y := RPosition.y - current^.y;
+      r.w := current^.TotalWidth;
+      r.h := current^.TotalHeight;
+
+      RenderTabHeader(r, i, [uiCONTROL_GRID_LEFT]);
+   end;
+
+   {now render tab title text}
+   f := CachedFont;
+
+   for i := 0 to (Tabs.t.n - 1) do begin
+      current := @Tabs.t.List[i];
+      r.x := RPosition.x + current^.x;
+      r.y := RPosition.y - current^.y;
+      r.w := current^.TotalWidth;
+      r.h := current^.TotalHeight;
+
+      f.Start();
+         if(Tabs.Selected <> i) then
+            SetColorBlended(pSkin.Colors.Text)
+         else
+            SetColorBlended(pSkin.Colors.TextInHighlight);
+
+         f.WriteCentered(current^.Title, r);
+
+      oxf.Stop();
+   end;
 end;
 
 procedure wdgTTabs.RenderTabHeader(const r: oxTRect; tabIndex: loopint; tabPosition: uiTControlGridPosition);
@@ -382,130 +447,6 @@ begin
          Tabs.Highlighted := -1;
    end else
       Tabs.Highlighted := -1;
-end;
-
-procedure wdgTTabs.RenderHorizontal();
-var
-   i: loopint;
-
-   current: wdgPTabEntry;
-
-   r: oxTRect;
-   f: oxTFont;
-
-   pSkin: uiTSkin;
-
-begin
-   pSkin := GetSkinObject();
-
-   if(RenderSurface) then begin
-      {render surface border}
-      SetColor(pSkin.Colors.Border);
-      uiDraw.Rect(RPosition.x, RPosition.y - HeaderHeight,
-         RPosition.x + Dimensions.w - 1, RPosition.y - Dimensions.h + 1);
-
-      {fill surface}
-      SetColor(pSkin.Colors.Surface);
-      uiDraw.Box(RPosition.x + 1, RPosition.y - HeaderHeight - 1,
-         RPosition.x + Dimensions.w - 2, RPosition.y - Dimensions.h + 2);
-   end;
-
-   if(Tabs.t.n < 1) then
-      exit;
-
-   {render tab titles}
-   for i := 0 to (Tabs.t.n - 1) do begin
-      current :=  @Tabs.t.List[i];
-      r.x := RPosition.x + current^.x;
-      r.y := RPosition.y;
-      r.w := current^.TotalWidth;
-      r.h := current^.TotalHeight;
-
-      RenderTabHeader(r, i, [uiCONTROL_GRID_TOP]);
-  end;
-
-   {now render tab title text}
-   f := CachedFont;
-
-   for i := 0 to (Tabs.t.n - 1) do begin
-      current := @Tabs.t.List[i];
-      r.x := RPosition.x + current^.x;
-      r.y := RPosition.y;
-      r.w := current^.TotalWidth;
-      r.h := current^.TotalHeight;
-
-      f.Start();
-         if(Tabs.Selected <> i) then
-            SetColorBlended(pSkin.Colors.Text)
-         else
-            SetColorBlended(pSkin.Colors.TextInHighlight);
-
-         f.WriteCentered(current^.Title, r);
-
-      oxf.Stop();
-   end;
-end;
-
-procedure wdgTTabs.RenderVertical();
-var
-   i: loopint;
-
-   current: wdgPTabEntry;
-
-   f: oxTFont;
-   r: oxTRect;
-
-   pSkin: uiTSkin;
-
-begin
-   pSkin := GetSkinObject();
-
-   if(RenderSurface) then begin
-      {render surface border}
-      SetColor(pSkin.Colors.Border);
-      uiDraw.Rect(RPosition.x + HeaderWidth, RPosition.y,
-         RPosition.x + Dimensions.w - 1, RPosition.y - Dimensions.h + 1);
-
-      {fill surface}
-      SetColor(pSkin.Colors.Surface);
-      uiDraw.Box(RPosition.x + HeaderWidth + 1, RPosition.y - 1,
-         RPosition.x + Dimensions.w - 2, RPosition.y - Dimensions.h + 2);
-   end;
-
-   if(Tabs.t.n < 1) then
-      exit;
-
-   {render tab titles}
-   for i := 0 to (Tabs.t.n - 1) do begin
-      current :=  @Tabs.t.List[i];
-      r.x := RPosition.x + current^.x;
-      r.y := RPosition.y - current^.y;
-      r.w := current^.TotalWidth;
-      r.h := current^.TotalHeight;
-
-      RenderTabHeader(r, i, [uiCONTROL_GRID_LEFT]);
-   end;
-
-   {now render tab title text}
-   f := CachedFont;
-
-   for i := 0 to (Tabs.t.n - 1) do begin
-      current := @Tabs.t.List[i];
-      r.x := RPosition.x + current^.x;
-      r.y := RPosition.y - current^.y;
-      r.w := current^.TotalWidth;
-      r.h := current^.TotalHeight;
-
-      f.Start();
-         if(Tabs.Selected <> i) then
-            SetColorBlended(pSkin.Colors.Text)
-         else
-            SetColorBlended(pSkin.Colors.TextInHighlight);
-
-         f.WriteCentered(current^.Title, r);
-
-      oxf.Stop();
-   end;
 end;
 
 {recalculate the size of the individual tabs}
@@ -593,10 +534,7 @@ end;
 function wdgTTabsGlobal.Add(const Pos: oxTPoint; const Dim: oxTDimensions; vertical: boolean): wdgTTabs;
 begin
    Result := wdgTTabs(uiWidget.Add(internal, Pos, Dim));
-   Result.Vertical := vertical;
-
-   if(vertical) then
-      Result.HeaderWidth := wdgTabs.HeaderWidth;
+   Result.SetVertical(vertical);
 end;
 
 function wdgTTabs.AddTab(const Title: StdString; const tabID: StdString): wdgPTabEntry;
@@ -779,6 +717,24 @@ end;
 procedure wdgTTabs.OnTabSecondaryClick(index: loopint);
 begin
 
+end;
+
+procedure wdgTTabs.SetVertical(useVertical: boolean);
+begin
+   Vertical := useVertical;
+
+   SurfaceOffset.x := 0;
+   SurfaceOffset.y := 0;
+
+   if(Vertical) then begin
+      HeaderWidth := wdgTabs.HeaderWidth;
+      SurfaceOffset.x := HeaderWidth;
+   end else begin
+      SurfaceOffset.y := HeaderHeight;
+   end;
+
+   SurfaceDimensions.w := Dimensions.w - SurfaceOffset.x;
+   SurfaceDimensions.h := Dimensions.h - SurfaceOffset.y;
 end;
 
 procedure init();
