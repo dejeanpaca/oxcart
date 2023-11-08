@@ -3,12 +3,13 @@
    Copyright (C) 2016. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}{$I-}
+{$INCLUDE oxheader.inc}
 UNIT uLinux;
 
 INTERFACE
 
-   USES StringUtils, baseunix, errors;
+   USES
+      StringUtils, baseunix, errors;
 
 TYPE
 
@@ -54,15 +55,15 @@ IMPLEMENTATION
 class function appTLinuxHelper.GetErrorString(ErrorCode: cint; includeNumber: boolean = true): string;
 begin
    if(includeNumber) then
-      result := '(' + sf(ErrorCode) + ') ' +StrError(ErrorCode)
+      Result := '(' + sf(ErrorCode) + ') ' +StrError(ErrorCode)
    else
-      result := StrError(ErrorCode);
+      Result := StrError(ErrorCode);
 end;
 
 class function appTLinuxHelper._ioc(dir, typ, nr, size: cint): cint;
 begin
    {$PUSH}{$R-}
-   result := ((dir shl _IOC_DIRSHIFT) or
+   Result := ((dir shl _IOC_DIRSHIFT) or
       (typ shl _IOC_TYPESHIFT) or
       (nr shl _IOC_NRSHIFT) or
       (size shl _IOC_SIZESHIFT));
@@ -71,22 +72,22 @@ end;
 
 class function appTLinuxHelper._ior(typ, nr, size: cint): cint;
 begin
-   result := _ioc(_IOC_READ, typ, nr, size);
+   Result := _ioc(_IOC_READ, typ, nr, size);
 end;
 
 class function appTLinuxHelper._iow(typ, nr, size: cint): cint;
 begin
-   result := _ioc(_IOC_WRITE, typ, nr, size);
+   Result := _ioc(_IOC_WRITE, typ, nr, size);
 end;
 
 class function appTLinuxHelper._ior(typ: char; nr, size: cint): cint;
 begin
-   result := _ioc(_IOC_READ, ord(typ), nr, size);
+   Result := _ioc(_IOC_READ, ord(typ), nr, size);
 end;
 
 class function appTLinuxHelper._iow(typ: char; nr, size: cint): cint;
 begin
-   result := _ioc(_IOC_WRITE, ord(typ), nr, size);
+   Result := _ioc(_IOC_WRITE, ord(typ), nr, size);
 end;
 
 END.
