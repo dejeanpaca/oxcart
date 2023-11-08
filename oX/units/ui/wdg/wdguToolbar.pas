@@ -20,12 +20,12 @@ INTERFACE
       wdguWorkbar;
 
 CONST
-  wdgscTOOLBAR_REGULAR = 0;
-  wdgscTOOLBAR_REGULAR_DISABLED = 1;
-  wdgscTOOLBAR_HIGHLIGHT = 2;
-  wdgscTOOLBAR_ACTIVATED = 3;
+   wdgscTOOLBAR_REGULAR = 0;
+   wdgscTOOLBAR_REGULAR_DISABLED = 1;
+   wdgscTOOLBAR_HIGHLIGHT = 2;
+   wdgscTOOLBAR_ACTIVATED = 3;
 
-  wdgToolbarSkinColorDescriptor: array[0..3] of uiTWidgetSkinColorDescriptor = (
+   wdgToolbarSkinColorDescriptor: array[0..3] of uiTWidgetSkinColorDescriptor = (
       (
          Name: 'regular';
          Color: (255, 255, 255, 255)
@@ -44,19 +44,19 @@ CONST
       )
    );
 
-  wdgToolbarSkinDescriptor: uiTWidgetSkinDescriptor = (
-     Name: 'toolbar';
+   wdgToolbarSkinDescriptor: uiTWidgetSkinDescriptor = (
+      Name: 'toolbar';
 
-     nColors: Length(wdgToolbarSkinColorDescriptor);
-     nImages: 0;
-     nBools: 0;
-     nStrings: 0;
+      nColors: Length(wdgToolbarSkinColorDescriptor);
+      nImages: 0;
+      nBools: 0;
+      nStrings: 0;
 
-     Colors: @wdgToolbarSkinColorDescriptor;
-     Images: nil;
-     Bools: nil;
-     Strings: nil;
-     Setup: nil
+      Colors: @wdgToolbarSkinColorDescriptor;
+      Images: nil;
+      Bools: nil;
+      Strings: nil;
+      Setup: nil
   );
 
 TYPE
