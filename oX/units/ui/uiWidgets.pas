@@ -1275,10 +1275,8 @@ end;
 
 function uiTWidgetHelper.GetColor(clrIdx: longint): TColor4ub;
 begin
-   if(Skin <> nil) then begin
-      if(Skin^.Colors <> nil) then
-         exit(Skin^.Colors[clrIdx]);
-   end;
+   if(Skin <> nil and Skin^.Colors <> nil) then
+      exit(Skin^.Colors[clrIdx]);
 
    exit(cWhite4ub);
 end;
