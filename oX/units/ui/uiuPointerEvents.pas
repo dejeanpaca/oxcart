@@ -17,7 +17,8 @@ INTERFACE
       {oX}
       oxuWindowTypes, oxuTypes, oxuGlobalInstances, oxuWindow,
       {ui}
-      uiuUI, uiuWindowTypes, uiuWindow, uiuWidget, uiuTypes, uiWidgets, uiuControl, uiuCursor, uiuPointer;
+      oxuUI, uiuUI, uiuTypes, uiuControl, uiuCursor, uiuPointer,
+      uiuWindowTypes, uiuWindow, uiuWidget, uiWidgets;
 
 TYPE
    { uiTPointerEventsGlobal }
@@ -400,6 +401,9 @@ end;
 begin
    if(event.evID <> appMOUSE_EVENT) then
       exit;
+
+   if(oxui = nil) then
+      oxui := oxuUI.oxui;
 
    oxui.mLastEventTime := timer.Cur();
    m := appTMouseEvent(event.GetData()^);
