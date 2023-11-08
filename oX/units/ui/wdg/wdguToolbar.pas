@@ -255,7 +255,6 @@ var
    i,
    size,
    center: loopint;
-   cSurface: TColor4ub;
 
    f: oxTFont;
    m: TMatrix4f;
@@ -322,8 +321,6 @@ begin
 
    oxui.Material.ApplyTexture('texture', nil);
 
-   cSurface := GetSurfaceColor();
-
    {render separators}
    for i := 0 to Items.n - 1 do begin
       if(Items.List[i].Typ = WDG_TOOLBAR_ITEM_SEPARATOR) then begin
@@ -332,20 +329,20 @@ begin
             y := RPosition.y - PaddingTop;
             y2 := RPosition.y - Dimensions.h + 1 + PaddingBottom;
 
-            SetColor(cSurface.Lighten(1.8));
+            SetColor(Color.Lighten(1.4));
             uiDraw.VLine(x, y, y2);
 
-            SetColor(cSurface.Darken(0.8));
+            SetColor(Color.Darken(0.4));
             uiDraw.VLine(x + 1, y, y2);
          end else begin
             x := RPosition.x + PaddingLeft;
             x2 := RPosition.x + Dimensions.w - 1 - PaddingRight;
             y := RPosition.y - Items.List[i].RelativePosition - (Items.List[i].Size div 2);
 
-            SetColor(cSurface.Lighten(1.8));
+            SetColor(Color.Lighten(1.4));
             uiDraw.HLine(x, y, x2);
 
-            SetColor(cSurface.Darken(0.8));
+            SetColor(Color.Darken(0.4));
             uiDraw.HLine(x, y - 1, x2);
          end;
       end;
