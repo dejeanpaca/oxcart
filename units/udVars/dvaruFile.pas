@@ -80,6 +80,8 @@ TYPE
 
       procedure InitializeOptions(out options: dvarTFileOptions);
 
+      procedure Notify(pdvar: PDvar; f: dvarPFileData; what: loopint);
+
       { TEXT FILE }
       procedure ReadText(var dv: TDVarGroup; const fn: StdString; options: dvarPFileOptions = nil);
       procedure WriteText(var dv: TDVarGroup; const fn: StdString; options: dvarPFileOptions = nil);
@@ -118,7 +120,10 @@ begin
       pvar := pd^.Get(key);
 
       if(pvar <> nil) then begin
-         if(not pvar^.AssignFromString(value)) then
+         if(pvar^.AssignFromString(value)) then begin
+            if(dvarNOTIFY_READ in pvar^.Properties) then
+               dvarf.Notify(pvar, parseData.ExternalData, DVAR_NOTIFICATION_READ)
+         end else
             log.i('dvar > Could not set variable ' + key + '(' + stdGetDTCodeName(pvar^.DataType)^ + ') to value: ' + value);
       end else
          log.i('dvar > Variable ' + key + ' not found.');
@@ -156,6 +161,21 @@ procedure dvarTFileGlobal.InitializeOptions(out options: dvarTFileOptions);
 begin
    ZeroOut(options, SizeOf(options));
    options.OnSave := @OnSave;
+end;
+
+procedure dvarTFileGlobal.Notify(pdvar: PDVar; f: dvarPFileData; what: loopint);
+var
+   context: TDVarNotificationContext;
+
+begin
+   TDVarNotificationContext.Initialize(context);
+
+   context.p := @pdvar;
+   context.f := f;
+   context.What := what;
+
+   if(pdvar^.pNotify <> nil) then
+      pdvar^.pNotify(context);
 end;
 
 procedure dvarTFileGlobal.ReadText(var dv: TDVarGroup; const fn: StdString; options: dvarPFileOptions);
@@ -231,16 +251,24 @@ end;
 
 function dvarTFileData.Write(const parent: StdString; var v: TDVar): boolean;
 begin
-   if(not (dvarDO_NOT_SAVE in v.Properties)) then
+   if(not (dvarDO_NOT_SAVE in v.Properties)) then begin
       parser.WriteLine(parent + v.Name + ' = ' + v.GetAsString());
+
+      if(dvarNOTIFY_WRITE in v.Properties) then
+         dvarf.Notify(@v, @self, DVAR_NOTIFICATION_WRITE);
+   end;
 
    Result := true;
 end;
 
 function dvarTFileData.Write(const parent: StdString; var v: TDVar; const what: StdString): boolean;
 begin
-   if(not (dvarDO_NOT_SAVE in v.Properties)) then
+   if(not (dvarDO_NOT_SAVE in v.Properties)) then begin
       parser.WriteLine(parent + v.Name + ' = ' + what);
+
+      if(dvarNOTIFY_WRITE in v.Properties) then
+         dvarf.Notify(@v, @self, DVAR_NOTIFICATION_WRITE);
+   end;
 
    Result := true;
 end;

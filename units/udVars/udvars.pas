@@ -32,7 +32,9 @@ TYPE
       dvarDO_NOT_SAVE, {do not save dvar to file}
       dvarINVISIBLE, {not visible by the user in console/ui}
       dvarREADONLY, {cannot be modified by user}
-      dvarREADONLY_PROTECTED_MODE {cannot be modified by user in dvar protected mode}
+      dvarREADONLY_PROTECTED_MODE {cannot be modified by user in dvar protected mode},
+      dvarNOTIFY_READ, {notify on read}
+      dvarNOTIFY_WRITE {notify on write}
    );
 
    TDVarProperties = set of TDVarProperty;
@@ -128,6 +130,7 @@ TYPE
 
       procedure Update(var newVariable);
 
+      procedure Notify(var context: TDVarNotificationContext);
       procedure Notify(what: LongWord);
    end;
 
@@ -173,7 +176,7 @@ TYPE
       {adds the specified dvar to dvar group}
       procedure Add(var a: TDVar);
       {quickly initialize and add a dvar}
-      procedure Add(out a: TDVar; const newName: StdString; dt: longint; v: pointer);
+      procedure Add(out a: TDVar; const newName: StdString; dt: longint; v: pointer; properties: TDVarProperties = []);
       {adds the specified quick dvar to a group, using r as the actual dvar (assigned from a)}
       procedure Add(var a: TDVarQuick; var r: TDVar);
 
@@ -390,9 +393,10 @@ begin
    ve := @a;
 end;
 
-procedure TDVarGroup.Add(out a: TDVar; const newName: StdString; dt: longint; v: pointer);
+procedure TDVarGroup.Add(out a: TDVar; const newName: StdString; dt: longint; v: pointer; properties: TDVarProperties);
 begin
    a.Init(dt, v, newName);
+   a.Properties := a.Properties + properties;
    Add(a);
 end;
 
@@ -761,6 +765,12 @@ end;
 procedure TDVar.Update(var newVariable);
 begin
    Variable := @newVariable;
+end;
+
+procedure TDVar.Notify(var context: TDVarNotificationContext);
+begin
+   if(pNotify <> nil) then
+      pNotify(context);
 end;
 
 procedure TDVar.Notify(what: LongWord);
