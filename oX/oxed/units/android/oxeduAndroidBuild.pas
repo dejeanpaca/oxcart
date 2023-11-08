@@ -19,11 +19,11 @@ INTERFACE
       oxeduAndroidPlatform, oxeduAndroidSettings;
 
 TYPE
-
    { oxedTAndroidBuild }
 
    oxedTAndroidBuild = record
-      BUILD_TO_PROJECT_ACTION: TEventID;
+      BUILD_TO_PROJECT_ACTION,
+      BUILD_ASSETS_TO_PROJECT_ACTION: TEventID;
 
       procedure BuildToProject();
       procedure Initialize();
@@ -179,6 +179,11 @@ begin
       oxedBuild.Fail('Cannot create libs directory at: ' + targetPath);
 end;
 
+procedure buildAssetsToProject();
+begin
+   oxedBuildLog.v('android > building assets');
+end;
+
 procedure init();
 begin
    oxedAndroidBuild.Initialize();
@@ -186,8 +191,11 @@ end;
 
 INITIALIZATION
    oxedAndroidBuild.BUILD_TO_PROJECT_ACTION := appActionEvents.SetCallback(@buildToProject);
+   oxedAndroidBuild.BUILD_ASSETS_TO_PROJECT_ACTION := appActionEvents.SetCallback(@buildAssetsToProject);
+
    oxedBuild.OnStartRun.Add(@buildStartRun);
    oxedBuild.OnFinish.Add(@buildFinish);
+
    oxed.Init.Add('platform.android.build', @init);
 
 END.
