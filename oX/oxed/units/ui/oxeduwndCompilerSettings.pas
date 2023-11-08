@@ -9,6 +9,7 @@ UNIT oxeduwndCompilerSettings;
 INTERFACE
 
    USES
+      uStd,
       {ox}
       oxuwndSettings, oxuRunRoutines,
       {widgets}

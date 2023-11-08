@@ -9,6 +9,8 @@ UNIT oxuShaderLoader;
 INTERFACE
 
    USES
+      uStd,
+      {ox}
       uOX, oxuRunRoutines, oxuFile,
       oxuShader, oxuRenderer, oxuRenderers;
 

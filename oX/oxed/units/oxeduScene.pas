@@ -9,7 +9,7 @@ UNIT oxeduScene;
 INTERFACE
 
    USES
-      uLog, uColors,
+      uStd, uLog, uColors,
       {ox}
       uOX, oxuRunRoutines, oxuEntity, oxuSceneRender, oxuScene, oxuWorld,
       {oxed}

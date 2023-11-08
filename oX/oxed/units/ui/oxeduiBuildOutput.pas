@@ -9,9 +9,11 @@ UNIT oxeduiBuildOutput;
 INTERFACE
 
    USES
-      sysutils,
-      uBuildExec, oxeduBuildLog,
-      oxeduSettings, oxeduConsole;
+      sysutils, uStd,
+      {build}
+      uBuildExec,
+      {ox}
+      oxeduBuildLog, oxeduSettings, oxeduConsole;
 
 IMPLEMENTATION
 
