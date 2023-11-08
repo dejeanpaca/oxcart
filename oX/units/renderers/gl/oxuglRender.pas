@@ -93,9 +93,14 @@ VAR
    );
 
 TYPE
+   {$IFNDEF GLES}
    TBLendRemap = array[0..2] of GLEnum;
+   {$ELSE}
+   TBLendRemap = array[0..1] of GLEnum;
+   {$ENDIF}
 
 CONST
+   {$IFNDEF GLES}
    blendRemaps: array[0..longint(oxBLEND_MAX)] of TBlendRemap = (
       {blend function, left side, right side}
       (GL_FUNC_ADD, GL_ONE, GL_ONE), {none}
@@ -104,6 +109,16 @@ CONST
       (GL_FUNC_SUBTRACT, GL_ONE, GL_ONE), {subtract}
       (GL_FUNC_ADD, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)  {filter}
    );
+   {$ELSE}
+   blendRemaps: array[0..longint(oxBLEND_MAX)] of TBlendRemap = (
+      {blend function, left side, right side}
+      (GL_ONE, GL_ONE), {none}
+      (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA), {alpha}
+      (GL_ONE, GL_ONE), {add}
+      (GL_ONE, GL_ONE), {subtract}
+      (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)  {filter}
+   );
+   {$ENDIF}
 
    functionRemap: array[0..longint(oxTEST_FUNCTION_ALWAYS)] of GLenum = (
       oglNONE, {oxDEPTH_TEST_NONE}
@@ -120,8 +135,12 @@ procedure oglTRender.BlendFunction(blendFunc: oxTBlendFunction);
 begin
    if(blendFunc <> oxBLEND_NONE) then begin
       glEnable(GL_BLEND);
+      {$IFNDEF GLES}
       glBlendFunc(blendRemaps[longint(blendFunc)][1], blendRemaps[longint(blendFunc)][2]);
       glBlendEquation(blendRemaps[longint(blendFunc)][0]);
+      {$ELSE}
+      glBlendFunc(blendRemaps[longint(blendFunc)][0], blendRemaps[longint(blendFunc)][1]);
+      {$ENDIF}
    end else
       glDisable(GL_BLEND);
 end;
