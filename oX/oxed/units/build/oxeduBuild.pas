@@ -17,7 +17,7 @@ INTERFACE
       {app}
       uApp, appuActionEvents, appuSysInfo,
       {ox}
-      oxuThreadTask, oxuFeatures, oxuRenderer, oxeduEditorPlatform,
+      oxuPaths, oxuThreadTask, oxuFeatures, oxuRenderer, oxeduEditorPlatform,
       {oxed}
       uOXED, oxeduConsole, oxeduPackageTypes, oxeduPackage, oxeduProject,
       oxeduPlatform, oxeduTasks, oxeduSettings,
@@ -1600,7 +1600,8 @@ begin
    end;
 
    if(BuildAssets) then begin
-      oxedBuildAssets.Deploy(oxedBuild.TargetPath);
+      if(not oxedBuildAssets.Deploy(oxedBuild.TargetPath + oxDataPath)) then
+         exit;
 
       if(not oxedBuild.BuildOk) then
          exit;
