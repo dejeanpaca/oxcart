@@ -84,6 +84,8 @@ begin
    oxwndFileContextMenu.OpenMenu := Menus.Current;
    oxwndFileContextMenu.Open(from);
 
+   Parameters.IsDirectory := oxwndFileContextMenu.Parameters.IsDirectory;
+
    if(Parameters.Target = uiFILE_CONTEXT_MENU_TARGET_HERE) then begin
       Items.Duplicate^.Disable();
       Items.Create^.Enable();
@@ -96,11 +98,6 @@ begin
       Items.Preview^.Enable(true);
    end else
       Items.Preview^.Enable(false);
-
-   Parameters.IsDirectory := oxwndFileContextMenu.Parameters.IsDirectory;
-
-   if(Parameters.IsDirectory) then
-      Menus.Current.FindByAction(Events.DUPLICATE)^.Disable();
 end;
 
 procedure duplicateFile();
@@ -125,6 +122,16 @@ begin
 
       FileUtils.Copy(oxedProjectContextMenu.Parameters.TargetPath, destination);
       reloadBrowserNav(false);
+   end else begin
+      i := 0;
+
+      repeat
+         inc(i);
+
+         destination := oxedProjectContextMenu.Parameters.TargetPath + ' (Copy ' + sf(i) + ')';
+      until not FileUtils.DirectoryExists(destination);
+
+      FileUtils.CopyDirectory(oxedProjectContextMenu.Parameters.TargetPath, destination);
    end;
 end;
 
@@ -194,7 +201,7 @@ begin
    end;
 end;
 
-procedure oxedTProjectContextMenuGlobal.Initialize;
+procedure oxedTProjectContextMenuGlobal.Initialize();
 var
    item: uiPContextMenuItem;
 
