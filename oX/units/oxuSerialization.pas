@@ -1024,7 +1024,7 @@ begin
    prop := AddProperty(name, poffset, oxSerialization.Types.tObject);
    prop^.Serializer := oxSerialization.Get(objectType);
 
-   if(prop^.Serializer <> nil) then
+   if(prop^.Serializer = nil) then
       log.w('Could not find serializer for object type: ' + objectType);
 end;
 
@@ -1037,7 +1037,7 @@ begin
    prop := AddProperty(name, poffset, oxSerialization.Types.tRecord);
    prop^.Serializer := oxSerialization.Get(recordType);
 
-   if(prop^.Serializer <> nil) then
+   if(prop^.Serializer = nil) then
       log.w('Could not find serializer for record type: ' + recordType);
 end;
 
