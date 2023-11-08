@@ -878,7 +878,7 @@ begin
    parameters := TBuildFPCConfiguration.GetFPCCommandLineForConfig();
 
    {verbosity level}
-   parameters.Add('-vewnhi');
+   parameters.Add('-vewnhiq');
    {output FPC logo}
    parameters.Add('-l');
 
