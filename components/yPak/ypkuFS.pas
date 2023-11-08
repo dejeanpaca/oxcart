@@ -178,10 +178,10 @@ begin
    fsidx := getFile();
 
    if(fsidx > -1) then begin
-      fs := filesystem.files[fsidx];
+      fs := filesystem.List[fsidx];
 
       {open the file}
-      fOpenUnx(fs^.f, d, offs, size);
+      fOpenUnix(fs^.f, d, offs, size);
       if(fs^.f.error = 0) then begin
          fs^.f.handleID := handleID;
          result := ypkfsAdd(fs^);
