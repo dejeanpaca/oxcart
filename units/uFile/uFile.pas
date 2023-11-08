@@ -58,7 +58,7 @@ TYPE
    {a custom file handler}
    PFileHandler = ^TFileHandler;
    TFileHandler = record
-      Name: string;
+      Name: StdString;
 
       make:    fTFileProcedure;
       dispose: fTFileProcedure;
@@ -105,7 +105,7 @@ TYPE
       handlerProps: longword;
 
       LineEndings: TLineEndingType;
-      LineEndingChars: string;
+      LineEndingChars: StdString;
 
       {extra data}
       extData: pointer;
@@ -120,7 +120,7 @@ TYPE
 
       {GENERAL FILE OPERATIONS}
 
-      function GetErrorString(): string;
+      function GetErrorString(): StdString;
 
       {set defaults for a file}
       procedure SetDefaults(const fileName: StdString);
@@ -178,7 +178,7 @@ TYPE
       {write a string}
       procedure Write(const s: StdString);
       {get the entire file as a string}
-      function GetString(): string;
+      function GetString(): StdString;
       {seeks to a position in the file}
       function Seek(position: fileint): fileint;
       function Seek(position: fileint; mode: fTSeekOperation): fileint;
@@ -203,10 +203,10 @@ TYPE
 {$IFNDEF FILE_NOFS}
    PVFileSystem = ^TVFileSystem;
    TVFileSystem = record
-      Name: string;
-      FileInFS: function(const path: string): fileint;
-      OpenFile: function(var f: TFile; const fn: string): boolean;
-      NewFile: function(var f: TFile; const fn: string): boolean;
+      Name: StdString;
+      FileInFS: function(const path: StdString): fileint;
+      OpenFile: function(var f: TFile; const fn: StdString): boolean;
+      NewFile: function(var f: TFile; const fn: StdString): boolean;
 
       next: PVFileSystem;
    end;
@@ -265,12 +265,12 @@ TYPE
 
       {ERROR SUPPORT}
       class procedure ErrorReset(); static;
-      class function GetErrorString(code: longint; io: longint = -1): string; static;
+      class function GetErrorString(code: longint; io: longint = -1): StdString; static;
 
       {FILE OPERATIONS}
 
       {checks whether a file exists, returns filesize if the file exists, or -1 on error}
-      function Exists(const fn: string): fileint;
+      function Exists(const fn: StdString): fileint;
 
       {GENERAL}
       procedure Init(out f: TFile);
@@ -285,7 +285,7 @@ TYPE
       {$IFNDEF FILE_NOFS}
       procedure fsInit(var fs: TVFileSystem);
       procedure fsAdd(var fs: TVFileSystem);
-      function fsExists(const fn: string): fileint;
+      function fsExists(const fn: StdString): fileint;
       function fsOpen(var f: TFile; const fn: StdString): boolean;
       {$ENDIF}
    end;
@@ -306,7 +306,7 @@ begin
    ioE := 0;
 end;
 
-class function TFileGlobal.GetErrorString(code: longint; io: longint): string;
+class function TFileGlobal.GetErrorString(code: longint; io: longint): StdString;
 begin
    if(code < feOPENED) then
       Result := GetErrorCodeString(code)
@@ -351,7 +351,7 @@ begin
    ioError  := 0;
 end;
 
-function TFile.GetErrorString(): string;
+function TFile.GetErrorString(): StdString;
 begin
    Result := fFile.GetErrorString(error);
 end;
@@ -692,7 +692,7 @@ begin
       Write(s[1], len);
 end;
 
-function TFile.GetString(): string;
+function TFile.GetString(): StdString;
 begin
    ReadUp();
 
@@ -860,7 +860,7 @@ end;
 
 {FILE OPERATIONS}
 
-function TFileGlobal.Exists(const fn: string): fileint;
+function TFileGlobal.Exists(const fn: StdString): fileint;
 begin
    Result := FileUtils.Exists(fn);
 
@@ -999,7 +999,7 @@ begin
    filesystem.e := @fs;
 end;
 
-function TFileGlobal.fsExists(const fn: string): fileint;
+function TFileGlobal.fsExists(const fn: StdString): fileint;
 var
    cur: PVFileSystem;
    res: fileint;
@@ -1038,17 +1038,17 @@ end;
 {$PUSH}{$HINTS OFF}
 
 {since these are dummy routines most parameters are unused}
-function dumFileInFS(const path: string): fileint;
+function dumFileInFS(const path: StdString): fileint;
 begin
    Result := -1;
 end;
 
-function dumOpenFile(var f: TFile; const fn: string): boolean;
+function dumOpenFile(var f: TFile; const fn: StdString): boolean;
 begin
    Result := false;
 end;
 
-function dumNewFile(var f: TFile; const fn: string): boolean;
+function dumNewFile(var f: TFile; const fn: StdString): boolean;
 begin
    Result := false;
 end;

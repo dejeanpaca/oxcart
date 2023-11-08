@@ -19,8 +19,8 @@ VAR
    stdStdFileHandler: TFileStdHandler;
 
 {Copy from a source file to destination. Returns error code.}
-function fCopy(const src: string; var dst: TFile): longint;
-function fCopy(var src: TFile; const dst: string; size: fileint): longint;
+function fCopy(const src: StdString; var dst: TFile): longint;
+function fCopy(var src: TFile; const dst: StdString; size: fileint): longint;
 
 IMPLEMENTATION
 
@@ -53,7 +53,7 @@ var
 
 begin
    if(data <> nil) then begin
-      Assign(data^.f, f.fn);
+      UTF8Assign(data^.f, f.fn);
 
       Reset(data^.f, 1);
       if(f.GetIOError() = 0) then begin
@@ -269,7 +269,7 @@ begin
    Result := buf;
 end;
 
-function fCopy(const src: string; var dst: TFile): longint;
+function fCopy(const src: StdString; var dst: TFile): longint;
 var
    buf: pbyte;
    f: file;
@@ -325,7 +325,7 @@ begin
    end;
 end;
 
-function fCopy(var src: TFile; const dst: string; size: fileint): longint;
+function fCopy(var src: TFile; const dst: StdString; size: fileint): longint;
 var
    f: file;
    buf: pbyte;
