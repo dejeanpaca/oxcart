@@ -999,6 +999,19 @@ begin
    oxedBuild.IncludeThirdParty := previousThirdParty;
 end;
 
+procedure RecreateAll();
+begin
+   log.i('Recreating project files');
+
+   {recreate fpc files}
+   oxedBuild.BuildMechanism := OXED_BUILD_VIA_FPC;
+   oxedBuild.Recreate();
+
+   {recreate laz files}
+   oxedBuild.BuildMechanism := OXED_BUILD_VIA_LAZ;
+   oxedBuild.Recreate();
+end;
+
 procedure oxedTBuildGlobal.RunTask(taskType: oxedTBuildTaskType);
 begin
    if(not oxedBuild.Buildable(true)) then
@@ -1052,12 +1065,7 @@ begin
    end else if(BuildType = OXED_BUILD_TASK_CLEANUP) then
       DoCleanup()
    else if(BuildType = OXED_BUILD_TASK_RECREATE) then begin
-      {recreate fpc files}
-      BuildMechanism := OXED_BUILD_VIA_FPC;
-      Recreate();
-      {recreate laz files}
-      BuildMechanism := OXED_BUILD_VIA_LAZ;
-      Recreate();
+      RecreateAll();
    end else if(BuildType = OXED_BUILD_TASK_REBUILD_THIRD_PARTY) then begin
       RebuildThirdParty();
    end else if(BuildType = OXED_BUILD_TASK_STANDALONE) then begin
@@ -1065,7 +1073,7 @@ begin
       RunBuild();
    end;
 
-   log.v('oxed > Build done');
+   log.v('oxed > Build task done');
 end;
 
 procedure oxedTBuildGlobal.StartTask(taskType: oxedTBuildTaskType);
