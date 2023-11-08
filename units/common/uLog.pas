@@ -238,7 +238,7 @@ TYPE
    TConsoleLogHandler = object(TLogHandler)
       constructor Create();
 
-      procedure Writeln(log: PLog; priority: longint; const s: StdString); virtual;
+      procedure Writeln(logf: PLog; priority: longint; const s: StdString); virtual;
       procedure WritelnRaw(log: PLog; const s: StdString); virtual;
       procedure EnterSection(log: PLog; const s: StdString; {%H-}collapsed: boolean); virtual;
    end;
@@ -255,6 +255,9 @@ TYPE
          Console: TConsoleLogHandler; {console log handler}
          pDefault: PLogHandler; {default log handler}
       end;
+
+      TabString,
+      SpaceString: StdString;
 
       Settings: TLogSettings;
 
@@ -379,10 +382,6 @@ end;
 
 { TStandardLogHandler }
 
-VAR
-   tabstr: StdString = #9#9#9#9#9 + #9#9#9#9#9 + #9#9#9#9#9 + #9#9#9#9#9;
-   spacestr: StdString = '                                 ';
-
 
 constructor TStandardLogHandler.Create();
 begin
@@ -484,7 +483,7 @@ begin
 
          {add tabs to signify a section}
          if(logf^.SectionLevel > 0) then
-            system.writeln(logf^.Fl^, timeString + copy(tabstr, 1, logf^.SectionLevel) + s)
+            system.writeln(logf^.Fl^, timeString + copy(log.TabString, 1, logf^.SectionLevel) + s)
          else
          {level 0 section needs no tabs}
             system.writeln(logf^.Fl^, timeString + s);
@@ -555,19 +554,19 @@ begin
    NeedOpen := false;
 end;
 
-procedure TConsoleLogHandler.Writeln(log: PLog; priority: longint; const s: StdString);
+procedure TConsoleLogHandler.Writeln(logf: PLog; priority: longint; const s: StdString);
 var
    timeString: StdString = '';
 
 begin
    {$IFDEF LOG_THREAD_SAFE}
-   EnterCriticalSection(log^.LogCS);
+   EnterCriticalSection(logf^.LogCS);
    {$ENDIF}
 
-   if(log^.Ok() {$IFDEF WINDOWS}and IsConsole{$ENDIF}) then begin
+   if(logf^.Ok() {$IFDEF WINDOWS}and IsConsole{$ENDIF}) then begin
       if(s <> '') then begin
          {construct a time string}
-         if(uLog.log.Settings.LogTime) then
+         if(log.Settings.LogTime) then
             timeString := TimeToStr(Now());
 
          if(priority >= 0) and (priority <= logcPRIORITY_MAX) then begin
@@ -578,8 +577,8 @@ begin
          end;
 
          {add tabs to signify a section}
-         if(log^.SectionLevel > 0) then begin
-            system.writeln(timeString + copy(spacestr, 1, log^.SectionLevel * 2) + s)
+         if(logf^.SectionLevel > 0) then begin
+            system.writeln(timeString + copy(log.SpaceString, 1, logf^.SectionLevel * 2) + s)
          end else
          {level 0 section needs no tabs}
             system.writeln(timeString + s);
@@ -591,7 +590,7 @@ begin
    end;
 
    {$IFDEF LOG_THREAD_SAFE}
-   LeaveCriticalSection(log^.LogCS);
+   LeaveCriticalSection(logf^.LogCS);
    {$ENDIF}
 end;
 
@@ -1262,6 +1261,9 @@ begin
 end;
 
 INITIALIZATION
+   log.TabString := #9#9#9#9#9 + #9#9#9#9#9 + #9#9#9#9#9 + #9#9#9#9#9;
+   log.SpaceString := '                                 ';
+
    consoleColors[0] := ConsoleUtils.console.InitialTextColor;
 
    {$IFNDEF NOLOG}
