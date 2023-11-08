@@ -11,8 +11,7 @@ INTERFACE
    USES
       sysutils, ParamUtils,
       uStd, uLog, uFileUtils, StringUtils, uTiming,
-      uFPCHelpers
-      {$IFDEF UNIX}, BaseUnix{$ENDIF};
+      uFPCHelpers;
 
 CONST
    { build system name }
