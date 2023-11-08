@@ -56,6 +56,8 @@ TYPE
    uiTMessageBoxWindow = class(uiTWindow)
       {external data}
       External: TObject;
+      {external pointer data}
+      ExternalPtr: pointer;
 
       MessageBox: record
          Style: uiTMessageBoxStyle;
