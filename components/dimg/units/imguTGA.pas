@@ -17,11 +17,11 @@ IMPLEMENTATION
    USES imguTGAStuff;
 
 VAR
-   tgaExt: fhTExtension;
-   tgaLoader: fhTHandler;
+   ext: fhTExtension;
+   loader: fhTHandler;
 
 {this routine is the purpose of this unit, it is the targa image loader}
-procedure dTGALoad(data: pointer);
+procedure load(data: pointer);
 var
    ld: imgPFileData;
    Header: tgaTHeader;
@@ -110,9 +110,9 @@ begin
    until(cPixel >= imgP.Size);
 end;
 
-begin {dTGALoad}
+begin {load}
    ld    := data;
-   imgP  := ld^.image;
+   imgP  := ld^.Image;
 
    {first, check for a Targa File Footer and determine if the file is in the new
    TGA format, or the old format. Not used currently but may be helpful in the
@@ -140,7 +140,7 @@ begin {dTGALoad}
 
    {check if the image is of supported type}
    if(Header.typeImage <> TGA_UNCOMPRESSED_TRUE_COLOR) and (Header.typeImage <> TGA_RLE_TRUE_COLOR) then begin
-      ld^.error := imgeUNSUPPORTED_COMPRESSION;
+      ld^.SetError(imgeUNSUPPORTED_COMPRESSION);
       exit;
    end;
 
@@ -162,7 +162,7 @@ begin {dTGALoad}
       32: imgP.PixF := PIXF_BGRA;
       else begin
          imgP.PixF  := PIXF_UNSUPPORTED;
-         ld^.error   := imgeUNSUPPORTED_DEPTH;
+         ld^.SetError(imgeUNSUPPORTED_DEPTH);
          exit;
       end;
    end;
@@ -203,7 +203,7 @@ end;
 
 BEGIN
    {register the extension and the loader}
-   imgFile.Loaders.RegisterHandler(tgaLoader, 'TGA', @dTGALoad);
-   imgFile.Loaders.RegisterExt(tgaExt, '.tga', @tgaLoader);
+   imgFile.Loaders.RegisterHandler(loader, 'TGA', @load);
+   imgFile.Loaders.RegisterExt(ext, '.tga', @loader);
 
 END.

@@ -107,8 +107,8 @@ TYPE
    end;
 
 VAR
-   pngExt: fhTExtension;
-   pngLoader: fhTHandler;
+   ext: fhTExtension;
+   loader: fhTHandler;
 
 {read the chunk header}
 procedure pngReadChunkHeader(var ld: imgTFileData; var data: TPNGLoaderData);
@@ -259,11 +259,11 @@ begin
    pc := abs(p - c);
 
    if(pa <= pb) and (pa <= pc) then
-      result := a
+      Result := a
    else if(pb <= pc) then
-      result := b
+      Result := b
    else
-      result := c;
+      Result := c;
 end;
 {$POP}
 
@@ -405,7 +405,7 @@ end;
 
 function getPNGBufferSize(const img: imgTImage): int64;
 begin
-   result := int64(img.Height) * (int64(img.RowSize) + int64(1));
+   Result := int64(img.Height) * (int64(img.RowSize) + int64(1));
 end;
 
 procedure loadFile(var ld: imgTFileData; var img: imgTImage; var data: TPNGLoaderData);
@@ -449,7 +449,7 @@ begin
 end;
 
 {the main routine for loading png images}
-procedure pngLoad(data: pointer);
+procedure load(data: pointer);
 var
    pngSig: packed array[0..7] of byte;
    ld: imgPFileData;
@@ -460,20 +460,21 @@ begin
 
    {read png signature and verify it}
    ld^.BlockRead(pngSig, 8);
-   if(ld^.error = 0) then begin
+
+   if(ld^.Error = 0) then begin
       if(CompareDWord(pngSig, pngcSignature, 2) <> 0) then begin
-         ld^.error := eINVALID;
+         ld^.SetError(eINVALID);
          exit;
       end;
 
       {initialize loader data}
       ZeroOut(loaderData, SizeOf(TPNGLoaderData));
-      loadFile(ld^, ld^.image, loaderData);
+      loadFile(ld^, ld^.Image, loaderData);
    end;
 end;
 
 BEGIN
    {register the extension and the loader}
-   imgFile.Loaders.RegisterHandler(pngLoader, 'PNGX', @pngLoad);
-   imgFile.Loaders.RegisterExt(pngExt, '.png', @pngLoader);
+   imgFile.Loaders.RegisterHandler(loader, 'PNGX', @load);
+   imgFile.Loaders.RegisterExt(ext, '.png', @loader);
 END.

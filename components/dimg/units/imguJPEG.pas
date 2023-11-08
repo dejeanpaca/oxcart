@@ -21,9 +21,9 @@ INTERFACE
 IMPLEMENTATION
 
 VAR
-   jpegExt,
-   jpegExt2: fhTExtension;
-   jpegLoader: fhTHandler;
+   ext,
+   ext2: fhTExtension;
+   loader: fhTHandler;
 
 procedure decodeJPEG(cinfo: jpeg_decompress_struct; var img: imgTImage; var ld: imgTFileData);
 var
@@ -114,7 +114,7 @@ begin
    end;
 end;
 
-procedure dJPEGLoad(data: pointer);
+procedure load(data: pointer);
 var
    cinfo: jpeg_decompress_struct; {jpeg decompression info}
    jerr: jpeg_error_mgr; {jpeg error handler}
@@ -130,7 +130,7 @@ begin
    try
       f := TFileStream.Create(ld^.fn, fmOpenRead);
    except
-      ld^.error := eIO;
+      ld^.SetError(eIO);
       exit;
    end;
 
@@ -145,9 +145,9 @@ begin
       jpeg_stdio_src(@cinfo, @f);
 
       {decode the JPEG information into a valid imgTImage record}
-      decodeJPEG(cinfo, ld^.image, ld^);
+      decodeJPEG(cinfo, ld^.Image, ld^);
     except
-      ld^.error := eIO;
+      ld^.SetError(eIO);
     end;
 
    {clean up the jpeg decompression info}
@@ -158,10 +158,10 @@ end;
 
 BEGIN
    {register the extensions and the loader}
-   imgFile.Loaders.RegisterHandler(jpegloader, 'JPEG', @dJPEGLoad);
+   imgFile.Loaders.RegisterHandler(loader, 'JPEG', @load);
    {jpeg handler doesn't support file abstractions}
-   jpegLoader.DoNotOpenFile := true;
+   loader.DoNotOpenFile := true;
 
-   imgFile.Loaders.RegisterExt(jpegExt, '.jpg', @jpegLoader);
-   imgFile.Loaders.RegisterExt(jpegExt2, '.jpeg', @jpegLoader);
+   imgFile.Loaders.RegisterExt(ext, '.jpg', @loader);
+   imgFile.Loaders.RegisterExt(ext2, '.jpeg', @loader);
 END.

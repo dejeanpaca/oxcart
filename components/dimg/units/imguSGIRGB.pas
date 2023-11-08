@@ -56,11 +56,11 @@ TYPE
    end;
 
 VAR
-   sgirgbExt: fhTExtension;
-   sgirgbLoader: fhTHandler;
+   ext: fhTExtension;
+   loader: fhTHandler;
 
 {this routine is the purpose of this unit, it is the targa image loader}
-procedure dLoad(data: pointer);
+procedure load(data: pointer);
 var
    hdr: THeader;
    ld: imgPFileData;
@@ -68,15 +68,17 @@ var
 
 begin
    ld    := data;
-   imgP   := ld^.image;
+   imgP   := ld^.Image;
 
    {get the header}
    ld^.BlockRead(hdr, SizeOf(THeader));
-   if(ld^.error <> 0) then exit;
+
+   if(ld^.Error <> 0) then
+      exit;
 
    {header - check bpc}
    if(hdr.BPC < 1) or (hdr.BPC > 2) then begin
-      ld^.error := eINVALID;
+      ld^.SetError(eINVALID);
       exit;
    end;
 
@@ -91,18 +93,18 @@ begin
          if(hdr.BPC = 1) then
             imgP.PixF := PIXF_RGB
          else begin
-            ld^.error := imgeUNSUPPORTED_BPC;
+            ld^.SetError(imgeUNSUPPORTED_BPC);
             exit;
          end;
       cRGBA:
          if(hdr.BPC = 2) then
             imgP.PixF := PIXF_RGBA
          else begin
-            ld^.error := imgeUNSUPPORTED_BPC;
+            ld^.SetError(imgeUNSUPPORTED_BPC);
             exit;
          end;
       else begin
-         ld^.error := imgeINVALID_PIXF;
+         ld^.SetError(imgeINVALID_PIXF);
          exit;
       end;
    end;
@@ -113,11 +115,11 @@ begin
       cCM_DITHERED,
       cCM_INDEX,
       cCM_COLORMAP: begin
-         ld^.error := imgeUNSUPPORTED_COLORMAP;
+         ld^.SetError(imgeUNSUPPORTED_COLORMAP);
          exit;
       end;
       else begin
-         ld^.error := imgeINVALID_COLORMAP;
+         ld^.SetError(imgeINVALID_COLORMAP);
          exit;
       end;
    end;
@@ -127,24 +129,24 @@ begin
       cSTORAGE_NORMAL:;
       cSTORAGE_RLE: begin
          imgP.Compression := imgcCOMPRESSION_RLE;
-         ld^.error := imgeUNSUPPORTED_COMPRESSION;
+         ld^.SetError(imgeUNSUPPORTED_COMPRESSION);
          exit;
       end;
       else begin
-         ld^.error := imgeINVALID_COMPRESSION;
+         ld^.SetError(imgeINVALID_COMPRESSION);
          exit;
       end;
    end;
 
    {header - check size}
    if(hdr.XSize < 1) or (hdr.YSize < 1) then begin
-      ld^.error := imgeINVALID_DIMENSIONS;
+      ld^.SetError(imgeINVALID_DIMENSIONS);
       exit;
    end;
 
    {header - check dimension}
    if(hdr.Dimension <> cDIMENSION_2D) then begin
-      ld^.error := imgeUNSUPPORTED;
+      ld^.SetError(imgeUNSUPPORTED);
       exit;
    end;
 
@@ -157,7 +159,8 @@ begin
 
    {allocate memory for image}
    ld^.Allocate();
-   if(ld^.error <> 0) then
+
+   if(ld^.Error <> 0) then
       exit;
 
    {now read the image}
@@ -166,6 +169,6 @@ end;
 
 BEGIN
    {register the extension and the loader}
-   imgFile.Loaders.RegisterHandler(sgirgbLoader, 'SGIRGB', @dLoad);
-   imgFile.Loaders.RegisterExt(sgirgbExt, '.rgb', @sgirgbLoader);
+   imgFile.Loaders.RegisterHandler(loader, 'SGIRGB', @load);
+   imgFile.Loaders.RegisterExt(ext, '.rgb', @loader);
 END.
