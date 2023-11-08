@@ -37,6 +37,8 @@ TYPE
       {associated window}
       AssociatedWindow: oxTWindow;
 
+      Timer: TTimer;
+
       constructor Create(); override;
       destructor Destroy(); override;
 
@@ -64,8 +66,6 @@ TYPE
 
       procedure TaskStart(); override;
       procedure TaskStop(); override;
-
-      function GetVersionString(): string; virtual;
    end;
 
    { oxTBasicSplashScreen }
@@ -86,6 +86,8 @@ TYPE
       procedure Load(); override;
       procedure Unload(); override;
       procedure RenderContent(); override;
+
+      function GetVersionString(): string; virtual;
    end;
 
    oxTSplashScreenClass = class of oxTSplashScreen;
@@ -104,87 +106,6 @@ VAR
 
 IMPLEMENTATION
 
-{ oxTBasicSplashScreen }
-
-constructor oxTBasicSplashScreen.Create;
-begin
-   inherited Create;
-
-   Texture.Path := oxPaths.Textures + 'splash.png';
-   oxmPrimitive.Init(Quad);
-end;
-
-procedure oxTBasicSplashScreen.Load;
-begin
-   if(Texture.Path <> '') then begin
-      Unload();
-
-      oxTextureGenerate.Generate(oxAssetPaths.Find(Texture.Path), Texture.Texture);
-
-      if(Texture.Texture <> nil) then
-         Texture.Texture.MarkUsed();
-   end;
-
-   Quad.Quad();
-   Quad.Scale(round(AssociatedWindow.Dimensions.w / 2), round(AssociatedWindow.Dimensions.h / 2), 0);
-   Quad.Translate(round(AssociatedWindow.Dimensions.w / 2), -round(AssociatedWindow.Dimensions.h / 2), 0);
-end;
-
-procedure oxTBasicSplashScreen.Unload;
-begin
-   oxResource.Destroy(Texture.Texture);
-end;
-
-procedure oxTBasicSplashScreen.RenderContent;
-var
-   m: TMatrix4f;
-   f: oxTFont;
-   w, h, dots: loopint;
-   dotsString: ShortString;
-
-begin
-   uiWindow.RenderPrepare(AssociatedWindow);
-
-   oxui.Material.Apply();
-
-   if(Texture.Texture <> nil) then begin
-      m := oxTransform.Matrix;
-      oxTransform.Translate(AssociatedWindow.RPosition.x, AssociatedWindow.RPosition.y, 0);
-      oxTransform.Apply();
-
-      oxRender.TextureCoords(QuadTexCoords[0]);
-      oxui.Material.ApplyTexture('texture', Texture.Texture);
-
-      Quad.Render();
-      oxui.Material.ApplyTexture('texture', nil);
-      oxTransform.Apply(m);
-   end;
-
-   dots := trunc((timer.Cur() mod 1000) / 250);
-
-   oxui.Material.Apply();
-   f := oxf.GetDefault();
-   if(f.Valid()) then begin
-      f.Start();
-
-      oxui.Material.ApplyColor('color', 1, 1, 1, 1.0);
-      oxRender.EnableBlend();
-
-      w := f.GetWidth();
-      h := f.GetHeight();
-
-      dotsString := '';
-      AddLeadingPadding(dotsString, '.', dots);
-
-      if(WriteVersion) then
-         f.Write(round(w * 0.5), round(h * 0.5), GetVersionString());
-
-      f.Write(AssociatedWindow.Dimensions.w - (f.GetWidth() * 3) {%H-}- round(w * 0.5), round(h * 0.5), dotsString);
-
-      oxf.Stop();
-   end;
-end;
-
 { oxTSplashScreen }
 
 constructor oxTSplashScreen.Create();
@@ -194,6 +115,9 @@ begin
    ClearColor := cBlack4f;
    ClearBits := oxrBUFFER_CLEAR_NOTHING;
    DisplayTime := oxSplashScreen.DefaultDisplayTime;
+
+   TTimer.Init(timer);
+   timer.Start();
 end;
 
 destructor oxTSplashScreen.Destroy();
@@ -265,20 +189,108 @@ end;
 
 procedure oxTSplashScreen.TaskStart();
 begin
-   oxTRenderer(AssociatedWindow.Renderer).StartThread(AssociatedWindow);
+   if(AssociatedWindow <> nil) then
+      oxTRenderer(AssociatedWindow.Renderer).StartThread(AssociatedWindow);
 end;
 
 procedure oxTSplashScreen.TaskStop();
 begin
-   oxTRenderer(AssociatedWindow.Renderer).StopThread(AssociatedWindow);
+   if(AssociatedWindow <> nil) then
+      oxTRenderer(AssociatedWindow.Renderer).StopThread(AssociatedWindow);
 
    Unload();
 end;
 
-function oxTSplashScreen.GetVersionString(): string;
+{ oxTBasicSplashScreen }
+
+constructor oxTBasicSplashScreen.Create();
+begin
+   inherited Create;
+
+   Texture.Path := oxPaths.Textures + 'splash.png';
+   oxmPrimitive.Init(Quad);
+end;
+
+procedure oxTBasicSplashScreen.Load();
+begin
+   if(AssociatedWindow = nil) then
+      exit;
+
+   if(Texture.Path <> '') then begin
+      Unload();
+
+      oxTextureGenerate.Generate(oxAssetPaths.Find(Texture.Path), Texture.Texture);
+
+      if(Texture.Texture <> nil) then
+         Texture.Texture.MarkUsed();
+   end;
+
+   Quad.Quad();
+   Quad.Scale(round(AssociatedWindow.Dimensions.w / 2), round(AssociatedWindow.Dimensions.h / 2), 0);
+   Quad.Translate(round(AssociatedWindow.Dimensions.w / 2), -round(AssociatedWindow.Dimensions.h / 2), 0);
+end;
+
+procedure oxTBasicSplashScreen.Unload();
+begin
+   oxResource.Destroy(Texture.Texture);
+end;
+
+procedure oxTBasicSplashScreen.RenderContent();
+var
+   m: TMatrix4f;
+   f: oxTFont;
+   w, h, dots: loopint;
+   dotsString: ShortString;
+
+begin
+   uiWindow.RenderPrepare(AssociatedWindow);
+
+   oxui.Material.Apply();
+
+   if(Texture.Texture <> nil) then begin
+      m := oxTransform.Matrix;
+      oxTransform.Translate(AssociatedWindow.RPosition.x, AssociatedWindow.RPosition.y, 0);
+      oxTransform.Apply();
+
+      oxRender.TextureCoords(QuadTexCoords[0]);
+      oxui.Material.ApplyTexture('texture', Texture.Texture);
+
+      Quad.Render();
+      oxui.Material.ApplyTexture('texture', nil);
+      oxTransform.Apply(m);
+   end;
+
+   dots := trunc((timer.Cur() mod 1000) / 250);
+
+   oxui.Material.Apply();
+   f := oxf.GetDefault();
+   if(f.Valid()) then begin
+      f.Start();
+
+      oxui.Material.ApplyColor('color', 1, 1, 1, 1.0);
+      oxRender.EnableBlend();
+
+      w := f.GetWidth();
+      h := f.GetHeight();
+
+      dotsString := '';
+      AddLeadingPadding(dotsString, '.', dots);
+
+      if(WriteVersion) then
+         f.Write(round(w * 0.5), round(h * 0.5), GetVersionString());
+
+      f.Write(AssociatedWindow.Dimensions.w - (f.GetWidth() * 3) {%H-}- round(w * 0.5), round(h * 0.5), dotsString);
+
+      oxf.Stop();
+   end;
+end;
+
+function oxTBasicSplashScreen.GetVersionString(): string;
 begin
    result := ox.GetVersionString();
 end;
+
+{ INITIALIZATION }
 
 procedure splashInitialize();
 begin
