@@ -23,6 +23,35 @@ CONST
    {scrollbar actions}
    wdgSCROLLBAR_MOVED                  = $0001;
 
+   wdgscSCROLLBAR_SURFACE = 0;
+   wdgscSCROLLBAR_HANDLE_SURFACE = 1;
+
+   wdgScrollbarSkinColorDescriptor: array[0..1] of uiTWidgetSkinColorDescriptor = (
+       (
+          Name: 'surface';
+          Color: (96, 96, 96, 127)
+       ),
+       (
+          Name: 'handle_surface';
+          Color: (96, 96, 192, 255)
+       )
+    );
+
+   wdgScrollbarSkinDescriptor: uiTWidgetSkinDescriptor = (
+      Name: 'scrollbar';
+
+      nColors: Length(wdgScrollbarSkinColorDescriptor);
+      nImages: 0;
+      nBools: 0;
+      nStrings: 0;
+
+      Colors: @wdgScrollbarSkinColorDescriptor;
+      Images: nil;
+      Bools: nil;
+      Strings: nil;
+      Setup: nil
+   );
+
 TYPE
 
    { wdgTScrollbar }
@@ -418,7 +447,7 @@ begin
    pSkin := uiTSkin(uiTWindow(wnd).Skin);
 
    {first render the scrolling surface}
-   cSurface := pSkin.Colors.LightSurface;
+   cSurface := GetColor(wdgscSCROLLBAR_SURFACE);
    if(LightMode) then begin
       if(not Permanent) then
          cSurface[3] := round(wdgScrollbar.LightOpacity * OpacityMul)
@@ -478,7 +507,7 @@ begin
       if(LightMode) and (oxui.PointerCapture.Wdg = Self) then
          cSurface := pSkin.Colors.SelectedBorder
       else
-         cSurface := pSkin.Colors.Surface;
+         cSurface := GetColor(wdgscSCROLLBAR_HANDLE_SURFACE);
 
       if(cSurface[3] < 255) then
          oxRender.EnableBlend();
@@ -660,6 +689,7 @@ end;
 
 procedure init();
 begin
+   wdgScrollbar.Internal.SkinDescriptor := @wdgScrollbarSkinDescriptor;
    wdgScrollbar.Internal.Done(wdgTScrollbar);
 
    wdgScrollbar := wdgTScrollbarGlobal.Create(wdgScrollbar.Internal);
