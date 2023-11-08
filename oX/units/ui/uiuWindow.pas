@@ -27,6 +27,8 @@ CONST
    wndevSELECT = 2;
    wndevCLOSE = 3;
 
+   WINDOW_HIGHLIGHT_MULTIPLIER: single = 1.25;
+
 TYPE
    uiTWindowClass = class of uiTWindow;
 
@@ -1778,11 +1780,21 @@ var
    f: oxTFont;
    wSelected: boolean;
    colors: uiPWindowSkinColors;
+   {are we currently hovering over this window}
+   hovering: boolean;
 
 procedure RenderWnd();
 var
    r: oxTRect;
    tx: array[0..3] of TVector2f;
+
+function getHoveringColor(color: TColor4ub): TColor4ub;
+begin
+   Result := color;
+
+   if(hovering) then
+      Result := Result.Lighten(WINDOW_HIGHLIGHT_MULTIPLIER);
+end;
 
 procedure renderBackgroundBox();
 begin
@@ -1836,16 +1848,13 @@ end;
 procedure renderNiceFrame();
 begin
    {title}
-   if(wSelected) then
-      SetColor(colors^.cTitle)
-   else
-      SetColor(colors^.cTitle);
+   SetColor(getHoveringColor(colors^.cTitle));
 
    uiDraw.Box(Aposition.x + 1, RPosition.y + 1, Aposition.x + width - 2, Aposition.y - 1);
    uiDraw.HLine(Aposition.x + 2, Aposition.y, Aposition.x + width - 3);
 
    {frame}
-   SetColor(colors^.cFrame);
+   SetColor(getHoveringColor(colors^.cFrame));
 
    {left}
    uiDraw.Box(APosition.x + 1, RPosition.y - Dimensions.h + 1, Aposition.x + fw - 1, RPosition.y);
@@ -1861,7 +1870,7 @@ begin
    uiDraw.HLine(APosition.x + 2, RPosition.y - Dimensions.h - fh + 1, Aposition.x + width - 3);
 
    {inner frame}
-   SetColor(colors^.cInnerFrame);
+   SetColor(getHoveringColor(colors^.cInnerFrame));
 
    uiDraw.Rect(Aposition.x + fw - 1, RPosition.y + 1, Aposition.x + width - fw, RPosition.y - Dimensions.h);
 end;
@@ -1869,12 +1878,12 @@ end;
 procedure renderSimpleFrame();
 begin
    {title}
-   SetColor(colors^.cTitle);
+   SetColor(getHoveringColor(colors^.cTitle));
 
    uiDraw.Box(Aposition.x, RPosition.y + 1, Aposition.x + width - 1, Aposition.y);
 
    {frame}
-   SetColor(colors^.cFrame);
+   SetColor(getHoveringColor(colors^.cFrame));
 
    {left}
    uiDraw.Box(Aposition.x, RPosition.y - Dimensions.h + 1, Aposition.x + fw - 1, RPosition.y);
@@ -1945,6 +1954,8 @@ begin
          colors := @uiTSkin(Skin).Window.Colors
       else
          colors := @uiTSkin(Skin).Window.InactiveColors;
+
+      hovering := (not IsSelected()) and (oxui.mSelect.IsIn(Self) >= 0);
 
       {if it's a sub-window we can render it's shape}
       if(Parent <> nil) then begin
