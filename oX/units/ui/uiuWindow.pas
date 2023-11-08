@@ -230,6 +230,8 @@ TYPE
       {dispose of the icon}
       procedure DisposeIcon();
 
+      function SetTitle(const newTitle: StdString): uiTWindow;
+
       { finding windows }
 
       {finds a window and returns selection}
@@ -485,6 +487,9 @@ begin
 
    wnd.oxwParent := createData.oxwParent;
 
+   if(wnd.oxwParent = nil) then
+      writeln('wtf: ' + wnd.Title);
+
    {set the base UI object if this is an oxTWindow}
    if(wnd.oxwParent = wnd) or (wnd.oxwParent = nil) then
       oxTWindow(wnd).UIBase := createData.UIBase;
@@ -588,10 +593,10 @@ begin
       {adjust position and size}
       wnd.Position   := position;
       wnd.Dimensions := dimensions;
-      wnd.SetTitle(title);
       wnd.ZIndex := createData.ZIndex;
 
       SetupCreatedWindow(wnd, createData);
+      wnd.SetTitle(title);
       wnd.SetHandler(wHandler);
 
       uiWidget.LastRect.Assign(wnd);
@@ -1268,6 +1273,17 @@ begin
       oxResource.Destroy(Icon);
 
    {TODO: Dispose system icon}
+end;
+
+function uiTWindowHelper.SetTitle(const newTitle: StdString): uiTWindow;
+begin
+   Title := newTitle;
+
+   {top level window}
+   if(oxwParent = nil) then
+      oxTWindow(Self).Viewport.Name := newTitle;
+
+   Result := Self;
 end;
 
 procedure uiTWindowHelper.Hide(notify: boolean);
