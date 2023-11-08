@@ -124,20 +124,22 @@ begin
    end;
 end;
 
-procedure SetInspector(const fn: StdString);
-begin
-   oxedInspectFile.Open(fn);
-end;
-
 procedure wdgTOXEDProjectBrowserFiles.FileClicked(index: loopint; button: TBitSet);
 var
    origin: uiTWidgetWindowOrigin;
+   selected: loopint;
 
 begin
    if(not button.IsSet(appmcRIGHT)) then begin
-      SetInspector(GetFilePath(index));
-
       inherited FileClicked(index, button);
+
+      selected := GetSelectedItem();
+
+      if(selected > -1) then
+         oxedInspectFile.Open(GetSelectedPath(), @Files.List[selected])
+      else
+         oxedInspectFile.Open(GetSelectedPath());
+
       exit;
    end;
 
@@ -151,7 +153,7 @@ procedure wdgTOXEDProjectBrowserFiles.ItemCleared();
 begin
    inherited;
 
-   SetInspector('');
+   oxedInspectFile.Open('');
 end;
 
 { wdgTProjectBrowserNavigate }
