@@ -81,20 +81,20 @@ TYPE
 
 IMPLEMENTATION
 
-var
-   currentWalker: oxedTProjectWalker;
-
 function scanFile(const fd: TFileTraverseData): boolean;
 var
    f: oxedTProjectWalkerFile;
+   walker: oxedTProjectWalker;
 
 begin
    Result := true;
 
-   currentWalker.Current.FormFile(f, fd.f);
-   currentWalker.OnFile.Call(f);
+   walker := oxedTProjectWalker(fd.ExternalData);
 
-   if(currentWalker.Terminated) then
+   walker.Current.FormFile(f, fd.f);
+   walker.OnFile.Call(f);
+
+   if(walker.Terminated) then
       exit(false);
 end;
 
@@ -102,17 +102,20 @@ function onDirectory(const fd: TFileTraverseData): boolean;
 var
    dir: StdString;
    path: oxedPPackagePath;
+   walker: oxedTProjectWalker;
 
 begin
    Result := true;
 
-   dir := oxedTProjectWalker.GetValidPath(currentWalker.Current.Path, fd.f.Name);
+   walker := oxedTProjectWalker(fd.ExternalData);
+
+   dir := oxedTProjectWalker.GetValidPath(walker.Current.Path, fd.f.Name);
 
    if(dir <> '') then begin
       {load package path properties if we have any}
       if(FileExists(fd.f.Name + DirSep + OX_PACKAGE_PROPS_FILE_NAME)) then begin
-         path := currentWalker.Current.Package^.Paths.Get(dir);
-         path^.LoadPathProperties(currentWalker.Current.Path);
+         path := walker.Current.Package^.Paths.Get(dir);
+         path^.LoadPathProperties(walker.Current.Path);
       end;
    end else
       Result := false;
@@ -154,6 +157,7 @@ begin
 
    Walker.OnFile := @scanFile;
    Walker.OnDirectory := @onDirectory;
+   Walker.ExternalData := Self;
 end;
 
 procedure oxedTProjectWalker.Run();
@@ -162,15 +166,13 @@ var
 
 procedure walkPackage(var p: oxedTPackage);
 begin
-   currentWalker.Current.Package := @p;
-   currentWalker.Current.Path := oxedProject.GetPackagePath(p);
+   Current.Package := @p;
+   Current.Path := oxedProject.GetPackagePath(p);
 
-   currentWalker.Walker.Run(currentWalker.Current.Path);
+   Walker.Run(Current.Path);
 end;
 
 begin
-   currentWalker := Self;
-
    try
       if(not Terminated) then
          walkPackage(oxedAssets.oxPackage);
@@ -194,7 +196,7 @@ begin
       end;
    end;
 
-   currentWalker.Current.Package := nil;
+   Current.Package := nil;
 end;
 
 class function oxedTProjectWalker.ValidPath(const packagePath, fullPath: StdString): Boolean;
