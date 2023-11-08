@@ -18,7 +18,7 @@ INTERFACE
       wdguBase;
 
 CONST
-   wdgWORKBAR_HEIGHT = 20;
+   wdgWORKBAR_HEIGHT = 22;
 
 TYPE
    wdgTWorkbarPositionTarget = (
