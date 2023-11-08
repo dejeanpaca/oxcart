@@ -16,7 +16,7 @@ INTERFACE
       oxuUI, oxuTypes, oxuTexture, oxuFont, oxuRenderUtilities, oxuRender, oxuTransform, oxuResourcePool,
       {ui}
       uiuTypes, uiuWindowTypes, uiuSkinTypes,
-      uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuDraw,
+      uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuDraw, uiuDrawUtilities,
       wdguBase, wdguWorkbar;
 
 CONST
@@ -222,7 +222,7 @@ begin
 
    SetPadding(2);
 
-   SeparationWidth := 2;
+   SeparationWidth := 3;
    Height := wdgToolbar.Height;
    HighlightedItem := -1;
    ItemPressed := -1;
@@ -329,21 +329,13 @@ begin
             y := RPosition.y - PaddingTop;
             y2 := RPosition.y - Dimensions.h + 1 + PaddingBottom;
 
-            SetColor(Color.Lighten(1.4));
-            uiDraw.VLine(x, y, y2);
-
-            SetColor(Color.Darken(0.4));
-            uiDraw.VLine(x + 1, y, y2);
+            uiDrawUtilities.VerticalDivisorSunken(uiTWindow(wnd), x, y, y2, Color);
          end else begin
             x := RPosition.x + PaddingLeft;
             x2 := RPosition.x + Dimensions.w - 1 - PaddingRight;
             y := RPosition.y - Items.List[i].RelativePosition - (Items.List[i].Size div 2);
 
-            SetColor(Color.Lighten(1.4));
-            uiDraw.HLine(x, y, x2);
-
-            SetColor(Color.Darken(0.4));
-            uiDraw.HLine(x, y - 1, x2);
+            uiDrawUtilities.HorizontalDivisorSunken(uiTWindow(wnd), x, y, x2, Color);
          end;
       end;
    end;
