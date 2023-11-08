@@ -1254,8 +1254,11 @@ var
    slen: longint;
 
 begin
-   if(High(chars) = 0) then
-      exit(s);
+   if(High(chars) = 0) then begin
+      Result := s;
+      s := '';
+      exit;
+   end;
 
    slen := length(s);
    Result := '';
@@ -1275,6 +1278,9 @@ begin
          inc(i);
       end;
    end;
+
+   Result := s;
+   s := '';
 end;
 
 function CopyToDel(var s: string): string;
@@ -2069,8 +2075,11 @@ var
    slen: longint;
 
 begin
-   if(High(chars) = 0) then
-      exit(s);
+   if(High(chars) = 0) then begin
+      Result := s;
+      s := '';
+      exit;
+   end;
 
    slen := length(s);
    Result := '';
@@ -2090,6 +2099,9 @@ begin
          inc(i);
       end;
    end;
+
+   Result := s;
+   s := '';
 end;
 
 function CopyToDel(var s: StdString): StdString;
