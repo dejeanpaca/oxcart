@@ -11,20 +11,16 @@ UNIT oxeduRunSettingsWindow;
 INTERFACE
 
    USES
-      uLog,
-      {app}
-      uStd, uAppInfo, appuEvents, appuActionEvents, appuKeys, appuKeyMappings,
+      uStd,
+      appuKeys,
       {oX}
-      uOX, oxuTypes, oxuRunRoutines,
-      {$IFDEF OX_FEATURE_CONSOLE}
-      oxuConsoleBackend,
-      {$ENDIF}
-      {ui}
-      oxuUI, uiuControl, uiuWindow, uiWidgets, uiuTypes, uiuMessageBox, uiuWidget, uiuKeyMappings,
+      oxuTypes, oxuConsoleBackend,
       {wnd}
-      oxuwndSettingsBase, oxuwndBase,
-      {widgets}
-      wdguLabel, wdguInputBox, wdguButton, wdguTabs, wdguDropDownList, wdguDivisor, wdguCheckbox, wdguList,
+      oxuwndBase, oxuwndSettingsBase,
+      {ui}
+      uiuControl, uiuWidget, uiWidgets, uiuMessageBox, uiuTypes, uiuKeyMappings,
+      {wdg}
+      wdguList, wdguButton, wdguDivisor, wdguLabel,
       {oxed}
       uOXED, oxeduProject;
 
@@ -35,9 +31,9 @@ TYPE
    oxeduiTRunSettingsWindow = class(oxuiTWindowBase)
    end;
 
-   { oxedTSettingsWindow }
+   { oxedTRunSettingsWindow }
 
-   oxedTSettingsWindow = class(oxTSettingsWindowBase)
+   oxedTRunSettingsWindow = class(oxTSettingsWindowBase)
       widgets: record
          RunParameters: wdgTStringList;
          AddParameter,
@@ -59,7 +55,7 @@ TYPE
    end;
 
 VAR
-   oxedwndRunSettings: oxedTSettingsWindow;
+   oxedwndRunSettings: oxedTRunSettingsWindow;
 
 IMPLEMENTATION
 
@@ -68,9 +64,9 @@ begin
    oxedwndRunSettings.Close();
 end;
 
-{ oxedTSettingsWindow }
+{ oxedTRunSettingsWindow }
 
-procedure oxedTSettingsWindow.AddWidgets();
+procedure oxedTRunSettingsWindow.AddWidgets();
 begin
    inherited;
 
@@ -101,17 +97,17 @@ begin
    end;
 end;
 
-procedure oxedTSettingsWindow.AddParameter();
+procedure oxedTRunSettingsWindow.AddParameter();
 begin
    uiMessageBox.Show('Add Parameter', 'Add a new parameter to the list', uimbsQUESTION, uimbcOK_CANCEL, uimbpDEFAULT or uimbpINPUT, @notify);
 end;
 
-procedure oxedTSettingsWindow.RemoveParameter();
+procedure oxedTRunSettingsWindow.RemoveParameter();
 begin
    oxedwndRunSettings.widgets.RunParameters.Remove(oxedwndRunSettings.widgets.RunParameters.SelectedItem);
 end;
 
-procedure oxedTSettingsWindow.Revert();
+procedure oxedTRunSettingsWindow.Revert();
 var
    i: loopint;
 
@@ -125,7 +121,7 @@ begin
    end;
 end;
 
-procedure oxedTSettingsWindow.Save();
+procedure oxedTRunSettingsWindow.Save();
 var
    i: loopint;
 
@@ -148,7 +144,7 @@ begin
 end;
 {$ENDIF}
 
-constructor oxedTSettingsWindow.Create();
+constructor oxedTRunSettingsWindow.Create();
 begin
    Name := 'run_settings';
    Title := 'Run Settings';
@@ -166,14 +162,14 @@ begin
       Action := OpenWindowAction;
 end;
 
-procedure oxedTSettingsWindow.Open;
+procedure oxedTRunSettingsWindow.Open;
 begin
    inherited Open;
 end;
 
 procedure init();
 begin
-   oxedwndRunSettings := oxedTSettingsWindow.Create();
+   oxedwndRunSettings := oxedTRunSettingsWindow.Create();
 end;
 
 procedure deinit();
