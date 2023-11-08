@@ -233,8 +233,10 @@ begin
       log.e('Failed to create window: ' + wnd.Title);
 
    if(Result) then begin
+      {$IFNDEF OX_LIBRARY}
       oxRenderer.Clear(oxrBUFFER_CLEAR_DEFAULT);
       oxRenderer.SwapBuffers(wnd);
+      {$ENDIF}
    end else begin
       oxWindow.Dispose(wnd);
    end;
