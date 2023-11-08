@@ -23,7 +23,8 @@ INTERFACE
 
    USES
       uStd, uImage, uFileHandlers, imguRW,
-      uOX;
+      {ox}
+      uOX, oxuFile;
 
 IMPLEMENTATION
 
@@ -71,7 +72,7 @@ var
    Info: TBMPInfo;
 
 begin
-   ld := data;
+   ld := oxTFileRWData(data^).External;
    imgP := ld^.Image;
 
    {read the header}

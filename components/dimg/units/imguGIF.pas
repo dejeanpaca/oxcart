@@ -11,7 +11,9 @@ UNIT imguGIF;
 INTERFACE
 
    USES
-      uStd, uImage, uFileHandlers, imguRW;
+      uStd, uImage, uFileHandlers, imguRW,
+      {ox}
+      uOX, oxuFile;
 
 IMPLEMENTATION
 
@@ -61,7 +63,7 @@ var
    descriptor: TGIFDescriptor;
 
 begin
-   ld := data;
+   ld := oxTFileRWData(data^).External;
    imgP := ld^.Image;
 
    ld^.BlockRead(descriptor, SizeOf(descriptor));
@@ -77,9 +79,13 @@ begin
    {check the flags}
 end;
 
+procedure init();
+begin
+  imgFile.Readers.RegisterHandler(loader, 'GIF', @load);
+  imgFile.Readers.RegisterExt(ext, '.gif', @loader);
+end;
+
 INITIALIZATION
-   {register the extension and loader}
-   imgFile.Loaders.RegisterHandler(loader, 'GIF', @load);
-   imgFile.Loaders.RegisterExt(ext, '.gif', @loader);
+   ox.PreInit.Add('image.gif', @init);
 
 END.

@@ -14,7 +14,8 @@ INTERFACE
 
    USES
       uImage, uFileHandlers, imguRW,
-      uOX;
+      {ox}
+      uOX, oxuFile;
 
 IMPLEMENTATION
 
@@ -47,7 +48,7 @@ begin
 end;
 
 begin {writeImage}
-   ld := data;
+   ld := oxTFileRWData(data^).External;
    imgP := ld^.Image;
 
    {check if the image is of a supported format}

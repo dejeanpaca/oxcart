@@ -11,7 +11,7 @@ UNIT imguRW;
 INTERFACE
 
    USES
-      uStd, uLog, StringUtils,
+      uStd, uLog,
       uFileHandlers, uFile, {%H-}uFiles,
       uImage, imguOperations,
       {oX}
@@ -131,6 +131,7 @@ var
 
 begin
    Init(options);
+   options.Image := image;
 
    Result := inherited Write(fileName, @options);
 end;

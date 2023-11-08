@@ -14,7 +14,8 @@ INTERFACE
       uStd, uImage, StringUtils,
       uFileHandlers, imguRW,
       paszlib, ZInflate,
-      uOX;
+      {ox}
+      uOX, oxuFile;
 
 IMPLEMENTATION
 
@@ -456,7 +457,7 @@ var
    loaderData: TPNGLoaderData;
 
 begin
-   ld := data;
+   ld := oxTFileRWData(data^).External;
 
    {read png signature and verify it}
    ld^.BlockRead(pngSig, 8);

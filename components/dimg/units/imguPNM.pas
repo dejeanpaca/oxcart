@@ -16,7 +16,8 @@ INTERFACE
 
    USES
       uStd, uImage, uFileHandlers, imguRW, StringUtils,
-      uOX;
+      {ox}
+      uOX, oxuFile;
 
 TYPE
    pnmTID = array[0..2] of char;
@@ -70,7 +71,7 @@ begin
 end;
 
 begin
-   ld := data; 
+   ld := oxTFileRWData(data^).External;
    imgP := ld^.Image;
 
    ld^.BlockRead(ID, SizeOf(pnmTID));
