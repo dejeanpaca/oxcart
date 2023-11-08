@@ -28,8 +28,6 @@ TYPE
       Code: loopint;
       {glyph texture associated with this entity}
       Texture: oxTTexture;
-      {edit mode renderer associated with this component}
-      EditRenderer: TObject;
 
       procedure Initialize(out glyph: oxedTComponentGlyph);
 
@@ -54,7 +52,7 @@ end;
 
 procedure oxedTComponentGlyph.CreateTexture();
 begin
-   if(Texture <> nil) then begin
+   if(Texture = nil) then begin
       {generate a texture by glyph name}
       if(Name <> '') then
          Texture := oxedIcons.Create(Name, oxedGlyphTextureSize);
