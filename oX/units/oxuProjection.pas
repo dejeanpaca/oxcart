@@ -56,6 +56,9 @@ TYPE
       procedure Ortho(w, h: single; zNear, zFar: single);
       procedure Ortho2D(w, h: single);
 
+      {set default orthographic properties}
+      procedure DefaultOrtho();
+
       {immediately make a perspective projection}
       procedure QuickPerspective(fovY, zNear, zFar: single);
       {immediately make a 2d orthographic projection}
@@ -65,6 +68,8 @@ TYPE
 
       {set properties of perspective projection}
       procedure Perspective(fovY, zNear, zFar: single);
+      {set default perspective properties}
+      procedure DefaultPerspective();
 
       procedure GetRect(out r: oxTRect);
 
@@ -92,7 +97,7 @@ begin
    ScissorOnClear    := true;
 
    ClearBits      := oxrBUFFER_CLEAR_DEFAULT;
-   p              := oxDefaultProjection;
+   p              := oxDefaultPerspective;
 
    SetViewport(0, 0, 640, 480);
    SetProjectionMatrix();
@@ -191,22 +196,22 @@ end;
 
 procedure oxTProjectionHelper.GetProjectionMatrix(out m: TMatrix4f);
 begin
-   if(not p.isOrtho) then begin
+   if(not p.IsOrtographic) then begin
       {perspective}
-      m := oxTTransform.PerspectiveFrustum(p.fovY, Dimensions.w / Dimensions.h, p.zNear, p.zFar)
+      m := oxTTransform.PerspectiveFrustum(p.FovY, Dimensions.w / Dimensions.h, p.ZNear, p.ZFar)
    end else
       {orthographic}
-      m := oxTTransform.OrthoFrustum(p.l, p.r, p.b, p.t, p.zNear, p.zFar);
+      m := oxTTransform.OrthoFrustum(p.l, p.r, p.b, p.t, p.ZNear, p.ZFar);
 end;
 
 procedure oxTProjectionHelper.SetProjectionMatrix();
 begin
-   if(not p.isOrtho) then begin
+   if(not p.IsOrtographic) then begin
       {perspective}
-      ProjectionMatrix := oxTTransform.PerspectiveFrustum(p.fovY, Dimensions.w / Dimensions.h, p.zNear, p.zFar)
+      ProjectionMatrix := oxTTransform.PerspectiveFrustum(p.FovY, Dimensions.w / Dimensions.h, p.ZNear, p.ZFar)
    end else
       {orthographic}
-      ProjectionMatrix := oxTTransform.OrthoFrustum(p.l, p.r, p.b, p.t, p.zNear, p.zFar);
+      ProjectionMatrix := oxTTransform.OrthoFrustum(p.l, p.r, p.b, p.t, p.ZNear, p.ZFar);
 end;
 
 procedure oxTProjectionHelper.Projection();
@@ -217,10 +222,10 @@ end;
 
 procedure oxTProjectionHelper.SetZ(zNear, zFar: single);
 begin
-   p.zNear := zNear;
-   p.zFar := zFar;
+   p.ZNear := zNear;
+   p.ZFar := zFar;
 
-   if(zNear <= 0.0) then
+   if(zNear <= 0.0) and (p.IsOrtographic) then
       log.w('zNear value should not be 0 or less');
 end;
 
@@ -231,7 +236,7 @@ end;
 
 procedure oxTProjectionHelper.Ortho(l, r, b, t: single; zNear, zFar: single);
 begin
-   p.isOrtho := true;
+   p.IsOrtographic := true;
 
    p.l := l;
    p.r := r;
@@ -239,9 +244,6 @@ begin
    p.t := t;
 
    SetZ(zNear, zFar);
-
-   if(zNear <= 0.0) then
-      log.w('zNear value should not be 0 or less');
 
    SetProjectionMatrix();
 end;
@@ -260,6 +262,11 @@ end;
 procedure oxTProjectionHelper.Ortho2D(w, h: single);
 begin
    Ortho(w, h, -1.0, 1.0);
+end;
+
+procedure oxTProjectionHelper.DefaultOrtho();
+begin
+   Ortho(oxDefaultOrthographic.ZNear, oxDefaultOrthographic.ZFar);
 end;
 
 procedure oxTProjectionHelper.QuickPerspective(fovY, zNear, zFar: single);
@@ -291,11 +298,17 @@ end;
 
 procedure oxTProjectionHelper.Perspective(fovY, zNear, zFar: single);
 begin
-   p.fovY := fovY;
-   p.isOrtho := false;
+   p.FovY := fovY;
+   p.IsOrtographic := false;
 
    SetZ(zNear, zFar);
    SetProjectionMatrix();
+end;
+
+procedure oxTProjectionHelper.DefaultPerspective();
+begin
+   Perspective(oxDefaultPerspective.FovY,
+      oxDefaultPerspective.ZNear, oxDefaultPerspective.ZFar);
 end;
 
 procedure oxTProjectionHelper.GetRect(out r: oxTRect);
