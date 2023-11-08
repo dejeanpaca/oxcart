@@ -13,7 +13,9 @@ PROGRAM oxed;
    USES
       {$INCLUDE oxappuses.inc},
       {oxed}
-      uOXED, oxeduInitialize;
+      uOXED, oxeduInitialize, oxuViewport;
+
+{$R *.res}
 
 BEGIN
    {$IF DECLARED(UseHeapTrace)}
