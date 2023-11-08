@@ -270,7 +270,7 @@ procedure oxTUI.DeInitialize();
 begin
    InitializationProcs.dCall();
 
-   FreeObject(Material);
+   oxResource.Free(Material);
 end;
 
 procedure oxTUI.BaseInitialize();
@@ -364,7 +364,7 @@ end;
 
 procedure onUse();
 begin
-   FreeObject(oxui.Material);
+   oxResource.Free(oxui.Material);
 
    oxui.Material := oxMaterial.Make();
    oxui.Material.Name := 'ui';
