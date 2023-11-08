@@ -384,7 +384,7 @@ end;
 procedure dvPlatformNotify(var {%H-}context: TDVarNotificationContext);
 begin
    if(currentMode = 'fpc') and (currentPlatform <> nil) then
-      currentPlatform^.Platform := currentValue;
+      currentPlatform^.SetPlatform(currentValue);
 end;
 
 procedure dvPathNotify(var {%H-}context: TDVarNotificationContext);
