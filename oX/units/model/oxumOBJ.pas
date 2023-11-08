@@ -25,7 +25,15 @@ TYPE
    { TLoaderData }
 
    TLoaderData = record
-      MaterialCount: loopint;
+      MaterialCount,
+
+      {total vertex loaded so far}
+      TotalV,
+      {total normals loaded so far}
+      TotalN,
+      {total uv loaded so far}
+      TotalUV: loopint;
+
       Model: oxTModel;
       UnsupportedFaces,
       HasTris,
@@ -237,9 +245,8 @@ begin
                   inc(m^.Materials.n);
                   wasUseMtl := true;
                end else if(key = 's') then begin
-                  if(not wasUseMtl) then begin
-                     inc(m^.Materials.n)
-                  end;
+                  if(not wasUseMtl) then
+                     inc(m^.Materials.n);
 
                   wasUseMtl := false;
                end;
@@ -336,6 +343,8 @@ var
 
          longIndices := false;
 
+         inc(ld.TotalV, m^.Data.nVertices);
+
          {we have to have allocated indices}
          if (Length(indices) > 0) and (m^.Data.nIndices > 0) then begin
             {check if we need long indices (dword)}
@@ -359,8 +368,9 @@ var
                Move(indices[ivOffset], m^.Data.il[0], SizeOf(m^.Data.il[0]) * m^.Data.nIndices);
          end;
 
-         if(hasN) and (m^.Data.n <> nil) then begin
+         if(hasN) and (m^.Data.n <> nil) and (inOffset > -1) then begin
             SetLength(newV, m^.Data.nVertices);
+            inc(ld.TotalV, m^.Data.nNormals);
 
             oxPrimitives.Reindex(@indices[inOffset], pdword(@indices[ivOffset]), m^.Data.nIndices,
                @m^.Data.n[0], PVector3f(@newV[0]));
@@ -371,14 +381,15 @@ var
             newV := nil;
          end;
 
-         if(hasUV) and (m^.Data.t <> nil) then begin
+         if(hasUV) and (m^.Data.t <> nil) and (iuvOffset > -1) then begin
             SetLength(newUV, m^.Data.nVertices);
+            inc(ld.TotalUV, m^.Data.nTexCoords);
 
             oxPrimitives.Reindex(@indices[iuvOffset], pdword(@indices[iuvOffset]), m^.Data.nIndices, @m^.Data.t[0], PVector2f(@newUV[0]));
             SetLength(m^.Data.t, 0);
 
             m^.Data.t := newUV;
-            m^.Data.nNormals := m^.Data.nVertices;
+            m^.Data.nTexCoords := m^.Data.nVertices;
             newUV := nil;
          end;
       end;
@@ -401,7 +412,10 @@ var
 
    procedure getMaterial();
    begin
-      if(currentMaterial < m^.Materials.n) then begin
+      if(m = nil) then
+         exit;
+
+      if currentMaterial < m^.Materials.n then begin
          pM := @m^.Materials.List[currentMaterial];
          pM^.Material := ld.Model.Materials.FindByName(materialName);
 
@@ -409,7 +423,7 @@ var
          pM^.StartIndice := currentFace * vertsPerFace;
 
          if(pM^.StartIndice > m^.Data.nIndices) then begin
-            log.w('Invalid indice starting position for material: ' + materialName);
+            data.SetError(eUNEXPECTED, 'Invalid indice starting position for material: ' + materialName);
             pM^.StartIndice := 0;
          end;
 
@@ -420,7 +434,7 @@ var
       inc(currentMaterial);
 
       if(currentMaterial > m^.Materials.n) then
-         data.SetError('Improperly scanned number of materials for mesh: ' + sf(meshIndex));
+         data.SetError(eUNEXPECTED, 'Improperly scanned number of materials for mesh: ' + sf(meshIndex));
    end;
 
    procedure cleanup();
@@ -463,14 +477,33 @@ var
    end;
 
    procedure setFacePoint(source, where: loopint); inline;
+   var
+      v: loopint;
+
    begin
-      setIndice(face[source].v, ivOffset + where);
+      v := face[source].v - ld.TotalV;
 
-      if(hasUV) then
-         setIndice(face[source].uv, iuvOffset + where);
+      setIndice(v, ivOffset + where);
 
-      if(hasN) then
-         setIndice(face[source].n, inOffset + where);
+      if(v > m^.Data.nVertices) then
+         data.SetError(eUNSUPPORTED, 'Failed to set vertex indice because out of range');
+
+      if(hasUV) then begin
+         v := face[source].uv - ld.TotalUV;
+         setIndice(v, iuvOffset + where);
+
+         if(v > m^.Data.nTexCoords) then
+            data.SetError(eUNSUPPORTED, 'Failed to set tex coord indice because out of range');
+      end;
+
+      if(hasN) then begin
+         v := face[source].n - ld.TotalN;
+
+         setIndice(v, inOffset + where);
+
+         if(v > m^.Data.nTexCoords) then
+            data.SetError(eUNSUPPORTED, 'Failed to set normal indice because out of range');
+      end;
    end;
 
 begin
@@ -490,6 +523,10 @@ begin
    faceStrings[1] := '';
    faceStrings[2] := '';
    faceStrings[3] := '';
+
+   ld.TotalV := 0;
+   ld.TotalN := 0;
+   ld.TotalUV := 0;
 
    ZeroPtr(@face, SizeOf(face));
 
@@ -557,13 +594,19 @@ begin
                   hasUV := indiceStrings[1] <> '';
                   hasN := indiceStrings[2] <> '';
 
+                  iCurrentOffset := 0;
+
                   ivOffset := getOffset();
 
                   if(hasUV) then
-                    iuvOffset := getOffset();
+                    iuvOffset := getOffset()
+                 else
+                    iuvOffset := -1;
 
                   if(hasN) then
-                    inOffset := getOffset();
+                     inOffset := getOffset()
+                  else
+                     inOffset := -1;
 
                   nIndices := iCurrentOffset;
                   SetLength(indices, iCurrentOffset);
@@ -660,6 +703,12 @@ begin
    { scan pass }
    scan(pData^, loaderData);
 
+   {failed loading model, fixup some aspects of it}
+   if(pData^.Error <> 0) then begin
+      options^.Model.Validate();
+      exit;
+   end;
+
    { we can't load this }
    if(loaderData.UnsupportedFaces) then begin
       pData^.SetError(eUNSUPPORTED, 'Unsupported face point count (not triangle or quad)');
@@ -667,13 +716,24 @@ begin
       exit;
    end;
 
+   {failed loading model, fixup some aspects of it}
+   if(pData^.Error <> 0) then begin
+      options^.Model.Validate();
+      exit;
+   end;
+
+   {conversion notification}
    if(loaderData.HasPolygons) then
       log.w('Polygons will be converted to triangles for: ' + pData^.FileName)
    else if(loaderData.HasQuads) then
       log.w('Quads will be converted to triangles for: ' + pData^.FileName);
 
-   { actually load the model }
+   {actually load the model}
    load(pData^, loaderData);
+
+   {failed loading model, fixup some aspects of it}
+   if(pData^.Error <> 0) then
+      options^.Model.Validate();
 end;
 
 
