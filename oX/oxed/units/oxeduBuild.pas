@@ -896,7 +896,8 @@ end;
 
 procedure onOutputLine();
 begin
-   oxedMessages.v(build.Output.LastLine);
+   if(oxedSettings.ShowBuildOutput) then
+      oxedMessages.v(build.Output.LastLine);
 end;
 
 VAR
