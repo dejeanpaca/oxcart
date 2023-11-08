@@ -148,9 +148,9 @@ begin
       glwnd := oglTWindow(wnd);
 
       glwnd.Info := xglwnd.Info;
-      glwnd.glSettings := xglwnd.glSettings;
-      glwnd.DefaultSettings := xglwnd.DefaultSettings;
-      glwnd.RequiredSettings := xglwnd.RequiredSettings;
+      glwnd.gl := xglwnd.gl;
+      glwnd.glDefault := xglwnd.glDefault;
+      glwnd.glRequired := xglwnd.glRequired;
       glwnd.glProperties := xglwnd.glProperties;
       glwnd.Limits := xglwnd.Limits;
    end;
