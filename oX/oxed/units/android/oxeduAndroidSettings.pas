@@ -45,7 +45,8 @@ TYPE
          {target android version}
          TargetVersion: loopint;
 
-         CPUType: oxedTAndroidCPUType;
+         {cpu type to use with the emulator}
+         EmulatorCPUType: oxedTAndroidCPUType;
       end;
 
       procedure ProjectReset();
@@ -59,6 +60,9 @@ TYPE
 
       {get the project files path}
       function GetProjectFilesPath(): StdString;
+
+      {get current cpu type}
+      function GetCPUType(): oxedTAndroidCPUType;
    end;
 
 VAR
@@ -152,6 +156,18 @@ begin
       Result := Project.ProjectFilesPath;
 end;
 
+function oxedTAndroidSettings.GetCPUType(): oxedTAndroidCPUType;
+begin
+   Result := oxedAndroidSettings.Project.EmulatorCPUType;
+end;
+
+procedure loadedProject();
+begin
+   {make sure cpu type is not set to a funky value in the config file}
+   if(loopint(oxedAndroidSettings.Project.EmulatorCPUType) > loopint(high(oxedTAndroidCPUType))) then
+      oxedAndroidSettings.Project.EmulatorCPUType := ANDROID_CPU_ARM;
+end;
+
 procedure preOpen();
 begin
    oxedAndroidSettings.ProjectReset();
@@ -160,6 +176,7 @@ end;
 INITIALIZATION
    oxedAndroidSettings.ProjectReset();
    oxedProjectManagement.OnPreOpen.Add(@preOpen);
+   oxedProjectManagement.OnLoadedProject.Add(@loadedProject);
 
    dvar.Init(oxedAndroidSettings.dvg, 'android');
    dvar.Init(oxedAndroidSettings.Project.dvg, 'android');
@@ -168,7 +185,7 @@ INITIALIZATION
 
    oxedAndroidSettings.Project.dvg.Add(dvManualFileManagement, 'manual_file_management', dtcBOOL, @oxedAndroidSettings.Project.ManualFileManagement);
    oxedAndroidSettings.Project.dvg.Add(dvPackageName, 'package_name', dtcSTRING, @oxedAndroidSettings.Project.PackageName);
-   oxedAndroidSettings.Project.dvg.Add(dvEmulatorCPUType, 'emulator_cpu_type', dtcENUM, @oxedAndroidSettings.Project.CPUType);
+   oxedAndroidSettings.Project.dvg.Add(dvEmulatorCPUType, 'emulator_cpu_type', dtcENUM, @oxedAndroidSettings.Project.EmulatorCPUType);
    oxedAndroidSettings.Project.dvg.Add(dvTargetVersion, 'target_version', dtcLOOPINT, @oxedAndroidSettings.Project.TargetVersion);
 
    oxedAndroidSettings.dvg.Add(dvSDKPath, 'sdk_path', dtcSTRING, @oxedAndroidSettings.SDKPath);
