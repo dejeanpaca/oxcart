@@ -395,7 +395,8 @@ begin
 
    Clickable := true;
    HighlightHovered := true;
-   SelectBorder := false;;
+   SelectBorder := false;
+   AllowLoopingNavigation := true;
 
    VerticalSeparation := VERTICAL_SEPARATION;
    SetPadding(PADDING_SIZE);
