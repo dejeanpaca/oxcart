@@ -1,8 +1,6 @@
 {
    oxeduwndAndroidGeneralSettings, oxed android general settings window
    Copyright (C) 2020. Dejan Boras
-
-   Started On:    21.02.2020.
 }
 
 {$INCLUDE oxdefines.inc}
@@ -13,7 +11,7 @@ INTERFACE
    USES
       uStd, StringUtils,
       {ox}
-      oxuRunRoutines, oxuTypes,
+      oxuRunRoutines,
       {widgets}
       oxuwndSettings, oxuwndFileDialog,
       uiWidgets, wdguCheckbox, wdguDivisor, wdguInputBox, wdguLabel, wdguButton,
@@ -25,10 +23,12 @@ IMPLEMENTATION
 
 VAR
    wdg: record
-      SDKPath: wdgTInputBox;
+      SDKPath,
+      NDKPath: wdgTInputBox;
    end;
 
-   dlgSDKPath: oxTFileDialog;
+   dlgSDKPath,
+   dlgNDKPath: oxTFileDialog;
 
 procedure openSDKPathCallback(dialog: oxTFileDialog);
 var
@@ -53,6 +53,32 @@ begin
    dlgSDKPath.Open();
 end;
 
+procedure openNDKPathCallback(dialog: oxTFileDialog);
+var
+   path: StdString;
+
+begin
+   if(not dialog.Canceled) then begin
+      path := IncludeTrailingPathDelimiterNonEmpty(dialog.SelectedFile);
+
+      wdg.NDKPath.SetText(path);
+   end;
+end;
+
+procedure openNDKPath();
+begin
+   if(dlgNDKPath = nil) then begin
+      dlgNDKPath := oxFileDialog.OpenDirectories();
+      dlgNDKPath.SetTitle('Find NDK Path');
+      dlgNDKPath.Callback := @openNDKPathCallback;
+   end;
+
+   dlgNDKPath.Open();
+
+   if(oxedAndroidSettings.SDKPath <> '') then
+      dlgNDKPath.SetPath(oxedAndroidSettings.SDKPath);
+end;
+
 procedure saveCallback();
 begin
    oxedAndroidSettings.SDKPath := wdg.SDKPath.GetText();
@@ -73,13 +99,17 @@ procedure PreAddTabs();
 begin
    oxwndSettings.Tabs.AddTab('Android', 'android');
 
-   wdgDivisor.Add('Android settings');
-
-   wdgLabel.Add('SDK Path');
+   wdgDivisor.Add('SDK Path');
    wdg.SDKPath := wdgInputBox.Add('');
    wdg.SDKPath.SetPlaceholder('SDK Path');
 
-   wdgButton.Add('Find SDK', uiWidget.LastRect.RightOf(), oxNullDimensions, 0).Callback.Use(@openSDKPath);
+   wdgButton.Add('Find SDK').Callback.Use(@openSDKPath);
+
+   wdgDivisor.Add('NDK Path');
+   wdg.NDKPath := wdgInputBox.Add('');
+   wdg.NDKPath.SetPlaceholder('NDK Path');
+
+   wdgButton.Add('Find NDK').Callback.Use(@openNDKPath);
 end;
 
 procedure init();
