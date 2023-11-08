@@ -791,6 +791,9 @@ end;
 
 procedure oxedTBuildGlobal.CopyLibraries();
 begin
+   if(BuildTarget <> OXED_BUILD_STANDALONE) then
+      exit;
+
    {$IFDEF WINDOWS}
    build.Libraries.Target := TargetPath;
 
