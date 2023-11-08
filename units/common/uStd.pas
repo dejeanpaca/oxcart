@@ -319,7 +319,9 @@ function GetBit(Value: word; Index: Byte): Boolean;
 
 {return a string for the current call stack}
 function DumpCallStack(skip: longint = 0): StdString;
+function DumpExceptionHeader(e: Exception): StdString;
 function DumpExceptionCallStack(e: Exception): StdString;
+function DumpExceptionCallStack(exceptAddr: Pointer; frameCount: longint; frames: PPointer): StdString;
 
 function GetUTF8EnvironmentVariable(const v: UTF8String): UTF8String;
 
@@ -1059,15 +1061,17 @@ begin
    RunTimeErrorDisplay(ErrorAddr);
 end;
 
-procedure UnhandledException(Obj: TObject; Addr: Pointer; {%H-}FrameCount: Longint; {%H-}Frames: PPointer);
+procedure UnhandledException(obj: TObject; addr: Pointer; {%H-}frameCount: Longint; {%H-}frames: PPointer);
 begin
    writeln(stdout, '(╯°□°)╯︵ ┻━┻');
-   writeln(stdout, 'Unhandled exception @ $',  addr2str(Addr), ' :');
+   writeln(stdout, 'Unhandled exception @ $',  addr2str(addr), ' :');
 
-   if(Obj is Exception) then begin
-      writeln(stdout, DumpExceptionCallStack(Exception(Obj)));
-   end else
-      writeLn(stdout, 'Exception object ', Obj.ClassName, ' is not of class Exception.');
+   if(obj is Exception) then begin
+      writeln(stdout, DumpExceptionCallStack(Exception(obj)));
+   end else begin
+      writeln(stdout, 'Exception object ', obj.ClassName, ' is not of class Exception.');
+      writeln(stdout, DumpExceptionCallStack(addr, frameCount, frames));
+   end;
 
    writeln(stdout,'');
 end;
@@ -1308,26 +1312,30 @@ begin
    Result := Report;
 end;
 
+function DumpExceptionHeader(e: Exception): StdString;
+begin
+   if(e <> nil) then
+      Result := 'Exception ' + E.ClassName + ' ' + E.Message + ' (unit: ' + e.UnitName + ')' + LineEnding
+   else
+      Result := '';
+end;
+
 function DumpExceptionCallStack(e: Exception): StdString;
+begin
+   Result := DumpExceptionHeader(e);
+
+   Result := Result + DumpExceptionCallStack(ExceptAddr, ExceptFrameCount, ExceptFrames);
+end;
+
+function DumpExceptionCallStack(exceptAddr: Pointer; frameCount: longint; frames: PPointer): StdString;
 var
    i: loopint;
-   Frames: PPointer;
-   Report: StdString;
 
 begin
-   report := '';
+   Result := BackTraceStrFunc(exceptAddr);
 
-   if (e <> nil) then begin
-      Report := Report + 'Exception ' + E.ClassName + ' ' + E.Message + ' (unit: ' + e.UnitName + ')' + LineEnding;
-   end;
-
-   Report := Report + BackTraceStrFunc(ExceptAddr);
-   Frames := ExceptFrames;
-
-   for i := 0 to ExceptFrameCount - 1 do
-      Report := Report + LineEnding + BackTraceStrFunc(Frames[I]);
-
-   Result := report;
+   for i := 0 to frameCount - 1 do
+      Result := Result + LineEnding + BackTraceStrFunc(frames[I]);
 end;
 
 function GetUTF8EnvironmentVariable(const v: UTF8String): UTF8String;
