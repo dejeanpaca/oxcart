@@ -17,7 +17,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont, oxuTexture,
       {ui}
-      uiuTypes, uiuWindowTypes, uiuWidget, uiWidgets, uiuDraw, uiuWidgetRender, uiuWindow,
+      uiuTypes, uiuWindowTypes, uiuWidget, uiWidgets, uiuDraw, uiuWidgetRender, uiuWindow, uiuSettings,
       wdguScrollbar;
 
 TYPE
@@ -1000,10 +1000,17 @@ begin
          ItemClickedSecondary(index);
       end;
    end else if(e.IsWheel()) then begin
-      if(e.Value < 0) then
-         Next()
-      else
-         Previous();
+      if(e.Value < 0) then begin
+         if(not uiSettings.NaturalScroll) then
+            Next()
+         else
+            Previous();
+      end else begin
+         if(not uiSettings.NaturalScroll) then
+            Previous()
+         else
+            Next();
+      end;
    end;
 end;
 
