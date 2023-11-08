@@ -57,7 +57,7 @@ TYPE
       {external data}
       External: TObject;
 
-      msgBox: record
+      MessageBox: record
          Style: uiTMessageBoxStyle;
          Buttons,
          Properties: longword;
@@ -212,18 +212,18 @@ begin
 
    uiTMessageBoxData.Init(data);
 
-   data.What := wnd.msgBox.What;
-   data.Button := wnd.msgBox.ButtonResult;
+   data.What := wnd.MessageBox.What;
+   data.Button := wnd.MessageBox.ButtonResult;
 
-   if(wnd.msgBox.wdg.Input <> nil) then
-      data.Input := wnd.msgBox.wdg.Input.GetText();
+   if(wnd.MessageBox.wdg.Input <> nil) then
+      data.Input := wnd.MessageBox.wdg.Input.GetText();
 
    data.Window := wnd;
 
-   if(wnd.msgBox.Notify <> nil) then
-      wnd.msgBox.Notify(data);
+   if(wnd.MessageBox.Notify <> nil) then
+      wnd.MessageBox.Notify(data);
 
-   uiWindow.DisposeQueue(uiTWindow(wnd.msgBox.SurfaceWnd));
+   uiWindow.DisposeQueue(uiTWindow(wnd.MessageBox.SurfaceWnd));
    uiWindow.DisposeQueue(uiTWindow(wnd));
 end;
 
@@ -235,12 +235,12 @@ begin
    Result := -1;
 
    {if clicked one of the buttons}
-   if(wdg.wdgClass^.cID = wdgButton.internal.cID) then begin
+   if(wdg.wdgClass^.cID = wdgButton.Internal.cID) then begin
       if(what = wdghBUTTON_CLICKED) then begin
          for i := 0 to (uimbcNBUTTONS - 1) do begin
             if(wdg = ButtonDescriptors[i].wdgID^) then begin
-               uiTMessageBoxWindow(wdg.wnd).msgBox.What := uimbcWHAT_BUTTON;
-               uiTMessageBoxWindow(wdg.wnd).msgBox.ButtonResult := 1 shl (i);
+               uiTMessageBoxWindow(wdg.wnd).MessageBox.What := uimbcWHAT_BUTTON;
+               uiTMessageBoxWindow(wdg.wnd).MessageBox.ButtonResult := 1 shl (i);
                break;
             end;
          end;
@@ -273,7 +273,7 @@ begin
    wdg := wdgTButton(wdgButton.Add(ButtonDescriptors[which].sCaption,
      oxPoint(x, y), oxDimensions(w, BTN_HEIGHT), 0).SetID(ButtonDescriptors[which].wdgID^));
 
-  wnd.msgBox.wdg.Buttons[curButton] := wdg;
+  wnd.MessageBox.wdg.Buttons[curButton] := wdg;
   if(nButtons > 0) then begin
      if(curButton = 0) then
         wdg.SetButtonPosition([uiCONTROL_GRID_LEFT])
@@ -352,14 +352,14 @@ var
 begin
    h := INPUT_HEIGHT;
 
-   wnd.msgBox.wdg.Input := wdgTInputBox(wdgInputBox.Add('',
+   wnd.MessageBox.wdg.Input := wdgTInputBox(wdgInputBox.Add('',
       oxPoint(wdgDEFAULT_SPACING, labelWidget.BelowOf()),
       oxDimensions(wnd.Dimensions.w - wdgDEFAULT_SPACING * 2, h)).
       SetID(WDGID_TEXT));
 
-   wnd.msgBox.wdg.Input.AutoSetDimensions(True);
+   wnd.MessageBox.wdg.Input.AutoSetDimensions(True);
 
-   wnd.msgBox.wdg.Input.SetPlaceholder('');
+   wnd.MessageBox.wdg.Input.SetPlaceholder('');
 end;
 
 procedure AddIcon();
@@ -410,7 +410,7 @@ begin
 
    if(properties and uimbpINPUT > 0) then begin
       AddInput();
-      wnd.msgBox.wdg.Input.SelectQueue();
+      wnd.MessageBox.wdg.Input.SelectQueue();
    end;
 
    if(style <> uimbsNONE) then
@@ -479,7 +479,7 @@ end;
 
 procedure uiTMessageBoxWindow.OnDeactivate;
 begin
-   if(oxui.Select.GetSelectedWnd() = msgBox.SurfaceWnd) then
+   if(oxui.Select.GetSelectedWnd() = MessageBox.SurfaceWnd) then
       Select();
 end;
 
@@ -595,10 +595,10 @@ begin
       wnd := CreateMsgBoxWnd(props.parent, title, say, props.Style, props.Buttons, props.properties);
 
       if(wnd <> nil) then begin
-         wnd.msgBox.Style       := props.Style;
-         wnd.msgBox.Properties  := props.Properties;
-         wnd.msgBox.Buttons     := props.Buttons;
-         wnd.msgBox.Notify      := props.Notify;
+         wnd.MessageBox.Style       := props.Style;
+         wnd.MessageBox.Properties  := props.Properties;
+         wnd.MessageBox.Buttons     := props.Buttons;
+         wnd.MessageBox.Notify      := props.Notify;
 
          if(props.properties and uimbpSURFACE > 0) then begin
             uiWindow.Create.ZIndex := -uiMessageBox.SurfaceZ;
@@ -607,7 +607,7 @@ begin
             surface := uiTMessageBoxSurfaceWindow(uiSurface.Create('MsgBoxSurface'));
             surface.Background.Color.Assign(0, 0, 0, 191);
             surface.msgBox := wnd;
-            wnd.msgBox.SurfaceWnd := surface;
+            wnd.MessageBox.SurfaceWnd := surface;
          end;
 
          wnd.Select();

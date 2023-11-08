@@ -253,7 +253,7 @@ begin
       uiMessageBox.WindowType := uiTFileContextMenuMessageBoxWindow;
       mbWindow := uiMessageBox.ShowInput('Enter new filename', 'Enter new file name: ', @mbRenameNotify);
       uiTFileContextMenuMessageBoxWindow(mbWindow).Parameters := wnd.Parameters;
-      mbWindow.msgBox.wdg.Input.SetText(fn);
+      mbWindow.MessageBox.wdg.Input.SetText(fn);
    end;
 end;
 
