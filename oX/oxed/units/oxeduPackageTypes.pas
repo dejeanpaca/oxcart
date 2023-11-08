@@ -42,6 +42,8 @@ TYPE
 
       {check if this package path is supported on provided platform}
       function IsSupported(const platform: StdString; isLibrary: boolean = false): boolean;
+      {is this package path optional (true if path and any parent is optional too)}
+      function IsOptional(): boolean;
 
       {loads path properties from .package file if any is present}
       procedure LoadPathProperties();
@@ -75,6 +77,11 @@ TYPE
       {find unit path (if any)}
       function FindPackageUnit(const p: StdString): oxedPPackagePath;
 
+      {find closes package path for given path}
+      function FindClosest(const path: StdString; excludeSelf: boolean = false): oxedPPackagePath;
+      {find parent path}
+      function AssociateParent(const p: oxedTPackagePath): oxedPPackagePath;
+
       {dispose of all the paths}
       procedure Destroy();
    end;
@@ -94,6 +101,26 @@ end;
 function oxedTPackagePath.IsSupported(const platform: StdString; isLibrary: boolean): boolean;
 begin
    Result := Platforms.IsSupported(platform, isLibrary);
+end;
+
+function oxedTPackagePath.IsOptional(): boolean;
+var
+   current: oxedPPackagePath;
+
+begin
+   Result := Optional;
+
+   {if current path is not optional, check if parent paths are}
+   if(not Result) then begin
+      current := Parent;
+
+      if(current <> Nil) then repeat
+         if(current^.Optional) then
+            exit(True);
+
+         current := current^.Parent;
+      until current = nil;
+   end;
 end;
 
 procedure oxedTPackagePath.LoadPathProperties();
@@ -186,23 +213,28 @@ begin
 end;
 
 function oxedTPackagePathsHelper.Get(const p: StdString): oxedPPackagePath;
+var
+   pp: StdString;
+
 begin
-   Result := FindPackagePath(p);
+   pp := IncludeTrailingPathDelimiterNonEmpty(p);
+   Result := FindPackagePath(pp);
 
    if(Result = nil) then
-      Result := NewPath(p);
+      Result := NewPath(pp);
 end;
 
 function oxedTPackagePathsHelper.NewPath(const p: StdString): oxedPPackagePath;
 var
-   units: oxedTPackagePath;
+   path: oxedTPackagePath;
 
 begin
-   oxedTPackagePath.Initialize(units);
-   units.Path := p;
+   oxedTPackagePath.Initialize(path);
+   path.Path := p;
 
-   Add(units);
+   Add(path);
    Result := GetLast();
+   AssociateParent(Result^);
 end;
 
 function oxedTPackagePathsHelper.FindPackagePath(const p: StdString): oxedPPackagePath;
@@ -239,6 +271,65 @@ begin
    end;
 
    Result := nil;
+end;
+
+function oxedTPackagePathsHelper.FindClosest(const path: StdString; excludeSelf: boolean): oxedPPackagePath;
+var
+   i: loopint;
+   potentialParent: oxedPPackagePath;
+
+begin
+   Result := nil;
+   potentialParent := nil;
+
+   {find parent with longest path (means closest to our package path)}
+
+   for i := 0 to n - 1 do begin
+      if(excludeSelf) and (path = List[i].Path) then
+         continue;
+
+      {do we have the parent path in our path}
+      if(pos(List[i].Path, path) = 1) then begin
+         if(potentialParent <> nil) then begin
+            {whichever parent is closer to our path}
+            if(Length(potentialParent^.Path) < Length(List[i].Path)) then
+               potentialParent := @List[i];
+         end else
+            potentialParent := @List[i];
+      end;
+   end;
+
+   Result := @potentialParent;
+end;
+
+function oxedTPackagePathsHelper.AssociateParent(const p: oxedTPackagePath): oxedPPackagePath;
+var
+   i: loopint;
+   potentialParent: oxedPPackagePath;
+
+begin
+   Result := nil;
+   potentialParent := nil;
+
+   {find parent with longest path (means closest to our package path)}
+
+   for i := 0 to n - 1 do begin
+      {don't match with ourselves}
+      if(@List[i] = @p) then
+         continue;
+
+      {do we have the parent path in our path}
+      if(pos(List[i].Path, p.Path) = 1) then begin
+         if(potentialParent <> nil) then begin
+            {whichever parent is closer to our path}
+            if(Length(potentialParent^.Path) < Length(List[i].Path)) then
+               potentialParent := @List[i];
+         end else
+            potentialParent := @List[i];
+      end;
+   end;
+
+   Result := @potentialParent;
 end;
 
 procedure oxedTPackagePathsHelper.Destroy();

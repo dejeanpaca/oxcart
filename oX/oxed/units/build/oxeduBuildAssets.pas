@@ -12,7 +12,8 @@ INTERFACE
       sysutils, uStd, uError, uLog, uFileUtils, StringUtils,
       {oxed}
       uOXED, oxeduBuildLog,
-      oxeduProject, oxeduProjectScanner, oxeduAssets, oxeduPackage, oxeduConsole;
+      oxeduPackage, oxeduPackageTypes,
+      oxeduProject, oxeduProjectScanner, oxeduAssets, oxeduConsole;
 
 TYPE
 
@@ -99,6 +100,7 @@ end;
 function onDirectory(const fd: TFileTraverseData): boolean;
 var
    name: StdString;
+   pp: oxedPPackagePath;
 
 begin
    Result := true;
@@ -115,6 +117,12 @@ begin
    name := ExtractFileName(fd.f.Name);
 
    if(oxedAssets.ShouldIgnoreDirectory(name)) then
+      exit(False);
+
+   {Find closest package path, and skip if optional}
+   pp := oxedBuildAssets.CurrentPackage^.Paths.FindClosest(name);
+
+   if(pp <> nil) and (pp^.IsOptional()) then
       exit(False);
 
    {ignore folder if .noassets file is declared in it}
