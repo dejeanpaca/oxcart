@@ -97,6 +97,7 @@ IMPLEMENTATION
 function winTWindowsOSGlobal.LogError(const prefix: string): DWORD;
 begin
    LastError := windows.GetLastError();
+   windows.SetLastError(0);
    Result := LastError;
 
    if(Result <> 0) then begin
@@ -130,6 +131,7 @@ end;
 function winTWindowsOSGlobal.GetLastError(silent: boolean): DWORD;
 begin
    LastError := windows.GetLastError();
+   windows.SetLastError(0);
    Result := LastError;
 
    if(Result <> 0) and (not silent) then
