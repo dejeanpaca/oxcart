@@ -38,9 +38,12 @@ TYPE
 
    oxTSceneClass = class of oxTScene;
 
-   { oxTSceneGlobal }
 
-   oxTSceneGlobal = record
+   oxPSceneManagement = ^oxTSceneManagement;
+
+   { oxTSceneManagement }
+
+   oxTSceneManagement = record
       {is scene functionality enabled (disable with care)}
       Enabled: boolean;
 
@@ -56,7 +59,7 @@ TYPE
 VAR
    {current scene}
    oxScene: oxTScene;
-   oxSceneManagement: oxTSceneGlobal;
+   oxSceneManagement: oxTSceneManagement;
 
 IMPLEMENTATION
 
@@ -74,7 +77,7 @@ end;
 
 { oxTSceneGlobal }
 
-class function oxTSceneGlobal.Instance(): oxTScene;
+class function oxTSceneManagement.Instance(): oxTScene;
 begin
   if(oxSceneManagement.InstanceType <> nil) then
      Result := oxSceneManagement.InstanceType.Create()
@@ -82,7 +85,7 @@ begin
      Result := oxTScene.Create();
 end;
 
-class procedure oxTSceneGlobal.SetScene(newScene: oxTScene);
+class procedure oxTSceneManagement.SetScene(newScene: oxTScene);
 begin
    oxScene := newScene;
 
@@ -129,7 +132,9 @@ end;
 
 INITIALIZATION
    oxSceneManagement.Enabled := True;
+
    oxGlobalInstances.Add(oxTScene, @oxScene, @instanceGlobal)^.Allocate := false;
+   oxGlobalInstances.Add('oxTSceneManagement', @oxSceneManagement);
 
    TProcedures.Initialize(oxSceneManagement.OnSceneChange);
 
