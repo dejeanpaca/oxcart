@@ -31,7 +31,7 @@ IMPLEMENTATION
 
 class procedure uiTSkinLoader.Load(skin: uiTSkin);
 var
-  windowPath: string;
+   windowPath: string;
 
 begin
    skin.ResourcePath := IncludeTrailingPathDelimiterNonEmpty(oxPaths.FindDirectory(oxPaths.UI + skin.Name));
@@ -46,6 +46,7 @@ end;
 class procedure uiTSkinLoader.LoadTexture(const fn: string; out tex: oxTTexture);
 begin
    tex := nil;
+
    if(FileUtils.Exists(fn) > 0) then begin
       oxTextureGenerate.Generate(fn, tex);
 
