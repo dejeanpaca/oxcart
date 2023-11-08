@@ -12,11 +12,12 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uStd, uLog,
       {ox}
-      oxuWindowTypes, oxuOGL, oxuglRendererInfo
-      {$IFNDEF ANDROID},{$ENDIF}
+      oxuWindowTypes, oxuOGL, oxuglRendererInfo,
       {$IF DEFINED(X11)}GLX, oxuX11Platform
       {$ELSEIF DEFINED(WINDOWS)}oxuWindowsOS
-      {$ELSEIF DEFINED(COCOA)}CocoaAll, oxuCocoaPlatform{$ENDIF};
+      {$ELSEIF DEFINED(COCOA)}CocoaAll, oxuCocoaPlatform
+      {$ELSEIF DEFINED(ANDROID)}oxuAndroidWindow
+      {$ENDIF};
 
 TYPE
 
@@ -30,6 +31,7 @@ TYPE
    oglTWindow = class({$IF DEFINED(WINDOWS)}winosTWindow
          {$ELSEIF DEFINED(X11)}x11TWindow
          {$ELSEIF DEFINED(COCOA)}cocoaTWindow
+         {$ELSEIF DEFINED(ANDROID)}androidTWindow
          {$ELSE}
          oxTWindow
          {$ENDIF})
