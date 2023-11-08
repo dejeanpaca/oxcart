@@ -169,8 +169,12 @@ TYPE
       procedure Flush();
       {a kludge used to read a line from a file, even a binary one}
       procedure Readln(out s: string);
+      {a kludge used to read a shortstring line from a file, even a binary one}
+      procedure Readln(out s: shortstring);
       {a kludge used to write a line to a file, even a binary one}
       procedure Writeln(const s: string);
+      {a kludge used to write a shortstring line to a file, even a binary one}
+      procedure Writeln(const s: shortstring);
       {write a string}
       procedure Write(const s: string);
       {get the entire file as a string}
@@ -594,9 +598,36 @@ end;
 
 procedure TFile.Readln(out s: string);
 var
-   c: char           = #0;
-   chars: longint    = 0;
-   count: fileint    = 0;
+   c: char = #0;
+   chars: longint = 0;
+   count: fileint = 0;
+
+begin
+   s := '';
+   chars := 0;
+
+   repeat
+      count := Read(c, 1);
+
+      if(error = 0) and (count > 0) then begin
+         if(c = #10) then
+            break;
+
+         if (c <> #13) and (c <> #10) then begin
+            inc(chars);
+            SetLength(s, chars);
+            s[chars] := c;
+         end;
+      end else
+         break;
+   until (c = #10);
+end;
+
+procedure TFile.Readln(out s: shortstring);
+var
+   c: char = #0;
+   chars: longint = 0;
+   count: fileint = 0;
 
 begin
    s := '';
@@ -620,6 +651,21 @@ begin
 end;
 
 procedure TFile.Writeln(const s: string);
+var
+   len: fileint;
+
+begin
+   len := Length(s);
+
+   {write string contents}
+   if(len > 0) then
+      Write(s[1], len);
+
+   {write line ending}
+   Write(LineEndingChars[1], Length(LineEndingChars));
+end;
+
+procedure TFile.Writeln(const s: shortstring);
 var
    len: fileint;
 
