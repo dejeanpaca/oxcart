@@ -276,7 +276,7 @@ begin
    cur := Parent;
 
    repeat
-     if(cur.IsType(parentType)) then
+     if(ox.IsType(cur, parentType)) then
         exit(cur);
 
      cur := cur.Parent;
