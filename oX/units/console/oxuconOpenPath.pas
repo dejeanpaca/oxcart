@@ -18,10 +18,8 @@ INTERFACE
 IMPLEMENTATION
 
 CONST
-   cidOPENPATH = $0000;
-
    conCommands: array[0..0] of conTCommand = (
-      (sid: 'openpath'; sHelp: 'open file manager to a path by name'; nID: cidOPENPATH));
+      (sid: 'openpath'; sHelp: 'open file manager to a path by name'; nID: 0));
 
 VAR
    conHandler: conTHandler;
@@ -31,7 +29,8 @@ begin
    app.OpenFileManager(path);
 end;
 
-procedure openPath(var con: conTConsole);
+{console commands}
+procedure conCommandNotify(var con: conTConsole; {%H-}nID: longint);
 var
     arg: string = '';
 
@@ -40,31 +39,23 @@ begin
       arg := LowerCase(con.Arguments.List[1]);
 
       if(arg = 'config') then
-         Open(appPath.Configuration.Path)
+         open(appPath.Configuration.Path)
       {$IFNDEF NOLOG}
       else if(arg = 'logs') or (arg = 'log') then
-         Open(log.Settings.Path)
+         open(log.Settings.Path)
       {$ENDIF}
       else if(arg = 'userconfig') then
-         Open(appPath.Get(appPATH_CONFIG))
+         open(appPath.Get(appPATH_CONFIG))
       else if(arg = 'userconfig_shared') then
-         Open(appPath.Get(appPATH_CONFIG_SHARED))
+         open(appPath.Get(appPATH_CONFIG_SHARED))
       else if(arg = 'home') then
-         Open(appPath.Get(appPATH_HOME))
+         open(appPath.Get(appPATH_HOME))
       else if(arg = 'temp') then
-         Open(appPath.Get(appPATH_TEMP))
+         open(appPath.Get(appPATH_TEMP))
       else if(arg = 'local') then
-         Open(appPath.Get(appPATH_LOCAL))
+         open(appPath.Get(appPATH_LOCAL))
       else if(arg = 'documents') then
-         Open(appPath.Get(appPATH_DOCUMENTS));
-   end;
-end;
-
-{console commands}
-procedure conCommandNotify(var con: conTConsole; nID: longint);
-begin
-   case nID of
-      cidOPENPATH: openPath(con);
+         open(appPath.Get(appPATH_DOCUMENTS));
    end;
 end;
 
