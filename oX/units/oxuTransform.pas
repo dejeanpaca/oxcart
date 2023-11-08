@@ -55,6 +55,8 @@ TYPE
       procedure GetRotationMatrixY(w: single; out m: TMatrix4f); virtual;
       procedure GetRotationMatrixZ(w: single; out m: TMatrix4f); virtual;
 
+      procedure ClampRotation();
+
       procedure Scale(x, y, z: single); virtual;
       procedure GetScaleMatrix(x, y, z: single; out m: TMatrix4f); virtual;
       procedure Scale(s: single);
@@ -349,6 +351,36 @@ begin
 
    m[1][0] := sinw;
    m[1][1] := cosw;
+end;
+
+procedure oxTTransform.ClampRotation();
+var
+   count: loopint;
+
+begin
+   if(vRotation[0] >= 360.0) then begin
+      count := abs(round(vRotation[0] / 360));
+      vRotation[0] := vRotation[0] - (count * 360);
+   end else if(vRotation[0] <= -360.0) then begin
+      count := abs(round(vRotation[0] / 360));
+      vRotation[0] := vRotation[0] + (count * 360);
+   end;
+
+   if(vRotation[1] >= 360.0) then begin
+      count := abs(round(vRotation[1] / 360));
+      vRotation[1] := vRotation[1] - (count * 360);
+   end else if(vRotation[1] <= -360.0) then begin
+      count := abs(round(vRotation[1] / 360));
+      vRotation[1] := vRotation[1] + (count * 360);
+   end;
+
+   if(vRotation[2] >= 360.0) then begin
+      count := abs(round(vRotation[2] / 360));
+      vRotation[2] := vRotation[2] - (count * 360);
+   end else if(vRotation[2] <= -360.0) then begin
+      count := abs(round(vRotation[2] / 360));
+      vRotation[2] := vRotation[2] + (count * 360);
+   end;
 end;
 
 procedure oxTTransform.Scale(x, y, z: single);
