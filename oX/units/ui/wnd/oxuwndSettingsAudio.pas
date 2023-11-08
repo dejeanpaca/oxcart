@@ -48,6 +48,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.Init.Add('wnd:settings.audio', @init);
+   ox.Init.Add('ox.wnd:settings.audio', @init);
 
 END.

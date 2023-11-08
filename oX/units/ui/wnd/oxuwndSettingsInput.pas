@@ -1,12 +1,12 @@
 {
-   oxuwndInputSettings, input settings window
+   oxuwndSettingsInput, input settings window
    Copyright (C) 2019. Dejan Boras
 
    Started On:    12.09.2019.
 }
 
 {$INCLUDE oxdefines.inc}
-UNIT oxuwndInputSettings;
+UNIT oxuwndSettingsInput;
 
 INTERFACE
 
