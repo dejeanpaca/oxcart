@@ -143,7 +143,7 @@ function AAsset_openFileDescriptor(asset: PAAsset; outStart, outLength: Poff_t):
  * Uses a 64-bit number for the offset and length instead of 32-bit instead of as AAsset_openFileDescriptor does.
  * Returns < 0 if direct fd access is not possible (for example, if the asset is compressed).
  *)
-function AAsset_openFileDescriptor64(asset: PAAsset; outStart, outLength: pcint64): cint;
+function AAsset_openFileDescriptor64(asset: PAAsset; outStart, outLength: pcint64): cint; cdecl; external;
 
 (**
  * Returns whether this asset's internal buffer is allocated in ordinary RAM (i.e. not
