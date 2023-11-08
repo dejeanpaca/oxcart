@@ -73,7 +73,7 @@ VAR
 
 IMPLEMENTATION
 
-function controlShowOnStartCheckbox(wdg: TObject; {%H-}what: longword): longint;
+function controlShowOnStartCheckbox(wdg: uiTControl; {%H-}what: loopint): loopint;
 begin
    Result := -1;
 

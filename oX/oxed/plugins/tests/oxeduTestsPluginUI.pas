@@ -120,7 +120,7 @@ begin
    Result := PUnitTestResultsPool(ref)^.Enabled;
 end;
 
-function controlIncludeOxCheckbox(wdg: uiTWidget; {%H-}what: longword): longint;
+function controlIncludeOxCheckbox(wdg: uiTWidget; {%H-}what: loopint): loopint;
 begin
    oxedTests.IncludeOx := wdgTCheckbox(wdg).Checked();
 

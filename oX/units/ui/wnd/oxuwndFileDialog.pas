@@ -353,7 +353,7 @@ begin
    end;
 end;
 
-function wdgControl(wdg: uiTWidget; what: longword): longint;
+function wdgControl(wdg: uiTWidget; what: loopint): loopint;
 var
    dlg: oxTFileDialog;
 
@@ -448,7 +448,7 @@ begin
    dialog.wnd.Select();
 end;
 
-function filenameInputControl({%H-}wdg: uiTWidget; what: longword): LongInt;
+function filenameInputControl(wdg: uiTWidget; what: loopint): loopint;
 var
    dialog: oxTFileDialog;
 
@@ -507,7 +507,7 @@ begin
             filenameInput := true;
 
          { create the widgets }
-         uiWidget.SetTarget(wnd, uiTWidgetControlProc(@wdgControl));
+         uiWidget.SetTarget(wnd, @wdgControl);
 
          {up button}
          wdg.Up := wdgTButton(wdgButton.Add('^').

@@ -227,12 +227,14 @@ begin
    uiWindow.DisposeQueue(uiTWindow(wnd));
 end;
 
-function wdgControl(wdg: uiTWidget; what: longword): longint;
+function wdgControl(widget: uiTWidget; what: loopint): loopint;
 var
    i: longint;
+   wdg: uiTWidget;
 
 begin
    Result := -1;
+   wdg := uiTWidget(widget);
 
    {if clicked one of the buttons}
    if(wdg.wdgClass^.cID = wdgButton.Internal.cID) then begin
@@ -377,7 +379,7 @@ begin
 end;
 
 begin
-   uiWidget.SetTarget(wnd, uiTWidgetControlProc(@wdgControl));
+   uiWidget.SetTarget(wnd, @wdgControl);
 
    {let's figure out how many buttons there are}
    nButtons := 0;

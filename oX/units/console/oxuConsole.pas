@@ -528,14 +528,14 @@ VAR
    congkHandlerAlt: oxTGlobalKeyHandler;
 
 { WIDGET CONTROL }
-function consoleWidgetControl(wdg: uiTWidget; what: longword): longint;
+function consoleWidgetControl(wdg: uiTWidget; what: loopint): loopint;
 var
    s: StdString;
 
 begin
    Result := -1;
 
-   if(wdg = WDGID_CONSOLE_IB) then begin
+   if(uiTWidget(wdg) = WDGID_CONSOLE_IB) then begin
       if(what = wdghINPUTBOX_CONFIRM_PRESSED) then
          Result := 0
       else if(what = wdghINPUTBOX_CONFIRM) then begin
@@ -588,7 +588,7 @@ begin
       oxConsole.Window.Close();
 
       {add console input box}
-      uiWidget.SetTargetCP(uiTWidgetControlProc(@consoleWidgetControl));
+      uiWidget.SetTargetCP(@consoleWidgetControl);
 
       uiWidget.Create.Instance := oxTConsoleInputBox;
       oxConsole.wdgInput := wdgTInputBox(wdgInputBox.Add('', oxPoint(oxConsole.GetIBLeftOffset() + 1, oxConsole.ibHeight),
