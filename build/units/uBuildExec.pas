@@ -41,6 +41,8 @@ TYPE
          OnLine: TProcedures;
       end;
 
+      log: PLog;
+
       {get lazarus project filename for the given path (which may already include project filename)}
       function GetLPIFilename(const path: StdString): StdString;
       {get tool process}
@@ -111,7 +113,7 @@ begin
 
    ResetOutput();
 
-   log.i('build > Building lazarus project: ' + path);
+   log^.i('build > Building lazarus project: ' + path);
 
    lazarus := BuildInstalls.GetLazarus();
 
@@ -129,7 +131,7 @@ begin
       p.Execute();
    except
       on e: Exception do begin
-         log.e('build > Failed to execute lazbuild: ' + lazarus^.Path + ' (' + e.ToString() + ')');
+         log^.e('build > Failed to execute lazbuild: ' + lazarus^.Path + ' (' + e.ToString() + ')');
          StoreOutput(p);
          p.Free();
          exit;
@@ -150,7 +152,7 @@ begin
          Output.ExecutableName := ExtractAllNoExt(path);
 
       Output.Success := true;
-      log.k('build > Building successful');
+      log^.k('build > Building successful');
    end else begin
       BuildingFailed(p);
    end;
@@ -211,12 +213,12 @@ begin
    Output.Success := false;
    platform := BuildInstalls.GetPlatform();
 
-   log.i('build > Building: ' + path);
+   log^.i('build > Building: ' + path);
 
    p := GetToolProcess();
 
    p.Executable := platform^.GetExecutablePath();
-   log.v('Running: ' + p.Executable);
+   log^.v('Running: ' + p.Executable);
 
    if(fpcParameters = nil) then begin
       if(build.FPCOptions.UseConfig = '') then
@@ -236,7 +238,7 @@ begin
       p.Execute();
    except
       on e: Exception do begin
-         log.e('build > Failed running: ' + p.Executable + ' (' + e.ToString() + ')');
+         log^.e('build > Failed running: ' + p.Executable + ' (' + e.ToString() + ')');
          StoreOutput(p);
          p.Free();
          exit();
@@ -251,7 +253,7 @@ begin
          ExtractFileNameNoExt(path), build.Options.IsLibrary);
 
       Output.Success := true;
-      log.k('build > Building successful');
+      log^.k('build > Building successful');
    end else begin
       BuildingFailed(p);
    end;
@@ -273,12 +275,12 @@ begin;
    if(p.ExitStatus <> 0) then
       Output.ErrorDecription := 'tool exited with status: ' + sf(p.ExitStatus);
 
-   log.e('build > ' + Output.ErrorDecription);
+   log^.e('build > ' + Output.ErrorDecription);
 
    LogOutput(p);
 
    if(Output.StdErr <> '') then
-      log.e(Output.StdErr);
+      log^.e(Output.StdErr);
 end;
 
 procedure TBuildSystemExec.CopyTool(const path: StdString);
@@ -290,7 +292,7 @@ begin
    Output.Success := false;
 
    if(path = '') then begin
-      log.e('build > CopyTool given empty parameter.');
+      log^.e('build > CopyTool given empty parameter.');
       exit;
    end;
 
@@ -300,20 +302,20 @@ begin
    target := build.Tools.Path + ExtractFileName(fullPath);
 
    if(FileUtils.Exists(fullPath) < 0) then begin
-      log.e('build > Tool: ' + fullPath + ' could not be found');
+      log^.e('build > Tool: ' + fullPath + ' could not be found');
       exit;
    end;
 
    error := FileUtils.Copy(fullPath, target);
    if(error < 0) then begin
-      log.e('build > Copy tool: ' + path + ' to ' + target + ' failed: ' + sf(error) + '/' + getRunTimeErrorDescription(ioE));
+      log^.e('build > Copy tool: ' + path + ' to ' + target + ' failed: ' + sf(error) + '/' + getRunTimeErrorDescription(ioE));
       exit;
    end else
-      log.i('build > Copied tool: ' + path + ' to ' + target);
+      log^.i('build > Copied tool: ' + path + ' to ' + target);
 
    {$IFDEF UNIX}
    if(FpChmod(target, &755) <> 0) then begin
-      log.e('build > Failed to set tool permissions: ' + target);
+      log^.e('build > Failed to set tool permissions: ' + target);
       exit;
    end;
    {$ENDIF}
@@ -350,7 +352,7 @@ begin
    if(p.Output <> nil) and (p.Output.NumBytesAvailable > 0) then begin
       bufferRead := p.Output.Read(buffer{%H-}, Length(buffer));
       buffer[bufferRead] := #0;
-      log.i(pchar(@buffer));
+      log^.i(pchar(@buffer));
    end;
 end;
 
@@ -406,5 +408,6 @@ end;
 
 INITIALIZATION
    TProcedures.Initialize(BuildExec.Output.OnLine);
+   BuildExec.log := @log;
 
 END.
