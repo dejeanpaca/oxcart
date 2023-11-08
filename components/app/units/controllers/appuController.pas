@@ -504,16 +504,16 @@ begin
    end else begin
       {correct for strech}
       if(stretch) then begin
-         Result := (1 / dZ) * Result;
+         Result := (1 / (1 - dZ)) * (Result - dZ);
       end;
    end;
 
    {clamp value so we don't go out of bounds}
-   vmClamp(value, 0.0, 1.0);
+   vmClamp(Result, 0.0, 1.0);
 
    {we convert to negative value if raw value was negative}
    if(value < 0) then
-      Result := Result * -1;
+      Result := -Result;
 end;
 
 function appTControllerDevice.GetNormalizedAxisValue(rawValue: loopint): appiTAxisState;
