@@ -66,7 +66,7 @@ IMPLEMENTATION
 
 constructor oxedTTask.Create();
 begin
-   inherited Create;
+   inherited;
 
    SingleRun := true;
    Background := false;
@@ -157,10 +157,14 @@ begin
       if(foregroundOnly and List.List[i].Background) then
          continue;
 
-      if((List.List[i].TaskType = taskType) or (taskType = nil)) and
-         (exceptType <> List.List[i].TaskType) and (oxTThreadTask.IsRunning(List.List[i])) then begin
+      if(oxTThreadTask.IsRunning(List.List[i])) then begin
+         {task matches task type}
+         if(taskType <> nil) and (taskType = List.List[i].ClassType) then
+            inc(Result)
+         {task is not the exception}
+         else if(taskType = nil) and (List.List[i].ClassType <> exceptType) then
             inc(Result);
-         end;
+      end;
    end;
 end;
 
