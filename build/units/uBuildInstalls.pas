@@ -739,11 +739,12 @@ begin
    if FileUtils.Exists(fn + build.GetExecutableName(executable)) <= 0 then begin
       fn := 'C:\fpc\' + FPC_VERSION + '\bin\' + build.BuiltWithTarget + DirectorySeparator;
 
-      if FileUtils.Exists(fn + build.GetExecutableName(executable)) > 0 then
-         Result := fn;
-   end else
-      Result := fn;
+      if FileUtils.Exists(fn + build.GetExecutableName(executable)) <= 0 then
+         fn := '';
+   end;
    {$ENDIF}
+
+   Result := fn;
 end;
 
 procedure initializeStart();
