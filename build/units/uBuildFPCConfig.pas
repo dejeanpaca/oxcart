@@ -17,18 +17,38 @@ TYPE
    { TBuildFPCConfiguration }
 
    TBuildFPCConfiguration = record
+      Config: TSimpleStringList;
+
+      class procedure Initialize(out buildConfig: TBuildFPCConfiguration); static;
+
       {get current platform and settings as an fpc command line string}
       function GetFPCCommandLineAsString(): StdString;
       function GetFPCCommandLine(emptyBefore: loopint = 0; emptyAfter: loopint = 0): TStringArray;
 
-      class function WriteFile(config: TStringArray; const fn: StdString): boolean; static;
-      class function WriteFile(config: TSimpleStringList; const fn: StdString): boolean; static;
+      {add a new config line}
+      procedure Add(const s: StdString); inline;
+      {construct a config from build configuration}
+      procedure Construct();
+
+      procedure FromList(const list: TStringArray; const prefix: StdString; count: loopint = -1);
+      procedure IncludeUnits(const list: TStringArray; count: loopint = -1);
+      procedure AddIncludes(const list: TStringArray; count: loopint = -1);
+      procedure AddSymbols(const list: TStringArray; count: loopint = -1);
+
+      function WriteFile(const fn: StdString): boolean;
+      class function WriteFile(what: TStringArray; const fn: StdString): boolean; static;
+      class function WriteFile(what: TSimpleStringList; const fn: StdString): boolean; static;
    end;
 
 VAR
    BuildFPCConfiguration: TBuildFPCConfiguration;
 
 IMPLEMENTATION
+
+class procedure TBuildFPCConfiguration.Initialize(out buildConfig: TBuildFPCConfiguration);
+begin
+   TSimpleStringList.Initialize(buildConfig.Config, 128);
+end;
 
 function TBuildFPCConfiguration.GetFPCCommandLineAsString(): StdString;
 var
@@ -101,15 +121,95 @@ begin
    Result := arguments;
 end;
 
-class function TBuildFPCConfiguration.WriteFile(config: TStringArray; const fn: StdString): boolean;
+procedure TBuildFPCConfiguration.Add(const s: StdString);
 begin
-   Result := FileUtils.WriteStrings(fn, config) >= 0;
+   Config.Add(s);
 end;
 
-class function TBuildFPCConfiguration.WriteFile(config: TSimpleStringList;
-   const fn: StdString): boolean;
+procedure TBuildFPCConfiguration.Construct();
+
 begin
-   Result := FileUtils.WriteStrings(fn, config.List, config.n) >= 0;
+   Config.Dispose();
+
+   add('# unit output directory');
+
+   if(build.FPCOptions.UnitOutputDirectory <> '') then
+      add('-FU' + build.FPCOptions.UnitOutputDirectory);
+
+   IncludeUnits(build.Units.List, build.Units.n);
+   AddIncludes(build.Includes.List, build.Includes.n);
+   AddSymbols(build.Symbols.List, build.Includes.n);
+
+   if(build.TargetOS <> '') then begin
+      add('# target OS');
+      add('-T' + build.TargetOS);
+   end;
+
+   if(build.TargetCPU <> '') then begin
+      add('# target CPU');
+      add('-p' + build.TargetCPU);
+   end;
+
+   if(build.IncludeDebugInfo) then begin
+      add('# include debug info');
+      add('-g');
+   end;
+end;
+
+procedure TBuildFPCConfiguration.FromList(const list: TStringArray; const prefix: StdString; count: loopint);
+var
+   i: loopint;
+
+begin
+   if(count > High(list) + 1) then
+      count := High(list)
+   else
+      count := count - 1;
+
+   if(count >= 0) then begin
+      for i := 0 to count do begin
+         Config.Add(prefix + list[i]);
+      end;
+   end;
+end;
+
+procedure TBuildFPCConfiguration.IncludeUnits(const list: TStringArray; count: loopint);
+begin
+   if(count > 0) then begin
+      Config.Add('# units');
+      FromList(list, '-Fu', count);
+   end;
+end;
+
+procedure TBuildFPCConfiguration.AddIncludes(const list: TStringArray; count: loopint);
+begin
+   if(count > 0) then begin
+      Config.Add('# includes');
+      FromList(list, '-Fi', count);
+   end;
+end;
+
+procedure TBuildFPCConfiguration.AddSymbols(const list: TStringArray; count: loopint);
+begin
+   if(count > 0) then begin
+      Config.Add('# symbols');
+      FromList(list, '-d', count);
+   end;
+end;
+
+function TBuildFPCConfiguration.WriteFile(const fn: StdString): boolean;
+begin
+   Result := WriteFile(Config, fn);
+end;
+
+class function TBuildFPCConfiguration.WriteFile(what: TStringArray; const fn: StdString): boolean;
+begin
+   Result := FileUtils.WriteStrings(fn, what) >= 0;
+end;
+
+class function TBuildFPCConfiguration.WriteFile(what: TSimpleStringList; const fn: StdString): boolean;
+begin
+   Result := FileUtils.WriteStrings(fn, what.List, what.n) >= 0;
 end;
 
 END.
