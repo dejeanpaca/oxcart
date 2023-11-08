@@ -398,7 +398,7 @@ procedure oxTFont.Allocate(const s: StdString; var c: oxTFont2DCache; maxlen: lo
 begin
    c.Length := Length(s);
 
-   if(c.Length > maxlen) then
+   if(maxlen > 0) and (c.Length > maxlen) then
       c.Length := maxlen;
 
    c.BufferLength := c.Length;
