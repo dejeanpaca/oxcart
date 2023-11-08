@@ -9,7 +9,9 @@ UNIT oxuwndBuildSettings;
 INTERFACE
 
    USES
-      uStd, uBuild, StringUtils,
+      uStd, StringUtils,
+      {build}
+      uFPCHelpers, uBuild,
       {app}
       uApp,
       {ox}

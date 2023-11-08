@@ -11,7 +11,7 @@ INTERFACE
    USES
       sysutils, uStd, uLog, uLPI, uFileUtils, StringUtils, uTiming, uFile, uFiles,
       {build}
-      uBuild, uBuildConfiguration, uBuildLibraries, uPasSourceHelper,
+      uFPCHelpers, uBuild, uBuildConfiguration, uBuildLibraries, uPasSourceHelper,
       {app}
       uApp, appuActionEvents,
       {ox}
