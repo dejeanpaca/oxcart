@@ -164,16 +164,6 @@ BEGIN
 
    buildSymbolParameters();
 
-   if(can_build('3rdparty')) or (can_build('thirdparty')) then begin
-      log.w('Setting up 3rd party dependencies');
-
-      build.Pas('thirdparty.pas');
-      log.i();
-
-      if(build.Output.Success) then
-         build.RunCommand('thirdparty', parameters.GetArray());
-   end;
-
    if(can_build('oxed') or can_build('ox')) then begin
       path := '..' + DirectorySeparator + 'oX' + DirectorySeparator + 'setup' + DirectorySeparator;
       log.w('Setting up oX at: ' + path);
