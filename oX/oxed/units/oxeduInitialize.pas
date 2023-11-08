@@ -17,36 +17,39 @@ INTERFACE
       {ox}
       uOX, oxuPaths, oxuRunRoutines,
       {oxed}
-      uOXED, oxeduSettings, oxeduRecents,
-      oxeduWindow, oxeduSplash, oxeduSplashScreen, oxeduIcons,
-      oxeduEntities,
+      uOXED, oxeduSettings, oxeduEntities,
       {build}
       oxeduBuild,
       oxeduPlatform,
       oxeduProjectPlatforms,
+      {$IFNDEF OXED_BUILD}
       oxeduProjectRunner, oxeduSceneClone,
+      {$ENDIF}
       oxeduProjectScanner, oxeduPasScanner, oxeduStatisticsScanner,
       oxeduProjectPackages, oxeduProjectPackagesConfiguration,
       {additional}
-      oxeduBuildEvents, oxeduLazarus,
+      oxeduBuildEvents, oxeduLazarus, oxeduMessages, oxeduProjectManagement,
+      {components}
+      oxeduCameraComponent, oxeduLightComponent, oxeduUIComponent,
+      {$IFNDEF NO_UI}
+      {base ui}
+      oxeduRecents, oxeduSplash, oxeduSplashScreen, oxeduIcons,
       {windows}
       oxuwndBuildSettings, oxuwndAbout,
       oxeduMenubar, oxeduMenubarBuild,
-      oxeduProjectManagement, oxeduMessages,
       oxeduToolbar, oxeduWorkbar, oxeduStatusbar, oxeduDockableArea, oxeduMenuToolbar,
       oxeduTasksUI, oxeduProjectContextMenu,
       oxeduProjectSettingsWindow, oxeduwndPackagesSettings,
       oxeduViewScene, oxeduSceneView, oxeduProjectDialog, oxeduSceneEditTools,
       oxeduRunButtons, oxeduStatusInfo, oxeduSettingsWindow,
       oxeduProjectFeaturesWindow, oxeduProjectStatisticsWindow,
-      {components}
-      oxeduCameraComponent, oxeduLightComponent, oxeduUIComponent,
       {initialize keys last}
       oxeduKeys,
       {ui}
       oxeduWindowTitle, oxeduProjectNotification,
       oxuStandardFilePreviewers, oxeduSceneScreenshot, oxeduPreviewGenerator,
       oxeduiBuildOutput,
+      {$ENDIF}
       {editor}
       oxeduEditorPlatform,
       {windows}
@@ -54,9 +57,11 @@ INTERFACE
       {linux}
       oxeduLinuxPlatform,
       {android}
-      oxeduAndroidPlatform, oxeduAndroidSettingsWindow,
+      oxeduAndroidPlatform, oxeduAndroidSettingsWindow
       {plugins}
-      oxeduPluginsUI
+      {$IFNDEF NO_UI}
+      , oxeduPluginsUI
+      {$ENDIF}
       {$INCLUDE ../plugins/oxed_plugins.inc};
 
 procedure oxedInitialize();
@@ -64,6 +69,7 @@ procedure oxedDeinitialize();
 
 IMPLEMENTATION
 
+{$IFNDEF NO_UI}
 procedure SetupWorkspace();
 begin
    oxedSettings.OnLoad();
@@ -75,22 +81,28 @@ begin
    oxedToolbar.Initialize();
    oxedDockableArea.Initialize();
 end;
+{$ENDIF}
 
 procedure oxedInitialize();
 begin
+   {$IFNDEF NO_UI}
    oxwndAbout.ShowBuiltWith := true;
 
    oxedMenubar.Deinitialize();
+   {$ENDIF}
+
    oxed.Init.iCall();
    oxedPlatforms.Initialize();
 
+   {$IFNDEF NO_UI}
    {setup default workspace}
    SetupWorkspace();
+   {$ENDIF}
 
    oxed.PostInit.iCall();
 
-  if(oxPaths.List.n = 0) then
-     oxedMessages.w('oX asset path doesn''t seem set (set ' + OX_ASSET_PATH_ENV + ' environment variable or config)');
+   if(oxPaths.List.n = 0) then
+      oxedMessages.w('oX asset path doesn''t seem set (set ' + OX_ASSET_PATH_ENV + ' environment variable or config)');
 
   oxed.Initialized := true;
 end;
@@ -99,7 +111,9 @@ procedure oxedDeInitialize();
 begin
    oxed.Deinitializing := true;
 
+   {$IFNDEF OXED_BUILD}
    oxedProjectRunner.Stop();
+   {$ENDIF}
 
    oxedProjectManagement.Destroy();
 
@@ -110,14 +124,16 @@ end;
 
 procedure onStart();
 begin
-  {open a project}
-  if(oxedSettings.StartWithLastProject) and (oxedRecents.LastOpen <> '') then begin
-     log.v('project > Opening last opened project: ' + oxedRecents.LastOpen);
+   {$IFNDEF NO_UI}
+   {open a project}
+   if(oxedSettings.StartWithLastProject) and (oxedRecents.LastOpen <> '') then begin
+      log.v('project > Opening last opened project: ' + oxedRecents.LastOpen);
 
-     if(not oxedProjectManagement.Open(oxedRecents.LastOpen)) then
-        {failed to open last open project, so clear it}
-        oxedRecents.LastOpen := '';
-  end;
+      if(not oxedProjectManagement.Open(oxedRecents.LastOpen)) then
+         {failed to open last open project, so clear it}
+         oxedRecents.LastOpen := '';
+   end;
+   {$ENDIF}
 end;
 
 INITIALIZATION
