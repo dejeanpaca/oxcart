@@ -567,11 +567,11 @@ begin
    for i := 0 to (tests^.Tests.n - 1) do
       p.WriteLine(tests^.Tests.List[i].Descriptor.Name + ' = ' + tests^.Tests.List[i].Descriptor.SuccessString());
 
-   if(p.f.Error <> 0) then begin
+   if(p.pF^.Error <> 0) then begin
       Result := false;
-      tests^.ErrorDescription := 'could not write to the test results file, error: ' + p.f.GetErrorString()
+      tests^.ErrorDescription := 'could not write to the test results file, error: ' + p.pF^.GetErrorString()
    end else
-      log.i('Written results to: ' + p.f.fn);
+      log.i('Written results to: ' + p.pF^.fn);
 end;
 
 function TUnitTests.WriteResults(): boolean;
