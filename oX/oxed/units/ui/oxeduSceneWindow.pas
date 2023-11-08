@@ -20,7 +20,7 @@ INTERFACE
       {find a camera component}
       oxuCameraComponent,
       {ui}
-      uiuTypes, uiuWindowTypes, uiuWindow, uiuDraw, uiWidgets,
+      uiuTypes, uiuWindowTypes, uiuWindow, uiuDraw, uiWidgets, uiuWindowRender,
       wdguLabel,
       {oxed}
       uOXED, oxeduSettings, oxeduWindow, oxeduMenubar, oxeduActions, oxeduProjectRunner, oxeduProject, oxeduSceneClone,
@@ -183,7 +183,7 @@ end;
 procedure oxedTSceneWindow.CleanupRender();
 begin
    oxTWindow(oxwParent).Projection.Apply(false);
-   uiWindow.RenderPrepare(oxTWIndow(oxwParent));
+   uiWindowRender.Prepare(oxTWIndow(oxwParent));
 
    uiDraw.Start();
 end;
