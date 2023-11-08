@@ -34,28 +34,35 @@ TYPE
 
    appTSystemPaths = array of appTSystemPath;
 
+   { appTPathConfiguration }
+
+   appTPathConfiguration = record
+      {will the organization name be used for configuration directory}
+      UseOrganization,
+      {use a local configuration directory}
+      UseLocal,
+      {has the configuration directory been created}
+      Created,
+      {will not initialize the application}
+      SkipInit: boolean;
+
+      {configuration path}
+      Path,
+      {local configuration path}
+      Local,
+      {preset configuration path}
+      Preset,
+      {preset local configuration path}
+      PresetLocal: StdString;
+
+      {get local configuration path}
+      function GetLocal(): StdString;
+   end;
+
    { appTPath }
 
    appTPath = record
-      Configuration: record
-         {will the organization name be used for configuration directory}
-         UseOrganization,
-         {use a local configuration directory}
-         UseLocal,
-         {has the configuration directory been created}
-         Created,
-         {will not initialize the application}
-         SkipInit: boolean;
-
-         {configuration path}
-         Path,
-         {local configuration path}
-         Local,
-         {preset configuration path}
-         Preset,
-         {preset local configuration path}
-         PresetLocal: StdString;
-      end;
+      Configuration: appTPathConfiguration;
 
       {return path for a specified constant, or nothing if not found}
       function Get(c: appTPathType): StdString;
@@ -76,6 +83,16 @@ VAR
    appPath: appTPath;
 
 IMPLEMENTATION
+
+{ appTPathConfiguration }
+
+function appTPathConfiguration.GetLocal(): StdString;
+begin
+   if(UseLocal) and (Local <> '') then
+      Result := Local
+   else
+      Result := Path;
+end;
 
 function appTPath.Get(c: appTPathType): StdString;
 var
