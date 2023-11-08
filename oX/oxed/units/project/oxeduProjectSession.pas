@@ -13,21 +13,13 @@ INTERFACE
    USES
       sysutils, uStd, udvars, dvaruFile,
       {oxed}
-      oxeduProject;
+      oxeduProject, oxeduProjectConfigurationFileHelper;
 
 CONST
    OXED_PROJECT_SESSION_FILE = 'session.dvar';
 
-TYPE
-
-   { oxedTProjectSession }
-
-   oxedTProjectSession = record
-      class function GetFn(): string; static;
-
-      class procedure Load(); static;
-      class procedure Save(); static;
-   end;
+VAR
+   oxedProjectSessionFile: oxedTProjectConfigurationFileHelper;
 
 IMPLEMENTATION
 
@@ -38,13 +30,6 @@ VAR
    dvDebugResources,
    dvEnableConsole: TDVar;
 
-{ oxedTProjectSession }
-
-class function oxedTProjectSession.GetFn(): string;
-begin
-   Result := oxedProject.GetTempFilePath(OXED_PROJECT_SESSION_FILE);
-end;
-
 procedure UpdateVars();
 begin
    dvLastScene.Update(oxedProject.LastScene);
@@ -53,19 +38,10 @@ begin
    dvEnableConsole.Update(oxedProject.Session.EnableConsole);
 end;
 
-class procedure oxedTProjectSession.Load();
-begin
-   UpdateVars();
-
-   dvarf.ReadText(dvGroup, GetFn());
-end;
-
-class procedure oxedTProjectSession.Save();
+procedure beforeSave();
 begin
    UpdateVars();
    oxedProject.RecreateTempDirectory();
-
-   dvarf.WriteText(dvGroup, GetFn());
 end;
 
 
@@ -76,6 +52,13 @@ INITIALIZATION
    dvGroup.Add(dvLastScene, 'last_scene', dtcSTRING, @oxedProject.LastScene);
    dvGroup.Add(dvIncludeThirdPartyUnits, 'include_third_party_units', dtcBOOL, @oxedProject.Session.IncludeThirdPartyUnits);
    dvGroup.Add(dvDebugResources, 'debug_resources', dtcBOOL, @oxedProject.Session.DebugResources);
-   dvGroup.Add(dvEnableConsole, 'enable_console', dtcBOOL, @oxedProject.Session.EnableConsole)
+   dvGroup.Add(dvEnableConsole, 'enable_console', dtcBOOL, @oxedProject.Session.EnableConsole);
+
+   oxedProjectSessionFile.Create();
+   oxedProjectSessionFile.FileName := OXED_PROJECT_SESSION_FILE;
+   oxedProjectSessionFile.IsTemp := true;
+   oxedProjectSessionFile.BeforeLoad := @UpdateVars;
+   oxedProjectSessionFile.BeforeSave := @beforeSave;
+   oxedProjectSessionFile.dvg := @dvGroup;
 
 END.
