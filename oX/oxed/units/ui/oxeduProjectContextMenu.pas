@@ -212,6 +212,7 @@ begin
 
    Menus.Current.InsertAt(Menus.Current.FindIndexByAction(oxwndFileContextMenu.Events.CREATE_DIRECTORY));
    Menus.Current.AddSeparator();
+   Menus.Current.InsertAfter(Menus.Current.FindIndexByAction(oxwndFileContextMenu.Events.CREATE_DIRECTORY));
    Items.Create := Menus.Current.AddSub('Create', Menus.Create);
 
    Menus.Current.AddSeparator();
