@@ -150,6 +150,7 @@ var
       normalCount := 0;
       faceCount := 0;
       facePointCount := 0;
+      wasUseMtl := false;
    end;
 
    procedure meshDone();
@@ -320,6 +321,7 @@ var
       m := nil;
       pM := nil;
       materialName := '';
+      wasUseMtl := false;
    end;
 
    procedure meshDone();
@@ -354,7 +356,7 @@ var
                   m^.Data.i[z] := indices[ivOffset + z];
                end;
             end else
-               Move(indices[ivOffset + z], m^.Data.il[0], SizeOf(m^.Data.il[0]) * m^.Data.nIndices);
+               Move(indices[ivOffset], m^.Data.il[0], SizeOf(m^.Data.il[0]) * m^.Data.nIndices);
          end;
 
          if(hasN) and (m^.Data.n <> nil) then begin
