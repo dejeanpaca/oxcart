@@ -1201,7 +1201,9 @@ begin
    {$IFOPT D+}
    build.Debug.Include := true;
    build.Debug.LineInfo := true;
-   build.Debug.External := true;
+
+   if(oxedBuild.BuildPlatform.SupportsExternalDebugSymbols) then
+      build.Debug.External := true;
    {$ENDIF}
 
    {optimization}
