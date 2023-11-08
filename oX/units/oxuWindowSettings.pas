@@ -94,10 +94,10 @@ begin
    selected := getSelectedWindowSettings();
 
    if(selected <> nil) then begin
-      dvWidth.Variable := @selected^.Dimensions.w;
-      dvHeight.Variable := @selected^.Dimensions.h;
-      dvFullscreen.Variable := @selected^.Fullscreen;
-      dvWindowedFullscreen.Variable := @selected^.WindowedFullscreen;
+      dvWidth.Update(selected^.Dimensions.w);
+      dvHeight.Update(selected^.Dimensions.h);
+      dvFullscreen.Update(selected^.Fullscreen);
+      dvWindowedFullscreen.Update(selected^.WindowedFullscreen);
    end;
 end;
 
