@@ -11,7 +11,8 @@ INTERFACE
    USES
       uStd, vmVector,
       {ox}
-      oxumPrimitive, oxuComponent, oxuComponentDescriptors, oxuRenderComponent, oxuSerialization;
+      oxuComponent, oxuComponentDescriptors, oxuRenderComponent, oxuEntity,
+      oxumPrimitive, oxuSerialization;
 
 TYPE
 
@@ -40,6 +41,8 @@ TYPE
       procedure Deserialized(); override;
 
       function GetDescriptor(): oxPComponentDescriptor; override;
+
+      class function GetEntity(out component: oxTPrimitiveModelComponent): oxTEntity; static;
    end;
 
 IMPLEMENTATION
@@ -131,6 +134,12 @@ end;
 function oxTPrimitiveModelComponent.GetDescriptor(): oxPComponentDescriptor;
 begin
    Result := @descriptor;
+end;
+
+class function oxTPrimitiveModelComponent.GetEntity(out component: oxTPrimitiveModelComponent): oxTEntity;
+begin
+   component := oxTPrimitiveModelComponent.Create();
+   Result := oxEntity.New('Primitive', component);
 end;
 
 function instance(): TObject;
