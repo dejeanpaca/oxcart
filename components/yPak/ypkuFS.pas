@@ -162,7 +162,10 @@ begin
       log.i(tag + 'Loaded file successfully: ' + fs.f.fn +
          ', files: ' + sf(hdr.Files) + ', offs: ' + sf(fs.f.fOffset) + ', blob: ' + sf(fs.BlobSize) + ', size: ' + sf(fs.f.fSize) + ')');
    end else
-      writeLog(fs, 'Cannot read blob or entries.')
+      writeLog(fs, 'Cannot read blob or entries.');
+
+   {correct paths so they match our system}
+   fs.CorrectPaths();
 end;
 
 function ypkTFileSystemGlobal.Add(const fn: StdString): ypkPFSFile;
@@ -309,6 +312,7 @@ begin
       entry := @fs^.Entries.List[entryIdx].Offset;
 
       f.Open(fs^.f, entry^.Offset, entry^.Size);
+      f.fn := f.fn + ':' + fn;
 
       if(fs^.f.error = 0) then
          Result := fs^.f.Seek(entry^.Offset) > -1;
@@ -392,8 +396,16 @@ end;
 { ypkTFSFile }
 
 procedure ypkTFSFile.CorrectPaths();
+var
+   i: loopint;
+   fn: PShortString;
+
 begin
-   {TODO: Implement file path correction}
+   for i := 0 to Entries.n - 1 do begin
+      fn := GetFn(i);
+
+      ReplaceDirSeparators(fn^);
+   end;
 end;
 
 function ypkTFSFile.GetFn(index: loopint): PShortString;
