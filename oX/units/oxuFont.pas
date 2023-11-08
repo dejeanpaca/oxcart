@@ -22,6 +22,27 @@ TYPE
       Built: boolean;
    end;
 
+   { oxTFont2DCache }
+
+   oxTFont2DCache = record
+      {NOTE: There are 6 vertices per character when you calculate buffer}
+
+      {length of the string}
+      Length,
+      {length of the provided buffer in characters (makes sense only for external data)}
+      BufferLength: loopint;
+      {indicates if the data (vertex and index) is external}
+      ExternalData: Boolean;
+
+      v,
+      t: PVector2f;
+      i: PWord;
+      IndiceCount: Loopint;
+
+      class procedure Initialize(out c: oxTFont2DCache); static;
+      procedure Destroy();
+   end;
+
    oxTFontCharacter = record
       Width,
       Height,
@@ -94,7 +115,9 @@ TYPE
       procedure Start();
 
       {cache a string into buffers}
-      function Cache(const s: StdString; out v: TVector3f; out t: TVector2f; out indices: Word;
+      function Cache(const s: StdString; var c: oxTFont2DCache; maxlen: longint = 0): boolean;
+      {cache a string into buffers}
+      function Cache(const s: StdString; out v: TVector2f; out t: TVector2f; out indices: Word;
         out actualLength: loopint; maxlen: longint = 0): boolean;
 
       {write text using a font}
@@ -173,6 +196,21 @@ VAR
    oxf: oxTFontGlobal absolute oxFont;
 
 IMPLEMENTATION
+
+{ oxTFont2DCache }
+
+class procedure oxTFont2DCache.Initialize(out c: oxTFont2DCache);
+begin
+   ZeroOut(c, SizeOf(c));
+end;
+
+procedure oxTFont2DCache.Destroy();
+begin
+   if(not ExternalData) then begin
+      XFreeMem(t);
+      XFreeMem(v);
+   end;
+end;
 
 constructor oxTFont.Create();
 begin
@@ -354,8 +392,7 @@ begin
    end;
 end;
 
-function oxTFont.Cache(const s: StdString; out v: TVector3f; out t: TVector2f; out indices: Word;
-   out actualLength: loopint; maxlen: longint = 0): boolean;
+function oxTFont.Cache(const s: StdString; var c: oxTFont2DCache; maxlen: longint): boolean;
 var
    {length of string}
    len,
@@ -368,8 +405,7 @@ var
    {current length of string (we may skip some characters), to be stored into actualLength}
    currentLength: loopint;
 
-
-   pVector: PVector3f;
+   pVector: PVector2f;
    pTexture: PVector2f;
    pIndice: PWord;
 
@@ -382,15 +418,19 @@ var
 
 begin
    Result := false;
-   actualLength := 0;
-   indices := 0;
+
+   c.Length := 0;
+   c.IndiceCount := 0;
 
    if(Valid()) then begin
       len := Length(s);
 
       {don't overflow our buffers}
       if(maxlen > 0) and (len > maxlen) then
-         len := Length(v) div 4;
+         len := maxlen;
+
+      if(c.BufferLength > 0) and (len > c.BufferLength) then
+         len := c.BufferLength;
 
       if(len > 0) then begin
          px := 0;
@@ -404,9 +444,9 @@ begin
          currentWidth := Width;
          currentHeight := Height;
 
-         pVector := @v;
-         pTexture := @t;
-         pIndice := @indices;
+         pVector := c.v;
+         pTexture := c.t;
+         pIndice := c.i;
          currentLength := 0;
 
          while(i <= len) do begin
@@ -433,25 +473,21 @@ begin
 
                pVector[index][0] := px;
                pVector[index][1] := py;
-               pVector[index][2] := 0.0;
 
                index := charIndex * 4 + 1;
 
                pVector[index][0] := px + currentWidth;
                pVector[index][1] := py;
-               pVector[index][2] := 0.0;
 
                index := charIndex * 4 + 2;
 
                pVector[index][0] := px + currentWidth;
                pVector[index][1] := py + currentHeight;
-               pVector[index][2] := 0.0;
 
                index := charIndex * 4 + 3;
 
                pVector[index][0] := px;
                pVector[index][1] := py + currentHeight;
-               pVector[index][2] := 0.0;
 
                {build texture coordinates}
                index := charIndex * 4;
@@ -481,11 +517,29 @@ begin
             inc(i);
          end;
 
-         actualLength := currentLength;
+         c.Length := currentLength;
 
          Result := true;
       end;
    end;
+end;
+
+function oxTFont.Cache(const s: StdString; out v: TVector2f; out t: TVector2f; out indices: Word;
+   out actualLength: loopint; maxlen: longint = 0): boolean;
+var
+   c: oxTFont2DCache;
+
+begin
+   oxTFont2DCache.Initialize(c);
+   c.ExternalData := true;
+   c.BufferLength := Length(v) div 6;
+
+   c.v := @v;
+   c.t := @t;
+   c.i := @indices;
+
+   Result := Cache(s, c, maxlen);
+   actualLength := c.Length;
 end;
 
 procedure oxTFont.Write(x, y: single; const s: StdString);
@@ -495,7 +549,7 @@ var
    px,
    py: single;
 
-   v: array[0..16383] of TVector3f;
+   v: array[0..16383] of TVector2f;
    indices: array[0..24575] of Word;
    t: array[0..16383] of TVector2f;
 
