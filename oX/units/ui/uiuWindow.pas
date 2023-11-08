@@ -487,9 +487,6 @@ begin
 
    wnd.oxwParent := createData.oxwParent;
 
-   if(wnd.oxwParent = nil) then
-      writeln('wtf: ' + wnd.Title);
-
    {set the base UI object if this is an oxTWindow}
    if(wnd.oxwParent = wnd) or (wnd.oxwParent = nil) then
       oxTWindow(wnd).UIBase := createData.UIBase;
