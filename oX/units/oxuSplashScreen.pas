@@ -12,7 +12,7 @@ INTERFACE
       uTiming, uStd, uLog, uColors, vmVector, StringUtils,
       {oX}
       uOX, oxuTypes, oxuWindowTypes,
-      oxuRenderer, oxuRender, oxuRenderThread, oxuSurfaceRender, oxuRenderingContext,
+      oxuRenderer, oxuRender, oxuSurfaceRender, oxuRenderingContext, oxuRenderTask,
       oxuTexture, oxuTextureGenerate, oxuPaths, oxuThreadTask,
       oxuMaterial, oxuFont, oxumPrimitive, oxuWindow, oxuTransform, oxuResourcePool, oxuPrimitives,
       oxuRunRoutines, oxuTimer,
@@ -25,42 +25,22 @@ CONST
 TYPE
    { oxTSplashScreen }
 
-   oxTSplashScreen = class(oxTThreadTask)
-      RC: loopint;
-
+   oxTSplashScreen = class(oxTRenderTask)
       ClearColor: TColor4f;
       ClearBits: TBitSet;
 
       {minimum time the splash screen needs to be displayed}
       DisplayTime: longint;
-      {associated window}
-      AssociatedWindow: oxTWindow;
-
-      Timer,
-      RenderingTimer: TTimer;
-      TimeFlow: Single;
 
       constructor Create(); override;
-      destructor Destroy(); override;
 
       {startup splash screen for a window}
       procedure StartSplash(wnd: oxTWindow);
-      {load and initialize all required resources}
-      procedure Load(); virtual;
-      {unload all resources}
-      procedure Unload(); virtual;
       {renders the splash screen, with content and overlay}
-      procedure Render(); virtual;
+      procedure Render(); override;
       {renders content here}
-      procedure RenderContent(var {%H-}context: oxTRenderingContext); virtual;
+      procedure RenderContent(var {%H-}context: oxTRenderingContext); override;
 
-      {run rendering in a separate thread, use instead of Start()}
-      procedure RunThreaded(wnd: oxTWindow);
-      {restore rendering context to the associated window}
-      procedure RestoreRender();
-
-      {called to update the splash screen (animate, calculate, and what else, but not render)}
-      procedure Update(); virtual;
       {waits until display time passsed}
       procedure WaitForDisplayTime();
 
@@ -68,9 +48,6 @@ TYPE
       procedure Run(); override;
 
       procedure TaskStart(); override;
-      procedure TaskStop(); override;
-
-      procedure ThreadStart(); override;
    end;
 
    { oxTBasicSplashScreen }
@@ -120,18 +97,6 @@ begin
    ClearColor := cBlack4f;
    ClearBits := oxrBUFFER_CLEAR_NOTHING;
    DisplayTime := oxSplashScreen.DefaultDisplayTime;
-
-   Timer.InitStart();
-   RenderingTimer.InitStart();
-
-   EmitAllEvents();
-end;
-
-destructor oxTSplashScreen.Destroy();
-begin
-   Unload();
-
-   inherited Destroy;
 end;
 
 procedure oxTSplashScreen.StartSplash(wnd: oxTWindow);
@@ -142,15 +107,6 @@ begin
    Load();
 
    RenderingTimer.InitStart();
-end;
-
-procedure oxTSplashScreen.Load();
-begin
-end;
-
-procedure oxTSplashScreen.Unload();
-begin
-
 end;
 
 procedure oxTSplashScreen.Render();
@@ -165,27 +121,6 @@ begin
 end;
 
 procedure oxTSplashScreen.RenderContent(var context: oxTRenderingContext);
-begin
-end;
-
-procedure oxTSplashScreen.RunThreaded(wnd: oxTWindow);
-begin
-   StartSplash(wnd);
-
-   Start();
-   log.v('Started splash screen: ' + Name);
-end;
-
-procedure oxTSplashScreen.RestoreRender();
-var
-   rtc: oxTRenderTargetContext;
-
-begin
-   AssociatedWindow.FromWindow(rtc);
-   oxTRenderer(AssociatedWindow.Renderer).ContextCurrent(rtc);
-end;
-
-procedure oxTSplashScreen.Update();
 begin
 end;
 
@@ -210,39 +145,10 @@ end;
 
 procedure oxTSplashScreen.TaskStart();
 begin
-   if(AssociatedWindow <> nil) then begin
-      oxRenderThread.StartThread(AssociatedWindow, RC);
-
-      oxRenderer.ClearColor(ClearColor);
-   end;
-end;
-
-procedure oxTSplashScreen.TaskStop();
-begin
-   Unload();
+   inherited;
 
    if(AssociatedWindow <> nil) then
-      oxRenderThread.StopThread(AssociatedWindow);
-
-   log.v('Ended splash screen: ' + Name);
-end;
-
-procedure oxTSplashScreen.ThreadStart();
-var
-   rtc: oxTRenderTargetContext;
-   renderer: oxTRenderer;
-
-begin
-   renderer := oxTRenderer(AssociatedWindow.Renderer);
-
-   {get an RC to render the splash screen}
-   RC := renderer.GetRenderingContext(AssociatedWindow);
-
-   {mark current context for use only (since we'll render in the splash)}
-   AssociatedWindow.FromWindow(rtc);
-   rtc.ContextType := oxRENDER_TARGET_CONTEXT_USE;
-
-   renderer.ContextCurrent(rtc);
+      oxRenderer.ClearColor(ClearColor);
 end;
 
 { oxTBasicSplashScreen }
