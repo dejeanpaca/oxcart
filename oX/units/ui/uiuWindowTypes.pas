@@ -96,12 +96,6 @@ TYPE
       {window ID and reference}
       ID: uiTControlID;
 
-      {reference}
-      Ref: record
-         idx: longint;
-         uid: qword;
-      end;
-
       {parent}
       wHandler: uiTWindowListener;
 
