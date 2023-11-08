@@ -560,6 +560,7 @@ begin
    enabled := item^.Properties.IsSet(uiCONTEXT_MENU_ITEM_ENABLED);
    clr := cWhite4ub;
    pSkin := uiTSkin(uiTWindow(wnd).Skin);
+   size := 0;
 
    if(item^.Glyph <> nil) then begin
       PrepareGlyph();

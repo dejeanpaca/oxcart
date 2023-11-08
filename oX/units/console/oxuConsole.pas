@@ -432,9 +432,8 @@ begin
       f.Start();
       wnd.SetColorBlended(225, 255, 255, 255);
 
-      if(oxConsole.DrawInputStatus) and (oxConsole.InputStatus <> '') then begin
+      if(oxConsole.DrawInputStatus) and (oxConsole.InputStatus <> '') then
          f.WriteCentered(oxConsole.InputStatus, r);
-      end;
 
       if(oxConsole.StatusHeight > 0) then
          f.Write(wnd.RPosition.x + 2, wnd.RPosition.y -  2 - (data.fh), appInfo.GetVersionString());

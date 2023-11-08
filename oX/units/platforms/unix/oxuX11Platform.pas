@@ -859,10 +859,8 @@ begin
       if(DPY <> nil) then begin
          Screen := DefaultScreenOfDisplay(DPY);
          DisplayOpened := true;
-      end else begin
+      end else
          log.e('X11 > Cannot open X server display.');
-         exit;
-      end;
    end;
 
    Result := DisplayOpened;

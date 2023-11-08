@@ -361,18 +361,17 @@ end;
 
 function TBuildSystem.GetExecutableName(const name: StdString; isLibrary: boolean): StdString;
 begin
+   Result := name;
+
    {$IFDEF WINDOWS}
    if(ExtractFileExt(name) = '') then begin
       if(not isLibrary) then
          Result := name + '.exe'
       else
          Result := name + '.dll';
-   end else
-      Result := name;
+   end;
    {$ELSE}
-   if(not isLibrary) then
-      Result := name
-   else begin
+   if(isLibrary) then begin
       if(ExtractFileExt(name) = '') then
          Result := 'lib' + name + '.so';
    end;

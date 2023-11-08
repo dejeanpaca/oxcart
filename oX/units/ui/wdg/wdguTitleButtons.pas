@@ -144,9 +144,7 @@ procedure wdgTTitleButtons.Render();
 var
    pSkin: uiTSkin;
 
-   x,
-   i,
-   y1: loopint;
+   i: loopint;
 
    f: oxTFont;
    r: oxTRect;
@@ -158,8 +156,8 @@ var
 
 procedure getRect(); inline;
 begin
-   r.x := x + Buttons.b[i].x;
-   r.y := y1;
+   r.x := RPosition.x + Buttons.b[i].x;
+   r.y := RPosition.y;
    r.w := Buttons.w;
    r.h := Buttons.h;
 end;
@@ -185,9 +183,6 @@ begin
       exit;
 
    SetColor(cWhite4ub);
-
-   x  := RPosition.x;
-   y1 := RPosition.y;
 
    {we have button glyphs}
    if(pSkin.Window.TitleButtonGlyphs[0] <> nil) then begin
