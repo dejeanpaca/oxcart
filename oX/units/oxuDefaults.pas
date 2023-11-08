@@ -143,6 +143,9 @@ INTERFACE
          {$ENDIF}
       {$ENDIF}
       {%H-}uOX,
+
+      {loaders}
+      oxuMaterialLoader,
       oxuShaderFileReader;
 
 IMPLEMENTATION
