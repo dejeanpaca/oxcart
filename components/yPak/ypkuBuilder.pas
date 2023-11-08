@@ -36,14 +36,25 @@ TYPE
       Blob: PByte;
       Total: loopint;
 
+      class procedure Initialize(out ypkb: ypkTBuilder); static;
+
       procedure Reset();
       function Build(): boolean;
       procedure AddFile(const source, destination: StdString);
+
+      procedure Dispose();
    end;
 
 IMPLEMENTATION
 
 { ypkTBuilder }
+
+class procedure ypkTBuilder.Initialize(out ypkb: ypkTBuilder);
+begin
+   ZeroOut(ypkb, SizeOf(ypkb));
+
+   ypkTBuilderFiles.InitializeValues(ypkb.Files);
+end;
 
 procedure ypkTBuilder.Reset();
 begin
@@ -149,6 +160,11 @@ begin
    f.Destination := destination;
 
    Files.Add(f);
+end;
+
+procedure ypkTBuilder.Dispose();
+begin
+   Files.Dispose();
 end;
 
 END.
