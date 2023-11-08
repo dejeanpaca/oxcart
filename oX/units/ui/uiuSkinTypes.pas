@@ -135,7 +135,10 @@ TYPE
       function GetColor(colorIndex: loopint): TColor4ub;
 
       procedure UseColors(var colorDescriptor: array of uiTWidgetSkinColorDescriptor);
-      procedure UseGlyphs(var glyphsDescriptor: array of uiTWidgetSkinGlyphDescriptors);
+      procedure UseImages(var imageDescriptor: array of uiTWidgetSkinImageDescriptor);
+      procedure UseGlyphs(var glyphDescriptor: array of uiTWidgetSkinGlyphDescriptor);
+      procedure UseStrings(var stringDescriptor: array of uiTWidgetSkinDescriptorString);
+      procedure UseBools(var boolDescriptor: array of uiTWidgetSkinBoolDescriptor);
 
       class procedure Initialize(out descriptor: uiTWidgetSkinDescriptor; const setName: StdString = ''); static;
    end;
@@ -222,10 +225,29 @@ begin
    Colors := @colorDescriptor[0];
 end;
 
-procedure uiTWidgetSkinDescriptor.UseGlyphs(var glyphsDescriptor: array of uiTWidgetSkinGlyphDescriptors);
+procedure uiTWidgetSkinDescriptor.UseImages(var imageDescriptor: array of uiTWidgetSkinImageDescriptor);
 begin
-   nGlyphs := Length(glyphsDescriptor);
-   Glyphs := @glyphsDescriptor[0];
+   nImages := Length(imageDescriptor);
+   Images := @imageDescriptor[0];
+end;
+
+procedure uiTWidgetSkinDescriptor.UseGlyphs(var glyphDescriptor: array of uiTWidgetSkinGlyphDescriptor);
+begin
+   nGlyphs := Length(glyphDescriptor);
+   Glyphs := @glyphDescriptor[0];
+end;
+
+procedure uiTWidgetSkinDescriptor.UseStrings(var stringDescriptor: array of uiTWidgetSkinDescriptorString);
+begin
+   nStrings := Length(stringDescriptor);
+   Strings := @stringDescriptor[0];
+end;
+
+procedure uiTWidgetSkinDescriptor.UseBools(
+   var boolDescriptor: array of uiTWidgetSkinBoolDescriptor);
+begin
+   nBools := Length(boolDescriptor);
+   Bools := @boolDescriptor[0];
 end;
 
 class procedure uiTWidgetSkinDescriptor.Initialize(out descriptor: uiTWidgetSkinDescriptor; const setName: StdString);
