@@ -48,6 +48,9 @@ TYPE
 
        procedure GetNormalizedPointerCoordinates(x, y: single; out n: TVector2f);
        procedure GetNormalizedPointerCoordinates(x, y, z: single; out n: TVector4f);
+
+       {get a viewport from a relative one}
+       procedure FromRelative(const relative: oxTViewport; out v: oxTViewport);
     end;
 
 VAR
@@ -176,6 +179,17 @@ begin
    n[1] := (2 * y / Dimensions.h) - 1;
    n[2] := z * 2 - 1;
    n[3] := 1;
+end;
+
+procedure oxTViewportHelper.FromRelative(const relative: oxTViewport; out v: oxTViewport);
+begin
+    v := Self;
+
+    v.Position.x := v.Position.x + (v.Dimensions.w * relative.Position.x);
+    v.Position.y := v.Position.y + (v.Dimensions.h * relative.Position.y);
+
+    v.Dimensions.w := v.Dimensions.w * relative.Dimensions.w;
+    v.Dimensions.h := v.Dimensions.h * relative.Dimensions.h;
 end;
 
 END.

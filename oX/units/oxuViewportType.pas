@@ -41,6 +41,11 @@ TYPE
        a: oxTAspect;
     end;
 
+    oxTRelativeViewport = record
+       Position: oxTPointf;
+       Dimensions: oxTDimensionsf;
+    end;
+
 IMPLEMENTATION
 
 END.
