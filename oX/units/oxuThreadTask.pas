@@ -13,7 +13,10 @@ INTERFACE
       uStd, uError, uTiming, uLog,
       appuEvents
       {$IFNDEF NO_THREADS}
-      , oxuTimer, uThreadUtils
+      , oxuTimer
+      {$IFDEF OX_DEBUG}
+      , uThreadUtils
+      {$ENDIF}
       {$ENDIF};
 
 CONST

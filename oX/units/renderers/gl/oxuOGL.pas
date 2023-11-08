@@ -10,7 +10,10 @@ INTERFACE
 
    USES
       {$INCLUDE usesgl.inc},
-      uStd, uError, uLog, StringUtils,
+      uStd, uLog, StringUtils,
+      {$IFDEF OX_DEBUG}
+      uError,
+      {$ENDIF}
       {ox}
       oxuTexture
       {$IFNDEF ANDROID},{$ENDIF}
