@@ -34,7 +34,11 @@ TYPE
       {called when the project is saved}
       OnSaved,
       {called when a project is overwritten (after save)}
-      OnOverwritten: TProcedures;
+      OnOverwritten,
+      {called when the project is being loaded}
+      OnLoadProject,
+      {called when the project is being saved}
+      OnSaveProject: TProcedures;
 
       {destroy current project}
       procedure Destroy();
@@ -92,15 +96,22 @@ begin
 
    SetCurrentDir(oxedProject.Path);
 
+   log.v('project > Saving: ' + oxedProject.Name);
+
    oxedProjectSettings.Save();
-   log.v('project > Saved settings: ' + oxedProject.Name);
+   log.v('project > Saved settings');
    oxedProjectSession.Save();
-   log.v('project > Saved session: ' + oxedProject.Name);
+   log.v('project > Saved session');
+
+   {save other project data}
+   oxedProjectManagement.OnSaveProject.Call();
+   log.v('project > Saved data');
+
    oxedProjectManagement.OnSaved.Call();
-   log.v('project > On saved called: ' + oxedProject.Name);
+   log.v('project > On saved called');
 
    oxedProject.MarkModified(false);
-   log.v('project > On modified called: ' + oxedProject.Name);
+   log.v('project > On modified(false) called');
 
    oxedMessages.i('project > Saved: ' + oxedProject.Path);
 end;
@@ -133,13 +144,18 @@ begin
 
          {TODO: Check if project settings loaded properly}
          oxedProjectSettings.Load();
-         log.v('project > Loaded settings: ' + oxedProject.Name);
+         log.v('project > Loading project: ' + oxedProject.Name);
+         log.v('project > Loaded settings');
          oxedProjectSession.Load();
-         log.v('project > Loaded session: ' + oxedProject.Name);
+         log.v('project > Loaded session');
          oxedProject.RecreateTempDirectory();
 
+         {load other project data}
+         oxedProjectManagement.OnLoadProject.Call();
+         log.v('project > Loaded');
+
          OnOpen.Call();
-         oxedMessages.i('project > Loaded: ' + oxedProject.Name + ' (' + oxedProject.Identifier + ')');
+         oxedMessages.i('project > Opened ' + oxedProject.Name + ' (' + oxedProject.Identifier + ')');
 
          if(oxedSettings.BuildOnProjectOpen) then
             appActionEvents.Queue(oxedActions.BUILD);
@@ -159,5 +175,7 @@ INITIALIZATION
    TProcedures.InitializeValues(oxedProjectManagement.OnClosed);
    TProcedures.InitializeValues(oxedProjectManagement.OnSaved);
    TProcedures.InitializeValues(oxedProjectManagement.OnOverwritten);
+   TProcedures.InitializeValues(oxedProjectManagement.OnLoadProject);
+   TProcedures.InitializeValues(oxedProjectManagement.OnSaveProject);
 
 END.
