@@ -240,7 +240,7 @@ end;
 
 procedure TFileDescriptor.From(const s: TUnicodeSearchRec);
 begin
-   Self.Name := s.Name;
+   Self.Name := UTF8String(s.Name);
    Self.Time := s.Time;
    Self.Size := Size;
    Self.Attr := Attr;
