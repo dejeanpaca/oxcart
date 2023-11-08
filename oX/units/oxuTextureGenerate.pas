@@ -15,7 +15,7 @@ INTERFACE
      uImage, imguRW, imguOperations,
      {oX}
      uOX, oxuRunRoutines, oxuRenderer, oxuRenderers, oxuTypes, oxuTexture, oxuPaths;
-  
+
 TYPE
    { oxTTextureGenerate }
 
@@ -49,6 +49,8 @@ TYPE
       function Load(const fileName: string): longint;
       function Load(const extension: string; var f: TFile): longint;
 
+      procedure LogFile(fn: string; err: boolean = false; props: imgPRWProperties = nil);
+
       {specify the texture generation size, only valid for textures whose size is unknown}
       procedure SetSize(width, height: longword);
 
@@ -70,10 +72,11 @@ TYPE
 
       {dispose of generation data}
       procedure Dispose();
+      procedure DisposeImage();
 
       private
 
-      function checkPot(): boolean;
+      function CheckPot(): boolean;
    end;
 
    oxTTextureGenerateSettings = record
@@ -134,18 +137,18 @@ begin
    routine is more likely to work on the texture with the new format.}
 
    {transform the texture to the preferred pixel format}
-   hasAlpha := imgcPIXFHasAlpha[image.PixF];
+   hasAlpha := imgcPIXFHasAlpha[Image.PixF];
 
    if(not hasAlpha) then begin
-      if(PreferedPIXF <> -1) and (image.PixF <> PreferedPIXF) then
-         imgOperations.Transform(image, PreferedPIXF);
+      if(PreferedPIXF <> -1) and (Image.PixF <> PreferedPIXF) then
+         imgOperations.Transform(Image, PreferedPIXF);
    end else
-      if(PreferedPIXFAlpha <> -1) and (image.PixF <> PreferedPIXFAlpha) then
-         imgOperations.Transform(image, PreferedPIXFAlpha);
+      if(PreferedPIXFAlpha <> -1) and (Image.PixF <> PreferedPIXFAlpha) then
+         imgOperations.Transform(Image, PreferedPIXFAlpha);
 
    {set the image to the origin we need}
    if(Origin <> -1) then
-      imgOperations.SetOrigin(image, Origin);
+      imgOperations.SetOrigin(Image, Origin);
 end;
 
 function oxTTextureGenerate.Load(const fileName: string): longint;
@@ -153,7 +156,55 @@ var
    imgProps: imgTRWProperties;
    fn: string;
 
-procedure logFile(err: boolean);
+begin
+   {log the filename}
+   if(oxTextureGenerateSettings.LogNameAlways) then
+      LogFile(fileName);
+
+   fn := oxPaths.Find(fileName);
+
+   {load the image}
+   imgFile.Init(imgProps);
+   imgProps.SupressLog := true;
+
+   Result := imgFile.Load(Image, fn, imgProps);
+
+   {check for errors}
+   if(Result = 0) then begin
+      OnLoad()
+   end else begin
+      LogFile(fileName, true, @imgProps);
+
+      DisposeImage();
+      Result := oxeIMAGE;
+   end;
+end;
+
+function oxTTextureGenerate.Load(const extension: string; var f: TFile): longint;
+var
+   imgProps: imgTRWProperties;
+
+begin
+   {load the image}
+   imgFile.Init(imgProps);
+   imgProps.supressLog := true;
+   imgProps.setToDefaultOrigin := false;
+
+   Result := imgFile.Load(Image, extension, f, imgProps);
+
+   {check for errors}
+   if(Result = 0) then
+      OnLoad()
+   else begin
+      LogFile(extension, true, @imgProps);
+
+      DisposeImage();
+
+      Result := oxeIMAGE;
+   end;
+end;
+
+procedure oxTTextureGenerate.LogFile(fn: string; err: boolean; props: imgPRWProperties);
 var
    s: string;
    errCount: longint;
@@ -175,71 +226,30 @@ begin
       errCount := 0;
       s := s + 'error(';
 
-      if(imgProps.error.e <> 0) then
-         addError('image: ' + GetErrorCodeString(imgProps.Error.e));
+      if(props <> nil) then begin
+         if(props^.Error.e <> 0) then
+            addError('image: ' + GetErrorCodeString(props^.Error.e));
 
-      if(imgProps.error.f <> 0) then
-         addError('file: ' + fFile.GetErrorString(imgProps.Error.f, imgProps.Error.io));
+         if(props^.Error.f <> 0) then
+            addError('file: ' + fFile.GetErrorString(props^.Error.f, props^.Error.io));
 
-      if(imgProps.error.description <> '') then
-         addError(imgProps.error.description);
+         if(props^.Error.Description <> '') then
+            addError(props^.Error.Description);
+      end;
 
       s := s + ') ';
    end;
 
    s := s + 'loading: ' + fn;
-   log.e(s);
 
-   if(err) and (imgProps.error.description <> '') then
-      log.w('description: ' + imgProps.error.description);
+   if(err) then
+      log.e(s)
+   else
+      log.v(s);
+
+   if(err) and (props <> nil) and (props^.Error.Description <> '') then
+      log.w('description: ' + props^.Error.Description);
 end;
-
-begin
-   {log the filename}
-   if(oxTextureGenerateSettings.logNameAlways) then
-      logFile(false);
-
-   fn := oxPaths.Find(fileName);
-
-   {load the image}
-   imgFile.Init(imgProps);
-   imgProps.supressLog := true;
-   Result := imgFile.Load(image, fn, imgProps);
-
-   {check for errors}
-   if(Result = 0) then begin
-      OnLoad()
-   end else begin
-      if(not oxTextureGenerateSettings.logNameAlways) then
-         logFile(true);
-
-      image.Dispose();
-      Result := oxeIMAGE;
-   end;
-end;
-
-function oxTTextureGenerate.Load(const extension: string; var f: TFile): longint;
-var
-   imgProps: imgTRWProperties;
-
-begin
-   {load the image}
-   imgFile.Init(imgProps);
-   imgProps.supressLog := true;
-   imgProps.setToDefaultOrigin := false;
-   Result := imgFile.Load(image, extension, f, imgProps);
-
-   {check for errors}
-   if(Result = 0) then
-      OnLoad()
-   else begin
-      log.e('Failed to load image: ' + image.FileName + ' (' + GetErrorCodeString(Result) + ', ' +
-         GetErrorCodeString(Image.error) + ', ' + f.GetErrorString() + ')');
-      image.Dispose();
-      Result := oxeIMAGE;
-   end;
-end;
-
 procedure oxTTextureGenerate.SetSize(width, height: longword);
 begin
    {correct and assign values}
@@ -260,7 +270,7 @@ var
 begin
    tex := 0;
 
-   canPot := checkPot();
+   canPot := CheckPot();
 
    if(not canPot) then begin
       log.v('Texture is not pow2 (' + sf(Image.Width) + 'x' + sf(Image.Height) + '): ' + Image.FileName);
@@ -394,12 +404,20 @@ end;
 
 procedure oxTTextureGenerate.Dispose();
 begin
-   FreeObject(image);
+   DisposeImage();
+
+   FreeObject(Image);
 end;
 
-function oxTTextureGenerate.checkPot(): boolean;
+procedure oxTTextureGenerate.DisposeImage();
 begin
-   Result := oxTex.IsPot(image.Width, image.Height) or (oxRenderer.Properties.Textures.NonPowerOf2);
+   if(Image <> nil) then
+      Image.Dispose();
+end;
+
+function oxTTextureGenerate.CheckPot(): boolean;
+begin
+   Result := oxTex.IsPot(Image.Width, Image.Height) or (oxRenderer.Properties.Textures.NonPowerOf2);
 
    {the texture is not power of 2, and such are not supported, so warn}
    if(not Result) and (not oxRenderer.Properties.Textures.WarnedPot) then begin
