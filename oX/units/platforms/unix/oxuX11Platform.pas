@@ -18,7 +18,7 @@ INTERFACE
       appuMouse, appuMouseEvents,
       {oX}
       oxuTypes, oxuWindowTypes, oxuWindows, oxuWindow, oxuPlatform, oxuPlatforms, oxuRenderer,
-      oxuKeyboardControl, oxuPointerControl, oxuGlobalInstances, uiuWindowTypes,
+      oxuGlobalInstances, uiuWindowTypes,
       {ui}
       uiuWindow, uiuTypes;
 
@@ -209,15 +209,12 @@ var
 
 procedure MouseEventDone();
 var
-   appEvent: appTEvent;
+   appEvent: appPEvent;
 
 begin
    if(lastM.Action <> 0) then begin
-      appEvents.Init(appEvent, appMOUSE_EVENT, @appMouseEvents.evh);
-      appEvent.ExternalData := @lastM;
-      appEvent.wnd := wnd;
-
-      oxPointer.Handle(appEvent, lastM, wnd);
+      appEvent := appMouseEvents.Queue(lastM);
+      appEvent^.wnd := wnd;
       lastM.Action := 0;
    end;
 end;
@@ -329,6 +326,7 @@ var
    appEvent: appTEvent;
    kEvent: appTKeyEvent;
    nev: TXEvent;
+   ev: appPEvent;
 
 begin
    appk.Init(key);
@@ -395,11 +393,8 @@ begin
          appk.Modifiers.Clear(kmSCROLL);
 
       {set the up/down state}
-      if(event._type = x.KeyPress) then begin
+      if(event._type = x.KeyPress) then
          key.State.Prop(kmDOWN);
-         appk.Pressed[key.Code] := true;
-      end else
-         appk.Pressed[key.Code] := false;
 
       {check if we have gotten an auto (fake) release (because X does this for reasons)}
       if(event._type = x.KeyRelease) and (XEventsQueued(DPY, QueuedAfterReading) > 0) then begin
@@ -410,7 +405,6 @@ begin
             XNextEvent(DPY, @nev);
 
             key.State.Prop(kmDOWN);
-            appk.Pressed[key.Code] := true;
          end;
       end;
 
@@ -420,7 +414,8 @@ begin
       appEvent.ExternalData := @kEvent;
       appEvent.wnd := wnd;
 
-      oxKey.Handle(appEvent, kEvent, wnd);
+      ev := appKeyEvents.Queue(key);
+      ev^.wnd := wnd;
    end;
 end;
 
@@ -996,4 +991,3 @@ INITIALIZATION
    modifiers.scroll := 0;
 
 END.
-
