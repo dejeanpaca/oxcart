@@ -47,6 +47,8 @@ TYPE
 
       procedure GetBoundingBox(out bbox: TBoundingBox); virtual;
 
+      {called when scene is loaded}
+      procedure Load(); virtual;
       {called when scene starts}
       procedure Start(); virtual;
       {called to update component per frame}
@@ -140,6 +142,11 @@ end;
 procedure oxTComponent.GetBoundingBox(out bbox: TBoundingBox);
 begin
    bbox := vmBBoxZero;
+end;
+
+procedure oxTComponent.Load();
+begin
+
 end;
 
 procedure oxTComponent.Start();
