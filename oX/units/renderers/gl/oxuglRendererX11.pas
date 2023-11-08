@@ -39,14 +39,14 @@ IMPLEMENTATION
 
 procedure ExpandAttributes(wnd: oglTWindow; var attr: TXAttrIntPreallocatedArray; fb: boolean = false);
 begin
-   if(wnd.gl.ColorBits >= 24) then begin
+   if(wnd.RenderSettings.ColorBits >= 24) then begin
       attr.Add(GLX_RED_SIZE, 8);
       attr.Add(GLX_GREEN_SIZE, 8);
       attr.Add(GLX_BLUE_SIZE, 8);
 
-      if(wnd.gl.ColorBits = 32) then
+      if(wnd.RenderSettings.ColorBits = 32) then
          attr.Add(GLX_ALPHA_SIZE, 8);
-   end else if(wnd.gl.ColorBits = 16) then begin
+   end else if(wnd.RenderSettings.ColorBits = 16) then begin
       attr.Add(GLX_RED_SIZE, 4);
       attr.Add(GLX_GREEN_SIZE, 5);
       attr.Add(GLX_BLUE_SIZE, 4);
@@ -56,24 +56,24 @@ begin
       attr.Add(GLX_BLUE_SIZE, 1);
    end;
 
-   if(wnd.gl.DepthBits > 0) then
-      attr.Add(GLX_DEPTH_SIZE, wnd.gl.DepthBits);
+   if(wnd.RenderSettings.DepthBits > 0) then
+      attr.Add(GLX_DEPTH_SIZE, wnd.RenderSettings.DepthBits);
 
-   if(wnd.gl.StencilBits > 0) then
-      attr.Add(GLX_STENCIL_SIZE, wnd.gl.StencilBits);
+   if(wnd.RenderSettings.StencilBits > 0) then
+      attr.Add(GLX_STENCIL_SIZE, wnd.RenderSettings.StencilBits);
 
-   if(wnd.gl.DoubleBuffer) then begin
+   if(wnd.RenderSettings.DoubleBuffer) then begin
       if(fb) then
          attr.Add(GLX_DOUBLEBUFFER, 1)
       else
          attr.Add(GLX_DOUBLEBUFFER);
    end;
 
-   if(wnd.gl.AccumBits > 0) then begin
-      attr.Add(GLX_ACCUM_RED_SIZE, wnd.gl.AccumBits);
-      attr.Add(GLX_ACCUM_GREEN_SIZE, wnd.gl.AccumBits);
-      attr.Add(GLX_ACCUM_BLUE_SIZE, wnd.gl.AccumBits);
-      attr.Add(GLX_ACCUM_ALPHA_SIZE, wnd.gl.AccumBits);
+   if(wnd.RenderSettings.AccumBits > 0) then begin
+      attr.Add(GLX_ACCUM_RED_SIZE, wnd.RenderSettings.AccumBits);
+      attr.Add(GLX_ACCUM_GREEN_SIZE, wnd.RenderSettings.AccumBits);
+      attr.Add(GLX_ACCUM_BLUE_SIZE, wnd.RenderSettings.AccumBits);
+      attr.Add(GLX_ACCUM_ALPHA_SIZE, wnd.RenderSettings.AccumBits);
    end;
 end;
 
@@ -183,7 +183,7 @@ var
    requiresContext: Boolean;
 
 begin
-   requiresContext := ogl.ContextRequired(wnd.DefaultSettings);
+   requiresContext := ogl.ContextRequired(wnd.glDefault);
 
    if(not requiresContext) then
       Result := chooseVisual(wnd)
@@ -243,8 +243,8 @@ begin
          exit(nil);
    end;
 
-   attr.Add(GLX_CONTEXT_MAJOR_VERSION_ARB,   wnd.glSettings.Version.Major);
-   attr.Add(GLX_CONTEXT_MINOR_VERSION_ARB,   wnd.glSettings.Version.Minor);
+   attr.Add(GLX_CONTEXT_MAJOR_VERSION_ARB,   wnd.gl.Version.Major);
+   attr.Add(GLX_CONTEXT_MINOR_VERSION_ARB,   wnd.gl.Version.Minor);
 
    contextFlags := 0;
    {$IFDEF OX_DEBUG}
@@ -256,13 +256,13 @@ begin
       attr.add(GLX_CONTEXT_FLAGS_ARB, contextFlags);
 
    if(extContext) then begin
-      if(wnd.glSettings.Version.Profile = oglPROFILE_ANY) then begin
+      if(wnd.gl.Version.Profile = oglPROFILE_ANY) then begin
          log.v('gl > Using any profile');
          attr.Add(GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB or GLX_CONTEXT_CORE_PROFILE_BIT_ARB);
-      end else if(wnd.glSettings.Version.Profile = oglPROFILE_COMPATIBILITY) then begin
+      end else if(wnd.gl.Version.Profile = oglPROFILE_COMPATIBILITY) then begin
          log.v('gl > Using compatibility profile');
          attr.Add(GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB);
-      end else if(wnd.glSettings.Version.Profile = oglPROFILE_CORE) then begin
+      end else if(wnd.gl.Version.Profile = oglPROFILE_CORE) then begin
          log.v('gl > Using core profile');
          attr.Add(GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_CORE_PROFILE_BIT_ARB);
       end;
@@ -281,7 +281,7 @@ var
 
 begin
    {requires new context creation for opengl 3.0 and higher}
-   requiresContext := ogl.ContextRequired(wnd.DefaultSettings);
+   requiresContext := ogl.ContextRequired(wnd.glDefault);
    extContextProfile := oglExtensions.PlatformSupported(cGLX_ARB_create_context_profile);
 
    if(requiresContext) and (extContextProfile) then begin
