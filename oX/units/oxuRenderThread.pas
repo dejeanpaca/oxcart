@@ -43,7 +43,7 @@ begin
       oxTRenderer(wnd.Renderer).ContextCurrent(rtc);
 
    oxTRenderer(wnd.Renderer).StartThread(wnd);
-   log.v('Started rendering thread: ' + sf(oxRenderingContext.RC));
+   oxTRenderer(wnd.Renderer).logtv('Started rendering thread: ' + sf(oxRenderingContext.RC));
 end;
 
 procedure oxTRenderThread.StopThread(wnd: oxTWindow);
@@ -59,7 +59,7 @@ begin
       oxRenderingContext.RC := -1;
    end;
 
-   log.v('Stopped rendering thread: ' + sf(wasRC));
+   oxTRenderer(wnd.Renderer).logtv('Stopped rendering thread: ' + sf(wasRC));
 end;
 
 END.

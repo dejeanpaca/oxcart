@@ -9,7 +9,7 @@ UNIT oxuglRendererPlatform;
 INTERFACE
 
    USES
-      uStd, StringUtils,
+      uStd,
       {ox}
       oxuTypes, oxuRenderer,
       {gl}
@@ -56,7 +56,7 @@ end;
 
 function oxglTPlatform.GetErrorDescription(error: loopint): StdString;
 begin
-   Result := sf(error);
+   Result := '$' + HexStr(error, 8);
 end;
 
 procedure oxglTPlatform.OnInitialize();
