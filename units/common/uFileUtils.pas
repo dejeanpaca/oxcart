@@ -460,12 +460,11 @@ var
    count, written: fileint;
 
 begin
+   FakeZeroOut(buffer);
+
    Result := 0;
    count := 0;
    written := 0;
-   {$IFDEF DEBUG}
-   buffer[0] := 0;
-   {$ENDIF}
 
    ZeroOut(sf, SizeOf(sF));
    ZeroOut(df, SizeOf(dF));
