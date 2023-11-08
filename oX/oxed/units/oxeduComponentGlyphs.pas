@@ -37,6 +37,7 @@ var
 
 begin
    oxc := oxedComponents.Find(component);
+
    if(oxc <> nil) then begin
       oxc^.Glyph.Component := component;
       oxc^.Glyph.Name := name;

@@ -76,7 +76,7 @@ var
 
 begin
    for i := 0 to List.n - 1 do begin
-      if(List.List[i].Component = component) then
+      if (List.List[i].Component.ClassName = component.ClassName) then
          exit(@List.List[i]);
    end;
 
@@ -89,8 +89,6 @@ var
 
 begin
    oxedTComponentList.InitializeValues(oxedComponents.List);
-
-   oxedComponents.Add(nil);
 
    {initialize components}
    for i := 0 to oxComponentDescriptors.List.n - 1 do begin

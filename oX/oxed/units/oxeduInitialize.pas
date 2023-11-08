@@ -32,7 +32,7 @@ INTERFACE
       oxeduViewScene, oxeduSceneView, oxeduProjectDialog, oxeduSceneEditTools,
       oxeduRunButtons, oxeduStatusInfo,
       {components}
-      oxeduNilComponent, oxeduCameraComponent, oxeduLightComponent,
+      oxeduCameraComponent, oxeduLightComponent,
       {initialize keys last}
       oxeduKeys,
       {ui}
