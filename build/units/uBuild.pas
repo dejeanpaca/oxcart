@@ -639,7 +639,7 @@ begin
 
    TParseData.Init(p);
    p.stripWhitespace := true;
-   p.Read(GetLPIFilename(path), TParseExtMethod(@readf));
+   p.Read(GetLPIFilename(path), TParseMethod(@readf));
 
    result := executableName;
 end;

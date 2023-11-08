@@ -192,7 +192,7 @@ begin
 
    TParseData.Init(p);
    p.externalData := Self;
-   p.Read(fn,  TParseExtMethod(@analyzeFile));
+   p.Read(fn, TParseMethod(@analyzeFile));
 end;
 
 procedure TUnitTestProgram.Execute();

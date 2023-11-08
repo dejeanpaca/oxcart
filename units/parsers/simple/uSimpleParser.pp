@@ -21,7 +21,7 @@ TYPE
    PParseData = ^TParseData;
 
    {read/write functions}
-   TParseExtMethod = function(var d): boolean;
+   TParseMethod = function(var d): boolean;
 
    { TParseData }
 
@@ -37,7 +37,7 @@ TYPE
 
       {callbacks}
       ReadMethod,
-      WriteMethod: TParseExtMethod;
+      WriteMethod: TParseMethod;
       {are we in key/value mode (only applicable if reading)}
       KeyValue: boolean;
       {key/value separator}
@@ -52,10 +52,10 @@ TYPE
 
       {perform file reading}
       function Read(const fn: string): Boolean;
-      function Read(const fn: string; readFunction: TParseExtMethod): Boolean;
+      function Read(const fn: string; readFunction: TParseMethod): Boolean;
       {write a file}
       function Write(const fn: string): Boolean;
-      function Write(const fn: string; writeFunction: TParseExtMethod): Boolean;
+      function Write(const fn: string; writeFunction: TParseMethod): Boolean;
       {write a single line to the file}
       procedure WriteLine(const s: string);
 
@@ -136,7 +136,7 @@ begin
    Result := inherited Read(fn);
 end;
 
-function TParseData.Read(const fn: string; readFunction: TParseExtMethod): Boolean;
+function TParseData.Read(const fn: string; readFunction: TParseMethod): Boolean;
 begin
    ReadMethod := readFunction;
 
@@ -148,7 +148,7 @@ begin
    Result := inherited Write(fn);
 end;
 
-function TParseData.Write(const fn: string; writeFunction: TParseExtMethod): Boolean;
+function TParseData.Write(const fn: string; writeFunction: TParseMethod): Boolean;
 begin
    WriteMethod := writeFunction;
    Result := inherited Write(fn);
