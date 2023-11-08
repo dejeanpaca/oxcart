@@ -11,9 +11,9 @@ UNIT oxuGlyph;
 INTERFACE
 
    USES
-      uStd, uLog,
+      uStd, uLog, StringUtils,
       {ox}
-      uOX, oxuResourcePool, oxuTexture, oxuTexturePool, oxuFreetype;
+      uOX, oxuResourcePool, oxuTexture, oxuTexturePool, oxuFreetype, oxuDefaultTexture;
 
 TYPE
    oxPGlyphs = ^oxTGlyphs;
@@ -39,6 +39,9 @@ TYPE
       function Load(): boolean;
       {unload the glyph}
       procedure Unload();
+
+      {get a texture (if none, return the default one if AlwaysReturnTexture is true)}
+      function GetTexture(): oxTTexture;
    end;
 
    oxTGlyphMaps = specialize TPreallocatedArrayList<oxTGlyphMap>;
@@ -49,12 +52,14 @@ TYPE
       Maps: oxTGlyphMaps;
       GlyphPool: oxTTexturePool;
       DefaultSize: loopint;
+      AlwaysReturnTexture: boolean;
 
       class procedure Init(out glyphs: oxTGlyphs); static;
 
       {get an existing map with the given name}
       function Get(const name: string): oxPGlyphMap;
       function Load(const name: string; const path: string; size: loopint = 0): oxPGlyphMap;
+      function Load(code: loopint; size: loopint = 0): oxPGlyphMap;
 
       {adds new map or returns matching existing one}
       function AddMap(const name: string; const path: string; size: loopint = 0): oxPGlyphMap;
@@ -136,6 +141,14 @@ begin
    oxResource.Destroy(Texture);
 end;
 
+function oxTGlyphMap.GetTexture(): oxTTexture;
+begin
+   Result := Texture;
+
+   if(Texture = nil) and (Root^.AlwaysReturnTexture) then
+      exit(oxDefaultTexture.Texture);
+end;
+
 { oxTGlyphs }
 
 class procedure oxTGlyphs.Init(out glyphs: oxTGlyphs);
@@ -144,6 +157,7 @@ begin
    glyphs.DefaultSize := 128;
    glyphs.Maps.InitializeValues(glyphs.Maps);
    glyphs.GlyphPool := oxTTexturePool.Create();
+   glyphs.AlwaysReturnTexture := true;
 end;
 
 function oxTGlyphs.Get(const name: string): oxPGlyphMap;
@@ -167,6 +181,18 @@ begin
       if(Result^.Texture = nil) then
          Result^.Load();
    end;
+end;
+
+function oxTGlyphs.Load(code: loopint; size: loopint): oxPGlyphMap;
+var
+   map: oxPGlyphMap = nil;
+   codeName: string;
+
+begin
+   codeName := sf(code);
+   map := oxGlyphs.Load(codeName, codeName, size);
+
+   Result := map;
 end;
 
 function oxTGlyphs.AddMap(const name: string; const path: string; size: loopint): oxPGlyphMap;
