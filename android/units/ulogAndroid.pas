@@ -61,6 +61,6 @@ end;
 
 INITIALIZATION
    loghAndroid.Create();
-   log.Handler.pDefault := @loghAndroid;
+   log.SetDefaultHandler(loghAndroid);
 
 END.

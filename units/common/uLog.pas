@@ -12,7 +12,9 @@ UNIT uLog;
 
 INTERFACE
 
-   USES SysUtils, uStd{$IFNDEF NOLOG}, StringUtils{$ENDIF}, ConsoleUtils;
+   USES
+      SysUtils, uStd{$IFNDEF NOLOG}, StringUtils{$ENDIF}, ConsoleUtils
+      {$IFDEF ANDROID}, android_log_helper{$ENDIF};
 
 CONST
    {errors}
@@ -281,6 +283,9 @@ TYPE
       procedure f(const logString: StdString); inline;
       procedure k(const logString: StdString); inline;
       procedure Flush(); inline;
+
+      {set a default handler (which also sets the stdlog handler)}
+      procedure SetDefaultHandler(const newHandler: tLogHandler);
 
       procedure Enter(const title: StdString); inline;
       procedure Collapsed(const title: StdString); inline;
@@ -658,11 +663,19 @@ begin
          stdlog.Open();
 
       if(stdlog.Error = 0) then begin
+         {$IFNDEF ANDROID}
          if(IsConsole) then
             writeln('Initialized standard log file(' + stdlog.FileName + ')');
+         {$ELSE}
+         logi('Initialized standard log file(' + stdlog.FileName + ')');
+         {$ENDIF}
       end else begin
+         {$IFNDEF ANDROID}
          if(IsConsole) then
             writeln('Failed to initialize stdlog(' + stdlog.FileName + '). Error: ', stdlog.Error, ',', stdlog.IoError);
+         {$ELSE}
+         loge('Failed to initialize stdlog(' + stdlog.FileName + '). Error: ' + sf(stdlog.Error) + ',' + sf(stdlog.IoError));
+         {$ENDIF}
       end;
    end;
 end;
@@ -732,6 +745,12 @@ end;
 procedure TLogUtils.Flush(); inline;
 begin
    stdlog.Flush();
+end;
+
+procedure TLogUtils.SetDefaultHandler(const newHandler: tLogHandler);
+begin
+   Handler.pDefault := @newHandler;
+   stdlog.Handler := @newHandler;
 end;
 
 procedure TLogUtils.Enter(const title: StdString);
@@ -1233,7 +1252,7 @@ begin
    log.Handler.Standard.Create();
    log.Handler.Console.Create();
 
-   log.Handler.pDefault := @log.Handler.Standard;
+   log.SetDefaultHandler(log.Handler.Standard);
 end;
 
 procedure RuntimeError();
@@ -1256,9 +1275,6 @@ INITIALIZATION
    consoleLog.QuickOpen('console', '', logcREWRITE, log.Handler.Console);
    consoleLog.LogEndTimeDate := false;
    stdlog.ChainLog := @consoleLog;
-   {$ELSE}
-   if(IsConsole) then
-      writeln('Logging support disabled');
    {$ENDIF}
 
    {store the old exit proc and set the new one}
