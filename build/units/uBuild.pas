@@ -30,20 +30,59 @@ CONST
 
 TYPE
    PBuildPlatform = ^TBuildPlatform;
+
    { TBuildPlatform }
    {per platform configuration}
    TBuildPlatform = record
       x64: boolean;
 
       Name,
-      FpcPath,
-      FpcConfigPath: string;
+      Platform,
+      Path,
+      ConfigPath: string;
       OptimizationLevels: TPreallocatedStringArrayList;
 
-      class procedure Initialize(out platform: TBuildPlatform); static;
+      class procedure Initialize(out p: TBuildPlatform); static;
    end;
 
    TBuildPlatforms = specialize TPreallocatedArrayList<TBuildPlatform>;
+
+   { TBuildPlatformsHelper }
+
+   TBuildPlatformsHelper = record helper for TBuildPlatforms
+      function FindIndexByName(const name: string): loopint;
+      function FindByName(const name: string): PBuildPlatform;
+   end;
+
+
+   PBuildLazarusInstall = ^TBuildLazarusInstall;
+
+   { TBuildLazarusInstall }
+
+   {per lazarus configuration}
+
+   TBuildLazarusInstall = record
+      x64: boolean;
+
+      Name,
+      Path,
+      ConfigPath,
+      UseFpc: string;
+
+      FPC: PBuildPlatform;
+
+      class procedure Initialize(out install: TBuildLazarusInstall); static;
+   end;
+
+   TBuildLazarusInstalls = specialize TPreallocatedArrayList<TBuildLazarusInstall>;
+
+   { TLazarusInstallsHelper }
+
+   TLazarusInstallsHelper = record helper for TBuildLazarusInstalls
+      function FindIndexByName(const name: string): loopint;
+      function FindByName(const name: string): PBuildLazarusInstall;
+   end;
+
 
    { TBuildSystemTools }
 
@@ -74,13 +113,14 @@ TYPE
 
       {build configuration path}
       ConfigPath,
-      {lazarus path}
-      LazarusPath,
       {build mode}
       BuildMode: string;
 
       {Configurations for various platforms (first one is default one for the current system), for cross-compiling}
       Platforms: TBuildPlatforms;
+
+      {configurations for various lazarus installs}
+      LazarusInstalls: TBuildLazarusInstalls;
 
       {result of build output}
       Output: record
@@ -113,6 +153,7 @@ TYPE
       end;
 
       CurrentPlatform: PBuildPlatform;
+      CurrentLazarus: PBuildLazarusInstall;
       OptimizationLevels: TPreallocatedStringArrayList;
 
       {initialize the build system}
@@ -181,10 +222,16 @@ TYPE
 
       {get current platform}
       function GetPlatform(): PBuildPlatform;
+      {get current lazarus install}
+      function GetLazarus(): PBuildLazarusInstall;
       {set current platform by its name}
       function SetPlatform(const name: string): Boolean;
+      {set lazarus by name}
+      function SetLazarusInstall(const name: string): Boolean;
       {find platform by name, returns nil if nothing found}
       function FindPlatform(const name: string): PBuildPlatform;
+      {find lazarus install by name, returns nil if nothing found}
+      function FindLazarusInstall(const name: string): PBuildLazarusInstall;
       {get the platform we're compiled with}
       function GetCurrentPlatform(): string;
 
@@ -192,6 +239,8 @@ TYPE
       procedure TestPlatforms();
       {sets the platform based on what is available}
       procedure SetupAvailablePlatform();
+      {sets the lazarus install based on what is available}
+      procedure SetupAvailableLazarus();
 
       {get current platform and settings as an fpc command line string}
       function GetFPCCommandLine(): string;
@@ -237,41 +286,43 @@ VAR
    dvUnitsBaseLinux,
    dvUnitsBaseDarwin: TDVar;
 
+   currentMode: string = 'fpc';
+   currentValue: string;
+
+   dvFPC,
+   dvLazarus,
    dvPlatform,
    dvCPU,
-   dvLazarusPath,
-   dvFPCPath,
+   dvPath,
+   dvConfigPath,
+   dvUseFPC,
+
    dvToolsPath,
    dvBuildPath,
    dvBuildLibOptimizationLevels: TDVar;
 
-   {cpu bits}
-   cpuBits,
-   {current unit read from units.config}
-   currentUnit,
-   {current include read from units.config}
-   currentInclude,
-   {current platform}
-   currentPlatform,
-   {library optimization levels}
-   libOptimizationLevels,
    {current base path read from units.config}
    winBasePath,
    unixBasePath,
-   darwinBasePath,
-   {temporary holder}
-   tempPath: string;
+   darwinBasePath: string;
 
-   temporaryPlatform: PBuildPlatform;
+   currentPlatform: PBuildPlatform;
+   currentLazarus: PBuildLazarusInstall;
 
-procedure SetupDVars();
-var
-   platform: PBuildPlatform;
-
+function getdvCurrentPlatform(): PBuildPlatform;
 begin
-   platform := @build.Platforms.List[build.Platforms.n - 1];
+   if(build.Platforms.n > 0) then
+      exit(build.Platforms.GetLast());
 
-   dvFPCPath.Variable := @platform^.FpcPath;
+   Result := nil;
+end;
+
+function getdvCurrentLazInstall(): PBuildLazarusInstall;
+begin
+   if(build.LazarusInstalls.n > 0) then
+      exit(build.LazarusInstalls.GetLast());
+
+   Result := nil;
 end;
 
 procedure CreateDefaultPlatform();
@@ -280,22 +331,98 @@ var
 
 begin
    defaultPlatform.Initialize(defaultPlatform);
-
    defaultPlatform.Name := 'default';
+
    build.Platforms.Dispose();
    build.Platforms.Add(defaultPlatform);
 
-   temporaryPlatform := @build.Platforms.List[build.Platforms.n - 1];
+   currentPlatform := build.Platforms.GetLast();
+end;
 
-   SetupDVars();
+procedure CreateDefaultLazarus();
+var
+   defaultLaz: TBuildLazarusInstall;
+
+begin
+   defaultLaz.Initialize(defaultLaz);
+
+   defaultLaz.Name := 'default';
+   build.LazarusInstalls.Dispose();
+   build.LazarusInstalls.Add(defaultLaz);
+
+   currentLazarus := build.LazarusInstalls.GetLast();
+end;
+
+{ TLazarusInstallsHelper }
+
+function TLazarusInstallsHelper.FindIndexByName(const name: string): loopint;
+var
+   i: loopint;
+
+begin
+   for i := 0 to n - 1 do begin
+      if(List[i].Name = name) then
+         exit(i);
+   end;
+
+   Result := -1;
+end;
+
+function TLazarusInstallsHelper.FindByName(const name: string): PBuildLazarusInstall;
+var
+   index: loopint;
+
+begin
+   index := FindIndexByName(name);
+
+   if(index > -1) then
+      exit(@List[index]);
+
+   Result := nil;
+end;
+
+{ TBuildPlatformsHelper }
+
+function TBuildPlatformsHelper.FindIndexByName(const name: string): loopint;
+var
+   i: loopint;
+
+begin
+   for i := 0 to n - 1 do begin
+      if(List[i].Name = name) then
+         exit(i);
+   end;
+
+   Result := -1;
+end;
+
+function TBuildPlatformsHelper.FindByName(const name: string): PBuildPlatform;
+var
+   index: loopint;
+
+begin
+   index := FindIndexByName(name);
+
+   if(index > -1) then
+      exit(@List[index]);
+
+   Result := nil;
+end;
+
+{ TBuildLazarusInstall }
+
+class procedure TBuildLazarusInstall.Initialize(out install: TBuildLazarusInstall);
+begin
+   ZeroPtr(@install, SizeOf(install));
 end;
 
 { TBuildPlatform }
 
-class procedure TBuildPlatform.Initialize(out platform: TBuildPlatform);
+class procedure TBuildPlatform.Initialize(out p: TBuildPlatform);
 begin
-   ZeroOut(platform, SizeOf(platform));
-   platform.OptimizationLevels.InitializeValues(platform.OptimizationLevels);
+   ZeroOut(p, SizeOf(p));
+
+   p.OptimizationLevels.InitializeValues(p.OptimizationLevels);
 end;
 
 { TPascalUnitBuilder }
@@ -429,6 +556,7 @@ begin
       exit;
 
    CreateDefaultPlatform();
+   CreateDefaultLazarus();
 
    LoadConfiguration();
 
@@ -440,6 +568,7 @@ begin
 
    {go through platforms and find an available platform}
    SetupAvailablePlatform();
+   SetupAvailableLazarus();
 
    TestPlatforms();
 
@@ -516,7 +645,6 @@ begin
    if(FileUtils.Exists(fn) > 0) then
       dvarf.ReadText(dvgConfig, fn);
 
-   FileUtils.NormalizePathEx(lazarusPath);
    FileUtils.NormalizePathEx(tools.build);
    FileUtils.NormalizePathEx(tools.path);
 end;
@@ -576,7 +704,7 @@ begin
 
    p := GetToolProcess();
 
-   p.Executable := lazarusPath +  GetExecutableName('lazbuild');
+   p.Executable := GetLazarus()^.Path +  GetExecutableName('lazbuild');
    if(Options.Rebuild) then
       p.Parameters.Add('-B');
 
@@ -588,7 +716,7 @@ begin
       p.Execute();
    except
       on e: Exception do begin
-         log.e('build > Failed to execute lazbuild: ' + lazarusPath + ' (' + e.ToString() + ')');
+         log.e('build > Failed to execute lazbuild: ' + GetLazarus()^.Path + ' (' + e.ToString() + ')');
          p.Free();
          exit;
       end;
@@ -672,7 +800,7 @@ begin
 
    p := GetToolProcess();
 
-   p.Executable := GetExecutableName(GetPlatform()^.FpcPath + 'fpc');
+   p.Executable := GetExecutableName(GetPlatform()^.Path + 'fpc');
    if(Options.Rebuild) then
       p.Parameters.Add('-B');
 
@@ -1052,12 +1180,12 @@ end;
 
 function TBuildSystem.GetLazarusExecutable(): string;
 begin
-   Result := LazarusPath + GetExecutableName('lazarus');
+   Result := GetLazarus()^.Path + GetExecutableName('lazarus');
 end;
 
 function TBuildSystem.GetLazarusStartExecutable(): string;
 begin
-   Result := LazarusPath + GetExecutableName('startlazarus');
+   Result := GetLazarus()^.Path + GetExecutableName('startlazarus');
 end;
 
 function TBuildSystem.GetPlatform(): PBuildPlatform;
@@ -1066,6 +1194,14 @@ begin
 
    if(CurrentPlatform = nil) then
       Result := @Platforms.List[0];
+end;
+
+function TBuildSystem.GetLazarus(): PBuildLazarusInstall;
+begin
+   Result := CurrentLazarus;
+
+   if(Result = nil) then
+      Result := @LazarusInstalls.List[0];
 end;
 
 function TBuildSystem.SetPlatform(const name: string): Boolean;
@@ -1084,22 +1220,35 @@ begin
    Result := false;
 end;
 
-function TBuildSystem.FindPlatform(const name: string): PBuildPlatform;
+function TBuildSystem.SetLazarusInstall(const name: string): Boolean;
 var
-   i: loopint;
+   p: PBuildLazarusInstall;
 
 begin
-   for i := 0 to Platforms.n - 1 do begin
-      if(Platforms.List[i].Name = name) then
-         exit(@Platforms.List[i]);
+   p := FindLazarusInstall(name);
+
+   if(p <> nil) then begin
+      CurrentLazarus := p;
+      exit(true);
    end;
 
-   Result := nil;
+   CurrentLazarus := @LazarusInstalls.List[0];
+   Result := false;
+end;
+
+function TBuildSystem.FindPlatform(const name: string): PBuildPlatform;
+begin
+   Result := Platforms.FindByName(name);
+end;
+
+function TBuildSystem.FindLazarusInstall(const name: string): PBuildLazarusInstall;
+begin
+   Result := LazarusInstalls.FindByName(name);
 end;
 
 function TBuildSystem.GetCurrentPlatform(): string;
 begin
-   Result := lowercase({$I %FPCTARGETOS%});
+   Result := LowerCase({$I %FPCTARGETOS%});
 end;
 
 procedure TBuildSystem.TestPlatforms();
@@ -1113,7 +1262,7 @@ begin
       p := @Platforms.List[i];
 
       process := GetToolProcess();
-      process.Executable := GetExecutableName(p^.FpcPath + 'fpc');
+      process.Executable := GetExecutableName(p^.Path + 'fpc');
       process.Parameters.Add('-iW');
       process.Options := process.Options + [poUsePipes];
 
@@ -1144,11 +1293,35 @@ begin
    end;
 
    {don't touch the current platform if we have a compiler}
-   if(not DirectoryExists(CurrentPlatform^.FpcPath)) then begin
+   if(not DirectoryExists(CurrentPlatform^.Path)) then begin
       for i := 0 to Platforms.n - 1 do begin
-         if(DirectoryExists(Platforms.List[i].FpcPath)) then begin
+         if(DirectoryExists(Platforms.List[i].Path)) then begin
             log.i('build > Available platform set to ' + Platforms.List[i].Name);
             SetPlatform(Platforms.List[i].Name);
+            exit;
+         end;
+      end;
+   end;
+end;
+
+procedure TBuildSystem.SetupAvailableLazarus();
+var
+   i: loopint;
+
+begin
+   if(CurrentLazarus = nil) then begin
+      if(LazarusInstalls.n > 0) then
+         CurrentLazarus := @LazarusInstalls.List[0]
+      else
+         exit;
+   end;
+
+   {don't touch the current lazarus install if we have one}
+   if(not DirectoryExists(CurrentLazarus^.Path)) then begin
+      for i := 0 to LazarusInstalls.n - 1 do begin
+         if(DirectoryExists(LazarusInstalls.List[i].Path)) then begin
+            log.i('build > Available lazarus install set to ' + LazarusInstalls.List[i].Name);
+            SetLazarusInstall(LazarusInstalls.List[i].Name);
             exit;
          end;
       end;
@@ -1228,14 +1401,14 @@ end;
 
 procedure dvUnitNotify({%H-}p: PDVar; {%H-}what: longword);
 begin
-   ReplaceDirSeparators(currentUnit);
-   build.Units.Add(getBasePath() + currentUnit);
+   ReplaceDirSeparators(currentValue);
+   build.Units.Add(getBasePath() + currentValue);
 end;
 
 procedure dvIncludeNotify({%H-}p: PDVar; {%H-}what: longword);
 begin
-   ReplaceDirSeparators(currentInclude);
-   build.Includes.Add(getBasePath() + currentInclude);
+   ReplaceDirSeparators(currentValue);
+   build.Includes.Add(getBasePath() + currentValue);
 end;
 
 procedure dvNotifyBasePath({%H-}p: PDVar; {%H-}what: longword);
@@ -1243,28 +1416,85 @@ begin
    FileUtils.NormalizePathEx(string(p^.Variable^));
 end;
 
-procedure dvPlatformNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure dvFPCNotify({%H-}p: PDVar; {%H-}what: longword);
 var
    platform: TBuildPlatform;
 
 begin
+   currentMode := 'fpc';
+
    platform.Initialize(platform);
-   platform.Name := currentPlatform;
+   platform.Name := currentValue;
 
    build.Platforms.Add(platform);
-   temporaryPlatform := @build.Platforms.List[build.Platforms.n - 1];
-   SetupDVars();
+   currentPlatform := getdvCurrentPlatform();
+end;
+
+procedure dvLazarusNotify({%H-}p: PDVar; {%H-}what: longword);
+var
+   laz: TBuildLazarusInstall;
+
+begin
+   currentMode := 'lazarus';
+
+   laz.Initialize(laz);
+   laz.Name := currentValue;
+
+   build.LazarusInstalls.Add(laz);
+   currentLazarus := getdvCurrentLazInstall();
 end;
 
 procedure dvCPUNotify({%H-}p: PDVar; {%H-}what: longword);
 begin
-   if(cpuBits = '64') then
-      temporaryPlatform^.x64 := True;
+   if(currentMode = 'fpc') and (currentPlatform <> nil) then begin
+      if(currentValue = '64') then
+         currentPlatform^.x64 := True;
+   end;
 end;
 
-procedure dvFPCPathNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure dvPlatformNotify({%H-}p: PDVar; {%H-}what: longword);
 begin
-   FileUtils.NormalizePathEx(string(p^.Variable^));
+   if(currentMode = 'fpc') and (currentPlatform <> nil) then
+      currentPlatform^.Platform := currentValue;
+end;
+
+procedure dvPathNotify({%H-}p: PDVar; {%H-}what: longword);
+begin
+   FileUtils.NormalizePathEx(currentValue);
+
+   if(currentMode = 'fpc') and (currentPlatform <> nil) then
+      currentPlatform^.Path := currentValue
+   else if(currentMode = 'lazarus') and (currentLazarus <> nil) then
+      currentLazarus^.Path := currentValue;
+end;
+
+procedure dvConfigPathNotify({%H-}p: PDVar; {%H-}what: longword);
+begin
+   FileUtils.NormalizePathEx(currentValue);
+
+   if(currentMode = 'fpc') and (currentPlatform <> nil) then
+      currentPlatform^.ConfigPath := currentValue
+   else if(currentMode = 'lazarus') and (currentLazarus <> nil) then
+      currentLazarus^.ConfigPath := currentValue;
+end;
+
+procedure dvUseFPCNotify({%H-}p: PDVar; {%H-}what: longword);
+var
+   platform: PBuildPlatform;
+
+begin
+   {TODO: Check if specified fpc exists in build.Platforms}
+
+   if(currentMode = 'lazarus') and (currentLazarus <> nil) then begin
+      platform := build.Platforms.findByName(currentValue);
+
+      if(platform <> nil) then begin
+         {set the used fpc for the lazarus install}
+         currentLazarus^.UseFpc := currentValue;
+         currentLazarus^.FPC := platform;
+      end else
+         log.w('Could not find platform: ' + currentValue + ' used by ' + currentLazarus^.Name);
+   end;
 end;
 
 procedure libOptimizationLevelsNotify({%H-}p: PDVar; {%H-}what: longword);
@@ -1273,11 +1503,12 @@ var
    optimizationLevels: TAnsiStringArray;
 
 begin
-   optimizationLevels := strExplode(libOptimizationLevels, ',');
+   optimizationLevels := strExplode(currentValue, ',');
 
-   if(Length(optimizationLevels) > 0) then begin
+   if(currentPlatform <> nil) and (Length(optimizationLevels) > 0) then begin
+      writeln(currentPlatform^.OptimizationLevels.Increment, ' ', currentPlatform^.OptimizationLevels.n, ' ', currentPlatform^.OptimizationLevels.a);
       for i := 0 to High(optimizationLevels) do begin
-         temporaryPlatform^.OptimizationLevels.Add(optimizationLevels[i]);
+         currentPlatform^.OptimizationLevels.Add(optimizationLevels[i]);
       end;
    end;
 end;
@@ -1293,22 +1524,44 @@ INITIALIZATION
    build.Includes.Initialize(build.Includes);
    build.Symbols.Initialize(build.Symbols);
    build.Platforms.Initialize(build.Platforms);
+   build.LazarusInstalls.Initialize(build.LazarusInstalls);
    build.OptimizationLevels.Initialize(build.OptimizationLevels);
 
    { CONFIGURATION }
    build.dvgConfig := dvar.RootGroup;
 
-   build.dvgConfig.Add(dvPlatform, 'platform', dtcSTRING, @currentPlatform);
-   dvPlatform.pNotify := @dvPlatformNotify;
-   build.dvgConfig.Add(dvCPU, 'cpu', dtcSTRING, @cpuBits);
+   { FPC }
+   build.dvgConfig.Add(dvFPC, 'fpc', dtcSTRING, @currentValue);
+   dvFPC.pNotify := @dvFPCNotify;
+
+   { LAZARUS }
+   build.dvgConfig.Add(dvLazarus, 'lazarus', dtcSTRING, @currentValue);
+   dvLazarus.pNotify := @dvLazarusNotify;
+
+   { CPU }
+   build.dvgConfig.Add(dvCPU, 'cpu', dtcSTRING, @currentValue);
    dvCPU.pNotify := @dvCPUNotify;
 
-   build.dvgConfig.Add(dvLazarusPath, 'lazarus_path', dtcSTRING, @build.LazarusPath);
-   build.dvgConfig.Add(dvFPCPath, 'fpc_path', dtcSTRING, @tempPath);
-   dvFPCPath.pNotify := @dvFPCPathNotify;
+   { PLATFORM }
+   build.dvgConfig.Add(dvPlatform, 'platform', dtcSTRING, @currentValue);
+   dvPlatform.pNotify := @dvPlatformNotify;
+
+   { PATH }
+   build.dvgConfig.Add(dvPath, 'path', dtcSTRING, @currentValue);
+   dvPath.pNotify := @dvPathNotify;
+
+   { CONFIG PATH }
+   build.dvgConfig.Add(dvConfigPath, 'config_path', dtcSTRING, @currentValue);
+   dvConfigPath.pNotify := @dvConfigPathNotify;
+
+   { CONFIG PATH }
+   build.dvgConfig.Add(dvUseFPC, 'use_fpc', dtcSTRING, @currentValue);
+   dvUseFPC.pNotify := @dvUseFPCNotify;
+
+
    build.dvgConfig.Add(dvToolsPath, 'tools_path', dtcSTRING, @build.Tools.Path);
    build.dvgConfig.Add(dvBuildPath, 'build_path', dtcSTRING, @build.Tools.Build);
-   build.dvgConfig.Add(dvBuildLibOptimizationLevels, 'lib_optimization_levels', dtcSTRING, @libOptimizationLevels);
+   build.dvgConfig.Add(dvBuildLibOptimizationLevels, 'lib_optimization_levels', dtcSTRING, @currentValue);
    dvBuildLibOptimizationLevels.pNotify := @libOptimizationLevelsNotify;
 
    { UNITS}
@@ -1335,9 +1588,9 @@ INITIALIZATION
    {$ENDIF}
 
 
-   build.dvgUnits.Add(dvUnitsUnit, 'unit', dtcSTRING, @currentUnit);
+   build.dvgUnits.Add(dvUnitsUnit, 'unit', dtcSTRING, @currentValue);
    dvUnitsUnit.pNotify := @dvUnitNotify;
-   build.dvgUnits.Add(dvUnitsInclude, 'include', dtcSTRING, @currentInclude);
+   build.dvgUnits.Add(dvUnitsInclude, 'include', dtcSTRING, @currentValue);
    dvUnitsInclude.pNotify := @dvIncludeNotify;
 
    CreateDefaultPlatform();
