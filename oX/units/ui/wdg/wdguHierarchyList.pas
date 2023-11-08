@@ -18,7 +18,7 @@ INTERFACE
       oxuTypes, oxuFont, oxuTexture, oxuRender, oxuRenderUtilities,
       {ui}
       oxuUI, uiuTypes,
-      uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuWindow, uiuDraw,
+      uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuWindow, uiuDraw, uiuDrawUtilities,
       wdguBase, wdguList;
 
 CONST
@@ -194,15 +194,15 @@ begin
 
       padding := 1;
 
-      height := r.h - padding;
+      height := r.h - padding * 2;
 
       if(glyph.Glyph <> nil) and (glyph.Glyph.rId <> 0) then begin
-         inc(r.x, (height * 2) + (padding * 2));
+         inc(r.x, height + padding * 2);
          f.WriteCentered(s, r, [oxfpCenterVertical]);
 
          oxRender.BlendDefault();
          SetColorBlended(glyph.Color);
-         oxRenderingUtilities.TexturedQuad(r.x, r.y - padding, height, height, glyph.Glyph);
+         uiDrawUtilities.Glyph(r.x - height - padding, r.y - padding, height, height, glyph.Glyph);
          oxui.Material.ApplyTexture('texture', f.Texture);
       end else
          f.WriteCentered(s, r, [oxfpCenterVertical]);
