@@ -21,6 +21,7 @@ TYPE
 
    oxglTPlatformWGL = object(oxglTPlatform)
       constructor Create();
+      function RaiseError(): loopint; virtual;
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
       procedure OnInitWindow({%H-}wnd: oglTWindow); virtual;
       procedure SwapBuffers(wnd: oglTWindow); virtual;
@@ -296,6 +297,11 @@ begin
    Name := 'wgl';
 end;
 
+function oxglTPlatformWGL.RaiseError(): loopint;
+begin
+   Result := winos.GetLastError(true);
+end;
+
 function oxglTPlatformWGL.PreInitWindow(wnd: oglTWindow): boolean;
 var
    pFormat: longint;
@@ -355,8 +361,8 @@ end;
 
 procedure oxglTPlatformWGL.SwapBuffers(wnd: oglTWindow);
 begin
-   if(not windows.SwapBuffers(wnd.wd.dc)) and (wnd.wd.dc <> 0) then
-      winos.LogError('SwapBuffers');
+   if(wnd.wd.dc <> 0) then
+      windows.SwapBuffers(wnd.wd.dc);
 end;
 
 function oxglTPlatformWGL.GetContext(wnd: oglTWindow; shareContext: HGLRC): HGLRC;
@@ -395,25 +401,16 @@ end;
 function oxglTPlatformWGL.ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean;
 begin
    Result := wglMakeCurrent(wnd.wd.dc, context);
-
-   if(not Result) then
-      wnd.wd.LastError := winos.LogError('wglMakeCurrent');
 end;
 
 function oxglTPlatformWGL.ClearContext(wnd: oglTWindow): boolean;
 begin
    Result := wglMakeCurrent(0, 0);
-
-   if(not Result) then
-      wnd.wd.LastError := winos.LogError('wglMakeCurrent')
 end;
 
 function oxglTPlatformWGL.DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean;
 begin
    Result := wglDeleteContext(context);
-
-   if(not Result) then
-      wnd.wd.LastError := winos.LogError('wglDeleteContext');
 end;
 
 INITIALIZATION
