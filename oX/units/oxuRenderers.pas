@@ -75,10 +75,12 @@ var
    i: longint;
 
 begin
-   if(n > 0) then begin
-      log.Enter('Renderers (' + sf(n) + ')');
+   {we'll assume 0 renderer is nil, and only report other renderers}
 
-      for i := 0 to (n - 1) do
+   if(n > 1) then begin
+      log.Enter('Renderers (' + sf(n - 1) + ')');
+
+      for i := 1 to (n - 1) do
          Log.i(List[i].Name);
 
       log.Leave();
