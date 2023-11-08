@@ -19,6 +19,7 @@ function OpenRegistryKeyUnicode(base: HKEY; const name: UnicodeString): HKEY;
 function GetRegistryString(key: HKEY; const name: string): string;
 function GetRegistryStringUnicode(key: HKEY; const name: UnicodeString): UnicodeString;
 function GetRegistryDWord(key: HKEY; const name: string): windows.DWORD;
+function GetVidAndPidFromDeviceId(const deviceId: string; out vid, pid: longint): boolean;
 
 IMPLEMENTATION
 
@@ -109,6 +110,39 @@ begin
       exit(contents);
 
    Result := 0;
+end;
+
+function GetVidAndPidFromDeviceId(const deviceId: string; out vid, pid: longint): boolean;
+var
+   code,
+   index: longint;
+   id: string;
+
+begin
+   vid := 0;
+   pid := 0;
+
+   {get VID}
+   index := Pos('VID_', deviceId);
+   if(index > 0) then begin
+      id := copy(deviceId, index, 4);
+      Val(id, vid, code);
+
+      {get PID}
+      if(code = 0) then begin
+         index := Pos('PID_', deviceId);
+
+         if(index > 0) then begin
+            id := copy(deviceId, index, 4);
+            Val(id, pid, code);
+
+            if(code = 0) then
+               exit(true);
+         end;
+      end;
+   end;
+
+   Result := false;
 end;
 
 END.
