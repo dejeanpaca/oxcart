@@ -229,6 +229,7 @@ begin
       Assign(data^.f, f.fn);
 
       Rewrite(data^.f, 1);
+
       if(f.GetIOError() = 0) then begin
          f.AutoSetBuffer();
       end else
@@ -431,4 +432,5 @@ INITIALIZATION
 
    stdStdFileHandler.Handler  := @stdfHandler;
    fFile.Handlers.Std := @stdStdFileHandler;
+
 END.

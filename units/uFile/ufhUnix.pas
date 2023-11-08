@@ -66,8 +66,7 @@ end;
 procedure fOpenUnix(var f: TFile; d: cint; offs, size: fileint); {normal file via descriptor}
 begin
    f.ErrorReset();
-   f.fNew      := 0;
-   f.fMode     := fcfREAD;
+   f.fMode := fcfREAD;
 
    {set defaults}
    f.SetDefaults('dscr:' + sf(d));
