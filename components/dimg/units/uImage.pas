@@ -12,7 +12,8 @@ UNIT uImage;
 
 INTERFACE
 
-   USES uStd, uColors;
+   USES
+      uStd, uColors;
 
 CONST
    imgcName = 'image';

@@ -12,7 +12,8 @@ UNIT imguSGIRGB;
 
 INTERFACE
 
-   USES uStd, uImage, uFileHandlers, imguRW, uColors;
+   USES
+      uStd, uImage, uFileHandlers, imguRW, uColors;
 
 IMPLEMENTATION
 
@@ -167,8 +168,9 @@ begin
    ld^.BlockRead(imgP.Image^, imgP.Size);
 end;
 
-BEGIN
+INITIALIZATION
    {register the extension and the loader}
    imgFile.Loaders.RegisterHandler(loader, 'SGIRGB', @load);
    imgFile.Loaders.RegisterExt(ext, '.rgb', @loader);
+
 END.

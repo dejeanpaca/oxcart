@@ -10,7 +10,8 @@ UNIT imguGIF;
 
 INTERFACE
 
-   USES uStd, uImage, uFileHandlers, imguRW;
+   USES
+      uStd, uImage, uFileHandlers, imguRW;
 
 IMPLEMENTATION
 
@@ -76,7 +77,7 @@ begin
    {check the flags}
 end;
 
-BEGIN
+INITIALIZATION
    {register the extension and loader}
    imgFile.Loaders.RegisterHandler(loader, 'GIF', @load);
    imgFile.Loaders.RegisterExt(ext, '.gif', @loader);

@@ -64,7 +64,6 @@ TYPE
       imgDescriptor: byte;
    end;
 
-   
 IMPLEMENTATION
 
 END.

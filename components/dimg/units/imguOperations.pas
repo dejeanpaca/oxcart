@@ -10,8 +10,8 @@ UNIT imguOperations;
 
 INTERFACE
 
-USES
-   uStd, uColors, uImage;
+   USES
+      uStd, uColors, uImage;
 
 TYPE
 
@@ -820,4 +820,3 @@ INITIALIZATION
    imgOperations.UseWeightedAverage := true;
 
 END.
-

@@ -12,7 +12,8 @@ UNIT imguwTGA;
 
 INTERFACE
 
-   USES uImage, uFileHandlers, imguRW;
+   USES
+      uImage, uFileHandlers, imguRW;
 
 IMPLEMENTATION
 
@@ -99,10 +100,11 @@ begin {writeImage}
    {success}
 end;
 
-BEGIN
+INITIALIZATION
    {register the extension and the writer}
    imgFile.Writers.RegisterHandler(writer, 'TGA', @writeImage);
    imgFile.Writers.RegisterExt(ext, '.tga', @writer);
 
    XFileFooter.Signature := tgacFooterSignature;
+
 END.

@@ -282,8 +282,9 @@ begin
       ld^.SetError(eNO_MEMORY);
 end;
 
-BEGIN
+INITIALIZATION
    {register the extension and the loader}
    imgFile.Loaders.RegisterHandler(loader, 'PCX', @load);
    imgFile.Loaders.RegisterExt(ext, '.pcx', @loader);
+
 END.

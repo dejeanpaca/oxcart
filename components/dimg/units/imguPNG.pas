@@ -473,8 +473,9 @@ begin
    end;
 end;
 
-BEGIN
+INITIALIZATION
    {register the extension and the loader}
    imgFile.Loaders.RegisterHandler(loader, 'PNGX', @load);
    imgFile.Loaders.RegisterExt(ext, '.png', @loader);
+
 END.
