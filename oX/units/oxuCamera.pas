@@ -17,7 +17,7 @@ INTERFACE
       {app}
       appuMouse,
       {ox}
-      oxuTransform, oxuSerialization, oxuProjection,
+      oxuTransform, oxuSerialization, oxuProjectionType, oxuProjection,
       {ui}
       uiuWindowTypes, uiuWindow;
 
@@ -96,10 +96,10 @@ TYPE
       {get ray from camera with a starting and ending point}
       procedure GetRay(length: single; out vS, vE: TVector3f);
       {get object position from pointer position}
-      procedure GetPointerOrigin(x, y, z: single; out origin: TVector3f; projection: oxTProjection = nil);
-      procedure GetPointerOrigin(x, y: single; out origin: TVector3f; projection: oxTProjection = nil);
+      procedure GetPointerOrigin(x, y, z: single; out origin: TVector3f; const projection: oxTProjection);
+      procedure GetPointerOrigin(x, y: single; out origin: TVector3f; const projection: oxTProjection);
       {get ray from pointer position}
-      procedure GetPointerRay(x, y: single; out origin, endPosition: TVector3f; projection: oxTProjection = nil);
+      procedure GetPointerRay(x, y: single; out origin, endPosition: TVector3f; const projection: oxTProjection);
    end;
 
    oxTCameraCursorControl = record
@@ -282,17 +282,17 @@ begin
    vE := vPos + (vView * length);
 end;
 
-procedure oxTCamera.GetPointerOrigin(x, y, z: single; out origin: TVector3f; projection: oxTProjection = nil);
+procedure oxTCamera.GetPointerOrigin(x, y, z: single; out origin: TVector3f; const projection: oxTProjection);
 begin
    projection.Unproject(x, y, z, Transform.Matrix, origin);
 end;
 
-procedure oxTCamera.GetPointerOrigin(x, y: single; out origin: TVector3f; projection: oxTProjection);
+procedure oxTCamera.GetPointerOrigin(x, y: single; out origin: TVector3f; const projection: oxTProjection);
 begin
    GetPointerOrigin(x, y, 0, origin, projection);
 end;
 
-procedure oxTCamera.GetPointerRay(x, y: single; out origin, endPosition: TVector3f; projection: oxTProjection);
+procedure oxTCamera.GetPointerRay(x, y: single; out origin, endPosition: TVector3f; const projection: oxTProjection);
 begin
    GetPointerOrigin(x, y, 0, origin, projection);
    GetPointerOrigin(x, y, 1, endPosition, projection);

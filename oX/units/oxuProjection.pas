@@ -1,5 +1,5 @@
 {
-   oxuContext, provides context management
+   oxuProjection, provides projection management
    Copyright (c) 2011. Dejan Boras
 
    Started On:    09.02.2011.
@@ -13,66 +13,14 @@ INTERFACE
    USES
       uStd, uColors, vmVector, uLog,
       {oX}
-      oxuAspect, oxuTypes, oxuRenderer, oxuRender, oxuTransform;
+      oxuAspect, oxuProjectionType, oxuTypes, oxuRenderer, oxuRender, oxuTransform;
 
 TYPE
-   {projection properties}
-   oxPProjectionSettings = ^oxTProjectionSettings;
-   oxTProjectionSettings = record
-      isOrtho: boolean; {is the projection orthographic?}
-      fovY,
-      zNear,
-      zFar,
-      l,
-      r,
-      b,
-      t: double;
-   end;
+   oxTProjectionHelper = record helper for oxTProjection
+      procedure Initialize();
+      procedure Initialize(x, y, w, h: longint);
 
-CONST
-   oxDefaultProjection: oxTProjectionSettings = (
-      isOrtho:    false;
-      fovY:       45;
-      zNear:      0.5;
-      zFar:       1000.0;
-      l:          -50;
-      r:          50;
-      b:          -50;
-      t:          50
-   );
-
-TYPE
-   { oxTProjection }
-
-   oxTProjection = class
-      Enabled: boolean;
-      Name: string;
-
-      Position,
-      {offset the position}
-      Offset: oxTPoint;
-      Dimensions: oxTDimensions;
-
-      {is the projection relative}
-      Relative,
-      {always scissor when clearing}
-      ScissorOnClear: boolean;
-
-      {set position and dimensions}
-      Positionf: oxTPointf;
-      Dimensionsf: oxTDimensionsf;
-
-      ClearBits: TBitSet;
-      ClearColor: TColor4f;
-
-      p: oxTProjectionSettings;
-      a: oxTAspect;
-      ProjectionMatrix: TMatrix4f;
-
-      constructor Create();
-      constructor Create(x, y, w, h: longint);
-
-      constructor Create(source: oxTProjection);
+      procedure Initialize(const source: oxTProjection);
 
       {apply this projection}
       procedure Apply(doClear: boolean = true);
@@ -119,7 +67,7 @@ TYPE
 
       procedure SetViewport(const pt: oxTPoint; const d: oxTDimensions);
       {get settings from another projection}
-      procedure From(source: oxTProjection);
+      procedure From(const source: oxTProjection);
 
       {get normalized pointer coordinates}
       procedure GetNormalizedPointerCoordinates(x, y: single; out n: TVector2f);
@@ -128,11 +76,11 @@ TYPE
    end;
 
 VAR
-   oxProjection: oxTProjection;
+   oxProjection: oxPProjection;
 
 IMPLEMENTATION
 
-constructor oxTProjection.Create();
+procedure oxTProjectionHelper.Initialize();
 begin
    Enabled        := true;
    ScissorOnClear := true;
@@ -144,19 +92,19 @@ begin
    SetProjectionMatrix();
 end;
 
-constructor oxTProjection.Create(x, y, w, h: longint);
+procedure oxTProjectionHelper.Initialize(x, y, w, h: longint);
 begin
-   Create();
+   Initialize();
 
    SetViewport(x, y, w, h);
 end;
 
-constructor oxTProjection.Create(source: oxTProjection);
+procedure oxTProjectionHelper.Initialize(const source: oxTProjection);
 begin
    From(source);
 end;
 
-procedure oxTProjection.Apply(doClear: boolean);
+procedure oxTProjectionHelper.Apply(doClear: boolean);
 begin
    if(Enabled) then begin
       Viewport();
@@ -168,12 +116,12 @@ begin
    end;
 end;
 
-procedure oxTProjection.SetViewport(newW, newH: longint);
+procedure oxTProjectionHelper.SetViewport(newW, newH: longint);
 begin
    SetViewport(0, 0, newW, newH);
 end;
 
-procedure oxTProjection.SetViewport(newX, newY, newW, newH: longint);
+procedure oxTProjectionHelper.SetViewport(newX, newY, newW, newH: longint);
 begin
    if (Dimensions.w <> newW) or (Dimensions.h <> newH) or (newX <> Position.x) or (newY <> Position.y) then begin
       Dimensions.w := newW;
@@ -187,7 +135,7 @@ begin
    end;
 end;
 
-procedure oxTProjection.SetViewportf(newX, newY, newW, newH: single);
+procedure oxTProjectionHelper.SetViewportf(newX, newY, newW, newH: single);
 begin
    Relative := true;
 
@@ -203,13 +151,13 @@ begin
    end;
 end;
 
-procedure oxTProjection.SetOffset(offsetX, offsetY: longint);
+procedure oxTProjectionHelper.SetOffset(offsetX, offsetY: longint);
 begin
    Offset.x := offsetX;
    Offset.y := offsetY;
 end;
 
-procedure oxTProjection.Viewport();
+procedure oxTProjectionHelper.Viewport();
 begin
    if(Enabled) then begin
       if(not Relative) then
@@ -220,7 +168,7 @@ begin
    end;
 end;
 
-procedure oxTProjection.Clear();
+procedure oxTProjectionHelper.Clear();
 begin
    oxRenderer.ClearColor(ClearColor);
 
@@ -235,7 +183,7 @@ begin
    end;
 end;
 
-procedure oxTProjection.GetProjectionMatrix(out m: TMatrix4f);
+procedure oxTProjectionHelper.GetProjectionMatrix(out m: TMatrix4f);
 begin
    if(not p.isOrtho) then begin
       {perspective}
@@ -245,7 +193,7 @@ begin
       m := oxTTransform.OrthoFrustum(p.l, p.r, p.b, p.t, p.zNear, p.zFar);
 end;
 
-procedure oxTProjection.SetProjectionMatrix();
+procedure oxTProjectionHelper.SetProjectionMatrix();
 begin
    if(not p.isOrtho) then begin
       {perspective}
@@ -255,13 +203,13 @@ begin
       ProjectionMatrix := oxTTransform.OrthoFrustum(p.l, p.r, p.b, p.t, p.zNear, p.zFar);
 end;
 
-procedure oxTProjection.Projection();
+procedure oxTProjectionHelper.Projection();
 begin
    if(Enabled) then
       oxRenderer.SetProjectionMatrix(ProjectionMatrix);
 end;
 
-procedure oxTProjection.SetZ(zNear, zFar: single);
+procedure oxTProjectionHelper.SetZ(zNear, zFar: single);
 begin
    p.zNear := zNear;
    p.zFar := zFar;
@@ -270,12 +218,12 @@ begin
       log.w('zNear value should not be 0 or less');
 end;
 
-procedure oxTProjection.Ortho(zNear, zFar: single);
+procedure oxTProjectionHelper.Ortho(zNear, zFar: single);
 begin
    Ortho(Dimensions.w div 2, Dimensions.h div 2, zNear, zFar);
 end;
 
-procedure oxTProjection.Ortho(l, r, b, t: single; zNear, zFar: single);
+procedure oxTProjectionHelper.Ortho(l, r, b, t: single; zNear, zFar: single);
 begin
    p.isOrtho := true;
 
@@ -292,7 +240,7 @@ begin
    SetProjectionMatrix();
 end;
 
-procedure oxTProjection.Ortho(w, h: single; zNear, zFar: single);
+procedure oxTProjectionHelper.Ortho(w, h: single; zNear, zFar: single);
 var
    fx, fy: single;
 
@@ -303,12 +251,12 @@ begin
    Ortho(-fx, fx, -fy, fy, zNear, zFar);
 end;
 
-procedure oxTProjection.Ortho2D(w, h: single);
+procedure oxTProjectionHelper.Ortho2D(w, h: single);
 begin
    Ortho(w, h, -1.0, 1.0);
 end;
 
-procedure oxTProjection.QuickPerspective(fovY, zNear, zFar: single);
+procedure oxTProjectionHelper.QuickPerspective(fovY, zNear, zFar: single);
 var
    m: TMatrix4f;
 
@@ -317,7 +265,7 @@ begin
    oxRenderer.SetProjectionMatrix(m);
 end;
 
-procedure oxTProjection.QuickOrtho2D();
+procedure oxTProjectionHelper.QuickOrtho2D();
 var
    m: TMatrix4f;
 
@@ -326,7 +274,7 @@ begin
    oxRenderer.SetProjectionMatrix(m);
 end;
 
-procedure oxTProjection.QuickOrtho2DZero();
+procedure oxTProjectionHelper.QuickOrtho2DZero();
 var
    m: TMatrix4f;
 
@@ -335,7 +283,7 @@ begin
    oxRenderer.SetProjectionMatrix(m);
 end;
 
-procedure oxTProjection.Perspective(fovY, zNear, zFar: single);
+procedure oxTProjectionHelper.Perspective(fovY, zNear, zFar: single);
 begin
    p.fovY := fovY;
    p.isOrtho := false;
@@ -344,7 +292,7 @@ begin
    SetProjectionMatrix();
 end;
 
-procedure oxTProjection.GetRect(out r: oxTRect);
+procedure oxTProjectionHelper.GetRect(out r: oxTRect);
 begin
    r.x := round(p.l);
    r.y := round(p.t);
@@ -352,12 +300,12 @@ begin
    r.w := round(p.t - p.b);
 end;
 
-procedure oxTProjection.SetViewport(const pt: oxTPoint; const d: oxTDimensions);
+procedure oxTProjectionHelper.SetViewport(const pt: oxTPoint; const d: oxTDimensions);
 begin
    SetViewport(pt.x, pt.y - d.h + 1, d.w, d.h);
 end;
 
-procedure oxTProjection.From(source: oxTProjection);
+procedure oxTProjectionHelper.From(const source: oxTProjection);
 begin
    Enabled := source.Enabled;
    Name := source.Name;
@@ -378,13 +326,13 @@ begin
    ProjectionMatrix := source.ProjectionMatrix;
 end;
 
-procedure oxTProjection.GetNormalizedPointerCoordinates(x, y: single; out n: TVector2f);
+procedure oxTProjectionHelper.GetNormalizedPointerCoordinates(x, y: single; out n: TVector2f);
 begin
    n[0] := (2 * x) / Dimensions.w - 1;
    n[1] := (2 * y) / Dimensions.h - 1;
 end;
 
-procedure oxTProjection.GetNormalizedPointerCoordinates(x, y, z: single; out n: TVector4f);
+procedure oxTProjectionHelper.GetNormalizedPointerCoordinates(x, y, z: single; out n: TVector4f);
 begin
    n[0] := (2 * x / Dimensions.w) - 1;
    n[1] := (2 * y / Dimensions.h) - 1;
@@ -393,7 +341,7 @@ begin
 end;
 
 
-function oxTProjection.Unproject(x, y, z: single; const view: TMatrix4f; out world: TVector3f): boolean;
+function oxTProjectionHelper.Unproject(x, y, z: single; const view: TMatrix4f; out world: TVector3f): boolean;
 var
    transform: TMatrix4f;
    vin, vout: TVector4f;

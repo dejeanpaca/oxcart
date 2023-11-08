@@ -14,7 +14,8 @@ INTERFACE
       uStd, vmVector,
       {ox}
       uOX, oxuRunRoutines,
-      oxuWindowTypes, oxuTypes, oxuCamera, oxuProjection, oxuRender, oxuTransform, oxuWindows, oxuSerialization,
+      oxuProjectionType, oxuProjection,
+      oxuWindowTypes, oxuTypes, oxuCamera, oxuRender, oxuTransform, oxuWindows, oxuSerialization,
       oxuMaterial, oxuGlobalInstances,
       oxuScene, oxuEntity, oxuComponent, oxuCameraComponent, oxuRenderComponent;
 
@@ -28,7 +29,7 @@ TYPE
       Entity: oxTEntity;
 
       class procedure Init(out p: oxTSceneRenderParameters;
-         setProjection: oxTProjection = nil; setCamera: oxTCamera = nil); static;
+         setProjection: oxPProjection = nil; setCamera: oxTCamera = nil); static;
    end;
 
    { oxTSceneRenderer }
@@ -77,11 +78,13 @@ IMPLEMENTATION
 { oxTSceneRenderParameters }
 
 class procedure oxTSceneRenderParameters.Init(out p: oxTSceneRenderParameters;
-   setProjection: oxTProjection; setCamera: oxTCamera);
+   setProjection: oxPProjection; setCamera: oxTCamera);
 begin
    ZeroOut(p, SizeOf(p));
 
-   p.Projection := setProjection;
+   p.Projection.Initialize();
+   if(setProjection <> nil) then
+      p.Projection.From(setProjection^);
    p.Camera := setCamera;
 end;
 
@@ -137,10 +140,7 @@ begin
       cameraComponent := oxTCameraComponent(cameras.List[i]);
       params.Camera := cameraComponent.Camera;
 
-      if(cameraComponent.UseSceneProjection) or (cameraComponent.Projection = nil) then
-         params.Projection := projection
-      else
-         params.Projection := cameraComponent.Projection;
+      params.Projection := cameraComponent.Projection;
 
       RenderCamera(params);
    end;

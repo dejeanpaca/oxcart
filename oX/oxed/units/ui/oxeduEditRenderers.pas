@@ -15,7 +15,8 @@ INTERFACE
    USES
       uStd, uInit, uLog,
       {ox}
-      oxuRunRoutines, oxuProjection, oxuCamera, oxuEntity, oxuScene, oxuComponent,
+      oxuRunRoutines, oxuProjectionType,
+      oxuCamera, oxuEntity, oxuScene, oxuComponent,
       oxuTexture, oxuDefaultTexture,
       {ui}
       uiuWindowTypes,

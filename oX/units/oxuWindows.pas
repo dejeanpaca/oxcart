@@ -196,8 +196,7 @@ end;
 
 procedure oxTWindows.Setup(var wnd: oxTWindow; const settings: oxTWindowSettings; contextWindow: boolean = false);
 begin
-   if(wnd.Projection = nil) then
-      wnd.Projection := oxTProjection.Create();
+   wnd.Projection.Initialize();
 
    if(not ox.LibraryMode) then
       settings.Load(wnd);
@@ -292,14 +291,9 @@ end;
 
 { RENDERING }
 procedure oxTWindows.StartRender(wnd: oxTWindow);
-var
-   projection: oxTProjection;
-
 begin
-   if(wnd.oxProperties.ApplyDefaultProjection) then begin
-      projection := oxTProjection(wnd.Projection);
-      projection.Apply();
-   end;
+   if(wnd.oxProperties.ApplyDefaultProjection) then
+      wnd.Projection.Apply();
 end;
 
 {render window(s)}
