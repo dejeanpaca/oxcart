@@ -53,6 +53,7 @@ TYPE
       OnValidate: oxTSettingsWindowStringFunctions;
 
       constructor Create();
+      destructor Destroy();
 
       protected
       procedure CreateTabsWidget();
@@ -105,6 +106,21 @@ begin
 
    if(ID.ID = 0) then
       ID := uiControl.GetID('ox.' + name);
+end;
+
+destructor oxTSettingsWindowBase.Destroy();
+begin
+   OnSave.Dispose();
+   OnRevert.Dispose();
+   OnCancel.Dispose();
+   OnValidate.Dispose();
+
+   OnOpen.Dispose();
+   PreAddTabs.Dispose();
+   OnAddTabs.Dispose();
+   PostAddTabs.Dispose();
+
+   ID.Destroy();
 end;
 
 procedure oxTSettingsWindowBase.CreateTabsWidget();

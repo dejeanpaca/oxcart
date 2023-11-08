@@ -67,7 +67,7 @@ begin
 end;
 {$ENDIF}
 
-constructor oxTSettingsWindow.Create;
+constructor oxTSettingsWindow.Create();
 begin
    Name := 'settings';
    Title := 'Settings';

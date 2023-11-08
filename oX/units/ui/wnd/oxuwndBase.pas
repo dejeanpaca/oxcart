@@ -9,6 +9,7 @@ UNIT oxuwndBase;
 INTERFACE
 
    USES
+      uStd,
       {app}
       appuEvents, appuActionEvents,
       {oX}
@@ -98,10 +99,15 @@ end;
 
 destructor oxTWindowBase.Destroy();
 begin
+   Name := '';
+   Title := '';
+
    if(Window <> nil) then begin
       Window.BaseHandler := nil;
       uiWindow.DisposeQueue(uiTWindow(Window));
    end;
+
+   ID.Destroy();
 end;
 
 procedure oxTWindowBase.CreateWindow();

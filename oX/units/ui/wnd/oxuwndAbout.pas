@@ -37,6 +37,7 @@ TYPE
       Links: array[0..3] of uiTLink;
 
       constructor Create();
+      destructor Destroy();
 
       procedure AddLink(caption, link: StdString);
       procedure ResetLinks();
@@ -121,6 +122,11 @@ begin
    AddLink('=> Github', 'https://github.com/dejeanpaca/oxcart');
 
    inherited;
+end;
+
+destructor oxTAboutWindow.Destroy();
+begin
+   ResetLinks();
 end;
 
 procedure oxTAboutWindow.AddLink(caption, link: StdString);

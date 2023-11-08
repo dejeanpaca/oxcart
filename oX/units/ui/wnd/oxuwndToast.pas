@@ -243,6 +243,7 @@ end;
 procedure deInitToast();
 begin
    oxResource.Free(oxToast.BackgroundTexture);
+   oxToast.Status := '';
    oxToast.Destroy();
 end;
 
