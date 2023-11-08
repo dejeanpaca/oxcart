@@ -11,9 +11,10 @@ UNIT appuPaths;
 INTERFACE
 
    USES
+      uStd,
       {$IFDEF UNIX}BaseUnix,{$ENDIF}
-      {$IFDEF WINDOWS}uStd, windows,{$ENDIF}
-      sysutils, uFileUtils, StringUtils,
+      {$IFDEF WINDOWS}windows,{$ENDIF}
+      sysutils, uFileUtils, StringUtils, ConsoleUtils,
       uAppInfo, uApp,
       oxuRunRoutines;
 
@@ -28,7 +29,7 @@ TYPE
 
    appTSystemPath = record
       Name,
-      Path: string;
+      Path: StdString;
    end;
 
    appTSystemPaths = array of appTSystemPath;
@@ -49,17 +50,17 @@ TYPE
          {configuration path}
          Path,
          {preset configuration path}
-         Preset: string;
+         Preset: StdString;
       end;
 
       {return path for a specified constant, or nothing if not found}
-      function Get(c: appTPathType): string;
+      function Get(c: appTPathType): StdString;
       {creates the configuration directory}
-      function HomeConfigurationDir(const dir: string): string;
+      function HomeConfigurationDir(const dir: StdString): StdString;
       {creates the configuration directory}
       function CreateConfiguration(): boolean;
       {get the executable path}
-      function GetExecutablePath(): string;
+      function GetExecutablePath(): StdString;
 
       {get a list of system paths}
       function GetSystemPaths(): appTSystemPaths;
@@ -70,9 +71,9 @@ VAR
 
 IMPLEMENTATION
 
-function appTPath.Get(c: appTPathType): string;
+function appTPath.Get(c: appTPathType): StdString;
 var
-   path: string = '';  
+   path: StdString = '';
    
 begin
    {check for preset path}
@@ -81,49 +82,53 @@ begin
 
    {$IFDEF WINDOWS}
    if(c = appPATH_CONFIG) then
-      path := GetEnvironmentVariable('APPDATA')
+      path := GetUTF8EnvironmentVariable('APPDATA')
    else if(c = appPATH_HOME) then
-      path := GetEnvironmentVariable('USERPROFILE')
+      path := GetUTF8EnvironmentVariable('USERPROFILE')
    else if(c = appPATH_CONFIG_SHARED) then
-      path := GetEnvironmentVariable('ALLUSERSPROFILE')
+      path := GetUTF8EnvironmentVariable('ALLUSERSPROFILE')
    else if(c = appPATH_DOCUMENTS) then
-      path := IncludeTrailingPathDelimiterNonEmpty(GetEnvironmentVariable('USERPROFILE')) + 'Documents';
+      path := IncludeTrailingPathDelimiterNonEmpty(GetUTF8EnvironmentVariable('USERPROFILE')) + 'Documents'
+   else if(c = appPATH_TEMP) then
+      path := GetUTF8EnvironmentVariable('TEMP');
    {$ENDIF}
 
    {$IFDEF UNIX} {also includes darwin}
    if(c = appPATH_CONFIG) or (c = appPATH_HOME) or (c = appPATH_CONFIG_SHARED) then
-      path := GetEnvironmentVariable('HOME')
+      path := GetUTF8EnvironmentVariable('HOME')
    else if(c = appPATH_DOCUMENTS) then
-      path := IncludeTrailingPathDelimiterNonEmpty(GetEnvironmentVariable('HOME')) + 'Documents';
+      path := IncludeTrailingPathDelimiterNonEmpty(GetUTF8EnvironmentVariable('HOME')) + 'Documents';
    {$ENDIF}
 
+   {$IFNDEF WINDOWS}
    if(c = appPATH_TEMP) then
-      path := GetEnvironmentVariable('TEMP');
+      path := GetUTF8EnvironmentVariable('TEMP');
+   {$ENDIF}
 
    {add a directory separator to the end if the path is not empty}
    path := IncludeTrailingPathDelimiterNonEmpty(path);
 
    {return path}
-   result := path;
+   Result := path;
 end;
 
-function appTPath.HomeConfigurationDir(const dir: string): string;
+function appTPath.HomeConfigurationDir(const dir: StdString): StdString;
 var
-   createdPath: string;
+   createdPath: StdString;
 
 begin
    createdPath := appPath.Get(appPATH_CONFIG) + dir + DirectorySeparator;
 
    CreateDir(createdPath);
 
-   result := createdPath;
+   Result := createdPath;
 end;
 
 {create the configuration directory}
 function appTPath.CreateConfiguration(): boolean;
 var
    createdPath,
-   name: string;
+   name: StdString;
 
 begin
    if(not Configuration.Created) then begin
@@ -159,22 +164,20 @@ begin
       if(not Configuration.Created) then begin
          Configuration.Path := '';
 
-         if(IsConsole) then
-            writeln('Failed to create configuration directory: ', Configuration.Path);
+         console.i('Failed to create configuration directory: ' + Configuration.Path);
       end else begin
-         if(IsConsole) then
-            writeln('Created configuration directory: ', Configuration.Path);
+         console.i('Created configuration directory: ' + Configuration.Path);
       end;
    end;
 
-   result := Configuration.Created;
+   Result := Configuration.Created;
 end;
 
 {$IFDEF DARWIN}
 function proc_pidpath(pid: longint; buffer: pbyte; bufferSize: longword): longint; cdecl; external 'libproc.dylib' name 'proc_pidpath';
 {$ENDIF}
 
-function appTPath.GetExecutablePath(): string;
+function appTPath.GetExecutablePath(): StdString;
 {$IFDEF DARWIN}
 var
    path: array[0..4095] of char;
