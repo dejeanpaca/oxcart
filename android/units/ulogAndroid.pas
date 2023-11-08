@@ -17,12 +17,12 @@ TYPE
 
    TAndroidLogHandler = object(TLogHandler)
       constructor Create();
-      procedure Writeln(log: PLog; priority: longint; const s: StdString); virtual;
-      procedure WritelnRaw(log: PLog; const s: StdString); virtual;
+      procedure Writeln({%H-}log: PLog; priority: longint; const s: StdString); virtual;
+      procedure WritelnRaw({%H-}log: PLog; const s: StdString); virtual;
    end;
 
 VAR
-   loghAndroid: TLogHandler;
+   loghAndroid: TAndroidLogHandler;
 
 IMPLEMENTATION
 
@@ -42,6 +42,7 @@ CONST
 constructor TAndroidLogHandler.Create();
 begin
    inherited;
+
    Name := 'android';
    FileExtension := '';
    NoHeader := true;
@@ -59,6 +60,7 @@ begin
 end;
 
 INITIALIZATION
+   loghAndroid.Create();
    log.Handler.pDefault := @loghAndroid;
 
 END.
