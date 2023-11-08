@@ -44,6 +44,10 @@ CONST
    fpuTexture = 1;
    fpuMax = 2;
 
+VAR
+   glInitRoutines,
+   initRoutines: oxTRunRoutine;
+
 { oxglTFPShader }
 
 constructor oxglTFPShader.Create;
@@ -127,11 +131,8 @@ end;
 procedure preinit();
 begin
    oxglRenderer.UseRoutines.Add(@onUse);
-   oxglRenderer.Init.Add('gl.fpshader', @init, @deinit);
+   oxglRenderer.Init.Add(glInitRoutines, 'gl.fpshader', @init, @deinit);
 end;
-
-VAR
-   initRoutines: oxTRunRoutine;
 
 INITIALIZATION
    ox.PreInit.iAdd(initRoutines, 'ox.gl.render', @preinit);

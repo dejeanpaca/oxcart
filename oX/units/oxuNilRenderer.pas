@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd,
       {ox}
-      oxuPlatform, oxuWindowTypes, oxuRenderer, oxuRenderers;
+      uOX, oxuPlatform, oxuWindowTypes, oxuRenderer, oxuRenderers, oxuRunRoutines;
 
 TYPE
    oxrTNilWindow = class(oxTWindow)
@@ -31,22 +31,30 @@ IMPLEMENTATION
 
 constructor oxTNilRenderer.Create;
 begin
+   inherited;
+
    Name := 'nil';
    WindowInstance := oxrTNilWindow;
    PlatformInstance := oxTPlatform;
-   Init.Init('renderer.nil');
 end;
 
-
-INITIALIZATION
+procedure init();
+begin
    oxNilRenderer := oxTNilRenderer.Create();
-   oxNilRenderer.Init.Init('renderer.nil');
 
    oxRenderers.Register(oxNilRenderer);
-
    oxRenderer := oxNilRenderer;
+end;
 
-FINALIZATION
+procedure deinit();
+begin
    FreeObject(oxNilRenderer);
+end;
+
+VAR
+   initRoutines: oxTRunRoutine;
+
+INITIALIZATION
+   ox.PreInit.Add(initRoutines, 'ox.gl.renderer', @init, @deinit);
 
 END.
