@@ -21,7 +21,9 @@ INTERFACE
       {oxed}
       uOXED, oxeduConsole, oxeduPackageTypes, oxeduPackage, oxeduProject,
       oxeduPlatform, oxeduTasks, oxeduSettings,
-      oxeduAppInfo,oxeduProjectScanner;
+      oxeduAppInfo,oxeduProjectScanner,
+      {build}
+      oxeduBuildAssets;
 
 CONST
    OXED_BUILD_3RDPARTY_PATH = '3rdparty';
@@ -782,6 +784,13 @@ begin
    BuildExec.Output.Redirect := previousRedirect;
 end;
 
+procedure StandaloneSteps();
+begin
+   oxedBuild.MoveExecutable();
+   oxedBuild.CopyLibraries();
+   oxedBuildAssets.Deploy();
+end;
+
 function createPath(const name, path: StdString): boolean;
 begin
    if(not FileUtils.DirectoryExists(path)) then begin
@@ -869,8 +878,8 @@ begin
    if(BuildExec.Output.Success) then begin
       oxedConsole.k(modestring + ' success (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
 
-      MoveExecutable();
-      CopyLibraries();
+      if(BuildTarget = OXED_BUILD_STANDALONE) then
+         StandaloneSteps();
    end else
       oxedConsole.e(modestring + ' failed (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
 
