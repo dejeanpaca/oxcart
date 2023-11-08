@@ -84,7 +84,7 @@ var
    given: oxTFont;
 
 begin
-   if(Font <> nil) then
+   if(newFont <> nil) then
       given := newFont
    else
       given := oxFont.GetDefault();
