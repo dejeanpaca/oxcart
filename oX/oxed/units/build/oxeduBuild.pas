@@ -395,7 +395,7 @@ end;
 
 begin
    if(build.IncludeDebugInfo) then begin
-      oxedConsole.w('Including debug info');
+      oxedBuildLog.w('Including debug info');
       f.AddCustomOption('-g');
       f.AddCustomOption('-gl');
       f.AddCustomOption('-Xg');
@@ -666,7 +666,7 @@ begin
    oxedProject.RecreateTempDirectory();
 
    if(not FileUtils.CreateDirectory(build.FPCOptions.UnitOutputDirectory)) then begin
-      oxedConsole.e('Failed to create unit output directory: ' + build.FPCOptions.UnitOutputDirectory);
+      oxedBuildLog.e('Failed to create unit output directory: ' + build.FPCOptions.UnitOutputDirectory);
       exit(false);
    end;
 
@@ -676,7 +676,7 @@ begin
    {check if main unit exists}
    if(oxedProject.MainUnit <> '') then begin
       if(oxedProject.MainPackage.Units.Find(oxedProject.MainUnit) = nil) then begin
-         oxedConsole.e('Specified main unit ' + oxedProject.MainUnit + ' not found.');
+         oxedBuildLog.e('Specified main unit ' + oxedProject.MainUnit + ' not found.');
          exit(false);
       end;
    end;
@@ -697,12 +697,12 @@ begin
    if(force or ShouldRecreate(oxedBuild.Props.ConfigFile)) then begin
       if(whatFor = OXED_BUILD_VIA_FPC) then begin
          if(not RecreateFPCConfig()) then begin
-            oxedConsole.e('Failed to create project fpc config file.');
+            oxedBuildLog.e('Failed to create project fpc config file.');
             exit(false);
          end;
       end else begin
          if(not RecreateLPI()) then begin
-            oxedConsole.e('Failed to create project library lpi file. lpi error: ' + sf(lpi.Error));
+            oxedBuildLog.e('Failed to create project library lpi file. lpi error: ' + sf(lpi.Error));
             exit(false);
          end;
       end;
@@ -831,7 +831,7 @@ begin
    oxedBuildLog.v('Working area: ' + WorkArea);
 
    if(oxed.UseHeapTrace) and (IsLibrary()) then
-      oxedConsole.w('OXED built with heaptrc included, running library may be unstable');
+      oxedBuildLog.w('OXED built with heaptrc included, running library may be unstable');
 
    assert(TargetPath <> '', 'Failed to set target path for build');
    assert(WorkArea <> '', 'Failed to set working area for build');
@@ -868,7 +868,7 @@ begin
    else
       targetString := 'standalone';
 
-   oxedConsole.i(modeString + ' started (' + targetString + ')');
+   oxedBuildLog.i(modeString + ' started (' + targetString + ')');
 
    if(not Recreate()) then begin
       Fail('Failed to recreate project files');
@@ -883,7 +883,7 @@ begin
    if(IsLibrary()) then begin
       {check if used fpc version matches us}
       if(pos(FPC_VERSION, BuildInstalls.CurrentPlatform^.Version) <> 1) then begin
-         oxedConsole.e('Library fpc version mismatch. Got ' + BuildInstalls.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
+         oxedBuildLog.e('Library fpc version mismatch. Got ' + BuildInstalls.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
          exit;
       end;
    end;
@@ -891,7 +891,7 @@ begin
    ExecuteBuild();
 
    if(BuildExec.Output.Success) then begin
-      oxedConsole.k(modestring + ' success (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
+      oxedBuildLog.k(modestring + ' success (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
 
       if(BuildTarget = OXED_BUILD_STANDALONE) then
          StandaloneSteps();
@@ -1059,7 +1059,7 @@ begin
    {rebuild instead of recode if initial build not done}
    if(BuildType = OXED_BUILD_TASK_RECODE) and (not oxedProject.Session.InitialBuildDone) and
    (oxedSettings.RequireRebuildOnOpen) then begin
-      oxedConsole.i('Rebuild instead of recode on initial build');
+      oxedBuildLog.i('Rebuild instead of recode on initial build');
       BuildType := OXED_BUILD_TASK_REBUILD;
    end;
 
@@ -1157,7 +1157,7 @@ begin
       platform := BuildInstalls.FindPlatform(build.BuiltWithTarget, build.BuiltWithVersion);
 
       if(platform = nil) then begin
-         oxedConsole.e('Failed to find suitable compiler for ' + build.BuiltWithTarget + ' and FPC ' + FPC_VERSION);
+         log.e('Failed to find suitable compiler for ' + build.BuiltWithTarget + ' and FPC ' + FPC_VERSION);
          exit(false);
       end;
 
@@ -1168,12 +1168,12 @@ begin
       if(laz <> nil) then
          BuildInstalls.SetLazarusInstall(laz^.Name)
       else begin
-         oxedBuildLog.w('Failed to find a lazarus install for fpc: ' + platform^.Name);
+         log.w('Failed to find a lazarus install for fpc: ' + platform^.Name);
          BuildInstalls.GetLazarus();
       end;
 
-      oxedBuildLog.v('Using platform: ' + BuildInstalls.CurrentPlatform^.Name + ', fpc ' + BuildInstalls.CurrentPlatform^.Version);
-      oxedBuildLog.v('Using lazbuild: ' + BuildInstalls.CurrentLazarus^.Name + ', at ' + BuildInstalls.CurrentLazarus^.Path);
+      log.v('Using platform: ' + BuildInstalls.CurrentPlatform^.Name + ', fpc ' + BuildInstalls.CurrentPlatform^.Version);
+      log.v('Using lazbuild: ' + BuildInstalls.CurrentLazarus^.Name + ', at ' + BuildInstalls.CurrentLazarus^.Path);
 
       exit(true);
    end;
@@ -1231,7 +1231,7 @@ procedure oxedTBuildGlobal.Fail(const reason: StdString);
 begin
    DoneBuild();
    BuildOk := false;
-   oxedConsole.e('Failed build: ' + reason);
+   oxedBuildLog.e('Failed build: ' + reason);
 end;
 
 procedure oxedTBuildGlobal.Reset();
