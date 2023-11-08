@@ -20,7 +20,8 @@ INTERFACE
       sysutils, uStd, uLog, uSimpleParser, uFileUtils, ConsoleUtils,
       process, StreamIO,
       StringUtils,
-      uBuild, uBuildInstalls, uBuildFPCConfig;
+      uBuild, uBuildInstalls, uBuildFPCConfig
+      {$IFDEF UNIX}, BaseUnix{$ENDIF};
 
 TYPE
    { TBuildSystemExec }

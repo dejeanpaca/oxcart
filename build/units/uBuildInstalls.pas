@@ -549,12 +549,12 @@ procedure TBuildSystemInstalls.SetupDefaults();
 begin
    if(DefaultPlatform^.Path = '') then begin
       {$IF DEFINED(LINUX)}
-      if(VerboseLog) then
+      if(build.VerboseLog) then
          log.v('build > auto fpc defaults for linux');
 
       DefaultPlatform^.Path := '/usr/bin/';
       {$ELSEIF DEFINED(DARWIN)}
-      if(VerboseLog) then
+      if(build.VerboseLog) then
          log.v('build > auto fpc defaults for darwin');
 
       DefaultPlatform^.Path := '/usr/local/bin/';
