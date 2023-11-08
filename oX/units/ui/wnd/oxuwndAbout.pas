@@ -64,7 +64,11 @@ begin
    {add the label}
    wdgLabel.Add(appInfo.GetVersionString(0));
    wdgDivisor.Add('');
+   {$IFNDEF OX_LIBRARY}
    wdgLabel.Add(ox.GetVersionString(0));
+   {$ELSE}
+   wdgLabel.Add(ox.GetVersionString(0) + ' (Editor Mode)');
+   {$ENDIF}
 
    if(Copyright <> '') then begin
       wdgl := wdgLabel.Add(Copyright);
@@ -91,7 +95,7 @@ begin
    wdgLabel.Add('CPU: ' + appSI.GetProcessorName());
    wdgLabel.Add('Memory: ' + appSI.GetMemorySize());
 
-   wdgDivisor.Add('Renderer Information');
+   wdgDivisor.Add('Renderer Information (' + oxRenderer.Name + ')');
    wdgLabel.Add(oxRenderer.GetSummary(), uiWidget.LastRect.BelowOf(), oxNullDimensions);
 
    {add a cancel button}

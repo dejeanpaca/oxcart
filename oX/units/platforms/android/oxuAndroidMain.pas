@@ -9,17 +9,17 @@ UNIT oxuAndroidMain;
 INTERFACE
 
 USES
-   android_native_app_glue, android_log_helper, native_activity, android_native_activity_helper,
-   android_window, android_layout_params,
-   ctypes, looper, jni, uAndroid,
-   uLog, uUnix, StringUtils,
-   {assets}
-   oxuAndroidAssets, uAndroidAssets,
+   ctypes, uLog, uUnix, StringUtils,
    {app}
    uApp, appuLog,
    {ox}
    uOX, oxuRun, oxuInitialize, oxuPlatform,
-   oxuAndroidPlatform;
+   {android}
+   looper, jni, android_native_app_glue, android_log_helper, native_activity, android_native_activity_helper,
+   android_window, android_layout_params, uAndroidApp,
+   uAndroid, uAndroidAssets,
+   {ox android}
+   oxuAndroidPlatform, oxuAndroidAssets;
 
 procedure android_main(app: Pandroid_app); cdecl;
 
@@ -105,6 +105,11 @@ var
    cycledEvents: boolean;
    finished: boolean;
 
+   function areWeRunning(): boolean;
+   begin
+      Result := (not finished) and uApp.app.Active and (not app^.destroyRequested);
+   end;
+
 begin
    AndroidApp := app;
 
@@ -117,8 +122,6 @@ begin
    appLog.Initialize();
 
    androidAssetManager.Get(app^.activity);
-   oxAndroidAssets.Initialize();
-
    oxAndroidPlatform.Startup();
    State := STATE_INITIALIZE;
 
@@ -148,13 +151,7 @@ begin
          end;
       end;
 
-      if(oxAndroidPlatform.fDone) then begin
-         oxRun.Done();
-         oxInitialization.Deinitialize();
-         oxAndroidPlatform.fDone := false;
-      end;
-
-      if(ox.Initialized) and (not finished) then begin
+      if(ox.Initialized) and areWeRunning() then begin
          if(not ox.Started) then begin
             oxRun.Start();
          end else begin
@@ -183,7 +180,7 @@ begin
       if(not cycledEvents) then
          AndroidProcessEvents();
 
-      if ox.InitializationFailed or (not uApp.app.Active) then begin
+      if ox.InitializationFailed or (not areWeRunning()) then begin
          if(not finished) then begin
             finished := true;
             logv('Closing activity: ' + sf(app^.activity));
@@ -191,8 +188,11 @@ begin
          end;
       end;
 
-      if(AndroidApp^.destroyRequested) then
+      if(app^.destroyRequested) then begin
+         oxRun.Done();
+         oxInitialization.Deinitialize();
          break;
+      end;
    until false;
 
    oxAndroidAssets.DeInitialize();

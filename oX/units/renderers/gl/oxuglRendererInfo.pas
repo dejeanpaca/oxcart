@@ -10,14 +10,18 @@ INTERFACE
 
    USES
       {$INCLUDE usesgl.inc},
-      oxuOGL, oxuWindow;
+      {ox}
+      oxuOGL, oxuWindow
+      {$IFDEF OX_LIBRARY_SUPPORT}
+      , oxuGlobalInstances
+      {$ENDIF};
 
 TYPE
    oxglPRendererInfo = ^oxglTRendererInfo;
 
    { oxglTRendererInfo }
 
-   oxglTRendererInfo = object
+   oxglTRendererInfo = record
       Properties: record
          Warned32NotSupported: boolean;
       end;
@@ -75,5 +79,10 @@ begin
    else
       Result := oglContextVersion;
 end;
+
+INITIALIZATION
+   {$IF NOT DEFINED(OX_LIBRARY) AND DEFINED(OX_LIBRARY_SUPPORT)}
+   oxGlobalInstances.Add('oxglTRendererInfo', @oxglRendererInfo);
+   {$ENDIF}
 
 END.

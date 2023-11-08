@@ -17,7 +17,7 @@ INTERFACE
       {app}
       uApp, appuActionEvents, appuSysInfo,
       {ox}
-      oxuThreadTask, oxuFeatures, oxuRenderer, oxeduEditorPlatform,
+      oxuPaths, oxuThreadTask, oxuFeatures, oxuRenderer, oxeduEditorPlatform,
       {oxed}
       uOXED, oxeduConsole, oxeduPackageTypes, oxeduPackage, oxeduProject,
       oxeduPlatform, oxeduTasks, oxeduSettings,
@@ -157,6 +157,9 @@ TYPE
       function GetFeatures(): oxTFeaturePDescriptorList;
       {are we building a library}
       function IsLibrary(): boolean;
+
+      {add a feature to the list by name}
+      function AddFeature(feature: StdString): oxPFeatureDescriptor;
 
       {recreate the work area (temp )directory if missing}
       procedure RecreateWorkArea();
@@ -384,7 +387,7 @@ begin
    for i := 0 to oxFeatures.List.n - 1 do begin
       feature := @oxFeatures.List.List[i];
 
-      if(oxFeatures.IsSupported(feature^, BuildOS, IsLibrary())) then begin
+      if(oxFeatures.IsSupported(feature^, BuildOS, lib)) then begin
          if(lib) then begin
             {skip renderer features as we'll include only a single renderer}
             if(pos('renderer.', feature^.Name) = 1) then
@@ -399,22 +402,41 @@ begin
                continue;
          end;
 
+         {check if feature is enabled for this platform}
+         if not feature^.Platforms.IsEnabled(BuildOS) then
+            continue;
+
          if(feature^.IncludeByDefault) then
-            Result.Add(feature);
+            Result.AddFeature(feature);
       end;
+   end;
+
+   {add project features}
+   for i := 0 to oxedProject.Features.n - 1 do begin
+      feature := oxFeatures.FindByName(oxedProject.Features[i]);
+
+      if(feature <> nil) then
+         Result.AddFeature(feature);
    end;
 
    {in library mode, only include the renderer we need}
    if(lib) then begin
       feature := oxFeatures.FindByName('renderer.' + oxRenderer.Id);
       assert(feature <> nil, 'Renderer ' + oxRenderer.Id +  ' feature must never be nil');
-      Result.Add(feature);
+      Result.AddFeature(feature);
    end;
 end;
 
 function oxedTBuildGlobal.IsLibrary(): boolean;
 begin
    Result := BuildTarget <> OXED_BUILD_EXECUTABLE;
+end;
+
+function oxedTBuildGlobal.AddFeature(feature: StdString): oxPFeatureDescriptor;
+begin
+   Result := oxFeatures.FindByName(feature);
+
+   Features.AddFeature(Result);
 end;
 
 procedure oxedTBuildGlobal.RecreateWorkArea();
@@ -466,9 +488,8 @@ begin
    if oxedProject.Session.DebugResources then
       Result.Add('OX_RESOURCE_DEBUG');
 
-   if oxedProject.NilProject then begin
+   if oxedProject.NilProject then
       Result.Add('OX_NIL');
-   end;
 
    for i := 0 to oxedBuild.Features.n - 1 do begin
       Result.Add(oxedBuild.Features.List[i]^.Symbol);
@@ -1339,6 +1360,9 @@ begin
    WorkArea := GetWorkingAreaPath();
    Features := GetFeatures();
 
+   if(oxedProject.Assets.Pack) then
+      AddFeature('pack');
+
    SetupFPCBuildOptions();
    SetupEditorBuildOptions();
 
@@ -1575,7 +1599,8 @@ begin
    end;
 
    if(BuildAssets) then begin
-      oxedBuildAssets.Deploy(oxedBuild.TargetPath);
+      if(not oxedBuildAssets.Deploy(oxedBuild.TargetPath + oxDataPath)) then
+         exit;
 
       if(not oxedBuild.BuildOk) then
          exit;
