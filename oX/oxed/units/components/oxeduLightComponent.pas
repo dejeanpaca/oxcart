@@ -17,8 +17,9 @@ INTERFACE
 TYPE
    { oxedTLightThingie }
 
-   oxedTLightThingie = class(oxedTThingie)
+   oxedTLightThingie = object(oxedTThingie)
       constructor Create();
+      procedure Initialize(); virtual;
    end;
 
 VAR
@@ -30,24 +31,19 @@ IMPLEMENTATION
 
 constructor oxedTLightThingie.Create();
 begin
+   inherited;
    Name := 'Light';
 
+   Link(oxTLightComponent);
+end;
+
+procedure oxedTLightThingie.Initialize();
+begin
    Glyph := oxedComponentGlyphs.Add(oxTLightComponent, '', $f0eb);
    Glyph^.Color.Assign(255, 255, 32, 255);
-   Associate(oxTLightComponent);
-end;
-
-procedure init();
-begin
-   oxedLightThingie := oxedTLightThingie.Create();
-end;
-
-procedure deinit();
-begin
-   FreeObject(oxedLightThingie);
 end;
 
 INITIALIZATION
-   oxedThingies.Init.Add('light', @init, @deinit);
+   oxedLightThingie.Create();
 
 END.
