@@ -280,19 +280,16 @@ function oxedTBuildGlobal.GetFeatures(): oxTFeaturePDescriptorList;
 var
    i: loopint;
    feature: oxPFeatureDescriptor;
-   platform: string;
    lib: boolean;
 
 begin
    Result.Initialize(Result);
    lib := IsLibrary();
 
-   platform := build.GetCurrentPlatform();
-
    for i := 0 to oxFeatures.List.n - 1 do begin
       feature := @oxFeatures.List.List[i];
 
-      if(oxFeatures.IsSupportedFeature(feature^, platform, isLibrary)) then begin
+      if(oxFeatures.IsSupportedFeature(feature^, BuildInstalls.CurrentPlatform^.OS, isLibrary)) then begin
          if(lib) then begin
             {skip renderer features as we'll include only a single renderer}
             if(pos('renderer.', feature^.Name) = 1) then
