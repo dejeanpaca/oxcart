@@ -45,11 +45,9 @@ INTERFACE
       {$ENDIF}
 
       {$IFDEF OX_FEATURE_CONTROLLERS}
-      {$IFDEF UNIX}
-      {$IFNDEF DARWIN}
-      {%H-}appuControllerLinux,
-      {$ENDIF}
-      {$ENDIF}
+         {$IF DEFINED(UNIX) AND NOT DEFINED(DARWIN)}
+         {%H-}appuControllerLinux,
+         {$ENDIF}
       {$ENDIF}
 
       { renderers }
@@ -86,6 +84,7 @@ INTERFACE
       uiuHints,
       uiuCursor,
       uiuDockableWindowContextMenu,
+      uiuDefaultFont,
       {$ENDIF}
 
       {others}
@@ -102,15 +101,13 @@ INTERFACE
       oxuwndAbout,
       {$ENDIF}
 
-      {$IFDEF OX_FEATURE_UI}
-         {$IFDEF OX_FEATURE_CONSOLE}
-         {console, requires UI}
-         oxuConsole,
-         oxuConsoleLog,
-         oxuconDVar,
-         oxuconWindow,
-         oxuconKeyMappings,
-         {$ENDIF}
+      {$IF DEFINED(OX_FEATURE_UI) AND DEFINED(OX_FEATURE_CONSOLE)}
+      {console, requires UI}
+      oxuConsole,
+      oxuConsoleLog,
+      oxuconDVar,
+      oxuconWindow,
+      oxuconKeyMappings,
       {$ENDIF}
 
       {$IFDEF OX_FEATURE_MODELS}
@@ -121,15 +118,15 @@ INTERFACE
       {$IFDEF OX_FEATURE_SCENE}
          oxuSceneRender,
          oxuSceneRunner,
+         oxuCameraComponent,
+         oxuPrimitiveModelComponent,
          {$IFDEF OX_LIBRARY}
          oxulibInputUpdater,
          oxuLibSceneLoader,
          {$ENDIF}
-         oxuCameraComponent,
          {$IFDEF OX_FEATURE_MODELS}
          oxuModelComponent,
          {$ENDIF}
-         oxuPrimitiveModelComponent,
       {$ENDIF}
       {%H-}uOX,
       oxuShaderFileReader;
