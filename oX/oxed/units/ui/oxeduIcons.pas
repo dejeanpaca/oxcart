@@ -46,6 +46,10 @@ begin
    tex := oxedIcons.Create($f07b {folder});
    oxFileIcons.SetDirectory(tex);
 
+   {folder}
+   tex := oxedIcons.Create($f07c {folder-open});
+   oxFileIcons.SetDirectoryOpen(tex);
+
    {file-code-o}
    tex := oxedIcons.Create($f1c9 {file-code-o});
    oxFileIcons.Add(tex, 'pas');
