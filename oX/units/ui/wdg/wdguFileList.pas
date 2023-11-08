@@ -15,7 +15,7 @@ INTERFACE
    USES
       sysutils, uStd, uBinarySize, uFileUtils, StringUtils, uTiming, uColors,
       {app}
-      appuKeys,
+      appuKeys, appuMouse,
       {oX}
       oxuTypes, oxuFont, oxuFileIcons, oxuRender, oxuTexture, oxuRenderUtilities,
       {ui}
@@ -80,13 +80,11 @@ TYPE
       procedure RemoveAll; override;
 
       protected
-         procedure FileClicked(index: loopint); virtual;
+         procedure FileClicked(index: loopint; button: TBitSet = appmcLEFT); virtual;
          procedure FileDoubleClicked({%H-}index: loopint; {%H-}button: TBitSet); virtual;
-         procedure FileClickedSecondary({%H-}index: loopint); virtual;
 
-         procedure GridItemClicked(index: loopint); override;
+         procedure GridItemClicked(index: loopint; button: TBitSet = appmcLEFT); override;
          procedure GridItemDoubleClicked(index: loopint; button: TBitSet); override;
-         procedure GridItemClickedSecondary(index: loopint); override;
 
          procedure OnPathChanged(); virtual;
          procedure OnGridHover(index: loopint); override;
@@ -831,9 +829,9 @@ begin
    inherited RemoveAll;
 end;
 
-procedure wdgTFileList.FileClicked(index: loopint);
+procedure wdgTFileList.FileClicked(index: loopint; button: TBitSet);
 begin
-   if(index > -1) then begin
+   if(index > -1) and (button = appmcLEFT) then begin
       if(Files.List[index].IsDirectory()) then begin
          if(Files.List[index].Name <> '..') then begin
             OpenDirectory(index);
@@ -847,24 +845,14 @@ procedure wdgTFileList.FileDoubleClicked(index: loopint; button: TBitSet);
 begin
 end;
 
-procedure wdgTFileList.FileClickedSecondary(index: loopint);
+procedure wdgTFileList.GridItemClicked(index: loopint; button: TBitSet);
 begin
-
-end;
-
-procedure wdgTFileList.GridItemClicked(index: loopint);
-begin
-   FileClicked(index);
+   FileClicked(index, button);
 end;
 
 procedure wdgTFileList.GridItemDoubleClicked(index: loopint; button: TBitSet);
 begin
    FileDoubleClicked(index, button);
-end;
-
-procedure wdgTFileList.GridItemClickedSecondary(index: loopint);
-begin
-   FileClickedSecondary(index)
 end;
 
 procedure wdgTFileList.OnPathChanged();

@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uColors, StringUtils,
       {app}
-      appuEvents, appuActionEvents, appuKeyMappings,
+      appuEvents, appuActionEvents, appuKeyMappings, appuMouse,
       {oX}
       oxuTypes, oxuFont, oxuRender, oxuUI, oxuTexture, oxuRenderUtilities, oxuResourcePool,
       {ui}
@@ -254,7 +254,7 @@ TYPE
 
          procedure FontChanged; override;
 
-         procedure ItemClicked(idx: loopint); override;
+         procedure ItemClicked(idx: loopint; button: TBitSet = appmcLEFT); override;
    end;
 
 VAR
@@ -619,13 +619,16 @@ begin
    end;
 end;
 
-procedure wdgTContextMenu.ItemClicked(idx: loopint);
+procedure wdgTContextMenu.ItemClicked(idx: loopint; button: TBitSet);
 var
    item: uiPContextMenuItem;
    r: oxTRect;
    origin: uiTWidgetWindowOrigin;
 
 begin
+   if(button <> appmcLEFT) then
+      exit;
+
    item := @menu.Items.list[idx];
 
    if(not item^.Properties.IsSet(uiCONTEXT_MENU_ITEM_ENABLED)) then

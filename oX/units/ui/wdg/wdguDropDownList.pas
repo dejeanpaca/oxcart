@@ -81,7 +81,7 @@ TYPE
 
       protected
          procedure FontChanged(); override;
-         procedure ItemClicked(idx: loopint); override;
+         procedure ItemClicked(idx: loopint; button: TBitSet = appmcLEFT); override;
    end;
 
    { wdgTDropDownListGlobal }
@@ -177,11 +177,13 @@ procedure wdgTDropDownListMenu.FontChanged;
 begin
 end;
 
-procedure wdgTDropDownListMenu.ItemClicked(idx: loopint);
+procedure wdgTDropDownListMenu.ItemClicked(idx: loopint;  button: TBitSet);
 begin
-   list.SelectItem(idx);
+   if(button = appmcLEFT) then begin
+      list.SelectItem(idx);
 
-   uiTWidgetWindowInternal(wnd).WidgetWindow^.Destroy();
+      uiTWidgetWindowInternal(wnd).WidgetWindow^.Destroy();
+   end;
 end;
 
 { wdgTDropDownList }

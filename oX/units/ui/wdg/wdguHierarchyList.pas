@@ -12,6 +12,8 @@ INTERFACE
 
    USES
       uStd, uColors, vmVector,
+      {app}
+      appuMouse,
       {oX}
       oxuTypes, oxuFont, oxuTexture, oxuRender, oxuRenderUtilities,
       {ui}
@@ -57,7 +59,7 @@ TYPE
       function Expanded(index: loopint): boolean;
 
       function GetItemCount(): loopint; override;
-      procedure ItemClicked(index: loopint); override;
+      procedure ItemClicked(index: loopint; button: TBitSet = appmcLEFT); override;
       function GetItemWidth(index: loopint): loopint; override;
 
       function GetExpanderWidth(): loopint;
@@ -237,7 +239,7 @@ begin
    result := Visible.n;
 end;
 
-procedure wdgTHierarchyList.ItemClicked(index: loopint);
+procedure wdgTHierarchyList.ItemClicked(index: loopint;  button: TBitSet);
 var
    items: TPreallocatedPointerArrayList;
 
@@ -255,15 +257,17 @@ begin
 end;
 
 begin
-   if(Expandable(index) and expandedClicked()) then begin
-      if(not Expanded(index)) then begin
-         items := GetSubItems(index, Visible.List[index].Item);
-         ExpandTo(items, index + 1, Visible.List[index].Level + 1);
-         items.Dispose();
+   if(button = appmcLEFT) then begin
+      if(Expandable(index) and expandedClicked()) then begin
+         if(not Expanded(index)) then begin
+            items := GetSubItems(index, Visible.List[index].Item);
+            ExpandTo(items, index + 1, Visible.List[index].Level + 1);
+            items.Dispose();
+         end else
+            Collapse(index);
       end else
-         Collapse(index);
-   end else
-      ItemNavigated(index);
+         ItemNavigated(index);
+   end;
 end;
 
 function wdgTHierarchyList.GetItemWidth(index: loopint): loopint;

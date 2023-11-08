@@ -15,7 +15,7 @@ INTERFACE
 USES
    sysutils, uStd, StringUtils,
    {app}
-   appuPaths,
+   appuPaths, appuMouse,
    {oX}
    oxuTypes, oxuUI, oxuWindowTypes, oxuWindows,
    {ui}
@@ -46,9 +46,8 @@ TYPE
       constructor Create; override;
 
       procedure OnPathChanged; override;
-      procedure ItemClicked(index: loopint); override;
+      procedure ItemClicked(index: loopint; button: TBitSet = appmcLEFT); override;
       procedure ItemCleared(); override;
-      procedure FileClickedSecondary(index: loopint); override;
 
       procedure OnContextMenuDone();
       procedure SetupRequireFile();
@@ -180,15 +179,13 @@ TYPE
    { TRecentsList }
 
    TRecentsList = class(TFileList)
-      protected
-         procedure ItemClicked(idx: loopint); override;
    end;
 
    { TSystemFilesList }
 
    TSystemFilesList = class(TFileList)
       protected
-         procedure ItemClicked(idx: loopint); override;
+         procedure ItemClicked(index: loopint; button: TBitSet = appmcLEFT); override;
    end;
 
 { oxTFileDialogWindow }
@@ -255,20 +252,36 @@ begin
       dlg.OnPathChange(dlg);
 end;
 
-procedure wdgTFileDialogFileList.ItemClicked(index: loopint);
+procedure wdgTFileDialogFileList.ItemClicked(index: loopint; button: TBitSet = appmcLEFT);
 var
    dlg: oxTFileDialog;
+   from: uiTWidgetWindowOrigin;
 
 begin
-   inherited ItemClicked(index);
+   inherited ItemClicked(index, button);
 
-   dlg := oxTFileDialog(Dialog);
-   if(LastGridItemUnderPointer <> -1) and (dlg.wdg.Filename <> nil) then begin
-      if(dlg.DialogType <> oxFILE_DLG_OPEN) then
-         dlg.wdg.Filename.SetText(Files.List[LastGridItemUnderPointer].Name)
+   if(button = appmcLEFT) then begin
+      dlg := oxTFileDialog(Dialog);
+      if(LastGridItemUnderPointer <> -1) and (dlg.wdg.Filename <> nil) then begin
+         if(dlg.DialogType <> oxFILE_DLG_OPEN) then
+            dlg.wdg.Filename.SetText(Files.List[LastGridItemUnderPointer].Name)
+      end;
+
+      SetupRequireFile();
+   end else if(button = appmcRIGHT) then begin
+      if(index < 0) then
+         oxwndFileContextMenu.Prepare(CurrentPath, uiFILE_CONTEXT_MENU_TARGET_HERE)
+      else
+         oxwndFileContextMenu.Prepare(IncludeTrailingPathDelimiterNonEmpty(CurrentPath) +
+            Files.List[index].Name, uiFILE_CONTEXT_MENU_TARGET_SPECIFIC);
+
+      oxwndFileContextMenu.Parameters.OnDone.Use(@OnContextMenuDone);
+
+      oxuiTFileDialogWindow(oxTFileDialog(Dialog).wnd).SuppressDeactivate := true;
+      from.SetPoint(GetAbsolutePointer(LastPointerPosition), Self);
+
+      oxwndFileContextMenu.Open(from);
    end;
-
-   SetupRequireFile();
 end;
 
 procedure wdgTFileDialogFileList.ItemCleared();
@@ -276,25 +289,6 @@ begin
    inherited ItemCleared();
 
    SetupRequireFile();
-end;
-
-procedure wdgTFileDialogFileList.FileClickedSecondary(index: loopint);
-var
-   from: uiTWidgetWindowOrigin;
-
-begin
-   if(index < 0) then
-      oxwndFileContextMenu.Prepare(CurrentPath, uiFILE_CONTEXT_MENU_TARGET_HERE)
-   else
-      oxwndFileContextMenu.Prepare(IncludeTrailingPathDelimiterNonEmpty(CurrentPath) +
-         Files.List[index].Name, uiFILE_CONTEXT_MENU_TARGET_SPECIFIC);
-
-   oxwndFileContextMenu.Parameters.OnDone.Use(@OnContextMenuDone);
-
-   oxuiTFileDialogWindow(oxTFileDialog(Dialog).wnd).SuppressDeactivate := true;
-   from.SetPoint(GetAbsolutePointer(LastPointerPosition), Self);
-
-   oxwndFileContextMenu.Open(from);
 end;
 
 procedure wdgTFileDialogFileList.OnContextMenuDone();
@@ -323,19 +317,14 @@ end;
 
 { TSystemFilesList }
 
-procedure TSystemFilesList.ItemClicked(idx: loopint);
+procedure TSystemFilesList.ItemClicked(index: loopint; button: TBitSet = appmcLEFT);
 begin
-   inherited ItemClicked(idx);
+   inherited ItemClicked(index, button);
 
-   if(Dialog <> nil) then
-      Dialog.SetPath(Dialog.SystemLocations[idx]);
-end;
-
-{ TRecentsList }
-
-procedure TRecentsList.ItemClicked(idx: loopint);
-begin
-   inherited ItemClicked(idx);
+   if(button = appmcLEFT) then begin
+      if(Dialog <> nil) then
+         Dialog.SetPath(Dialog.SystemLocations[index]);
+   end;
 end;
 
 { CLASS }

@@ -12,6 +12,8 @@ INTERFACE
 
 USES
    uStd, udvars,
+   {app}
+   appuMouse,
    {oX}
    uOX, oxuTypes, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF} oxuRenderer,
    oxuwndBase,
@@ -40,7 +42,7 @@ TYPE
       function GetValue(index, column: loopint): string; override;
       function GetItemCount(): loopint; override;
 
-      procedure ItemClicked(index: loopint); override;
+      procedure ItemClicked(index: loopint; button: TBitSet = appmcLEFT); override;
 
       procedure Reload();
    end;
@@ -137,33 +139,35 @@ begin
    Result := Vars.n;
 end;
 
-procedure oxwdgTDVarEditorGrid.ItemClicked(index: loopint);
+procedure oxwdgTDVarEditorGrid.ItemClicked(index: loopint;  button: TBitSet);
 var
    p: oxTPoint;
    wdg: oxwdgTChangeValue;
    pv: PDVar;
 
 begin
-   inherited ItemClicked(index);
+   inherited ItemClicked(index, button);
 
-   if(index < 0) then
-      exit;
+   if(button = appmcLEFT) then begin
+      if(index < 0) then
+         exit;
 
-   pv := Vars.List[SelectedItem].Variable;
+      pv := Vars.List[SelectedItem].Variable;
 
-   if(dvarREADONLY in pv^.Properties) then
-      exit();
+      if(dvarREADONLY in pv^.Properties) then
+         exit();
 
-   p := oxNullPoint;
-   p.y := Dimensions.h - GetItemVerticalOffset(SelectedItem);
+      p := oxNullPoint;
+      p.y := Dimensions.h - GetItemVerticalOffset(SelectedItem);
 
-   uiInputBoxOverlay.Instance := oxwdgTChangeValue;
-   uiInputBoxOverlay.Show(Self, p);
-   wdg := oxwdgTChangeValue(uiInputBoxOverlay.Wdg);
-   wdg.pointedDvar := pv;
-   wdg.SetText(wdg.pointedDvar^.GetAsString());
+      uiInputBoxOverlay.Instance := oxwdgTChangeValue;
+      uiInputBoxOverlay.Show(Self, p);
+      wdg := oxwdgTChangeValue(uiInputBoxOverlay.Wdg);
+      wdg.pointedDvar := pv;
+      wdg.SetText(wdg.pointedDvar^.GetAsString());
 
-   uiInputBoxOverlay.Wdg.Resize(Dimensions.w, uiInputBoxOverlay.Wdg.Dimensions.h);
+      uiInputBoxOverlay.Wdg.Resize(Dimensions.w, uiInputBoxOverlay.Wdg.Dimensions.h);
+   end;
 end;
 
 procedure LoadVars(var vars: oxTDVarEditorPointers; var group: TDVarGroup; const parentPath: string);
