@@ -10,6 +10,7 @@ INTERFACE
 
    USES
       uStd, uFPCHelpers,
+      uBuild,
       {ox}
       oxuRunRoutines,
       {oxed}
@@ -51,6 +52,13 @@ begin
 
    Configuration := oxedTPlatformConfiguration.Create();
    Architecture := oxedTEditorPlatformArchitecture.Create('editor', LowerCase(FPC_TARGETCPU));
+   Architecture.ExecutableExtension := build.GetExecutableName('');
+   {$IFDEF WINDOWS}
+   Architecture.LibraryExtension := '.dll';
+   {$ELSE}
+   Architecture.LibraryExtension := '.so';
+   Architecture.LibraryPrefix := 'lib';
+   {$ENDIF}
    AddArchitecture(Architecture);
 end;
 

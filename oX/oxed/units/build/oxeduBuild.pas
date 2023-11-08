@@ -932,8 +932,6 @@ begin
    ExecuteBuild();
 
    if(BuildExec.Output.Success) then begin
-      oxedBuildLog.k(modestring + ' success (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
-
       if(BuildTarget = OXED_BUILD_STANDALONE) then
          StandaloneSteps();
    end else
@@ -942,9 +940,12 @@ begin
    if(BuildOk) then begin
       OnFinish.Call();
 
-      if(BuildOk) then
+      if(BuildOk) then begin
+         oxedBuildLog.k(modestring + ' success (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
+
          {if successful rebuild, we've made an initial build}
          oxedProject.Session.InitialBuildDone := true;
+      end;
    end;
 
    {cleanup}
@@ -1272,9 +1273,9 @@ begin
    Result := WorkArea;
 
    if(IsLibrary()) then
-      Result := Result + build.GetExecutableName(oxPROJECT_LIBRARY_NAME, true)
+      Result := Result + BuildArch.LibraryPrefix + oxPROJECT_LIBRARY_NAME + BuildArch.LibraryExtension
    else
-      Result := Result + build.GetExecutableName(oxedProject.ShortName, false);
+      Result := Result + oxedProject.ShortName + BuildArch.ExecutableExtension;
 end;
 
 function oxedTBuildGlobal.GetFPCConfigFilename(): StdString;
