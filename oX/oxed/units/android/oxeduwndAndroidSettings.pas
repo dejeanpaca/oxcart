@@ -14,11 +14,11 @@ INTERFACE
       oxuRunRoutines,
       {widgets}
       uiWidgets, uiuWidget,
-      wdguCheckbox, wdguDivisor, wdguInputBox, wdguLabel,
+      wdguCheckbox, wdguDivisor, wdguInputBox, wdguLabel, wdguButton,
       {oxed}
-      uOXED,
-      oxeduAndroidPlatform, oxeduPlatform,
-      oxeduAndroidSettings, oxeduProjectSettingsWindow;
+      uOXED, oxeduPlatform, oxeduProject,
+      oxeduAndroidPlatform,  oxeduAndroidSettings, oxeduAndroidProjectFiles,
+      oxeduProjectSettingsWindow;
 
 IMPLEMENTATION
 
@@ -28,7 +28,27 @@ VAR
       ProjectFilesPath: wdgTInputBox;
       Enabled,
       ManualFileManagement: wdgTCheckbox;
+      DeployTemplate: wdgTButton;
    end;
+
+procedure deployTemplate();
+var
+   path: StdString;
+
+begin
+   path := '';
+
+   if(wdg.ManualFileManagement.Checked()) then begin
+      path := wdg.ProjectFilesPath.GetText();
+   end;
+
+   if(path = '') then begin
+      path := oxedProject.Path + 'android';
+      wdg.ProjectFilesPath.SetText('android');
+   end;
+
+   oxedAndroidProjectFiles.Deploy(path);
+end;
 
 procedure saveCallback();
 var
@@ -68,11 +88,18 @@ begin
 end;
 
 function manualFileManagementControl(cb: uiTWidget; what: loopint): loopint;
+var
+   enabled: boolean;
+
 begin
    Result := -1;
 
-   if(what = wdgcCHECKBOX_TOGGLE) then
-      wdg.ProjectFilesPath.Enable(wdgTCheckbox(cb).Checked());
+   if(what = wdgcCHECKBOX_TOGGLE) then begin
+      enabled := wdgTCheckbox(cb).Checked();
+
+      wdg.ProjectFilesPath.Enable(enabled);
+      wdg.DeployTemplate.Enable(enabled);
+   end;
 end;
 
 procedure PreAddTabs();
@@ -99,6 +126,8 @@ begin
 
    wdgLabel.Add('Path for the android project files (only if manual file management is enabled)');
    wdg.ProjectFilesPath := wdgInputBox.Add('');
+
+   wdg.DeployTemplate := wdgButton.Add('Add android files to project').UseCallback(@deployTemplate);
 
    revertCallback();
 end;
