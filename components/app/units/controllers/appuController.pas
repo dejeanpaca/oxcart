@@ -495,7 +495,9 @@ begin
    List.Add(device);
    device.DeviceIndex := List.n - 1;
 
-   device.Mapping := appControllers.GetMappedDeviceByName(device.Name);
+   {try to find a better mapping if we have a generic one}
+   if(device.Mapping = @appControllerDeviceGenericMapping) then
+      device.Mapping := appControllers.GetMappedDeviceByName(device.Name);
 
    m := device.Mapping;
 
