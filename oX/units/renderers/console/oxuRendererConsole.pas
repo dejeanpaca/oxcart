@@ -14,8 +14,13 @@ UNIT oxuRendererConsole;
 
 INTERFACE
 
-   USES oxuConsoleRenderer, oxurConsoleRender, oxurConsoleTextureComponent;
+   USES
+      uStd,
+      oxuConsoleRenderer, oxurConsoleRender, oxurConsoleTextureComponent;
 
 IMPLEMENTATION
+
+INITIALIZATION
+   Pass();
 
 END.
