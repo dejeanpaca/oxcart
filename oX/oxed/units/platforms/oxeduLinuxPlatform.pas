@@ -15,7 +15,7 @@ INTERFACE
       {ox}
       oxuRunRoutines,
       {oxed}
-      uOXED, oxeduPlatform;
+      uOXED, oxeduPlatform, oxeduPlatformConfiguration;
 
 TYPE
    { oxedTLinuxPlatform }
@@ -35,6 +35,8 @@ begin
    Name := 'Linux';
    Id := 'linux';
    GlyphName := 'brands:61820';
+
+   Configuration := oxedTPlatformConfiguration.Create();
 
    AddArchitecture('x86', 'x86');
    AddArchitecture('x64', 'x86_x64');
