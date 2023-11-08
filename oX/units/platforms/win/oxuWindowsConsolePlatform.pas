@@ -9,16 +9,19 @@ UNIT oxuWindowsConsolePlatform;
 INTERFACE
 
    USES
+      uStd, uiuWindowTypes, uiuTypes,
       {oX}
-      {%H-}oxuPlatforms,
-      {windows}
-      oxuWindowsPlatformBase;
+      {%H-}oxuPlatforms, oxuConsolePlatform,
+      oxuWindowsOS;
 
 TYPE
    { oxTWindowsConsolePlatform }
 
-   oxTWindowsConsolePlatform = class(oxTWindowsPlatformBase)
+   oxTWindowsConsolePlatform = class(oxTConsolePlatform)
       constructor Create(); override;
+
+      function MessageBox(wParent: uiTWindow; const Title, Say: StdString;
+         Style: uiTMessageBoxStyle; Buttons: longword): longword; override;
    end;
 
 IMPLEMENTATION
@@ -28,8 +31,12 @@ IMPLEMENTATION
 constructor oxTWindowsConsolePlatform.Create();
 begin
    inherited;
+end;
 
-   Name := 'mswinconsole';
+function oxTWindowsConsolePlatform.MessageBox(wParent: uiTWindow; const Title,
+   Say: StdString; Style: uiTMessageBoxStyle; Buttons: longword): longword;
+begin
+   Result := winos.MessageBox(wParent, Title, Say, Style, Buttons);
 end;
 
 INITIALIZATION
