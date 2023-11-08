@@ -251,7 +251,6 @@ begin
       font        := oxTFont.Create();
       font.Base   := base;
       font.Chars  := charCount;
-      font.TextureBaseline := true;
       font.fn     := ft.FontName + '-' + sf(size);
       font.Width  := size;
       font.Height := size;
