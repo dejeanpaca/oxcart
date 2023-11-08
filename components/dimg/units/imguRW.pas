@@ -32,6 +32,7 @@ TYPE
    imgTFileData = record
       Image: imgTImage;
       PFile: oxPFileRWData;
+      f: PFile;
 
       {These routines are meant as a help for loaders to make performing
       common operations easier. This also helps to reduce the size of code
@@ -156,6 +157,7 @@ begin
 
    imageData.Image := pOptions^.Image;
    imageData.PFile := @data;
+   imageData.f := data.f;
 
    data.External := @imageData;
    data.Handler^.CallHandler(@data);
@@ -176,7 +178,7 @@ end;
 
 function imgTFileData.Allocate(): longint;
 begin
-   Result := image.Allocate();
+   Result := Image.Allocate();
 end;
 
 function imgTFileData.ReadPalette(padBytes: longint): longint;
@@ -242,9 +244,9 @@ end;
 
 function imgTFileData.Seek(pos: fileint): fileint;
 begin
-   Result := PFile^.f^.Seek(pos);
+   Result := f^.Seek(pos);
 
-   if(PFile^.f^.Error <> 0) then begin
+   if(f^.Error <> 0) then begin
       PFile^.SetError(eIO);
       Result := -1;
    end;
@@ -252,9 +254,9 @@ end;
 
 function imgTFileData.BlockRead(out buf; size: fileint): fileint;
 begin
-   Result := PFile^.f^.Read(buf, size);
+   Result := f^.Read(buf, size);
 
-   if(PFile^.f^.Error <> 0) then begin
+   if(f^.Error <> 0) then begin
       PFile^.SetError(eIO);
       Result := -1;
    end;
@@ -262,9 +264,9 @@ end;
 
 function imgTFileData.BlockWrite(var buf; size: fileint): fileint;
 begin
-   Result := PFile^.f^.Write(buf, size);
+   Result := f^.Write(buf, size);
 
-   if(PFile^.f^.Error <> 0) then begin
+   if(f^.Error <> 0) then begin
       PFile^.SetError(eIO);
       Result := -1;
    end;

@@ -139,7 +139,7 @@ begin
    ld := oxTFileRWData(data^).External;
    imgP := ld^.image;
 
-   fileSize := ld^.PFile^.f^.GetSize();
+   fileSize := ld^.f^.GetSize();
 
    {get memory for the file}
    GetMem(pcxData, fileSize);
