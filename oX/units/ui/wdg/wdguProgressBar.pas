@@ -267,6 +267,6 @@ end;
 INITIALIZATION
    wdgProgressBar.Create('progress_bar');
 
-   wdgProgressBar.SkinDescriptor.UseColors(wdgProgressBarSkinColorDescriptor);
+   wdgProgressBar.Internal.SkinDescriptor.UseColors(wdgProgressBarSkinColorDescriptor);
 
 END.
