@@ -102,8 +102,7 @@ begin
       {$ENDIF}
 
       oxRun.Initialize();
-
-      exit(ox.Initialized);
+      exit(oxRun.PreInitializeSuccess);
    end else
       log.e('lib > global instances reference not set');
 
