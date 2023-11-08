@@ -22,6 +22,8 @@ TYPE
       appPATH_CONFIG_SHARED, {shared configuration for all users}
       appPATH_HOME, {user profile home}
       appPATH_TEMP, {temporary files directory}
+      {NOTE: local is applicable to windows mostly due to the distinction of roaming and local profile}
+      appPATH_LOCAL, {local configuration path (should house non-critical things, which aren't quite temporary (logs, caches))}
       appPATH_DOCUMENTS {documents directory}
    );
 
@@ -81,27 +83,25 @@ begin
    {$IFDEF WINDOWS}
    if(c = appPATH_CONFIG) then
       path := GetUTF8EnvironmentVariable('APPDATA')
+   else if(c = appPATH_LOCAL) then
+         path := GetUTF8EnvironmentVariable('LOCALAPPDATA')
    else if(c = appPATH_HOME) then
       path := GetUTF8EnvironmentVariable('USERPROFILE')
    else if(c = appPATH_CONFIG_SHARED) then
       path := GetUTF8EnvironmentVariable('ALLUSERSPROFILE')
    else if(c = appPATH_DOCUMENTS) then
-      path := IncludeTrailingPathDelimiterNonEmpty(GetUTF8EnvironmentVariable('USERPROFILE')) + 'Documents'
-   else if(c = appPATH_TEMP) then
-      path := GetUTF8EnvironmentVariable('TEMP');
+      path := IncludeTrailingPathDelimiterNonEmpty(GetUTF8EnvironmentVariable('USERPROFILE')) + 'Documents';
    {$ENDIF}
 
    {$IFDEF UNIX} {also includes darwin}
-   if(c = appPATH_CONFIG) or (c = appPATH_HOME) or (c = appPATH_CONFIG_SHARED) then
+   if(c = appPATH_CONFIG) or (c = appPATH_HOME) or (c = appPATH_CONFIG_SHARED) or (c = appPATH_LOCAL) then
       path := GetUTF8EnvironmentVariable('HOME')
    else if(c = appPATH_DOCUMENTS) then
       path := IncludeTrailingPathDelimiterNonEmpty(GetUTF8EnvironmentVariable('HOME')) + 'Documents';
    {$ENDIF}
 
-   {$IFNDEF WINDOWS}
    if(c = appPATH_TEMP) then
       path := GetUTF8EnvironmentVariable('TEMP');
-   {$ENDIF}
 
    {add a directory separator to the end if the path is not empty}
    path := IncludeTrailingPathDelimiterNonEmpty(path);
