@@ -80,6 +80,6 @@ INITIALIZATION
    {nothing should be output to the file by default }
    loghOXConsole.noHeader       := true;
 
-   oldLogCallback := appLog.setupCallback;
-   appLog.setupCallback := @SetupLog;
+   oldLogCallback := appLog.SetupCallback;
+   appLog.SetupCallback := @SetupLog;
 END.
