@@ -556,6 +556,8 @@ begin
    if(wnd.GetUI().Select.GetSelectedWnd() = nil) then
       wnd.Select();
 
+   wnd.SetTitle(wnd.Title);
+
    uiWidget.SetTarget(wnd);
    uiWindow.OnCreate.Call(wnd);
 
@@ -604,9 +606,9 @@ begin
       wnd.Position   := position;
       wnd.Dimensions := dimensions;
       wnd.ZIndex := createData.ZIndex;
+      wnd.Title := title;
 
       SetupCreatedWindow(wnd, createData);
-      wnd.SetTitle(title);
       wnd.SetHandler(wHandler);
 
       uiWidget.LastRect.Assign(wnd);
@@ -1271,10 +1273,10 @@ end;
 function uiTWindowHelper.SetIcon(const fn: string): loopint;
 begin
    if(fn <> '') then begin
-     if(not IsOxw()) then
-        Result := SetIconTexture(fn)
-     else
-        SetSystemIcon(fn);
+      if(not IsOxw()) then
+         Result := SetIconTexture(fn)
+      else
+         SetSystemIcon(fn);
    end;
 end;
 
@@ -1315,6 +1317,7 @@ begin
       if(IsReady()) then
          oxTPlatform(oxw.Platform).SetTitle(oxw, newTitle);
    end;
+
    Result := Self;
 end;
 
@@ -1601,9 +1604,9 @@ end;
 
 procedure uiTWindowHelper.Find(x, y: loopint; var s: uiTSelectInfo);
 begin
-   s.l   := -1;
-   s.x   := x;
-   s.y   := y;
+   s.l := -1;
+   s.x := x;
+   s.y := y;
 
    s.startPoint.x := x;
    s.startPoint.y := y;
