@@ -157,7 +157,7 @@ var
          m^.Data.nFaces := faceCount;
 
          m^.Data.nVertsPerFace := oxPrimitivePoints[loopint(m^.Primitive)];
-         m^.SetIndices(faceCount * m^.Data.nVertsPerFace);
+         m^.Data.nIndices := faceCount * m^.Data.nVertsPerFace;
       end;
 
       reset();
@@ -252,6 +252,7 @@ var
    vertsPerFace: loopint;
 
    indices: array of dword = nil;
+   longIndices: boolean;
 
    indiceStrings: array[0..2] of ShortString;
    faceStrings: array[0..MAX_SUPPORTED_FACE_POINTS] of ShortString;
@@ -312,8 +313,29 @@ var
          if(m^.Primitive = oxPRIMITIVE_NONE) then
             m^.Primitive := oxPRIMITIVE_TRIANGLES;
 
-         for z := 0 to m^.Data.nIndices - 1 do begin
-            m^.Data.i[z] := indices[ivOffset + z];
+         longIndices := false;
+
+         {we have to have allocated indices}
+         if (Length(indices) > 0) and (m^.Data.nIndices > 0) then begin
+            {check if we need long indices (dword)}
+            for z := 0 to m^.Data.nIndices - 1 do begin
+               if(indices[ivOffset + z] > 65535) then begin
+                  longIndices := true;
+                  break;
+               end;
+            end;
+
+            if(not longIndices) then
+               m^.SetIndices(m^.Data.nFaces * m^.Data.nVertsPerFace)
+            else
+               m^.SetIndicesL(m^.Data.nFaces * m^.Data.nVertsPerFace);
+
+            if(not longIndices) then begin
+               for z := 0 to m^.Data.nIndices - 1 do begin
+                  m^.Data.i[z] := indices[ivOffset + z];
+               end;
+            end else
+               Move(indices[ivOffset + z], m^.Data.il[0], SizeOf(m^.Data.il[0]) * m^.Data.nIndices);
          end;
 
          if(hasN) and (m^.Data.n <> nil) then begin
