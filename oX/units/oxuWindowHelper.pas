@@ -113,8 +113,6 @@ begin
    Position.y := y;
 
    if(not oxProperties.Context) then begin
-      system := system;
-
       if(system) and (oxProperties.Created) then
          oxPlatform.Move(self, x, y);
 

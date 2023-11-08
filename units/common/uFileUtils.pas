@@ -279,8 +279,6 @@ begin
 
       if(not CreateDir(path)) then
          Result := false;
-
-      {TODO: Abandon running if failed to create directory}
    end;
 end;
 
@@ -307,8 +305,6 @@ begin
 
       if(FileUtils.Copy(data^.Source + path, data^.Destination + path) < 0) then
          Result := false;
-
-      {TODO: Abandon running if failed to create directory}
    end;
 end;
 
