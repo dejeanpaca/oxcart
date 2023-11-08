@@ -91,7 +91,7 @@ begin
    FileName := fn;
    Texture := nil;
 
-   path := oxAssetPaths.Find(fn);
+   path := oxPaths.Find(fn);
 
    oxTextureGenerate.Generate(path, Texture);
 

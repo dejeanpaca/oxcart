@@ -71,7 +71,7 @@ begin
 
    face := nil;
    Result := nil;
-   fn := oxAssetPaths.Find(path);
+   fn := oxPaths.Find(path);
 
    error := FT_New_Face(Lib, PChar(fn), faceIndex, face);
    if(error = 0) then begin
@@ -395,7 +395,7 @@ begin
 
    {add font specified with value (path)}
    if(p.Value <> '') then begin
-      path := oxAssetPaths.Find(oxPaths.Fonts + p.Value);
+      path := oxPaths.Find(oxPaths.Fonts + p.Value);
 
       if(path <> '') then begin
          oxFreetypeManager.Load(p.Key, path);
@@ -411,7 +411,7 @@ var
    p: TParseData;
 
 begin
-   path := oxAssetPaths.Find(oxPaths.Fonts + 'fonts.list');
+   path := oxPaths.Find(oxPaths.Fonts + 'fonts.list');
 
    if(path <> '') then begin
       TParseData.InitKeyValue(p);
@@ -424,7 +424,7 @@ begin
 
    if(FindFont('default') = nil) then begin
       {add default font}
-      path := oxAssetPaths.Find(oxPaths.Fonts + 'FontAwesome.otf');
+      path := oxPaths.Find(oxPaths.Fonts + 'FontAwesome.otf');
 
       if(path <> '') then
          Load('default', path);

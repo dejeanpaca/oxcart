@@ -40,7 +40,7 @@ var
    assetPath: String;
 
 begin
-   assetPath := oxAssetPaths.Find(Path);
+   assetPath := oxPaths.Find(Path);
    Font := oxFreetypeManager.CreateFont(assetPath, Size);
 
    if(Font <> nil) then

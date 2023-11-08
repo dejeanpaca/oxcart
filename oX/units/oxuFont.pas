@@ -886,7 +886,7 @@ begin
 
    oxTFD.Init(tfd);
 
-   f.fn := oxAssetPaths.Find(f.fn);
+   f.fn := oxPaths.Find(f.fn);
 
    errCode := oxTFD.Load(tfd, f.fn);
    if(errCode = 0) then begin
