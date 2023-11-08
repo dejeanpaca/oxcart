@@ -11,7 +11,7 @@ UNIT oxeduAndroidPlatform;
 INTERFACE
 
    USES
-      uStd,
+      uStd, udvars,
       {ox}
       oxuRunRoutines,
       {oxed}
@@ -24,6 +24,7 @@ TYPE
       constructor Create(); override;
 
       procedure ProjectReset(); override;
+      function GetDvarGroup(): PDVarGroup;
    end;
 
 IMPLEMENTATION
@@ -46,6 +47,11 @@ end;
 procedure oxedTAndroidPlatform.ProjectReset();
 begin
    oxedAndroidSettings.Reset();
+end;
+
+function oxedTAndroidPlatform.GetDvarGroup(): PDVarGroup;
+begin
+   Result := @oxedAndroidSettings.dvg;
 end;
 
 procedure init();
