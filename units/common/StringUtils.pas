@@ -104,6 +104,7 @@ procedure StripLeadingWhitespace(var st: StdString);
 procedure StripTrailingWhitespace(var st: StdString);
 procedure StripWhitespace(var st: StdString);
 function IsWhitespace(const st: string): boolean;
+function IsWhitespace(const st: StdString): boolean;
 procedure StripEndLine(var st: string);
 procedure StripEndLine(var st: StdString);
 
@@ -150,6 +151,8 @@ procedure ReplaceDirSeparators(var st: StdString);
 function GetParentDirectory(const st: string): string;
 {include a trailing path delimiter only if specified path is non empty}
 function IncludeTrailingPathDelimiterNonEmpty(const st: string): string;
+{include a trailing path delimiter only if specified path is non empty}
+function IncludeTrailingPathDelimiterNonEmpty(const st: StdString): StdString;
 
 { SUB STRINGS }
 
@@ -445,6 +448,21 @@ begin
 end;
 
 function IsWhitespace(const st: string): boolean;
+var
+   len, i: longint;
+
+begin
+   len := Length(st);
+   if(len > 0) then
+      for i := 1 to len do begin
+         if not (st[i] in strWhitespace) then
+            exit(false);
+      end;
+
+   Result := true;
+end;
+
+function IsWhitespace(const st: StdString): boolean;
 var
    len, i: longint;
 
@@ -1148,6 +1166,14 @@ begin
 end;
 
 function IncludeTrailingPathDelimiterNonEmpty(const st: string): string;
+begin
+   if(st <> '') then
+      Result := IncludeTrailingPathDelimiter(st)
+   else
+      Result := '';
+end;
+
+function IncludeTrailingPathDelimiterNonEmpty(const st: StdString): StdString;
 begin
    if(st <> '') then
       Result := IncludeTrailingPathDelimiter(st)
