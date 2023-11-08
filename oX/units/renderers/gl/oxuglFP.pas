@@ -22,7 +22,7 @@ TYPE
    { oxglTFP }
 
    oxglTFP = record
-      Init: TInitializationProcs;
+      Init: oxTRunRoutines;
 
       class procedure Initialize(); static;
       class procedure DeInitialize(); static;
@@ -55,8 +55,6 @@ begin
 end;
 
 INITIALIZATION
-   oxglFP.Init.Init('ox.gl.fp');
-
    ox.PreInit.iAdd(initRoutines, 'ox.gl.fos', @init);
 
 END.

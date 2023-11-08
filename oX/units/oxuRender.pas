@@ -13,7 +13,11 @@ INTERFACE
    USES
       uStd, uColors, vmVector,
       {oX}
-      oxuRenderer, oxuRenderers, oxuTexture, oxuTypes, oxuGlobalInstances;
+      {$IFNDEF OX_LIBRARY}
+      oxuRunRoutines,
+      {$ENDIF}
+      oxuTypes,
+      oxuRenderer, oxuRenderers, oxuTexture, oxuGlobalInstances;
 
 TYPE
    { oxTRender }
@@ -328,6 +332,9 @@ begin
 end;
 
 VAR
+   {$IFNDEF OX_LIBRARY}
+   initRoutine: oxTRunRoutine;
+   {$ENDIF}
    grRender: oxPGlobalInstance;
 
 function instanceGlobal(): TObject;
@@ -343,7 +350,7 @@ INITIALIZATION
    grRender^.CopyOverReference := true;
 
    {$IFNDEF OX_LIBRARY}
-   oxRenderers.init.dAdd('oxRender', @OnDeInit);
+   oxRenderers.init.dAdd(initRoutine, 'oxRender', @OnDeInit);
    {$ENDIF}
 
 END.

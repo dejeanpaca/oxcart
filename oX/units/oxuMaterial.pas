@@ -13,7 +13,8 @@ INTERFACE
    USES
       uStd, StringUtils, uLog, uColors, uComponentProvider, uThreads, vmVector,
       {ox}
-      oxuTypes, oxuTexture, oxuRenderer, oxuRenderers, oxuShader, oxuResourcePool;
+      oxuRunRoutines, oxuTypes, oxuResourcePool,
+      oxuTexture, oxuRenderer, oxuRenderers, oxuShader;
 
 CONST
    {material properties}
@@ -968,9 +969,12 @@ begin
    oxCurrentMaterial := oxMaterial.Default;
 end;
 
+VAR
+   initRoutine: oxTRunRoutine;
+
 INITIALIZATION
    oxRenderers.PostUseRoutines.Add(@onUse);
-   oxRenderers.Init.dAdd('material', @deinit);
+   oxRenderers.Init.dAdd(initRoutine, 'material', @deinit);
 
    Threads.GetHandlerIndex(@threadInitialize);
 

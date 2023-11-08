@@ -16,7 +16,8 @@ INTERFACE
       StringUtils,
       {$ENDIF}
       {ox}
-      oxuTypes, oxuRenderer, oxuRenderers, oxuResourcePool, oxuTexture;
+      oxuTypes, oxuRunRoutines, oxuResourcePool,
+      oxuRenderer, oxuRenderers, oxuTexture;
 
 CONST
    {shader uniform constant prefix, should correspond to the oxTShaderUniformType}
@@ -584,9 +585,12 @@ begin
    {$ENDIF}
 end;
 
+VAR
+   initRoutine: oxTRunRoutine;
+
 INITIALIZATION
    oxRenderers.UseRoutines.Add(@onUse);
-   oxRenderers.Init.dAdd('shader', @deinit);
+   oxRenderers.Init.dAdd(initRoutine, 'shader', @deinit);
 
    InitializeUniformSizes();
 
