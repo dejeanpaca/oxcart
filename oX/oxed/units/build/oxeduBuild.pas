@@ -700,7 +700,7 @@ begin
    end;
 end;
 
-procedure CreateIncludesList(const list: TSimpleStringList; var s: TAppendableString);
+procedure CreateIncludesList(const list: TSimpleStringList; var s: TAppendableString; prefix: StdString = '');
 var
    i: loopint;
 
@@ -710,11 +710,11 @@ begin
          {check for comment}
          if pos('{', list.List[i]) <> 1 then begin
            if i < list.n - 1 then
-              s.Add(list.List[i] + ',')
+              s.Add(prefix + list.List[i] + ',')
            else
-              s.Add(list.List[i]);
+              s.Add(prefix + list.List[i]);
          end else
-            s.Add(list.List[i]);
+            s.Add(prefix + list.List[i]);
       end;
    end;
 end;
@@ -724,10 +724,10 @@ begin
    Result := GetUsesString();
 
    if oxedBuild.Parameters.IncludeUses.n > 0 then begin
-      if(not oxedProject.NilProject) then
+      if(not oxedProject.NilProject) or (Result <> '') then
          Result := Result + ',';
 
-      CreateIncludesList(oxedBuild.Parameters.IncludeUses, Result);
+      CreateIncludesList(oxedBuild.Parameters.IncludeUses, Result, '   ');
    end;
 end;
 
@@ -739,7 +739,7 @@ begin
    u.Name := oxedProject.Identifier;
 
    u.sUses := CreateUsesString();
-   CreateIncludesList(oxedBuild.Parameters.ExportSymbols, u.sExports);
+   CreateIncludesList(oxedBuild.Parameters.ExportSymbols, u.sExports, '   ');
 end;
 
 procedure RecreateProgram();
