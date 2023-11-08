@@ -367,7 +367,8 @@ begin
    appControllers.List.Initialize(appControllers.List, 8);
    appControllers.OnEvent.Initialize(appControllers.OnEvent);
 
-   appControllerHandler.Initialize();
+   if(appControllerHandler <> nil) then
+      appControllerHandler.Initialize();
 end;
 
 procedure deinitialize();
@@ -379,7 +380,8 @@ begin
       FreeObject(appControllers.List.List[i]);
    end;
 
-   appControllerHandler.DeInitialize();
+   if(appControllerHandler <> nil) then
+      appControllerHandler.DeInitialize();
 end;
 
 VAR
