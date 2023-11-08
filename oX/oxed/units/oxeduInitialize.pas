@@ -40,6 +40,7 @@ INTERFACE
       {ui}
       oxeduWindowTitle, oxeduProjectNotification,
       oxuStandardFilePreviewers, oxeduSceneScreenshot, oxeduPreviewGenerator,
+      oxeduiBuildOutput,
       {android}
       oxeduAndroidPlatform, oxeduAndroidSettingsFile, oxeduAndroidSettingsWindow,
       {plugins}
