@@ -586,11 +586,12 @@ begin
       {$ELSEIF DEFINED(WINDOWS)}
       fn := 'C:\lazarus\fpc\' + FPC_VERSION + '\bin\' + build.BuiltWithTarget + DirectorySeparator;
 
-      if FileUtils.Exists(fn) <= 0 then begin
+      if FileUtils.Exists(fn + build.GetExecutableName('fpc')) <= 0 then begin
          fn := 'C:\fpc\' + FPC_VERSION + '\bin\' + build.BuiltWithTarget + DirectorySeparator;
 
-         if FileUtils.Exists(fn) > 0 then
+         if FileUtils.Exists(fn + build.GetExecutableName('fpc')) > 0 then begin
             DefaultPlatform^.Path := fn;
+         end;
       end else
          DefaultPlatform^.Path := fn;
 
@@ -613,7 +614,7 @@ begin
          log.v('build > auto lazarus defaults for darwin');
 
       DefaultLazarus^.Path := '/Developer/lazarus/';
-      {$ELSEIF DEFINED(WINDOW)}
+      {$ELSEIF DEFINED(WINDOWS)}
       DefaultLazarus^.Path := 'C:\lazarus\';
       {$ENDIF}
 
