@@ -168,10 +168,22 @@ begin
 
    s := size / 2;
 
-   p.l := -s * p.Aspect;
-   p.r := s * p.Aspect;
+   p.l := -s;
+   p.r := s;
    p.b := -s;
    p.t := s;
+
+   if(p.Aspect > 1) then begin
+      p.l := -s * p.Aspect;
+      p.r := s * p.Aspect;
+      p.b := -s;
+      p.t := s;
+   end else if(p.Aspect < 1) then begin
+      p.l := -s;
+      p.r := s;
+      p.b := -s / p.Aspect;
+      p.t := s / p.Aspect;
+   end;
 
    SetProjectionMatrix();
 end;
@@ -338,7 +350,9 @@ begin
       Result := 'Perspective > Aspect: ' + sf(p.Aspect, 3) + ', FovY: ' + sf(p.FovY, 2) + ', Z(' + sf(p.ZNear, 3) + ' .. ' + sf(p.ZFar, 3) + ')';
    end else begin
       if(p.Size > 0) then
-         Result := 'Ortho > Aspect: ' + sf(p.Aspect, 3) + ', Size: ' + sf(p.Size, 3) + ', Z(' + sf(p.ZNear, 3) + ' .. ' + sf(p.ZFar, 3) + ')'
+         Result := 'Ortho > Aspect: ' + sf(p.Aspect, 3) + ', Size: ' + sf(p.Size, 3) +
+            '(' + sf(p.GetWidth(), 3) + 'x' + sf(p.GetHeight(), 3) +
+            '), Z(' + sf(p.ZNear, 3) + ' .. ' + sf(p.ZFar, 3) + ')'
       else
          Result := 'Ortho > Aspect: ' + sf(p.Aspect, 3) + ', Z(' + sf(p.ZNear, 3) + ' .. ' + sf(p.ZFar, 3) + '), ' +
             'l: ' + sf(p.l, 3) + ', r: ' + sf(p.r, 3) + ', t: ' + sf(p.t, 3) + ', b: ' + sf(p.b, 3);
