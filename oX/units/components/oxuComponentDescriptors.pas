@@ -31,7 +31,7 @@ TYPE
 
       Component: TClass;
 
-      constructor Create(const newId: string);
+      constructor Create(const newId: string; componentType: TClass);
    end;
 
    oxTComponentDescriptorList = specialize TPreallocatedArrayList<oxPComponentDescriptor>;
@@ -61,7 +61,7 @@ end;
 
 { oxTComponentDescriptor }
 
-constructor oxTComponentDescriptor.Create(const newId: string);
+constructor oxTComponentDescriptor.Create(const newId: string; componentType: TClass);
 begin
    if(newId = '') then
       Id := 'unknown'
@@ -69,7 +69,7 @@ begin
       Id := newId;
 
    Name := Id;
-   Component := nil;
+   Component := componentType;
 
    {$IFDEF OX_LIBRARY}
    InLibrary := true;
@@ -81,6 +81,6 @@ end;
 
 INITIALIZATION
    oxTComponentDescriptorList.Initialize(oxComponentDescriptors.List, 1024);
-   oxComponentDescriptors.Unknown.Create('unknown');
+   oxComponentDescriptors.Unknown.Create('unknown', nil);
 
 END.

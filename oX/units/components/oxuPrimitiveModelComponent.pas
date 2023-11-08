@@ -138,7 +138,7 @@ INITIALIZATION
    serializer := oxTSerialization.Create(oxTPrimitiveModelComponent, @instance);
    serializer.AddProperty('primitiveType', @oxTPrimitiveModelComponent(nil).Model.primitiveType, oxSerialization.Types.Enum, TypeInfo(oxTPrimitiveModelType));
 
-   descriptor.Create('primitive_model');
+   descriptor.Create('primitive_model', oxTPrimitiveModelComponent);
    descriptor.Name := 'Primitive Model';
 
 FINALIZATION

@@ -41,7 +41,7 @@ begin
 end;
 
 INITIALIZATION
-   descriptor.Create('render');
+   descriptor.Create('render', oxTRenderComponent);
    descriptor.Name := 'Render (Unknown)';
 
 END.

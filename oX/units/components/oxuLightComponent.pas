@@ -87,7 +87,7 @@ INITIALIZATION
    serialization := oxTSerialization.Create(oxTLightComponent, @instance);
    serialization.AddObjectProperty('Light', @oxTLightComponent(nil).Light);
 
-   descriptor.Create('light');
+   descriptor.Create('light', oxTLightComponent);
    descriptor.Name := 'Light';
 
 FINALIZATION
