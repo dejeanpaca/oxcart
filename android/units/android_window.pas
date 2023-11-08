@@ -9,8 +9,8 @@ UNIT android_window;
 INTERFACE
 
    USES
-      ctypes, jni, native_activity,
-      native_window, uAndroid, android_layout_params;
+      jni, native_activity,
+      uAndroid, android_layout_params;
 
 TYPE
 
