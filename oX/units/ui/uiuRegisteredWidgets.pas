@@ -48,7 +48,7 @@ TYPE
       class procedure Init(out wc: uiTWidgetClass); static;
       class procedure Init(out wc: uiTWidgetClass; const name: string); static;
 
-      procedure Register(const name: string; initProc: TProcedure);
+      procedure Register(const name: string; initProc: TProcedure; deinitProc: TProcedure = nil);
       procedure Done(widgetClass: uiTWidgetClassType);
       procedure Done();
    end;
@@ -137,12 +137,12 @@ begin
    wc.sName := name;
 end;
 
-procedure uiTWidgetInternal.Register(const name: string; initProc: TProcedure);
+procedure uiTWidgetInternal.Register(const name: string; initProc: TProcedure; deinitProc: TProcedure);
 begin
    Init(self, CopyAfter(name, '.'));
 
    if(initProc <> nil) then begin
-      ui.BaseInitializationProcs.iAdd(InitRoutines, name, initProc);
+      ui.BaseInitializationProcs.Add(InitRoutines, name, initProc, deinitProc);
    end;
 
    inc(uiRegisteredWidgets.nWidgetTypes);
@@ -171,6 +171,5 @@ INITIALIZATION
    ui.BaseInitializationProcs.Add(skinInitRoutines, 'widget.skin', @skinInitialize);
 
    InitDummyWidgetClass();
-
 
 END.
