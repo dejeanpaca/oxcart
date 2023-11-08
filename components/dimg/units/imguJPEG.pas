@@ -14,7 +14,7 @@ INTERFACE
       uStd, uImage, uFileHandlers, imguRW,
       jpeglib, jerror, jdapimin, jdapistd, jdatasrc, Classes,
       {ox}
-      uOX, oxuFile;
+      oxuFile;
 
 IMPLEMENTATION
 

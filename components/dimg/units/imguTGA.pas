@@ -13,7 +13,7 @@ INTERFACE
    USES
       uImage, uFileHandlers, imguRW,
       {ox}
-      uOX, oxuFile;
+      oxuFile;
 
 IMPLEMENTATION
 
