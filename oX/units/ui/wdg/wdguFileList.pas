@@ -20,7 +20,7 @@ INTERFACE
       oxuTypes, oxuFont, oxuFileIcons, oxuRender, oxuTexture, oxuRenderUtilities,
       {ui}
       uiuTypes, uiuWindowTypes, uiuSkinTypes, uiuFiles,
-      uiuWidget, uiWidgets, uiuRegisteredWidgets,
+      uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuDrawUtilities,
       wdguBase, wdguGrid, wdguList, wdguHierarchyList;
 
 TYPE
@@ -570,7 +570,6 @@ var
    br: oxTRect;
 
    glyph: wdgTListGlyph;
-   px, py: single;
 
 begin
    if(not ScissorRect(r)) then
@@ -585,14 +584,11 @@ begin
          glyph := wdgFileList.GetFileIcon(pf^);
 
          if(glyph.Glyph <> nil) and (glyph.Glyph.rId <> 0) then begin
-            height := (r.h - padding * 2) div 2;
-
-            px := r.x + r.w div 2;
-            py := r.y - r.h div 2;
+            height := r.h - padding * 2;
 
             oxRender.BlendDefault();
             SetColorBlended(glyph.Color);
-            oxRenderingUtilities.TexturedQuad(px, py, height, height, glyph.Glyph);
+            uiDrawUtilities.Glyph(r.x, r.y, height, height, glyph.Glyph);
 
             {restore text color}
             SetFontColor(-1);
@@ -609,14 +605,11 @@ begin
          fh := f.GetHeight();
 
          if(glyph.Glyph <> nil) and (glyph.Glyph.rId <> 0) then begin
-            height := (r.h - (fh * wdgFileGrid.FileNameLines + fh div 2) - padding * 2) div 2;
-
-            px := r.x + (r.w div 2);
-            py := r.y - height - padding;
+            height := r.h - (fh * wdgFileGrid.FileNameLines + fh div 2) - padding * 2;
 
             oxRender.BlendDefault();
             SetColorBlended(glyph.Color);
-            oxRenderingUtilities.TexturedQuad(px, py, height, height, glyph.Glyph);
+            uiDrawUtilities.Glyph(r.x, r.y - padding, height, height, glyph.Glyph);
 
             br.y := br.y - r.h + (fh * wdgFileGrid.FileNameLines) + fh div 2;
          end;
