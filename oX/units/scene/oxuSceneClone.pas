@@ -47,6 +47,8 @@ begin
          target.Children.List[i] := CloneEntity(serialization, oxTEntity(source.Children.List[i]));
          oxTEntity(target.Children.List[i]).Parent := target;
       end;
+
+      target.Children.n := source.Children.n;
    end;
 end;
 
@@ -80,7 +82,11 @@ begin
       scene := oxTScene(CloneEntity(serialization, source, false));
       scene.World := oxTWorld(serialization.Clone(source.World));
 
+      writeln('Initial ', source.Children.n, ' ', source.Name);
+
       CloneChildren(serialization, source, scene);
+
+      writeln('Final ', scene.Children.n, ' ', scene.Name);
 
       log.v('Scene cloned (Elapsed: ' + startTime.ElapsedfToString() + 's)');
    end else
