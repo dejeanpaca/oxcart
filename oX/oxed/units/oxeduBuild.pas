@@ -77,6 +77,8 @@ TYPE
       BuildStart: TDateTime;
       BuildArch: oxedTPlatformArchitecture;
       BuildMechanism: oxedTBuildMechanism;
+      {is the last build ok}
+      BuildOk: boolean;
 
       {properties of the current build task, determined based on Build* settings}
       Props: record
@@ -125,9 +127,9 @@ TYPE
       {clean up resources at the end of a build}
       procedure DoneBuild();
       {copy the built executable to target path}
-      procedure MoveExecutable();
+      function MoveExecutable(): boolean;
       {copy required run-time libraries for this build}
-      procedure CopyLibraries();
+      function CopyLibraries(): boolean;
 
       {run cleanup in a task}
       class procedure BuildStandaloneTask(arch: oxedTPlatformArchitecture); static;
@@ -154,6 +156,8 @@ TYPE
       function GetFPCConfigFilename(): StdString;
       {get lpi filename based on current target}
       function GetLPIFilename(): StdString;
+
+      procedure Fail(const reason: StdString);
 
       {Reset build targets and options. Should be called after a build so the next one doesn't use leftover settings.}
       procedure Reset();
@@ -760,12 +764,6 @@ begin
    BuildExec.Pas(oxedBuild.WorkArea + oxedBuild.Props.Source, @parameters);
 end;
 
-procedure FailBuild(const reason: StdString);
-begin
-   oxedBuild.DoneBuild();
-   oxedConsole.e('Failed build: ' + reason);
-end;
-
 procedure ExecuteBuild();
 var
    previousRedirect: boolean;
@@ -786,9 +784,18 @@ end;
 
 procedure StandaloneSteps();
 begin
-   oxedBuild.MoveExecutable();
+   if(not oxedBuild.MoveExecutable()) then
+      exit;
+
    oxedBuild.CopyLibraries();
+
+   if(not oxedBuild.BuildOk) then
+      exit;
+
    oxedBuildAssets.Deploy(oxedBuild.TargetPath);
+
+   if(not oxedBuild.BuildOk) then
+      exit;
 end;
 
 function createPath(const name, path: StdString): boolean;
@@ -797,7 +804,7 @@ begin
       if(ForceDirectories(path)) then begin
          log.v('Created ' + name + ' path: ' + path)
       end else begin
-         FailBuild('Failed to create ' + name + ' path: ' + path);
+         oxedBuild.Fail('Failed to create ' + name + ' path: ' + path);
          exit(false);
       end;
    end;
@@ -856,12 +863,12 @@ begin
    oxedConsole.i(modeString + ' started (' + targetString + ')');
 
    if(not Recreate()) then begin
-      FailBuild('Failed to recreate project files');
+      Fail('Failed to recreate project files');
       exit;
    end;
 
    if(not RecreateConfig(BuildMechanism)) then begin
-      FailBuild('Failed to recreate project config files');
+      Fail('Failed to recreate project config files');
       exit;
    end;
 
@@ -881,7 +888,7 @@ begin
       if(BuildTarget = OXED_BUILD_STANDALONE) then
          StandaloneSteps();
    end else
-      oxedConsole.e(modestring + ' failed (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
+      Fail(modestring + ' failed (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
 
    {if successful rebuild, we've made an initial build}
    oxedProject.Session.InitialBuildDone := true;
@@ -895,14 +902,17 @@ begin
    Features.Dispose();
 end;
 
-procedure oxedTBuildGlobal.MoveExecutable();
+function oxedTBuildGlobal.MoveExecutable(): boolean;
 var
    source,
    destination: StdString;
 
 begin
+   {nothing to do here}
    if(BuildTarget <> OXED_BUILD_STANDALONE) then
-      exit;
+      exit(true);
+
+   Result := false;
 
    source := BuildExec.Output.ExecutableName;
    destination := TargetPath + ExtractFileName(BuildExec.Output.ExecutableName);
@@ -911,38 +921,61 @@ begin
    FileUtils.Erase(destination);
 
    {move the file}
-   if(RenameFile(source, destination)) then
-      log.v('Moving: ' + source + ' to ' + destination)
-   else
-      FailBuild('Failed to move: ' + source + ' to ' + destination);
-
+   if(RenameFile(source, destination)) then begin
+      log.v('Moving: ' + source + ' to ' + destination);
+      Result := true;
+   end else
+      Fail('Failed to move: ' + source + ' to ' + destination);
 end;
 
-procedure oxedTBuildGlobal.CopyLibraries();
+function CopyLibrary(const source: StdString; const target: StdString = ''): boolean;
+begin
+   if(not buildLibraries.CopyLibrary(source, target)) then begin
+      if(target <> '') then
+         oxedBuild.Fail('Failed to copy library ' + source + ' as ' + target)
+      else
+         oxedBuild.Fail('Failed to copy library ' + source);
+
+      exit(false);
+   end;
+
+   Result := true;
+end;
+
+function oxedTBuildGlobal.CopyLibraries(): boolean;
 {$IFDEF WINDOWS}
 var
    requireZlib: boolean;
 {$ENDIF}
 
 begin
+   {nothing to do here}
    if(BuildTarget <> OXED_BUILD_STANDALONE) then
-      exit;
+      exit(true);
+
+   Result := false;
 
    {$IFDEF WINDOWS}
    buildLibraries.Target := TargetPath;
    requireZlib := false;
 
-   if(Features.FindByName('audio.al') <> nil) then
-      buildLibraries.CopyLibrary('oal_soft.dll', 'openal32.dll');
+   if(Features.FindByName('audio.al') <> nil) then begin
+      if(not CopyLibrary('oal_soft.dll', 'openal32.dll')) then
+         exit(false);
+   end;
 
    if(Features.FindByName('freetype') <> nil) then begin
-      buildLibraries.CopyLibrary('freetype-6.dll', 'freetype.dll');
+      if(not CopyLibrary('freetype-6.dll', 'freetype.dll')) then
+         exit(false);
+
       requireZlib := true;
    end;
 
    if(requireZlib) then
-      buildLibraries.CopyLibrary('zlib1.dll');
+      CopyLibrary('zlib1.dll');
    {$ENDIF}
+
+   Result := true;
 end;
 
 procedure DoCleanup();
@@ -1001,6 +1034,8 @@ begin
       exit;
    end;
 
+   {we start off assuming things are fine}
+   BuildOk := true;
    BuildStart := Now;
 
    build.ResetOptions();
@@ -1183,8 +1218,16 @@ begin
       Result := oxPROJECT_MAIN_LPI;
 end;
 
+procedure oxedTBuildGlobal.Fail(const reason: StdString);
+begin
+   DoneBuild();
+   BuildOk := false;
+   oxedConsole.e('Failed build: ' + reason);
+end;
+
 procedure oxedTBuildGlobal.Reset();
 begin
+   BuildOk := false;
    BuildType := OXED_BUILD_TASK_RECODE;
    BuildTarget := OXED_BUILD_LIB;
    BuildArch := oxedEditorPlatform.Architecture;
