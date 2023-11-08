@@ -319,6 +319,9 @@ function DumpExceptionCallStack(e: Exception): string;
 
 function GetUTF8EnvironmentVariable(const v: UTF8String): UTF8String;
 
+procedure UTF8Assign(var f: text; const fn: UTF8String);
+function UTF8Lower(const s: UTF8String): UTF8String;
+
 IMPLEMENTATION
 
 VAR
@@ -1308,7 +1311,27 @@ end;
 
 function GetUTF8EnvironmentVariable(const v: UTF8String): UTF8String;
 begin
+   {$IFDEF WINDOWS}
    Result := UTF8Encode(GetEnvironmentVariable(UnicodeString(v)));
+   {$ELSE}
+   // Result := GetEnvironmentVariable(v);
+   {$ENDIF}
+   writeln('Result: ', Result);
+end;
+
+procedure UTF8Assign(var f: text; const fn: UTF8String);
+begin
+   Assign(f, UTF8Decode(fn));
+end;
+
+function UTF88Lower(const s: UTF8String): UTF8String;
+begin
+
+end;
+
+function UTF8Lower(const s: UTF8String): UTF8String;
+begin
+   Result := UTF8Encode(UnicodeLowerCase(UTF8Decode(s)));
 end;
 
 function TLineEndingTypeHelper.GetChars(): string;
