@@ -44,14 +44,7 @@ TYPE
       RunRoutines: appTRunRoutines;
 
       {main app control routine}
-      procedure Control();
-
-      {app cycle}
-      function Cycle(dosleep: boolean): boolean;
-      procedure Sleep(time: longint = -1);
-
-      {runs the application}
-      procedure Run();
+      procedure ControlEvents();
 
       {adds a run routine to the execution list}
       procedure AddRoutine(var routine: appTRunRoutine);
@@ -128,7 +121,7 @@ begin
 end;
 
 {main app control routine}
-procedure appTRunGlobal.Control();
+procedure appTRunGlobal.ControlEvents();
 var
    event: appTEvent;
    evh: appPEventHandler;
@@ -159,38 +152,6 @@ begin
       end;
    {if uinEvents is 0 then there are no more events}
    until(appEvents.n = 0);
-end;
-
-{Application Run}
-function appTRunGlobal.Cycle(dosleep: boolean): boolean;
-begin
-   Result := true;
-
-   PreRunRoutines.Call();
-   RunRoutines.Call();
-
-   if(dosleep) then
-      Sleep();
-end;
-
-procedure appTRunGlobal.Sleep(time: longint);
-begin
-   if(time = -1) then
-      time := app.IdleTime;
-
-   if(time > 0) then
-      SysUtils.Sleep(time);
-end;
-
-procedure appTRunGlobal.Run();
-begin
-   app.Active := true;
-
-   {main loop}
-   repeat
-      if(not Cycle(true)) then
-         break;
-   until (not app.Active); {repeat until the application is no longer active}
 end;
 
 procedure appTRunGlobal.AddRoutine(var routine: appTRunRoutine);
