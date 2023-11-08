@@ -24,9 +24,9 @@ TYPE
       {get fpc command line options as strings}
       class function GetFPCCommandLineAsString(): StdString; static;
       {get fpc command line options as strings}
-      class function GetFPCCommandLine(emptyBefore: loopint = 0; emptyAfter: loopint = 0): TStringArray; static;
+      class function GetFPCCommandLine(emptyBefore: loopint = 0; emptyAfter: loopint = 0): TSimpleStringList; static;
       {get fpc command line options for use with a config file}
-      class function GetFPCCommandLineForConfig(): TStringArray; static;
+      class function GetFPCCommandLineForConfig(): TSimpleStringList; static;
 
       {add a new config line}
       procedure Add(const s: StdString); inline;
@@ -53,53 +53,30 @@ end;
 
 class function TBuildFPCConfiguration.GetFPCCommandLineAsString(): StdString;
 var
-   args: TStringArray;
+   parameters: TSimpleStringList;
 
 begin
-   args := GetFPCCommandLine();
+   parameters := GetFPCCommandLine();
 
-   Result := args.GetSingleString(' ');
+   Result := parameters.GetSingleString(' ');
+   parameters.Dispose();
 end;
 
-class function TBuildFPCConfiguration.GetFPCCommandLine(emptyBefore: loopint = 0; emptyAfter: loopint = 0): TStringArray;
+class function TBuildFPCConfiguration.GetFPCCommandLine(emptyBefore: loopint = 0; emptyAfter: loopint = 0): TSimpleStringList;
 var
-   count,
-   i,
-   index: loopint;
-   arguments: TStringArray;
+   i: loopint;
 
 procedure AddArgument(const s: StdString);
 begin
-   arguments[index] := s;
-   inc(index);
+   Result.Add(s);
 end;
 
 begin
-   count := emptyBefore + emptyAfter;
+   TSimpleStringList.Initialize(Result, 128);
 
-   inc(count, build.Units.n);
-   inc(count, build.Includes.n);
-   inc(count, build.Symbols.n);
-
-   if(build.Options.Rebuild) then
-      inc(count);
-
-   if(build.FPCOptions.UnitOutputDirectory <> '') then
-      inc(count);
-
-   if(build.TargetOS <> '') then
-      inc(count);
-
-   if(build.TargetCPU <> '') then
-      inc(count);
-
-   if(build.IncludeDebugInfo) then
-      inc(count);
-
-   index := emptyBefore;
-
-   arguments := nil;
-   SetLength(arguments, count);
+   for i := 0 to emptyBefore - 1 do begin
+      AddArgument('');
+   end;
 
    for i := 0 to build.Units.n - 1 do begin
       AddArgument('-Fu' + build.Units.List[i]);
@@ -128,32 +105,23 @@ begin
    if(build.IncludeDebugInfo) then
       AddArgument('-g');
 
-   Result := arguments;
+   for i := 0 to emptyAfter - 1 do begin
+      AddArgument('');
+   end;
 end;
 
-class function TBuildFPCConfiguration.GetFPCCommandLineForConfig(): TStringArray;
-var
-   index: loopint;
-
-procedure AddArgument(const s: StdString);
+class function TBuildFPCConfiguration.GetFPCCommandLineForConfig(): TSimpleStringList;
 begin
-   inc(index);
-   SetLength(Result, index);
-   Result[index - 1] := s;
-end;
-
-begin
-   Result := nil;
-   index := 0;
+   TSimpleStringList.Initialize(Result, 128);
 
    if(build.Options.Rebuild) then
-      AddArgument('-B');
+      Result.Add('-B');
 
    if(build.FPCOptions.DontUseDefaultConfig) then
-      AddArgument('-n');
+      Result.Add('-n');
 
    if(build.FPCOptions.UseConfig <> '') then
-      AddArgument('@' + build.FPCOptions.UseConfig);
+      Result.Add('@' + build.FPCOptions.UseConfig);
 end;
 
 procedure TBuildFPCConfiguration.Add(const s: StdString);
