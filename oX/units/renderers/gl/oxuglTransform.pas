@@ -26,12 +26,12 @@ TYPE
 
 VAR
    oxglTransform: oxglTTransform;
-   
+
 IMPLEMENTATION
 
 { oxglTTransformMatrixHelper }
 
-procedure oxglTTransform.Apply;
+procedure oxglTTransform.Apply();
 var
    transposed: TMatrix4f;
 
