@@ -19,9 +19,19 @@ TYPE
 
    ypkTFSFile = record
       f: TFile;
+      {blob size}
+      BlobSize: fileint;
+      {blob memory containing file names}
+      Blob: PByte;
+      {ypk entries}
       Entries: ypkTEntries;
 
+      {correct file path separators for all entries}
       procedure CorrectPaths();
+      {get file name for entry specified by index}
+      function GetFn(index: loopint): PShortString;
+      {finds a file with the specified name in the entries}
+      function Find(var e: ypkTEntries; const fn: string): longint;
    end;
 
    ypkTFileSystemGlobal = record
@@ -114,7 +124,7 @@ end;
 
 function ypkfsAdd(var fs: ypkTFSFile): ypkPFSFile;
 var
-   hdr: ypkTHeader;
+   hdr: ypkfTHeader;
 
 begin
    Result := nil;
@@ -122,6 +132,7 @@ begin
    ypk.ReadHeader(fs.f, hdr);
 
    if(fs.f.error = 0) then begin
+      ypk.ReadBlob(fs.f, fs.Blob, fs.BlobSize);
       ypk.ReadEntries(fs.f, fs.Entries, hdr.Files);
 
       if(fs.f.Error = 0) then begin
@@ -277,7 +288,7 @@ end;
 
 function OpenFile(var f: TFile; const fn: StdString): boolean;
 var
-   entry: ypkPEntry;
+   entry: ypkfPEntry;
    entryIdx: longint;
    fs: ypkPFSFile;
 
@@ -325,7 +336,7 @@ begin
    if(filesystem.n > 0) then begin
       for i := (filesystem.n - 1) downto 0 do begin
          if(filesystem.List[i] <> nil) then begin
-            entryIdx := ypk.Find(filesystem.List[i]^.Entries, fn);
+            entryIdx := filesystem.List[i]^.Find(filesystem.List[i]^.Entries, fn);
 
             if(entryIdx > -1) then
                exit(filesystem.List[i]);
@@ -374,7 +385,30 @@ end;
 
 procedure ypkTFSFile.CorrectPaths();
 begin
+   {TODO: Implement file path correction}
+end;
 
+function ypkTFSFile.GetFn(index: loopint): PShortString;
+begin
+   Result := @EmptyShortString;
+
+   if(index >= 0) and (index < Entries.n) then begin
+      Result := PShortString(Blob + ptrint(Entries.List[index].FileNameOffset));
+   end;
+end;
+
+function ypkTFSFile.Find(var e: ypkTEntries; const fn: string): longint;
+var
+   i: longint;
+
+begin
+   if(e.n > 0) then
+      for i := 0 to (e.n-1) do begin
+         if(GetFN(i)^ = fn) then
+            exit(i);
+      end;
+
+   Result := -1;
 end;
 
 INITIALIZATION
