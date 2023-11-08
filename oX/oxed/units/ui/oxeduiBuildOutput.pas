@@ -143,6 +143,7 @@ begin
    n := 0;
 
    Add(3104, logcVERBOSE);
+   Add(5024, logcVERBOSE);
 end;
 
 INITIALIZATION
