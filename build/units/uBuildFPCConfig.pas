@@ -177,6 +177,8 @@ begin
 
    { compiler options }
 
+   add('## compiler options');
+
    if(build.FPCOptions.CompilerMode <> '') then
      config.Add('-M' + build.FPCOptions.CompilerMode);
 
@@ -189,7 +191,12 @@ begin
    if(build.FPCOptions.CLikeOperators) then
       config.Add('-Sc');
 
+   if(build.FPCOptions.AllowGotoAndLabel) then
+      add('-Sg');
+
    { checks }
+
+   add('## checks');
 
    if(build.Checks.IO) then
       config.Add('-Ci');
@@ -211,6 +218,8 @@ begin
 
    { target }
 
+   add('## target');
+
    if(build.TargetOS <> '') then begin
       add('# target OS');
       add('-T' + build.TargetOS);
@@ -221,25 +230,26 @@ begin
       add('-P' + build.TargetCPU);
    end;
 
-   if(build.Debug.Include) then begin
-      add('# include debug info');
+   if(build.CPUType <> '') then
+      add('-Cp' + build.CPUType);
+
+   if(build.FPUType <> '') then
+      add('-Cf' + build.FPUType);
+
+   if(build.BinUtilsPrefix <> '') then
+      add('-XP' + build.BinUtilsPrefix);
+
+   { debug }
+   add('## debug');
+
+   if(build.Debug.Include) then
       add('-g');
-   end;
 
-   if(build.Debug.LineInfo) then begin
-      add('# include line info');
+   if(build.Debug.LineInfo) then
       add('-gl');
-   end;
 
-   if(build.Debug.External) then begin
-      add('# debug info from external file');
+   if(build.Debug.External) then
       add('-Xg');
-   end;
-
-   if(build.FPCOptions.AllowGotoAndLabel) then begin
-      add('# allow goto and label');
-      add('-Sg');
-   end;
 end;
 
 procedure TBuildFPCConfiguration.ConstructDefaultIncludes(const basePath: StdString);

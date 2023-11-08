@@ -51,7 +51,11 @@ TYPE
       ConfigPath: StdString;
 
       TargetOS,
-      TargetCPU: StdString;
+      TargetCPU,
+
+      CPUType,
+      FPUType,
+      BinUtilsPrefix: StdString;
 
       {debug information}
       Debug: record
@@ -71,20 +75,22 @@ TYPE
          CompilerMode: StdString;
          {where to output units (-FU)}
          UnitOutputPath,
-         {what fpc config to use for building}
+         {what fpc config to use for building (@)}
          UseConfig,
          {compiler utilities path (-FF)}
          CompilerUtilitiesPath: StdString;
-         {don't use default fpc config file}
-         DontUseDefaultConfig: Boolean;
+         {don't use default fpc config file (-n)}
+         DontUseDefaultConfig,
          {Allow goto and label (-Sg)}
-         AllowGotoAndLabel: boolean;
+         AllowGotoAndLabel,
          {Allow C like operators (-Sc)}
-         CLikeOperators: boolean;
+         CLikeOperators,
          {Use reference counted strings (ansistrings, -Sh)}
-         ReferenceCountedString: boolean;
+         ReferenceCountedString,
          {Turn on inlining of routines marked as inline (-Si)}
-         TurnOnInlining: boolean;
+         TurnOnInlining,
+         {position independent code (-Cg)}
+         PositionIndependentCode: boolean;
       end;
 
       Options: record
@@ -375,6 +381,10 @@ begin
    Debug.External := false;
    OptimizationLevel := 0;
 
+   CPUType := '';
+   FPUType := '';
+   BinUtilsPrefix := '';
+
    FPCOptions.CompilerMode := 'objfpc';
    FPCOptions.UnitOutputPath := '';
    FPCOptions.UseConfig := '';
@@ -384,6 +394,7 @@ begin
    FPCOptions.CLikeOperators := true;
    FPCOptions.ReferenceCountedString := true;
    FPCOptions.TurnOnInlining := true;
+   FPCOptions.PositionIndependentCode := false;
 
    Libraries.Dispose();
 
