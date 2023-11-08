@@ -76,13 +76,13 @@ end;
 
 class procedure oxedTProjectDialog.OpenDialog();
 begin
-   if(dlgOpen = nil) then
-      dlgOpen := oxFileDialog.Open();
+   if(dlgOpen = nil) then begin
+      dlgOpen := oxFileDialog.OpenDirectories();
+      dlgOpen.SetTitle('Open Project');
+      dlgOpen.Callback := @openCallback;
+      dlgOpen.OnPathChange := @openOnPathChange;
+   end;
 
-   dlgOpen.SetTitle('Open Project');
-   dlgOpen.Callback := @openCallback;
-   dlgOpen.OnPathChange := @openOnPathChange;
-   dlgOpen.ShowDirectoriesOnly := true;
    dlgOpen.Open();
 end;
 
@@ -177,10 +177,9 @@ class procedure oxedTProjectDialog.SaveDialog();
 begin
    if(oxedProject <> nil) and (oxedProject.Path = '') then begin
       if(dlgSave = nil) then begin
-         dlgSave := oxFileDialog.Save();
+         dlgSave := oxFileDialog.SaveDirectories();
          dlgSave.Callback := @saveCallback;
          dlgSave.SetTitle('Save Project');
-         dlgSave.ShowDirectoriesOnly := true;
          dlgSave.ShowFilenameInput := false;
       end;
 
