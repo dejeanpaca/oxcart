@@ -6,7 +6,7 @@
    @lazpackage LazUtils
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxheader.inc}
 PROGRAM lpitool;
 
    USES

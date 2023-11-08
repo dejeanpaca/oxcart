@@ -3,7 +3,7 @@
    Copyright (C) 2019. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 UNIT android_log_helper;
 
 INTERFACE

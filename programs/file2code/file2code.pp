@@ -13,7 +13,7 @@
    executable code).
 }
 
-{$MODE OBJFPC}{$H+}{$R-}{$I-}
+{$INCLUDE oxheader.inc}
 PROGRAM file2code;
 
    USES uStd, uAppInfo, StringUtils, ParamUtils, uFileUtils;

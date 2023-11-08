@@ -3,7 +3,7 @@
    Copyright (C) 2009. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxheader.inc}
 PROGRAM xkeycoderemap;
 
 USES

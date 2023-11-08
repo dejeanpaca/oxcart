@@ -3,7 +3,7 @@
    Copyright (C) 2010. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 UNIT vmMath;
 
 INTERFACE

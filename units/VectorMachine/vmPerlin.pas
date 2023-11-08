@@ -8,7 +8,7 @@
    This will drastically improve performance.
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 UNIT vmPerlin;
 
 INTERFACE

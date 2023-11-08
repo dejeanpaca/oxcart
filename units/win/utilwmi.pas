@@ -36,7 +36,7 @@ unit Utilwmi;
 // - Removed old wmi code because we use fpc 3+
 // - Remove dialog code as we never use that
  
-{$MODE OBJFPC}{$H+}{$HINTS ON}
+{$INCLUDE oxheader.inc}{$HINTS ON}
   
 INTERFACE
  

@@ -1,7 +1,8 @@
 {
    Copyright (C) 2009. Dejan Boras
 }
-{$MODE OBJFPC}{$H+}
+
+{$INCLUDE oxheader.inc}
 PROGRAM test;
 
 USES

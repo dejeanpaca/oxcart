@@ -3,7 +3,7 @@
    Copyright (C) Dejan Boras 2017.
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}{$MODESWITCH TYPEHELPERS}
+{$INCLUDE oxheader.inc}
 UNIT uSimpleList;
 
 INTERFACE

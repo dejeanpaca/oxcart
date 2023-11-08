@@ -3,7 +3,7 @@
    Copyright (C) 2009. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 PROGRAM oxfonttex;
 
    USES ConsoleUtils, ParamUtils, StringUtils, uColors, ufhStandard,

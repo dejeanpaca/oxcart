@@ -3,7 +3,7 @@
    Copyright (c) 2012. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 UNIT jniutils;
 
 INTERFACE

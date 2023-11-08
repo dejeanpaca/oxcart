@@ -3,7 +3,7 @@
    Copyright (C) 2013. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 PROGRAM texpax;
 
    USES ConsoleUtils, ParamUtils, StringUtils, uFileStd,

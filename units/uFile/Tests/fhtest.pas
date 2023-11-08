@@ -1,4 +1,4 @@
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxheader.inc}
 PROGRAM test;
 
    USES uLog, uStd, uFileHandlers;

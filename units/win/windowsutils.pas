@@ -3,8 +3,7 @@
    Copyright (C) 2016. Dejan Boras
 }
 
-
-{$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT windowsutils;
 
 INTERFACE

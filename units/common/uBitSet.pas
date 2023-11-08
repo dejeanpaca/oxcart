@@ -3,7 +3,7 @@
    Copyright (C) 2007. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 UNIT uBitSet;
 
 INTERFACE

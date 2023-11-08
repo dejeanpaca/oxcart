@@ -5,7 +5,7 @@
    Copyright (C) 2007. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT uFileHandlers;
 
 INTERFACE

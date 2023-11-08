@@ -7,7 +7,7 @@
    {$FATAL udvars should not be used when NODVAR is defined.}
 {$ENDIF}
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH advancedrecords}
+{$INCLUDE oxheader.inc}
 UNIT udvars;
 
 INTERFACE

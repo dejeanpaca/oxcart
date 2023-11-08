@@ -3,7 +3,7 @@
    Copyright (C) 2006. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH TYPEHELPERS}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT uTVideo;
 
 {Note that characters CR(carriage return), LF(Line Feed) in these combinations:

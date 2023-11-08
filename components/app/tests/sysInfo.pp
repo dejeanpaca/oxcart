@@ -2,7 +2,7 @@
    Copyright (C) 2012. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 PROGRAM sysInfo;
 
    USES uLog, uAppInfo, appuSysInfo, appuPaths, appuLog, uApp;
