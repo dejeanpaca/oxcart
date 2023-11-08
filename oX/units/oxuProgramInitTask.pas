@@ -14,12 +14,9 @@ USES
    sysutils, uStd, uLog, uTiming,
    {ox}
    uOX, uiuBase,
-   oxuThreadTask, oxuRenderTask, oxuInitTask, oxuWindow;
+   oxuWindow, oxuThreadTask, oxuRenderTask, oxuInitTask, oxuInitTaskHandler;
 
 TYPE
-
-   { oxTInitTask }
-
    { oxTProgramInitTask }
 
    oxTProgramInitTask = class(oxTInitTask)
@@ -27,18 +24,8 @@ TYPE
       procedure Run(); override;
    end;
 
-   { oxTProgramInitTaskGlobal }
-
-   oxTProgramInitTaskGlobal = record
-      Task: oxTProgramInitTask;
-      Initialized: boolean;
-
-      procedure Go();
-      function IsFinished(): boolean;
-   end;
-
 VAR
-   oxProgramInitTask: oxTProgramInitTaskGlobal;
+   oxProgramInitTask: oxTInitTaskHandler;
 
 IMPLEMENTATION
 
@@ -70,22 +57,7 @@ begin
    oxProgramInitTask.Initialized := true;
 end;
 
-{ oxTInitTaskGlobal }
+INITIALIZATION
+   oxProgramInitTask.Instance := oxTProgramInitTask;
 
-procedure oxTProgramInitTaskGlobal.Go();
-begin
-   Task := oxTProgramInitTask.Create();
-   Task.RunThreaded(oxWindow.Current);
-end;
-
-function oxTProgramInitTaskGlobal.IsFinished(): boolean;
-begin
-   Result := false;
-
-   if(Initialized) then
-      Result := true;
-
-   if(Task <> nil) then
-      Result := Task.IsFinished();
-end;
 END.

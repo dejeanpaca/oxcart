@@ -13,7 +13,7 @@ INTERFACE
       {app}
       uAppInfo, uApp, appuLog, appudvarConfiguration,
       {oX}
-      uOX, oxuWindow, oxuWindows, oxuInitTask, oxuProgramInitTask,
+      uOX, oxuWindow, oxuWindows, oxuMainInitTask, oxuProgramInitTask,
       oxuPlatform, oxuUIHooks, oxuGlobalInstances, oxuPlatforms,
       oxuRenderer, oxuRenderers,
       {$IFDEF OX_LIBRARY}
@@ -227,7 +227,7 @@ begin
    elapsedTime := Time();
 
    {run the initialization task}
-   oxInitTask.Go();
+   oxMainInitTask.Go();
 
    Result := eNONE;
 end;

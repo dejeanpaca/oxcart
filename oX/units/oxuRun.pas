@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       uOX,
       oxuInitialize, oxuWindows, oxuPlatform, oxuRunRoutines, oxuWindowRender,
-      oxuInitTask, oxuProgramInitTask,
+      oxuMainInitTask, oxuProgramInitTask,
       oxuTimer, oxuRenderingContext, oxuRenderer;
 
 TYPE
@@ -25,14 +25,16 @@ TYPE
      {restart instead of quitting}
      RestartFlag,
      {debug log enabled}
-     LogDebugCycle: boolean;
+     LogDebugCycle,
+     {is the ox.Initialize() step complete successful}
+     PreInitializeSuccess: boolean;
 
      {perform initialization before running}
      function Initialize(): boolean;
      {start running}
      procedure Start();
-     {done running}
-     procedure Done();
+     {call any deinitialization tasks and call Done()}
+     procedure Teardown();
      {run the engine}
      procedure Go();
      {run a single cycle}
@@ -64,9 +66,11 @@ IMPLEMENTATION
 
 function oxTRunGlobal.Initialize(): boolean;
 begin
-   oxInitialization.Initialize();
+   Result := oxInitialization.Initialize();
+   PreInitializeSuccess := Result;
 
-   Result := ox.Error = 0;
+   Result := Result and (ox.Error = 0);
+   app.Active := Result;
 
    log.Flush();
 end;
@@ -91,11 +95,21 @@ begin
    log.v('OnStart (Elapsed: ' + startTime.ElapsedfToString() + 's)');
 end;
 
-procedure oxTRunGlobal.Done();
+procedure oxTRunGlobal.Teardown();
 begin
-   log.i('oX > Finished running the program...');
-   ox.Started := false;
-   log.Leave();
+   oxProgramInitTask.StopWait();
+   oxMainInitTask.StopWait();
+
+   if(PreInitializeSuccess) then begin
+      log.i('oX > Finished running the program...');
+      ox.Started := false;
+      log.Leave();
+   end;
+
+   PreInitializeSuccess := false;
+
+   oxInitialization.DeInitialize();
+   {handle restart (if any) only if ran successfully}
 end;
 
 procedure oxTRunGlobal.Go();
@@ -107,34 +121,34 @@ begin
       initialized := Initialize();
 
       if(initialized) then begin
-         app.Active := true;
-
          {main loop}
          repeat
-            if(ox.Initialized and oxInitTask.IsFinished()) then begin
-               if(oxProgramInitTask.Task = nil) then
-                  oxProgramInitTask.Go();
-            end;
-
-            if(ox.Initialized and oxProgramInitTask.IsFinished()) then begin
-               if(not ox.Started) then
-                  Start();
-            end;
-
             GoCycle(true);
          until (not app.Active); {repeat until the application is no longer active}
-
-         Done();
       end else
          log.v('Failed to initialize');
 
-      oxInitialization.DeInitialize();
+      Teardown();
       {handle restart (if any) only if ran successfully}
    until (not initialized) or (not HandleRestart());
 end;
 
 procedure oxTRunGlobal.GoCycle(dosleep: boolean);
 begin
+   {are we waiting for initialization}
+   if(ox.Initialized) then begin
+      if(oxMainInitTask.IsFinished()) then begin
+         if(oxProgramInitTask.Task = nil) then
+            oxProgramInitTask.Go();
+      end;
+
+      if(oxProgramInitTask.IsFinished()) then begin
+         if(not ox.Started) then
+            Start();
+      end;
+   end;
+
+   {cycle stuff}
    if(LogDebugCycle) then
       log.d('oxRun > PreEvents');
    ox.OnPreEvents.LogVerbose := LogDebugCycle;
@@ -163,6 +177,7 @@ begin
    end;
    {$ENDIF}
 
+   {after}
    if(LogDebugCycle) then
       log.d('oxRun > OnAfter');
 
@@ -172,6 +187,7 @@ begin
    if(LogDebugCycle) then
       log.d('oxRun > Sleep');
 
+   {give the system a break}
    if(dosleep) then
       oxTimer.Sleep();
 end;
