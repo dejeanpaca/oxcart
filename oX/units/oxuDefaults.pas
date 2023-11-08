@@ -159,7 +159,10 @@ INTERFACE
 
       {$IFDEF OX_FEATURE_UI}
       oxuwndSettings,
+      oxuwndSettingsVideo,
+      oxuwndSettingsAudio,
       oxuwndInputSettings,
+      oxuwndSettingsOther,
       {$ENDIF}
 
       {loaders}
