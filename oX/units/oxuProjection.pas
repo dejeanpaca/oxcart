@@ -173,6 +173,8 @@ begin
    p.b := -s;
    p.t := s;
 
+   {we asssume size is minimum size for width or height, whichever is smaller}
+
    if(p.Aspect > 1) then begin
       p.l := -s * p.Aspect;
       p.r := s * p.Aspect;
