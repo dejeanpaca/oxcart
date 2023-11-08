@@ -80,7 +80,7 @@ TYPE
    end;
 
    {command notification procedure}
-   conTCommandNotifyProc = procedure(con: conPConsole; nID: longint);
+   conTCommandNotifyProc = procedure(con: conPConsole);
 
    {command}
    conPCommand = ^conTCommand;
@@ -163,6 +163,8 @@ TYPE
 
       {arguments}
       Arguments: TSimpleStringList;
+      {command ID for the current command handler}
+      CommandID: loopint;
 
       {entry handlers}
       EntryHandlers: conTEntryHandlerFuncs;
@@ -561,7 +563,8 @@ begin
 
       if cur <> nil then begin
          if cur^.Notify <> nil then begin
-            cur^.Notify(@self, cmd^.nID);
+            self.CommandID := cmd^.nID;
+            cur^.Notify(@self);
             exit(true);
          end
       end;

@@ -337,9 +337,9 @@ begin
    log.i();
 end;
 
-procedure oxconCommandNotify(var con: conTConsole; nID: longint);
+procedure oxconCommandNotify(var con: conTConsole);
 begin
-   case nID of
+   case con.CommandID of
       cidCON:
          consoleCommand(con);
       cidQUIT:

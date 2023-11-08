@@ -200,9 +200,9 @@ begin
 end;
 
 {console commands}
-procedure conCommandNotify(var con: conTConsole; nID: longint);
+procedure conCommandNotify(var con: conTConsole);
 begin
-   case nID of
+   case con.CommandID of
       cidLISTVAR: listVar(con);
       cidSETVAR: setVar(con);
       cidGETVAR: getVar(con);
