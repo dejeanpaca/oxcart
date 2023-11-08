@@ -234,7 +234,7 @@ TYPE
       MaxKeymapLength: loopint;
 
       constructor Create(); override;
-      procedure Initialize; override;
+      procedure Initialize(); override;
 
       function GetItemCount(): loopint; override;
       function GetItemHeight(index: loopint): loopint; override;
@@ -242,18 +242,18 @@ TYPE
       function IsEnabled(idx: loopint): boolean; override;
       function IsNavigable(index: loopint): boolean; override;
 
-      procedure Render; override;
+      procedure Render(); override;
 
       procedure RenderItem(index: loopint; r: oxTRect); override;
 
-      procedure UpdateItemHeight; override;
+      procedure UpdateItemHeight(); override;
 
-      destructor Destroy; override;
+      destructor Destroy(); override;
 
       protected
          menu: uiTContextMenu;
 
-         procedure FontChanged; override;
+         procedure FontChanged(); override;
 
          procedure ItemClicked(idx: loopint; button: TBitSet = appmcLEFT); override;
    end;
@@ -446,7 +446,7 @@ begin
    Result := menu.Items.List[index].ItemType <> uiCONTEXT_MENU_SEPARATOR;
 end;
 
-procedure wdgTContextMenu.Render;
+procedure wdgTContextMenu.Render();
 var
    i: loopint;
 
@@ -537,14 +537,17 @@ begin
          oxui.Material.ApplyColor('color', 0.5, 0.5, 0.5, 1);
 
       oxRenderingUtilities.TexturedQuad(r.x + 2 + size, r.y - 1 - size, size, size, item^.Glyph);
+      oxui.Material.ApplyTexture('texture', nil);
    end;
 
    if(item^.ItemType = uiCONTEXT_MENU_COMMAND) then begin
       f := CachedFont;
+      f.Start();
       DetermineColor();
       renderKeyMap();
 
       RenderCaption();
+      oxf.Stop();
    end else if(item^.ItemType = uiCONTEXT_MENU_CHECKBOX) then begin
       size := (r.h - 4);
 
@@ -562,11 +565,14 @@ begin
       wdgTCheckbox.RenderCheckbox(Self, menu.Items.List[index].Properties.IsSet(uiCONTEXT_MENU_ITEM_CHECKED), enabled, false, ir);
 
       f := CachedFont;
+      f.Start();
       DetermineColor();
       renderKeyMap();
       RenderCaption();
+      oxf.Stop();
    end else if(item^.ItemType = uiCONTEXT_MENU_SUB) then begin
       f := CachedFont;
+      f.Start();
 
       DetermineColor();
       RenderCaption();
@@ -574,29 +580,26 @@ begin
 
       f.Write(r.x + Dimensions.w - (5 + f.GetLength('>')), r.y - (r.h div 2) - f.GetHeight() div 2, '>');
       SetColorBlended(pSkin.Colors.Text);
+      oxf.Stop();
    end else if (item^.ItemType = uiCONTEXT_MENU_SEPARATOR) then begin
       SetColor(pSkin.Colors.Border);
 
       oxui.Material.ApplyTexture('texture', nil);
       uiDraw.HLine(r.x, r.y - (r.h div 2), r.x + r.w - 1);
-      CachedFont.Start();
-
-      if(not OddColored) then
-         SetColorBlended(pSkin.Colors.Text);
    end;
 end;
 
-procedure wdgTContextMenu.UpdateItemHeight;
+procedure wdgTContextMenu.UpdateItemHeight();
 begin
    ConstantHeight := false;
 end;
 
-destructor wdgTContextMenu.Destroy;
+destructor wdgTContextMenu.Destroy();
 begin
    inherited Destroy;
 end;
 
-procedure wdgTContextMenu.FontChanged;
+procedure wdgTContextMenu.FontChanged();
 var
    f: oxTFont;
    len,
@@ -665,7 +668,7 @@ begin
    end;
 end;
 
-procedure wdgTContextMenu.Initialize;
+procedure wdgTContextMenu.Initialize();
 begin
    inherited Initialize;
 
