@@ -61,7 +61,7 @@ VAR
 
 function Init(): boolean;
 begin
-   result := false;
+   Result := false;
 
    oxInitialization.Initialize();
    if(ox.Error <> 0) then
@@ -84,7 +84,7 @@ end;
 
 function oxTRunGlobal.Initialize(): boolean;
 begin
-   result := Init();
+   Result := Init();
 
    log.Flush();
 end;
@@ -123,6 +123,7 @@ var
 begin
    repeat
       initialized := Initialize();
+
       if(initialized) then begin
          Start();
 
