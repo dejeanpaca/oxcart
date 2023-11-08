@@ -281,7 +281,7 @@ begin
    Camera.vView.Assign(0, 0, -1);
    Camera.vView.Normalize();
    Camera.vUp.Assign(0, 1, 0);
-   Camera.SetupAngles();
+   Camera.SetupRotation();
 end;
 
 procedure oxedTSceneWindow.SceneChange();
