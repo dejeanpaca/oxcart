@@ -39,6 +39,9 @@ TYPE
       procedure LeaveFullscreen();
       procedure ToggleFullscreen();
       procedure ToggleWindowedFullscreen();
+
+      procedure LostFocus();
+      procedure RegainedFocus();
    end;
 
 IMPLEMENTATION
@@ -105,6 +108,16 @@ begin
       WindowedFullscreen()
    else
       LeaveFullscreen();
+end;
+
+procedure oxTWindowHelper.LostFocus();
+begin
+
+end;
+
+procedure oxTWindowHelper.RegainedFocus();
+begin
+
 end;
 
 procedure oxTWindowHelper.SetPosition(x, y: longint; system: boolean);
