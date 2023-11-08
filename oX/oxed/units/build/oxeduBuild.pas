@@ -317,7 +317,7 @@ begin
    for i := 0 to oxFeatures.List.n - 1 do begin
       feature := @oxFeatures.List.List[i];
 
-      if(oxFeatures.IsSupportedFeature(feature^, BuildInstalls.CurrentPlatform^.OS, IsLibrary())) then begin
+      if(oxFeatures.IsSupported(feature^, BuildInstalls.CurrentPlatform^.OS, IsLibrary())) then begin
          if(lib) then begin
             {skip renderer features as we'll include only a single renderer}
             if(pos('renderer.', feature^.Name) = 1) then
