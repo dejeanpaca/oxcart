@@ -108,10 +108,11 @@ begin
    
    if(f.error = 0) then begin
       Load(tfd, f);
+
       if(f.error <> 0) then
-         log.e('oxTFD > Error(' + sf(f.error) + ',' + sf(f.ioError) + ') reading file: ' + fn);
+         log.e('oxTFD > Error(' + sf(f.error) + ',' + sf(f.IoError) + ') reading file: ' + fn);
    end else
-      log.e('oxTFD > Error(' + sf(f.error) + ',' + sf(f.ioError) + ') opening file: ' + fn);
+      log.e('oxTFD > Error(' + sf(f.error) + ',' + sf(f.IoError) + ') opening file: ' + fn);
 
    f.Close();
 
@@ -185,7 +186,7 @@ begin
       Save(tfd, f);
 
       if(f.error <> 0) then
-         log.e('oxTFD > Error(' + sf(f.error) + ',' + sf(f.ioError) + ') writing file: ' + fn);
+         log.e('oxTFD > Error(' + sf(f.error) + ',' + sf(f.IoError) + ') writing file: ' + fn);
    end else
       log.e('oxTFD > Failed to create: ' + fn);
 
