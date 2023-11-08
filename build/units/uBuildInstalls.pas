@@ -35,6 +35,7 @@ TYPE
 
       class procedure Initialize(out p: TBuildPlatform); static;
       function GetName(): StdString;
+      function GetDescription(): StdString;
       function GetExecutablePath(): StdString;
 
       procedure SetPlatform(newPlatform: TFPCPlatformString);
@@ -307,6 +308,19 @@ begin
       Result := build.GetBuiltWithTarget();
 end;
 
+function TBuildPlatform.GetDescription(): StdString;
+var
+   sName: string;
+
+begin
+   sName := GetName();
+
+   if(sName = Platform) then
+      Result := sName
+   else
+      Result := sName + ' (' + Platform + ')';
+end;
+
 function TBuildPlatform.GetExecutablePath(): StdString;
 begin
    if(Executable = '') then
@@ -387,14 +401,14 @@ begin
    fn := GetExecutablePath();
 
    if(fn = '') then begin
-      log.w('Cannot find executable for ' + GetName() + ' at ' + fn);
+      log.w('Cannot find executable for ' + GetDescription() + ' at ' + fn);
       exit(False);
    end;
 
    if ReadVersion() then
-      log.v('Found executable for ' + GetName() + ' at ' + fn + ' (version: ' + Version + ')')
+      log.v('Found executable for ' + GetDescription() + ' at ' + fn + ' (version: ' + Version + ')')
    else begin
-      log.w('Cannot read version for ' + GetName() + ' at ' + fn);
+      log.w('Cannot read version for ' + GetDescription() + ' at ' + fn);
       exit(False);
    end;
 
