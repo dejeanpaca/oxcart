@@ -154,7 +154,10 @@ TYPE
       procedure ClearContext();
       {clear context but mark it as used}
       procedure ClearContextUse();
-      function DestroyContext({%H-}context: loopint): boolean; virtual;
+      {renderer implementation of destroying a context}
+      function InternalDestroyContext({%H-}context: loopint): boolean; virtual;
+      {destroy a context}
+      function DestroyContext({%H-}context: loopint): boolean;
 
       function RenderingContextCount(): loopint;
 
@@ -351,7 +354,7 @@ begin
       RenderingContexts[context].Used := false;
       RenderingContexts[context].Created := false;
 
-      log.i('Rendering context ' + sf(context) + ' destroyed');
+      logtv('Rendering context ' + sf(context) + ' removed');
    end;
 end;
 
@@ -488,10 +491,24 @@ begin
    end;
 end;
 
+function oxTRenderer.InternalDestroyContext(context: loopint): boolean;
+begin
+   Result := true;
+end;
+
 function oxTRenderer.DestroyContext(context: loopint): boolean;
 begin
-   RemoveContext(context);
    Result := true;
+
+   if(context >= 0) and (RenderingContexts[context].Created) then begin
+      Result := InternalDestroyContext(context);
+      RemoveContext(context);
+
+      if(Result) then
+         logtv('Destroyed context ' + sf(context))
+      else
+         logtv('Failed to destroy context ' + sf(context));
+   end;
 end;
 
 function oxTRenderer.RenderingContextCount(): loopint;
