@@ -12,11 +12,11 @@ INTERFACE
 
    USES
       oxuEntity, oxuSerialization,
-      oxeduEditRenderers;
+      oxeduThingies;
 
 TYPE
    oxedTEntityData = class
-      ComponentRenderers: oxedTEditRendererComponentPairs;
+      ComponentRenderers: oxedTThingieComponentPairs;
    end;
 
 IMPLEMENTATION

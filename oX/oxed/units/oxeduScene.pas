@@ -15,7 +15,7 @@ INTERFACE
       {ox}
       uOX, oxuRunRoutines, oxuEntity, oxuSceneRender, oxuScene, oxuWorld,
       {oxed}
-      uOXED, oxeduEditRenderers, oxeduMessages, oxeduEntities;
+      uOXED, oxeduThingies, oxeduMessages, oxeduEntities;
 
 TYPE
    { oxedTSceneGlobal }
@@ -24,7 +24,7 @@ TYPE
       {currently selected entity}
       SelectedEntity: oxTEntity;
       {selected entity component renderer pairs}
-      SelectedComponentPairs: oxedTEditRendererComponentPairs;
+      SelectedComponentPairs: oxedTThingieComponentPairs;
 
       {set an entity as currently selected}
       procedure SelectEntity(newEntity: oxTEntity);
@@ -53,7 +53,7 @@ begin
    SelectedComponentPairs.Dispose();
 
    if(newEntity <> nil) then
-      SelectedComponentPairs := oxedEditRenderers.FindForEntity(newEntity);
+      SelectedComponentPairs := oxedThingies.FindForEntity(newEntity);
 end;
 
 procedure oxedTSceneGlobal.Unselect;
