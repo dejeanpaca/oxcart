@@ -268,7 +268,6 @@ end;
 procedure oxTWindows.SetCurrent(wnd: oxTWindow);
 begin
    oxWindow.Current := wnd;
-   oxTRenderer(wnd.Renderer).ContextCurrent(wnd.RenderingContext);
 end;
 
 INITIALIZATION

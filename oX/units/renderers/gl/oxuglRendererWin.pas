@@ -10,8 +10,11 @@ INTERFACE
 
 	USES
      uStd, uLog, StringUtils,
+     windows,
+     {ox}
+     oxuTypes, oxuWindowsOS, oxuRenderer,
+     {gl}
      {$INCLUDE usesglext.inc},
-     windows, oxuWindowsOS, oxuRenderer,
      oxuOGL, oxuglExtensions, oxuglRendererPlatform, oxuglRenderer, oxuglWindow
      {$IFNDEF GLES}
      ,oxuWGL
@@ -27,7 +30,7 @@ TYPE
       procedure OnInitWindow({%H-}wnd: oglTWindow); virtual;
       procedure SwapBuffers(wnd: oglTWindow); virtual;
       function GetContext(wnd: oglTWindow; shareContext: HGLRC): HGLRC; virtual;
-      function ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
+      function ContextCurrent(var target: oxTRenderTarget; context: oglTRenderingContext): boolean; virtual;
       function ClearContext({%H-}wnd: oglTWindow): boolean; virtual;
       function DestroyContext({%H-}wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
    end;
@@ -399,9 +402,10 @@ begin
       log.e('gl > (' + method + ') Failed getting rendering context ' + winos.FormatMessage(wnd.wd.LastError));
 end;
 
-function oxglTPlatformWGL.ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean;
+function oxglTPlatformWGL.ContextCurrent(var target: oxTRenderTarget; context: oglTRenderingContext): boolean;
 begin
-   Result := wglMakeCurrent(wnd.wd.dc, context);
+   if(target.Typ = oxRENDER_TARGET_WINDOW) then
+      Result := wglMakeCurrent(winosTWindow(target.Target).wd.dc, context);
 end;
 
 function oxglTPlatformWGL.ClearContext(wnd: oglTWindow): boolean;
