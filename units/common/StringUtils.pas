@@ -27,6 +27,12 @@ TYPE
    TAnsiStringArray = array of ansistring;
    TStringArray = array of StdString;
 
+   { TStringArrayHelper }
+
+   TStringArrayHelper = type helper for TStringArray
+      function GetSingleString(separator: StdString): StdString;
+   end;
+
    { TPackedStrings }
 
    TPackedStrings = record
@@ -2173,6 +2179,29 @@ begin
 
    for i := 0 to Length(s) - 1 do
       Result[i] := s[i];
+end;
+
+{ TStringArrayHelper }
+
+function TStringArrayHelper.GetSingleString(separator: StdString): StdString;
+var
+   i: loopint;
+
+begin
+   Result := '';
+
+   if(separator <> '') then begin
+      for i := 0 to High(Self) do begin
+         if(i < High(Self)) then
+            Result := Result + Self[i] + separator
+         else
+            Result := Result + Self[i];
+      end;
+   end else begin
+      for i := 0 to High(Self) do begin
+         Result := Result + Self[i];
+      end;
+   end;
 end;
 
 { TStdStringStringHelper }
