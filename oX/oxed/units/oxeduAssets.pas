@@ -54,7 +54,8 @@ IMPLEMENTATION
 class procedure oxedTAssetsIgnorePaths.Initialize(out ig: oxedTAssetsIgnorePaths);
 begin
    ZeroOut(ig, SizeOf(ig));
-   ig.Initialize(ig);
+   TSimpleStringList.Initialize(ig.Directories, 128);
+   TSimpleStringList.Initialize(ig.FileTypes, 128);
 end;
 
 { oxedTAssets }
