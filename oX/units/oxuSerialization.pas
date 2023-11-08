@@ -198,7 +198,7 @@ TYPE
 
    { oxTSerializationManager }
 
-   oxTSerializationManager = class
+   oxTSerializationManager = record
       public
       Types: record
          Char,
@@ -253,7 +253,7 @@ TYPE
 
       Serializers: oxTSerializers;
 
-      constructor Create; virtual;
+      procedure Initialize();
 
       procedure Add(serializer: oxTSerialization);
       procedure Remove(serializer: oxTSerialization);
@@ -274,9 +274,7 @@ VAR
 
 IMPLEMENTATION
 
-{ oxTSerializationManager }
-
-constructor oxTSerializationManager.Create;
+procedure oxTSerializationManager.Initialize();
 begin
    Serializers.Initialize(Serializers);
 end;
@@ -1178,7 +1176,7 @@ end;
 
 procedure init();
 begin
-   oxSerialization := oxTSerializationManager.Create();
+   oxSerialization.Initialize();
 
    oxSerialization.Types.Char.Init(tkChar);
    oxSerialization.Types.Char.Name := 'Char';
@@ -1280,11 +1278,6 @@ begin
    end;
 end;
 
-function instanceGlobal(): TObject;
-begin
-   Result := oxTSerializationManager.Create();
-end;
-
 VAR
    initRoutines: oxTRunRoutine;
  
@@ -1293,9 +1286,6 @@ INITIALIZATION
 
    ox.Init.iAdd(initRoutines, 'ox.serialization', @initSerialization);
 
-   oxGlobalInstances.Add(oxTSerializationManager, @oxSerialization, @instanceGlobal)^.Allocate := false;
-
-FINALIZATION
-   FreeObject(oxSerialization);
+   oxGlobalInstances.Add('oxTSerializationManager', @oxSerialization);
 
 END.

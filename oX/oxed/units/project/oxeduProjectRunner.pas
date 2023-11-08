@@ -227,7 +227,7 @@ end;
 
 procedure onStart();
 begin
-   oxedLib.oxWindows := oxTWindows(oxLibReferences.FindInstance('oxTWindows'));
+   oxedLib.oxWindows := oxLibReferences.FindInstancePtr('oxTWindows');
 end;
 
 procedure onStop();

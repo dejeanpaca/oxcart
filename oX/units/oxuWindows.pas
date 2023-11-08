@@ -28,9 +28,11 @@ CONST
    oxcCONTEXT_WINDOW_IDX            = -1;
 
 TYPE
+   oxPWindows = ^oxTWindows;
+
    { oxTWindows }
 
-   oxTWindows = class
+   oxTWindows = record
       {window list}
       n: loopint;
       w: array[-1..oxcMAXIMUM_WINDOWS - 1] of oxTWindow;
@@ -65,7 +67,7 @@ TYPE
       {list of external windows}
       ExternalWindows: uiTPreallocatedControlList;
 
-      constructor Create; virtual;
+      procedure Create();
 
       {window allocation}
       procedure Setup(var wnd: oxTWindow; const settings: oxTWindowSettings; contextWindow: boolean = false);
@@ -86,8 +88,8 @@ TYPE
       procedure StartRender(wnd: oxTWindow);
 
       {render window(s)}
-      procedure Render(wnd: oxTWindow); virtual;
-      procedure Render(); virtual;
+      procedure Render(wnd: oxTWindow);
+      procedure Render();
 
       {set window as current}
       procedure SetCurrent(wnd: oxTWindow);
@@ -100,7 +102,7 @@ TYPE
 VAR
    oxWindows: oxTWindows;
    {$IFDEF OX_LIBRARY}
-   oxExternalWindows: oxTWindows;
+   oxExternalWindows: oxPWindows;
    {$ENDIF}
 
 IMPLEMENTATION
@@ -119,17 +121,17 @@ begin
    Result := false;
 
    {$IFDEF OX_LIBRARY}
-   oxExternalWindows := oxTWindows(oxExternalGlobalInstances.FindInstance('oxTWindows'));
+   oxExternalWindows := oxExternalGlobalInstances.FindInstancePtr('oxTWindows');
 
    if(oxExternalWindows = nil) then begin
       log.e('Failed to get external oxTWindows instance');
       exit(false);
    end;
 
-   oxWindowSettings.AllocateCount := oxExternalWindows.ExternalWindows.n;
+   oxWindowSettings.AllocateCount := oxExternalWindows^.ExternalWindows.n;
    if(oxWindowSettings.AllocateCount > 0) then begin
       {get the renderer from the first window}
-      oxRenderers.vSelectedRenderer := oxTRenderer(oxTWindow(oxExternalWindows.ExternalWindows.List[0].oxwParent).Renderer).Name;
+      oxRenderers.vSelectedRenderer := oxTRenderer(oxTWindow(oxExternalWindows^.ExternalWindows.List[0].oxwParent).Renderer).Name;
 
       log.v('Using external renderer: ' + oxRenderers.vSelectedRenderer);
       oxRenderers.SetRenderer();
@@ -159,8 +161,8 @@ begin
          oxWindow.Current := w[i];
 
          {$IFDEF OX_LIBRARY}
-         if(oxExternalWindows <> nil) and (oxExternalWindows.ExternalWindows.n > 0) then
-            externalWindow := oxExternalWindows.ExternalWindows.List[i];
+         if(oxExternalWindows <> nil) and (oxExternalWindows^.ExternalWindows.n > 0) then
+            externalWindow := oxExternalWindows^.ExternalWindows.List[i];
          {$ENDIF}
 
          if(not oxWindow.CreateWindow(w[i], externalWindow)) then begin
@@ -179,13 +181,13 @@ begin
       log.e('Error: No windows were allocated.');
 end;
 
-constructor oxTWindows.Create;
+procedure oxTWindows.Create();
 begin
    MaxWindowAllocate := 1;
    AllowScreenSaver := false;
 
-   internal.OnPostRender.Initialize(internal.OnPostRender);
-   internal.OnPostRender.Add(@oxwRenderPost);
+   Internal.OnPostRender.Initialize(internal.OnPostRender);
+   Internal.OnPostRender.Add(@oxwRenderPost);
 
    ExternalWindows.Initialize(ExternalWindows);
 
@@ -338,11 +340,8 @@ begin
    end;
 end;
 
-function instanceGlobal(): TObject;
-begin
-   Result := oxTWindows.Create();
-end;
-
 INITIALIZATION
-   oxGlobalInstances.Add(oxTWindows, @oxWindows, @instanceGlobal);
+   oxGlobalInstances.Add('oxTWindows', @oxWindows);
+   oxWindows.Create();
+
 END.

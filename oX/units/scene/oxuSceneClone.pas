@@ -15,7 +15,7 @@ INTERFACE
       {ox}
       oxuEntity, oxuComponent, oxuScene, oxuWorld, oxuSerialization;
 
-procedure oxCloneScene(source: oxTScene; out scene: oxTScene; serialization: oxTSerializationManager = nil);
+procedure oxCloneScene(source: oxTScene; out scene: oxTScene; var serialization: oxTSerializationManager);
 
 IMPLEMENTATION
 
@@ -65,28 +65,21 @@ begin
    oxEntity.OnClone.Call(entity);
 end;
 
-
-procedure oxCloneScene(source: oxTScene; out scene: oxTScene; serialization: oxTSerializationManager = nil);
+procedure oxCloneScene(source: oxTScene; out scene: oxTScene; var serialization: oxTSerializationManager);
 var
    startTime: TDateTime;
 
 begin
    startTime := Time();
 
-   if(serialization = nil) then
-      serialization := oxSerialization;
-
    scene := nil;
 
-   if(serialization <> nil) then begin
-      scene := oxTScene(CloneEntity(serialization, source, false));
-      scene.World := oxTWorld(serialization.Clone(source.World));
+   scene := oxTScene(CloneEntity(serialization, source, false));
+   scene.World := oxTWorld(serialization.Clone(source.World));
 
-      CloneChildren(serialization, source, scene);
+   CloneChildren(serialization, source, scene);
 
-      log.v('Scene cloned (Elapsed: ' + startTime.ElapsedfToString() + 's)');
-   end else
-      log.e('No serialization manager provided for scene clone');
+   log.v('Scene cloned (Elapsed: ' + startTime.ElapsedfToString() + 's)');
 end;
 
 END.

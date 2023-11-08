@@ -242,7 +242,7 @@ begin
          errDescription.Add(ErrorDescription);
       end;
 
-      if(oxWindows <> nil) and (oxWindows.LastErrorDescription <> '') then
+      if(oxWindows.LastErrorDescription <> '') then
          errDescription.Add(oxWindows.LastErrorDescription);
 
       errDescription.Add('');
@@ -286,15 +286,12 @@ begin
       appDVarTextConfiguration.Save();
    end;
 
-   {dispose all windows except primary}
-   if(oxWindows <> nil) then begin
-      {do not destroy}
-      oxWindows.DisposeExceptPrimary();
+   {do not destroy}
+   oxWindows.DisposeExceptPrimary();
 
-      {destroy ui objects in primary window}
-      if(oxWindows.w[0] <> nil) then
-         oxUIHooks.DestroyWindow(oxWindows.w[0]);
-   end;
+   {destroy ui objects in primary window}
+   if(oxWindows.w[0] <> nil) then
+      oxUIHooks.DestroyWindow(oxWindows.w[0]);
 
    {done with UI}
    if(oxui <> nil) then
