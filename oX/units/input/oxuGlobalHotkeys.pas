@@ -22,7 +22,7 @@ IMPLEMENTATION
 procedure toggleFullscreen(wnd: oxTWindow; goFull: boolean);
 begin
    if(goFull) then
-      wnd.Fullscreen()
+      wnd.EnterFullscreen()
    else
       wnd.LeaveFullscreen();
 end;
@@ -35,13 +35,13 @@ var
 begin
    if(oxGlobalHotkeys.AllFullscreen) then begin
       {base toggle on the first window}
-      inFullscreen := oxWindows.w[0].oxProperties.Fullscreen;
+      inFullscreen := oxWindows.w[0].Fullscreen.Enabled;
 
       for i := 0 to oxWindows.n - 1 do begin
          toggleFullscreen(oxWindows.w[0], not inFullscreen);
       end;
    end else
-      toggleFullscreen(wnd, not wnd.oxProperties.Fullscreen);
+      toggleFullscreen(wnd, not wnd.Fullscreen.Enabled);
 end;
 
 CONST

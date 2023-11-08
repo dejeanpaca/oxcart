@@ -893,7 +893,7 @@ begin
       else if code = DISP_CHANGE_RESTART then
          codeName := 'RESTART';
 
-      log.e('ChangeDisplaySettings returned: ' + sf(code) + ' ' + codeName);
+      log.e('ChangeDisplaySettings returned: ' + sf(code) + ' ' + codeName);         
    end;
 
    winos.LogError('Failed to change display settings');
@@ -940,7 +940,7 @@ begin
    if(winos.LogError('Failed to set GWL_EXSTYLE') <> 0) then
       exit(false);
 
-   if(not wnd.oxProperties.WindowedFullscreen) then begin
+   if(not wnd.Fullscreen.Windowed) then begin
       Result := Fullscreen(wnd.Dimensions.w, wnd.Dimensions.h, oxTRenderer(wnd.Renderer).Settings.ColorBits);
 
       if(not Result) then
@@ -962,7 +962,7 @@ begin
    SetWindowLong(wnd.wd.h, GWL_STYLE, wnd.wd.wStyle);
    SetWindowLong(wnd.wd.h, GWL_EXSTYLE, wnd.wd.wStyleEx);
 
-   if(not wnd.oxProperties.WindowedFullscreen) then
+   if(not wnd.Fullscreen.Windowed) then
       Result := winosChangeDisplaySettings(nil, 0) = DISP_CHANGE_SUCCESSFUL
    else
       Result := true;
