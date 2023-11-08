@@ -41,6 +41,8 @@ TYPE
       function GetSingleString(separator: StdString): StdString;
       function GetSingleString(): StdString;
       function GetAnsiStrings(): TAnsiStringArray;
+      procedure AddUnique(const s: StdString);
+      procedure RemoveString(const s: StdString);
    end;
 
    { TSimpleAnsiStringListHelper }
@@ -1801,6 +1803,23 @@ begin
    for i := 0 to n - 1 do begin
       Result[i] := Self.List[i];
    end;
+end;
+
+procedure TSimpleStringListHelper.AddUnique(const s: StdString);
+begin
+   if(FindString(s) = -1) then
+      Add(s);
+end;
+
+procedure TSimpleStringListHelper.RemoveString(const s: StdString);
+var
+   index: loopint;
+
+begin
+   index := FindString(s);
+
+   if(index > -1) then
+      Remove(index);
 end;
 
 { TSimpleAnsiStringListHelper }
