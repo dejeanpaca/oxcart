@@ -13,7 +13,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuViewportType, oxuViewport, oxuWindowTypes,
       {ui}
-      uiuWindowRender,
+      uiuWindowRender, uiuDraw,
       uiuWidget, uiWidgets, uiuRegisteredWidgets, wdguBase;
 
 TYPE
@@ -23,6 +23,9 @@ TYPE
    wdgTViewport = class(uiTWidget)
       PreviousViewport: oxPViewport;
       Viewport: oxTViewport;
+
+      PreviousUIScissorStack: loopint;
+
       AlwaysClear,
       AutoProjectionName: boolean;
 
@@ -90,6 +93,7 @@ end;
 
 procedure wdgTViewport.ProjectionStart();
 begin
+   PreviousUIScissorStack := uiDraw.ScissorStackIndex;
    PreviousViewport := oxViewport;
    Viewport.Apply(AlwaysClear);
 end;
@@ -100,6 +104,7 @@ begin
      PreviousViewport^.Apply(false);
 
    uiWindowRender.Prepare(oxTWindow(oxwParent));
+   uiDraw.ScissorStackIndex := PreviousUIScissorStack;
 end;
 
 procedure wdgTViewport.UpdateViewport();
