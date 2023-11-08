@@ -131,10 +131,17 @@ begin
    oxed.Init.dCall();
 end;
 
+{$IFNDEF NO_UI}
 procedure onStart();
+var
+   lastOpen: StdString;
+
 begin
-   {$IFNDEF NO_UI}
+   lastOpen := oxedRecents.LastOpen;
+
    oxedProjectManagement.OnClosed.Call();
+
+   oxedRecents.LastOpen := lastOpen;
 
    {open a project}
    if(oxedSettings.StartWithLastProject) and (oxedRecents.LastOpen <> '') then begin
@@ -144,13 +151,15 @@ begin
          {failed to open last open project, so clear it}
          oxedRecents.LastOpen := '';
    end;
-   {$ENDIF}
 end;
+{$ENDIF}
 
 INITIALIZATION
    Include(uiWindow.RootDefaultProperties, uiwndpRESIZABLE);
 
    ox.OnInitialize.Add('oxed.init', @initialize, @deinitialize);
+   {$IFNDEF NO_UI}
    ox.OnStart.Add('oxed.start', @onStart);
+   {$ENDIF}
 
 END.
