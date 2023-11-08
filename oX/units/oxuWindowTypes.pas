@@ -65,7 +65,8 @@ TYPE
 
       constructor Create(); override;
 
-      procedure RaiseError(code: longint; const description: StdString);
+      procedure RaiseError(code: longint; const description: StdString = '');
+      procedure RaiseError(const description: StdString);
       procedure CreateFail(const description: StdString);
       procedure DestroyFail(const description: StdString);
    end;
@@ -98,7 +99,7 @@ begin
    end;
 end;
 
-constructor oxTWindow.Create;
+constructor oxTWindow.Create();
 begin
    inherited;
 
@@ -121,6 +122,11 @@ begin
 
    ErrorDescription.Add(description);
    log.e(description);
+end;
+
+procedure oxTWindow.RaiseError(const description: StdString);
+begin
+   RaiseError(eFAIL, description);
 end;
 
 procedure oxTWindow.CreateFail(const description: StdString);
