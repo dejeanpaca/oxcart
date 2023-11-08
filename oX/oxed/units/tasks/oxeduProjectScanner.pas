@@ -216,7 +216,7 @@ begin
       exit('');
 end;
 
-{ TBuildTask }
+{ oxedTProjectScannerTask }
 
 constructor oxedTProjectScannerTask.Create();
 begin

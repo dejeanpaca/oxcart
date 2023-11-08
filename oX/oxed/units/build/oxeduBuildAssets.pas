@@ -36,7 +36,7 @@ TYPE
       {called when deploy is done}
       procedure OnDone(); virtual;
 
-      function OnFile(var {%H-}f: oxedTAssetBuildFile; var sf: oxedTScannerFile): boolean; virtual;
+      function OnFile(var {%H-}f: oxedTAssetBuildFile; var {%H-}sf: oxedTScannerFile): boolean; virtual;
    end;
 
    { oxedTBuildAssets }
