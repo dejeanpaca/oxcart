@@ -96,6 +96,8 @@ TYPE
       BuildMechanism: oxedTBuildMechanism;
       {signal the build process to abort}
       BuildAbort,
+      {compile a binary for target platform}
+      BuildBinary,
       {build assets}
       BuildAssets: boolean;
 
@@ -994,32 +996,38 @@ begin
 
    oxedBuildLog.i(modeString + ' started (' + targetString + ')');
 
-   if(not Recreate()) then begin
-      Fail('Failed to recreate project files');
-      exit;
-   end;
-
-   if(not RecreateConfig(BuildMechanism)) then begin
-      Fail('Failed to recreate project config files');
-      exit;
-   end;
-
-   if(IsLibrary()) then begin
-      {check if used fpc version matches us}
-      if(pos(FPC_VERSION, BuildInstalls.CurrentPlatform^.Version) <> 1) then begin
-         oxedBuildLog.e('Library fpc version mismatch. Got ' + BuildInstalls.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
+   if(BuildBinary) then begin
+      if(not Recreate()) then begin
+         Fail('Failed to recreate project files');
          exit;
       end;
+
+      if(not RecreateConfig(BuildMechanism)) then begin
+         Fail('Failed to recreate project config files');
+         exit;
+      end;
+
+      if(IsLibrary()) then begin
+         {check if used fpc version matches us}
+         if(pos(FPC_VERSION, BuildInstalls.CurrentPlatform^.Version) <> 1) then begin
+            oxedBuildLog.e('Library fpc version mismatch. Got ' + BuildInstalls.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
+            exit;
+         end;
+      end;
+
+      ExecuteBuild();
+
+      if(not BuildExec.Output.Success) then
+         Fail(modestring + ' failed (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
+   end else begin
+      {fake a successful build}
+      BuildExec.ResetOutput();
+      BuildExec.Output.Success := true;
    end;
 
-   ExecuteBuild();
-
-   if(BuildExec.Output.Success) then begin
-      FurtherSteps();
-   end else
-      Fail(modestring + ' failed (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
-
    if(BuildOk) then begin
+      FurtherSteps();
+
       OnFinish.Call();
 
       if(BuildOk) then begin
@@ -1275,7 +1283,10 @@ begin
 
    InEditor := IsLibrary() and (BuildArch.Name = 'editor');
 
-   BuildAssets := BuildType = OXED_BUILD_TASK_STANDALONE;
+   if(BuildType = OXED_BUILD_TASK_STANDALONE) then begin
+      BuildAssets := true;
+      BuildBinary := true;
+   end;
 
    SetupFPCBuildOptions();
    SetupEditorBuildOptions();
@@ -1461,6 +1472,8 @@ begin
    BuildArch := oxedEditorPlatform.Architecture;
    BuildMechanism := OXED_BUILD_VIA_FPC;
    BuildAbort := false;
+   BuildBinary := true;
+   BuildAssets := true;
    Parameters.ExportSymbols.Dispose();
    Parameters.PreIncludeUses.Dispose();
    Parameters.IncludeUses.Dispose();
@@ -1469,14 +1482,16 @@ end;
 
 procedure oxedTBuildGlobal.FurtherSteps();
 begin
-   if(BuildType = OXED_BUILD_TASK_STANDALONE) then begin
-      if(BuildTarget = OXED_BUILD_LIB) then begin
-         if(not MoveExecutable()) then
+   if(BuildBinary) then begin
+      if(BuildType = OXED_BUILD_TASK_STANDALONE) then begin
+         if(BuildTarget = OXED_BUILD_LIB) then begin
+            if(not MoveExecutable()) then
+               exit;
+         end;
+
+         if(not CopyLibraries()) then
             exit;
       end;
-
-      if(not CopyLibraries()) then
-         exit;
    end;
 
    if(BuildAssets) then begin
