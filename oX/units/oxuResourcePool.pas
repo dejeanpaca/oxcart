@@ -11,12 +11,23 @@ UNIT oxuResourcePool;
 INTERFACE
 
    USES
-      uStd, oxuTypes{$IFDEF OX_RESOURCE_DEBUG}, StringUtils, uLog{$ENDIF};
+      uStd, oxuTypes
+      {$IFDEF OX_RESOURCE_DEBUG}, StringUtils, uLog{$ENDIF};
 
 CONST
    oxRESOURCE_POOL_INCREMENT: loopint = 1024;
 
 TYPE
+   oxTResourceLoaderRoutine = procedure(resource: oxTResource);
+
+   oxPResourceLoader = ^oxTResourceLoader;
+   oxTResourceLoader = record
+      ResourceType: oxTResourceClass;
+      Load: oxTResourceLoaderRoutine;
+   end;
+
+   oxTResourceLoaders = specialize TPreallocatedArrayList<oxTResourceLoader>;
+
    { oxTResourcePool }
 
    oxTResourcePool = class(oxTPreallocatedResourceArrayListClass)
@@ -30,19 +41,35 @@ TYPE
       {dispose of all resources, even permanent ones (if you're sure there aren't any other references to these objects)}
       procedure DisposeAllPermanent();
 
+      {find resource by path}
       function FindByPath(const path: string): oxTResource;
 
+      {add resource to pool}
       procedure AddResource(resource: oxTResource);
+      {remove specified resource from pool}
       procedure RemoveResource(resource: oxTResource);
+
+      {Load this type of resource, should basically call the loader routine added via oxResource.AddLoader.
+      This also exists so we don't need to look for the loader method as well.}
+      procedure Load(); virtual;
    end;
 
    { oxTResourceGlobal }
 
    oxTResourceGlobal = record
+      Loaders: oxTResourceLoaders;
+
+      {load a resource}
+      procedure Load(var resource);
       {destroy a resource (destroys the object if reference count 0 or less)}
       procedure Destroy(var resource);
       {free resource object}
       procedure Free(var resource);
+
+      {add a resource loader}
+      procedure AddLoader(resourceType: oxTResourceClass; loader: oxTResourceLoaderRoutine);
+      {find a resource loader by the given resource type}
+      function FindLoader(resourceType: oxTResourceClass): oxPResourceLoader;
    end;
 
 VAR
@@ -51,6 +78,31 @@ VAR
 IMPLEMENTATION
 
 { oxTResourceGlobal }
+
+procedure oxTResourceGlobal.Load(var resource);
+var
+   loader: oxPResourceLoader;
+
+begin
+   {make sure we're not given any object}
+   if(TObject(resource) <> nil) then begin
+      assert(TObject(resource).InheritsFrom(oxTResource), 'Tried to load resource which doesn''t inherit from oxTResource');
+
+      if(oxTResource(resource).Pool <> nil) then begin
+         {if resource in pool, call the pool method}
+         if(oxTResource(resource).Pool <> nil) then
+            oxTResourcePool(oxTResource(resource).Pool).Load()
+         else begin
+            {otherwise we find the loader}
+            loader := FindLoader(oxTResourceClass(oxTResource(resource).ClassType));
+
+            assert(loader <> nil, 'Resource loader not found for class type ' + oxTResource(resource).ClassName);
+
+            loader^.Load(oxTResource(resource));
+         end;
+      end;
+   end;
+end;
 
 procedure oxTResourceGlobal.Destroy(var resource);
 var
@@ -129,6 +181,42 @@ begin
    {$ENDIF}
 
    FreeObject(resource);
+end;
+
+procedure oxTResourceGlobal.AddLoader(resourceType: oxTResourceClass; loader: oxTResourceLoaderRoutine);
+var
+   l: oxTResourceLoader;
+
+begin
+   assert(resourceType <> nil, 'Cannot add loader for nil resource type');
+   assert(loader <> nil, 'Cannot add nil resource loader routine');
+
+   l.ResourceType := resourceType;
+   l.Load := loader;
+
+   Loaders.Add(l);
+end;
+
+function oxTResourceGlobal.FindLoader(resourceType: oxTResourceClass): oxPResourceLoader;
+var
+   i: loopint;
+   properType: TClass;
+
+begin
+   properType := resourceType;
+
+   {find class type that inherits from oxTResource, as we need to match with the base type instead of anything inherited}
+   while(properType.ClassParent.ClassName <> 'oxTResource') do begin
+      properType := properType.ClassParent;
+   end;
+
+   {find the type in the list}
+   for i := 0 to Loaders.n - 1 do begin
+      if(Loaders.List[i].ResourceType = oxTResourceClass(properType)) then
+         exit(@Loaders.List[i]);
+   end;
+
+   Result := nil;
 end;
 
 { oxTResourcePool }
@@ -214,5 +302,13 @@ begin
       end;
    end;
 end;
+
+procedure oxTResourcePool.Load();
+begin
+   Assert(true, 'Load method not overriden for resource pool of type ' + ClassName);
+end;
+
+INITIALIZATION
+   oxResource.Loaders.InitializeValues(oxResource.Loaders);
 
 END.
