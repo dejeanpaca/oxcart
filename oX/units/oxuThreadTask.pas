@@ -13,9 +13,9 @@ INTERFACE
    USES
       sysutils, classes,
       uStd, uTiming, uLog,
-      appuEvents,
+      appuEvents
       {$IFNDEF NO_THREADS}
-      oxuRun
+      , oxuRun
       {$ENDIF};
 
 CONST
