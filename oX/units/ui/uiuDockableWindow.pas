@@ -358,8 +358,8 @@ begin
    if(w.w.n = 1) then begin
       d := GetTotalDimensions();
       p := Position;
-      Include(Self.Properties, uiwndpMOVE_BY_SURFACE);
-      Include(Self.Properties, uiwndpMOVABLE);
+
+      Self.Properties := Self.Properties + [uiwndpMOVE_BY_SURFACE, uiwndpMOVABLE];
 
       SetFrameStyle(uiwFRAME_STYLE_NONE);
 
@@ -610,8 +610,7 @@ var
 begin
    parent := oxWindow.Current;
 
-   Include(uiWindow.Create.Properties, uiwndpNO_ESCAPE_KEY);
-   Include(uiWindow.Create.Properties, uiwndpNO_CONFIRMATION_KEY);
+   uiWindow.Create.Properties :=  uiWindow.Create.Properties + [uiwndpNO_ESCAPE_KEY, uiwndpNO_CONFIRMATION_KEY];
 
    parent.GetMaximizationCoords(p, d);
 
