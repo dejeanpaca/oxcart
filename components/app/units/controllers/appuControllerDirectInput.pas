@@ -91,9 +91,10 @@ end;
 
 function diCallback(var lpddi: TDIDeviceInstanceA; {%H-}pvRef: Pointer): windows.BOOL; stdcall;
 begin
-   appDirectInputControllerHandler.Add(lpddi);
-
-   Result := DIENUM_CONTINUE;
+   if appDirectInputControllerHandler.Add(lpddi) then
+      Result := DIENUM_CONTINUE
+   else
+      Result := DIENUM_STOP;
 end;
 
 procedure appTDirectInputControllerHandler.Rescan();
@@ -167,13 +168,13 @@ begin
    if failed(appDirectInputControllerHandler.DIInterface.CreateDevice(lpddi.guidInstance, diDevice, nil), 'Failed to create device') then
       exit(false);
 
-   {get device updates when in background and exclusive access when in foreground}
-   if failed(diDevice.SetCooperativeLevel(0,
-      DISCL_BACKGROUND and DISCL_EXCLUSIVE), 'Failed to set cooperative level') then
-      exit(false);
-
    {use generic joystick data format}
    if failed(diDevice.SetDataFormat(c_dfDIJoystick), 'Failed to set data format') then
+      exit(false);
+
+   {get device updates when in background and exclusive access when in foreground}
+   if failed(diDevice.SetCooperativeLevel(0,
+      DISCL_BACKGROUND or DISCL_EXCLUSIVE), 'Failed to set cooperative level') then
       exit(false);
 
    {get device capabilities}
