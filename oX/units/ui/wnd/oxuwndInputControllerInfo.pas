@@ -27,17 +27,30 @@ INTERFACE
 
 TYPE
 
+   { oxuiTControllerInfoWindow }
+
+   oxuiTControllerInfoWindow = class(oxuiTWindowBase)
+      procedure Update(); override;
+   end;
+
    { oxTControllerInfoWindow }
 
    oxTControllerInfoWindow = object(oxTWindowBase)
       public
       Controller: appTControllerDevice;
 
+      wdg: record
+         Buttons: array[0..appMAX_CONTROLLER_BUTTONS - 1] of wdgTControllerButtonState;
+      end;
+
       constructor Create();
       procedure Open(); virtual;
 
       protected
       procedure AddWidgets(); virtual;
+
+      {update controller representation}
+      procedure Update();
    end;
 
 VAR
@@ -45,9 +58,23 @@ VAR
 
 IMPLEMENTATION
 
+{ oxuiTControllerInfoWindow }
+
+procedure oxuiTControllerInfoWindow.Update();
+begin
+   if(oxwndControllerInfo.Window <> nil) then
+      oxwndControllerInfo.Update();
+end;
+
+{ oxTControllerInfoWindow }
+
 procedure oxTControllerInfoWindow.AddWidgets();
 var
    btnOk: wdgTButton;
+   btnWidget: wdgTControllerButtonState;
+
+   buttonsPerRow,
+   i: loopint;
 
 begin
    wdgLabel.Add('Controller: ' + controller.GetName() +
@@ -58,6 +85,26 @@ begin
    wdgLabel.Add('Buttons: ' + sf(controller.ButtonCount) + ' / Axes: ' + sf(controller.AxisCount) +
       ' / Triggers: ' + sf(controller.TriggerCount) + ' / Hats: ' + sf(controller.HatCount));
 
+   uiWidget.LastRect.NextLine();
+
+   buttonsPerRow := 8;
+   if(Controller.ButtonCount > 16) then
+      buttonsPerRow := 10;
+
+   ZeroOut(wdg.Buttons, SizeOf(wdg.Buttons));
+
+   for i := 0 to Controller.ButtonCount - 1 do begin
+      btnWidget := wdgControllerButtonState.Add(uiWidget.LastRect.RightOf());
+      btnWidget.ButtonName := sf(i);
+      btnWidget.ButtonIndex := i;
+
+      wdg.Buttons[i] := btnWidget;
+
+      if(i mod buttonsPerRow = 0) and (i > 0) then begin
+         uiWidget.LastRect.NextLine();
+      end;
+   end;
+
    {add a cancel button}
    btnOk := wdgButton.Add('Close', uiWidget.LastRect.BelowOf(), oxNullDimensions, @Close);
    btnOk.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT);
@@ -66,12 +113,31 @@ begin
    Window.AutoCenter();
 end;
 
+procedure oxTControllerInfoWindow.Update();
+var
+   i: loopint;
+
+begin
+   if(Controller = nil) or (not Controller.Updated) then
+      exit;
+
+   for i := 0 to Controller.ButtonCount - 1 do begin
+      if(wdg.Buttons[i] <> nil) then begin
+         if(Controller.GetButtonPressure(i) > 0) then
+            writeln('pressed: ', i);
+
+         wdg.Buttons[i].SetPressure(Controller.GetButtonPressure(i));
+      end;
+   end;
+end;
+
 constructor oxTControllerInfoWindow.Create();
 begin
    ID := uiControl.GetID('ox.controller_info');
    Width := 540;
    Height := 200;
    Title := 'Controller Info';
+   Instance := oxuiTControllerInfoWindow;
 
    inherited;
 end;
@@ -89,7 +155,7 @@ begin
 end;
 {$ENDIF}
 
-procedure Initialize();
+procedure initialize();
 begin
    oxwndControllerInfo.Create();
 
