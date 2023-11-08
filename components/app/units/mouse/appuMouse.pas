@@ -70,6 +70,8 @@ TYPE
       function IsMoved(): boolean; inline;
       function IsWheel(): boolean; inline;
 
+      function IsButtonAction(): boolean; inline;
+
       function ToString(): string;
    end;
 
@@ -153,27 +155,32 @@ IMPLEMENTATION
 
 { appTMouseEvent }
 
-function appTMouseEvent.IsPressed: boolean;
+function appTMouseEvent.IsPressed(): boolean;
 begin
    Result := Action = appmcPRESSED;
 end;
 
-function appTMouseEvent.IsReleased: boolean; inline;
+function appTMouseEvent.IsReleased(): boolean;
 begin
    Result := Action = appmcRELEASED;
 end;
 
-function appTMouseEvent.IsMoved: boolean;
+function appTMouseEvent.IsMoved(): boolean;
 begin
    Result := Action = appmcMOVED;
 end;
 
-function appTMouseEvent.IsWheel: boolean;
+function appTMouseEvent.IsWheel(): boolean;
 begin
    Result := Action = appmcWHEEL;
 end;
 
-function appTMouseEvent.ToString: string;
+function appTMouseEvent.IsButtonAction(): boolean;
+begin
+   Result := IsPressed() or IsMoved() or IsReleased();
+end;
+
+function appTMouseEvent.ToString(): string;
 var
    actionString,
      buttonString: TAppendableString;
