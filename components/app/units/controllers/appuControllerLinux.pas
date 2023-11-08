@@ -232,7 +232,7 @@ begin
    err := FindFirst('/dev/input/js*', faAnyFile, fSearch);
 
    if(err = 0) then begin
-      log.Collapsed('Gamepad initialization (reset)');
+      log.Collapsed('Controller initialization (reset)');
       repeat
          {device found, add it}
          Add('/dev/input/' + fSearch.Name);
@@ -241,7 +241,7 @@ begin
       until (err <> 0);
       log.Leave();
    end else
-      log.v('No gamepads found');
+      log.v('No controllers found');
 
    FindClose(fSearch);
 
