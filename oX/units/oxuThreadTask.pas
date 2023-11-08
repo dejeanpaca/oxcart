@@ -125,6 +125,11 @@ TYPE
       {set all events to emit}
       procedure EmitAllEvents();
 
+      {set task as continuous}
+      procedure SetAsContinuous();
+      {set task as continuous}
+      procedure SetAsSingleRun();
+
       {called when thread is started in the main process thread}
       procedure ThreadStart(); virtual;
       {called when thread is stopped in the main process thread}
@@ -394,6 +399,16 @@ end;
 procedure oxTThreadTask.EmitAllEvents();
 begin
    Events.Emit := [OX_THREAD_TASK_EMIT_START, OX_THREAD_TASK_EMIT_DONE];
+end;
+
+procedure oxTThreadTask.SetAsContinuous();
+begin
+   SingleRun := false;
+end;
+
+procedure oxTThreadTask.SetAsSingleRun();
+begin
+   SingleRun := true;
 end;
 
 procedure oxTThreadTask.ThreadStart();
