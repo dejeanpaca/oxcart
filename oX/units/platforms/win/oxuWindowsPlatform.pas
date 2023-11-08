@@ -248,7 +248,7 @@ begin
    end;
 end;
 
-procedure queueMouseEvent(wnd: oxTWindow; wParam, lParam: longint; action, Button: longword);
+procedure queueMouseEvent(wnd: oxTWindow; wParam, lParam: longint; action, button: longword);
 var
    mEvent: appTMouseEvent;
    e: appPEvent;
@@ -272,19 +272,26 @@ begin
    end;
 
    if(action = appmcPRESSED) then
-      mButtonState := mButtonState or Button
+      mButtonState := mButtonState or button
    else if(action = appmcRELEASED) then
-      mButtonState := mButtonState and Button xor mButtonState;
+      mButtonState := mButtonState and button xor mButtonState;
 
-   appm.pointer[0].btnState := mButtonState;
+   appm.Pointer[0].ButtonState := mButtonState;
 
    ZeroOut(mEvent, SizeOf(mEvent));
    mEvent.Action := action;
    mEvent.bState := mButtonState;
-   mEvent.Button := Button;
+   mEvent.Button := button;
 
-   mEvent.x := SmallInt(lo(lParam));
-   mEvent.y := wnd.Dimensions.h - 1 - SmallInt(hi(lParam));
+   if(action <> appmcWHEEL) then begin
+      {event coordinates are relative to client area}
+      mEvent.x := SmallInt(lo(lParam));
+      mEvent.y := wnd.Dimensions.h - 1 - SmallInt(hi(lParam));
+   end else begin
+      {wheel events have coordinates relative to screen}
+      mEvent.x := SmallInt(lo(lParam)) - wnd.Position.x - wnd.GetFrameWidth() + 1;
+      mEvent.y := wnd.Dimensions.h - 1 - (SmallInt(hi(lParam)) - wnd.Position.y - wnd.GetNonClientHeight());
+   end;
 
    if(action = appmcWHEEL) then begin
       {count our values}
