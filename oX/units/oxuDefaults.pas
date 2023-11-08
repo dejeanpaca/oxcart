@@ -28,7 +28,9 @@ INTERFACE
       { app }
       appuKeyStateUpdater,
       {$IFNDEF OX_LIBRARY}
-      appuCtrlBreak,
+        {$IFNDEF ANDROID}
+        appuCtrlBreak,
+        {$ENDIF}
       appuCrashDetect,
       {$ENDIF}
       appuPaths,
