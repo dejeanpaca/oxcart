@@ -83,6 +83,8 @@ TYPE
       HeaderHeight,
       {footer height (horizontal scrollbar)}
       FooterHeight: loopint;
+      {font padding if any for item height}
+      FontPadding: loopint;
 
       {maximum size (height) of all items}
       Max,
@@ -555,6 +557,7 @@ begin
    SelectBorder := true;
    HighlightedItem := -1;
    SelectedItem := -1;
+   FontPadding := 0;
 
    PermanentHorizontalScrollbar := false;
    NavigationIsSelection := true;
@@ -583,7 +586,7 @@ begin
    if(ConstantHeight) then
       Result := ItemHeight
    else
-      Result := (CachedFont.GetHeight()) + 2;
+      Result := (CachedFont.GetHeight()) + FontPadding;
 end;
 
 function wdgTList.GetItemWidth(index: loopint): loopint;
