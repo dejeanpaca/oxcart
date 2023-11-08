@@ -79,7 +79,7 @@ procedure oxedTGameViewWindow.Render();
 begin
    {we don't render anything, as the game will render itself}
    if(oxedTProjectRunner.CanRender()) then begin
-      oxedLib.oxWindows^.Render();
+      oxedLib.oxWindowRender^.All();
 
       wdg.SceneRender.CleanupRender();
    end;
@@ -165,7 +165,7 @@ begin
    inherited;
 
    if(oxedLib.oxWindows <> nil) then
-      oxedLib.oxWindows^.w[0].SetupProjection();
+      oxedLib.oxWindows^.w[0].SetupViewport();
 end;
 
 procedure oxedTGameViewWindow.PositionChanged();
@@ -173,7 +173,7 @@ begin
    inherited;
 
    if(oxedLib.oxWindows <> nil) then
-      oxedLib.oxWindows^.w[0].SetupProjection();
+      oxedLib.oxWindows^.w[0].SetupViewport();
 end;
 
 procedure oxedTGameViewWindow.SizeChanged();
@@ -182,7 +182,7 @@ begin
 
    if(oxedLib.oxWindows <> nil) then begin
       oxedLib.oxWindows^.w[0].SetDimensions(Dimensions.w, Dimensions.h, false);
-      oxedLib.oxWindows^.w[0].SetupProjection();
+      oxedLib.oxWindows^.w[0].SetupViewport();
    end;
 end;
 

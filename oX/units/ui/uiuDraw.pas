@@ -13,7 +13,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuRender, oxuRenderUtilities,
       oxuPrimitives, oxuTransform, oxuUI, oxuTexture, oxuWindow,
-      oxuProjectionType;
+      oxuViewportType;
 
 CONST
    uiMAX_SCISSOR_STACK = 64;
@@ -301,15 +301,15 @@ end;
 procedure uiTDraw.Scissor(x, y, w, h: single; incrementLevel: boolean);
 var
    previousScissor: uiTScissorStackElement;
-   projection: oxPProjection;
+   viewport: oxPViewport;
 
 begin
    if(incrementLevel) then
       ScissorNextLevel();
 
-   projection := @oxWindow.Current.Projection;
-   x := x + projection^.Offset.x;
-   y := y + projection^.Offset.y;
+   viewport := @oxWindow.Current.Viewport;
+   x := x + viewport^.Offset.x;
+   y := y + viewport^.Offset.y;
 
    if(ScissorStackIndex > 0) then begin
       if(ScissorStackIndex > 1) and (incrementLevel) then begin

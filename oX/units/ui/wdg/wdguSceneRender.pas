@@ -12,7 +12,7 @@ INTERFACE
       uStd,
       {oX}
       oxuTypes,
-      oxuProjection, oxuCamera,
+      oxuProjection, oxuProjectionType, oxuCamera,
       oxuSceneRender, oxuScene,
       {ui}
       uiuWidget, uiWidgets, uiuRegisteredWidgets, wdguBase, wdguViewport;
@@ -24,6 +24,8 @@ TYPE
    wdgTSceneRender = class(wdgTViewport)
       {a renderer for the scene}
       SceneRenderer: oxTSceneRenderer;
+      {scene projection}
+      Projection: oxTProjection;
       {render a specific camera}
       Camera: oxTCamera;
 
@@ -68,6 +70,7 @@ begin
 
    SceneRenderer := oxSceneRender.Default;
    RenderSceneCameras := true;
+   oxTProjection.Create(Projection);
    Camera.Initialize();
 end;
 

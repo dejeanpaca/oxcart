@@ -196,7 +196,7 @@ end;
 
 class function oxedTProjectRunner.CanRender(): boolean;
 begin
-   Result := oxedTProjectRunner.Valid() and (oxedLib.oxWindows <> nil);
+   Result := oxedTProjectRunner.Valid() and (oxedLib.oxWindowRender <> nil) and (oxedLib.oxWindows <> nil);
 end;
 
 class function oxedTProjectRunner.CanRun(): boolean;
@@ -233,11 +233,13 @@ end;
 
 procedure onStart();
 begin
+   oxedLib.oxWindowRender := oxLibReferences^.FindInstancePtr('oxTWindowRender');
    oxedLib.oxWindows := oxLibReferences^.FindInstancePtr('oxTWindows');
 end;
 
 procedure onStop();
 begin
+   oxedLib.oxWindowRender := nil;
    oxedLib.oxWindows := nil;
 end;
 

@@ -13,7 +13,7 @@ INTERFACE
       {app}
       uApp, appuEvents, appuActionEvents,
       {oX}
-      uOX, oxuInit, oxuWindows, oxuPlatform, oxuRunRoutines;
+      uOX, oxuInit, oxuWindows, oxuPlatform, oxuRunRoutines, oxuWindowRender;
 
 TYPE
    { oxTRunGlobal }
@@ -152,7 +152,7 @@ begin
 
    {render stuff}
    {$IFNDEF OX_LIBRARY}
-   oxWindows.Render();
+   oxWindowRender.All();
    {$ENDIF}
 
    ox.OnRunAfter.Call();

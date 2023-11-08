@@ -12,7 +12,7 @@ INTERFACE
       uStd, vmVector,
       {ox}
       uOX,
-      oxuProjectionType, oxuProjection,
+      oxuProjectionType, oxuProjection, oxuViewportType, oxuViewport,
       oxuWindowTypes, oxuCamera, oxuRender, oxuTransform, oxuWindows, oxuSerialization,
       oxuMaterial, oxuGlobalInstances,
       oxuScene, oxuEntity, oxuSceneManagement, oxuRenderLayerComponent,
@@ -23,6 +23,7 @@ TYPE
    { oxTSceneRenderParameters }
 
    oxTSceneRenderParameters = record
+      Viewport: oxPViewport;
       Projection: oxPProjection;
       Camera: oxPCamera;
       Entity: oxTEntity;
@@ -86,6 +87,11 @@ class procedure oxTSceneRenderParameters.Init(out p: oxTSceneRenderParameters;
 begin
    ZeroOut(p, SizeOf(p));
 
+   if(setProjection <> nil) then
+      p.Viewport := setProjection^.Viewport
+   else
+      p.Viewport := oxViewport;
+
    p.Projection := setProjection;
    p.Camera := setCamera;
 end;
@@ -124,6 +130,8 @@ begin
 
    params.Camera := @camera.Camera;
 
+   {TODO: Properly use scene viewport to current camera}
+
    if(camera.UseSceneProjection) then
       params.Projection := params.Projection
    else
@@ -137,7 +145,7 @@ begin
    if(entity = nil) then
       entity := Scene;
 
-   params.Projection^.ClearColor := Scene.World.ClearColor;
+   params.Viewport^.ClearColor := Scene.World.ClearColor;
 
    params.Projection^.Apply();
    params.Camera^.LookAt();
@@ -264,6 +272,7 @@ procedure render(wnd: oxTWindow);
 var
    sceneWindow: oxTSceneRenderWindow;
    renderer: oxTSceneRenderer;
+   projection: oxTProjection;
 
 begin
    if(not oxSceneRender.RenderAutomatically) then
@@ -276,9 +285,14 @@ begin
       renderer := oxSceneRender.Default;
 
    if(sceneWindow.Scene <> nil) then begin
-//      wnd.oxProperties.ApplyDefaultProjection := false;
+//      wnd.oxProperties.ApplyDefaultViewport := false;
       renderer.Scene := sceneWindow.Scene;
-      renderer.Render(wnd.Projection);
+
+      if(oxProjection = nil) then begin
+         oxTProjection.Create(projection);
+         renderer.Render(projection);
+      end else
+         renderer.Render(oxProjection^);
    end;
 end;
 

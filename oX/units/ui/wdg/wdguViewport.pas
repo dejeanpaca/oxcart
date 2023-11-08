@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, uColors,
       {oX}
-      oxuTypes, oxuProjectionType, oxuProjection, oxuWindowTypes,
+      oxuTypes, oxuViewportType, oxuViewport, oxuWindowTypes,
       {ui}
       uiuWindowRender,
       uiuWidget, uiWidgets, uiuRegisteredWidgets, wdguBase;
@@ -21,8 +21,8 @@ TYPE
    { wdgTViewport }
 
    wdgTViewport = class(uiTWidget)
-      PreviousProjection: oxPProjection;
-      Projection: oxTProjection;
+      PreviousViewport: oxPViewport;
+      Viewport: oxTViewport;
       AlwaysClear,
       AutoProjectionName: boolean;
 
@@ -67,8 +67,8 @@ constructor wdgTViewport.Create();
 begin
    inherited Create();
 
-   oxTProjection.Create(Projection);
-   Projection.ClearColor.Assign(0.2, 0.2, 0.2, 1.0);
+   oxTViewport.Create(Viewport);
+   Viewport.ClearColor.Assign(0.2, 0.2, 0.2, 1.0);
 
    AutoProjectionName := true;
    AlwaysClear := true;
@@ -79,7 +79,7 @@ begin
    inherited;
 
    if(oxTWindow(oxwParent).ExternalWindow <> nil) then
-     Projection.SetOffset(oxTWindow(oxwParent).Projection.Offset);
+     Viewport.SetOffset(oxTWindow(oxwParent).Viewport.Offset);
 end;
 
 procedure wdgTViewport.Render();
@@ -90,19 +90,21 @@ end;
 
 procedure wdgTViewport.ProjectionStart();
 begin
-   PreviousProjection := oxProjection;
-   Projection.Apply(AlwaysClear);
+   PreviousViewport := oxViewport;
+   Viewport.Apply(AlwaysClear);
 end;
 
 procedure wdgTViewport.CleanupRender();
 begin
-   PreviousProjection^.Apply(false);
+   if(PreviousViewport <> nil) then
+     PreviousViewport^.Apply(false);
+
    uiWindowRender.Prepare(oxTWindow(oxwParent));
 end;
 
 procedure wdgTViewport.UpdateViewport();
 begin
-   Projection.SetViewport(RPosition.x, RPosition.y - Dimensions.h + 1, Dimensions.w, Dimensions.h);
+   Viewport.SetViewport(RPosition.x, RPosition.y - Dimensions.h + 1, Dimensions.w, Dimensions.h);
 end;
 
 procedure wdgTViewport.CaptionChanged();
@@ -110,7 +112,7 @@ begin
   inherited CaptionChanged();
 
   if(AutoProjectionName) then
-     Projection.Name := Caption;
+     Viewport.Name := Caption;
 end;
 
 procedure wdgTViewport.SizeChanged();
