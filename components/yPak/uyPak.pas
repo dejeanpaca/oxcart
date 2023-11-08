@@ -45,8 +45,8 @@ TYPE
 
    ypkPEntry = ^ypkTEntry;
    ypkTEntry = packed record
-      offs,
-      size: fileint;
+      Offset,
+      Size: fileint;
       fn: string[ypkMAX_FN_LENGTH];
    end;
 
@@ -85,20 +85,19 @@ IMPLEMENTATION
 
 procedure ypkTGlobal.eRaise(e: longint);
 begin
-   error := e;
+   Error := e;
 end;
 
 function ypkTGlobal.eGet(): longint;
 begin
    result := error;
-   error := 0;
+   Error := 0;
 end;
 
 procedure ypkTGlobal.eReset();
 begin
-   error := 0;
+   Error := 0;
 end;
-
 
 { HEADER }
 
@@ -106,7 +105,7 @@ procedure ypkTGlobal.ReadHeader(var f: TFile; out hdr: ypkTHeader);
 begin
    f.Read(hdr, SizeOf(hdr));
 
-   if(f.error = 0) then begin
+   if(f.Error = 0) then begin
       { check if it is a valid and supported file }
       if(hdr.ID = ypkID) then begin
          if(hdr.Endian = ypkENDIAN) then begin
@@ -140,21 +139,21 @@ begin
       e.n := count;
 
       try
-         SetLength(e.list, e.n);
+         SetLength(e.List, e.n);
       except
          exit(eNO_MEMORY);
       end;
 
-      f.Read(e.list[0], int64(count) * ypkENTRY_SIZE);
+      f.Read(e.List[0], int64(count) * ypkENTRY_SIZE);
    end;
 
-   result := eNONE;
+   Result := eNONE;
 end;
 
 procedure ypkTGlobal.WriteEntries(var f: TFile; var e: ypkTEntries);
 begin
    if(e.n > 0) then
-      f.Write(e.list[0], int64(e.n) * ypkENTRY_SIZE);
+      f.Write(e.List[0], int64(e.n) * ypkENTRY_SIZE);
 end;
 
 function ypkTGlobal.Find(var e: ypkTEntries; const fn: string): longint;
@@ -164,11 +163,11 @@ var
 begin
    if(e.n > 0) then
       for i := 0 to (e.n-1) do begin
-         if(e.list[i].fn = fn) then
+         if(e.List[i].fn = fn) then
             exit(i);
       end;
 
-   result := -1;
+   Result := -1;
 end;
 
 END.
