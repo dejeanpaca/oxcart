@@ -209,7 +209,7 @@ destructor uiTSkin.Destroy();
 begin
    inherited Destroy;
 
-   oxResource.Destroy(Window.Textures.Background);
+   oxResource.Free(Window.Textures.Background);
 end;
 
 function uiTSkin.Get(cID: longint): uiPWidgetSkin;
