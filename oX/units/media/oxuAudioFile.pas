@@ -25,7 +25,7 @@ TYPE
 
    { oxTAudioFile }
 
-   oxTAudioFile = class(oxTFileRW)
+   oxTAudioFile = object(oxTFileRW)
       procedure Init(out options: oxTAudioFileOptions);
 
       function Read(const fn: string; var options: oxTAudioFileOptions): oxTAudioBuffer;
@@ -35,22 +35,21 @@ TYPE
 
       function ReadSimple(const fn: string): oxTAudioSource;
 
-      function OnRead(var data: oxTFileRWData): loopint; override;
+      function OnRead(var data: oxTFileRWData): loopint; virtual;
    end;
 
 VAR
-   oxfAudio: oxTAudioFile = nil;
+   oxfAudio: oxTAudioFile;
 
 IMPLEMENTATION
 
 procedure init();
 begin
-   oxfAudio := oxTAudioFile.Create();
+   oxfAudio.Create();
 end;
 
 procedure deinit();
 begin
-   FreeObject(oxfAudio);
 end;
 
 { oxTAudioFile }
@@ -152,7 +151,7 @@ begin
       end;
    end;
 
-   result := data.Error;
+   Result := data.Error;
 
    {done}
    audioData.Destroy();

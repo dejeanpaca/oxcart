@@ -23,7 +23,7 @@ TYPE
 
    { oxTShaderFileRW }
 
-   oxTShaderFileRW = class(oxTFileRW)
+   oxTShaderFileRW = object(oxTFileRW)
       function Read(var f: TFile; const fn: string): oxTShader;
       function Read(const fn: string): oxTShader;
    end;
@@ -60,17 +60,7 @@ begin
    Result := oxTShader(data.Result)
 end;
 
-procedure init();
-begin
-   oxfShader := oxTShaderFileRW.Create();
-end;
-
-procedure deinit();
-begin
-   FreeObject(oxfShader);
-end;
-
 INITIALIZATION
-   ox.Init.Add('shader_file', @init, @deinit);
+   oxfShader.Create();
 
 END.

@@ -30,13 +30,13 @@ TYPE
 
    { oxTModelFile }
 
-   oxTModelFile = class(oxTFileRW)
+   oxTModelFile = object(oxTFileRW)
       class procedure Init(out options: oxTModelFileOptions); static;
 
       function Read(const name: string): oxTModel;
       function Read(var f: TFile; const fn: string = '.oxmdl'): oxTModel;
 
-      function OnRead(var data: oxTFileRWData): loopint; override;
+      function OnRead(var data: oxTFileRWData): loopint; virtual;
    end;
 
 VAR
@@ -91,17 +91,7 @@ begin
    Result := data.GetError();
 end;
 
-procedure init();
-begin
-   oxfModel := oxTModelFile.Create();
-end;
-
-procedure deinit();
-begin
-   FreeObject(oxfModel);
-end;
-
 INITIALIZATION
-   ox.Init.Add('model_file', @init, @deinit);
+   oxfModel.Create();
 
 END.
