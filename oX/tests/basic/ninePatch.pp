@@ -12,12 +12,12 @@ PROGRAM ninePatch;
       {app}
       uApp, uColors,
       {oX}
+      oxuViewport,
       oxuWindowTypes, oxuWindows, oxuRender, oxu9Patch, oxuRunRoutines,
-      oxuRenderer, oxuTransform, oxuTexture, oxuTextureGenerate, uiuDraw;
+      oxuRenderer, oxuTransform, oxuTexture, oxuTextureGenerate, uiuDraw, oxu9PatchFile;
 
 VAR
    patch: oxT9Patch;
-   texture: oxTTexture;
 
 procedure Render({%H-}wnd: oxTWindow);
 var
@@ -25,6 +25,8 @@ var
    w2, h2: single;
 
 begin
+   oxViewport^.ClearColor.Assign(0.2, 0.2, 0.5, 1.0);
+
    uiDraw.Start();
 
    w2 := wnd.dimensions.w div 2;
@@ -37,15 +39,14 @@ begin
    oxTransform.Translate(-192, -128, 0);
    oxTransform.Apply();
 
-   patch.Render(384, 256, texture);
+   if(patch <> nil) then
+      patch.Render(384, 256);
 end;
 
 procedure Initialize();
 begin
-   oxTextureGenerate.Generate('data' + DirectorySeparator + '9patch.png', texture);
+   patch := oxf9Patch.Read('data' + DirectorySeparator + '9patch.9p');
 
-   patch := oxT9Patch.Create();
-   patch.Compute(4, 16, 16);
    oxWindows.OnRender.Add(@Render);
 end;
 
