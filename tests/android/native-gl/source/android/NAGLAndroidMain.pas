@@ -19,6 +19,7 @@ IMPLEMENTATION
 
 TYPE
    PEngine = ^TEngine;
+
    TEngine = record
       app: Pandroid_app;
 
@@ -115,13 +116,11 @@ begin
    engine^.width  := w;
    engine^.height := h;
 
-   // Check openGL on the system
    logi('VENDOR: ' + pChar(glGetString(GL_VENDOR)));
    logi('RENDERER: ' + pChar(glGetString(GL_RENDERER)));
    logi('VERSION: ' + pChar(glGetString(GL_VERSION)));
    logi('EXTENSIONS: ' + pChar(glGetString(GL_EXTENSIONS)));
 
-   // Initialize GL state.
    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
    glEnable(GL_CULL_FACE);
    glShadeModel(GL_SMOOTH);
@@ -133,36 +132,34 @@ end;
 { Just the current frame in the display. }
 procedure engine_draw_frame(engine: PEngine);
 begin
-    if engine^.display = nil then
+   if engine^.display = nil then
        exit;
 
-    // Just fill the screen with a color.
-    glClearColor(engine^.state.x / engine^.width, engine^.state.angle,
-                 engine^.state.y / engine^.height, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
+   glClearColor(engine^.state.x / engine^.width, engine^.state.angle, engine^.state.y / engine^.height, 1);
+   glClear(GL_COLOR_BUFFER_BIT);
 
-    eglSwapBuffers(engine^.display, engine^.surface);
+   eglSwapBuffers(engine^.display, engine^.surface);
 end;
 
 { Tear down the EGL context currently associated with the display. }
 procedure engine_term_display(engine: PEngine);
 begin
-    if engine^.display <> EGL_NO_DISPLAY then begin
-        eglMakeCurrent(engine^.display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+   if engine^.display <> EGL_NO_DISPLAY then begin
+      eglMakeCurrent(engine^.display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
-         if engine^.context <> EGL_NO_CONTEXT then
-            eglDestroyContext(engine^.display, engine^.context);
+      if engine^.context <> EGL_NO_CONTEXT then
+         eglDestroyContext(engine^.display, engine^.context);
 
-        if engine^.surface <> EGL_NO_SURFACE then
-            eglDestroySurface(engine^.display, engine^.surface);
+      if engine^.surface <> EGL_NO_SURFACE then
+         eglDestroySurface(engine^.display, engine^.surface);
 
-        eglTerminate(engine^.display);
-    end;
+      eglTerminate(engine^.display);
+   end;
 
-    engine^.animating := false;
-    engine^.display := EGL_NO_DISPLAY;
-    engine^.context := EGL_NO_CONTEXT;
-    engine^.surface := EGL_NO_SURFACE;
+   engine^.animating := false;
+   engine^.display := EGL_NO_DISPLAY;
+   engine^.context := EGL_NO_CONTEXT;
+   engine^.surface := EGL_NO_SURFACE;
 end;
 
 procedure engine_handle_cmd(app: Pandroid_app; cmd: cint32);
