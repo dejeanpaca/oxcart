@@ -10,7 +10,9 @@ INTERFACE
 
    USES
       uStd, udvars,
-      oxuUI, oxuPlatformClipboard;
+      {oX}
+      oxuRunRoutines,
+      uiuBase, oxuUI, oxuPlatformClipboard;
 
 TYPE
 
@@ -111,7 +113,24 @@ begin
    end;
 end;
 
+procedure init();
+var
+   component: oxPPlatformClipboardComponent;
+
+begin
+   component := oxTPlatformClipboardComponent.GetComponent();
+
+   {if we're using the default clipboard component, use the internal clipboard}
+   if(component = @oxDefaultClipboardComponent) then begin
+      uiClipboard.Internal := true;
+   end;
+end;
+
+VAR
+   initRoutine: oxTRunRoutine;
+
 INITIALIZATION
    oxui.dvg.Add(dvInternalClipboard, 'internal_clipboard', dtcBOOL, @uiClipboard.Internal);
+   ui.InitializationProcs.Add(initRoutine, 'clipboard', @init);
 
 END.
