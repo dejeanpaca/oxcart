@@ -23,6 +23,7 @@ INTERFACE
       {build}
       oxeduBuild,
       oxeduPlatform, oxeduWindowsPlatform, oxeduLinuxPlatform,
+      oxeduProjectPlatforms,
       oxeduProjectRunner, oxeduSceneClone,
       oxeduProjectScanner, oxeduPasScanner, oxeduStatisticsScanner,
       {additional}
@@ -44,7 +45,7 @@ INTERFACE
       oxuStandardFilePreviewers, oxeduSceneScreenshot, oxeduPreviewGenerator,
       oxeduiBuildOutput,
       {android}
-      oxeduAndroidPlatform, oxeduAndroidSettingsFile, oxeduAndroidSettingsWindow,
+      oxeduAndroidPlatform, oxeduAndroidSettingsWindow,
       {plugins}
       oxeduPluginsUI
       {$INCLUDE ../plugins/oxed_plugins.inc};
