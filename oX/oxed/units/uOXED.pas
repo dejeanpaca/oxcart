@@ -29,6 +29,9 @@ CONST
    {editor library source name}
    oxPROJECT_EDITOR_LIB_SOURCE = 'editor_lib.pas';
 
+   {oxed project organization while running in the editor}
+   oxedPROJECT_ORGANIZATION = 'oxed_projects';
+
    {app information include source name}
    oxPROJECT_APP_INFO_INCLUDE = 'appinfo.inc';
 

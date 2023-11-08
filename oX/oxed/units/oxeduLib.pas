@@ -15,7 +15,8 @@ INTERFACE
       {ox}
       oxuDynlib, oxulibSettings, oxuGlobalInstances, oxuWindows,
       {oxed}
-      oxeduProject, oxeduMessages;
+      uOXED, oxeduProject, oxeduMessages;
+
 TYPE
 
    { oxedTLibraryGlobal }
@@ -135,8 +136,9 @@ begin
    log.i('Library ' + path + ' loaded successfully: '  + oxLib.Name + ' (Elapsed: ' + startTime.ElapsedfToString() + 's)');
 
    appInfo := oxLib.GetAppInfo();
+
    {force organization to preset while running inside OXED}
-   appInfo^.SetOrganization('oxed_projects');
+   appInfo^.SetOrganization(oxedPROJECT_ORGANIZATION);
 
    oxLibReferences := oxLib.LibraryInstances;
 
