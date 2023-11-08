@@ -171,6 +171,9 @@ begin
    if(arch = nil) then
       exit;
 
+   if(not oxedBuild.BuildBinary) then
+      exit;
+
    {copy built library to the target folder}
    source := oxedBuild.GetTargetExecutableFileName();
    appPath := oxedAndroidSettings.GetAppPath();
