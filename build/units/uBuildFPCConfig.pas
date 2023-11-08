@@ -128,6 +128,12 @@ begin
    if(build.Debug.Valgrind) then
       AddArgument('-gv');
 
+   if(build.Debug.Information.DwarfSets) then
+      AddArgument('-godwarfsets');
+
+   if(build.Debug.DwarfLevel > 0) then
+      AddArgument('-gw' + sf(build.Debug.DwarfLevel));
+
    for i := 0 to emptyAfter - 1 do begin
       AddArgument('');
    end;
@@ -263,6 +269,12 @@ begin
 
    if(build.Debug.Valgrind) then
       add('-gv');
+
+   if(build.Debug.Information.DwarfSets) then
+      add('-godwarfsets');
+
+   if(build.Debug.DwarfLevel > 0) then
+      add('-gw' + sf(build.Debug.DwarfLevel));
 
    { optimization }
    add();
