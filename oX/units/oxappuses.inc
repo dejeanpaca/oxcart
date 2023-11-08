@@ -4,6 +4,7 @@
    {$IFNDEF NO_THREADS}
    cthreads,
    {$ENDIF}
+   cwstring,
 {$ENDIF}
 
 {app}
