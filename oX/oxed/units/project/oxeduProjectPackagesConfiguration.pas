@@ -77,11 +77,13 @@ begin
          end;
       end;
    end else if(context.What = DVAR_NOTIFICATION_READ) then begin
-      if(currentPackage[1] = '@') then begin
-         path := Copy(currentPackage, 1, Length(currentPackage) - 1);
-         oxedProject.AddPackagePath(path);
-      end else
-         oxedProject.AddPackagePath(currentPackage);
+      if(currentPackage <> '') then begin
+         if(currentPackage[1] = '@') then begin
+            path := Copy(currentPackage, 2, Length(currentPackage) - 1);
+            oxedProject.AddPackagePath(path);
+         end else
+            oxedProject.AddPackage(currentPackage);
+      end;
    end;
 end;
 
@@ -92,6 +94,7 @@ INITIALIZATION
 
    dvGroup.Add(dvPackage, 'package', dtcSTRING, @currentPackage);
    dvPackage.pNotify := @packageNotify;
+   dvPackage.Properties := dvPackage.Properties + [dvarNOTIFY_READ, dvarNOTIFY_WRITE];
 
    oxedProjectManagement.OnLoadProject.Add(@oxedTProjectPackagesConfiguration.Load);
    oxedProjectManagement.OnSaveProject.Add(@oxedTProjectPackagesConfiguration.Save);
