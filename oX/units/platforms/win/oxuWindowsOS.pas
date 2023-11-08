@@ -9,7 +9,7 @@ UNIT oxuWindowsOS;
 INTERFACE
 
    USES
-      uStd, StringUtils, uLog, Windows,
+      uStd, uLog, Windows,
       {oX}
       oxuWindowTypes, uiuTypes, uiuWindowTypes;
 
@@ -113,7 +113,7 @@ var
 function copyMessage(): StdString;
 begin
    if(len > 0) then
-      Result := Copy(PChar(@buf[0]), 1, len - 1)
+      Result := Copy(PChar(@buf[0]), 1, len - 2)
    else
       Result := '';
 end;
@@ -123,7 +123,7 @@ begin
 
    {remove newlines which are returned for some reason}
    if(includeCode) then
-      Result := '(' + sf(messsageID) + ') ' + copyMessage()
+      Result := '(0x' + hexstr(messsageID, 8) + ') ' + copyMessage()
    else
       Result := copyMessage();
 end;
