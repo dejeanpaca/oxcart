@@ -9,7 +9,7 @@ UNIT oxuSerialization;
 INTERFACE
 
    USES
-      variants, uStd, sysutils, typinfo, uLog, StringUtils,
+      uStd, sysutils, typinfo, uLog, StringUtils,
       {ox}
       uOX, oxuRunRoutines, oxuGlobalInstances;
 
