@@ -80,8 +80,6 @@ begin
    source := f.PackagePath + f.PackageFileName;
    target := oxedBuildAssets.CurrentTarget + f.PackageFileName;
 
-   log.i(source + ' .. ' + target);
-
    {create directories required for target file, and quit if we fail}
    if(not sysutils.ForceDirectories(ExtractFilePath(target))) then
       Result := false;
