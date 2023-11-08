@@ -18,7 +18,7 @@ INTERFACE
       oxuRunRoutines,
       {ui}
       uiuContextMenu, uiuWidgetWindow,
-      wdguFileList, oxuwndFileContextMenu,
+      wdguFileList, oxuwndFileContextMenu, oxuFilePreviewWindow,
       {oxed}
       uOXED, oxeduIcons, oxeduActions;
 
@@ -37,7 +37,8 @@ TYPE
 
       Items: record
          Duplicate,
-         Create: uiPContextMenuItem;
+         Create,
+         Preview: uiPContextMenuItem;
       end;
 
       Events: record
@@ -74,6 +75,9 @@ end;
 { oxedTProjectContextMenuGlobal }
 
 procedure oxedTProjectContextMenuGlobal.OpenMenu(const from: uiTWidgetWindowOrigin);
+var
+   handler: oxTFilePreviewHandler;
+
 begin
    oxwndFileContextMenu.Prepare(Parameters.TargetPath, Parameters.Target);
    oxwndFileContextMenu.Parameters.AllowCreateDirectory := Parameters.AllowCreateDirectory;
@@ -89,6 +93,11 @@ begin
       Items.Duplicate^.Enable();
       Items.Create^.Disable();
    end;
+
+   if(not Parameters.IsDirectory) and (oxFilePreviewWindow.Previewable(Parameters.TargetPath, handler)) then begin
+      Items.Preview^.Enable(true);
+   end else
+      Items.Preview^.Enable(false);
 
    Parameters.IsDirectory := oxwndFileContextMenu.Parameters.IsDirectory;
 
@@ -180,6 +189,14 @@ begin
    appActionEvents.Queue(oxedActions.OPEN_LAZARUS);
 end;
 
+procedure previewFile();
+begin
+   if(not oxedProjectContextMenu.Parameters.IsDirectory) then begin
+      if(oxFilePreviewWindow <> nil) then
+         oxFilePreviewWindow.Show(oxedProjectContextMenu.Parameters.TargetPath);
+   end;
+end;
+
 procedure oxedTProjectContextMenuGlobal.Initialize;
 var
    item: uiPContextMenuItem;
@@ -218,6 +235,7 @@ begin
    Items.Create := Menus.Current.AddSub('Create', Menus.Create);
 
    Menus.Current.AddSeparator();
+   Items.Preview := Menus.Current.AddItem('Preview', @previewFile);
    item := Menus.Current.AddItem('Open Lazarus', @openLazarus);
    oxedIcons.Create(item, $f1b0);
 end;
