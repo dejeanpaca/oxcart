@@ -32,7 +32,7 @@ TYPE
       procedure UpdatePosition({%H-}wnd: oxTWindow); virtual;
 
       procedure Select({%H-}wnd: oxTWindow); virtual;
-      procedure Render({%H-}var context: oxTRenderingContext); virtual;
+      procedure Render(var {%H-}context: oxTRenderingContext); virtual;
 
       procedure Minimize({%H-}wnd: oxTWindow; {%H-}fromSystem: boolean = false); virtual;
       procedure Maximize({%H-}wnd: oxTWindow; {%H-}fromSystem: boolean = false); virtual;
