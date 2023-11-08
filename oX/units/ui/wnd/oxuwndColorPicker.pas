@@ -13,7 +13,7 @@ INTERFACE
    USES
       sysutils, uStd, uColors, StringUtils,
       {oX}
-      uOX, oxuTypes, oxuWindows,
+      uOX, oxuTypes, oxuRunRoutines, oxuWindows,
       {ui}
       uiuControl, uiuWindow, uiWidgets, uiuWidget,
       {widgets}
@@ -284,8 +284,11 @@ begin
    FreeObject(oxwndColorPicker);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.Add('ox.about', @initialize, @deinitialize);
+   ox.Init.Add(initRoutines, 'ox.about', @initialize, @deinitialize);
 
    wdgidR := uiControl.GetID('r');
    wdgidG := uiControl.GetID('g');

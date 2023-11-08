@@ -13,7 +13,8 @@ INTERFACE
    USES
       uStd, uImage, uColors, uTiming,
       {oX}
-      uOX, oxuTypes, oxuWindows, oxuProjection, oxuFont, oxuPaths, oxuWindow,
+      uOX, oxuTypes, oxuRunRoutines,
+      oxuWindows, oxuProjection, oxuFont, oxuPaths, oxuWindow,
       oxuTexture, oxuTextureGenerate,
       {ui}
       uiuControl, uiuWindowTypes, uiuWindow, uiuTypes, uiuWidget, uiWidgets, wdguLabel, oxuwndBase;
@@ -201,10 +202,14 @@ begin
       oxToast.Close();
 end;
 
+VAR
+   initRoutines,
+   runRoutine: oxTRunRoutine;
+
 INITIALIZATION
    wdgidLABEL     := uiControl.GetID('toast.label');
    wdgidTITLE     := uiControl.GetID('toast.label');
 
-   ox.OnRun.Add(@toastControl);
-   ox.Init.Add('toast', @initToast, @deInitToast);
+   ox.OnRun.Add(runRoutine, @toastControl);
+   ox.Init.Add(initRoutines, 'toast', @initToast, @deInitToast);
 END.
