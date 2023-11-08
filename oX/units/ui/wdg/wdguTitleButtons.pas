@@ -192,7 +192,7 @@ begin
             else
                pWnd.SetColorBlended(colors^.cTitleBtHighlight);
 
-            f.WriteCentered(pSkin.Window.cTitleBtSymbols[Buttons.b[i].Which], r, oxfpCenterHV);
+            f.WriteCentered(pSkin.Window.TitleButtonSymbols[Buttons.b[i].Which], r, oxfpCenterHV);
          end;
 
          f.Scale(1, 1);

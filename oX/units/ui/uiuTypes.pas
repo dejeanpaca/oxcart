@@ -120,7 +120,6 @@ CONST
    uiwFRAME_FORM_SIMPLE          = 0;
    uiwFRAME_FORM_NICE            = 1;
 
-
    {message box buttons}
    uimbcNONE                  = $0000;
    uimbcOK                    = $0001;

@@ -38,16 +38,13 @@ TYPE
       Shadow: TColor4ub;
    end;
 
+   { uiTWindowSkin }
+
    uiTWindowSkin = record
       {dimensions and offsets}
       Frames: array[0..ord(uiwFRAME_STYLE_MAX)] of uiTWindowSkinFrame;
 
-      FrameForm,
-      TitleButtonSpacing: loopint;
-      TitleTextOffset: array[0..2] of loopint;
-
-      {title icon}
-      TitleIconOffset: array[0..1] of loopint;
+      FrameForm: loopint;
 
       {look and feel settings}
       TitleTextAlignment,
@@ -62,7 +59,7 @@ TYPE
       Colors,
       InactiveColors: uiTWindowSkinColors;
 
-      cTitleBtSymbols: array[0..uiwcbNMAX - 1] of Char;
+      TitleButtonSymbols: array[0..uiwcBUTTON_MAX] of Char;
 
       Textures: record
          Background: oxTTexture;
