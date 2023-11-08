@@ -24,10 +24,10 @@ TYPE
    { wdgTTestGrid }
 
    wdgTTestGrid = class(wdgTStringGrid)
-      constructor Create; override;
+      constructor Create(); override;
 
       function GetItemCount(): loopint; override;
-      function GetValue(index, column: loopint): string; override;
+      function GetValue(index, column: loopint): StdString; override;
    end;
 
 VAR
@@ -156,6 +156,18 @@ begin
       end;
 end;
 
+procedure RenderWnd({%H-}wnd: oxTWindow);
+begin
+   oxTransform.Identity();
+   oxTransform.Apply();
+end;
+
+procedure InitWindow();
+begin
+   oxWindowSettings.AllocateCount := 1;
+   oxWindowSettings.w[0].Dimensions.Assign(800, 600);
+end;
+
 procedure onInitialize();
 begin
    oxWindows.OnRender.Add(@RenderWnd);
@@ -182,19 +194,7 @@ begin
    q.Dispose();
 end;
 
-procedure RenderWnd({%H-}wnd: oxTWindow);
-begin
-   oxTransform.Identity();
-   oxTransform.Apply();
-end;
-
-procedure InitWindow();
-begin
-   oxWindowSettings.AllocateCount := 1;
-   oxWindowSettings.w[0].Dimensions.Assign(800, 600);
-end;
-
-constructor wdgTTestGrid.Create;
+constructor wdgTTestGrid.Create();
 begin
    inherited Create;
 
@@ -206,9 +206,9 @@ begin
    Result := 25;
 end;
 
-function wdgTTestGrid.GetValue(index, column: loopint): string;
+function wdgTTestGrid.GetValue(index, column: loopint): StdString;
 begin
-   Result:= sf(index) + 'x' + sf(column);
+   Result := sf(index) + 'x' + sf(column);
 end;
 
 VAR
