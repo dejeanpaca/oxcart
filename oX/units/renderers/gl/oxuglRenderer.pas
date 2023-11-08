@@ -441,7 +441,7 @@ begin
 
    {$INCLUDE ../../ox_default_platform_instance.inc}
 
-   Id := 'renderer.gl';
+   Id := 'gl';
 end;
 
 function oxglTRenderer.GetSummary(wnd: oxTWindow): TStringArray;
@@ -478,6 +478,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add('ox.gl.renderer', @init, @deinit);
+   ox.PreInit.Add('renderer.gl', @init, @deinit);
 
 END.

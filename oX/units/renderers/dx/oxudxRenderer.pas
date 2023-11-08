@@ -334,22 +334,25 @@ constructor oxdxTRenderer.Create();
 begin
    inherited;
 
-   Id := 'renderer.dx';
+   Id := 'dx';
    Name := 'DirectX';
    WindowInstance := dxTRendererWindow;
 
    Init.Init(Id);
 end;
 
-procedure DeInitialize();
+procedure init();
+begin
+   oxdxRenderer := oxdxTRenderer.Create();
+   oxRenderers.Register(oxdxRenderer);
+end;
+
+procedure deinit();
 begin
    FreeObject(oxdxRenderer);
 end;
 
 INITIALIZATION
-   oxdxRenderer := oxdxTRenderer.Create();
-
-   oxRenderers.Register(oxdxRenderer);
-   oxRenderers.Init.dAdd('renderer.dx', @DeInitialize);
+   ox.PreInit.Add('renderer.dx', @init, @deinit);
 
 END.

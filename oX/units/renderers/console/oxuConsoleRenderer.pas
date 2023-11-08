@@ -54,7 +54,7 @@ constructor oxTConsoleRenderer.Create();
 begin
    inherited;
 
-   Id := 'renderer.console';
+   Id := 'console';
    Name := 'Console';
 
    PlatformInstance := oxTPlatform;
@@ -130,6 +130,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add('ox.con.renderer', @init, @deinit);
+   ox.PreInit.Add('rendere.console', @init, @deinit);
 
 END.

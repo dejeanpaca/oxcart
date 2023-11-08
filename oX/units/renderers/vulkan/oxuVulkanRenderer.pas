@@ -45,7 +45,7 @@ constructor oxTVulkanRenderer.Create;
 begin
    inherited;
 
-   Id := 'renderer.vulkan';
+   Id := 'vulkan';
    Name := 'Vulkan';
    WindowInstance := oxTVulkanWindow;
 
@@ -69,6 +69,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add('ox.vulkan.renderer', @init, @deinit);
+   ox.PreInit.Add('renderer.vulkan', @init, @deinit);
 
 END.
