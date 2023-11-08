@@ -30,6 +30,8 @@ TYPE
       Name: string;
       Handle: fhTHandleProc;
 
+      {indicates that the file should not be automatically opened/created for reading/writing,
+      as the handler will do this}
       DoNotOpenFile: boolean;
       Next: fhPHandler;
 
