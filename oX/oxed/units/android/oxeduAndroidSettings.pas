@@ -22,8 +22,7 @@ TYPE
       {android package name}
       PackageName: string;
 
-      class procedure OnLoad(); static;
-      procedure Reset();
+      class procedure Reset(); static;
    end;
 
 VAR
@@ -38,16 +37,11 @@ VAR
 
 { oxedTAndroidSettings }
 
-class procedure oxedTAndroidSettings.OnLoad();
+class procedure oxedTAndroidSettings.Reset();
 begin
-   with oxedAndroidSettings do begin
-      PackageName := '';
-   end;
-end;
-
-procedure oxedTAndroidSettings.Reset();
-begin
-
+  with oxedAndroidSettings do begin
+     PackageName := '';
+  end;
 end;
 
 
@@ -56,5 +50,8 @@ INITIALIZATION
 
    dvgOXED.Add('android', dvgAndroid);
    dvgAndroid.Add(dvPackageName, 'package_name', dtcSINGLE, @oxedAndroidSettings.PackageName);
+
+   oxedProjectManagement.OnNew.Add(@oxedAndroidSettings.Reset);
+   oxedProjectManagement.OnClosed.Add(@oxedAndroidSettings.Reset);
 
 END.
