@@ -74,6 +74,14 @@ begin
       if(p.y - d.h < 0) then
          p.y := d.h - 1 + HINT_SEPARATION;
 
+      p.x := p.x + 4;
+      p.y := p.y - 4;
+
+      uiRenderWidget.Box(p, d, uiTSkin(uiTWindow(oxw).Skin).Colors.Shadow, uiTSkin(uiTWindow(oxw).Skin).Colors.Shadow, wdgRENDER_BLOCK_ALL, 0.5);
+
+      p.x := p.x - 4;
+      p.y := p.y + 4;
+
       cSurface := uiTSkin(uiTWindow(oxw).Skin).Colors.Surface;
       uiRenderWidget.Box(p, d, cSurface, uiTSkin(uiTWindow(oxw).Skin).Colors.Highlight, wdgRENDER_BLOCK_ALL, 0.75);
 
