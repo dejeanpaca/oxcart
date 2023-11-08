@@ -35,21 +35,21 @@ TYPE
       Textures,
       UI,
       Fonts,
-      Shaders: string;
+      Shaders: StdString;
 
       {base oX asset paths (should equal WorkingDirectory in standalone mode)}
       BasePath,
       {working directory used as base}
-      WorkingDirectory: string;
+      WorkingDirectory: StdString;
       {list of asset paths}
       List: TPreallocatedStringArrayList;
 
       {return a path at which location an asset can be found}
-      function Find(const asset: string): string;
+      function Find(const asset: StdString): StdString;
       {return a path at which location of an asset directory can be found}
-      function FindDirectory(const asset: string): string;
+      function FindDirectory(const asset: StdString): StdString;
       {add an asset path}
-      procedure Add(const assetPath: string);
+      procedure Add(const assetPath: StdString);
    end;
 
 VAR
@@ -59,10 +59,10 @@ IMPLEMENTATION
 
 { oxTPaths }
 
-function oxTPaths.Find(const asset: string): string;
+function oxTPaths.Find(const asset: StdString): StdString;
 var
    i: loopint;
-   fn: string;
+   fn: StdString;
 
 begin
    if(FileUtils.Exists(WorkingDirectory + asset) > -1) then
@@ -78,10 +78,10 @@ begin
    Result := asset;
 end;
 
-function oxTPaths.FindDirectory(const asset: string): string;
+function oxTPaths.FindDirectory(const asset: StdString): StdString;
 var
    i: loopint;
-   path: string;
+   path: StdString;
 
 begin
    if(FileUtils.DirectoryExists(WorkingDirectory + asset)) then
@@ -97,7 +97,7 @@ begin
    Result := asset;
 end;
 
-procedure oxTPaths.Add(const assetPath: string);
+procedure oxTPaths.Add(const assetPath: StdString);
 begin
    if(assetPath <> '') then begin
       List.Add(IncludeTrailingPathDelimiter(assetPath));
@@ -109,9 +109,9 @@ begin
    end;
 end;
 
-function tryDetermineAssetPath(startPath: string): string;
+function tryDetermineAssetPath(startPath: StdString): StdString;
 var
-   path: String;
+   path: StdString;
 
 begin
    path := IncludeTrailingPathDelimiter(startPath);
@@ -165,7 +165,7 @@ end;
 procedure init();
 {$IFDEF OX_DEBUG}
 var
-   assetPath: string;
+   assetPath: StdString;
 {$ENDIF}
 
 begin
