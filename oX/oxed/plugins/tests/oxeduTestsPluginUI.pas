@@ -19,7 +19,7 @@ INTERFACE
       {wdg}
       wdguCheckboxHierarchy, wdguDivisor, wdguButton, wdguList, wdguCheckbox,
       {oxed}
-      oxeduMenubar, oxeduTestsPlugin, oxeduTasks;
+      uOXED, oxeduMenubar, oxeduTestsPlugin, oxeduTasks;
 
 TYPE
 
@@ -250,7 +250,7 @@ begin
 end;
 
 INITIALIZATION
-   ox.Init.Add('ox.settings', @init, @deinit);
+   oxed.Init.Add('ox.settings', @init, @deinit);
    oxedMenubar.OnInit.Add(@menubarInit);
 
    oxedTests.OnTaskStart.Add(@update);
