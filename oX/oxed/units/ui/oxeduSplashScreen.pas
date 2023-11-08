@@ -11,22 +11,23 @@ UNIT oxeduSplashScreen;
 INTERFACE
 
    USES
-      uOX, oxuSplashScreen, oxuPaths;
+      uOX, oxuSplashScreen, oxuDefaultSplashScreen, oxuPaths;
 
 TYPE
 
    { oxedTSplashScreen }
 
-   oxedTSplashScreen = class(oxTBasicSplashScreen)
-      constructor Create; override;
-      function GetVersionString: string; override;
+   oxedTSplashScreen = class(oxTDefaultSplashScreen)
+      constructor Create(); override;
+
+      function GetVersionString(): string; override;
    end;
 
 IMPLEMENTATION
 
 { oxedTSplashScreen }
 
-constructor oxedTSplashScreen.Create;
+constructor oxedTSplashScreen.Create();
 begin
    inherited Create;
 
@@ -35,7 +36,7 @@ begin
    DisplayTime := 0;
 end;
 
-function oxedTSplashScreen.GetVersionString: string;
+function oxedTSplashScreen.GetVersionString(): string;
 begin
    Result := 'OXED ' + ox.GetVersionString(oxVERSION_STR_ONLY);
 end;
