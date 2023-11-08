@@ -9,7 +9,7 @@ UNIT oxeduProjectStatisticsWindow;
 INTERFACE
 
    USES
-      uStd,
+      uStd, StringUtils, uBinarySize,
       {oX}
       oxuTypes, oxuConsoleBackend,
       {wnd}
@@ -17,9 +17,9 @@ INTERFACE
       {ui}
       uiuControl, uiuWidget, uiWidgets, uiuMessageBox, uiuTypes,
       {wdg}
-      wdguButton, wdguDivisor, wdguLabel, wdguList,
+      wdguButton, wdguDivisor, wdguLabel, wdguGrid,
       {oxed}
-      uOXED, oxeduProject;
+      uOXED, oxeduProject, oxeduProjectStatistics;
 
 TYPE
    { oxeduiTProjectStatisticsWindow }
@@ -27,11 +27,18 @@ TYPE
    oxeduiTProjectStatisticsWindow = class(oxuiTWindowBase)
    end;
 
+   { oxedwdgTStatisticsGrid }
+
+   oxedwdgTStatisticsGrid = class(wdgTStringGrid)
+      function GetValue(index, column: loopint): StdString; override;
+      function GetItemCount(): loopint; override;
+   end;
+
    { oxedTProjectStatisticsWindow }
 
    oxedTProjectStatisticsWindow = object(oxTSettingsWindowBase)
       widgets: record
-         Statistics: wdgTStringList;
+         Statistics: wdgTStringGrid;
          AddParameter,
          RemoveParameter: wdgTButton;
          Separator: wdgTDivisor;
@@ -54,23 +61,52 @@ begin
    oxedwndProjectStatistics.Close();
 end;
 
+{ oxedwdgTStatisticsGrid }
+
+function oxedwdgTStatisticsGrid.GetValue(index, column: loopint): StdString;
+begin
+   if(column = 0) then
+      Result := oxedProjectStatistics.FileTypes.List[index].Extension
+   else if(column = 1) then
+      Result := sf(oxedProjectStatistics.FileTypes.List[index].Count)
+   else
+      Result := getiecByteSizeHumanReadable(oxedProjectStatistics.FileTypes.List[index].TotalSize);
+end;
+
+function oxedwdgTStatisticsGrid.GetItemCount(): loopint;
+begin
+   Result := oxedProjectStatistics.FileTypes.n;
+end;
+
 { oxedTProjectStatisticsWindow }
 
 procedure oxedTProjectStatisticsWindow.AddWidgets();
 begin
    inherited;
 
-   AddCancelSaveButtons();
-   wdg.Save.Callback.Use(@Save);
-   AddRevertButton();
-   wdg.Revert.Callback.Use(@Revert);
+   AddCloseButton();
    widgets.Separator := wdgDivisor.Add('', uiWidget.LastRect.AboveOf());
 
    uiWidget.LastRect.Assign(Window);
-   wdgLabel.Add('File Statistics:');
-   widgets.Statistics := wdgStringList.Add(uiWidget.LastRect.BelowOf(), oxDimensions(Window.Dimensions.w - wdgDEFAULT_SPACING*2, 120));
+   wdgLabel.Add('Files: ' + sf(oxedProjectStatistics.FileCount));
+   wdgLabel.Add('Total size: ' + getiecByteSizeHumanReadable(oxedProjectStatistics.TotalSize));
+
+   wdgDivisor.Add('');
+
+   uiWidget.Create.Instance := oxedwdgTStatisticsGrid;
+
+   widgets.Statistics := wdgStringGrid.Add(uiWidget.LastRect.BelowOf(),
+      oxDimensions(Window.Dimensions.w - wdgDEFAULT_SPACING * 2, 200));
+
    widgets.Statistics.Selectable := true;
    widgets.Statistics.OddColored := true;
+
+   widgets.Statistics.AddColumn('Extension')^.Ratio := 0.3;
+   widgets.Statistics.AddColumn('Count')^.Ratio := 0.3;
+   widgets.Statistics.AddColumn('Total size')^.Ratio := 0.4;
+
+   widgets.Statistics.ComputeColumns();
+   widgets.Statistics.Assigned();
 end;
 
 {$IFDEF OX_FEATURE_CONSOLE}
