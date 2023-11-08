@@ -24,9 +24,12 @@ TYPE
 
    oxedTComponent = record
       Component: oxTComponentType;
+      {glyph associated with this component}
       Glyph: oxedTComponentGlyph;
+      {edit mode renderer associated with this component}
+      EditRenderer: TObject;
 
-      procedure Initialize(out c: oxedTComponent);
+      class procedure Initialize(out c: oxedTComponent); static;
    end;
 
    oxedTComponentList = specialize TPreallocatedArrayList<oxedTComponent>;
@@ -47,7 +50,7 @@ IMPLEMENTATION
 
 { oxedTComponent }
 
-procedure oxedTComponent.Initialize(out c: oxedTComponent);
+class procedure oxedTComponent.Initialize(out c: oxedTComponent);
 begin
    ZeroPtr(@c, SizeOf(c));
 end;
@@ -86,6 +89,8 @@ var
 
 begin
    oxedTComponentList.InitializeValues(oxedComponents.List);
+
+   oxedComponents.Add(nil);
 
    {initialize components}
    for i := 0 to oxComponentDescriptors.List.n - 1 do begin
