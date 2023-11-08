@@ -27,8 +27,9 @@ CONST
    OXED_GLYPH_3D_DISTANCE_SCALE: single = 0.5;
    OXED_LINE_GRID_LENGTH: single = 200;
 
-   CONE_RADIUS = 0.075;
-   CONE_LENGTH = 0.15;
+   SELECT_LINE_LENGTH = 1.25;
+   CONE_RADIUS = 0.125;
+   CONE_LENGTH = 0.225;
    CONE_DIVISIONS = 32;
 
    AxisColors: array[0..2] of TColor4f = (
@@ -299,17 +300,17 @@ begin
    Camera^.Transform.Matrix := Camera^.Transform.Matrix * Transform.Matrix;
    Camera^.Transform.Apply();
 
-   oxRender.LineWidth(3.0);
+   oxRender.LineWidth(1.5);
 
    oxRender.DepthTest(oxTEST_FUNCTION_NONE);
    oxRender.DepthWrite(false);
 
    Material.ApplyColor('color', cRed4f);
-   oxRenderUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(1.0, 0.0, 0.0));
+   oxRenderUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(SELECT_LINE_LENGTH, 0.0, 0.0));
    Material.ApplyColor('color', cGreen4f);
-   oxRenderUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(0.0, 1.0, 0.0));
+   oxRenderUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(0.0, SELECT_LINE_LENGTH, 0.0));
    Material.ApplyColor('color', cBlue4f);
-   oxRenderUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(0.0, 0.0, 1.0));
+   oxRenderUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(0.0, 0.0, SELECT_LINE_LENGTH));
 
    oxRender.LineWidth(1.0);
 
@@ -321,21 +322,21 @@ begin
       BBox[1].Assign(CONE_LENGTH / 2, CONE_LENGTH / 2, CONE_LENGTH / 2);
 
       Material.ApplyColor('color', AxisColors[0]);
-      p.Assign(1.0 - CONE_LENGTH / 2, 0, 0);
+      p.Assign(SELECT_LINE_LENGTH - CONE_LENGTH / 2, 0, 0);
       oxRenderUtilities.BBox(p, BBox);
 
       Material.ApplyColor('color', AxisColors[1]);
-      p.Assign(0, 1.0 - CONE_LENGTH / 2, 0);
+      p.Assign(0, SELECT_LINE_LENGTH - CONE_LENGTH / 2, 0);
       oxRenderUtilities.BBox(p, BBox);
 
       Material.ApplyColor('color', AxisColors[2]);
-      p.Assign(0, 0, 1.0 - CONE_LENGTH / 2);
+      p.Assign(0, 0, SELECT_LINE_LENGTH - CONE_LENGTH / 2);
       oxRenderUtilities.BBox(p, BBox);
    end;
 
-   RenderCone(0, {pos} 1.0 - CONE_LENGTH, 0.0, 0.0, {rot} 0.0, 0.0, -90);
-   RenderCone(1, {pos} 0.0, 1.0 - CONE_LENGTH, 0.0, {rot} 0.0, 0.0, 0.0);
-   RenderCone(2, {pos} 0.0, 0.0, 1.0 - CONE_LENGTH, {rot}  90, 0.0, 0.0);
+   RenderCone(0, {pos} SELECT_LINE_LENGTH - CONE_LENGTH, 0.0, 0.0, {rot} 0.0, 0.0, -90);
+   RenderCone(1, {pos} 0.0, SELECT_LINE_LENGTH - CONE_LENGTH, 0.0, {rot} 0.0, 0.0, 0.0);
+   RenderCone(2, {pos} 0.0, 0.0, SELECT_LINE_LENGTH - CONE_LENGTH, {rot}  90, 0.0, 0.0);
 
    Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
    oxRender.DepthDefault();
