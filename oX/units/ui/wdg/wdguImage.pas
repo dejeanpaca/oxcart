@@ -66,6 +66,7 @@ TYPE
    wdgTImageGlobal = object(specialize wdgTBase<wdgTImage>)
       {adds a image to a window}
       function Add(const fn: StdString; const Pos: oxTPoint; const Dim: oxTDimensions): wdgTImage;
+      function Add(): wdgTImage;
    end;
 
 VAR
@@ -180,6 +181,11 @@ begin
       Result.SetImage(fn);
       AddDone(Result);
    end;
+end;
+
+function wdgTImageGlobal.Add(): wdgTImage;
+begin
+   Result := Add('', oxNullPoint, oxNullDimensions);
 end;
 
 INITIALIZATION
