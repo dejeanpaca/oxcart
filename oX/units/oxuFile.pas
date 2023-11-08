@@ -9,7 +9,8 @@ UNIT oxuFile;
 INTERFACE
 
    USES
-     uStd, uLog, uError,
+     sysutils,
+     uStd, uLog, uError, uTiming,
      {files}
      uFile, {%H-}uFiles, uFileHandlers,
      {oX}
@@ -123,9 +124,12 @@ end;
 
 function oxTFileRW.Read(var f: TFile; var handler: fhTHandler; options: pointer; pdata: oxPFileRWData = nil): loopint;
 var
+   startTime: TDateTime;
    localData: oxTFileRWData;
 
 begin
+   startTime := Now();
+
    if(pdata = nil) then begin
       pdata := @localData;
       ZeroOut(localData, SizeOf(localData));
@@ -153,7 +157,7 @@ begin
          f.fn + ' > ' + pdata^.ErrorDescription);
    end else begin
       {$IFDEF DEBUG}
-      log.d('Read file: ' + f.fn);
+      log.d('Read file: ' + f.fn + ' (Elapsed: ' + startTime.ElapsedfToString(3) + 's)');
       {$ENDIF}
    end;
 
