@@ -14,6 +14,9 @@ INTERFACE
       oxuRunRoutines;
 
 TYPE
+
+   { appTLog }
+
    appTLog = record
      FileName: StdString;
      {callback for setting up log files}
@@ -23,6 +26,8 @@ TYPE
      SkipInit: boolean;
 
      procedure Initialize();
+     {use a new setup callback and return the old one}
+     function UseSetupCallback(callback: TProcedure): TProcedure;
    end;
 
 VAR
@@ -66,6 +71,12 @@ begin
    {call other log setup routines}
    if(SetupCallback <> nil) then
       SetupCallback();
+end;
+
+function appTLog.UseSetupCallback(callback: TProcedure): TProcedure;
+begin
+   Result := SetupCallback;
+   SetupCallback := callback;
 end;
 
 procedure Initialize();

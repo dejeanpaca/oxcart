@@ -116,9 +116,7 @@ end;
 INITIALIZATION
    log.Init(oxedBuildLog.Log);
 
-   oldLogCallback := appLog.SetupCallback;
-   appLog.SetupCallback := @SetupLog;
-
+   oldLogCallback := appLog.UseSetupCallback(@SetupLog);
 
 FINALIZATION
    oxedBuildLog.Log.Close();
