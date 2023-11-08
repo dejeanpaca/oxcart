@@ -72,6 +72,8 @@ TYPE
 
       {main unit uses, if specified will be the only unit included by default in project}
       MainUnit: StdString;
+      {this project does not use engine facilities (manually managed project)}
+      NilProject: boolean;
 
       {called when the project is modified}
       OnProjectModified: TProcedures; static;

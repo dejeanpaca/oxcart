@@ -402,6 +402,10 @@ begin
       end;
    end;
 
+   if oxedProject.NilProject then begin
+      Result.Add('OX_NIL');
+   end;
+
    if oxedBuild.InEditor then begin
       Result.Add('OX_LIBRARY');
       Result.Add('OX_LIBRARY_SUPPORT');
