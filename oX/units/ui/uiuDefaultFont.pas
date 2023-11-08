@@ -13,10 +13,12 @@ INTERFACE
    USES
       uStd, uLog,
       {ox}
-      oxuPaths, oxuFont, oxuRunRoutines,
+      oxuPaths, oxuFont, oxuRunRoutines, oxuGlobalInstances,
       oxuUI, oxuFreetypeFonts;
 
 TYPE
+   uiPDefaultFontManager = ^uiTDefaultFontManager;
+
    { uiTDefaultFontManager }
 
    uiTDefaultFontManager = record
@@ -59,6 +61,7 @@ begin
    end;
 end;
 
+{$IFNDEF OX_LIBRARY}
 procedure initialize();
 begin
    uiDefaultFont.Initialize();
@@ -69,6 +72,22 @@ begin
    uiDefaultFont.Deinitialize();
 end;
 
+{$ELSE}
+procedure initializeLibrary();
+var
+   instance: uiPDefaultFontManager;
+
+begin
+   instance := oxExternalGlobalInstances.FindInstancePtr('uiTDefaultFontManager');
+
+   if(instance <> nil) then begin
+      uiDefaultFont.Path := instance^.Path;
+      uiDefaultFont.Size := instance^.Size;
+      uiDefaultFont.Font := instance^.Font;
+   end;
+end;
+{$ENDIF}
+
 VAR
    initRoutines: oxTRunRoutine;
 
@@ -76,6 +95,12 @@ INITIALIZATION
    uiDefaultFont.Path := oxPaths.Fonts + 'Inconsolata.ttf';
    uiDefaultFont.Size := 12;
 
+   oxGlobalInstances.Add('uiTDefaultFontManager', @uiDefaultFont);
+
+   {$IFNDEF OX_LIBRARY}
    oxui.InitializationProcs.Add(initRoutines, 'default_font', @initialize, @deinitialize);
+   {$ELSE}
+   oxui.InitializationProcs.Add(initRoutines, 'default_font', @initializeLibrary);
+   {$ENDIF}
 
 END.
