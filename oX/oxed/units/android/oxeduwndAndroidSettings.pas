@@ -122,8 +122,6 @@ begin
    wdg.DeployTemplate := wdgButton.Add('Add android files to project').UseCallback(@deployTemplate);
 
    enableAndroidDeployWidgets(oxedAndroidSettings.Project.ManualFileManagement);
-
-   revertCallback();
 end;
 
 procedure init();

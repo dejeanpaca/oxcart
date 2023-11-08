@@ -84,8 +84,6 @@ begin
    widgets.AddParameter.SetButtonPosition([uiCONTROL_GRID_LEFT]);
    widgets.RemoveParameter := wdgButton.Add('Remove', uiWidget.LastRect.RightOf(0, 0, false), oxNullDimensions, @RemoveParameter);
    widgets.RemoveParameter.SetButtonPosition([uiCONTROL_GRID_RIGHT]);
-
-   Revert();
 end;
 
 procedure notify(var mb: uiTMessageBoxData);

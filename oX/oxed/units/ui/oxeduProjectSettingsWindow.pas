@@ -175,8 +175,6 @@ begin
    wdg.Revert.Callback.Use(@Revert);
 
    AddDivisor();
-
-   Revert();
 end;
 
 procedure oxedTSettingsWindow.AddProjectWidgets();
