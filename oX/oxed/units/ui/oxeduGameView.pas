@@ -79,6 +79,8 @@ procedure oxedTGameViewWindow.Render();
 begin
    {we don't render anything, as the game will render itself}
    if(oxedTProjectRunner.CanRender()) then begin
+      wdg.SceneRender.ProjectionStart();
+
       oxedLib.oxWindowRender^.All();
 
       wdg.SceneRender.CleanupRender();
@@ -141,7 +143,9 @@ begin
    oxWindows.ExternalWindows.Dispose();
    oxWindows.ExternalWindows.Add(Self);
 
+   {don't use scene widget or apply its viewport (project applies its own)}
    wdg.SceneRender.Enable(false);
+   wdg.SceneRender.Viewport.Enabled := false;
 end;
 
 procedure oxedTGameViewWindow.OnActivate();
