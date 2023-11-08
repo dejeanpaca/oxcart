@@ -309,7 +309,9 @@ begin
       glPlatform^.ClearContext(wnd);
       error := glPlatform^.RaiseError();
 
-      if(error <> 0) then
+      if(error = 0) then
+         log.v('gl > Cleared context ' + sf(context))
+      else
          log.w('gl > Failed to clear context ' + sf(context) + ': ' + GetPlatformErrorDescription(error));
 
       RenderingContexts[context].Used := false;
@@ -418,7 +420,7 @@ end;
 
 function oxglTRenderer.GetPlatformErrorDescription(error: loopint): StdString;
 begin
-   Result := glPlatform^.Name + ' error: ' + sf(error);
+   Result := glPlatform^.Name + ' error: ' + glPlatform^.GetErrorDescription(error);
 end;
 
 procedure init();

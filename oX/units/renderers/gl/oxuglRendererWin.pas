@@ -25,7 +25,10 @@ TYPE
 
    oxglTPlatformWGL = object(oxglTPlatform)
       constructor Create();
+
       function RaiseError(): loopint; virtual;
+      function GetErrorDescription(error: loopint): StdString; virtual;
+
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
       procedure OnInitWindow({%H-}wnd: oglTWindow); virtual;
       procedure SwapBuffers(wnd: oglTWindow); virtual;
@@ -306,6 +309,11 @@ begin
    Result := winos.GetLastError(true);
 end;
 
+function oxglTPlatformWGL.GetErrorDescription(error: loopint): StdString;
+begin
+   Result := winos.FormatMessage(error);
+end;
+
 function oxglTPlatformWGL.PreInitWindow(wnd: oglTWindow): boolean;
 var
    pFormat: longint;
@@ -398,8 +406,12 @@ begin
       Result := winLegacyContext(wnd, shareContext);
    end;
 
-   if(wnd.wd.LastError <> 0) then
-      log.e('gl > (' + method + ') Failed getting rendering context ' + winos.FormatMessage(wnd.wd.LastError));
+   if(wnd.wd.LastError <> 0) then begin
+      if(Result = 0) then
+         log.e('gl > (' + method + ') Failed getting rendering context ' + winos.FormatMessage(wnd.wd.LastError))
+      else
+         log.w('gl > (' + method + ') Error while getting rendering context ' + winos.FormatMessage(wnd.wd.LastError));
+   end;
 end;
 
 function oxglTPlatformWGL.ContextCurrent(const context: oxTRenderTargetContext): boolean;
