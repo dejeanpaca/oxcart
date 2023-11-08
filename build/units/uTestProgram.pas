@@ -12,8 +12,9 @@ UNIT uTestProgram;
 
 INTERFACE
 
-   USES process, uStd, uLog, StringUtils, uFileUtils,
-      uTest, uBuild, uSimpleParser;
+   USES
+      process, uStd, uLog, StringUtils, uFileUtils,
+      uBuild, uSimpleParser, uTest;
 
 TYPE
 
