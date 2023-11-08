@@ -1,6 +1,9 @@
 {
    oxeduFileInspectors, handles file inspectors
    Copyright (C) 2020. Dejan Boras
+
+   TODO: Compute folder sizes in a task
+   TODO: Add file operation buttons (delete, rename, create directory ...)
 }
 
 {$INCLUDE oxdefines.inc}
@@ -159,6 +162,8 @@ begin
    wdg.Name.Resize(wnd.Dimensions.w - wdgDEFAULT_SPACING * 2, inspector.wdg.Header.Dimensions.h - 10);
    wdg.Name.SetPosition(wdgPOSITION_VERTICAL_CENTER);
 
+   uiWidget.LastRect.Assign(wdg.Information);
+
    if(wdg.Attributes.Caption <> '') then begin
       wdg.Attributes.Move(wdgDEFAULT_SPACING, wdg.Information.Dimensions.h);
       wdg.Attributes.SetSize(wdgWIDTH_MAX_HORIZONTAL);
@@ -168,6 +173,7 @@ begin
       wdg.Size.Move(wdgDEFAULT_SPACING, wdg.Information.Dimensions.h);
 
    wdg.Size.SetSize(wdgWIDTH_MAX_HORIZONTAL);
+   uiWidget.LastRect.GoLeft();
 
    wdg.Time.MoveBelow(wdg.Size, 0);
    wdg.Time.SetSize(wdgWIDTH_MAX_HORIZONTAL);
