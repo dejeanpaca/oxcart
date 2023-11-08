@@ -13,15 +13,35 @@ INTERFACE
       {ox}
       oxuRunRoutines,
       {oxed}
-      uOXED, oxeduAssets;
+      uOXED, oxeduAssets, oxeduVCS;
 
 TYPE
-   oxedTGit = record
- end;
+
+   { oxedTGit }
+
+   oxedTGit = class(oxedTVCS)
+      procedure Start(); override;
+   end;
+
+VAR
+   oxedGit: oxedTGit;
 
 IMPLEMENTATION
 
 procedure initialize();
+begin
+   oxedGit := oxedTGit.Create();
+   oxedVCS.SetVCS(oxedGit);
+end;
+
+procedure deinitialize();
+begin
+   FreeObject(oxedGit);
+end;
+
+{ oxedTGit }
+
+procedure oxedTGit.Start();
 begin
    oxedAssets.AddFileIgnore('.gitignore');
    oxedAssets.AddFileIgnore('.gitmodule');
@@ -29,7 +49,6 @@ begin
 end;
 
 INITIALIZATION
-   oxed.Init.Add('git', @initialize);
-
+   oxed.Init.Add('git', @initialize, @deinitialize);
 
 END.

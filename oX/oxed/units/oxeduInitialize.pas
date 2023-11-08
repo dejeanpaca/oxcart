@@ -68,15 +68,13 @@ INTERFACE
       {platforms}
       oxeduwndAndroidSettings, oxeduwndAndroidGeneralSettings,
       oxeduAndroidMenu,
-      {vcs}
-      oxeduGit,
       {ypk}
       oxeduYPK,
-      {initialize keys last}
-      oxeduKeys,
       {$ENDIF}
       {plugins}
-      {$INCLUDE ../plugins/oxed_plugins.inc};
+      {$INCLUDE ../plugins/oxed_plugins.inc}
+      {initialize keys last}
+      oxeduKeys;
 
 IMPLEMENTATION
 
