@@ -22,7 +22,8 @@ General outline of the bitmap file format:
 INTERFACE
 
    USES
-      uStd, uImage, uFileHandlers, imguRW;
+      uStd, uImage, uFileHandlers, imguRW,
+      uOX;
 
 IMPLEMENTATION
 
@@ -113,7 +114,7 @@ begin
 
    {get memory for bitmap and the color table}
    ld^.Allocate();
-   if(ld^.Error <> 0) then
+   if(ld^.GetError() <> 0) then
       exit;
 
    if(Info.BitCount = 4) then
@@ -121,23 +122,27 @@ begin
    else if(Info.BitCount = 8) then
       pal.Make(imgP, PIXF_BGR, 256);
 
-   if(ld^.Error <> 0) then
+   if(ld^.GetError() <> 0) then
       exit;
 
    {read in the palette, if one is present}
    ld^.ReadPalette(1);
-   if(ld^.Error = 0) then begin
+   if(ld^.GetError() = 0) then begin
       {read in the bitmap}
       ld^.Seek(Header.Offset);
 
-      if(ld^.Error = 0) then
+      if(ld^.GetError() = 0) then
          ld^.BlockRead(imgP.Image^, imgP.Size);
    end;
 end;
 
+procedure init();
+begin
+   imgFile.Readers.RegisterHandler(loader, 'WINBMP', @load);
+   imgFile.Readers.RegisterExt(ext, '.bmp', @loader);
+end;
+
 INITIALIZATION
-   {register the extension and loader}
-   imgFile.Loaders.RegisterHandler(loader, 'WINBMP', @load);
-   imgFile.Loaders.RegisterExt(ext, '.bmp', @loader);
+   ox.PreInit.Add('image.bmp', @init);
 
 END.

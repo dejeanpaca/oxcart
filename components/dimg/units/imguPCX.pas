@@ -12,7 +12,9 @@ UNIT imguPCX; {PCX}
 
 INTERFACE
 
-   USES uStd, uImage, uFileHandlers, imguRW, uColors;
+   USES
+      uStd, uImage, uFileHandlers, imguRW, uColors,
+      uOX;
 
 IMPLEMENTATION
 
@@ -136,7 +138,7 @@ begin
    ld := data;
    imgP := ld^.image;
 
-   fileSize := ld^.f^.GetSize();
+   fileSize := ld^.PFile^.f^.GetSize();
 
    {get memory for the file}
    GetMem(pcxData, fileSize);
@@ -145,7 +147,7 @@ begin
       {read in the entire file}
       ld^.BlockRead(pcxData^, fileSize);
 
-     if(ld^.Error <> 0) then begin
+     if(ld^.GetError() <> 0) then begin
          cleanup();
          exit;
       end;
@@ -192,7 +194,7 @@ begin
       ld^.Calculate();
       ld^.Allocate();
 
-      if(ld^.Error <> 0) then begin
+      if(ld^.GetError() <> 0) then begin
          cleanup();
          exit;
       end;
@@ -263,7 +265,7 @@ begin
 
                {get memory for the palette}
                pal.Make(imgP, PIXF_RGB, 256);
-               if(ld^.Error <> 0) then
+               if(ld^.GetError() <> 0) then
                   exit;
 
                palData := imgP.palette.Data;
@@ -282,9 +284,13 @@ begin
       ld^.SetError(eNO_MEMORY);
 end;
 
+procedure init();
+begin
+  imgFile.Readers.RegisterHandler(loader, 'PCX', @load);
+  imgFile.Readers.RegisterExt(ext, '.pcx', @loader);
+end;
+
 INITIALIZATION
-   {register the extension and the loader}
-   imgFile.Loaders.RegisterHandler(loader, 'PCX', @load);
-   imgFile.Loaders.RegisterExt(ext, '.pcx', @loader);
+   ox.PreInit.Add('image.pcx', @init);
 
 END.

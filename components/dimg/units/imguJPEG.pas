@@ -12,7 +12,8 @@ INTERFACE
 
    USES
       uStd, uImage, uFileHandlers, imguRW,
-      jpeglib, jerror, jdapimin, jdapistd, jdatasrc, Classes;
+      jpeglib, jerror, jdapimin, jdapistd, jdatasrc, Classes,
+      uOX;
 
 IMPLEMENTATION
 
@@ -67,7 +68,7 @@ begin
       end;
       else begin
          CleanUp();
-         ld.error := eUNSUPPORTED;
+         ld.SetError(eUNSUPPORTED);
          exit;
       end;
    end;
@@ -85,7 +86,7 @@ begin
    SetLength(rows, img.Height);
    if(Length(rows) < img.Height) then begin
       CleanUp();
-      ld.error := eNO_MEMORY;
+      ld.SetError(eNO_MEMORY);
       exit;
    end;
 
@@ -104,7 +105,7 @@ begin
    {that's it, now clean up}
    CleanUp();
    except
-      ld.error := eIO;
+      ld.SetError(eIO);
       Cleanup();
       exit;
    end;
@@ -124,7 +125,7 @@ begin
    ZeroOut(jerr, SizeOf(jerr));
 
    try
-      f := TFileStream.Create(ld^.fn, fmOpenRead);
+      f := TFileStream.Create(ld^.PFile^.FileName, fmOpenRead);
    except
       ld^.SetError(eIO);
       exit;
@@ -152,13 +153,17 @@ begin
    f.Free();
 end;
 
-INITIALIZATION
-   {register the extensions and the loader}
-   imgFile.Loaders.RegisterHandler(loader, 'JPEG', @load);
+procedure init();
+begin
+   imgFile.Readers.RegisterHandler(loader, 'JPEG', @load);
    {jpeg handler doesn't support file abstractions}
    loader.DoNotOpenFile := true;
 
-   imgFile.Loaders.RegisterExt(ext, '.jpg', @loader);
-   imgFile.Loaders.RegisterExt(ext2, '.jpeg', @loader);
+   imgFile.Readers.RegisterExt(ext, '.jpg', @loader);
+   imgFile.Readers.RegisterExt(ext2, '.jpeg', @loader);
+end;
+
+INITIALIZATION
+   ox.PreInit.Add('image.jpeg', @init);
 
 END.

@@ -13,7 +13,8 @@ UNIT imguwTGA;
 INTERFACE
 
    USES
-      uImage, uFileHandlers, imguRW;
+      uImage, uFileHandlers, imguRW,
+      uOX;
 
 IMPLEMENTATION
 
@@ -100,11 +101,15 @@ begin {writeImage}
    {success}
 end;
 
-INITIALIZATION
-   {register the extension and the writer}
-   imgFile.Writers.RegisterHandler(writer, 'TGA', @writeImage);
-   imgFile.Writers.RegisterExt(ext, '.tga', @writer);
+procedure init();
+begin
+  imgFile.Writers.RegisterHandler(writer, 'TGA', @writeImage);
+  imgFile.Writers.RegisterExt(ext, '.tga', @writer);
 
-   XFileFooter.Signature := tgacFooterSignature;
+  XFileFooter.Signature := tgacFooterSignature;
+end;
+
+INITIALIZATION
+   ox.PreInit.Add('image.write.tga', @init);
 
 END.

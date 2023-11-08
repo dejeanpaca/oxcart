@@ -13,7 +13,8 @@ INTERFACE
    USES
       uStd, uImage, StringUtils,
       uFileHandlers, imguRW,
-      paszlib, ZInflate;
+      paszlib, ZInflate,
+      uOX;
 
 IMPLEMENTATION
 
@@ -114,7 +115,7 @@ VAR
 procedure pngReadChunkHeader(var ld: imgTFileData; var data: TPNGLoaderData);
 begin
    ld.BlockRead(data.chunk, SizeOf(data.chunk));
-   if(ld.error = 0) then begin
+   if(ld.GetError() = 0) then begin
       {$IFDEF ENDIAN_LITTLE}
       data.chunk.length := BEtoN(data.chunk.length);
       {$ENDIF}
@@ -131,30 +132,30 @@ end;
 
 procedure skipChunk(var ld: imgTFileData; var data: TPNGLoaderData);
 begin
-   ld.Seek(ld.f^.fPosition + data.chunk.length + 4);
+   ld.Seek(ld.PFile^.f^.fPosition + data.chunk.length + 4);
 end;
 
 procedure loadIHDR(var ld: imgTFileData; var img: imgTImage; var data: TPNGLoaderData);
 begin
    {read the IHDR chunk}
    pngReadChunkHeader(ld, data);
-   if(ld.error = 0) then begin
+   if(ld.GetError() = 0) then begin
       if(data.chunk.typ <> pngcIHDR) then begin
-         ld.error := eINVALID;
+         ld.SetError(eINVALID);
          exit;
       end;
    end else
       exit;
 
    ld.BlockRead(data.HDR, sizeof(pngfTIHDR));
-   if(ld.error = 0) then begin
+   if(ld.GetError() = 0) then begin
       {assign and calculate}
       img.Width   := BEtoN(data.HDR.Width);
       img.Height  := BEtoN(data.HDR.Height);
 
       {check the bit depth}
       if(data.HDR.BitDepth <> 8) then begin
-         ld.error := eUNSUPPORTED;
+         ld.SetError(eUNSUPPORTED);
          exit;
       end;
 
@@ -172,13 +173,13 @@ begin
          img.RowSize       := img.Width * 4;
          data.bpp          := 4;
       end else begin
-         ld.error := eUNSUPPORTED;
+         ld.SetERror(eUNSUPPORTED);
          exit;
       end;
 
       {check compression and filtering}
       if(data.HDR.CompressionMethod <> 0) and (data.HDR.FilterMethod <> 0) then begin
-         ld.error := eUNSUPPORTED;
+         ld.SetError(eUNSUPPORTED);
          exit;
       end;
 
@@ -223,7 +224,7 @@ begin
          data.fzStream.avail_in  := bread;
          data.fzStream.next_in   := data.zBuffer;
       end else begin
-         ld.error := eINVALID;
+         ld.SetError(eINVALID);
          exit();
       end;
 
@@ -231,13 +232,12 @@ begin
          error := zinflate.inflate(data.fzStream, Z_NO_FLUSH);
 
          if(error < 0) then begin
-            ld.eDescription := 'z_stream error(' + sf(error) + ',' + zError(error) + ') while unpacking';
-            ld.error := eEXTERNAL;
+            ld.SetError(eEXTERNAL, 'z_stream error(' + sf(error) + ',' + zError(error) + ') while unpacking');
             exit();
          end;
       until (data.fzStream.avail_in <= 0);
 
-   until (pos >= data.chunk.length) or ld.f^.EOF() or (error <> Z_OK);
+   until (pos >= data.chunk.length) or ld.PFile^.f^.EOF() or (error <> Z_OK);
 
    skipCRC(ld);
 
@@ -382,7 +382,7 @@ begin
    repeat
       {read chunk header}
       pngReadChunkHeader(ld, data);
-      if(ld.error <> 0) then
+      if(ld.GetError() <> 0) then
         break;
 
       {IDAT}
@@ -398,9 +398,9 @@ begin
       else
          skipChunk(ld, data);
 
-      if(ld.error <> 0) then
+      if(ld.GetError() <> 0) then
         break;
-   until(ld.f^.EOF() = true);
+   until(ld.PFile^.f^.EOF() = true);
 end;
 
 function getPNGBufferSize(const img: imgTImage): int64;
@@ -415,7 +415,7 @@ var
 begin
    {load the IHDR chunk}
    loadIHDR(ld, img, data);
-   if(ld.error <> 0) then
+   if(ld.GetError() <> 0) then
       exit;
 
    {allocate memory for the z buffer}
@@ -433,15 +433,15 @@ begin
             {read all chunks}
             pngReadChunks(ld, img, data);
 
-            if(ld.error = 0) then begin
+            if(ld.GetError() = 0) then begin
                {filter image}
                pngFilter(img, data);
             end;
          end;
       end else
-         ld.error := eNO_MEMORY;
+         ld.SetError(eNO_MEMORY);
    end else
-      ld.error := eNO_MEMORY;
+      ld.SetError(eNO_MEMORY);
 
    zinflate.inflateEnd(data.fzStream);
    XFreeMem(data.zBuffer);
@@ -461,7 +461,7 @@ begin
    {read png signature and verify it}
    ld^.BlockRead(pngSig, 8);
 
-   if(ld^.Error = 0) then begin
+   if(ld^.GetError() = 0) then begin
       if(CompareDWord(pngSig, pngcSignature, 2) <> 0) then begin
          ld^.SetError(eINVALID);
          exit;
@@ -473,9 +473,13 @@ begin
    end;
 end;
 
+procedure init();
+begin
+  imgFile.Readers.RegisterHandler(loader, 'PNG', @load);
+  imgFile.Readers.RegisterExt(ext, '.png', @loader);
+end;
+
 INITIALIZATION
-   {register the extension and the loader}
-   imgFile.Loaders.RegisterHandler(loader, 'PNGX', @load);
-   imgFile.Loaders.RegisterExt(ext, '.png', @loader);
+   ox.PreInit.Add('image.png', @init);
 
 END.
