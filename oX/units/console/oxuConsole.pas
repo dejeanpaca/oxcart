@@ -200,7 +200,8 @@ begin
       end;
 
       exit(true);
-   end;
+   end else if(keyEvent.Key.Equal(kcESC)) then
+      exit(false);
 
    Result := inherited Key(keyEvent);
 end;
@@ -508,6 +509,8 @@ begin
    {handle [ESC, TILDE] keys}
    end else if(event.hID = @appKeyEvents.evh) then begin
       key := appPKey(event.GetData())^.Key;
+
+      writeln('GOT KEY: ' + key.ToString());
 
       if(key.Equal(kcESC)) or (key.Equal(kcTILDE)) then begin
          if(key.Released()) then
