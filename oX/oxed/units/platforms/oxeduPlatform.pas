@@ -84,7 +84,7 @@ TYPE
       pDvg: PDVarGroup;
 
       constructor Create(); virtual;
-      destructor Destroy; override;
+      destructor Destroy(); override;
 
       function AddArchitecture(arch: oxedTPlatformArchitecture): oxedTPlatformArchitecture;
 
@@ -185,7 +185,7 @@ begin
    RequiresPIC := false;
 end;
 
-destructor oxedTPlatform.Destroy;
+destructor oxedTPlatform.Destroy();
 var
    i: loopint;
 
@@ -197,6 +197,8 @@ begin
    end;
 
    Architectures.Dispose();
+
+   FreeObject(Configuration);
 end;
 
 function oxedTPlatform.AddArchitecture(arch: oxedTPlatformArchitecture): oxedTPlatformArchitecture;

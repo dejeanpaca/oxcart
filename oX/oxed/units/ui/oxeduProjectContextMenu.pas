@@ -254,9 +254,8 @@ end;
 
 procedure deinit();
 begin
-   uiContextMenu.Destroy();
-
    FreeObject(oxedProjectContextMenu.Menus.Current);
+   FreeObject(oxedProjectContextMenu.Menus.Create);
 end;
 
 INITIALIZATION

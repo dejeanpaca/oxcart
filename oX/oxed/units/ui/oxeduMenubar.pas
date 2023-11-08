@@ -26,6 +26,12 @@ INTERFACE
 
 TYPE
 
+   { oxedTMenubar }
+
+   oxedTMenubar = class(wdgTMenubar)
+      procedure DeInitialize(); override;
+   end;
+
    { oxedTMenubarGlobal }
 
    oxedTMenubarGlobal = record
@@ -97,6 +103,15 @@ begin
    oxedMenubar.UpdateRecents();
 end;
 
+{ oxedTMenubar }
+
+procedure oxedTMenubar.DeInitialize();
+begin
+   {no longer available}
+   oxedMenubar.Bar := nil;
+   oxedMenubar.OpenWindows := nil;
+end;
+
 procedure oxedTMenubarGlobal.Initialize();
 var
    menu,
@@ -107,6 +122,7 @@ begin
    OpenWindows := uiTContextMenu.Create('Open Windows');
 
    uiWidget.Create.Instance := wdgTOXEDMenubar;
+   uiWidget.Create.Instance := oxedTMenubar;
    Bar := wdgMenubar.Add(oxWindows.w[0]);
 
    { FILES }
@@ -247,6 +263,7 @@ end;
 procedure oxedTMenubarGlobal.Deinitialize();
 begin
    OnDeinit.Call();
+   FreeObject(oxedMenubar.OpenWindows);
 end;
 
 procedure clearRecents();
@@ -309,7 +326,9 @@ end;
 
 procedure oxedTMenubarGlobal.SetupWindowsMenu();
 begin
-   Windows.AddSub('Open', OpenWindows);
+   if(OpenWindows <> nil) then
+      Windows.AddSub('Open', OpenWindows);
+
    Windows.AddItem('Reset Layout', oxedActions.RESET_WINDOW_LAYOUT);
 end;
 
