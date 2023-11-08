@@ -53,7 +53,7 @@ begin
    SelectedComponentPairs.Dispose();
 
    if(newEntity <> nil) then
-      SelectedComponentPairs := oxedEditRenderers.Selection.FindForEntity(newEntity);
+      SelectedComponentPairs := oxedEditRenderers.FindForEntity(newEntity);
 end;
 
 procedure oxedTSceneGlobal.Unselect;
