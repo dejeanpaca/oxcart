@@ -122,7 +122,6 @@ begin
    {$IFDEF OX_LIBRARY}
    if(wnd.ExternalWindow <> nil) then
       oglTWindow(wnd).Info := oglTWindow(wnd.ExternalWindow).Info;
-   log.w('INITIALOZED');
    {$ENDIF}
 
    {bind rendering context to the window}
