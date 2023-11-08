@@ -222,6 +222,9 @@ TYPE
       procedure GetFileInfo(const fn: string; out f: TFileDescriptor);
       procedure GetFileInfo(const fn: StdString; out f: TFileDescriptor);
 
+      procedure ReplaceInFile(const fn: string; const keyValue: array of TStringPair);
+      procedure ReplaceInFile(const fn: StdString; const keyValue: array of TStringPair);
+
       function HideFile(const {%H-}fn: StdString): boolean;
    end;
 
@@ -1453,6 +1456,33 @@ begin
       TFileDescriptor.Initialize(f);
 
    FindClose(searchRec);
+end;
+
+procedure TFileUtilsGlobal.ReplaceInFile(const fn: string; const keyValue: array of TStringPair);
+begin
+   ReplaceInFile(StdString(fn), keyValue);
+end;
+
+procedure TFileUtilsGlobal.ReplaceInFile(const fn: StdString; const keyValue: array of TStringPair);
+var
+   i,
+   l: loopint;
+   fileContents: StdString;
+
+begin
+   l := Length(keyValue);
+
+   if(l > 0) then begin
+      LoadString(fn, fileContents);
+
+      if(fileContents <> '') then begin
+         for i := 0 to l - 1 do begin
+            fileContents := StringReplace(fileContents, keyValue[i][0], keyValue[i][1], [rfReplaceAll]);
+         end;
+
+         WriteString(fn, fileContents);
+      end;
+   end;
 end;
 
 function TFileUtilsGlobal.HideFile(const fn: StdString): boolean;
