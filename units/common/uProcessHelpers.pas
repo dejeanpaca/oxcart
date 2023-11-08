@@ -32,10 +32,11 @@ TYPE
 
    TProcessHelpers = record
       OutputString: AnsiString;
+      ExitCode: loopint;
 
-      procedure RunCommand(const path: StdString; const commands: TStringArray; options: TProcessOptions = []);
-      procedure AsyncCommand(const path: StdString; const commands: TStringArray; options: TProcessOptions = []);
-      procedure RunCommandCurrentDir(const path: StdString; const commands: TStringArray; options: TProcessOptions = []);
+      function RunCommand(const path: StdString; const commands: TStringArray; options: TProcessOptions = []): boolean;
+      function AsyncCommand(const path: StdString; const commands: TStringArray; options: TProcessOptions = []): boolean;
+      function RunCommandCurrentDir(const path: StdString; const commands: TStringArray; options: TProcessOptions = []): boolean;
    end;
 
 VAR
@@ -45,13 +46,15 @@ IMPLEMENTATION
 
 { TProcessHelpers }
 
-procedure TProcessHelpers.RunCommand(const path: StdString; const commands: TStringArray; options: TProcessOptions);
+function TProcessHelpers.RunCommand(const path: StdString; const commands: TStringArray; options: TProcessOptions): boolean;
 var
    i: loopint;
    p: TProcess;
 
 begin
+   Result := false;
    OutputString := '';
+   ExitCode := 0;
 
    p := TProcess.Create(nil);
    p.Executable := path;
@@ -66,12 +69,14 @@ begin
       p.Execute();
 
       OutputString := p.GetOutputString();
+      ExitCode := p.ExitCode;
+
+      Result := true;
    except
       on e: Exception do begin
          log.e('Failed to execute: ' + path);
       end;
    end;
-
 
    if(OutputString <> '') then
       console.i(OutputString);
@@ -79,15 +84,15 @@ begin
    FreeObject(p);
 end;
 
-procedure TProcessHelpers.AsyncCommand(const path: StdString; const commands: TStringArray; options: TProcessOptions);
+function TProcessHelpers.AsyncCommand(const path: StdString; const commands: TStringArray; options: TProcessOptions): boolean;
 begin
    Exclude(options, poWaitOnExit);
-   RunCommand(path, commands, options);
+   Result := RunCommand(path, commands, options);
 end;
 
-procedure TProcessHelpers.RunCommandCurrentDir(const path: StdString; const commands: TStringArray; options: TProcessOptions);
+function TProcessHelpers.RunCommandCurrentDir(const path: StdString; const commands: TStringArray; options: TProcessOptions): boolean;
 begin
-   RunCommand(IncludeTrailingPathDelimiterNonEmpty(GetCurrentDir()) + path, commands, options);
+   Result := RunCommand(IncludeTrailingPathDelimiterNonEmpty(GetCurrentDir()) + path, commands, options);
 end;
 
 { TProcessHelper }
