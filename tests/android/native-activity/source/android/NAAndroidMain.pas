@@ -73,9 +73,7 @@ begin
     *)
    eglChooseConfig(display, attribs, nil, 0, @numConfigs);
    SetLength(supportedConfigs, numConfigs);
-   logi('num: ' + sf(numConfigs));
    eglChooseConfig(display, attribs, @supportedConfigs[0], numConfigs, @numConfigs);
-   logi('new: ' + sf(numConfigs));
 
    config := nil;
 
@@ -116,12 +114,8 @@ begin
        exit(-1);
    end;
 
-   logi('made current');
-
    eglQuerySurface(display, surface, EGL_WIDTH, @w);
    eglQuerySurface(display, surface, EGL_HEIGHT, @h);
-
-   logi('queried');
 
    engine^.display := display;
    engine^.context := context;
@@ -130,22 +124,17 @@ begin
    engine^.height := h;
    engine^.state.angle := 0;
 
-   logi('written');
-
    // Check openGL on the system
-(*   auto opengl_info = {GL_VENDOR, GL_RENDERER, GL_VERSION, GL_EXTENSIONS};
-   for (auto name : opengl_info) {
-       auto info = glGetString(name);
-       LOGI("OpenGL Info: %s", info);
-   }*)
+   logi('VENDOR: ' + pChar(glGetString(GL_VENDOR)));
+   logi('RENDERER: ' + pChar(glGetString(GL_RENDERER)));
+   logi('VERSION: ' + pChar(glGetString(GL_VERSION)));
+   logi('EXTENSIONS: ' + pChar(glGetString(GL_EXTENSIONS)));
 
    // Initialize GL state.
    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
    glEnable(GL_CULL_FACE);
    glShadeModel(GL_SMOOTH);
    glDisable(GL_DEPTH_TEST);
-
-   logi('initialized');
 
    Result := 0;
 end;
@@ -289,10 +278,7 @@ begin
       ident := ALooper_pollAll(0, nil, @nEvents, @pSource);
 
       if(ident >= 0) then begin
-         logi('event: ' + sf(ident));
-
          if(pSource <> nil) then begin
-            logi('source: ' + sf(pSource^.id));
             pSource^.process(app, pSource);
          end;
       end;
