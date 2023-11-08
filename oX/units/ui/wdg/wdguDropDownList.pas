@@ -150,7 +150,7 @@ var
 
 begin
    if(HighlightedItem <> index) then
-      SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.InputText)
+      SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.Text)
    else
       SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight);
 
