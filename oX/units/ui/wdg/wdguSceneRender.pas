@@ -81,8 +81,6 @@ destructor wdgTSceneRender.Destroy();
 begin
    inherited Destroy;
 
-   Camera.Dispose();
-
    if(SceneRenderer <> oxSceneRender.Default) then
       FreeObject(SceneRenderer);
 end;
