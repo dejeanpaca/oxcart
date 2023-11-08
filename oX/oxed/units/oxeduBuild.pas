@@ -386,10 +386,10 @@ begin
       f.AddCustomOption('-dNO_THREADS');
    {$ENDIF}
 
-   {$IFOPT D+}
-   oxedConsole.w('Including debug info');
-   f.AddCustomOption('-g');
-   {$ENDIF}
+   if(build.IncludeDebugInfo) then begin
+      oxedConsole.w('Including debug info');
+      f.AddCustomOption('-g');
+   end;
 
    if(oxed.UseHeapTrace) then
       oxedConsole.w('OXED built with heaptrc included, running library may be unstable');
@@ -483,14 +483,74 @@ begin
    Result := lpi.Error = 0;
 end;
 
+procedure InsertPackageIntoConfig(var config: TBuildFPCConfiguration; var package: oxedTPackage; const path: StdString);
+var
+   i: loopint;
+
+begin
+   if(package.IsEmpty()) then
+      exit;
+
+   {TODO: Make sure to not include duplicate paths}
+
+   config.Add('');
+   config.Add('#' + package.Name);
+   config.Add('');
+
+   for i := 0 to package.Units.n - 1 do begin;
+      config.Add('-Fu' + getRelativePath(path, package.Units.List[i]));
+   end;
+
+   for i := 0 to package.IncludeFiles.n - 1 do begin;
+      config.Add('-Fi' + getRelativePath(path, package.IncludeFiles.List[i]));
+   end;
+end;
+
+procedure InsertPackagesIntoConfig(var config: TBuildFPCConfiguration);
+var
+   i: loopint;
+
+begin
+   InsertPackageIntoConfig(config, oxedProject.MainPackage, oxedProject.Path);
+
+   for i := 0 to oxedProject.Packages.n - 1 do begin
+      InsertPackageIntoConfig(config, oxedProject.Packages.List[i], oxedProject.GetPackagePath(oxedProject.Packages.List[i]));
+   end;
+end;
+
 function RecreateFPCConfig(): boolean;
 var
+   i: loopint;
    fn: StdString;
    config: TBuildFPCConfiguration;
 
 begin
    TBuildFPCConfiguration.Initialize(config);
    config.Construct();
+
+   InsertPackagesIntoConfig(config);
+
+   config.Add('');
+
+   for i := 0 to oxedBuild.Features.n - 1 do begin
+      config.Add('-d' + oxedBuild.Features.List[i]^.Symbol);
+   end;
+
+   config.Add('-dOXED');
+   config.Add('-dOX_NO_DEFAULT_FEATURES');
+
+   {$IFDEF OX_DEBUG}
+   config.Add('-dOX_DEBUG');
+   config.Add('-dDEBUG');
+   {$ENDIF}
+
+   if(oxedProject.Session.DebugResources) then
+      config.Add('-dOX_RESOURCE_DEBUG');
+
+   {$IFDEF NO_THREADS}
+   if(oxedBuild.IsLibrary()) then
+      config.Add('-dNO_THREADS');
+   {$ENDIF}
 
    fn := oxedBuild.WorkArea + oxedBuild.Props.ConfigFile;
 
@@ -973,6 +1033,12 @@ begin
    TargetPath := GetTargetPath();
    WorkArea := GetWorkingAreaPath();
 
+   {$IFOPT D+}
+   build.IncludeDebugInfo := true;
+   {$ELSE}
+   build.IncludeDebugInfo := false;
+   {$ENDIf}
+
    if(BuildType = OXED_BUILD_TASK_RECODE) then begin
       build.Options.Rebuild := false;
       RunBuild();
@@ -1133,6 +1199,7 @@ INITIALIZATION
 
    oxedActions.BUILD := appActionEvents.SetCallback(@oxedBuild.RebuildTask);
    oxedActions.RECODE := appActionEvents.SetCallback(@oxedBuild.RecodeTask);
+   oxedActions.RECREATE := appActionEvents.SetCallback(@oxedBuild.RecreateTask);
    oxedActions.CLEANUP := appActionEvents.SetCallback(@oxedBuild.CleanupTask);
    oxedActions.REBUILD_THIRD_PARTY := appActionEvents.SetCallback(@oxedBuild.RebuildThirdPartyTask);
 
