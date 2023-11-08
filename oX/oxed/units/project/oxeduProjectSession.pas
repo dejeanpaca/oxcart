@@ -55,8 +55,9 @@ INITIALIZATION
    oxedProjectSessionFile.Create();
    oxedProjectSessionFile.FileName := OXED_PROJECT_SESSION_FILE;
    oxedProjectSessionFile.IsTemp := true;
+   oxedProjectSessionFile.dvg := @dvGroup;
+
    oxedProjectSessionFile.BeforeLoad := @UpdateVars;
    oxedProjectSessionFile.BeforeSave := @beforeSave;
-   oxedProjectSessionFile.dvg := @dvGroup;
 
 END.
