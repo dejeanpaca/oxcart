@@ -61,10 +61,17 @@ begin
 end;
 
 procedure updateFramerate();
+var
+   frameRate: StdString;
+
 begin
    if(oxedMenubar.Bar <> nil) and (oxedMenuToolbar.FrameRate <> nil) then begin
-      oxedMenuToolbar.FrameRate^.Caption := oxFramerate.Get();
-      oxedMenuToolbar.OnResize();
+      frameRate := oxFramerate.Get();
+
+      if(oxedMenuToolbar.FrameRate^.Caption <> frameRate) then begin
+         oxedMenuToolbar.FrameRate^.Caption := frameRate;
+         oxedMenuToolbar.OnResize();
+      end;
    end;
 end;
 
