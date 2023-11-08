@@ -19,6 +19,7 @@ TYPE
          surface: EGLSurface;
          context: EGLContext;
          display: EGLDisplay;
+         config: EGLConfig;
       end;
    end;
 
