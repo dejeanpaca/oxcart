@@ -179,6 +179,8 @@ TYPE
       function GetPath(): string;
    end;
 
+   oxTResourceClass = class of oxTResource;
+
    oxTPreallocatedResourceArrayListClass = specialize TPreallocatedArrayListClass<oxTResource>;
 
    oxTTextureID = type longword;
