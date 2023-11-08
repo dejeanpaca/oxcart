@@ -9,9 +9,9 @@ UNIT appuPaths;
 INTERFACE
 
    USES
-      uStd, uBitSet,
+      uStd,
       {$IFDEF UNIX}BaseUnix,{$ENDIF}
-      {$IFDEF WINDOWS}windows,{$ENDIF}
+      {$IFDEF WINDOWS}uBitSet, windows,{$ENDIF}
       sysutils, uFileUtils, StringUtils, ConsoleUtils,
       uAppInfo, uApp,
       oxuRunRoutines;
