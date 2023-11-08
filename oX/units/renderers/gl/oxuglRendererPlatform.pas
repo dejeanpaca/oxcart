@@ -23,6 +23,9 @@ TYPE
 
       constructor Create();
 
+      {raise an error, if any}
+      function RaiseError(): loopint; virtual;
+
       procedure OnInitialize(); virtual;
       function PreInitWindow({%H-}wnd: oglTWindow): boolean; virtual;
       procedure OnInitWindow({%H-}wnd: oglTWindow); virtual;
@@ -41,6 +44,11 @@ IMPLEMENTATION
 constructor oxglTPlatform.Create();
 begin
 
+end;
+
+function oxglTPlatform.RaiseError(): loopint;
+begin
+   Result := 0;
 end;
 
 procedure oxglTPlatform.OnInitialize();

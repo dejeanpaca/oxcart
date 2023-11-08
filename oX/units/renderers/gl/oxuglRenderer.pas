@@ -68,6 +68,7 @@ TYPE
       constructor Create(); override;
 
       function GetSummary(): TStringArray; override;
+      function GetPlatformErrorDescription(error: loopint): StdString;
   end;
 
 VAR
@@ -196,8 +197,15 @@ begin
 end;
 
 procedure oxglTRenderer.SwapBuffers(wnd: oxTWindow);
+var
+   error: loopint;
+
 begin
    glPlatform^.SwapBuffers(oglTWindow(wnd));
+   {$IFDEF OX_DEBUG}
+   if(glPlatform^.RaiseError() <> 0) then
+      log.e('Failed to swap buffers (' + GetPlatformErrorDescription(error) + ')');
+   {$ENDIF}
 end;
 
 function oxglTRenderer.GetContext(wnd: oxTWindow; shareContext: loopint): loopint;
@@ -365,6 +373,11 @@ begin
    list[3] := 'GLSL Version: ' + oxglRendererInfo.GLSL.Version;
 
    Result := list;
+end;
+
+function oxglTRenderer.GetPlatformErrorDescription(error: loopint): StdString;
+begin
+   Result := glPlatform^.Name + ' error: ' + sf(error);
 end;
 
 procedure init();
