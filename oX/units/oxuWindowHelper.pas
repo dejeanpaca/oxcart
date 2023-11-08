@@ -27,9 +27,9 @@ TYPE
       procedure SetupViewport();
       procedure SetViewportOffset();
 
-      procedure Maximize();
-      procedure Minimize();
-      procedure Restore();
+      procedure Maximize(fromSystem: boolean = false);
+      procedure Minimize(fromSystem: boolean = false);
+      procedure Restore(fromSystem: boolean = false);
 
       {set a frame for the window}
       procedure SetFrame(fs: uiTWindowFrameStyle);
@@ -122,6 +122,9 @@ end;
 
 procedure oxTWindowHelper.SetPosition(x, y: longint; system: boolean);
 begin
+   if(Position.x = x) and (Position.y = y) then
+      exit;
+
    Position.x := x;
    Position.y := y;
 
@@ -137,6 +140,9 @@ end;
 
 procedure oxTWindowHelper.SetDimensions(w, h: longint; system: boolean);
 begin
+   if(Dimensions.w = w) and (Dimensions.h = h) then
+      exit;
+
    Dimensions.w := w;
    Dimensions.h := h;
 
@@ -164,25 +170,25 @@ begin
       Viewport.SetOffset(0, 0);
 end;
 
-procedure oxTWindowHelper.Maximize();
+procedure oxTWindowHelper.Maximize(fromSystem: boolean);
 begin
    if(oxProperties.Fullscreen) then
       exit;
 
    if(oxUIHooks <> nil) then
-      oxUIHooks.Maximize(Self);
+      oxUIHooks.Maximize(Self, fromSystem);
 end;
 
-procedure oxTWindowHelper.Minimize();
+procedure oxTWindowHelper.Minimize(fromSystem: boolean);
 begin
    if(oxProperties.Fullscreen) then
       exit;
 
    if(oxUIHooks <> nil) then
-      oxUIHooks.Minimize(Self);
+      oxUIHooks.Minimize(Self, fromSystem);
 end;
 
-procedure oxTWindowHelper.Restore();
+procedure oxTWindowHelper.Restore(fromSystem: boolean);
 begin
    if(oxProperties.Fullscreen) then begin
       LeaveFullscreen();
@@ -190,7 +196,7 @@ begin
    end;
 
    if(oxUIHooks <> nil) then
-      oxUIHooks.Restore(Self);
+      oxUIHooks.Restore(Self, fromSystem);
 end;
 
 procedure oxTWindowHelper.SetFrame(fs: uiTWindowFrameStyle);
