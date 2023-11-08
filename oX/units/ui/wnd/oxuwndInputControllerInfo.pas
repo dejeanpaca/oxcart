@@ -23,7 +23,8 @@ INTERFACE
       {ui}
       uiuControl, uiuWindow,
       uiuWidget, uiWidgets,
-      wdguLabel, wdguButton, wdguDivisor, wdguControllerInputState, wdguProgressBar;
+      wdguLabel, wdguButton, wdguDivisor, wdguProgressBar,
+      wdguControllerInputState, wdguControllerInputDPad;
 
 TYPE
 
@@ -40,6 +41,7 @@ TYPE
       Controller: appTControllerDevice;
 
       wdg: record
+         DPad: wdgTControllerDPadState;
          Buttons: array[0..appMAX_CONTROLLER_BUTTONS - 1] of wdgTControllerButtonState;
          Axes: array[0..appMAX_CONTROLLER_AXES - 1] of wdgTProgressBar;
          Triggers: array[0..appMAX_CONTROLLER_TRIGGERS - 1] of wdgTProgressBar;
@@ -80,6 +82,8 @@ var
    buttonsPerRow,
    i: loopint;
 
+   r: uiTWidgetLastRect;
+
 begin
    wdgLabel.Add('Controller: ' + controller.GetName() +
       ' (' + appPControllerHandler(Controller.Handler)^.GetName() + ')');
@@ -92,6 +96,7 @@ begin
    uiWidget.LastRect.NextLine();
 
    buttonsPerRow := 8;
+
    if(Controller.ButtonCount > 16) then
       buttonsPerRow := 10;
 
@@ -111,19 +116,27 @@ begin
       wdg.Buttons[i] := btnWidget;
    end;
 
-   if(Controller.AxisCount > 0) then
+
+   r := uiWidget.LastRect;
+
+   if(Controller.AxisCount > 0) then begin
       uiWidget.LastRect.NextLine();
+      r := uiWidget.LastRect;
+   end;
 
    for i := 0 to Controller.AxisCount - 1 do begin
       if(i mod 2 = 0) and (i > 0) then
          uiWidget.LastRect.NextLine();
 
-      axisWidget := wdgProgressBar.Add(uiWidget.LastRect.RightOf(), oxDimensions(60, 25));
+      axisWidget := wdgProgressBar.Add(uiWidget.LastRect.RightOf(), oxDimensions(80, 25));
       axisWidget.SetCaption(sf(i));
       axisWidget.Progress.PercentageInText := false;
       axisWidget.SetRatio(Controller.GetUnitAxisValue(i));
 
       wdg.Axes[i] := axisWidget;
+
+      if(i = 1) then
+         r := uiWidget.LastRect;
    end;
 
    if(Controller.TriggerCount > 0) then
@@ -133,12 +146,18 @@ begin
       if(i mod 2 = 0) and (i > 0) then
          uiWidget.LastRect.NextLine();
 
-      triggerWidget := wdgProgressBar.Add(uiWidget.LastRect.RightOf(), oxDimensions(60, 25));
+      triggerWidget := wdgProgressBar.Add(uiWidget.LastRect.RightOf(), oxDimensions(80, 25));
       triggerWidget.SetCaption(sf(i));
       triggerWidget.Progress.PercentageInText := false;
       triggerWidget.SetRatio(Controller.GetNormalizedTriggerValue(i));
 
       wdg.Triggers[i] := triggerWidget;
+   end;
+
+   {is a dpad present}
+   if(Controller.DPadPresent) then begin
+      wdg.DPad := wdgControllerDPadState.Add(r.RightOf());
+      wdg.DPad.SetDirection(Controller.GetDPadDirection());
    end;
 
    {add a cancel button}
@@ -171,6 +190,9 @@ begin
       if(wdg.Triggers[i] <> nil) then
          wdg.Triggers[i].SetRatio(Controller.GetTriggerValue(i));
    end;
+
+   if(wdg.DPad <> nil) then
+      wdg.DPad.SetDirection(Controller.GetDPadDirection());
 end;
 
 constructor oxTControllerInfoWindow.Create();
