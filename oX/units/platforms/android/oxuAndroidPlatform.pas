@@ -375,7 +375,10 @@ begin
       exit(false);
    end;
 
-   ANativeWindow_setBuffersGeometry(AndroidApp^.window, 0, 0, format);
+   if(ANativeWindow_setBuffersGeometry(AndroidApp^.window, 0, 0, format) <> 0) then begin
+      wnd.RaiseError('egl > Failed to set window buffers geometry');
+      exit(false);
+   end;
 
    Result := true;
 end;
