@@ -72,6 +72,9 @@ TYPE
       {add an extension to the extension blacklist}
       procedure ExcludeExtension(const ext: string);
 
+      {reset extensions}
+      procedure ResetExtensions();
+
       {stop traversing}
       procedure Stop();
 
@@ -1223,6 +1226,12 @@ procedure TFileTraverse.ExcludeExtension(const ext: string);
 begin
    SetLength(ExtensionsBlacklist, Length(ExtensionsBlacklist) + 1);
    ExtensionsBlacklist[Length(ExtensionsBlacklist) - 1] := ext;
+end;
+
+procedure TFileTraverse.ResetExtensions();
+begin
+   SetLength(ExtensionsBlacklist, 0);
+   SetLength(Extensions, 0);
 end;
 
 procedure TFileTraverse.Stop();
