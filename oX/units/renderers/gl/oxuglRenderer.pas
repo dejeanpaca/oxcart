@@ -17,7 +17,7 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uLog, uStd, uColors, StringUtils, uImage, vmVector,
       {ox}
-      uOX, oxuRunRoutines, oxuWindowTypes, oxuTypes, oxuRenderer, oxuRenderers,
+      uOX, oxuRunRoutines, oxuWindowTypes, oxuTypes, oxuRenderer, oxuRenderers, oxuWindow,
       {renderer.gl}
       oxuOGL, oxuglExtensions, oxuglInfo, oxuglRendererPlatform, oxuglRendererInfo, oxuglWindow
       {$IFNDEF OX_LIBRARY}, oxuglLog{$ENDIF};
@@ -83,7 +83,8 @@ begin
    inherited AfterInitialize();
 
    {$IFNDEF OX_LIBRARY}
-   oglLogInformation();
+   if(oxWindow.Current.ErrorCode = 0) then
+      oglLogInformation();
    {$ENDIF}
 
    log.Leave();
