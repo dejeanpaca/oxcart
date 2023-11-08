@@ -17,6 +17,13 @@ INTERFACE
 
 procedure appLinuxSysInfoGetInformation();
 
+{get kernel version}
+procedure appLinuxSysInfoGetKernelVersion();
+{get memory information}
+procedure appLinuxSysInfoGetMemoryInfo();
+{get cpu information}
+procedure appLinuxSysInfoGetCPUInfo();
+
 IMPLEMENTATION
 
 TYPE
@@ -206,6 +213,28 @@ CONST
    );
 {$ENDIF}
 
+procedure appLinuxSysInfoGetKernelVersion();
+var
+   release: string;
+
+begin
+   if(FileUtils.LoadStringPipe('/proc/version', release) > 0) then begin
+      StringUtils.StripEndLine(release);
+      appSI.System.KernelVersion := release;
+   end;
+end;
+
+procedure appLinuxSysInfoGetMemoryInfo();
+begin
+   processKeyColonValueFile('/proc/meminfo', @memoryHandler);
+end;
+
+procedure appLinuxSysInfoGetCPUInfo();
+begin
+   processKeyColonValueFile('/proc/cpuinfo', @cpuHandler);
+   appSI.nProcessors := length(appSI.Processors);
+end;
+
 procedure appLinuxSysInfoGetInformation();
 var
    release: StdString = '';
@@ -215,11 +244,7 @@ var
    {$ENDIF}
 
 begin
-   {$IFNDEF ANDROID}
    appSI.System.Name := 'Linux';
-   {$ELSE}
-   appSI.System.Name := 'Android';
-   {$ENDIF}
 
    {get platform names}
    {$IFNDEF ANDROID}
@@ -234,20 +259,9 @@ begin
    end;
    {$ENDIF}
 
-   {get kernel version}
-   ok := FileUtils.LoadStringPipe('/proc/version', release);
-
-   if(ok > 0) then begin
-      StringUtils.StripEndLine(release);
-      appSI.System.KernelVersion := release;
-   end;
-
-   {get memory information}
-   processKeyColonValueFile('/proc/meminfo', @memoryHandler);
-
-   {get processor information}
-   processKeyColonValueFile('/proc/cpuinfo', @cpuHandler);
-   appSI.nProcessors := length(appSI.Processors);
+   appLinuxSysInfoGetKernelVersion();
+   appLinuxSysInfoGetMemoryInfo();
+   appLinuxSysInfoGetCPUInfo();
 end;
 
 INITIALIZATION
