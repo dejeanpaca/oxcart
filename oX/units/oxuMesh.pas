@@ -184,6 +184,7 @@ end;
 procedure oxTMesh.SetData(nv: loopint; ni: loopint; nt: loopint; nn: loopint);
 begin
    SetVertices(nv);
+
    if(ni > 0) then
       SetIndices(ni);
 

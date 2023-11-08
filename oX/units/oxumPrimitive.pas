@@ -358,7 +358,7 @@ begin
    Mesh.CullFace := oxCULL_FACE_NONE;
 
    { add indices, vertices and texture coordinates}
-   Mesh.SetData(QUAD_VERTICEs, QUAD_INDICES, QUAD_VERTICES);
+   Mesh.SetData(QUAD_VERTICES, QUAD_INDICES, QUAD_VERTICES);
 
    { setup data }
    Move(QuadIndicesus[0], Mesh.Data.i[0], QUAD_INDICES * SizeOf(oxTPrimitiveIndice));
