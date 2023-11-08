@@ -348,9 +348,6 @@ begin
       imgOperations.FlipV(fontImage);
       oxTextureGenerate.Generate(fontImage, fontTexture);
 
-      if(fontTexture <> nil) then
-         fontTexture.MarkUsed();
-
       font.Texture := fontTexture;
 
       font.Build();

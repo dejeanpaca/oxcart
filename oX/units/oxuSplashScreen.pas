@@ -224,9 +224,6 @@ begin
       Unload();
 
       oxTextureGenerate.Generate(oxPaths.Find(Texture.Path), Texture.Texture);
-
-      if(Texture.Texture <> nil) then
-         Texture.Texture.MarkUsed();
    end;
 
    Quad.Quad();

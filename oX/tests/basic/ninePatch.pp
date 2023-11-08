@@ -45,7 +45,6 @@ end;
 procedure Initialize();
 begin
    oxTextureGenerate.Generate('data' + DirectorySeparator + '9patch.png', texture);
-   texture.MarkUsed();
 
    patch := oxT9Patch.Create();
    patch.Compute(4, 16, 16);

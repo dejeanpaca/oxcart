@@ -79,8 +79,10 @@ begin
    end;
 
    Result := oxTTexture(GlyphPool.FindByPath(path));
-   if(Result <> nil) then
+   if(Result <> nil) then begin
+      Result.MarkUsed();
       exit();
+   end;
 
    if(source <> '') then
       font := oxFreetypeManager.FindFont(source)
@@ -118,7 +120,6 @@ begin
       if(Result <> nil) then begin
          Result.Path := path;
          GlyphPool.AddResource(Result);
-         Result.MarkUsed();
       end;
    end;
 
