@@ -20,12 +20,20 @@ procedure appLinuxSysInfoGetInformation();
 IMPLEMENTATION
 
 CONST
-   nPlatforms = 3;
+   nPlatforms = 4;
 
-   platformNames: array[0..nPlatforms-1] of string = (
+   platformFileNames: array[0..nPlatforms - 1] of string = (
       'debian-version',
+      'fedora-release',
       'redhat-release',
       'slackware-version'
+   );
+
+   platformNames: array[0..nPlatforms - 1] of string = (
+      'debian',
+      'fedora',
+      'redhat',
+      'slackware'
    );
 
 procedure appLinuxSysInfoGetInformation();
@@ -39,11 +47,12 @@ begin
 
    {get platform names}
    for i := 0 to (nPlatforms - 1) do begin
-      ok := FileUtils.LoadStringPipe('/etc/' + platformNames[i], release);
+      ok := FileUtils.LoadStringPipe('/etc/' + platformFileNames[i], release);
 
       if(ok > 0) then begin
          StringUtils.StripEndLine(release);
          appSI.System.Name := release;
+         appSI.System.OS := platformNames[i];
          break;
       end;
    end;

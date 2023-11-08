@@ -43,6 +43,7 @@ TYPE
    appTSystemInformation = record
       System: record
          Name,
+         OS,
          DeviceName,
          KernelVersion: string;
       end;

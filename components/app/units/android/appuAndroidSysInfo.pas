@@ -18,6 +18,7 @@ IMPLEMENTATION
 procedure appAndroidSysInfoGetInformation();
 begin
    appSI.System.Name := 'Android';
+   appSI.System.OS := 'android';
 
    appLinuxSysInfoGetKernelVersion();
    appLinuxSysInfoGetMemoryInfo();
