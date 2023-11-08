@@ -418,6 +418,9 @@ var
          pM := nil;
 
       inc(currentMaterial);
+
+      if(currentMaterial > m^.Materials.n) then
+         data.SetError('Improperly scanned number of materials for mesh: ' + sf(meshIndex));
    end;
 
    procedure cleanup();
@@ -510,8 +513,11 @@ begin
                   m^.Materials.SetSize(m^.Materials.n);
             end else begin
                m := nil;
+               data.SetError('Improperly scanned number of meshes');
                break;
             end;
+
+            m^.Name := value;
 
             inc(meshIndex);
             wasUseMtl := false;
@@ -623,7 +629,8 @@ begin
             end;
          end;
       end;
-   until data.f^.EOF() or (data.f^.Error <> 0);
+
+   until data.f^.EOF() or (data.f^.Error <> 0) or (data.Error <> 0);
 
    materialDone();
 
