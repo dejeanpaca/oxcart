@@ -300,26 +300,29 @@ begin
       oxTransform.Apply(m);
    end;
 
-   dots := trunc((RenderingTimer.Cur() mod 1000) / 250);
-
    f := oxui.GetDefaultFont();
 
    if(f.Valid()) then begin
       f.Start();
 
       uiDraw.Color(1, 1, 1, 1.0);
-      oxRender.EnableBlend();
 
       w := f.GetWidth();
       h := f.GetHeight();
 
-      dotsString := '';
-      AddLeadingPadding(dotsString, '.', dots);
+      {write version}
 
       if(WriteVersion) then
          f.Write(round(w * 0.5), round(h * 0.5), GetVersionString());
 
-      f.Write(AssociatedWindow.Dimensions.w - (f.GetWidth() * 3) {%H-}- round(w * 0.5), round(h * 0.5), dotsString);
+      dots := trunc((RenderingTimer.Cur() mod 1000) / 250);
+
+      {write dots}
+
+      dotsString := '';
+      AddLeadingPadding(dotsString, 'x', dots);
+
+      f.Write(AssociatedWindow.Dimensions.w - round(w * 4), round(h * 0.5), dotsString);
 
       oxf.Stop();
    end;
