@@ -43,9 +43,7 @@ begin
    instance := oxExternalGlobalInstances^.FindInstancePtr('oxTDefaultTextureGlobal');
 
    if(instance <> nil) then
-      oxDefaultTexture.Texture := instance^.Texture
-   else
-      log.w('Missing oxTDefaultTextureGlobal external instance');
+      oxDefaultTexture.Texture := instance^.Texture;
 end;
 {$ENDIF}
 

@@ -50,8 +50,7 @@ begin
       {set as default font in any case}
       if(oxf.Default = nil) then
          oxf.SetDefault(oxDefaultFont.Font);
-   end else
-      log.w('Missing oxTDefaultFontGlobal external instance');
+   end;
 end;
 {$ENDIF}
 

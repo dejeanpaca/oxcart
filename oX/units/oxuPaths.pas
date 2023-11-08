@@ -141,6 +141,7 @@ var
 
 begin
    ext := oxExternalGlobalInstances^.FindInstancePtr('oxTPaths');
+
    if(ext = nil) then
       exit;
 

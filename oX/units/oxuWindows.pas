@@ -121,10 +121,8 @@ begin
    {$IFDEF OX_LIBRARY}
    oxExternalWindows := oxExternalGlobalInstances^.FindInstancePtr('oxTWindows');
 
-   if(oxExternalWindows = nil) then begin
-      log.e('Failed to get external oxTWindows instance');
+   if(oxExternalWindows = nil) then
       exit(false);
-   end;
 
    oxWindowSettings.AllocateCount := oxExternalWindows^.ExternalWindows.n;
    if(oxWindowSettings.AllocateCount > 0) then begin

@@ -29,10 +29,9 @@ var
 
 begin
    entitiesGlobal := oxTEntityGlobal(oxLibReferences^.FindInstance('oxTEntityGlobal'));
-   if(entitiesGlobal <> nil) then begin
+
+   if(entitiesGlobal <> nil) then
       oxedEntities.SetupHooks(entitiesGlobal);
-   end else
-      oxedMessages.e('Could not find ' + oxTSceneRender.ClassName + ' instance in the library');
 end;
 
 
@@ -43,14 +42,9 @@ var
    externalSceneManagement: oxPSceneManagement;
 
 begin
-   externalSceneManagement := oxPSceneManagement(oxLibReferences^.FindInstancePtr('oxTSceneManagement'));
+   externalSceneManagement := oxLibReferences^.FindInstancePtr('oxTSceneManagement');
 
-   if(externalSceneManagement = nil) then begin
-      oxedMessages.e('Could not find oxTSceneManagement instance in the library');
-      exit;
-   end;
-
-   if(externalSceneManagement^.Enabled) then begin
+   if(externalSceneManagement <> nil) and externalSceneManagement^.Enabled then begin
       scene := oxTScene(oxLibReferences^.FindInstance('oxTScene'));
       oxWorld := scene.World;
       oxSceneManagement.SetScene(scene);
@@ -60,8 +54,7 @@ begin
       if(sceneRender <> nil) then begin
          sceneRender.Scenes[0].Scene := oxScene;
          oxedLib.oxWindows^.w[0].oxProperties.ApplyDefaultProjection := false;
-      end else
-         oxedMessages.e('Could not find ' + oxTSceneRender.ClassName + ' instance in the library');
+      end;
    end;
 end;
 

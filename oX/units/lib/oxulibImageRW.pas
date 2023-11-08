@@ -25,8 +25,7 @@ begin
    if(f <> nil) then begin
       imgFile.Readers := f^.Readers;
       imgFile.Writers := f^.Writers;
-   end else
-      log.w('Could not find external imgTFile reference');
+   end;
 end;
 
 INITIALIZATION
