@@ -1843,17 +1843,17 @@ begin
    SetColor(colors^.cFrame);
 
    {left}
-   uiDraw.Box(Aposition.x + 1, RPosition.y - Dimensions.h + 1, Aposition.x + fw - 1, RPosition.y);
+   uiDraw.Box(APosition.x + 1, RPosition.y - Dimensions.h + 1, Aposition.x + fw - 1, RPosition.y);
    {right}
-   uiDraw.Box(Aposition.x + width - fw, RPosition.y - Dimensions.h + 1, Aposition.x + width - 2, RPosition.y);
+   uiDraw.Box(APosition.x + width - fw, RPosition.y - Dimensions.h + 1, Aposition.x + width - 2, RPosition.y);
    {bottom}
-   uiDraw.Box(Aposition.x + 1, RPosition.y - Dimensions.h - fh + 2, Aposition.x + width - 2, RPosition.y - Dimensions.h);
+   uiDraw.Box(APosition.x + 1, RPosition.y - Dimensions.h - fh + 2, Aposition.x + width - 2, RPosition.y - Dimensions.h);
    {left line}
-   uiDraw.VLine(Aposition.x, Aposition.y - 2, RPosition.y - Dimensions.h - 1);
+   uiDraw.VLine(APosition.x, Aposition.y - 1, RPosition.y - Dimensions.h - 1);
    {right line}
-   uiDraw.VLine(Aposition.x + width - 1, Aposition.y - 2, RPosition.y - Dimensions.h - 1);
+   uiDraw.VLine(APosition.x + width - 1, Aposition.y - 2, RPosition.y - Dimensions.h - 1);
    {bottom line}
-   uiDraw.HLine(Aposition.x + 2, RPosition.y - Dimensions.h - fh + 1, Aposition.x + width - 3);
+   uiDraw.HLine(APosition.x + 2, RPosition.y - Dimensions.h - fh + 1, Aposition.x + width - 3);
 
    {inner frame}
    SetColor(colors^.cInnerFrame);
