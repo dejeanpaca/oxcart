@@ -557,9 +557,12 @@ begin
    end;
 
    if(device.GetMappingId() <> '') then
-      log.v('Added input controller device: ' + device.GetName() + ' (' + device.GetMappingId() + ')')
+      log.Collapsed('Input controller device: ' + device.GetName() + ' (' + device.GetMappingId() + ')')
    else
-      log.v('Added input controller device: ' + device.GetName());
+      log.Collapsed('Input controller device: ' + device.GetName());
+
+   device.LogDevice();
+   log.Leave();
 end;
 
 procedure appTControllers.Reset();
