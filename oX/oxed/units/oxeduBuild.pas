@@ -106,6 +106,8 @@ TYPE
       class function Recreate(): boolean; static;
       {run the build process}
       procedure RunBuild();
+      {clean up resources at the end of a build}
+      procedure DoneBuild();
       {copy the built executable to target path}
       procedure MoveExecutable();
       {copy required run-time libraries for this build}
@@ -374,7 +376,7 @@ begin
    Result := ExtractRelativepath(oxedBuild.WorkingArea, oxedProject.Path + ExtractFilePath(unitFile.Path));
 end;
 
-procedure recreateSymbols(var f: TLPIFile; isLibrary: boolean);
+procedure recreateSymbols(var f: TLPIFile);
 var
    i: loopint;
 
@@ -424,7 +426,7 @@ begin
       end;
    end;
 
-   recreateSymbols(f, IsLibrary);
+   recreateSymbols(f);
    f.SetValue(f.compiler.targetFilename, ExtractFileName(oxedBuild.GetTargetExecutableFileName()));
 end;
 
@@ -711,6 +713,7 @@ end;
 
 procedure FailBuild(const reason: StdString);
 begin
+   oxedBuild.DoneBuild();
    oxedMessages.e('Failed build: ' + reason);
 end;
 
@@ -811,6 +814,14 @@ begin
 
    {if successful rebuild, we've made an initial build}
    oxedProject.Session.InitialBuildDone := true;
+
+   {cleanup}
+   DoneBuild();
+end;
+
+procedure oxedTBuildGlobal.DoneBuild();
+begin
+   Features.Dispose();
 end;
 
 procedure oxedTBuildGlobal.MoveExecutable();
