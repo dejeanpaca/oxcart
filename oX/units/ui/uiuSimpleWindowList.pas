@@ -28,6 +28,15 @@ TYPE
       function FindFirstLeftOf(x: loopint): uiTWindow;
       function FindFirstRightOf(x: loopint): uiTWindow;
 
+      {finds other windows in contact with the given one on the left side}
+      function FindContactsLeft(wnd: uiTWindow): uiTSimpleWindowList;
+      {finds other windows in contact with the given one on the right side}
+      function FindContactsRight(wnd: uiTWindow): uiTSimpleWindowList;
+      {finds other windows in contact with the given one on the left side}
+      function FindContactsAbove(wnd: uiTWindow): uiTSimpleWindowList;
+      {finds other windows in contact with the given one on the right side}
+      function FindContactsBelow(wnd: uiTWindow): uiTSimpleWindowList;
+
       function GetLeftmostCoordinate(): loopint;
 
       {get total width (including non-client) of all windows}
@@ -153,6 +162,66 @@ begin
                Result := List[i]
          else if(List[i].Position.x > x) then
             Result := List[i];
+      end;
+   end;
+end;
+
+function uiTSimpleWindowListHelper.FindContactsLeft(wnd: uiTWindow): uiTSimpleWindowList;
+var
+   i: loopint;
+
+begin
+   Result.Initialize(Result);
+
+   for i := 0 to n - 1 do begin
+      if(List[i] <> wnd) then begin
+         if(List[i].Position.x + List[i].GetTotalDimensions().w = wnd.Position.x) then
+            Result.Add(List[i]);
+      end;
+   end;
+end;
+
+function uiTSimpleWindowListHelper.FindContactsRight(wnd: uiTWindow): uiTSimpleWindowList;
+var
+   i: loopint;
+
+begin
+   Result.Initialize(Result);
+
+   for i := 0 to n - 1 do begin
+      if(List[i] <> wnd) then begin
+         if(List[i].Position.x = wnd.Position.x + wnd.GetTotalDimensions().w) then
+            Result.Add(List[i]);
+      end;
+   end;
+end;
+
+function uiTSimpleWindowListHelper.FindContactsAbove(wnd: uiTWindow): uiTSimpleWindowList;
+var
+   i: loopint;
+
+begin
+   Result.Initialize(Result);
+
+   for i := 0 to n - 1 do begin
+      if(List[i] <> wnd) then begin
+         if(List[i].Position.y - List[i].GetTotalDimensions().h = wnd.Position.y) then
+            Result.Add(List[i]);
+      end;
+   end;
+end;
+
+function uiTSimpleWindowListHelper.FindContactsBelow(wnd: uiTWindow): uiTSimpleWindowList;
+var
+   i: loopint;
+
+begin
+   Result.Initialize(Result);
+
+   for i := 0 to n - 1 do begin
+      if(List[i] <> wnd) then begin
+         if(wnd.Position.y - wnd.GetTotalDimensions().h = List[i].Position.y) then
+            Result.Add(List[i]);
       end;
    end;
 end;
