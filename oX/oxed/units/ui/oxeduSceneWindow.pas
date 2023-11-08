@@ -217,7 +217,9 @@ begin
       if(e.IsPressed()) then begin
          CameraRotateMode := true;
          LockPointer();
-         SetPointerCentered();
+
+         if(oxedSettings.PointerCenterEnable) then
+            SetPointerCentered();
 
          CursorControl.CursorAngleSpeed := oxedSettings.CameraAngleSpeed;
          CursorControl.Start();
