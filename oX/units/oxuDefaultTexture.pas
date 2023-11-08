@@ -75,15 +75,16 @@ begin
             oxDefaultTexture.Texture.MarkPermanent();
             oxDefaultTexture.Texture.Path := ':default_texture';
          end;
-      end;
+      end else
+         errorCode := eIO;
 
-      if(f.Error <> 0) or (errorCode <> 0) then
-         log.e('oX > Failed to load default texture');
+      if(errorCode = 0) then
+         log.v('Loaded default texture (elapsed: ' + elapsedTime.ElapsedfToString() + 's)')
+      else
+         log.e('oX > Failed to load default texture ' + GetErrorCodeString(errorCode));
 
       f.Close();
       f.Dispose();
-
-      log.v('Loaded default texture (elapsed: ' + elapsedTime.ElapsedfToString() + 's)')
    end;
 end;
 

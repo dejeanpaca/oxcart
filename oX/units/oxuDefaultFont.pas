@@ -60,7 +60,7 @@ end;
 {$IFNDEF OX_LIBRARY}
 procedure load();
 var
-   errcode: longint;
+   errorCode: longint;
    f: TFile;
    elapsedTIme: TDateTime;
 
@@ -71,26 +71,29 @@ begin
       fFile.Init(f);
       f.Open(@default_font, length(default_font));
 
-      if(f.error = 0) then begin
-         errcode := oxFont.Load(oxDefaultFont.Font, tfd, tfd.TextureName, f);
+      if(f.Error = 0) then begin
+         errorCode := oxFont.Load(oxDefaultFont.Font, tfd, tfd.TextureName, f);
 
-         if(errcode = 0) then begin
+         if(errorCode = 0) then begin
             oxDefaultFont.Font.Texture.Path := 'default';
             oxDefaultFont.Font.Texture.Name := 'default';
             oxDefaultFont.Font.Texture.MarkPermanent();
          end else
-            log.e('oX > Failed to load default font');
+            log.e('oX > Failed to load default font ' + GetErrorCodeString(errorCode));
 
          {set as default font in any case}
          if(oxf.Default = nil) then
             oxf.SetDefault(oxDefaultFont.Font);
       end else
-         log.e('oX > Failed to load default font image file');
+         errorCode:= eIO;
 
       f.Close();
       f.Dispose();
 
-      log.v('Loaded default font (elapsed: ' + elapsedTime.ElapsedfToString() + 's)')
+      if(errorCode = 0) then
+         log.v('Loaded default font (elapsed: ' + elapsedTime.ElapsedfToString() + 's)')
+      else
+         log.e('oX > Failed to load default font image file');
    end;
 end;
 
