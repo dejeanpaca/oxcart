@@ -52,21 +52,21 @@ VAR
    dlgSceneOpen,
    dlgSceneSave: oxTFileDialog;
 
-procedure openCallback(dialog: oxTFileDialog);
+procedure openCallback(var dialog: oxTFileDialog);
 begin
    if(not dialog.Canceled) then begin
       oxedProjectManagement.Open(dialog.SelectedFile);
    end;
 end;
 
-procedure openSceneCallback(dialog: oxTFileDialog);
+procedure openSceneCallback(var dialog: oxTFileDialog);
 begin
    if(not dialog.Canceled) then begin
       oxedSceneManagement.Open(dialog.SelectedFile);
    end;
 end;
 
-procedure openOnPathChange(dialog: oxTFileDialog);
+procedure openOnPathChange(var dialog: oxTFileDialog);
 begin
    if(FileUtils.DirectoryExists(IncludeTrailingPathDelimiter(dialog.wdg.Files.CurrentPath) + oxPROJECT_DIRECTORY)) then
       dialog.wdg.Ok.Enable(true)
@@ -76,13 +76,6 @@ end;
 
 class procedure oxedTProjectDialog.OpenDialog();
 begin
-   if(dlgOpen = nil) then begin
-      dlgOpen := oxFileDialog.OpenDirectories();
-      dlgOpen.SetTitle('Open Project');
-      dlgOpen.Callback := @openCallback;
-      dlgOpen.OnPathChange := @openOnPathChange;
-   end;
-
    dlgOpen.Open();
 end;
 
@@ -107,31 +100,31 @@ end;
 
 procedure mbSaveNonEmpty(var data: uiTMessageBoxData);
 var
-   dialog: oxTFileDialog;
+   dialog: oxPFileDialog;
 
 begin
-   dialog := oxTFileDialog(uiTMessageBoxWindow(data.Window).External);
+   dialog := uiTMessageBoxWindow(data.Window).ExternalPtr;
 
    if(data.Button = uimbcOK) then begin
-      saveTo(dialog.SelectedFile, true);
-      dialog.Close();
+      saveTo(dialog^.SelectedFile, true);
+      dialog^.Close();
    end;
 end;
 
 procedure mbSceneSaveExisting(var data: uiTMessageBoxData);
 var
-   dialog: oxTFileDialog;
+   dialog: oxPFileDialog;
 
 begin
-   dialog := oxTFileDialog(uiTMessageBoxWindow(data.Window).External);
+   dialog := uiTMessageBoxWindow(data.Window).ExternalPtr;
 
    if(data.Button = uimbcOK) then begin
-      saveSceneTo(dialog.SelectedFile);
-      dialog.Close();
+      saveSceneTo(dialog^.SelectedFile);
+      dialog^.Close();
    end;
 end;
 
-procedure saveCallback(dialog: oxTFileDialog);
+procedure saveCallback(var dialog: oxTFileDialog);
 var
    mbwnd: uiTMessageBoxWindow;
 
@@ -149,13 +142,13 @@ begin
          mbwnd := uiMessageBox.Show('Directory not empty', 'Selected path is not empty: '#13#13 + dialog.SelectedFile + #13 +
             'Are you sure you want to use this directory?', uimbsWARNING, uimbcOK_CANCEL, uimbpDEFAULT, @mbSaveNonEmpty);
 
-         mbwnd.External := dialog;
+         mbwnd.ExternalPtr := @dialog;
          dialog.PreventClose := true;
       end;
    end;
 end;
 
-procedure saveSceneCallback(dialog: oxTFileDialog);
+procedure saveSceneCallback(var dialog: oxTFileDialog);
 var
    mbwnd: uiTMessageBoxWindow;
 
@@ -166,7 +159,7 @@ begin
          mbwnd := uiMessageBox.Show('Overwrite scene?', 'File already exists: '#13#13 + dialog.SelectedFile + #13 +
             'Are you sure you want to overwrite this file?', uimbsWARNING, uimbcOK_CANCEL, uimbpDEFAULT, @mbSceneSaveExisting);
 
-         mbwnd.External := dialog;
+         mbwnd.ExternalPtr := @dialog;
          dialog.PreventClose := true;
       end else
          saveSceneTo(dialog.SelectedFile);
@@ -176,13 +169,6 @@ end;
 class procedure oxedTProjectDialog.SaveDialog();
 begin
    if(oxedProject <> nil) and (oxedProject.Path = '') then begin
-      if(dlgSave = nil) then begin
-         dlgSave := oxFileDialog.SaveDirectories();
-         dlgSave.Callback := @saveCallback;
-         dlgSave.SetTitle('Save Project');
-         dlgSave.ShowFilenameInput := false;
-      end;
-
       dlgSave.Open();
    end else
       oxedProjectManagement.Save();
@@ -207,13 +193,6 @@ begin
    if(not oxedProjectValid()) then
       exit;
 
-   if(dlgSceneOpen = nil) then begin
-      dlgSceneOpen := oxFileDialog.Open();
-      dlgSceneOpen.SetTitle('Open Scene');
-      dlgSceneOpen.Callback := @openSceneCallback;
-      dlgSceneOpen.RequireFile := true;
-   end;
-
    dlgSceneOpen.Open();
 end;
 
@@ -223,27 +202,12 @@ begin
       exit;
 
    if(oxedProject.ScenePath = '') then begin
-      if(dlgSceneSave = nil) then begin
-         dlgSceneSave := oxFileDialog.Save();
-         dlgSceneSave.SetTitle('Save Scene');
-         dlgSceneSave.Callback := @saveSceneCallback;
-         dlgSceneSave.RequireFile := true;
-      end;
-
       dlgSceneSave.Open();
    end else
       oxedSceneManagement.Save();
 end;
 
-procedure deinitialize();
-begin
-   FreeObject(dlgOpen);
-   FreeObject(dlgSave);
-end;
-
 INITIALIZATION
-   oxed.Init.dAdd('oxed.projectdialog', @deinitialize);
-
    oxedActions.OPEN_PROJECT := appActionEvents.SetCallback(@oxedProjectDialog.OpenDialog);
    oxedActions.NEW_PROJECT := appActionEvents.SetCallback(@oxedProjectManagement.New);
    oxedActions.SAVE_PROJECT := appActionEvents.SetCallback(@oxedProjectDialog.SaveDialog);
@@ -252,5 +216,25 @@ INITIALIZATION
    oxedActions.NEW_SCENE := appActionEvents.SetCallback(@oxedProjectDialog.NewSceneDialog);
    oxedActions.OPEN_SCENE := appActionEvents.SetCallback(@oxedProjectDialog.OpenSceneDialog);
    oxedActions.SAVE_SCENE := appActionEvents.SetCallback(@oxedProjectDialog.SaveSceneDialog);
+
+   dlgOpen := oxFileDialog.OpenDirectories();
+   dlgOpen.SetTitle('Open Project');
+   dlgOpen.Callback := @openCallback;
+   dlgOpen.OnPathChange := @openOnPathChange;
+
+   dlgSave := oxFileDialog.SaveDirectories();
+   dlgSave.Callback := @saveCallback;
+   dlgSave.SetTitle('Save Project');
+   dlgSave.ShowFilenameInput := false;
+
+   dlgSceneOpen := oxFileDialog.Open();
+   dlgSceneOpen.SetTitle('Open Scene');
+   dlgSceneOpen.Callback := @openSceneCallback;
+   dlgSceneOpen.RequireFile := true;
+
+   dlgSceneSave := oxFileDialog.Save();
+   dlgSceneSave.SetTitle('Save Scene');
+   dlgSceneSave.Callback := @saveSceneCallback;
+   dlgSceneSave.RequireFile := true;
 
 END.
