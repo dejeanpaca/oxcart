@@ -46,15 +46,28 @@ TYPE
       Error: loopint;
 
       {list of all do routines}
+      {called after base engine is initialized}
+      OnPreInitialize,
+      {called after engine is initialized}
       OnInitialize,
+      {called before engine is deinitialized}
       OnDeinitialize,
+      {called when the program is ready to start}
       OnStart,
+      {called after initialization, but before start to load required resources}
       OnLoad,
+      {called each run cycle}
       OnRun,
+      {called on the end of the run cylce (after OnRun)}
       OnRunAfter: TProcedures;
 
+      {preinitialization routines (before renderer/window is created)}
       PreInit,
+      {minimal required functionality for engine}
+      BaseInit,
+      {engine initialization}
       Init,
+      {program/application initialization}
       AppProcs: TInitializationProcs;
 
       dvar: TDVarGroup;
@@ -113,6 +126,7 @@ INITIALIZATION
    ox.AppProcs.Init('ox.appprocs');
    ox.AppProcs.DontDetermineState();
 
+   TProcedures.Initialize(ox.OnPreInitialize);
    TProcedures.Initialize(ox.OnInitialize);
    TProcedures.Initialize(ox.OnDeinitialize);
    TProcedures.Initialize(ox.OnLoad);

@@ -178,6 +178,15 @@ begin
    oxRenderers.StartRoutines.Call();
    oxRenderer.StartRoutines.Call();
 
+   {call base initialization routines}
+   ox.BaseInit.iCall();
+   if(ox.Error <> 0) then begin
+      ErrorDescription := 'Base initialization failed';
+      exit(oxeGENERAL);
+   end;
+
+   ox.OnPreInitialize.Call();
+
    {call initialization routines}
    ox.Init.iCall();
    if(ox.Error <> 0) then begin
@@ -289,6 +298,7 @@ begin
 
    {call any de-initializers}
    ox.Init.dCall();
+   ox.BaseInit.dCall();
    log.i('Called de-initialization routines');
 
    {destroy the remaining primary window}
