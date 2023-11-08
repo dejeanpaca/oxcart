@@ -57,6 +57,8 @@ TYPE
    TKeyCode = longint;
    TKeyState = TBitSet;
 
+   appTKeyRemapCodes = array[0..255] of word;
+
    {key}
    appPKey = ^appTKey;
 
@@ -142,6 +144,8 @@ TYPE
       a key in the array} {useful for games}
       Properties: array[0..appkcKEYS_PRESSED_SIZE - 1] of TBitSet;
 
+      ReverseRemapCodes: appTKeyRemapCodes;
+
       {initialize a appTKey record}
       class procedure Init(out k: appTKey); static;
       {initialize a appTKey record}
@@ -152,6 +156,10 @@ TYPE
       { INPUT }
       {translate a key event into a character}
       function Translate(var k: appTKey): char;
+
+      {Return a platform translated character based on the key record. Useful if the platform translation code
+      returns characters for keys you might want to handle differently (tab, enter)}
+      function Translate(var k: appTKey; c: char): char;
 
       {KEYBOARD ROUTINES}
       {checks whether any of the SHIFT keys is being held or not}
@@ -187,11 +195,16 @@ VAR
    appk: appTKeyGlobal;
 
    {remap codes}
-   {$IFNDEF ANDROID}{$INCLUDE ./kRemapCodes.inc}{$ENDIF}
+   {$IFNDEF ANDROID}
+   {$INCLUDE ./kRemapCodes.inc}
+   {$ENDIF}
 
 operator = (const a: appTKey; const b: appTKey): boolean;
 
 IMPLEMENTATION
+
+VAR
+   runRoutine: appTRunRoutine;
 
 operator = (const a: appTKey; const b: appTKey): boolean;
 begin
@@ -376,7 +389,7 @@ begin
    isCaps := shiftPressed;
 
    if(k.State.IsSet(kmCAPS)) then
-      isCaps := shiftPressed xor true;
+      isCaps := not isCaps;
 
    if (k.State.IsSet(kmCONTROL) or k.State.IsSet(kmALT)) then
       exit;
@@ -473,6 +486,31 @@ begin
          else
             Result := '0';
    end;
+end;
+
+function appTKeyGlobal.Translate(var k: appTKey; c: char): char;
+var
+   shiftPressed: boolean = false;
+   isCaps: boolean = false;
+
+begin
+   Result := #0;
+
+   if(c <> #0) then begin
+      shiftPressed := k.State.IsSet(kmSHIFT);
+      isCaps := shiftPressed;
+
+      if(k.State.IsSet(kmCAPS)) then
+         isCaps := not isCaps;
+
+      Result := c;
+
+      if(not shiftPressed) then
+         Result := LowerCase(Result)
+      else
+         Result := UpCase(Result);
+   end else
+      Result := Translate(k);
 end;
 
 { KEYBOARD ROUTINES }
@@ -635,10 +673,20 @@ begin
    appk.UpdateCycle();
 end;
 
-VAR
-   runRoutine: appTRunRoutine;
+procedure initialize();
+var
+   i: loopint;
+
+begin
+   for i := 0 to high(appkRemapCodes) do begin
+      if(appkRemapCodes[i] <> 0) then
+         appk.ReverseRemapCodes[appkRemapCodes[i]] := i;
+   end;
+
+   appRun.AddPreRoutine(runRoutine, 'appKeys', @run);
+end;
 
 INITIALIZATION
-   appRun.AddPreRoutine(runRoutine, 'appKeys', @run);
+   initialize();
 
 END.
