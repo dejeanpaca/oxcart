@@ -116,6 +116,13 @@ begin
    Exclude(wnd.Properties, uiwndpQUIT_ON_CLOSE);
 end;
 
+procedure renderWindow(wnd: oxTWindow);
+begin
+   oxUIHooks.Render(wnd);
+end;
+
 INITIALIZATION
    oxUIHooksInstance := uiTOXHooks;
+   oxWindows.Internal.OnPostRender.Add(@renderWindow);
+
 END.
