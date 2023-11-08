@@ -15,7 +15,7 @@ INTERFACE
       {app}
       uApp, appuController,
       {ox}
-      uOX, oxuTypes, oxuRunRoutines, oxuwndSettings,
+      uOX, oxuTypes, oxuRunRoutines, oxuwndSettings, oxuwndInputControllerInfo,
       {ui}
       uiWidgets, wdguLabel, wdguButton, wdguDivisor;
 
@@ -33,6 +33,11 @@ end;
 
 procedure configurePointer();
 begin
+end;
+
+procedure testController();
+begin
+
 end;
 
 procedure rescanControllers();
@@ -60,6 +65,7 @@ begin
    if(appControllers.List.n > 0) then begin
       for i := 0 to appControllers.List.n - 1 do begin
          wdgButton.Add(appControllers.List[i].GetName());
+         wdgButton.Add('Information / Test', uiWidget.LastRect.RightOf(), oxNullDimensions, @testController);
       end;
    end else begin
       wdgLabel.Add('No controllers detected/supported');
