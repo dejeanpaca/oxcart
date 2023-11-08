@@ -28,6 +28,7 @@ IMPLEMENTATION
 
 procedure oglGetInformation(wnd: oglTWindow);
 begin
+   {$IFNDEF OX_LIBRARY}
    {get basic information}
    wnd.Info.Renderer := ogl.GetString(GL_RENDERER);
    wnd.Info.Vendor   := ogl.GetString(GL_VENDOR);
@@ -93,6 +94,10 @@ begin
    log.Leave();
 
    oglExtensions.Get(wnd);
+   {$ELSE}
+   wnd.Info := oglTWindow(wnd.ExternalWindow.oxwParent).Info;
+   oglExtensions.Get(wnd);
+   {$ENDIF}
 end;
 
 function oglVersionCheck(wnd: oglTWindow): longint;
