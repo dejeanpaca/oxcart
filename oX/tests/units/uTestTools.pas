@@ -30,7 +30,7 @@ TYPE
       procedure RotateXYZ();
       procedure dtRotateXYZ();
       function LoadTexture(const name: string; var t: oxTTextureID): boolean;
-      class procedure DefaultKeyUp(var key: appTKeyEvent; wnd: oxTWindow); static;
+      class function DefaultKeyUp(var key: appTKeyEvent; wnd: oxTWindow): boolean; static;
    end;
 
 VAR
@@ -52,9 +52,9 @@ end;
 
 procedure TTestTools.dtRotateXYZ();
 begin
-   rot[0] := rot[0] + rotSpeed[0] * oxMainTimeFlow;
-   rot[1] := rot[1] + rotSpeed[1] * oxMainTimeFlow;
-   rot[2] := rot[2] + rotSpeed[2] * oxMainTimeFlow;
+   rot[0] := rot[0] + rotSpeed[0] * oxTime.Flow;
+   rot[1] := rot[1] + rotSpeed[1] * oxTime.Flow;
+   rot[2] := rot[2] + rotSpeed[2] * oxTime.Flow;
 end;
 
 function TTestTools.loadTexture(const name: string; var t: oxTTextureID): boolean;
@@ -66,13 +66,24 @@ begin
       log.i('ok');
 end;
 
-class procedure TTestTools.DefaultKeyUp(var key: appTKeyEvent; wnd: oxTWindow);
+class function TTestTools.DefaultKeyUp(var key: appTKeyEvent; wnd: oxTWindow): boolean;
 begin
-   if(key.Key.Equal(kcESC)) then
-      appActionEvents.QueueQuitEvent();
+   if(key.Key.Equal(kcESC)) then begin
+      if(key.Key.Released()) then
+         appActionEvents.QueueQuitEvent();
+
+      exit(True);
+   end;
+
+   Result := False;
+end;
+
+procedure init();
+begin
+   oxKey.UpRoutine := @TTestTools.DefaultKeyUp;
 end;
 
 INITIALIZATION
-   oxKeyUpRoutine := @TTestTools.DefaultKeyUp;
+   ox.OnInitialize.Add(@init);
 
 END.
