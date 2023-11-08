@@ -52,6 +52,8 @@ TYPE
       procedure Rotate(const v: TVector4f); virtual;
       procedure Scale(const v: TVector3f); virtual;
 
+      function GetForward(): TVector3f; virtual;
+
       {get a perspective frustum matrix}
       class function PerspectiveFrustum(l, r, b, t, n, f: single): TMatrix4f; static;
       class function PerspectiveFrustum(fovY, aspect, zNear, zFar: single): TMatrix4f; static;
@@ -242,6 +244,19 @@ begin
    m[2][2] := v[2];
 
    Matrix := Matrix * m;
+end;
+
+function oxTTransform.GetForward(): TVector3f;
+var
+   pitch, yaw: single;
+
+begin
+   pitch := vRotation[0] * vmcToRad;
+   yaw := vRotation[1] * vmcToRad;
+
+   Result[0] := sin(yaw) * cos(pitch);
+   Result[1] := sin(pitch);
+   Result[2] := cos(yaw) * cos(pitch);
 end;
 
 class function oxTTransform.PerspectiveFrustum(l, r, b, t, n, f: single): TMatrix4f;
