@@ -8,6 +8,12 @@ UNIT oxuDefaults;
 
 INTERFACE
 
+   {$DEFINE OX_PLATFORM_SUPPORT}
+
+   {$IFDEF OX_LIBRARY}
+      {$UNDEF OX_PLATFORM_SUPPORT}
+   {$ENDIF}
+
    USES
       uStd,
       ufhStandard,
