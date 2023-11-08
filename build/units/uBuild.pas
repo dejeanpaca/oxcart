@@ -158,18 +158,14 @@ TYPE
       Includes,
       Symbols: TSimpleStringList;
 
-      Libraries: record
-         Source,
-         Target: StdString;
-         OptimizationLevel: longint;
-      end;
-
       CurrentPlatform: PBuildPlatform;
       CurrentLazarus: PBuildLazarusInstall;
       OptimizationLevels: TSimpleStringList;
 
       DefaultPlatform: PBuildPlatform;
       DefaultLazarus: PBuildLazarusInstall;
+
+      OnInitialize: TProcedures;
 
       {initialize the build system}
       procedure Initialize();
@@ -234,8 +230,6 @@ TYPE
       procedure ResetOutput();
       procedure Wait(p: TProcess);
 
-      {copy a library with the given name from source to target (set in Libraries)}
-      function CopyLibrary(const name: StdString; const newName: StdString = ''): boolean;
       {get an optimization level name}
       function GetOptimizationLevelName(optimizationLevel: longint): StdString;
       {get a human readable optimization level name}
@@ -284,25 +278,6 @@ TYPE
 
       {get the target name with which the current build was made}
       class function GetBuiltWithTarget(): StdString; static;
-   end;
-
-   { TPascalSourceBuilder }
-
-   TPascalSourceBuilder = record
-      Name,
-      Header,
-      sInterface,
-      sImplementation,
-      sUses,
-      sExports,
-      sInitialization,
-      sMain: TAppendableString;
-
-      procedure AddUses(var p: TAppendableString);
-
-      function BuildUnit(): TAppendableString;
-      function BuildProgram(): TAppendableString;
-      function BuildLibrary(): TAppendableString;
    end;
 
 VAR
@@ -495,115 +470,6 @@ begin
       Result := build.GetBuiltWithTarget();
 end;
 
-{ TPascalUnitBuilder }
-
-procedure TPascalSourceBuilder.AddUses(var p: TAppendableString);
-begin
-   if(sUses <> '') then begin
-      p.Add('USES');
-      p.Add(sUses + ';');
-      p.Add('');
-   end;
-end;
-
-function TPascalSourceBuilder.BuildUnit(): TAppendableString;
-begin
-   Result := '';
-
-   if(Header <> '') then
-      Result.Add(Header);
-
-   Result.Add('UNIT ' + Name + ';');
-   Result.Add('');
-
-   Result.Add('INTERFACE');
-
-   AddUses(Result);
-
-   if(sInterface <> '') then begin
-      Result.Add('');
-      Result.Add(sInterface);
-   end;
-
-   Result.Add('');
-
-   Result.Add('IMPLEMENTATION');
-   Result.Add('');
-
-   if(sImplementation <> '') then begin
-      Result.Add(sImplementation);
-      Result.Add('');
-   end;
-
-   if(sInitialization <> '') then begin
-      Result.Add('INITIALIZATION');
-      Result.Add(sInitialization);
-      Result.Add('');
-   end;
-
-   Result.Add('END.');
-end;
-
-function TPascalSourceBuilder.BuildProgram: TAppendableString;
-begin
-   Result := '';
-
-   if(Header <> '') then
-      Result.Add(Header);
-
-   Result.Add('PROGRAM ' + Name + ';');
-
-   if(sUses <> '') then
-      AddUses(Result)
-   else
-      Result.Add('');
-
-   Result.Add('BEGIN');
-
-   if(sMain <> '') then begin
-      Result.Add('');
-      Result.Add(sMain);
-   end;
-
-   Result.Add('');
-   Result.Add('END.');
-end;
-
-function TPascalSourceBuilder.BuildLibrary: TAppendableString;
-begin
-   Result := '';
-
-   if(Header<> '') then
-      Result.Add(Header);
-
-   Result.Add('LIBRARY ' + Name + ';');
-   Result.Add('');
-
-   if(sUses <> '') then
-      AddUses(Result)
-   else
-      Result.Add('');
-
-   if(sInterface <> '') then begin
-      Result.Add('');
-      Result.Add(sInterface);
-   end;
-
-   if(sExports <> '') then begin
-      Result.Add('EXPORTS');
-      Result.Add(sExports + ';');
-      Result.Add('');
-   end;
-
-   if(sInitialization <> '') then begin
-      Result.Add('INITIALIZATION');
-      Result.Add(sInitialization);
-      Result.Add('');
-   end;
-
-   Result.Add('END.');
-end;
-
 { TBuildSystemTools }
 
 procedure TBuildSystemTools.SetPath(const s: StdString);
@@ -665,7 +531,7 @@ begin
    {setup unit paths}
    LoadUnits();
 
-   Libraries.Source := Tools.Build + 'libraries' + DirectorySeparator;
+   OnInitialize.Call();
 
    {go through Platforms and find an available platform}
    SetupAvailablePlatform();
@@ -1274,89 +1140,6 @@ begin
    if(Output.Redirect) then begin
       Close(f);
    end;
-end;
-
-function TBuildSystem.CopyLibrary(const name: StdString; const newName: StdString = ''): boolean;
-var
-   optimizationSource,
-   usedSource: StdString;
-   optimizationLevel: longint;
-
-function getNewName(): StdString;
-begin
-   if(newName <> '') then
-      Result := newName
-   else
-      Result := name;
-end;
-
-function getPath(): StdString;
-begin
-   Result := Libraries.Source + IncludeTrailingPathDelimiterNonEmpty(CurrentPlatform^.GetName());
-end;
-
-begin
-   Result := false;
-   optimizationLevel := Libraries.OptimizationLevel;
-   usedSource := '';
-
-   {find optimized library if one specified}
-   if(Libraries.OptimizationLevel > 0) then begin
-      optimizationLevel := Libraries.OptimizationLevel;
-
-      repeat
-         optimizationSource := getPath() +
-            IncludeTrailingPathDelimiterNonEmpty(GetOptimizationLevelName(optimizationLevel)) + name;
-
-         if(FileUtils.Exists(optimizationSource) > 0) then begin
-            if(optimizationLevel <> Libraries.OptimizationLevel) then
-               log.w('Could not find optimized library ' + name + ' at level ' +
-                  GetOptimizationLevelNameHuman(Libraries.OptimizationLevel) + ', used ' +
-                  GetOptimizationLevelNameHuman(optimizationLevel) + ' instead');
-
-            usedSource := optimizationSource;
-            break;
-         end;
-
-         dec(optimizationLevel);
-      until optimizationLevel < 0;
-
-      if(optimizationLevel <= 0) then begin
-         log.w('Could not find library ' + name + ' in ' + optimizationSource);
-         usedSource := getPath() + name;
-      end;
-   end else
-      usedSource := getPath() + name;
-
-   if(FileUtils.Exists(usedSource) <= 0) then begin
-      log.e('Could not find library ' + name + ' in ' + usedSource);
-
-      usedSource := '';
-
-      if(optimizationLevel <= 0) then begin
-         for optimizationLevel := 1 to CurrentPlatform^.OptimizationLevels.n do begin
-            usedSource := getPath() +
-               IncludeTrailingPathDelimiterNonEmpty(GetOptimizationLevelName(optimizationLevel)) + name;
-
-            if(FileUtils.Exists(usedSource) > 0) then begin
-               log.w('Using optimized library: ' + usedSource + ' because regular not found');
-               break;
-            end else
-               usedSource := '';
-         end;
-      end;
-
-      if(usedSource = '') then begin
-         log.e('Failed to find library: ' + name + ' in ' + getPath());
-         exit(false);
-      end;
-   end;
-
-   if(FileUtils.Copy(usedSource, Libraries.Target + getNewName()) > 0) then begin
-      log.k('Copied ' + getNewName() + ' library successfully');
-      Result := true;
-   end else
-      log.e('Failed to copy library from ' + usedSource + ' to ' + Libraries.Target + getNewName());
 end;
 
 function TBuildSystem.GetOptimizationLevelName(optimizationLevel: longint): StdString;
