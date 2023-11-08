@@ -20,7 +20,7 @@ VAR
 
 procedure framerateNotify(var context: TDVarNotificationContext);
 begin
-   if(context.What = DVAR_NOTIFICATION_READ) then
+   if(context.What = DVAR_NOTIFICATION_READ) or (context.What = DVAR_NOTIFICATION_MODIFIED) then
       oxRenderingTimer.Initialize(oxRenderingTimer, oxRenderSettings.TargetFramerate);
 end;
 
