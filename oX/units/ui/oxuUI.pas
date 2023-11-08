@@ -143,6 +143,7 @@ TYPE
 
       procedure SetDefaultFont(f: oxTFont);
       function GetDefaultFont(): oxTFont;
+      procedure GetNilDefault(var f: oxTFont);
    end;
 
 VAR
@@ -324,6 +325,12 @@ begin
       Result := Font
    else
       Result := oxf.GetDefault();
+end;
+
+procedure oxTUI.GetNilDefault(var f: oxTFont);
+begin
+   if(f = nil) then
+      f := GetDefaultFont();
 end;
 
 procedure updateControlWdg(wdg: uiTWidget);
