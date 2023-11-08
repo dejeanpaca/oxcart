@@ -172,6 +172,12 @@ TYPE
       function GetSummary(): TStringArray; virtual;
       {selects this renderer for use}
       procedure Use(); virtual;
+
+      { THREAD LOGGING HELPERS }
+      procedure logti(const what: StdString);
+      procedure logtv(const what: StdString);
+      procedure logtw(const what: StdString);
+      procedure logte(const what: StdString);
    end;
 
    oxTRendererClass = class of oxTRenderer;
@@ -519,6 +525,26 @@ end;
 
 procedure oxTRenderer.Use();
 begin
+end;
+
+procedure oxTRenderer.logti(const what: StdString);
+begin
+   log.i(Id + ' (t: ' + sf(GetThreadID()) + ')  ' + what);
+end;
+
+procedure oxTRenderer.logtv(const what: StdString);
+begin
+   log.v(Id + ' (t: ' + sf(GetThreadID()) + ') ' + what);
+end;
+
+procedure oxTRenderer.logtw(const what: StdString);
+begin
+   log.w(Id + ' (t: ' + sf(GetThreadID()) + ') ' + what);
+end;
+
+procedure oxTRenderer.logte(const what: StdString);
+begin
+   log.e(Id + ' (t: ' + sf(GetThreadID()) + ') ' + what);
 end;
 
 function instanceGlobal(): TObject;
