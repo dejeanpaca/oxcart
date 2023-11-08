@@ -634,8 +634,14 @@ end;
 procedure uiTWindowGlobal.SetupCreatedWindow(wnd: uiTWindow; var createData: uiTWindowCreateData);
 begin
    wnd.SetSkin(oxui.DefaultSkin);
+
    wnd.Background       := uiWindow.DefaultBackground;
+
+   if(uiTSkin(wnd.Skin).Window.Textures.Background <> nil) then
+      wnd.SetBackgroundTexture(uiTSkin(wnd.Skin).Window.Textures.Background, uiwBACKGROUND_TEX_FIT);
+
    wnd.SetBackgroundColor(uiTSkin(wnd.Skin).Window.Colors.cBackground);
+
    wnd.Buttons          := createData.Buttons;
    wnd.Properties       := createData.Properties;
 
@@ -1790,7 +1796,7 @@ begin
       SetColor(Background.Color);
       texture := oxTTexture(Background.Texture);
 
-      if(oxTTexture(Background.Texture).HasAlpha()) then
+      if(oxTTexture(Background.Texture).HasAlpha() or (Background.Color.Transparent())) then
          oxRender.EnableBlend()
       else
          oxRender.DisableBlend();
@@ -1817,6 +1823,8 @@ begin
 
       {render background}
       renderBackgroundBox();
+
+      oxui.Material.ApplyTexture('texture', nil);
    end;
 end;
 
