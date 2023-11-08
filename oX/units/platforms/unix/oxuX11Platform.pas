@@ -350,47 +350,13 @@ begin
    if(key.Code <> 0) then begin
       key.State := 0;
 
-      if(event.xkey.state and ShiftMask > 0) then begin
-         key.State.Prop(kmSHIFT);
-         appk.Modifiers.Prop(kmSHIFT);
-      end else
-         appk.Modifiers.Clear(kmSHIFT);
-
-      if(event.xkey.state and ControlMask > 0) then begin
-         key.State := key.State or kmCONTROL;
-         appk.Modifiers.Prop(kmCONTROL);
-      end else
-         appk.Modifiers.Clear(kmCONTROL);
-
-      if(event.xkey.state and modifiers.alt > 0) then begin
-         key.State.Prop(kmALT);
-         appk.Modifiers.Prop(kmALT);
-      end else
-         appk.Modifiers.Clear(kmALT);
-
-      if(event.xkey.state and modifiers.altgr > 0) then begin
-         key.State.Prop(kmALTGR);
-         appk.Modifiers.Prop(kmALTGR);
-      end else
-         appk.Modifiers.Clear(kmALTGR);
-
-      if(event.xkey.state and LockMask> 0) then begin
-         key.State.Prop(kmCAPS);
-         appk.Modifiers.Prop(kmCAPS);
-      end else
-         appk.Modifiers.Clear(kmCAPS);
-
-      if(event.xkey.state and modifiers.numlock > 0) then begin
-         key.State.Prop(kmNUM);
-         appk.Modifiers.Prop(kmNUM);
-      end else
-         appk.Modifiers.Prop(kmNUM);
-
-      if(event.xkey.state and modifiers.scroll > 0) then begin
-         key.State := key.State or kmSCROLL;
-         appk.Modifiers.Prop(kmSCROLL);
-      end else
-         appk.Modifiers.Clear(kmSCROLL);
+      appk.Modifiers.Prop(kmSHIFT, event.xkey.state and ShiftMask > 0);
+      appk.Modifiers.Prop(kmCONTROL, event.xkey.state and ControlMask > 0);
+      appk.Modifiers.Prop(kmALT, event.xkey.state and modifiers.alt > 0);
+      appk.Modifiers.Prop(kmALTGR, event.xkey.state and modifiers.altgr > 0);
+      appk.Modifiers.Prop(kmCAPS, event.xkey.state and LockMask > 0);
+      appk.Modifiers.Prop(kmNUM, event.xkey.state and modifiers.numlock > 0);
+      appk.Modifiers.Prop(kmSCROLL, event.xkey.state and modifiers.scroll > 0);
 
       {set the up/down state}
       if(event._type = x.KeyPress) then
