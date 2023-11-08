@@ -11,8 +11,7 @@ UNIT oxuRunRoutines;
 INTERFACE
 
    USES
-      uStd,
-      appuEvents;
+      uStd;
 
 TYPE
    oxPRunRoutine = ^ oxTRunRoutine;
@@ -36,16 +35,6 @@ TYPE
       procedure Add(var routine: oxTRunRoutine);
       procedure Add(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
    end;
-
-   { oxTRunRoutinesGlobal }
-
-   oxTRunRoutinesGlobal = record
-      {main ox control routine}
-      procedure ControlEvents();
-   end;
-
-VAR
-   oxRunRoutines: oxTRunRoutinesGlobal;
 
 IMPLEMENTATION
 
@@ -109,40 +98,6 @@ begin
    routine.Exec := exec;
 
    Add(routine);
-end;
-
-{main ox control routine}
-procedure oxTRunRoutinesGlobal.ControlEvents();
-var
-   event: appTEvent;
-   evh: appPEventHandler;
-   result: longint = 0;
-
-begin
-   {process all events}
-   if(appEvents.n > 0) then repeat
-      {get the event and the event handler}
-      appEvents.Init(event);
-      appEvents.Dequeue(event);
-
-      if(event.hID <> nil) then begin
-         evh := event.hID;
-
-         result := 0;
-         if(not event.Properties.IsSet(appEVENT_PROP_DISABLED)) then begin
-            {if a event handler is set}
-            if(evh <> nil) and (result <> -1) then begin
-               {action}
-               if(evh^.Action <> nil) then
-                  evh^.Action(event);
-            end;
-         end;
-
-         {done with this event}
-         event.Dispose();
-      end;
-   {if uinEvents is 0 then there are no more events}
-   until(appEvents.n = 0);
 end;
 
 END.
