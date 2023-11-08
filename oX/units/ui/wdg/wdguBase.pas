@@ -11,7 +11,7 @@ UNIT wdguBase;
 INTERFACE
 
    USES
-      uStd, uColors,
+      uStd, uColors, uPreallocatedArray,
       {oX}
       oxuTypes, oxuFont,
       {ui}
@@ -21,18 +21,18 @@ TYPE
 
    { wdgTBase }
 
-   wdgTBase = class
+   generic wdgTBase<T> = class
       public
       pInternal: uiPWidgetClass;
 
       constructor Create(var selfInternal: uiTWidgetClass);
 
-      function Add(const Pos: oxTPoint; const Dim: oxTDimensions): uiTWidget;
-      function Add(): uiTWidget;
+      function Add(const Pos: oxTPoint; const Dim: oxTDimensions): T;
+      function Add(): T;
 
       protected
       {called when adding is done}
-      function AddDone(wdg: uiTWidget): uiTWidget;
+      function AddDone(wdg: uiTWidget): T;
    end;
 
 IMPLEMENTATION
@@ -44,9 +44,9 @@ begin
    pInternal := @selfInternal;
 end;
 
-function wdgTBase.Add(const Pos: oxTPoint; const Dim: oxTDimensions): uiTWidget;
+function wdgTBase.Add(const Pos: oxTPoint; const Dim: oxTDimensions): T;
 begin
-  Result := uiWidget.Add(pInternal^, Pos, Dim);
+  Result := T(uiWidget.Add(pInternal^, Pos, Dim));
 end;
 
 function wdgTBase.Add(): uiTWidget;
@@ -59,7 +59,7 @@ begin
    if(wdg <> nil) then
       wdg.AutoSize();
 
-   Result := wdg;
+   Result := T(wdg);
 end;
 
 END.
