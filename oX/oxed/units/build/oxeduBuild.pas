@@ -768,8 +768,6 @@ begin
 
    parameters := TBuildFPCConfiguration.GetFPCCommandLineForConfig();
 
-   {optimization level}
-   parameters.Add('-O1');
    {verbosity level}
    parameters.Add('-vewnhi');
    {output FPC logo}
@@ -1098,6 +1096,9 @@ begin
    build.Debug.LineInfo := true;
    build.Debug.External := true;
    {$ENDIF}
+
+   {optimization}
+   build.Optimization.Level := 1;
 end;
 
 procedure oxedTBuildGlobal.RunTask();
