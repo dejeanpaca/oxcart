@@ -30,10 +30,14 @@ INTERFACE
 
       oxuSerializationTypes,
 
-      {image loaders}
-      {$INCLUDE ../../components/dimg/units/imgIncludeAllLoaders.inc},
-      {image writers}
-      {$INCLUDE ../../components/dimg/units/imgIncludeAllWriters.inc},
+      {$IFNDEF OX_LIBRARY}
+         {image loaders}
+         {$INCLUDE ../../components/dimg/units/imgIncludeAllLoaders.inc},
+         {image writers}
+         {$INCLUDE ../../components/dimg/units/imgIncludeAllWriters.inc},
+      {$ELSE}
+         {%H-}oxulibImageRW,
+      {$ENDIF}
 
       {$IFDEF OX_PLATFORM_SUPPORT}
          {$IFNDEF OX_LIBRARY}
