@@ -14,13 +14,13 @@ INTERFACE
       uStd, oxuTypes{$IFDEF OX_RESOURCE_DEBUG}, StringUtils, uLog{$ENDIF};
 
 CONST
-   oxRESOURCE_POOL_INCREMENT = 1024;
+   oxRESOURCE_POOL_INCREMENT: loopint = 1024;
 
 TYPE
    { oxTResourcePool }
 
    oxTResourcePool = class(oxTPreallocatedResourceArrayListClass)
-      constructor Create; virtual;
+      constructor Create; override;
       destructor Destroy; override;
 
       {mark all resources as used (increase their reference count)}
