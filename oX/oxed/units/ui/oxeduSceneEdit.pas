@@ -149,7 +149,7 @@ end;
 
 procedure oxedTSceneEditRenderer.CameraEnd(var params: oxTSceneRenderParameters);
 begin
-   params.Camera^.Transform.Apply();
+   params.Camera^.Apply();
 
    { render a base grid }
 
@@ -264,19 +264,15 @@ var
    p,
    rotation: TVector3f;
    distanceScale: single;
-   camMatrix,
-   tempMatrix: TMatrix4f;
    BBox: TBoundingBox;
    camera: oxPCamera;
 
 procedure RenderCone(index: loopint; const x, y, z: single; const rX, rY, rZ: single);
 begin
-   Camera^.Transform.Matrix := tempMatrix;
-   Camera^.Transform.Translate(x, y, z);
+   oxTransform.Translate(x, y, z);
+   oxTransform.Rotate(rX, rY, Rz);
+   oxTransform.Apply();
 
-   Camera^.Transform.Rotate(rX, rY, Rz);
-
-   Camera^.Transform.Apply();
    Material.ApplyColor('color', AxisColors[index]);
    ConeModel.Render();
 end;
@@ -284,6 +280,9 @@ end;
 begin
    camera := @wdg.SceneRender.Camera;
    Material.Apply();
+
+   Transform.Identity();
+   Transform.Matrix := camera^.Matrix;
 
    oxedScene.SelectedEntity.GetWorldPosition(p);
    oxedScene.SelectedEntity.GetWorldRotation(rotation);
@@ -295,9 +294,8 @@ begin
    Transform.vScale.Assign(distanceScale, distanceScale, distanceScale);
    Transform.SetupMatrix();
 
-   camMatrix := Camera^.Transform.Matrix;
-   Camera^.Transform.Matrix := Camera^.Transform.Matrix * Transform.Matrix;
-   Camera^.Transform.Apply();
+   Transform.Matrix := camera^.Matrix * Transform.Matrix;
+   Transform.Apply();
 
    oxRender.LineWidth(1.5);
 
@@ -313,7 +311,7 @@ begin
 
    oxRender.LineWidth(1.0);
 
-   tempMatrix := Camera^.Transform.Matrix;
+   Transform.Matrix := camera^.Matrix;
 
    if(oxedSettings.Debug.RenderSelectorBBox) then begin
       BBox := vmBBoxZero;
@@ -340,7 +338,7 @@ begin
    Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
    oxRender.DepthDefault();
 
-   Camera^.Transform.Apply(camMatrix);
+   camera^.Apply();
 end;
 
 procedure oxedTSceneEditWindow.RenderGlyphs(const componentPairs: oxedTThingieComponentPairs);
@@ -377,8 +375,7 @@ var
    rotation: TVector3f;
    distance,
    distanceScale: single;
-   pMatrix,
-   camMatrix: TMatrix4f;
+   pMatrix: TMatrix4f;
    camera: oxPCamera;
 
 begin
@@ -399,26 +396,21 @@ begin
    Transform.vScale.Assign(distanceScale, distanceScale, distanceScale);
    Transform.SetupMatrix();
 
-   camMatrix := camera^.Transform.Matrix;
-   camera^.Transform.Matrix := camera^.Transform.Matrix * Transform.Matrix;
-   pMatrix := camera^.Transform.Matrix;
-
-   camera^.Transform.Apply();
+   Transform.Matrix := camera^.Matrix * Transform.Matrix;
 
    {shadow}
-   camera^.Transform.Scale(1.15, 1.15, 1);
-   camera^.Transform.Apply();
+   pMatrix := Transform.Matrix;
+   Transform.Scale(1.15, 1.15, 1);
+   Transform.Apply();
 
    Material.ApplyColor('color', 0.0, 0.0, 0.0, 0.75);
    oxRenderUtilities.Quad(component^.Glyph.Texture);
 
    {glyph}
-   camera^.Transform.Apply(pMatrix);
+   Transform.Apply(pMatrix);
 
    Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
    oxRenderUtilities.Quad();
-
-   camera^.Transform.Matrix := camMatrix;
 end;
 
 procedure oxedTSceneEditWindow.RenderGlyphDone();
