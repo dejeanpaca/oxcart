@@ -11,7 +11,7 @@ INTERFACE
    USES
       sysutils, uStd, udvars, uFile, StringUtils, uLog, uFileUtils,
       {oxed}
-      uOXED, oxeduProject, oxeduProjectManagement,
+      uOXED, oxeduProject, oxeduProjectManagement, oxeduAssets,
       oxeduAndroid;
 
 CONST
@@ -183,6 +183,8 @@ begin
    {make sure cpu type is not set to a funky value in the config file}
    if(loopint(oxedAndroidSettings.Project.EmulatorCPUType) > loopint(high(oxedTAndroidCPUType))) then
       oxedAndroidSettings.Project.EmulatorCPUType := ANDROID_CPU_ARM;
+
+   oxedAssets.AddDirectoryIgnore(oxedAndroidSettings.Project.ProjectFilesPath);
 end;
 
 procedure preOpen();
