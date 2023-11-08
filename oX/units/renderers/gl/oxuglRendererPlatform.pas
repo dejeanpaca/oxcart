@@ -31,6 +31,7 @@ TYPE
 
       procedure OnInitialize(); virtual;
       function PreInitWindow({%H-}wnd: oglTWindow): boolean; virtual;
+      procedure AfterInitWindow({%H-}wnd: oglTWindow); virtual;
       procedure OnInitWindow({%H-}wnd: oglTWindow); virtual;
       function OnDeInitWindow({%H-}wnd: oglTWindow): boolean; virtual;
       procedure SwapBuffers({%H-}wnd: oglTWindow); virtual;
@@ -67,6 +68,11 @@ end;
 function oxglTPlatform.PreInitWindow(wnd: oglTWindow): boolean;
 begin
    Result := false;
+end;
+
+procedure oxglTPlatform.AfterInitWindow(wnd: oglTWindow);
+begin
+
 end;
 
 procedure oxglTPlatform.OnInitWindow(wnd: oglTWindow);

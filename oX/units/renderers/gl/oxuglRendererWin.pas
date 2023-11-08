@@ -30,7 +30,7 @@ TYPE
       function GetErrorDescription(error: loopint): StdString; virtual;
 
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
-      procedure OnInitWindow({%H-}wnd: oglTWindow); virtual;
+      procedure AfterInitWindow({%H-}wnd: oglTWindow); virtual;
       procedure SwapBuffers(wnd: oglTWindow); virtual;
       function GetContext(wnd: oglTWindow; shareContext: HGLRC): HGLRC; virtual;
       function ContextCurrent(const context: oxTRenderTargetContext): boolean; virtual;
@@ -364,7 +364,7 @@ begin
    Result := true;
 end;
 
-procedure oxglTPlatformWGL.OnInitWindow(wnd: oglTWindow);
+procedure oxglTPlatformWGL.AfterInitWindow(wnd: oglTWindow);
 begin
    {$IF NOT DEFINED(GLES)}
    wglChoosePixelFormatARB := TwglChoosePixelFormatARB(wglGetProcAddress('wglChoosePixelFormatARB'));
