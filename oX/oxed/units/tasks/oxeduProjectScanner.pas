@@ -121,7 +121,7 @@ begin
 
    if(dir <> '') then begin
       {load package path properties if we have any}
-      if(FileExists(fd.f.Name + DirectorySeparator + OX_PACKAGE_PROPS_FILE_NAME)) then begin
+      if(FileExists(fd.f.Name + DirSep + OX_PACKAGE_PROPS_FILE_NAME)) then begin
          path := oxedProjectScanner.CurrentPackage^.Paths.Get(dir);
          path^.LoadPathProperties(oxedProjectScanner.CurrentPath);
       end;
@@ -184,7 +184,7 @@ begin
       exit(false);
 
    {ignore folder if .noassets file is declared in it}
-   if FileUtils.Exists(fullPath + DirectorySeparator + OX_NO_ASSETS_FILE) >= 0 then
+   if FileUtils.Exists(fullPath + DirSep + OX_NO_ASSETS_FILE) >= 0 then
       exit(False);
 
    {ignore directory if included in ignore lists}
