@@ -11,7 +11,7 @@ INTERFACE
    USES
       sysutils, uStd, udvars, uFile, StringUtils, uLog, uFileUtils,
       {oxed}
-      uOXED, oxeduProjectManagement,
+      uOXED, oxeduProject, oxeduProjectManagement,
       oxeduAndroid;
 
 CONST
@@ -71,10 +71,16 @@ VAR
 IMPLEMENTATION
 
 VAR
+   { project settings }
+
    dvTargetVersion,
    dvManualFileManagement,
    dvPackageName,
    dvEmulatorCPUType,
+   dvProjectFilesPath,
+
+   { general settings }
+
    dvSDKPath,
    dvNDKPath,
    dvUsedNDK: TDVar;
@@ -151,9 +157,9 @@ function oxedTAndroidSettings.GetProjectFilesPath(): StdString;
 begin
    if(not Project.ManualFileManagement) then
       {TODO: Set the project files path from temporary project}
-      Result := Project.ProjectFilesPath
+      Result := oxedProject.Path + Project.ProjectFilesPath
    else
-      Result := Project.ProjectFilesPath;
+      Result := oxedProject.Path + Project.ProjectFilesPath;
 end;
 
 function oxedTAndroidSettings.GetCPUType(): oxedTAndroidCPUType;
@@ -187,6 +193,7 @@ INITIALIZATION
    oxedAndroidSettings.Project.dvg.Add(dvPackageName, 'package_name', dtcSTRING, @oxedAndroidSettings.Project.PackageName);
    oxedAndroidSettings.Project.dvg.Add(dvEmulatorCPUType, 'emulator_cpu_type', dtcENUM, @oxedAndroidSettings.Project.EmulatorCPUType);
    oxedAndroidSettings.Project.dvg.Add(dvTargetVersion, 'target_version', dtcLOOPINT, @oxedAndroidSettings.Project.TargetVersion);
+   oxedAndroidSettings.Project.dvg.Add(dvProjectFilesPath, 'project_files_path', dtcSTRING, @oxedAndroidSettings.Project.ProjectFilesPath);
 
    oxedAndroidSettings.dvg.Add(dvSDKPath, 'sdk_path', dtcSTRING, @oxedAndroidSettings.SDKPath);
    oxedAndroidSettings.dvg.Add(dvNDKPath, 'ndk_path', dtcSTRING, @oxedAndroidSettings.NDKPath);
