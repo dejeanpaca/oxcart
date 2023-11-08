@@ -60,7 +60,8 @@ var
    traverse: TFileTraverse;
 
 begin
-   traverse := TFileTraverse.Create();
+   TFileTraverse.Initialize(traverse);
+
    traverse.OnFile := @RecursiveOnFile;
    traverse.Recursive := recursive;
 
@@ -71,8 +72,6 @@ begin
       traverse.Run(Directory)
    else
       traverse.Run();
-
-   traverse.Free();
 end;
 
 procedure TTestRunner.RunRecursive();

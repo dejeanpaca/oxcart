@@ -95,7 +95,7 @@ end;
 class procedure oxedTProjectScannerGlobal.Initialize();
 begin
    with oxedProjectScanner do begin
-      Walker := TFileTraverse.Create();
+      TFileTraverse.Initialize(Walker);
       Walker.AddExtension('.pas');
       Walker.AddExtension('.inc');
 
