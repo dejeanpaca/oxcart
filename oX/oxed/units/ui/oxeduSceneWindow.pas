@@ -151,6 +151,8 @@ var
 begin
    inherited DeInitialize;
 
+   Camera.Dispose();
+
    index := oxedSceneWindows.List.Find(Self);
 
    if(index > -1) then
