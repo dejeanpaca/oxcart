@@ -96,6 +96,10 @@ begin
          oxedConsole.e('Failed to create directory: ' + oxedProject.ConfigPath);
          exit;
       end;
+
+      {$IFDEF WINDOWS}
+      FileUtils.HideFile(oxedProject.ConfigPath);
+      {$ENDIF}
    end;
 
    SetCurrentDir(oxedProject.Path);
