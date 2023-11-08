@@ -222,7 +222,7 @@ TYPE
       procedure GetFileInfo(const fn: string; out f: TFileDescriptor);
       procedure GetFileInfo(const fn: StdString; out f: TFileDescriptor);
 
-      function HideFile(const fn: StdString): boolean;
+      function HideFile(const {%H-}fn: StdString): boolean;
    end;
 
    PDirectoryCopierData = ^TDirectoryCopierData;
@@ -368,7 +368,7 @@ begin
    if(Name <> '') then
       Result := (Name[1] = '.') and (Name <> '..') and (Name <> '.')
    else
-      Result := '';
+      Result := false;
    {$ELSEIF DEFINED(WINDOWS)}
    Result := Attr and faHiddenWindows > 0;
    {$ELSE}
@@ -1202,10 +1202,10 @@ end;
 class function TFileUtilsGlobal.IsHiddenFile(f: TRawbyteSearchRec): boolean;
 begin
    {$IF DEFINED(UNIX)}
-   if(Name <> '') then
+   if(f.Name <> '') then
       Result := (f.Name[1] = '.') and (f.Name <> '..') and (f.Name <> '.')
    else
-      Result := '';
+      Result := false;
    {$ELSEIF DEFINED(WINDOWS)}
    Result := f.Attr and faHiddenWindows > 0;
    {$ELSE}
@@ -1456,8 +1456,10 @@ begin
 end;
 
 function TFileUtilsGlobal.HideFile(const fn: StdString): boolean;
+{$IFDEF WINDOWS}
 var
    attr: longint;
+{$ENDIF}
 
 begin
    {$IFDEF WINDOWS}
