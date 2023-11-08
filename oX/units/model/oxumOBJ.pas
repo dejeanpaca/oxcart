@@ -527,6 +527,7 @@ begin
    reset();
    nIndices := 0;
    meshIndex := 0;
+   vertsPerFace := 0;
 
    indiceStrings[0] := '';
    indiceStrings[1] := '';

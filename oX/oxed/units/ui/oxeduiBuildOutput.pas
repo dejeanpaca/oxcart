@@ -71,6 +71,7 @@ begin
       content := BuildExec.Output.LastLine;
 
       priority := logcINFO;
+      messageNo := 0;
 
       p := Pos('Hint: ', content);
 

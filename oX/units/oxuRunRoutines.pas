@@ -25,8 +25,8 @@ TYPE
    end;
 
    oxTRunRoutinePool = record
-      count: loopint;
-      all: array[0..2047] of oxTRunRoutine;
+      Count: loopint;
+      All: array[0..2047] of oxTRunRoutine;
    end;
 
    { oxTRunRoutines }
@@ -219,9 +219,9 @@ end;
 
 function oxTRunRoutines.GetFromPool(): oxPRunRoutine;
 begin
-   Result := @pool.all[pool.count];
+   Result := @pool.All[pool.Count];
    ZeroPtr(Result, SizeOf(oxTRunRoutine));
-   inc(pool.count);
+   inc(pool.Count);
 end;
 
 procedure oxTRunRoutines.dAdd(const name: string; exec: TProcedure);

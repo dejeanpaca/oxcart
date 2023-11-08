@@ -72,7 +72,7 @@ TYPE
 
    oglTGlobal = record
       {raise an opengl error (in case of an error, stackSkip tells how many stack entries to skip reporting on)}
-      class function eRaise(out glerror: GLenum; stackSkip: longint = 0): longint; static;
+      class function eRaise(out glerror: GLenum; {%H-}stackSkip: longint = 0): longint; static;
       class function eRaise(stackSkip: longint = 1): longint; static;
       {return a string for the specified OPENGL error}
       class function ErrorString(err: GLenum; includeCode: boolean = true): string; static;
