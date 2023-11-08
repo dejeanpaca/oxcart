@@ -50,6 +50,7 @@ TYPE
    private
       {previous parent of the window we're within}
       PreviousWindowParent: uiTControl;
+      PreviousFrame: uiTWindowFrameStyle;
 
       Buttons: record
          n, {number of Buttons}
@@ -87,6 +88,7 @@ begin
    inherited Initialize();
 
    PreviousWindowParent := wnd;
+   PreviousFrame := uiTWindow(wnd).Frame;
 end;
 
 procedure wdgTTitleButtons.Point(var e: appTMouseEvent; x, {%H-}y: longint);
@@ -239,6 +241,11 @@ begin
    if(PreviousWindowParent <> uiTWindow(wnd).Parent) then begin
       PreviousWindowParent := uiTWindow(wnd).Parent;
       Calculate();
+   end;
+
+   if(PreviousFrame <> uiTWindow(wnd).Frame) then begin
+      SetVisibility(uiTWindow(wnd).Frame <> uiwFRAME_STYLE_NONE);
+      PreviousFrame := uiTWindow(wnd).Frame;
    end;
 end;
 
