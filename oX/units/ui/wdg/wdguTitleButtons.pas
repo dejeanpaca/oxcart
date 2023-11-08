@@ -164,42 +164,41 @@ begin
    else
       colors := @pSkin.Window.InactiveColors;
 
-   if(pWnd.Frame <> uiwFRAME_STYLE_NONE) and (pSkin <> nil) then begin
-      if(Buttons.n > 0) then begin
-         {set button color}
-         SetColor(cWhite4ub);
+   if(pWnd.Frame = uiwFRAME_STYLE_NONE) or (pSkin = nil) or (Buttons.n <= 0) then
+      exit;
 
-         x  := RPosition.x;
-         y1 := RPosition.y;
+   {set button color}
+   SetColor(cWhite4ub);
 
-         f := CachedFont;
-         f.Start();
-         scale := (Buttons.h) / f.GetHeight();
-         f.Scale(scale, scale);
+   x  := RPosition.x;
+   y1 := RPosition.y;
 
-         {render all the Buttons}
-         for i := 0 to (Buttons.n - 1) do begin
-            r.x := x + Buttons.b[i].x;
-            r.y := y1;
-            r.w := Buttons.w;
-            r.h := Buttons.h;
+   f := CachedFont;
+   f.Start();
+   scale := (Buttons.h) / f.GetHeight();
+   f.Scale(scale, scale);
 
-            if(r.x + r.w < wnd.RPosition.x) or (r.x + r.w > wnd.RPosition.x + wnd.Dimensions.w) then
-               continue;
+   {render all the Buttons}
+   for i := 0 to (Buttons.n - 1) do begin
+      r.x := x + Buttons.b[i].x;
+      r.y := y1;
+      r.w := Buttons.w;
+      r.h := Buttons.h;
 
-            if(not Buttons.b[i].Highlighted) then
-               pWnd.SetColorBlended(colors^.cTitleBt)
-            else
-               pWnd.SetColorBlended(colors^.cTitleBtHighlight);
+   if(r.x + r.w < wnd.RPosition.x) or (r.x + r.w > wnd.RPosition.x + wnd.Dimensions.w) then
+      continue;
 
-            f.WriteCentered(pSkin.Window.TitleButtonSymbols[Buttons.b[i].Which], r, oxfpCenterHV);
-         end;
+   if(not Buttons.b[i].Highlighted) then
+      pWnd.SetColorBlended(colors^.cTitleBt)
+   else
+      pWnd.SetColorBlended(colors^.cTitleBtHighlight);
 
-         f.Scale(1, 1);
-
-         oxf.Stop();
-      end;
+      f.WriteCentered(pSkin.Window.TitleButtonSymbols[Buttons.b[i].Which], r, oxfpCenterHV);
    end;
+
+   f.Scale(1, 1);
+
+   oxf.Stop();
 end;
 
 procedure wdgTTitleButtons.Hover({%H-}x, {%H-}y: longint; what: uiTHoverEvent);
