@@ -166,12 +166,12 @@ begin
                   hasVertex := true;
 
                   if(hasFaces) then
-                     data.SetError(eINVALID, 'Invalid (v) order');
+                     data.SetError(eINVALID, 'Invalid (v) order at line' + sf(lineCount));
                end else if(key = 'vn') then begin
                   inc(normalCount);
 
                   if(hasFaces) then
-                     data.SetError(eINVALID, 'Invalid (vn) order');
+                     data.SetError(eINVALID, 'Invalid (vn) order at line ' + sf(lineCount));
                end else if(key = 'f') then begin
                   hasFaces := true;
 
@@ -414,6 +414,8 @@ begin
    m := nil;
    pM := nil;
 
+   ZeroPtr(@face, SizeOf(face));
+
    repeat
       data.f^.Readln(s);
 
@@ -488,8 +490,6 @@ begin
                for i := 0 to facePointCount - 1 do begin
                   strExplode(faceStrings[i], '/', indiceStrings, 3);
 
-                  ZeroPtr(@face, SizeOf(face));
-
                   face[i].v := getIndice(indiceStrings[0]);
 
                   if(indiceStrings[1] <> '') then
@@ -501,9 +501,9 @@ begin
 
                if(facePointCount = 3) then begin
                   {we have a triangle}
-                  for i := 0 to 2 do begin
-                     setFacePoint(i, i);
-                  end;
+                  setFacePoint(0, 0);
+                  setFacePoint(1, 1);
+                  setFacePoint(2, 2);
 
                   inc(currentFace);
                end else begin
