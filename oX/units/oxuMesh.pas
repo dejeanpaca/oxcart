@@ -20,7 +20,7 @@ INTERFACE
 TYPE
    oxPMeshMaterial = ^oxTMeshMaterial;
 
-   { oxTMeshMAterial}
+   { oxTMeshMaterial }
 
    oxTMeshMaterial = record
       StartIndice,
