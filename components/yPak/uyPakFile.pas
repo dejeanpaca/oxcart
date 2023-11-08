@@ -88,7 +88,7 @@ TYPE
 
       { FILENAMES BLOB }
       function ReadBlob(var f: TFile; out blob: PByte; size: fileint): fileint;
-      function WriteBlob(var f: TFile; out blob: PByte; size: fileint): fileint;
+      function WriteBlob(var f: TFile; var blob: PByte; size: fileint): fileint;
    end;
 
 CONST
@@ -189,13 +189,11 @@ begin
    end;
 end;
 
-function ypkfTGlobal.WriteBlob(var f: TFile; out blob: PByte; size: fileint): fileint;
+function ypkfTGlobal.WriteBlob(var f: TFile; var blob: PByte; size: fileint): fileint;
 begin
    Result := 0;
 
-   blob := nil;
-
-   if(size > 0) then
+   if(size > 0) and (blob <> nil) then
       Result := f.Write(blob^, size);
 end;
 
