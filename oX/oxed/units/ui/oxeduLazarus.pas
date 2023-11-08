@@ -58,11 +58,7 @@ begin
       openLazarusFlag := false;
 
       if(recreateProject) then begin
-         if(not oxedBuild.Recreate()) then
-            exit;
-
-         oxedBuild.BuildMechanism := OXED_BUILD_VIA_LAZ;
-         if(not oxedBuild.RecreateConfig()) then
+         if(not oxedBuild.RecreateProjectFiles(OXED_BUILD_VIA_LAZ)) then
             exit;
       end;
 
