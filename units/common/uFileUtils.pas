@@ -45,6 +45,13 @@ CONST
    {$ENDIF}
 
 TYPE
+   TFilePathType = (
+      PATH_TYPE_NON_EXISTENT,
+      PATH_TYPE_FILE,
+      PATH_TYPE_DIRECTORY
+   );
+
+TYPE
    { TFileTraverse }
 
    TFileTraverse = record
@@ -94,7 +101,7 @@ TYPE
 
    TFileDescriptor = record
       {file name}
-      Name: string;
+      Name: UnicodeString;
       {last modification time}
       Time: LongInt;
       {file size}
@@ -108,6 +115,11 @@ TYPE
       function IsFile(): boolean;
       {is the file a hidden file}
       function IsHidden(): boolean;
+
+      procedure From(const s: TSearchRec);
+      procedure From(const s: TUnicodeSearchRec);
+      class procedure From(out f: TFileDescriptor; const s: TSearchRec); static;
+      class procedure From(out f: TFileDescriptor; const s: TUnicodeSearchRec); static;
    end;
 
    {list of file descriptors}
@@ -134,6 +146,10 @@ TYPE
       class function CreateDirectory(const dir: string): boolean; static;
       {remove directory recusively, returns true if succeeds, returns false if any files/paths failed to delete}
       class function RmDir(const dir: string): boolean; static;
+      {tells what kind of type the given path is}
+      class function PathType(const path: string): TFilePathType; static;
+      {tells what kind of type the given path is}
+      class function PathType(const path: UnicodeString): TFilePathType; static;
 
       {create a file, returns true if successful}
       class function Create(const fn: string): boolean; static;
@@ -212,6 +228,34 @@ begin
    {$IFDEF WINDOWS}
    Result := Result or (Attr and faHiddenWindows > 0);
    {$ENDIF}
+end;
+
+procedure TFileDescriptor.From(const s: TSearchRec);
+begin
+   Self.Name := s.Name;
+   Self.Time := s.Time;
+   Self.Size := Size;
+   Self.Attr := Attr;
+end;
+
+procedure TFileDescriptor.From(const s: TUnicodeSearchRec);
+begin
+   Self.Name := s.Name;
+   Self.Time := s.Time;
+   Self.Size := Size;
+   Self.Attr := Attr;
+end;
+
+class procedure TFileDescriptor.From(out f: TFileDescriptor; const s: TSearchRec);
+begin
+   ZeroOut(f, SizeOf(f));
+   f.From(s);
+end;
+
+class procedure TFileDescriptor.From(out f: TFileDescriptor; const s: TUnicodeSearchRec);
+begin
+   ZeroOut(f, SizeOf(f));
+   f.From(s);
 end;
 
 class function TFileUtilsGlobal.ValidHandle(handle: THandle): boolean;
@@ -365,6 +409,32 @@ end;
 class function TFileUtilsGlobal.RmDir(const dir: string): boolean;
 begin
    result := RmDirChildren(ExcludeTrailingPathDelimiter(dir));
+end;
+
+class function TFileUtilsGlobal.PathType(const path: string): TFilePathType;
+var
+   f: TSearchRec;
+   descriptor: TFileDescriptor;
+
+begin
+   Result := PATH_TYPE_NON_EXISTENT;
+
+   if(FindFirst(path, faAnyFile, f) = 0) then begin
+      TFileDescriptor.From(descriptor, f);
+   end;
+end;
+
+class function TFileUtilsGlobal.PathType(const path: UnicodeString): TFilePathType;
+var
+   f: TUnicodeSearchRec;
+   descriptor: TFileDescriptor;
+
+begin
+   Result := PATH_TYPE_NON_EXISTENT;
+
+   if(FindFirst(UnicodeString(path), faAnyFile, f) = 0) then begin
+      TFileDescriptor.From(descriptor, f);
+   end;
 end;
 
 class function TFileUtilsGlobal.Create(const fn: string): boolean;
@@ -909,16 +979,14 @@ begin
    list.Initialize(list);
 
    error := FindFirst(path, attr, f);
+   ZeroPtr(@descriptor, SizeOf(descriptor));
 
    if(error = 0) then begin
       if(not properties.IsSet(FILE_FIND_ALL_ONLY_DIRECTORIES)) then begin
          repeat
             if(f.Name <> '.') and ((f.Name <> '..') or (not properties.IsSet(FILE_FIND_ALL_SKIP_PARENT_DIRECTORY_LINK))) then begin
                if(properties.IsSet(FILE_FIND_ALL_HIDDEN) or (not IsHiddenFile(f))) then begin
-                  descriptor.Name := f.Name;
-                  descriptor.Attr := f.Attr;
-                  descriptor.Time := f.Time;
-                  descriptor.Size := f.Size;
+                  descriptor.From(f);
 
                   list.Add(descriptor);
                end;
@@ -931,10 +999,7 @@ begin
          repeat
             if(f.Name <> '.') and ((f.Name <> '..') or (not properties.IsSet(FILE_FIND_ALL_SKIP_PARENT_DIRECTORY_LINK))) and (f.Attr and faDirectory > 0) then begin
                if(properties.IsSet(FILE_FIND_ALL_HIDDEN) or (not IsHiddenFile(f))) then begin
-                  descriptor.Name := f.Name;
-                  descriptor.Attr := f.Attr;
-                  descriptor.Time := f.Time;
-                  descriptor.Size := f.Size;
+                  descriptor.From(f);
 
                   list.Add(descriptor);
                end;
