@@ -83,20 +83,27 @@ var
 
    r: uiTWidgetLastRect;
 
+   mappingId: string;
+
 begin
-   wdgLabel.Add('Controller: ' + controller.GetName() +
-      ' (' + appPControllerHandler(Controller.Handler)^.GetName() + ')');
+   mappingId := Controller.GetMappingId();
+
+   if(mappingId <> '') then
+      mappingId := mappingId + ', ';
+
+   wdgLabel.Add('Controller: ' + Controller.GetName() +
+      ' (' + mappingId + appPControllerHandler(Controller.Handler)^.GetName() + ')');
 
    wdgDivisor.Add('');
 
-   wdgLabel.Add('Buttons: ' + sf(controller.ButtonCount) + ' / Axes: ' + sf(controller.AxisCount) +
-      ' / Triggers: ' + sf(controller.TriggerCount) + ' / DPad: ' + sf(controller.DPadPresent));
+   wdgLabel.Add('Buttons: ' + sf(controller.Settings.ButtonCount) + ' / Axes: ' + sf(controller.Settings.AxisCount) +
+      ' / Triggers: ' + sf(controller.Settings.TriggerCount) + ' / DPad: ' + sf(controller.Settings.DPadPresent));
 
    uiWidget.LastRect.NextLine();
 
    buttonsPerRow := 8;
 
-   if(Controller.ButtonCount > 16) then
+   if(Controller.Settings.ButtonCount > 16) then
       buttonsPerRow := 10;
 
    ZeroOut(wdg.Buttons, SizeOf(wdg.Buttons));
@@ -104,7 +111,7 @@ begin
    ZeroOut(wdg.Triggers, SizeOf(wdg.Triggers));
    ZeroOut(wdg.AxisGroups, SizeOf(wdg.AxisGroups));
 
-   for i := 0 to Controller.ButtonCount - 1 do begin
+   for i := 0 to Controller.Settings.ButtonCount - 1 do begin
       if(i mod buttonsPerRow = 0) and (i >= buttonsPerRow) then
          uiWidget.LastRect.NextLine();
 
@@ -118,12 +125,12 @@ begin
 
    r := uiWidget.LastRect;
 
-   if(Controller.AxisCount > 0) then begin
+   if(Controller.Settings.AxisCount > 0) then begin
       uiWidget.LastRect.NextLine();
       r := uiWidget.LastRect;
    end;
 
-   for i := 0 to Controller.AxisCount - 1 do begin
+   for i := 0 to Controller.Settings.AxisCount - 1 do begin
       if(i mod 2 = 0) and (i > 0) then
          uiWidget.LastRect.NextLine();
 
@@ -138,10 +145,10 @@ begin
          r := uiWidget.LastRect;
    end;
 
-   if(Controller.TriggerCount > 0) then
+   if(Controller.Settings.TriggerCount > 0) then
       uiWidget.LastRect.NextLine();
 
-   for i := 0 to Controller.TriggerCount - 1 do begin
+   for i := 0 to Controller.Settings.TriggerCount - 1 do begin
       if(i mod 2 = 0) and (i > 0) then
          uiWidget.LastRect.NextLine();
 
@@ -154,15 +161,15 @@ begin
    end;
 
    {is a dpad present}
-   if(Controller.DPadPresent) then begin
+   if(Controller.Settings.DPadPresent) then begin
       wdg.DPad := wdgControllerDPadState.Add(r.RightOf());
       wdg.DPad.SetDirection(Controller.GetDPadDirection());
    end;
 
-   if(Controller.AxisGroupCount > 0) then begin
+   if(Controller.Settings.AxisGroupCount > 0) then begin
       uiWidget.LastRect.NextLine();
 
-      for i := 0 to Controller.AxisGroupCount - 1 do begin
+      for i := 0 to Controller.Settings.AxisGroupCount - 1 do begin
          wdg.AxisGroups[i] := wdgControllerDPadState.Add(uiWidget.LastRect.RightOf());
          wdg.AxisGroups[i].SetDirection(Controller.GetAxisGroupVector(i));
       end;
@@ -191,17 +198,17 @@ begin
    if(not Controller.Updated) then
       exit;
 
-   for i := 0 to Controller.ButtonCount - 1 do begin
+   for i := 0 to Controller.Settings.ButtonCount - 1 do begin
       if(wdg.Buttons[i] <> nil) then
          wdg.Buttons[i].SetPressure(Controller.GetButtonPressure(i));
    end;
 
-   for i := 0 to Controller.AxisCount - 1 do begin
+   for i := 0 to Controller.Settings.AxisCount - 1 do begin
       if(wdg.Axes[i] <> nil) then
          wdg.Axes[i].SetRatio(Controller.GetUnitAxisValue(i));
    end;
 
-   for i := 0 to Controller.TriggerCount - 1 do begin
+   for i := 0 to Controller.Settings.TriggerCount - 1 do begin
       if(wdg.Triggers[i] <> nil) then
          wdg.Triggers[i].SetRatio(Controller.GetTriggerValue(i));
    end;
@@ -209,7 +216,7 @@ begin
    if(wdg.DPad <> nil) then
       wdg.DPad.SetDirection(Controller.GetDPadDirection());
 
-   for i := 0 to Controller.AxisGroupCount - 1 do begin
+   for i := 0 to Controller.Settings.AxisGroupCount - 1 do begin
       if(wdg.AxisGroups[i] <> nil) then begin
          wdg.AxisGroups[i].SetDirection(Controller.GetAxisGroupVector(i));
       end;

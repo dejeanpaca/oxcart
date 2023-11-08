@@ -107,6 +107,7 @@ var
    error: longint;
    version: longint = 0;
    version_bytes: packed array[0..3] of byte absolute version;
+
    nAxes,
    nButtons: byte;
 
@@ -135,6 +136,7 @@ begin
          Name := FileName;
 
          error := fpgeterrno();
+
          if(error <> 0) then
             log.w('Failed getting device name: ' + linux.GetErrorString(error));
       end;
@@ -144,18 +146,18 @@ begin
       error := fpIOCtl(fileHandle, linux._ior('j', JSIOCGAXES, sizeof(nAxes)), @nAxes);
 
       if(error = 0) then begin
-         AxisCount := nAxes;
+         Settings.AxisCount := nAxes;
 
-         if(AxisCount >= 2) then begin
-            AxisGroupCount := 1;
-            AxisGroups[0][0] := 0;
-            AxisGroups[0][1] := 1;
+         if(Settings.AxisCount >= 2) then begin
+            Settings.AxisGroupCount := 1;
+            Settings.AxisGroups[0][0] := 0;
+            Settings.AxisGroups[0][1] := 1;
          end;
 
-         if(AxisCount >= 4) then begin
-            AxisGroupCount := 2;
-            AxisGroups[1][0] := 2;
-            AxisGroups[1][1] := 3;
+         if(Settings.AxisCount >= 4) then begin
+            Settings.AxisGroupCount := 2;
+            Settings.AxisGroups[1][0] := 3;
+            Settings.AxisGroups[1][1] := 4;
          end;
       end else
          log.w('Failed to get number of axes: ' + linux.GetErrorString(fpgeterrno()));
@@ -163,7 +165,7 @@ begin
       error := fpIOCtl(fileHandle, linux._ior('j', JSIOCGBUTTONS, sizeof(nButtons)), @nButtons);
 
       if(error = 0) then
-         ButtonCount := nButtons
+         Settings.ButtonCount := nButtons
       else
          log.w('Failed to get number of buttons: ' + linux.GetErrorString(fpgeterrno()));
 
