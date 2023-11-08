@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, appuRun, appuKeys, uLog,
       {ox}
-      uOX, oxuGlobalInstances;
+      uOX, oxuGlobalInstances, oxulibSettings;
 
 IMPLEMENTATION
 
@@ -32,17 +32,11 @@ procedure updateInput();
 begin
    if(appkExt <> nil) and (oxLibrarySettings.Focused) then begin
       appk.Modifiers := appkExt^.Modifiers;
-      appk.Pressed := appkExt^.Pressed;
-      appk.ReleasePressed := appkExt^.ReleasePressed;
-      appk.CurrentCyclePressed := appkExt^.CurrentCyclePressed;
-      appk.WasPressed := appkExt^.WasPressed;
+      appk.Properties := appkExt^.Properties;
    end else begin
       appk.Modifiers := 0;
 
-      ZeroPtr(@appk.Pressed, SizeOf(appk.Pressed));
-      ZeroPtr(@appk.ReleasePressed, SizeOf(appk.ReleasePressed));
-      ZeroPtr(@appk.CurrentCyclePressed, SizeOf(appk.CurrentCyclePressed));
-      ZeroPtr(@appk.WasPressed, SizeOf(appk.WasPressed));
+      ZeroPtr(@appk.Properties, SizeOf(appk.Properties));
    end;
 end;
 
