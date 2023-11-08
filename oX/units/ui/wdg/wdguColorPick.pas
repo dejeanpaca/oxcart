@@ -42,13 +42,6 @@ VAR
 
 IMPLEMENTATION
 
-procedure initializeWidget();
-begin
-   wdgColorPick.Internal.Done(wdgTColorPick);
-
-   wdgColorPick := wdgTColorPickGlobal.Create(wdgColorPick.Internal);
-end;
-
 procedure wdgTColorPick.Render();
 begin
    uiRenderWidget.Box(uiTWidget(self), Color, uiTWindow(wnd).Skin.Colors.Border);
@@ -76,7 +69,19 @@ begin
       oxwndColorPicker.ObjectCallback := nil;
 end;
 
+procedure init();
+begin
+   wdgColorPick.Internal.Done(wdgTColorPick);
+
+   wdgColorPick := wdgTColorPickGlobal.Create(wdgColorPick.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgColorPick);
+end;
+
 INITIALIZATION
-   wdgColorPick..Register('widget.color_pick', @initializeWidget);
+   wdgColorPick.Internal.Register('widget.color_pick', @init, @deinit);
 
 END.

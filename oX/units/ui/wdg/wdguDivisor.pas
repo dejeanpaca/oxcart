@@ -56,14 +56,6 @@ VAR
 
 IMPLEMENTATION
 
-procedure InitWidget();
-begin
-   wdgDivisor.Internal.NonSelectable := true;
-   wdgDivisor.Internal.Done(wdgTDivisor);
-
-   wdgDivisor := wdgTDivisorGlobal.Create(wdgDivisor.Internal);
-end;
-
 { wdgTDivisor }
 
 constructor wdgTDivisor.Create();
@@ -200,7 +192,20 @@ begin
    Result := Add(Caption, uiWidget.LastRect.BelowOf());
 end;
 
+procedure init();
+begin
+   wdgDivisor.Internal.NonSelectable := true;
+   wdgDivisor.Internal.Done(wdgTDivisor);
+
+   wdgDivisor := wdgTDivisorGlobal.Create(wdgDivisor.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgDivisor);
+end;
+
 INITIALIZATION
-   wdgDivisor.internal.Register('widget.link', @InitWidget);
+   wdgDivisor.internal.Register('widget.link', @init, @deinit);
 
 END.

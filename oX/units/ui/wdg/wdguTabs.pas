@@ -533,13 +533,6 @@ begin
    end;
 end;
 
-procedure InitWidget();
-begin
-   wdgTabs.Internal.Done(wdgTTabs);
-
-   wdgTabs := wdgTTabsGlobal.Create(wdgTabs.Internal);
-end;
-
 {recalculate the size of the individual tabs}
 procedure wdgTTabs.Recalculate();
 var
@@ -813,11 +806,23 @@ begin
 
 end;
 
+procedure init();
+begin
+   wdgTabs.Internal.Done(wdgTTabs);
+
+   wdgTabs := wdgTTabsGlobal.Create(wdgTabs.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgTabs);
+end;
+
 INITIALIZATION
    wdgTabs.HeaderHeight := 40;
    wdgTabs.HeaderWidth := 80;
    wdgTabs.HeaderNonSelectedDecrease := 2;
 
-   wdgTabs.internal.Register('widget.tabs', @InitWidget);
+   wdgTabs.internal.Register('widget.tabs', @init, @deinit);
 
 END.

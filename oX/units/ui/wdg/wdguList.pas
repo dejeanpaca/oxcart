@@ -1584,22 +1584,32 @@ begin
       uiDraw.Scissor(sRect, false);
 end;
 
-procedure InitWidget();
+procedure init();
 begin
    wdgList.Internal.Done(wdgTList);
 
    wdgList := wdgTListGlobal.Create(wdgList.Internal);
 end;
 
-procedure InitStringWidget();
+procedure deinit();
+begin
+   FreeObject(wdgList);
+end;
+
+procedure initString();
 begin
    wdgStringList.Internal.Done(wdgTStringList);
 
    wdgStringList := wdgTStringListGlobal.Create(wdgStringList.Internal);
 end;
 
+procedure deinitString();
+begin
+   FreeObject(wdgStringList);
+end;
+
 INITIALIZATION
-   wdgList.Internal.Register('widget.list', @InitWidget);
-   wdgStringList.Internal.Register('widget.stringlist', @InitStringWidget);
+   wdgList.Internal.Register('widget.list', @init, @deinit);
+   wdgStringList.Internal.Register('widget.stringlist', @initString, @deinitString);
 
 END.

@@ -11,11 +11,12 @@ UNIT wdguEmpty;
 INTERFACE
 
    USES
-   {oX}
-   oxuTypes,
-   {ui}
-   uiuWidget, uiWidgets, uiuRegisteredWidgets,
-   wdguBase;
+      uStd,
+      {oX}
+      oxuTypes,
+      {ui}
+      uiuWidget, uiWidgets, uiuRegisteredWidgets,
+      wdguBase;
 
 TYPE
    wdgTEmptyGlobal = class(specialize wdgTBase<uiTWidget>)
@@ -27,14 +28,19 @@ VAR
 
 IMPLEMENTATION
 
-procedure initializeWidget();
+procedure init();
 begin
    wdgEmpty.Internal.Done(uiTWidget);
 
    wdgEmpty := wdgTEmptyGlobal.Create(wdgEmpty.Internal);
 end;
 
+procedure deinit();
+begin
+   FreeObject(wdgEmpty);
+end;
+
 INITIALIZATION
-   wdgEmpty.Internal.Register('widget.empty', @initializeWidget);
+   wdgEmpty.Internal.Register('widget.empty', @init, @deinit);
 
 END.

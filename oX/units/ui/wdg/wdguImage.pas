@@ -181,13 +181,6 @@ begin
    CalculateQuad();
 end;
 
-procedure InitWidget();
-begin
-   wdgImage.Internal.Done(wdgTImage);
-
-   wdgImage := wdgTImageGlobal.Create(wdgImage.Internal);
-end;
-
 function wdgTImageGlobal.Add(const fn: StdString;
       const Pos: oxTPoint; const Dim: oxTDimensions): wdgTImage;
 
@@ -200,7 +193,19 @@ begin
    end;
 end;
 
+procedure init();
+begin
+   wdgImage.Internal.Done(wdgTImage);
+
+   wdgImage := wdgTImageGlobal.Create(wdgImage.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgImage);
+end;
+
 INITIALIZATION
-   wdgImage.Internal.Register('widget.image', @InitWidget);
+   wdgImage.Internal.Register('widget.image', @init, @deinit);
 
 END.

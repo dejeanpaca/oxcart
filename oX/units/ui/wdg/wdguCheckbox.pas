@@ -269,13 +269,6 @@ begin
    SetSpacing();
 end;
 
-procedure initWidget();
-begin
-   wdgCheckbox.Internal.Done(wdgTCheckbox);
-
-   wdgCheckbox := wdgTCheckboxGlobal.Create(wdgCheckbox.Internal);
-end;
-
 function wdgTCheckboxGlobal.Add(const Caption: StdString;
          const Pos: oxTPoint;
          value: boolean = false): wdgTCheckbox;
@@ -300,6 +293,18 @@ begin
    Result := Add(Caption).Check(value);
 end;
 
+procedure init();
+begin
+   wdgCheckbox.Internal.Done(wdgTCheckbox);
+
+   wdgCheckbox := wdgTCheckboxGlobal.Create(wdgCheckbox.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgCheckbox);
+end;
+
 INITIALIZATION
    wdgCheckbox.Width := 18;
    wdgCheckbox.Height := 18;
@@ -307,6 +312,6 @@ INITIALIZATION
 
    wdgCheckbox.DisabledColor.Assign(96, 96, 96, 255);
    wdgCheckbox.CheckedColor.Assign(32, 91, 32, 255);
-   wdgCheckbox.Internal.Register('widget.checkbox', @initWidget);
+   wdgCheckbox.Internal.Register('widget.checkbox', @init, @deinit);
 
 END.

@@ -894,31 +894,46 @@ begin
    wdg.EnableGridMode();
 end;
 
-procedure InitWidget();
+procedure init();
 begin
    wdgFileList.Internal.Done(wdgTFileList);
 
    wdgFileList := wdgTFileListGlobal.Create(wdgFileList.Internal);
 end;
 
-procedure InitGridWidget();
+procedure deinit();
+begin
+   FreeObject(wdgFileList);
+end;
+
+procedure initGrid();
 begin
    wdgFileGrid.Internal.Done(wdgTFileGrid);
 
    wdgFileGrid := wdgTFileGridGlobal.Create(wdgFileGrid.Internal);
 end;
 
-procedure InitHierarchicalWidget();
+procedure deinitGrid();
+begin
+   FreeObject(wdgFileGrid);
+end;
+
+procedure initHierarchical();
 begin
    wdgHierarchicalFileList.Internal.Done(wdgTHierarchicalFileList);
 
    wdgHierarchicalFileList := wdgTHierarchicalFileListGlobal.Create(wdgHierarchicalFileList.Internal);
 end;
 
+procedure deinitHierarchical();
+begin
+   FreeObject(wdgHierarchicalFileList);
+end;
+
 INITIALIZATION
-   wdgFileList.Internal.Register('widget.filelist', @InitWidget);
-   wdgFileGrid.Internal.Register('widget.filegrid', @InitGridWidget);
-   wdgHierarchicalFileList.Internal.Register('widget.hierarchicalfilelist', @InitHierarchicalWidget);
+   wdgFileList.Internal.Register('widget.filelist', @init, @deinit);
+   wdgFileGrid.Internal.Register('widget.filegrid', @initGrid, @deinitGrid);
+   wdgHierarchicalFileList.Internal.Register('widget.hierarchicalfilelist', @initHierarchical, @deinitHierarchical);
 
    wdgFileGrid.FileNameLines := 2;
 

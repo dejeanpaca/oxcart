@@ -94,14 +94,6 @@ VAR
 
 IMPLEMENTATION
 
-procedure InitWidget();
-begin
-   wdgLink.Internal.skinDescriptor := @wdgLinkSkinDescriptor;
-   wdgLink.Internal.Done(wdgTLink);
-
-   wdgLink := wdgTLinkGlobal.Create(wdgLink.Internal);
-end;
-
 { wdgTLink }
 
 procedure wdgTLink.Render();
@@ -155,8 +147,21 @@ begin
    end;
 end;
 
+procedure init();
+begin
+   wdgLink.Internal.skinDescriptor := @wdgLinkSkinDescriptor;
+   wdgLink.Internal.Done(wdgTLink);
+
+   wdgLink := wdgTLinkGlobal.Create(wdgLink.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgLink);
+end;
+
 INITIALIZATION
    wdgLink.DefaultColor := cBlue4ub;
-   wdgLink.Internal.Register('widget.link', @InitWidget);
+   wdgLink.Internal.Register('widget.link', @init, @deinit);
 
 END.

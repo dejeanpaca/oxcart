@@ -135,13 +135,6 @@ begin
    {TODO: Send events about state change perhaps}
 end;
 
-procedure InitWidget();
-begin
-   wdgRadioButton.Internal.Done(wdgTRadioButton);
-
-   wdgRadioButton := wdgTRadioButtonGlobal.Create(wdgRadioButton.Internal);
-end;
-
 procedure wdgTRadioButtonGlobal.SetSize(w, h: longint);
 begin
    Diameter := w;
@@ -175,12 +168,23 @@ begin
    end;
 end;
 
+procedure init();
+begin
+   wdgRadioButton.Internal.Done(wdgTRadioButton);
+
+   wdgRadioButton := wdgTRadioButtonGlobal.Create(wdgRadioButton.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgRadioButton);
+end;
 
 INITIALIZATION
    wdgRadioButton.SetSize(16, 16);
    wdgRadioButton.CaptionSpace := 4;
    wdgRadioButton.clrDisabled.Assign(96, 96, 96, 255);
 
-   wdgRadioButton.Internal.Register('widget.radiobutton', @InitWidget);
+   wdgRadioButton.Internal.Register('widget.radiobutton', @init, @deinit);
 
 END.

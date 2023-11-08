@@ -11,11 +11,12 @@ UNIT wdguBlock;
 INTERFACE
 
    USES
-   {oX}
-   oxuTypes,
-   {ui}
-   uiuWidget, uiWidgets, uiuDraw, uiuRegisteredWidgets,
-   wdguBase;
+      uStd,
+      {oX}
+      oxuTypes,
+      {ui}
+      uiuWidget, uiWidgets, uiuDraw, uiuRegisteredWidgets,
+      wdguBase;
 
 
 TYPE
@@ -32,13 +33,6 @@ VAR
 
 IMPLEMENTATION
 
-procedure initializeWidget();
-begin
-   wdgBlock.Internal.Done(wdgTBlock);
-
-   wdgBlock := wdgTBlockGlobal.Create(wdgBlock.Internal);
-end;
-
 procedure wdgTBlock.Render();
 begin
    {set color or bind texture depending on if textures are available}
@@ -47,7 +41,19 @@ begin
    uiDraw.Box(RPosition, Dimensions);
 end;
 
+procedure init();
+begin
+   wdgBlock.Internal.Done(wdgTBlock);
+
+   wdgBlock := wdgTBlockGlobal.Create(wdgBlock.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgBlock);
+end;
+
 INITIALIZATION
-   wdgBlock.Internal.Register('widget.block', @initializeWidget);
+   wdgBlock.Internal.Register('widget.block', @init, @deinit);
 
 END.

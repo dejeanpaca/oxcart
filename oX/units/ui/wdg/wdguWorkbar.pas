@@ -69,13 +69,6 @@ VAR
 
 IMPLEMENTATION
 
-procedure initializeWidget();
-begin
-   wdgWorkbar.Internal.Done(wdgTWorkbar);
-
-   wdgWorkbar := wdgTWorkbarGlobal.Create(wdgWorkbar.Internal);
-end;
-
 { wdgTWorkbar }
 
 constructor wdgTWorkbar.Create;
@@ -175,8 +168,20 @@ begin
    wdg.AutoPosition();
 end;
 
+procedure init();
+begin
+   wdgWorkbar.Internal.Done(wdgTWorkbar);
+
+   wdgWorkbar := wdgTWorkbarGlobal.Create(wdgWorkbar.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgWorkbar);
+end;
+
 INITIALIZATION
-   wdgWorkbar.Internal.Register('widget.workbar', @initializeWidget);
+   wdgWorkbar.Internal.Register('widget.workbar', @init, @deinit);
 
    wdgWorkbar.Height := wdgWORKBAR_HEIGHT;
    wdgWorkbar.Shadows := true;

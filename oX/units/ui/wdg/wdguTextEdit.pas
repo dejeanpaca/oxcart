@@ -112,14 +112,6 @@ VAR
 
 IMPLEMENTATION
 
-procedure InitWidget();
-begin
-   wdgTextEdit.Internal.SkinDescriptor := @wdgInputSkinDescriptor;
-   wdgTextEdit.Internal.Done(wdgTTextEdit);
-
-   wdgTextEdit :=  wdgTTextEditGlobal.Create(wdgTextEdit.Internal);
-end;
-
 { wdgTTextEdit }
 
 constructor wdgTTextEdit.Create();
@@ -611,7 +603,20 @@ begin
    ib.VerticalSpacing := CachedFont.GetHeight() div 8;
 end;
 
+procedure init();
+begin
+   wdgTextEdit.Internal.SkinDescriptor := @wdgInputSkinDescriptor;
+   wdgTextEdit.Internal.Done(wdgTTextEdit);
+
+   wdgTextEdit :=  wdgTTextEditGlobal.Create(wdgTextEdit.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgTextEdit);
+end;
+
 INITIALIZATION
-   wdgTextEdit.Internal.Register('widget.textedit', @InitWidget);
+   wdgTextEdit.Internal.Register('widget.textedit', @init, @deinit);
 
 END.

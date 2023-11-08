@@ -172,14 +172,6 @@ VAR
 
 IMPLEMENTATION
 
-procedure initializeWidget();
-begin
-   wdgToolbar.Internal.SkinDescriptor := @wdgToolbarSkinDescriptor;
-   wdgToolbar.Internal.Done(wdgTToolbar);
-
-   wdgToolbar := wdgTToolbarGlobal.Create(wdgToolbar.Internal);
-end;
-
 { wdgTToolbarItem }
 
 procedure wdgTToolbarItem.Enable(setEnable: boolean);
@@ -611,8 +603,21 @@ begin
    Result.Recalculate();
 end;
 
+procedure init();
+begin
+   wdgToolbar.Internal.SkinDescriptor := @wdgToolbarSkinDescriptor;
+   wdgToolbar.Internal.Done(wdgTToolbar);
+
+   wdgToolbar := wdgTToolbarGlobal.Create(wdgToolbar.Internal);
+end;
+
+procedure deinit();
+begin
+   FreeObject(wdgToolbar);
+end;
+
 INITIALIZATION
-   wdgToolbar.Internal.Register('widget.Toolbar', @initializeWidget);
+   wdgToolbar.Internal.Register('widget.Toolbar', @init, @deinit);
    wdgToolbar.Height := wdgWORKBAR_HEIGHT;
 
 END.
