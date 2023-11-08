@@ -84,15 +84,15 @@ IMPLEMENTATION
 
 { appTKeyMapping }
 
-procedure appTKeyMapping.CallEvent;
+procedure appTKeyMapping.CallEvent();
 begin
-   if(Action <> 0) then
+   if Action <> 0 then
       appActionEvents.Queue(Action);
 end;
 
 procedure appTKeyMapping.Call();
 begin
-   if(Callback <> nil) then
+   if Callback <> nil then
       Callback();
 
    CallEvent();
@@ -105,7 +105,7 @@ end;
 
 function appTKeyMapping.ToString(): string;
 begin
-   result := Key.ToString();
+   Result := Key.ToString();
 end;
 
 { appTKeyMappingGroup }
@@ -113,7 +113,7 @@ end;
 function appTKeyMappingGroup.AddKey(const kName, kDescription: string; const k: appTKey): appPKeyMapping;
 var
    mapping: appTKeyMapping;
-   existingMapping: appPKeyMapping;
+   existing: appPKeyMapping;
 
 begin
    ZeroOut(mapping, SizeOf(mapping));
@@ -123,17 +123,18 @@ begin
    mapping.DefaultKey := k;
    mapping.Key := mapping.DefaultKey;
 
-   existingMapping := Find(k.Code, k.State);
-   if(existingMapping <> nil) then begin
-      if(existingMapping^.Name <> kName) then
-         log.w('Existing mapping (' + existingMapping^.Name  + ') exists in group ' + Name + ', but tried to add ' + kName + ' (' + k.ToString() + ')');
+   existing := Find(k.Code, k.State);
+   if existing <> nil then begin
+      if existing^.Name <> kName then
+         log.w('Existing mapping (' + existing^.Name  + ') exists in group ' + Name + ', but tried to add ' +
+            kName + ' (' + k.ToString() + ')');
 
-      exit(existingMapping);
+      exit(existing);
    end;
 
    Keys.Add(mapping);
 
-   result := @Keys.List[Keys.n - 1];
+   Result := @Keys.List[Keys.n - 1];
 end;
 
 function appTKeyMappingGroup.AddKey(const kName, kDescription: string; keyCode: longint; state: TBitSet): appPKeyMapping;
@@ -146,7 +147,7 @@ begin
    k.Code := keyCode;
    k.State := state;
 
-   result := AddKey(kName, kDescription, k);
+   Result := AddKey(kName, kDescription, k);
 end;
 
 function appTKeyMappingGroup.Find(keyCode: longint; state: TBitSet): appPKeyMapping;
@@ -157,13 +158,13 @@ var
 begin
    k.Assign(keyCode, state);
 
-   if(Keys.n> 0) then
-      for i := 0 to (Keys.n - 1) do begin
-         if(Keys.List[i].Key.Equal(k)) then
+   if Keys.n > 0 then
+      for i := 0 to Keys.n - 1 do begin
+         if Keys.List[i].Key.Equal(k) then
             exit(@Keys.List[i]);
       end;
 
-   result := nil;
+   Result := nil;
 end;
 
 function appTKeyMappingGroup.Find(action: longint): appPKeyMapping;
@@ -171,13 +172,13 @@ var
    i: loopint;
 
 begin
-   if(Keys.n> 0) then
-      for i := 0 to (Keys.n - 1) do begin
-         if(Keys.List[i].Action = action) then
+   if Keys.n > 0 then
+      for i := 0 to Keys.n - 1 do begin
+         if Keys.List[i].Action = action then
             exit(@Keys.List[i]);
       end;
 
-   result := nil;
+   Result := nil;
 end;
 
 procedure appTKeyMappingGroup.Validate();
@@ -187,7 +188,8 @@ var
 begin
    for i := 0 to Keys.n - 1 do begin
       if(Keys.List[i].Action = 0) and (Keys.List[i].Callback = nil) then begin
-         log.w('Key mapping: ' + Name + ' ' + Keys.List[i].Name + ' (' +  Keys.List[i].Key.ToString() + ') has no action or callback associated');
+         log.w('Key mapping: ' + Name + ' ' + Keys.List[i].Name + ' (' +  Keys.List[i].Key.ToString() +
+            ') has no action or callback associated');
       end;
    end;
 end;
@@ -215,15 +217,15 @@ var
    i: loopint;
 
 begin
-   if(Groups.n > 0) then
-      for i := 0 to (Groups.n - 1) do begin
-         result := Groups.List[i]^.Find(keyCode, state);
+   if Groups.n > 0 then
+      for i := 0 to Groups.n - 1 do begin
+         Result := Groups.List[i]^.Find(keyCode, state);
 
-         if(result <> nil) then
+         if Result <> nil then
             exit;
       end;
 
-   result := nil;
+   Result := nil;
 end;
 
 function appTKeyMappings.Find(const k: appTKey): appPKeyMapping;
@@ -236,27 +238,27 @@ var
    i: loopint;
 
 begin
-   if(Groups.n > 0) then
-      for i := 0 to (Groups.n - 1) do begin
-         result := Groups.List[i]^.Find(action);
+   if Groups.n > 0 then
+      for i := 0 to Groups.n - 1 do begin
+         Result := Groups.List[i]^.Find(action);
 
-         if(result <> nil) then
+         if Result <> nil then
             exit;
       end;
 
-   result := nil;
+   Result := nil;
 end;
 
 function appTKeyMappings.Call(const k: appTKey): appPKeyMapping;
 begin
-   result := Call(k.Code, k.State);
+   Result := Call(k.Code, k.State);
 end;
 
 function appTKeyMappings.Call(keyCode: longint; state: TBitSet): appPKeyMapping;
 begin
    Result := Find(keyCode, state);
 
-   if(Result <> nil) then
+   if Result <> nil then
       Result^.Call();
 end;
 
