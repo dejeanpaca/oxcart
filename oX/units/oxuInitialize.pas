@@ -13,7 +13,7 @@ INTERFACE
      {app}
      uAppInfo, uApp, appuLog, appudvarConfiguration,
      {oX}
-     uOX, oxuWindow, oxuWindows,
+     uOX, oxuWindow, oxuWindows, oxuInitTask,
      oxuPlatform, oxuUIHooks, oxuGlobalInstances, oxuPlatforms,
      oxuRenderer, oxuRenderers,
      {$IF NOT DEFINED(OX_LIBRARY) AND NOT DEFINED(MOBILE)}
@@ -34,7 +34,7 @@ TYPE
       function InitializePlatforms(): boolean;
 
       public
-      procedure Initialize();
+      function Initialize(): boolean;
       procedure Deinitialize();
 
       procedure LogInformation();
@@ -215,26 +215,13 @@ begin
 
    elapsedTime := Time();
 
-   {call initialization routines}
-   ox.Init.iCall();
-   if(ox.Error <> 0) then
-      exit(ox.RaiseError('Initialization failed'));
-
-   log.i('Called all initialization routines (elapsed: ' + elapsedTime.ElapsedfToString() + 's)');
-
-   {call UI initialization routines}
-   ui.Initialize();
-
-   {success}
-   log.i('Initialization done. Elapsed: ' + GlobalStartTime.ElapsedfToString() + 's');
-   log.Leave();
-
-   ox.Initialized := true;
+   {run the initialization task}
+   oxInitTask.Go();
 
    Result := eNONE;
 end;
 
-procedure oxTInitializationGlobal.Initialize();
+function oxTInitializationGlobal.Initialize(): boolean;
 var
    errDescription: TErrorString;
 
@@ -264,6 +251,8 @@ begin
          oxPlatform.ErrorMessageBox(appInfo.GetVersionString() + ' (Initialization Failed)', errDescription);
       {$ENDIF}
    end;
+
+   Result := ox.Error = 0;
 end;
 
 procedure oxTInitializationGlobal.Deinitialize();

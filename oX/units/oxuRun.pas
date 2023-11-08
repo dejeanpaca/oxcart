@@ -13,7 +13,7 @@ INTERFACE
       {app}
       uApp, appuEvents, appuActionEvents,
       {oX}
-      uOX, oxuInitialize, oxuWindows, oxuPlatform, oxuRunRoutines, oxuWindowRender,
+      uOX, oxuInitialize, oxuWindows, oxuPlatform, oxuRunRoutines, oxuWindowRender, oxuProgramInitTask,
       oxuTimer;
 
 TYPE
@@ -41,6 +41,9 @@ TYPE
      {control events}
      procedure ControlEvents();
 
+     {are we loaded and ready}
+     function IsReady(): boolean;
+
      {adds a run routine to the execution list}
      procedure AddRoutine(var routine: oxTRunRoutine);
      procedure AddRoutine(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
@@ -55,30 +58,11 @@ VAR
 
 IMPLEMENTATION
 
-VAR
-   ProgramInitStartTime: TDateTime;
-
 function oxTRunGlobal.Initialize(): boolean;
 begin
-   Result := false;
-
    oxInitialization.Initialize();
 
-   if(ox.Error = 0) then begin
-      ProgramInitStartTime := Time();
-
-      log.Enter('oX > Initializing the program...');
-
-      ox.OnInitialize.iCall();
-
-      log.i('Program initialization done. Elapsed time: ' + ProgramInitStartTime.ElapsedfToString() + 's');
-      log.Leave();
-
-      log.i('Total startup time: ' + GlobalStartTime.ElapsedfToString() + 's');
-
-      if(ox.Error = 0) then
-         Result := true;
-   end;
+   Result := ox.Error = 0;
 
    log.Flush();
 end;
@@ -119,17 +103,27 @@ begin
       initialized := Initialize();
 
       if(initialized) then begin
-         Start();
-
          app.Active := true;
+         log.v('Active');
 
          {main loop}
          repeat
+            if(ox.Initialized) then begin
+               if(oxProgramInitTask.Task = nil) then
+                  oxProgramInitTask.Go();
+            end;
+
+            if(ox.Initialized and oxProgramInitTask.Initialized) then begin
+               if(not ox.Started) then
+                  Start();
+            end;
+
             GoCycle(true);
          until (not app.Active); {repeat until the application is no longer active}
 
          Done();
-      end;
+      end else
+         log.v('Failed to initialize');
 
       oxInitialization.DeInitialize();
       {handle restart (if any) only if ran successfully}
@@ -147,7 +141,8 @@ begin
 
    {render stuff}
    {$IFNDEF OX_LIBRARY}
-   oxWindowRender.All();
+   if(IsReady()) then
+      oxWindowRender.All();
    {$ENDIF}
 
    ox.OnRunAfter.Call();
@@ -205,6 +200,12 @@ begin
    {if uinEvents is 0 then there are no more events}
    until(appEvents.n = 0);
 end;
+
+function oxTRunGlobal.IsReady(): boolean;
+begin
+   Result := ox.Initialized and oxProgramInitTask.Initialized;
+end;
+
 procedure oxTRunGlobal.AddRoutine(var routine: oxTRunRoutine);
 begin
    ox.OnRun.Add(routine);
