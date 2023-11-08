@@ -121,7 +121,7 @@ end;
 
 function oxglTRenderer.InitWindow(wnd: oxTWindow): boolean;
 begin
-   wnd.RenderingContext := oxTRenderer(wnd.Renderer).GetContext(wnd);
+   wnd.RenderingContext := GetContext(wnd);
 
    if(wnd.RenderingContext = -1) or (wnd.ErrorCode <> 0) then begin
       if(wnd.ErrorCode = 0) then
@@ -138,7 +138,7 @@ begin
    {$ENDIF}
 
    {bind rendering context to the window}
-   oxTRenderer(wnd.Renderer).ContextCurrent(wnd.RenderingContext);
+   ContextCurrent(wnd.RenderingContext);
    ogl.ActivateRenderingContext();
 
    {$IF DEFINED(WINDOWS) AND (NOT DEFINED(GLES))}
