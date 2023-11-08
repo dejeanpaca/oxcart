@@ -11,7 +11,7 @@ UNIT oxuRenderers;
 INTERFACE
 
    USES
-      StringUtils, uLog, uInit, uStd, udvars, ParamUtils,
+      StringUtils, uLog, uStd, udvars, ParamUtils,
       {ox}
       uOX, oxuRunRoutines, oxuRenderer;
 

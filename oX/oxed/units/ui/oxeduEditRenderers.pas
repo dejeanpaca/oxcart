@@ -13,7 +13,7 @@ UNIT oxeduEditRenderers;
 INTERFACE
 
    USES
-      uStd, uInit, uLog,
+      uStd, uLog,
       {ox}
       oxuRunRoutines, oxuProjectionType,
       oxuCamera, oxuEntity, oxuScene, oxuComponent,
