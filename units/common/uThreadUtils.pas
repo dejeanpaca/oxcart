@@ -26,6 +26,7 @@ TYPE
 
 IMPLEMENTATION
 
+{$IFDEF WINDOWS}
 CONST
    MS_VC_EXCEPTION: windows.DWORD = $406D1388;
 
@@ -38,7 +39,6 @@ TYPE
    end;
 
 { TThreadUtils }
-{$IFDEF WINDOWS}
 
 class procedure TThreadUtils.SetThreadName(t: TThread; const name: string);
 var
