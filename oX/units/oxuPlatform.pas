@@ -102,7 +102,7 @@ end;
 constructor oxTPlatform.Create();
 begin
    Name := 'default';
-   TComponentProviderGlobal.Initialize(Components);
+   ComponentProvider.InitializeValues(Components);
 end;
 
 function oxTPlatform.MakeWindow(wnd: oxTWindow): boolean;
