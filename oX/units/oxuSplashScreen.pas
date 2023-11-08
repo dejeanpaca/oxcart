@@ -9,7 +9,7 @@ UNIT oxuSplashScreen;
 INTERFACE
 
    USES
-      uTiming, uStd, uColors, vmVector, StringUtils,
+      uTiming, uStd, uLog, uColors, vmVector, StringUtils,
       {oX}
       uOX, oxuTypes, oxuWindowTypes,
       oxuTexture, oxuTextureGenerate, oxuPaths, oxuRenderer, oxuRender, oxuThreadTask,
@@ -145,6 +145,7 @@ end;
 procedure oxTSplashScreen.Render();
 begin
    oxCurrentMaterial := oxMaterial.Default;
+
    if(oxCurrentMaterial.Shader = nil) then
       exit;
 
@@ -166,8 +167,8 @@ begin
    StartSplash(wnd);
 
    Start();
+   log.v('Started splash screen: ' + Name);
 end;
-
 
 procedure oxTSplashScreen.Update();
 begin
@@ -175,16 +176,22 @@ end;
 
 procedure oxTSplashScreen.WaitForDisplayTime();
 begin
-   repeat
-      oxTimer.Sleep(1);
-   until Timer.Cur() > (StartTime + DisplayTime);
+   if(DisplayTime > 0) then begin
+      repeat
+         oxTimer.Sleep(1);
+      until Timer.Elapsed() > DisplayTime;
+   end;
+
+   log.v('Ended splash screen: ' + Name);
 end;
 
 procedure oxTSplashScreen.Run();
 begin
-   Update();
-   TimeFlow := Timer.TimeFlow();
-   Render();
+   if(AssociatedWindow.IsSelected()) then begin
+      Update();
+      TimeFlow := Timer.TimeFlow();
+      Render();
+   end;
 end;
 
 procedure oxTSplashScreen.TaskStart();
