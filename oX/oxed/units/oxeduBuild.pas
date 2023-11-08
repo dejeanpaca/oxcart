@@ -80,8 +80,6 @@ TYPE
       {what task type to run after scan}
       RunAfterScanTaskType: oxedTBuildTaskType;
 
-      {TODO: Use working area for temporary stuff in a build}
-
       {where we output our stuff}
       TargetPath,
       {where we output temporary files in order to make a build}
