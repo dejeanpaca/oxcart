@@ -1,9 +1,0 @@
-#  gles\exts.inc, a list of OpenGL ES extensions
-#  Not all extensions may be listed here, only those that matter to oX or a
-#  project based on oX. If the list is updated, the gles\oxglextdscr.inc file should
-#  be rebuilt with "oxbuildglextdscr -gles" tool.
-
-#  Started On:    28.03.2011.
-#  Last Update:   19.07.2013.
-
-GLES_none

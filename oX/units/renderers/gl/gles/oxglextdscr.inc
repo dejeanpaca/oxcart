@@ -1,5 +1,3 @@
-{File generated via oxbuildglextdscr.}
-
    oglnExtensionDescriptors = 1;
 
 { extension IDs }
