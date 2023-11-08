@@ -36,6 +36,10 @@ TYPE
       function GetExecutablePath(): StdString;
 
       procedure SetPlatform(newPlatform: TFPCPlatformString);
+      function ReadVersion(): boolean;
+
+      {load everything for this platform from the fpc executable}
+      function Load(): boolean;
    end;
 
    TBuildPlatforms = specialize TSimpleList<TBuildPlatform>;
@@ -130,7 +134,7 @@ TYPE
       function GetCurrentPlatform(): StdString;
 
       {test all platforms}
-      procedure TestPlatforms();
+      procedure LoadPlatforms();
       {test all lazarus installations}
       procedure TestLazarusInstallations();
       {sets the platform based on what is available}
@@ -148,6 +152,10 @@ TYPE
 
       {get process for running an executable}
       function GetProcess(): TProcess;
+
+      {add platform from executable}
+      function AddPlatformFromExecutable(const cpu, os: StdString; const path: StdString = '';
+         const executable: StdString = ''): PBuildPlatform;
 
       {find an fpc executable path from a set of default locations}
       function FindFPCPathFromDefaults(const executable: StdString): StdString;
@@ -303,6 +311,59 @@ begin
    Platform.Separate(CPU, OS);
 end;
 
+function TBuildPlatform.ReadVersion(): boolean;
+var
+   process: TProcess;
+
+begin
+   Result := false;
+
+   process := BuildInstalls.GetProcess();
+   if Executable <> '' then
+      process.Executable := build.GetExecutableName(Path + 'fpc')
+   else
+      process.Executable := build.GetExecutableName(Path + Executable);
+
+   process.Parameters.Add('-iW');
+   process.Options := process.Options + [poUsePipes];
+
+   try
+      process.Execute();
+
+      Version := process.GetOutputString();
+
+      Result := true;
+   except
+      on e: Exception do begin
+         Result := false;
+      end;
+   end;
+
+   FreeObject(process);
+end;
+
+function TBuildPlatform.Load(): boolean;
+var
+   fn: StdString;
+
+begin
+   Result := false;
+
+   fn := GetExecutablePath();
+
+   if FileUtils.Exists(fn) > 0 then
+      log.v('Found executable for ' + GetName() + ' at ' + fn)
+   else begin
+      log.w('Cannot find executable for ' + GetName() + ' at ' + fn);
+      exit(False);
+   end;
+
+   if not ReadVersion() then
+      exit(False);
+
+   Result := true;
+end;
+
 { TBuildSystemInstalls }
 
 procedure TBuildSystemInstalls.ReInitialize();
@@ -329,7 +390,7 @@ begin
    SetupAvailablePlatform();
    SetupAvailableLazarus();
 
-   TestPlatforms();
+   LoadPlatforms();
    TestLazarusInstallations();
 end;
 
@@ -451,34 +512,13 @@ begin
    Result := LowerCase({$I %FPCTARGETOS%});
 end;
 
-procedure TBuildSystemInstalls.TestPlatforms();
+procedure TBuildSystemInstalls.LoadPlatforms();
 var
    i: loopint;
-   p: PBuildPlatform;
-   process: TProcess;
 
 begin
    for i := 0 to Platforms.n - 1 do begin
-      p := @Platforms.List[i];
-
-      process := GetProcess();
-      process.Executable := build.GetExecutableName(p^.Path + 'fpc');
-      process.Parameters.Add('-iW');
-      process.Options := process.Options + [poUsePipes];
-
-      try
-         process.Execute();
-
-         p^.Version := process.GetOutputString();
-
-         log.v('Found fpc(' + p^.Version + ') executable for platform ' + p^.Name + ' at path ' + process.Executable);
-      except
-         on e: Exception do begin
-            log.w('Could not execute fpc for platform ' + p^.Name + ' at path ' + process.Executable);
-         end;
-      end;
-
-      FreeObject(process);
+      Platforms.List[i].Load();
    end;
 end;
 
@@ -635,6 +675,51 @@ begin
    Result := TProcess.Create(nil);
 
    Result.Options := Result.Options + [poWaitOnExit];
+end;
+
+function TBuildSystemInstalls.AddPlatformFromExecutable(const cpu, os: StdString; const path: StdString;
+   const executable: StdString): PBuildPlatform;
+var
+   fn: StdString;
+   platformName: TFPCPlatformString;
+   p: TBuildPlatform;
+
+
+begin
+   Result := nil;
+
+   if path <> '' then begin
+      if executable <> '' then
+         fn := IncludeTrailingPathDelimiter(path) + build.GetExecutableName(executable)
+      else
+         fn := IncludeTrailingPathDelimiter(path) + build.GetExecutableName('fpc');
+
+      {check if we found anything}
+      if FileUtils.Exists(fn) <= 0 then
+         fn := '';
+   end else begin
+     if executable <> '' then
+        fn := FindFPCPathFromDefaults(executable)
+     else
+        fn := FindFPCPathFromDefaults('fpc');
+   end;
+
+   if fn <> '' then begin
+      TBuildPlatform.Initialize(p);
+
+      platformName := cpu + '-' + os;
+      p.Platform := platformName;
+      p.OS := os;
+      p.CPU := cpu;
+      p.Path := IncludeTrailingPathDelimiter(fn);
+
+      if executable <> '' then
+         p.Executable := build.GetExecutableName(executable);
+
+      p.Load();
+
+      Platforms.Add(p);
+   end;
 end;
 
 function TBuildSystemInstalls.FindFPCPathFromDefaults(const executable: StdString): StdString;
