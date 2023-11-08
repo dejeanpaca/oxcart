@@ -1,10 +1,10 @@
 {
-   oxuInit, oX de/initialization
+   oxuInitialize, oX de/initialization
    Copyright (c) 2011. Dejan Boras
 }
 
 {$INCLUDE oxheader.inc}
-UNIT oxuInit;
+UNIT oxuInitialize;
 
 INTERFACE
 

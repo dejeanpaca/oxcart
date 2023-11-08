@@ -13,7 +13,7 @@ INTERFACE
       {app}
       uApp, appuEvents, appuActionEvents,
       {oX}
-      uOX, oxuInit, oxuWindows, oxuPlatform, oxuRunRoutines, oxuWindowRender,
+      uOX, oxuInitialize, oxuWindows, oxuPlatform, oxuRunRoutines, oxuWindowRender,
       oxuTimer;
 
 TYPE
