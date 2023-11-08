@@ -80,7 +80,9 @@ TYPE
       Name,
       FileExtension: StdString;
       NeedOpen,
-      NoHeader: boolean;
+      NoHeader,
+      {is this handler thread safe (in which case uLog won't perform thread protection by itself)}
+      ThreadSafe: boolean;
 
       constructor Create();
 
@@ -115,7 +117,8 @@ TYPE
          AppendFailed,
          Error,
          CloseChained,
-         Ok: boolean;
+         Ok,
+         HasCS: boolean;
       end;
 
       {flush output on each write}
@@ -123,7 +126,9 @@ TYPE
       {is verbose logging enabled}
       VerboseEnabled,
       {log ending statement}
-      LogEndTimeDate: boolean;
+      LogEndTimeDate,
+      {is this log thread safe}
+      ThreadSafe: boolean;
 
       SectionLevel: longint;
       Error,
@@ -140,6 +145,9 @@ TYPE
 
       {initializes the log file, the second one reserves memory}
       function Initialize(const fn, logh: StdString; mode: longint): boolean;
+      {assign a log handler to this log}
+      procedure AssignHandler(const newHandler: TLogHandler);
+
       {disposes a TLog record}
       procedure Dispose();
       {opens the log file}
@@ -206,6 +214,12 @@ TYPE
       {handler writing}
       procedure HandlerWriteln({%H-}priority: longint; const {%H-}logString: StdString; {%H-}noChainLog: boolean);
       procedure HandlerWritelnRaw(const {%H-}logString: StdString);
+
+      {$IFDEF LOG_THREAD_SAFE}
+      procedure DoneCS();
+      procedure EnterCS();
+      procedure LeaveCS();
+      {$ENDIF}
    end;
 
    { TDummyLogHandler }
@@ -737,7 +751,10 @@ begin
    {no filename provided, exit}
    if(log.Settings.HandleLogs) and (fn <> '') and (not Flags.Initialized) then begin
       {$IFDEF LOG_THREAD_SAFE}
-      InitCriticalSection(LogCS);
+      if(not Flags.HasCS) and (not ThreadSafe) then begin
+         InitCriticalSection(LogCS);
+         Flags.HasCS := true;
+      end;
       {$ENDIF}
 
       if(Handler = nil) then
@@ -764,6 +781,12 @@ begin
    LogHeader  := logh;
    FileMode   := mode;
    {$ENDIF}
+end;
+
+procedure TLog.AssignHandler(const newHandler: TLogHandler);
+begin
+   Handler := @newHandler;
+   ThreadSafe := newHandler.ThreadSafe;
 end;
 
 procedure TLog.Dispose();
@@ -896,16 +919,11 @@ begin
 end;
 
 procedure TLog.DeInitialize();
-var
-   wasOk: boolean;
-
 begin
    {$IFNDEF NOLOG}
    Error := logeNONE;
 
    if(log.settings.HandleLogs <> false) and (Flags.Initialized) then begin
-      wasOk := Flags.Ok;
-
       {if the file is opened try to close it}
       if(Flags.Opened) then begin
          Close();
@@ -918,10 +936,7 @@ begin
       Flags.Ok := false;
 
       {we can no longer use the CS}
-      {$IFDEF LOG_THREAD_SAFE}
-      if(wasOk) then
-         DoneCriticalSection(LogCS);
-      {$ENDIF}
+      DoneCS();
    end;
    {$ENDIF}
 end;
@@ -944,10 +959,7 @@ begin
    Error       := errorCode;
    Flags.Error := true;
 
-   {$IFNDEF NO_THREADS}
-   if(Flags.Ok) then
-      DoneCriticalSection(LogCS);
-   {$ENDIF}
+   DoneCS();
 
    Flags.Ok    := false;
    {$ENDIF}
@@ -1007,15 +1019,11 @@ procedure TLog.Flush();
 begin
    {$IFNDEF NOLOG}
    if(Flags.Ok) then begin
-      {$IFDEF LOG_THREAD_SAFE}
-      EnterCriticalSection(LogCS);
-      {$ENDIF}
+      {$IFDEF LOG_THREAD_SAFE}EnterCS();{$ENDIF}
 
       Handler^.Flush(@self);
 
-      {$IFDEF LOG_THREAD_SAFE}
-      LeaveCriticalSection(LogCS);
-      {$ENDIF}
+      {$IFDEF LOG_THREAD_SAFE}LeaveCS();{$ENDIF}
    end;
    {$ENDIF}
 end;
@@ -1181,18 +1189,14 @@ procedure TLog.HandlerWriteln(priority: longint; const logString: StdString; noC
 begin
    {$IFNDEF NOLOG}
    if(Flags.Ok) then begin
-      {$IFDEF LOG_THREAD_SAFE}
-      EnterCriticalSection(LogCS);
-      {$ENDIF}
+      {$IFDEF LOG_THREAD_SAFE}EnterCS();{$ENDIF}
 
       Handler^.Writeln(@self, priority, logString);
 
       if(FlushOnWrite) then
          Handler^.Flush(@self);
 
-      {$IFDEF LOG_THREAD_SAFE}
-      LeaveCriticalSection(LogCS);
-      {$ENDIF}
+      {$IFDEF LOG_THREAD_SAFE}LeaveCS();{$ENDIF}
    end;
 
    if(ChainLog <> nil) and (not noChainLog) then
@@ -1204,21 +1208,39 @@ procedure TLog.HandlerWritelnRaw(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
    if(Flags.Ok) then begin
-      {$IFDEF LOG_THREAD_SAFE}
-      EnterCriticalSection(LogCS);
-      {$ENDIF}
+      {$IFDEF LOG_THREAD_SAFE}EnterCS();{$ENDIF}
 
       Handler^.WritelnRaw(@self, logString);
 
       if(FlushOnWrite) then
          Handler^.Flush(@self);
 
-      {$IFDEF LOG_THREAD_SAFE}
-      LeaveCriticalSection(LogCS);
-      {$ENDIF}
+      {$IFDEF LOG_THREAD_SAFE}LeaveCS();{$ENDIF}
    end;
    {$ENDIF}
 end;
+
+{$IFDEF LOG_THREAD_SAFE}
+procedure TLog.DoneCS();
+begin
+   if(not ThreadSafe) and (Flags.HasCS) then begin
+      Flags.HasCS := false;
+      DoneCriticalSection(LogCS);
+   end;
+end;
+
+procedure TLog.EnterCS();
+begin
+   if(not ThreadSafe) and (Flags.HasCS) then
+      EnterCriticalSection(LogCS);
+end;
+
+procedure TLog.LeaveCS();
+begin
+   if(not ThreadSafe) and (Flags.HasCS) then
+      LeaveCriticalSection(LogCS);
+end;
+{$ENDIF}
 
 { INITIALIZE }
 
