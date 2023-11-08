@@ -130,6 +130,14 @@ begin
 
       build.Libraries.Add(path);
    end;
+
+   { add units }
+
+   oxedBuild.Parameters.IncludeUses.Add('oxuAndroidMain');
+   oxedBuild.Parameters.IncludeUses.Add('android_native_app_glue');
+
+   oxedBuild.Parameters.ExportSymbols.Add('ANativeActivity_onCreate');
+   oxedBuild.Parameters.ExportSymbols.Add('android_main');
 end;
 
 procedure buildFinish();
