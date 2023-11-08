@@ -38,7 +38,9 @@ end;
 procedure deinit();
 begin
    FreeObject(oxedCopyAssetsDeployer);
-   oxedBuildAssets.Deployer := nil;
+
+   if(oxedBuildAssets <> nil) then
+      oxedBuildAssets.Deployer := nil;
 end;
 
 { oxedTCopyAssetsDeployer }

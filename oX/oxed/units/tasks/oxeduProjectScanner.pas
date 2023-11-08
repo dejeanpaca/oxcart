@@ -148,7 +148,8 @@ end;
 
 procedure deinitialize();
 begin
-   FreeObject(oxedProjectScanner.Task);
+   if(oxedProjectScanner <> nil) then
+      FreeObject(oxedProjectScanner.Task);
 end;
 
 procedure projectClosed();
