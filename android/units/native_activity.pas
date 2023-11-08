@@ -29,7 +29,7 @@ uses asset_manager,input,native_window,rect,jni,ctypes;
  }
 type
   PANativeActivityCallbacks = ^ANativeActivityCallbacks;
-  ANativeActivity = packed record
+  ANativeActivity = record
     (**
      * Pointer to the callback function table of the native application.
      * You can set the functions here to your own callbacks.  The callbacks
