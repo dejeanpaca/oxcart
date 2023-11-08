@@ -142,7 +142,9 @@ var
    ext: oxPPaths;
 
 begin
-   ext := oxGlobalInstances.FindInstancePtr('oxTPaths');
+   ext := oxExternalGlobalInstances.FindInstancePtr('oxTPaths');
+   if(ext = nil) then
+      exit;
 
    oxPaths.Data         := ext^.Data;
    oxPaths.Textures     := ext^.Textures;
