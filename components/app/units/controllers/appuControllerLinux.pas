@@ -168,28 +168,30 @@ begin
       if(count > 0) then begin
          event.MappedFunction := appCONTROLLER_NONE;
          event.Controller := Self;
-         event.Number := jsevent.number;
+         event.KeyCode := jsevent.number;
 
          if(jsevent.typ and JS_EVENT_BUTTON > 0) then begin
             event.Typ := appCONTROLLER_EVENT_BUTTON;
-            State.Keys := State.Keys or (1 shr jsevent.number);
-         end else
+            State.KeyState := State.KeyState or (1 shr jsevent.number);
+
+            if(jsevent.value = 0) then
+               event.Value := 0
+            else
+               event.Value := 1.0;
+
+            State.Keys.Process(jsevent.number, event.Value > 0);
+         end else  if(jsevent.typ and JS_EVENT_AXIS > 0) then begin
             event.Typ := appCONTROLLER_EVENT_AXIS;
 
-         if(jsevent.value = 0) then begin
-            event.Value := 0;
-
-            if(jsevent.typ and JS_EVENT_AXIS > 0) then
-               State.Axes[jsevent.number] := 0;
-         end else begin
-            if(jsevent.typ and JS_EVENT_AXIS > 0) then begin
+            if(jsevent.value = 0) then
+               State.Axes[jsevent.number] := 0
+            else
                State.Axes[jsevent.number] := 1 / 32767 * jsevent.value;
-               event.Value := State.Axes[jsevent.number];
-            end else
-               event.Value := jsevent.value;
+
+            event.Value := State.Axes[jsevent.number];
          end;
 
-         event.Keys := State.Keys;
+         event.KeyState := State.KeyState;
          event.Value := jsevent.value;
 
          if(jsevent.typ and JS_EVENT_INIT = 0) then
