@@ -12,7 +12,10 @@ INTERFACE
       uStd,
       appuKeys,
       {oX}
-      oxuTypes, oxuConsoleBackend,
+      oxuTypes,
+      {$IFDEF OX_FEATURE_CONSOLE}
+      oxuConsoleBackend,
+      {$ENDIF}
       {wnd}
       oxuwndBase, oxuwndSettingsBase,
       {ui}
