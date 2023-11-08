@@ -37,6 +37,8 @@ TYPE
       y: single;
 
       procedure Assign(nx, ny: single);
+      procedure Assign(nx, ny: loopint);
+      procedure Assign(const p: oxTPoint);
       class function Make(nx, ny: single): oxTPointf; static;
       class function MakeCenterPoint(w, h, w2, h2: single): oxTPointf; static;
       class function Null(): oxTPointf; static;
@@ -565,6 +567,18 @@ procedure oxTPointf.Assign(nx, ny: single);
 begin
    x := nx;
    y := ny;
+end;
+
+procedure oxTPointf.Assign(nx, ny: loopint);
+begin
+   x := nx;
+   y := ny;
+end;
+
+procedure oxTPointf.Assign(const p: oxTPoint);
+begin
+   x := p.x;
+   y := p.y;
 end;
 
 class function oxTPointf.Make(nx, ny: single): oxTPointf;
