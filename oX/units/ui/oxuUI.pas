@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uInit, uLog, uTiming, udvars,
       {app}
-      appuRun, appuMouse,
+      appuMouse,
       {oX}
       uOX, oxuWindow, oxuWindows, oxuRenderer, oxuRenderers, oxuTypes, oxuResourcePool,
       oxuShader, oxuMaterial,
