@@ -57,7 +57,7 @@ TYPE
       {is the font monospace}
       Monospace: boolean;
       {file name}
-      fn: string;
+      fn: StdString;
 
       Width, {width}
       Height, {height}
@@ -72,7 +72,7 @@ TYPE
       vScale: TVector2f;
 
       {texture name}
-      TexName: string;
+      TexName: StdString;
       {buffers}
       Buf: oxTFontBuffer;
 
@@ -96,17 +96,18 @@ TYPE
       procedure Start();
 
       {cache a string into buffers}
-      function Cache(const s: string; out v: TVector3f; out t: TVector2f; out indices: Word; out actualLength: loopint; maxlen: longint = 0): boolean;
+      function Cache(const s: StdString; out v: TVector3f; out t: TVector2f; out indices: Word;
+        out actualLength: loopint; maxlen: longint = 0): boolean;
 
       {write text using a font}
-      procedure Write(x, y: single; const s: string);
-      procedure WriteCentered(const s: string; const r: oxTRect);
-      procedure WriteCentered(const s: string; const r: oxTRect; props: oxTFontPropertiesSet);
-      procedure WriteCenteredCxt(const s: string; props: oxTFontPropertiesSet);
-      procedure WriteCenteredScaled(const s: string; const r: oxTRect; sx, sy: single);
-      procedure WriteCenteredScaledCxt(const s: string; sx, sy: single);
-      procedure WriteInRect(const txt: string; const r: oxTRect; breakChars: boolean = true; multiline: boolean = true);
-      procedure WriteInRect(const txt: string; const r: oxTRect; props: oxTFontPropertiesSet);
+      procedure Write(x, y: single; const s: StdString);
+      procedure WriteCentered(const s: StdString; const r: oxTRect);
+      procedure WriteCentered(const s: StdString; const r: oxTRect; props: oxTFontPropertiesSet);
+      procedure WriteCenteredCxt(const s: StdString; props: oxTFontPropertiesSet);
+      procedure WriteCenteredScaled(const s: StdString; const r: oxTRect; sx, sy: single);
+      procedure WriteCenteredScaledCxt(const s: StdString; sx, sy: single);
+      procedure WriteInRect(const txt: StdString; const r: oxTRect; breakChars: boolean = true; multiline: boolean = true);
+      procedure WriteInRect(const txt: StdString; const r: oxTRect; props: oxTFontPropertiesSet);
 
       {scale a font}
       procedure Scale(x, y: single);
@@ -119,10 +120,10 @@ TYPE
       function GetHeight(c: longint): longint;
       function GetWidth(): longint;
       function GetWidth(c: longint): longint;
-      function GetLength(const s: string): longint;
+      function GetLength(const s: StdString): longint;
 
       {get length of a multiline string}
-      function GetMultilineLength(const txt: string): loopint;
+      function GetMultilineLength(const txt: StdString): loopint;
 
       {assigns a TFD to a font}
       procedure Assign(const tfd: oxTTFD);
@@ -147,9 +148,9 @@ TYPE
       NilFont: oxTFont;
 
       {load a font from TFD file}
-      function Load(var f: oxTFont; const fn: string): longint;
+      function Load(var f: oxTFont; const fn: StdString): longint;
       {load file with a specific tfd and file}
-      function Load(var f: oxTFont; var tfd: oxTTFD; const extension: string; var textureFile: TFile): longint;
+      function Load(var f: oxTFont; var tfd: oxTTFD; const extension: StdString; var textureFile: TFile): longint;
 
       {prepare for font writing}
       procedure Start();
@@ -357,7 +358,8 @@ begin
    end;
 end;
 
-function oxTFont.Cache(const s: string; out v: TVector3f; out t: TVector2f; out indices: Word; out actualLength: loopint; maxlen: longint = 0): boolean;
+function oxTFont.Cache(const s: StdString; out v: TVector3f; out t: TVector2f; out indices: Word;
+  out actualLength: loopint; maxlen: longint = 0): boolean;
 var
    {length of string}
    len,
@@ -414,7 +416,7 @@ begin
          while(i <= len) do begin
             b := ord(s[i]);
 
-            charIndex := i - 1;
+            charIndex := currentLength;
 
             if(b >= Base) and (b < Base + Chars) then begin
                inc(currentLength);
@@ -490,7 +492,7 @@ begin
    end;
 end;
 
-procedure oxTFont.Write(x, y: single; const s: string);
+procedure oxTFont.Write(x, y: single; const s: StdString);
 var
    len,
    cachedLength: loopint;
@@ -542,12 +544,12 @@ begin
    end;
 end;
 
-procedure oxTFont.WriteCentered(const s: string; const r: oxTRect);
+procedure oxTFont.WriteCentered(const s: StdString; const r: oxTRect);
 begin
    WriteCentered(s, r, oxfpCenterHV);
 end;
 
-procedure oxTFont.WriteCentered(const s: string; const r: oxTRect; props: oxTFontPropertiesSet);
+procedure oxTFont.WriteCentered(const s: StdString; const r: oxTRect; props: oxTFontPropertiesSet);
 var
    h, x, y, len: loopint;
 
@@ -573,7 +575,7 @@ begin
    Write(r.x + x, r.y - r.h + 1 + y, s);
 end;
 
-procedure oxTFont.WriteCenteredCxt(const s: string; props: oxTFontPropertiesSet);
+procedure oxTFont.WriteCenteredCxt(const s: StdString; props: oxTFontPropertiesSet);
 var
    rect: oxTRect;
 
@@ -586,7 +588,7 @@ begin
    WriteCentered(s, rect, props);
 end;
 
-procedure oxTFont.WriteCenteredScaled(const s: string; const r: oxTRect; sx, sy: single);
+procedure oxTFont.WriteCenteredScaled(const s: StdString; const r: oxTRect; sx, sy: single);
 var
    x, y, w, h: single;
 
@@ -602,7 +604,7 @@ begin
    Scale(1.0, 1.0);
 end;
 
-procedure oxTFont.WriteCenteredScaledCxt(const s: string; sx, sy: single);
+procedure oxTFont.WriteCenteredScaledCxt(const s: StdString; sx, sy: single);
 var
    rect: oxTRect;
 
@@ -616,7 +618,7 @@ begin
    Scale(1.0, 1.0);
 end;
 
-procedure oxTFont.WriteInRect(const txt: string; const r: oxTRect; breakChars: boolean; multiline: boolean);
+procedure oxTFont.WriteInRect(const txt: StdString; const r: oxTRect; breakChars: boolean; multiline: boolean);
 var
    props: oxTFontPropertiesSet;
 
@@ -632,9 +634,9 @@ begin
    WriteInRect(txt, r, props);
 end;
 
-procedure oxTFont.WriteInRect(const txt: string; const r: oxTRect; props: oxTFontPropertiesSet);
+procedure oxTFont.WriteInRect(const txt: StdString; const r: oxTRect; props: oxTFontPropertiesSet);
 var
-   s: string;
+   s: StdString;
    {width, txt length, i, start, char length, y position}
    tempSize,
    i,
@@ -654,7 +656,7 @@ var
    centerHorizontal,
    centerVertical: boolean;
 
-   strings: array[0..1023] of string;
+   strings: array[0..1023] of StdString;
 
 begin
    l := Length(txt);
@@ -804,7 +806,7 @@ begin
       Result := Width;
 end;
 
-function oxTFont.GetLength(const s: string): longint;
+function oxTFont.GetLength(const s: StdString): longint;
 var
    i,
    l: loopint;
@@ -823,9 +825,9 @@ begin
    end;
 end;
 
-function oxTFont.GetMultilineLength(const txt: string): loopint;
+function oxTFont.GetMultilineLength(const txt: StdString): loopint;
 var
-   s: TAnsiStringArray;
+   s: TStringArray;
    i,
    strLen: loopint;
    l: loopint = 0;
@@ -865,10 +867,10 @@ end;
 
 { oxTFontGlobal }
 
-function oxTFontGlobal.Load(var f: oxTFont; const fn: string): longint;
+function oxTFontGlobal.Load(var f: oxTFont; const fn: StdString): longint;
 var
    tfd: oxTTFD;
-   tfn: string;
+   tfn: StdString;
    errCode: longint;
    gen: oxTTextureGenerate;
 
@@ -906,7 +908,7 @@ begin
    Result := errCode;
 end;
 
-function oxTFontGlobal.Load(var f: oxTFont; var tfd: oxTTFD; const extension: string; var textureFile: TFile): longint;
+function oxTFontGlobal.Load(var f: oxTFont; var tfd: oxTTFD; const extension: StdString; var textureFile: TFile): longint;
 var
    errCode: longint;
    gen: oxTTextureGenerate;
