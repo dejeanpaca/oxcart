@@ -494,7 +494,7 @@ begin
 
    fn := oxedBuild.WorkArea + oxedBuild.Props.ConfigFile;
 
-   Result := BuildFPCConfiguration.WriteFile(fn);
+   Result := config.WriteFile(fn);
 
    if(not Result) then
       log.e('Failed to write fpc config file for project: ' + fn)
@@ -684,7 +684,26 @@ begin
 end;
 
 procedure BuildFPC();
+var
+   i: loopint;
+   parameters: TStringArray;
+
 begin
+   build.FPCOptions.UseConfig := oxedBuild.WorkArea + oxedBuild.Props.ConfigFile;
+
+   parameters := TBuildFPCConfiguration.GetFPCCommandLineForConfig();
+
+   if(Length(parameters) > 0) then begin
+      log.Collapsed('FPC parameters for build');
+
+      for i := 0 to High(parameters) do begin
+         log.i(parameters[i]);
+      end;
+
+      log.Leave();
+   end;
+
+   BuildExec.Pas(oxedBuild.WorkArea + oxedBuild.Props.Source, parameters);
 end;
 
 procedure FailBuild(const reason: StdString);
@@ -920,6 +939,8 @@ procedure oxedTBuildGlobal.RunTask(taskType: oxedTBuildTaskType);
 begin
    if(not oxedBuild.Buildable(true)) then
       exit;
+
+   build.ResetOptions();
 
    if(taskType <> OXED_BUILD_TASK_STANDALONE) then
       BuildTarget := OXED_BUILD_LIB
