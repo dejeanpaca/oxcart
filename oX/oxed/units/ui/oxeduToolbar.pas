@@ -75,12 +75,16 @@ begin
    Resize(20, bar.BelowOf(0) + 1 - oxedMenubar.Bar.Dimensions.h);
 end;
 
+
+function CreateButton(icon, action: loopint; const color: TColor4ub; const hint: StdString = ''): wdgPToolbarItem;
+begin
+   Result := oxedToolbar.Toolbar.AddButton(oxedIcons.Create($f245), oxedActions.TOOL_TRANSLATE);
+   Result^.Color := ToolButtonColor;
+end;
+
 { oxedTToolbarGlobal }
 
 procedure oxedTToolbarGlobal.Initialize();
-var
-   btn: wdgPToolbarItem;
-
 begin
    uiWidget.Create.Instance := wdgTOXEDToolbar;
    uiWidget.SetTarget();
@@ -92,32 +96,23 @@ begin
 
    Toolbar.AddSeparator();
 
-   Buttons.Translate := Toolbar.AddButton(oxedIcons.Create($f245), oxedActions.TOOL_TRANSLATE);
-   Buttons.Translate^.Hint := 'Move the selected object';
+   Buttons.Translate := CreateButton($f245, oxedActions.TOOL_TRANSLATE, ToolButtonColor,
+      'Move the selected object');
    Buttons.Translate^.Activate(true);
-   Buttons.Translate^.Color := ToolButtonColor;
 
-   Buttons.Rotate := Toolbar.AddButton(oxedIcons.Create($f01e), oxedActions.TOOL_ROTATE);
-   Buttons.Rotate^.Hint := 'Rotate the selected object';
-   Buttons.Translate^.Color := ToolButtonColor;
-
-   Buttons.Scale := Toolbar.AddButton(oxedIcons.Create($f0b2), oxedActions.TOOL_SCALE);
-   Buttons.Scale^.Hint := 'Scale the selected object';
-   Buttons.Translate^.Color := ToolButtonColor;
+   Buttons.Rotate := CreateButton($f01e, oxedActions.TOOL_ROTATE, ToolButtonColor,
+      'Rotate the selected object');
+   Buttons.Scale := CreateButton($f0b2, oxedActions.TOOL_SCALE, ToolButtonColor,
+      'Scale the selected object');
 
    Toolbar.AddSeparator();
 
-   btn := Toolbar.AddButton(oxedIcons.Create($f060), oxedActions.VIEW_LEFT);
-   btn^.Hint := 'Set the view left (CONTROL for right)';
-   btn^.Color := ViewButtonColor;
-
-   btn := Toolbar.AddButton(oxedIcons.Create($f062), oxedActions.VIEW_UP);
-   btn^.Hint := 'Set the view up (CONTROL for down)';
-   btn^.Color := ViewButtonColor;
-
-   btn := Toolbar.AddButton(oxedIcons.Create($f0aa), oxedActions.VIEW_FRONT);
-   btn^.Hint := 'Set the view front (CONTROL for back)';
-   btn^.Color := ViewButtonColor;
+   CreateButton($f060, oxedActions.VIEW_LEFT, ViewButtonColor,
+      'Set the view left (CONTROL for right)');
+   CreateButton($f062, oxedActions.VIEW_UP, ViewButtonColor,
+      'Set the view up (CONTROL for down)');
+   CreateButton($f0aa, oxedActions.VIEW_FRONT, ViewButtonColor,
+      'Set the view front (CONTROL for back)');
 
    Toolbar.EnableItems(false);
 end;
