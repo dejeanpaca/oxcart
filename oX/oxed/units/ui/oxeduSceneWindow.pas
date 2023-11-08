@@ -18,7 +18,7 @@ INTERFACE
       {find a camera component}
       oxuCameraComponent,
       {ui}
-      uiuTypes, uiuWindowTypes, uiuWindow, uiWidgets,
+      uiuTypes, uiuWindowTypes, uiuWindow, uiuWidget, uiWidgets,
       wdguLabel, wdguSceneRender,
       {oxed}
       uOXED, oxeduSettings, oxeduWindow, oxeduActions, oxeduProjectRunner,
@@ -136,6 +136,8 @@ begin
 
    wdg.SceneRender := wdgSceneRender.Add();
    wdg.SceneRender.Scene := oxScene;
+   {we want pointer and key events to propagate to the game}
+   Exclude(wdg.SceneRender.Properties, wdgpSELECTABLE);
 
    ResetCamera();
    UpdateSceneRenderWidget();
