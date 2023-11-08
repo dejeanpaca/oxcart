@@ -9,6 +9,8 @@ UNIT appuAndroidSysInfo;
 INTERFACE
 
 	USES
+      uAndroid, StringUtils,
+      {app}
       appuSysInfoBase, appuLinuxSysInfo, appuLinuxSysInfoBase;
 
 procedure appAndroidSysInfoGetInformation();
@@ -19,6 +21,8 @@ procedure appAndroidSysInfoGetInformation();
 begin
    appSI.System.Name := 'Android';
    appSI.System.OS := 'android';
+
+   appSI.System.Name := 'Android API ' + sf(android_api_level);
 
    appLinuxSysInfoGetKernelVersion();
    appLinuxSysInfoGetMemoryInfo();
