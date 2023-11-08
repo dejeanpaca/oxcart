@@ -118,6 +118,8 @@ begin
       {check if the project exists}
       if(FileUtils.DirectoryExists(fn + oxPROJECT_DIRECTORY)) then begin
          New();
+         oxedProject.MarkModified(false);
+
          oxedMessages.Clear();
          oxedProject.SetPath(fn);
 

@@ -607,6 +607,9 @@ begin
 
    oxedBuild.BuildStart := Now;
 
+   if(not oxedProject.Valid()) then
+      exit;
+
    {if we're missing everything, rebuild}
    if(not FileUtils.DirectoryExists(oxedProject.TempPath)) then
       oxedBuild.BuildType := OXED_BUILD_TASK_REBUILD;

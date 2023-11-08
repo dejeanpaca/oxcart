@@ -24,7 +24,6 @@ TYPE
 
       procedure LoadStart();
       procedure Load(scene: oxTScene);
-      procedure Loaded(scene: oxTScene);
    end;
 
 VAR
@@ -47,11 +46,13 @@ begin
    log.v('scene > Loading: ' + scene.Name);
 
    startTime := Time();
+   oxSceneManagement.SetScene(scene);
 
    scene.LoadResources();
    log.v('scene > Loaded resources (Elapsed: ' + startTime.ElapsedfToString() + 's)');
 
-   Loaded(scene);
+   OnLoaded.Call();
+   scene.CallOnLoaded();
    log.v('scene > Loaded scene');
 
    scene.LoadComponentsInChildren();
@@ -59,14 +60,6 @@ begin
 
    scene.StartComponentsInChildren();
    log.v('scene > Started components');
-end;
-
-procedure oxTSceneLoader.Loaded(scene: oxTScene);
-begin
-   oxSceneManagement.SetScene(scene);
-
-   OnLoaded.Call();
-   scene.CallOnLoaded();
 end;
 
 INITIALIZATION

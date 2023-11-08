@@ -47,6 +47,8 @@ begin
          target.Children.List[i] := CloneEntity(serialization, oxTEntity(source.Children.List[i]));
          oxTEntity(target.Children.List[i]).Parent := target;
       end;
+
+      target.Children.n := source.Children.n;
    end;
 end;
 

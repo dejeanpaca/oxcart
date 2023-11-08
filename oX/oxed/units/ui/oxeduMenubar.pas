@@ -289,13 +289,16 @@ end;
 procedure oxedTMenubarGlobal.UpdateRecents();
 var
    i: longint;
+   item: uiPContextMenuItem;
 
 begin
    Recents.RemoveAll();
 
    if(oxedRecents.List.n > 0) then begin
-      for i := 0 to (oxedRecents.List.n - 1) do
-         Recents.AddItem(oxedRecents.List.list[i], 0, @openRecentCallback);
+      for i := 0 to (oxedRecents.List.n - 1) do begin
+         item := Recents.AddItem(oxedRecents.List.List[i], 0, @openRecentCallback);
+         item^.Index := i;
+      end;
 
       Recents.AddSeparator();
       Recents.AddItem('Clear all', CLEAR_RECENTS_EVENT);
@@ -323,10 +326,13 @@ end;
 
 procedure OnProjectChange();
 var
-   enable: boolean;
+   enable,
+   running,
+   enableRun: boolean;
 
 begin
    enable := oxedBuild.Buildable();
+   running := oxedProjectRunner.IsRunning();
 
    oxedMenubar.Project.FindByAction(oxedActions.BUILD)^.Enable(enable);
    oxedMenubar.Project.FindByAction(oxedActions.RECODE)^.Enable(enable);
@@ -336,8 +342,10 @@ begin
 
    oxedMenubar.Build.Enable(enable);
 
-   oxedMenubar.FileMenu.FindByAction(oxedActions.CLOSE_PROJECT)^.Enable(oxedProject <> nil);
-   oxedMenubar.FileMenu.FindByAction(oxedActions.SAVE_PROJECT)^.Enable(oxedProject <> nil);
+   enableRun := (oxedProject <> nil) and (not running);
+
+   oxedMenubar.FileMenu.FindByAction(oxedActions.CLOSE_PROJECT)^.Enable(enableRun);
+   oxedMenubar.FileMenu.FindByAction(oxedActions.SAVE_PROJECT)^.Enable(enableRun);
 
    enable := oxedProject <>  nil;
    if(enable) then begin
@@ -345,11 +353,15 @@ begin
          enable := false;
    end;
 
-   oxedMenubar.FileMenu.FindByAction(oxedActions.NEW_SCENE)^.Enable(oxedProject <> nil);
-   oxedMenubar.FileMenu.FindByAction(oxedActions.OPEN_SCENE)^.Enable(enable);
-   oxedMenubar.FileMenu.FindByAction(oxedActions.SAVE_SCENE)^.Enable(oxedProjectValid() and (oxScene <> nil));
+   oxedMenubar.FileMenu.FindByAction(oxedActions.NEW_PROJECT)^.Enable(not running);
+   oxedMenubar.FileMenu.FindByAction(oxedActions.OPEN_PROJECT)^.Enable(not running);
+   oxedMenubar.FileMenu.FindByAction(oxedActions.NEW_SCENE)^.Enable(enableRun);
+   oxedMenubar.FileMenu.FindByAction(oxedActions.OPEN_SCENE)^.Enable(enableRun);
+   oxedMenubar.FileMenu.FindByAction(oxedActions.SAVE_SCENE)^.Enable(enableRun and oxedProjectValid() and (oxScene <> nil));
 
-   oxedMenubar.Project.FindByAction(oxedwndProjectSettings.OpenWindowAction)^.Enable(oxedProject <> nil);
+   oxedMenubar.Recents.Enable(not running);
+
+   oxedMenubar.Project.FindByAction(oxedwndProjectSettings.OpenWindowAction)^.Enable(enableRun);
    oxedMenubar.Project.FindByAction(oxedActions.OPEN_LAZARUS)^.Enable(oxedProjectValid());
    oxedMenubar.Project.FindByAction(oxedActions.OPEN_PROJECT_DIRECTORY)^.Enable(oxedProjectValid());
 
@@ -361,7 +373,7 @@ begin
    if(oxedProject <> nil) then
       oxedMenubar.Items.IncludeThirdPartyUnits^.SetChecked(oxedProject.Session.IncludeThirdPartyUnits);
 
-   SetupRunItems(oxedProjectRunner.IsRunning());
+   SetupRunItems(running);
 end;
 
 procedure oxedTMenubarGlobal.SetupBuildOptions();
@@ -410,6 +422,10 @@ INITIALIZATION
    oxedProjectManagement.OnProjectClosed.Add(@OnProjectChange);
    oxedProjectManagement.OnProjectSaved.Add(@OnProjectChange);
    oxedProjectManagement.OnNewProject.Add(@OnProjectChange);
+
+   oxedProjectRunner.OnStart.Add(@OnProjectChange);
+   oxedProjectRunner.OnStop.Add(@OnProjectChange);
+
 
    oxedTasks.OnTaskStart.Add(@OnProjectChange);
    oxedTasks.OnTaskDone.Add(@OnProjectChange);
