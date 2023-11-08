@@ -132,7 +132,6 @@ TYPE
       {$ENDIF}
 
       Handler: PLogHandler;
-      h: PLogHandler;
 
       {next log in chain}
       ChainLog: PLog;
@@ -617,8 +616,7 @@ begin
    ZeroOut(logFile, SizeOf(logFile));
 
    logFile.Handler       := log.Handler.pDefault;
-   logFile.h             := @log.Handler.Dummy;
-   logFile.flushOnWrite  := log.Settings.FlushOnWrite;
+   logFile.FlushOnWrite  := log.Settings.FlushOnWrite;
    logFile.Tag           := log.Settings.Tag;
 
    logFile.VerboseEnabled := log.Settings.VerboseEnabled;
@@ -765,17 +763,15 @@ begin
       if(Handler = nil) then
          Handler := @log.Handler.Dummy;
 
-      h := Handler;
-
       {store stuff}
       FileName   := log.Settings.Path + fn;
       LogHeader  := logh;
       FileMode   := mode;
 
       if(log.Settings.UseHandlerFileExtension) then
-         FileName := ExtractAllNoExt(FileName) + '.' + h^.FileExtension;
+         FileName := ExtractAllNoExt(FileName) + '.' + Handler^.FileExtension;
 
-      h^.Init(@self);
+      Handler^.Init(@self);
 
       if(Error = 0) then begin
          Flags.Initialized := true;
@@ -796,7 +792,7 @@ begin
       ChainLog^.Dispose();
 
    FileName := '';
-   h^.Dispose(@self);
+   Handler^.Dispose(@self);
 end;
 
 
@@ -813,23 +809,23 @@ begin
    if(log.Settings.HandleLogs) then begin
       Flags.Closing := false;
 
-      if(not Self.h^.NeedOpen) then begin
+      if(not Self.Handler^.NeedOpen) then begin
          Flags.Opened := true;
          Flags.Ok := true;
          exit;
       end;
 
       if(Flags.Initialized) then begin
-         h^.Open(@self);
+         Handler^.Open(@self);
 
          if(not Flags.Error) then begin
             Flags.Opened := true;
             Flags.Ok := true;
 
-            h^.Start(@self);
+            Handler^.Start(@self);
 
             {write down the log header(if one exists)}
-            if(LogHeader <> '') and (not h^.NoHeader) then begin
+            if(LogHeader <> '') and (not Handler^.NoHeader) then begin
                i(LogHeader);
 
                {put an additional after the header(if chosen so)}
@@ -875,7 +871,7 @@ begin
       Flush();
 
       {close the file and set the state}
-      h^.Close(@self);
+      Handler^.Close(@self);
 
       Flags.Opened := false;
       Flags.Ok := false;
@@ -910,7 +906,7 @@ begin
       end;
 
        {erase the file}
-       h^.Del(@self);
+       Handler^.Del(@self);
    end;
    {$ENDIF}
 end;
@@ -1031,14 +1027,14 @@ end;
 procedure TLog.Flush();
 begin
    {$IFNDEF NOLOG}
-   h^.Flush(@self);
+   Handler^.Flush(@self);
    {$ENDIF}
 end;
 
 procedure TLog.FlushChain();
 begin
    {$IFNDEF NOLOG}
-   h^.Flush(@Self);
+   Handler^.Flush(@Self);
 
    if(ChainLog <> nil) then
       ChainLog^.FlushChain();
@@ -1155,7 +1151,7 @@ procedure TLog.Enter(const title: StdString; collapsed: boolean);
 begin
    {$IFNDEF NOLOG}
    if(Flags.Initialized) then begin
-      h^.EnterSection(@self, title, collapsed);
+      Handler^.EnterSection(@self, title, collapsed);
       inc(SectionLevel);
       assert(SectionLevel < logcMAX_SECTIONS, 'Too many log sections, increase logcMAX_SECTIONS.');
    end;
@@ -1179,7 +1175,7 @@ procedure TLog.Leave();
 begin
    {$IFNDEF NOLOG}
    if(SectionLevel > 0) then begin
-      h^.LeaveSection(@self);
+      Handler^.LeaveSection(@self);
       dec(SectionLevel);
 
       if(ChainLog <> nil) then
@@ -1194,10 +1190,10 @@ procedure TLog.HandlerWriteln(priority: longint; const logString: StdString; noC
 begin
    {$IFNDEF NOLOG}
    if(Flags.Ok) then begin
-      h^.Writeln(@self, priority, logString);
+      Handler^.Writeln(@self, priority, logString);
 
-      if(flushOnWrite) then
-         h^.Flush(@self);
+      if(FlushOnWrite) then
+         Handler^.Flush(@self);
    end;
 
    if(ChainLog <> nil) and (not noChainLog) then
@@ -1209,10 +1205,10 @@ procedure TLog.HandlerWritelnRaw(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
    if(Flags.Ok) then begin
-      h^.WritelnRaw(@self, logString);
+      Handler^.WritelnRaw(@self, logString);
 
-      if(flushOnWrite) then
-         h^.Flush(@self);
+      if(FlushOnWrite) then
+         Handler^.Flush(@self);
    end;
    {$ENDIF}
 end;
