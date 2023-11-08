@@ -396,6 +396,8 @@ begin
       uiDraw.Box(x, y - (wnd.Dimensions.h),
          x + wnd.Dimensions.w, y - (wnd.Dimensions.h - oxConsole.wdgInput.Dimensions.h));
 
+      r := oxNullRect;
+
       {input triangle}
       if(oxConsole.DrawInputStatus) then begin
          w := oxConsole.IbHeight div 2;
