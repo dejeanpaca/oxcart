@@ -22,7 +22,7 @@ CONST
    wdgevSELECT  = 2;
 
 TYPE
-   {same as uiTWidgetControlProc, except we use the actual type here}
+   {same as uiTWidgetControlProc, except we use the actual type here (returns -1 if it did nothing)}
    uiTWidgetControlMethod = function(wdg: uiTWidget; what: longword): longint;
 
    { uiTWidgetHelper }
