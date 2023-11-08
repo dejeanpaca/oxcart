@@ -488,8 +488,6 @@ begin
    for i := 0 to appControllers.nHandlers - 1 do begin
       if(appControllers.Handlers[i] <> nil) then
          appControllers.Handlers[i]^.DeInitialize();
-
-      FreeObject(appControllers.Handlers[i]);
    end;
 end;
 
