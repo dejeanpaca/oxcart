@@ -5,11 +5,11 @@
    cwstring,
 {$ENDIF}
 
-{app}
-{%H-}uAppInfo,
-{ox}
-{%H-}uOX,
-{%H-}oxuDefaults
-{$IFNDEF LIBRARY}
-{%H-}, oxuRun
+{$IFNDEF OX_NIL}
+  {%H-}uAppInfo
+  {%H-},uOX
+  {%H-},oxuDefaults
+  {$IFNDEF LIBRARY}
+  {%H-},oxuRun
+  {$ENDIF}
 {$ENDIF}
