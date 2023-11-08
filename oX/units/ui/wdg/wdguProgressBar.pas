@@ -42,7 +42,7 @@ TYPE
    { wdgTProgressBar }
 
    wdgTProgressBar = class(uiTWidget)
-      Speed: longword;
+      Speed: loopint;
       Progress: oxTProgressIndicatorData;
 
       constructor Create(); override;
@@ -51,8 +51,8 @@ TYPE
 
       {Sets maximum value for a progress bar.
        -1 is a special value and denotes progress with undefined duration (continuous animation).}
-      function SetMaximum(max: longint): wdgTProgressBar;
-      function SetCurrent(curr: longint): wdgTProgressBar;
+      function SetMaximum(max: loopint): wdgTProgressBar;
+      function SetCurrent(curr: loopint): wdgTProgressBar;
       {set the progress as a ratio (0 .. 1)}
       function SetRatio(ratio: single): wdgTProgressBar;
       {set the progress as a ratio (0 .. 1)}
@@ -70,7 +70,7 @@ TYPE
    wdgTProgressBarBase = object(specialize wdgTBase<wdgTProgressBar>)
       {adds a ProgressBar to a window}
       function Add(const Pos: oxTPoint; const Dim: oxTDimensions;
-                  max: longint = 100): wdgTProgressBar;
+                  max: loopint = 100): wdgTProgressBar;
    end;
 
 VAR
@@ -194,7 +194,7 @@ begin
 end;
 
 function wdgTProgressBarBase.Add(const Pos: oxTPoint; const Dim: oxTDimensions;
-            max: longint = 100): wdgTProgressBar;
+            max: loopint = 100): wdgTProgressBar;
 
 begin
    Result := wdgTProgressBar(uiWidget.Add(internal, Pos, Dim));
@@ -203,7 +203,7 @@ begin
       Result.SetMaximum(max);
 end;
 
-function wdgTProgressBar.SetMaximum(max: longint): wdgTProgressBar;
+function wdgTProgressBar.SetMaximum(max: loopint): wdgTProgressBar;
 begin
    Progress.ItemsDone := 0;
    Progress.ItemsTotal := max;
@@ -212,7 +212,7 @@ begin
    Result := self;
 end;
 
-function wdgTProgressBar.SetCurrent(curr: longint): wdgTProgressBar;
+function wdgTProgressBar.SetCurrent(curr: loopint): wdgTProgressBar;
 begin
    Progress.ItemsDone := curr;
    Progress.ShowProgressWith := oxPROGRESS_INDICATOR_ITEMS;
