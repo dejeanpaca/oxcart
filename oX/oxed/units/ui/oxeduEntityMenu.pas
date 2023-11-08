@@ -215,7 +215,7 @@ var
 
 begin
    item := addItem('Empty', @newEntity, 0, menu);
-   oxedIcons.Create(item, 0, 'regular:61640');
+   oxedIcons.Create(item, 'regular:$f0c8');
    addItem('Camera', @oxCameraEntity.Default, $f03d, menu);
 
    item := addItem('Light', @oxLightEntity.Default, $f0eb, menu);
@@ -236,7 +236,7 @@ begin
    addPrimitiveItem('Sphere', @oxPrimitiveModelEntities.Sphere, $f111);
 
    item := addPrimitiveItem('Circle', @oxPrimitiveModelEntities.Circle, 0);
-   oxedIcons.Create(item, 0, 'regular:61713');
+   oxedIcons.Create(item, 'regular:$f111');
    addPrimitiveItem('Disk', @oxPrimitiveModelEntities.Disk, $f111);
    addPrimitiveItem('Torus', @oxPrimitiveModelEntities.Torus);
    addPrimitiveItem('Cylinder', @oxPrimitiveModelEntities.Cylinder);
