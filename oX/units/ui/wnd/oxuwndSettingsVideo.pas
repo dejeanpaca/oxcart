@@ -12,7 +12,7 @@ INTERFACE
       uStd,
       {oX}
       uOX,  oxuTypes, oxuwndSettings,
-      oxuRenderers,
+      oxuWindow, oxuRenderer, oxuRenderers,
       {ui}
       uiWidgets, wdguLabel, wdguDropDownList, wdguDivisor;
 
@@ -109,8 +109,9 @@ begin
    list.Add('1920x1080');
    list.Add('2560x1440');
    list.Add('3840x2160');
+   list.Add(oxWindow.Current.Dimensions.ToString());
 
-   list.SelectItem(3);
+   list.SelectLast();
 
    { refresh rate }
 
@@ -142,33 +143,35 @@ begin
 
    { render scale }
 
-   wdgLabel.Add('Render scale');
+   if(oxRenderer.Properties.SupportsRenderScaling) then begin
+      wdgLabel.Add('Render scale');
 
-   list := wdgDropDownList.Add(uiWidget.LastRect.RightOf());
-   wdg.RenderScale := list;
+      list := wdgDropDownList.Add(uiWidget.LastRect.RightOf());
+      wdg.RenderScale := list;
 
-   list.Add('0.5');
-   list.Add('0.6');
-   list.Add('0.7');
-   list.Add('0.8');
-   list.Add('0.9');
-   list.Add('1.0');
-   list.Add('1.1');
-   list.Add('1.2');
-   list.Add('1.3');
-   list.Add('1.4');
-   list.Add('1.5');
-   list.Add('1.6');
-   list.Add('1.7');
-   list.Add('1.8');
-   list.Add('1.9');
-   list.Add('2.0');
+      list.Add('0.5');
+      list.Add('0.6');
+      list.Add('0.7');
+      list.Add('0.8');
+      list.Add('0.9');
+      list.Add('1.0');
+      list.Add('1.1');
+      list.Add('1.2');
+      list.Add('1.3');
+      list.Add('1.4');
+      list.Add('1.5');
+      list.Add('1.6');
+      list.Add('1.7');
+      list.Add('1.8');
+      list.Add('1.9');
+      list.Add('2.0');
 
-   list.AutoSetDimensions(true);
+      list.AutoSetDimensions(true);
 
-   list.SelectItem(5);
+      list.SelectItem(5);
 
-   uiWidget.LastRect.NextLine();
+      uiWidget.LastRect.NextLine();
+   end;
 
    { frame limiting }
 
