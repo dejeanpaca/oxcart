@@ -51,8 +51,8 @@ BEGIN
 
    if(isOXEDMode(MODE_OXED_LIBRARIES)) then begin
       log.i('Setting up OXED Libraries');
+
       {$IFDEF WINDOWS}
-      build.Libraries.Source := oxBuild.GetLibrarySource();
       build.Libraries.Target := 'oxed' + DirectorySeparator;
 
       build.CopyLibrary('oal_soft.dll', 'openal32.dll');

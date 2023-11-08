@@ -45,6 +45,7 @@ TYPE
       OptimizationLevels: TPreallocatedStringArrayList;
 
       class procedure Initialize(out p: TBuildPlatform); static;
+      function GetName(): string;
    end;
 
    TBuildPlatforms = specialize TPreallocatedArrayList<TBuildPlatform>;
@@ -444,6 +445,37 @@ begin
    p.OptimizationLevels.InitializeValues(p.OptimizationLevels);
 end;
 
+function TBuildPlatform.GetName(): string;
+begin
+   Result := Name;
+
+   if(Name = 'default') then begin
+      {$IFDEF WINDOWS}
+         {$IFDEF CPU64}
+         Result := 'win64';
+         {$ELSE}
+         Result := 'win32';
+         {$ENDIF}
+      {$ENDIF}
+
+      {$IFDEF LINUX}
+         {$IFDEF CPU64}
+         Result := 'linux32';
+         {$ELSE}
+         Result := 'linux64';
+         {$ENDIF}
+      {$ENDIF}
+
+      {$IFDEF DARWIN}
+         {$IFDEF CPU64}
+         Result := 'darwin32';
+         {$ELSE}
+         Result := 'darwin64';
+         {$ENDIF}
+      {$ENDIF}
+   end;
+end;
+
 { TPascalUnitBuilder }
 
 procedure TPascalSourceBuilder.AddUses(var p: TAppendableString);
@@ -592,6 +624,8 @@ begin
 
    {setup unit paths}
    LoadUnits();
+
+   Libraries.Source := Tools.Build + 'libraries' + DirectorySeparator;
 
    {go through platforms and find an available platform}
    SetupAvailablePlatform();
@@ -1155,7 +1189,7 @@ end;
 
 function getPath(): string;
 begin
-   Result := Libraries.Source + IncludeTrailingPathDelimiterNonEmpty(CurrentPlatform^.Name);
+   Result := Libraries.Source + IncludeTrailingPathDelimiterNonEmpty(CurrentPlatform^.GetName());
 end;
 
 begin
