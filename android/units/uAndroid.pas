@@ -9,7 +9,7 @@ UNIT uAndroid;
 INTERFACE
 
    USES
-      ctypes;
+      ctypes, jni;
 
 CONST
    __ANDROID_API_FUTURE__ = 10000;
@@ -55,6 +55,7 @@ CONST
 
 VAR
    android_api_level: longint;
+   mainThreadEnv:  PJNIEnv;
 
 IMPLEMENTATION
 
