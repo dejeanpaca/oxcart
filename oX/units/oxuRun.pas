@@ -9,7 +9,7 @@ UNIT oxuRun;
 INTERFACE
 
    USES
-      uStd, uLog, sysutils, uTiming,
+      uStd, uLog, sysutils, uTiming, StringUtils,
       {app}
       uApp, appuEvents, appuActionEvents,
       {oX}
@@ -136,7 +136,7 @@ end;
 procedure oxTRunGlobal.GoCycle(dosleep: boolean);
 begin
    {are we waiting for initialization}
-   if(ox.Initialized) then begin
+   if(ox.Initialized and PreInitializeSuccess) then begin
       if(oxMainInitTask.IsFinished()) then begin
          if(oxProgramInitTask.Task = nil) then
             oxProgramInitTask.Go();

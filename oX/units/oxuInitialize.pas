@@ -226,8 +226,9 @@ begin
 
    elapsedTime := Time();
 
-   {run the initialization task}
-   oxMainInitTask.Go();
+   {run the initialization task (if nothing of OnPreInitialize failed)}
+   if(ox.Error = 0) then
+      oxMainInitTask.Go();
 
    Result := eNONE;
 end;
