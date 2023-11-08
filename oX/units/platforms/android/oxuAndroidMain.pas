@@ -81,10 +81,15 @@ begin
    finished := false;
    uApp.app.Active := true;
 
-   oxAndroidPlatform.fStarted := true;
+   oxAndroidPlatform.Startup();
 
    repeat
       cycledEvents := false;
+
+      if(oxAndroidPlatform.fSignalMainThread) then begin
+         oxAndroidPlatform.fSignalMainThread := false;
+         signalMainThread();
+      end;
 
       if(not ox.Initialized) and (not ox.InitializationFailed) then begin
          if(not ox.Started) and (oxAndroidPlatform.fInitWindow) then begin
@@ -115,18 +120,12 @@ begin
       end;
 
       if(ox.Started) then begin
-         if(oxAndroidPlatform.fSignalMainThread) then begin
-            oxAndroidPlatform.fSignalMainThread := false;
-            signalMainThread();
-         end;
-
          if(oxAndroidPlatform.fRegainedFocus) then begin
-            if(oxAndroidPlatform.fStarted) then begin
-               oxAndroidPlatform.fRegainedFocus := false;
-            end else begin
+            if(not oxAndroidPlatform.fHaveFocus) then begin
                oxAndroidPlatform.fRecreateSurface := true;
                oxAndroidPlatform.RecreateSurface();
                oxAndroidPlatform.RegainedFocus();
+               oxAndroidPlatform.fRegainedFocus := false;
             end;
          end;
       end;
