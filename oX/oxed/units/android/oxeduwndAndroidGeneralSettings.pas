@@ -77,12 +77,6 @@ begin
    wdg.SDKPath.SetText(oxedAndroidSettings.SDKPath);
 end;
 
-procedure InitSettings();
-begin
-   oxwndSettings.OnSave.Add(@saveCallback);
-   oxwndSettings.OnRevert.Add(@revertCallback);
-end;
-
 procedure PreAddTabs();
 begin
    oxwndSettings.Tabs.AddTab('Android', 'android');
@@ -102,7 +96,8 @@ end;
 
 procedure init();
 begin
-   oxwndSettings.OnInit.Add(@InitSettings);
+   oxwndSettings.OnSave.Add(@saveCallback);
+   oxwndSettings.OnRevert.Add(@revertCallback);
    oxwndSettings.PostAddTabs.Add(@PreAddTabs);
 end;
 
