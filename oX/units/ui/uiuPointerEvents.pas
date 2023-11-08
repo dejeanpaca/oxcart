@@ -528,8 +528,9 @@ begin
       if(Events[f].m.IsReleased()) then begin
          for i := f - 1 downto f - 2 do begin
             if(i >= 0) then begin
-               {both events must be releases on a matching target}
-               if(Events[i].m.IsReleased()) and (Events[i].Target = Events[f].Target) then begin
+               {both events must be releases on a matching target, with matching buttons}
+               if(Events[i].m.IsReleased()) and (Events[i].Target = Events[f].Target)
+               and (Events[i].m.Button = Events[f].m.Button) then begin
                   elapsed := TTimer.Elapsed(Events[f].Time, Events[i].Time);
 
                   {two clicks must occur within the allowed time span}
