@@ -129,9 +129,9 @@ begin
 
    { set the library path, if any }
 
-   if(arch.LibTarget <> '') then begin
+   if(arch.LibSource <> '') then begin
       path := IncludeTrailingPathDelimiterNonEmpty(oxedAndroidSettings.GetNDKPath()) +
-         'toolchains/llvm/prebuilt/' + oxedTAndroidHelpers.HostPlatformPath() + '/sysroot/usr/lib/' + arch.LibTarget +
+         'toolchains/llvm/prebuilt/' + oxedTAndroidHelpers.HostPlatformPath() + '/sysroot/usr/lib/' + arch.LibSource +
          '/' + sf(oxedAndroidSettings.Project.TargetVersion) + '/';
 
       ReplaceDirSeparators(path);
