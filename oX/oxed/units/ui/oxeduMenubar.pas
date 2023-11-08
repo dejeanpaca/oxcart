@@ -408,9 +408,9 @@ begin
          arch := platform.Architectures.List[archIndex];
 
          if(arch.Architecture <> '') then
-            item := build.AddItem(platform.Name + ' (' + arch.Name + ')')
+            item := build.AddItem(platform.Name + ' (' + arch.Name + ')', @arch.Build)
          else
-            item := build.AddItem(platform.Name);
+            item := build.AddItem(platform.Name, @arch.Build);
 
          if(platform.GlyphCode <> 0) then
             oxedIcons.Create(item, oxedPlatform.GlyphCode, oxedPlatform.GlyphName);
