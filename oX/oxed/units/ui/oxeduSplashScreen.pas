@@ -17,7 +17,7 @@ TYPE
 
    { oxedTSplashScreen }
 
-   oxedTSplashScreen = class(oxTDefaultSplashScreen)
+   oxedTSplashScreen = class(oxTBasicSplashScreen)
       constructor Create; override;
       function GetVersionString: string; override;
    end;
@@ -30,6 +30,7 @@ constructor oxedTSplashScreen.Create;
 begin
    inherited Create;
 
+   WriteVersion := true;
    Texture.Path := oxPaths.Data + 'splash.png';
    DisplayTime := 0;
 end;
