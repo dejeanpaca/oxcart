@@ -125,7 +125,7 @@ begin
 
    if(oxedAssets.ShouldIgnore(f.Extension)) then begin
       consoleLog.v('Ignoring: ' + fd.f.Name);
-      exit(True);
+      exit(False);
    end;
 
    oxedBuildLog.v('Deploying: ' + fd.f.Name);
@@ -152,6 +152,11 @@ begin
 
    {find closest package path, and skip if optional}
    pp := oxedBuildAssets.Current.Package^.Paths.FindClosest(dir);
+
+   if(oxedAssets.ShouldIgnoreDirectory(dir)) then begin
+      consoleLog.v('Ignoring: ' + dir);
+      exit(False);
+   end;
 
    if(pp <> nil) and (pp^.IsOptional()) then begin
       oxedBuildLog.v('Optional: ' + dir);
