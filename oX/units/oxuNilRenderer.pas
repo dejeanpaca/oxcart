@@ -32,6 +32,7 @@ begin
    inherited;
 
    Name := 'nil';
+   Id := 'nil';
    WindowInstance := oxrTNilWindow;
    PlatformInstance := oxTPlatform;
 end;
