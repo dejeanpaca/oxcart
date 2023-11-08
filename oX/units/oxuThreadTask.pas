@@ -72,7 +72,9 @@ TYPE
       DoThreadSwitching: Boolean;
 
       {time when the task was started}
-      StartTime: longword;
+      StartTime,
+      {time to sleep between runs}
+      SleepTime: longword;
 
       RunnerInstanceType: oxTThreadTaskRunnerClass;
 
@@ -88,8 +90,8 @@ TYPE
          ThreadDone: oxTThreadMethods;
       end;
 
-      constructor Create; virtual;
-      destructor Destroy; override;
+      constructor Create(); virtual;
+      destructor Destroy(); override;
 
       {start the task}
       procedure Start();
@@ -232,12 +234,12 @@ var
    t: oxTThreadTask;
 
 begin
+   t := oxTThreadTask(Task);
+
    try
       Run();
    except
       on e: Exception do begin
-         t := oxTThreadTask(Task);
-
          t.Stop();
 
          if(oxThreadEvents.LogExceptions) then begin
@@ -266,6 +268,10 @@ begin
 
          if(t.DoThreadSwitching) then
             ThreadSwitch();
+
+         if(t.SleepTime > 0) then
+            Sleep(t.SleepTime);
+
       end;
    end else
       t.Run();
@@ -280,7 +286,7 @@ end;
 
 { oxTThreadTask }
 
-constructor oxTThreadTask.Create;
+constructor oxTThreadTask.Create();
 begin
    Name := 'task';
 
@@ -292,7 +298,7 @@ begin
    Events.ThreadDone.Initialize(Events.ThreadDone, 8);
 end;
 
-destructor oxTThreadTask.Destroy;
+destructor oxTThreadTask.Destroy();
 begin
    inherited Destroy;
 
