@@ -14,7 +14,7 @@ INTERFACE
       sysutils,
       uStd, uLog, StringUtils, appuKeys, appuPaths,
       {oX}
-      uOX, oxuRenderer, oxuWindowTypes, oxuWindow, oxuGlobalKeys,
+      uOX, oxuRunRoutines, oxuRenderer, oxuWindowTypes, oxuWindow, oxuGlobalKeys,
       {dImage}
       uImage, imguRW, imguOperations;
 
@@ -165,7 +165,7 @@ CONST
       Name: 'ox.screenshot'
    );
 
-procedure Initialize();
+procedure initialize();
 begin
    oxScreenshot.Path := appPath.configuration.path + 'screenshots';
    {create a screenshot directory}
@@ -175,9 +175,12 @@ begin
    oxGlobalKeys.Hook(gkHandlerKey);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    oxScreenshot.CaptureKey := gkHandlerKey.Key;
 
-   ox.Init.iAdd('screenshot', @Initialize);
+   ox.Init.iAdd(initRoutines, 'screenshot', @initialize);
 
 END.

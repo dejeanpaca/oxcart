@@ -15,7 +15,7 @@ INTERFACE
       {app}
       appuMouse, appuKeys, uApp,
       {ox}
-      oxuTypes, oxuScene,
+      oxuRunRoutines, oxuTypes, oxuScene,
       oxuRender, oxuRenderer, oxuTimer,
       {ui}
       uiuControl, uiuTypes, uiuWindow, uiuWidget, uiWidgets, uiuWidgetWindow,
@@ -361,8 +361,11 @@ begin
    end;
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('scene.projectbrowser', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'scene.projectbrowser', @init, @deinit);
    oxedMenubar.OnInit.Add(@initMenubar);
 
    oxedProjectManagement.OnProjectOpen.Add(@projectOpen);

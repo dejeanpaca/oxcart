@@ -14,7 +14,7 @@ INTERFACE
    {$INCLUDE usesgl.inc},
       uStd, uLog, uImage, StringUtils,
       {ox}
-      uOX, oxuTypes, oxuTexture, oxuTextureGenerate,
+      uOX, oxuTypes, oxuTexture, oxuTextureGenerate, oxuRunRoutines,
       oxuOGL, oxuglRenderer;
 
 TYPE
@@ -137,7 +137,10 @@ begin
    oglTextureGenerate.Free();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.PreInit.Add('ox.gl.texture_generate', @init, @deinit);
+   ox.PreInit.Add(initRoutines, 'ox.gl.texture_generate', @init, @deinit);
 
 END.

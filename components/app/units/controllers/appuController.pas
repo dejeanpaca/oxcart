@@ -372,11 +372,11 @@ begin
    appControllerHandler.DeInitialize();
 end;
 
-CONST
-   runRoutine: oxTRunRoutine = (name: 'input_controllers'; exec: @run; next: nil);
+VAR
+   runRoutine: oxTRunRoutine;
 
 INITIALIZATION
-   oxRun.AddRoutine(runRoutine);
+   oxRun.AddRoutine(runRoutine, 'input_controllers', @run);
    app.InitializationProcs.Add('input_controllers', @initialize, @deinitialize);
 
    appControllers.evhp := appEvents.AddHandler(appControllers.evh, 'input_controller');

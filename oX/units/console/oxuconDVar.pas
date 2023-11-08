@@ -16,7 +16,7 @@ INTERFACE
    USES
       uStd, udvars,
       {oX}
-      uOX, oxuConsoleBackend;
+      uOX, oxuRunRoutines, oxuConsoleBackend;
 
 IMPLEMENTATION
 
@@ -217,6 +217,10 @@ begin
    console.Selected^.AddHandler(conHandler, conTCommandNotifyProc(@conCommandNotify), conCommands);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.iAdd('console.dvar', @Initialize);
+   ox.Init.iAdd(initRoutines, 'console.dvar', @Initialize);
+
 END.

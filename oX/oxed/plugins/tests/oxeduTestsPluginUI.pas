@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uTest,
       {ox}
-      uOX, oxuTypes, oxuwndBase, oxuThreadTask,
+      uOX, oxuRunRoutines, oxuTypes, oxuwndBase, oxuThreadTask,
       {ui}
       uiuWidget, uiWidgets, uiuContextMenu, uiuControl,
       {wdg}
@@ -251,8 +251,11 @@ begin
    FreeObject(oxedwndTests);
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('ox.settings', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'ox.settings', @init, @deinit);
    oxedMenubar.OnInit.Add(@menubarInit);
 
    oxedTests.OnTaskStart.Add(@update);

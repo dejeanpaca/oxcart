@@ -13,7 +13,7 @@ INTERFACE
    USES
       uInit,
       {ox}
-      uOX,
+      uOX, oxuRunRoutines,
       {ox.gl}
       oxuglRenderer;
 
@@ -50,10 +50,13 @@ begin
    oxglRenderer.Init.Add('gl.fpshader', @oxglTFP.Initialize, @oxglTFP.DeInitialize);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    oxglFP.Init.Init('ox.gl.fp');
    oxglFP.Init.DontDetermineState();
 
-   ox.PreInit.iAdd('ox.gl.fos', @init);
+   ox.PreInit.iAdd(initRoutines, 'ox.gl.fos', @init);
 
 END.

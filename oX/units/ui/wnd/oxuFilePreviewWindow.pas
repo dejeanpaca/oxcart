@@ -13,7 +13,7 @@ INTERFACE
 USES
    uStd, uImage, StringUtils,
    {oX}
-   uOX, oxuTypes, oxuWindows,
+   uOX, oxuRunRoutines, oxuTypes, oxuWindows,
    {ui}
    uiuControl, uiuWindowTypes, uiuWindow, uiuTypes, uiWidgets, oxuwndBase;
 
@@ -175,8 +175,11 @@ begin
    FreeObject(oxFilePreviewWindow);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.Add('toast', @init, @deinit);
+   ox.Init.Add(initRoutines, 'toast', @init, @deinit);
 
    oxTFilePreviewHandlers.Initialize(oxFilePreviewWindow.Handlers);
 

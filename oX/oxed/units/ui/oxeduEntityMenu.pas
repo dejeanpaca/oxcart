@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uInit, uLog,
       {ox}
-      oxuTypes, oxuEntity, oxuScene,
+      oxuRunRoutines, oxuTypes, oxuEntity, oxuScene,
       {entities}
       oxuCameraEntity, oxuLightEntity, oxuPrimitiveModelEntities,
       {ui}
@@ -230,8 +230,11 @@ begin
    FreeObject(oxedEntityMenu.CurrentMenu);
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('entity_menu', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'entity_menu', @init, @deinit);
 
    oxedEntityMenu.EntityList.Initialize(oxedEntityMenu.EntityList);
 

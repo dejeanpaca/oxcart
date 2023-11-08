@@ -197,7 +197,8 @@ VAR
    {show on start dvar}
    dvSplashShowOnStart: TDVar;
 
-   routine: oxTRunRoutine;
+   routine,
+   initRoutines: oxTRunRoutine;
 
 INITIALIZATION
    oxTSplashWindow.ShowOnStart := true;
@@ -214,7 +215,7 @@ INITIALIZATION
    dvgSplash.Add(dvSplashShowOnStart, 'showOnStart', dtcBOOL, @oxTSplashWindow.ShowOnStart);
 
    { set init }
-   ox.Init.Add('ox.splash', @initialize, @deinitialize);
+   ox.Init.Add(initRoutines, 'ox.splash', @initialize, @deinitialize);
 
    ox.OnStart.Add(routine, 'ox.splash', @splashStart);
 END.

@@ -14,7 +14,7 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uStd, uLog,
       {ox}
-      uOX, oxuShader,
+      uOX, oxuShader, oxuRunRoutines,
       oxuOGL, oxuglRenderer;
 
 TYPE
@@ -285,7 +285,10 @@ begin
    oxglRenderer.components.RegisterComponent('shader', @componentReturn);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.PreInit.iAdd('ox.gl.shader', @init);
+   ox.PreInit.iAdd(initRoutines, 'ox.gl.shader', @init);
 
 END.

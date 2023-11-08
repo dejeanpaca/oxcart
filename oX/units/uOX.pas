@@ -67,7 +67,7 @@ TYPE
       {minimal required functionality for engine}
       BaseInit,
       {engine initialization}
-      Init,
+      Init: oxTRunRoutines;
       {program/application initialization}
       AppProcs: TInitializationProcs;
 
@@ -115,12 +115,6 @@ end;
 
 INITIALIZATION
    appInfo.setOrganization('ox');
-
-   ox.PreInit.Init('ox.preinit');
-   ox.PreInit.DontDetermineState();
-
-   ox.Init.Init('ox.init');
-   ox.Init.DontDetermineState();
 
    ox.AppProcs.Init('ox.appprocs');
    ox.AppProcs.DontDetermineState();

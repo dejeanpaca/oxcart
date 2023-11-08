@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uFile, uFileHandlers, uLog, StringUtils,
       {ox}
-      uOX, oxuFile, oxuShader, oxuShaderFile, oxuShaderLoader;
+      uOX, oxuRunRoutines, oxuFile, oxuShader, oxuShaderFile, oxuShaderLoader;
 
 IMPLEMENTATION
 
@@ -141,7 +141,10 @@ begin
    oxfShader.Readers.RegisterExt(ext, '.oxs', @handler);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.iAdd('shader_reader', @init);
+   ox.Init.iAdd(initRoutines, 'shader_reader', @init);
 
 END.

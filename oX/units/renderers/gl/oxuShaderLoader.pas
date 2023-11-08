@@ -11,8 +11,8 @@ UNIT oxuShaderLoader;
 INTERFACE
 
    USES
-      oxuShader, oxuRenderer, oxuRenderers,
-      uOX, oxuFile;
+      uOX, oxuRunRoutines, oxuFile,
+      oxuShader, oxuRenderer, oxuRenderers;
 
 TYPE
 
@@ -44,7 +44,10 @@ begin
    oxRenderers.UseRoutines.Add(@onUse);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.PreInit.iAdd('ox.gl.shader_loader', @init);
+   ox.PreInit.iAdd(initRoutines, 'ox.gl.shader_loader', @init);
 
 END.

@@ -13,7 +13,7 @@ INTERFACE
    USES
       sysutils, uStd, uFile,
       {oX}
-      uOX, oxuFile, oxuShader;
+      uOX, oxuRunRoutines, oxuFile, oxuShader;
 
 TYPE
    oxPShaderFileData = ^oxTShaderFileData;
@@ -70,8 +70,10 @@ begin
    FreeObject(oxfShader);
 end;
 
-INITIALIZATION
+VAR
+   initRoutines: oxTRunRoutine;
 
-   ox.Init.Add('shader_file', @init, @deinit);
+INITIALIZATION
+   ox.Init.Add(initRoutines, 'shader_file', @init, @deinit);
 
 END.

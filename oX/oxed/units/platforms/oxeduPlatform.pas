@@ -12,6 +12,8 @@ INTERFACE
 
    USES
       uStd,
+      {ox}
+      oxuRunRoutines,
       {oxed}
       uOXED;
 
@@ -133,8 +135,11 @@ begin
    oxedPlatforms.Dispose();
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.dAdd('platforms', @deinit);
+   oxed.Init.dAdd(oxedInitRoutines, 'platforms', @deinit);
 
    oxedPlatforms.List.Initialize(oxedPlatforms.List);
 

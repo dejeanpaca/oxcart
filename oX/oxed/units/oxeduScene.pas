@@ -13,7 +13,7 @@ INTERFACE
    USES
       uLog, uColors,
       {ox}
-      uOX, oxuEntity, oxuSceneRender, oxuScene, oxuWorld,
+      uOX, oxuRunRoutines, oxuEntity, oxuSceneRender, oxuScene, oxuWorld,
       {oxed}
       uOXED, oxeduEditRenderers, oxeduMessages, oxeduEntities;
 
@@ -79,8 +79,11 @@ begin
    oxedEntities.OnRemove.Add(@entityRemove);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.iAdd('oxed.scene', @init);
+   ox.Init.iAdd(initRoutines, 'oxed.scene', @init);
 
    oxed.OnSceneChange.Add(@sceneChange);
 

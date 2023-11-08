@@ -15,7 +15,7 @@ INTERFACE
       {tests}
       uTest, uTestRunner,
       {ox}
-      oxuThreadTask,
+      oxuRunRoutines, oxuThreadTask,
       {oxed}
       uOXED, oxeduPlugins, oxeduTasks, oxeduProject;
 
@@ -230,6 +230,9 @@ begin
    FreeObject(oxedTests.Task);
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
    dvgOXED.Add('tests', dvgTests);
    dvgTests.Add(dvIncludeOx, 'include_ox', dtcBOOL, @oxedTests.IncludeOx);
@@ -238,7 +241,7 @@ INITIALIZATION
    TProcedures.Initialize(oxedTests.OnTaskStart);
    TProcedures.Initialize(oxedTests.OnTaskDone);
 
-   oxed.Init.Add('plugin.tests', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'plugin.tests', @init, @deinit);
    oxedPlugins.Add('Tests', 'Testing framework');
 
 END.

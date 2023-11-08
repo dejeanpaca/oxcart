@@ -12,7 +12,7 @@ INTERFACE
 
    USES
       {ox}
-      oxuTypes, oxuwndSettings,
+      oxuTypes, oxuwndSettings, oxuRunRoutines,
       {widgets}
       uiuWidget, uiWidgets,
       wdguCheckbox, wdguDivisor,
@@ -93,8 +93,11 @@ begin
    oxwndSettings.PreAddTabs.Add(@PreAddTabs);
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.iAdd('settings', @init);
+   oxed.Init.iAdd(oxedInitRoutines, 'settings', @init);
 
 END.
 

@@ -15,7 +15,8 @@ INTERFACE
       {app}
       uStd, uAppInfo, appuEvents, appuActionEvents, appuKeys, appuKeyMappings,
       {oX}
-      uOX, oxuTypes, oxuRenderers, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend, oxuConsole,{$ENDIF}
+      uOX, oxuTypes, oxuRunRoutines,
+      {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
       {ui}
       oxuUI, uiuControl, uiuWindow, uiWidgets, uiuTypes, uiuMessageBox, uiuWidget, uiuKeyMappings,
       {wnd}
@@ -173,7 +174,10 @@ begin
    FreeObject(oxedwndRunSettings);
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('oxed.run_settings', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'oxed.run_settings', @init, @deinit);
 
 END.

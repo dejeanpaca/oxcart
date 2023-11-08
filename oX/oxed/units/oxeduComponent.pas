@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uInit,
       {ox}
-      uOX, oxuComponent, oxuComponentDescriptors,
+      uOX, oxuComponent, oxuComponentDescriptors, oxuRunRoutines,
       {oxed}
       uOXED, oxeduComponentGlyph;
 
@@ -125,8 +125,13 @@ begin
    end;
 end;
 
+
+VAR
+   initRoutines: oxTRunRoutine;
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.Add('oxed.components', @init, @deinit);
-   oxed.Init.Add('components', @oxed_init, @oxed_deinit);
+   ox.Init.Add(initRoutines, 'oxed.components', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'components', @oxed_init, @oxed_deinit);
 
 END.

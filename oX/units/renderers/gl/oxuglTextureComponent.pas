@@ -14,7 +14,7 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uColors,
       {ox}
-      uOX, oxuTypes, oxuglRenderer, oxuTexture, oxuOGL;
+      uOX, oxuTypes, oxuglRenderer, oxuTexture, oxuOGL, oxuRunRoutines;
 
 TYPE
    { oglTTextureComponent }
@@ -97,7 +97,10 @@ begin
    oglTextureID.Free();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.PreInit.Add('ox.gl.texture_component', @init, @deinit);
+   ox.PreInit.Add(initRoutines, 'ox.gl.texture_component', @init, @deinit);
 
 END.

@@ -13,7 +13,8 @@ INTERFACE
    USES
       sysutils, uStd, uLog, uFile, uFiles, uTiming,
       {oX}
-      uOX, oxuTFD, oxuFont, oxuResourcePool;
+      uOX, oxuRunRoutines,
+      oxuTFD, oxuFont, oxuResourcePool;
 
 TYPE
    oxTDefaultFontGlobal = record
@@ -74,9 +75,12 @@ begin
    FreeObject(oxDefaultFont.Font);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    oxDefaultFont.Load := true;
-   ox.BaseInit.Add('default_font', @load, @dispose);
+   ox.BaseInit.Add(initRoutines, 'default_font', @load, @dispose);
 
    oxTFD.Init(tfd);
 

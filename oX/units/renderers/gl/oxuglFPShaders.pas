@@ -13,8 +13,7 @@ INTERFACE
    USES
       uStd, uLog,
       {ox}
-      uOX,
-      {gl}
+      uOX, oxuRunRoutines,
       oxuShader, oxuTexture, oxuTypes, oxuRenderers, oxuResourcePool,
       {gl}
       oxuglRenderer, oxuglFP, oxuglTextureComponent,
@@ -131,7 +130,10 @@ begin
    oxglRenderer.Init.Add('gl.fpshader', @init, @deinit);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.PreInit.iAdd('ox.gl.render', @preinit);
+   ox.PreInit.iAdd(initRoutines, 'ox.gl.render', @preinit);
 
 END.

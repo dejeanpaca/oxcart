@@ -11,7 +11,7 @@ UNIT oxuPaths;
 INTERFACE
 
    USES
-     sysutils, uStd, uFileUtils, uLog, appuPaths,
+     sysutils, uStd, uFileUtils, uLog, appuPaths, oxuRunRoutines,
      {ox}
      uOX;
 
@@ -116,6 +116,9 @@ begin
    oxAssetPaths.List.Dispose();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    oxPaths.Data         := oxDataPath;
    oxPaths.Textures     := oxTexturesDefaultPath;
@@ -124,7 +127,7 @@ INITIALIZATION
    oxPaths.Shaders      := oxShadersDefaultPath;
 
    oxAssetPaths.List.Initialize(oxAssetPaths.List);
-   ox.PreInit.Add('ox.assetpaths', @init, @deinit);
+   ox.PreInit.Add(initRoutines, 'ox.assetpaths', @init, @deinit);
 
 END.
 

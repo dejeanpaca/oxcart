@@ -14,7 +14,7 @@ INTERFACE
       sysutils, process, uStd, uLog, uBuild, uLPI, uFileUtils, StringUtils, uTiming, uFile, uFiles,
       uApp, appuActionEvents,
       {ox}
-      oxuThreadTask, oxuFeatures, oxuRenderer,
+      oxuRunRoutines, oxuThreadTask, oxuFeatures, oxuRenderer,
       {oxed}
       uOXED, oxeduMessages, oxeduProject, oxeduTasks, oxeduActions, oxeduSettings, oxeduProjectScanner;
 
@@ -932,8 +932,11 @@ begin
    end;
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('build', @oxedTBuildGlobal.Initialize, @oxedTBuildGlobal.Deinitialize);
+   oxed.Init.Add(oxedInitRoutines, 'build', @oxedTBuildGlobal.Initialize, @oxedTBuildGlobal.Deinitialize);
 
    TProcedures.Initialize(oxedBuild.OnPreBuild);
    TProcedures.Initialize(oxedBuild.OnBuildDone);

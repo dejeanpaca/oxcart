@@ -13,7 +13,8 @@ INTERFACE
    USES
       uStd, uLog, StringUtils, uFileHandlers, vmVector, uFile, uFiles, uColors,
       {oX}
-      uOX, oxuTypes, oxuFile, oxuMaterial, oxuModel, oxuModelFile, oxuMesh, oxuSerializationString, oxuPrimitives;
+      uOX, oxuRunRoutines, oxuTypes,
+      oxuFile, oxuMaterial, oxuModel, oxuModelFile, oxuMesh, oxuSerializationString, oxuPrimitives;
 
 IMPLEMENTATION
 
@@ -521,7 +522,10 @@ begin
    oxfModel.Readers.RegisterExt(objExt, '.obj', @objLoader);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.iAdd('model.obj', @init);
+   ox.Init.iAdd(initRoutines, 'model.obj', @init);
 
 END.

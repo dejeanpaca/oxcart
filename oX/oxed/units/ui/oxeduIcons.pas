@@ -13,8 +13,8 @@ INTERFACE
    USES
       uStd,
       {ox}
-      uOX, oxuPaths, oxuTexture, oxuTexturePool, uiuContextMenu, oxuDefaultTexture,
-      oxuGlyph,
+      uOX, oxuRunRoutines, oxuPaths,
+      oxuTexture, oxuTexturePool, uiuContextMenu, oxuDefaultTexture, oxuGlyph,
       {oxed}
       uOXED, oxuFileIcons;
 
@@ -118,8 +118,11 @@ begin
       item^.SetGlyph(tex);
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.iAdd('oxed.icons', @init);
+   oxed.Init.iAdd(oxedInitRoutines, 'oxed.icons', @init);
    oxedIcons.DefaultContextMenuSize := 32;
 
 END.

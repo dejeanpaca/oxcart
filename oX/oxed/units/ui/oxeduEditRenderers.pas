@@ -15,7 +15,7 @@ INTERFACE
    USES
       uStd, uInit, uLog,
       {ox}
-      oxuProjection, oxuCamera, oxuEntity, oxuScene, oxuComponent,
+      oxuRunRoutines, oxuProjection, oxuCamera, oxuEntity, oxuScene, oxuComponent,
       oxuTexture, oxuDefaultTexture,
       {ui}
       uiuWindowTypes,
@@ -231,11 +231,14 @@ begin
    oxedEditRenderers.Init.dCall();
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
    oxedEditRenderers.Init.Init('oxed.edit_renderers');
    oxedEditRenderers.Glyphs3D := true;
 
-   oxed.Init.Add('oxed.edit_renderers', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'oxed.edit_renderers', @init, @deinit);
 
 
 END.

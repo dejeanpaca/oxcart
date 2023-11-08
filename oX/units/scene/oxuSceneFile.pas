@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uFile, uFileHandlers,
       {oX}
-      uOX, oxuFile, oxuScene;
+      uOX, oxuRunRoutines, oxuFile, oxuScene;
 
 TYPE
    { oxTSceneFileOptions }
@@ -119,7 +119,10 @@ begin
    FreeObject(oxfScene);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.Add('scene_file', @init, @deinit);
+   ox.Init.Add(initRoutines, 'scene_file', @init, @deinit);
 
 END.

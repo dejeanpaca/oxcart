@@ -15,7 +15,8 @@ USES
    {app}
    appuMouse,
    {oX}
-   uOX, oxuTypes, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF} oxuRenderer,
+   uOX, oxuTypes, oxuRunRoutines,
+   {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
    oxuwndBase,
    {ui}
    uiuControl, uiuWindow, uiWidgets, uiuWidget, uiuInputBoxOverlay,
@@ -318,7 +319,10 @@ begin
    FreeObject(oxwndDVarEditor);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.Add('ox.wnd.dvar_edit', @initialize, @deinitialize);
+   ox.Init.Add(initRoutines, 'ox.wnd.dvar_edit', @initialize, @deinitialize);
 
 END.

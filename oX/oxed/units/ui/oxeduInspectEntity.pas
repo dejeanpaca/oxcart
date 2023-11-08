@@ -15,7 +15,7 @@ INTERFACE
       {app}
       appuMouse,
       {ox}
-      oxuTypes, oxuEntity, oxuComponent, oxuComponentDescriptors,
+      oxuRunRoutines, oxuTypes, oxuEntity, oxuComponent, oxuComponentDescriptors,
       {ui}
       uiuTypes, uiWidgets, uiuWidget,
       wdguLabel, wdguWorkbar, wdguCheckbox, wdguInputBox, wdguGroup, wdguButton,
@@ -385,8 +385,11 @@ begin
    FreeObject(oxedInspectEntity);
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('scene.inspector', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'scene.inspector', @init, @deinit);
 
    oxed.OnSceneChange.Add(@sceneChange);
    oxedProjectRunner.OnStart.Add(@sceneChange);

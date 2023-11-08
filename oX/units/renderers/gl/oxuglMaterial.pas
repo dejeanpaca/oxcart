@@ -13,7 +13,7 @@ INTERFACE
    USES
       {$INCLUDE usesgl.inc},
       {ox}
-      uOX, oxuMaterial,
+      uOX, oxuMaterial, oxuRunRoutines,
       {gl}
       oxuglRenderer;
 
@@ -33,7 +33,10 @@ begin
    oxglRenderer.components.RegisterComponent('material', @componentReturn);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.PreInit.iAdd('ox.gl.materia', @init);
+   ox.PreInit.iAdd(initRoutines, 'ox.gl.materia', @init);
 
 END.

@@ -15,6 +15,7 @@ INTERFACE
       {app}
       appuKeys, appuMouse,
       {ox}
+      oxuRunRoutines,
       oxuScene, oxuSceneRender, oxuWindows, oxuRenderer, oxuWindow,
       oxuGlobalInstances, oxuKeyboardControl, oxuPointerControl, oxuGlobalKeys,
       {ui}
@@ -230,8 +231,11 @@ begin
    projectPointer := nil;
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('scene.game', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'scene.game', @init, @deinit);
    oxedMenubar.OnInit.Add(@initMenubar);
 
    oxedProjectRunner.OnBeforeStart.Add(@beforeProjectStart);

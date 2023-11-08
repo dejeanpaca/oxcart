@@ -13,7 +13,7 @@ INTERFACE
    USES
       uLog,
       {ox}
-      oxuConsoleBackend,
+      oxuRunRoutines, oxuConsoleBackend,
       {oxed}
       uOXED;
 
@@ -101,8 +101,11 @@ begin
    con.Clear();
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('messages', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'messages', @init, @deinit);
 
 END.
 

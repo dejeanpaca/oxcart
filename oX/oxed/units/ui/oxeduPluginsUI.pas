@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd,
       {ox}
-      uOX, oxuTypes, oxuwndBase, uiWidgets, uiuWidget,
+      uOX, oxuRunRoutines, oxuTypes, oxuwndBase, uiWidgets, uiuWidget,
       wdguButton, wdguDivisor, wdguGrid, uiuContextMenu,
       {oxed}
       uOXED, oxeduMenubar, oxeduPlugins, oxeduIcons;
@@ -137,8 +137,11 @@ begin
    FreeObject(oxedPluginsWindow);
 end;
 
+VAR
+   oxedInitRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   oxed.Init.Add('ox.settings', @init, @deinit);
+   oxed.Init.Add(oxedInitRoutines, 'ox.settings', @init, @deinit);
    oxedMenubar.OnInit.Add(@menubarInit);
 
 END.

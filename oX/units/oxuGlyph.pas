@@ -13,7 +13,8 @@ INTERFACE
    USES
       uStd, uLog, StringUtils,
       {ox}
-      uOX, oxuResourcePool, oxuTexture, oxuTexturePool, oxuDefaultTexture, oxuFreetype, oxuFreetypeFonts;
+      uOX, oxuRunRoutines,
+      oxuResourcePool, oxuTexture, oxuTexturePool, oxuDefaultTexture, oxuFreetype, oxuFreetypeFonts;
 
 TYPE
    oxPGlyphs = ^oxTGlyphs;
@@ -169,7 +170,10 @@ begin
    oxGlyphs.Destroy();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.Add('ox.glyphs', @init, @deinit);
+   ox.Init.Add(initRoutines, 'ox.glyphs', @init, @deinit);
 
 END.

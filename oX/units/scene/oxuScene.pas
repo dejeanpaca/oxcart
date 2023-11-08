@@ -14,7 +14,7 @@ INTERFACE
       uStd,
       {ox}
       {$IFNDEF OX_LIBRARY}
-      uOX,
+      uOX, oxuRunRoutines,
       {$ENDIF}
       oxuGlobalInstances, oxuEntity, oxuWorld, oxuSerialization;
 
@@ -130,6 +130,9 @@ begin
    Result := oxTScene.Create();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    oxSceneManagement.Enabled := True;
 
@@ -142,7 +145,7 @@ INITIALIZATION
    oxSceneManagement.Serialization.Inherits := oxEntity.Serialization;
 
    {$IFNDEF OX_LIBRARY}
-   ox.Init.Add('ox.scene', @init, @deinit);
+   ox.Init.Add(initRoutines, 'ox.scene', @init, @deinit);
    {$ENDIF}
 
 FINALIZATION

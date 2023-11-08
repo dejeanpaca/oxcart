@@ -13,7 +13,7 @@ INTERFACE
    USES
      uStd, uFileHandlers, uFile, StringUtils,
      {ox}
-     uOX, oxuAudioBase, oxuAudioFile, oxuFile, oxauRIFF;
+     uOX, oxuRunRoutines, oxuAudioBase, oxuAudioFile, oxuFile, oxauRIFF;
 
 CONST
    {supported wave sound formats}
@@ -132,7 +132,10 @@ begin
    oxfAudio.Readers.RegisterExt(ext, '.wav', @handler);
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   ox.Init.iAdd('audio_wav', @init);
+   ox.Init.iAdd(initRoutines, 'audio_wav', @init);
 
 END.

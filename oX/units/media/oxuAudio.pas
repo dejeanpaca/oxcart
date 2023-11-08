@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uLog,
       {ox}
-      uOX, oxuAudioBase, oxuGlobalInstances;
+      uOX, oxuRunRoutines, oxuAudioBase, oxuGlobalInstances;
 
 TYPE
    oxTAudioGlobal = record helper for oxTAudioBase
@@ -102,10 +102,13 @@ begin
    Result := oxTAudioHandler.Create();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
    oxAudio.onSetHandler := @setDefaultHandler;
 
    oxGlobalInstances.Add(oxTAudioHandler, @oxa, @instanceGlobal)^.Allocate := false;
 
-   ox.Init.Add('audio', @Initialize, @DeInitialize);
+   ox.Init.Add(initRoutines, 'audio', @Initialize, @DeInitialize);
 END.
