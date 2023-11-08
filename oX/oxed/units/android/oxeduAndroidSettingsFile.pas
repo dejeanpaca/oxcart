@@ -33,9 +33,8 @@ begin
 end;
 
 INITIALIZATION
-   oxedAndroidSettingsFile.Create();
+   oxedAndroidSettingsFile.Create(oxedAndroidSettings.dvg);
    oxedAndroidSettingsFile.FileName := 'android.dvar';
-   oxedAndroidSettingsFile.dvg := @oxedAndroidSettings.dvg;
 
    oxed.init.Add('android.settings_file', @init, @deinit)
 

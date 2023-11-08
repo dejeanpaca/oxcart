@@ -28,7 +28,7 @@ TYPE
       BeforeSave,
       AfterSave: TProcedure;
 
-      constructor Create();
+      constructor Create(var useDvg: TDVarGroup);
 
       function GetFn(): StdString; virtual;
       procedure Load();
@@ -39,9 +39,10 @@ IMPLEMENTATION
 
 { oxTDvarFile }
 
-constructor oxTDvarFile.Create();
+constructor oxTDvarFile.Create(var useDvg: TDVarGroup);
 begin
    Enabled := true;
+   dvg := @useDvg;
 end;
 
 function oxTDvarFile.GetFn(): StdString;

@@ -52,10 +52,9 @@ INITIALIZATION
    dvGroup.Add(dvDebugResources, 'debug_resources', dtcBOOL, @oxedProject.Session.DebugResources);
    dvGroup.Add(dvEnableConsole, 'enable_console', dtcBOOL, @oxedProject.Session.EnableConsole);
 
-   oxedProjectSessionFile.Create();
+   oxedProjectSessionFile.Create(dvGroup);
    oxedProjectSessionFile.FileName := OXED_PROJECT_SESSION_FILE;
    oxedProjectSessionFile.IsTemp := true;
-   oxedProjectSessionFile.dvg := @dvGroup;
 
    oxedProjectSessionFile.BeforeLoad := @UpdateVars;
    oxedProjectSessionFile.BeforeSave := @beforeSave;
