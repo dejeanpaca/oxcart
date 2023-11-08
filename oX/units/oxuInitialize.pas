@@ -9,7 +9,7 @@ UNIT oxuInitialize;
 INTERFACE
 
    USES
-     sysutils, uStd, uLog, uTiming, ParamUtils,
+     sysutils, uStd, uLog, uTiming, ParamUtils, StringUtils,
      {app}
      uAppInfo, uApp, appuLog, appudvarConfiguration,
      {oX}
@@ -107,6 +107,10 @@ begin
 
    log.i('Initialized application');
 
+   {$IFNDEF NO_THREADS}
+   log.v('Main thread ID: ' + sf(GetThreadID));
+   {$ENDIF}
+
    {$IFNDEF OX_LIBRARY}
    log.Enter('Initializing oX engine ...');
    {$ELSE}
@@ -179,11 +183,10 @@ begin
    oxRenderer.AfterInitialize();
 
    {$IF NOT DEFINED(OX_LIBRARY)}
-
-   {$IFNDEF NO_THREADS}
-   {get an additional rendering context}
-   oxRenderer.GetContext(oxWindow.Current);
-   {$ENDIF}
+      {$IFNDEF NO_THREADS}
+      {get an additional rendering context}
+      oxRenderer.GetContext(oxWindow.Current);
+      {$ENDIF}
 
       {$IF NOT DEFINED(MOBILE)}
       if(oxContextWindow.Require) then begin
