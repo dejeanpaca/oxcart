@@ -117,6 +117,14 @@ var
    list: TFileDescriptorList;
    basePath: StdString;
 
+procedure autoSet();
+begin
+   if(AvailableNDKs.n > 0) then begin
+      UsedNDK := oxedAndroidSettings.AvailableNDKs.List[oxedAndroidSettings.AvailableNDKs.n - 1];
+      log.i('android > Auto set NDK path: ' + UsedNDK);
+   end;
+end;
+
 begin
    SDKPath := IncludeTrailingPathDelimiterNonEmpty(SDKPath);
 
@@ -143,12 +151,11 @@ begin
    if(NDKPath = '') then begin
       if(UsedNDK = '') then begin
          {no default ndk set, use first one found}
-         UsedNDK := oxedAndroidSettings.AvailableNDKs.List[oxedAndroidSettings.AvailableNDKs.n - 1];
-         log.i('android > Auto set NDK path: ' + UsedNDK);
+         autoSet();
       end else begin
          {if can't find the used ndk, use first one found}
          if(not DirectoryExists(GetNDKPathInSDK() + UsedNDK)) then
-            UsedNDK := oxedAndroidSettings.AvailableNDKs.List[oxedAndroidSettings.AvailableNDKs.n - 1];
+            autoSet();
       end;
    end;
 end;
