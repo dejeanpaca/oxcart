@@ -454,7 +454,7 @@ procedure android_app_post_exec_cmd(app: Pandroid_app; cmd: cint8);
 begin
    case cmd of
       APP_CMD_TERM_WINDOW: begin
-         logv('APP_CMD_TERM_WINDOW');
+         logv('post APP_CMD_TERM_WINDOW');
          pthread_mutex_lock(@app^.mutex);
          app^.window := nil;
          pthread_cond_broadcast(@app^.cond);
@@ -462,7 +462,7 @@ begin
       end;
 
       APP_CMD_SAVE_STATE: begin
-         logv('APP_CMD_SAVE_STATE');
+         logv('post APP_CMD_SAVE_STATE');
          pthread_mutex_lock(@app^.mutex);
          app^.stateSaved := true;
          pthread_cond_broadcast(@app^.cond);
