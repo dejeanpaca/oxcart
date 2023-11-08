@@ -6,6 +6,8 @@
 {$INCLUDE oxdefines.inc}{$M+}
 UNIT oxuSerialization;
 
+{$INCLUDE oxtypesdefines.inc}
+
 INTERFACE
 
    USES
@@ -585,8 +587,10 @@ begin
          exit(sf(Double(location^)))
       else if(Dt^.FloatType = ftExtended) then
          exit(sf(Extended(location^)))
+      {$IFNDEF EXCLUDE_CURRENCY}
       else if(Dt^.FloatType = ftCurr) then
          exit(sf(Currency(location^)))
+      {$ENDIF}
       else if(Dt^.FloatType = ftComp) then
          exit(sf(Comp(location^)));
    end;
