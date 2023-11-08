@@ -61,6 +61,8 @@ TYPE
       {get the project files path}
       function GetProjectFilesPath(): StdString;
 
+      {get the app path in project files}
+      function GetAppPath(): StdString;
       {get current cpu type}
       function GetCPUType(): oxedTAndroidCPUType;
    end;
@@ -160,6 +162,11 @@ begin
       Result := oxedProject.Path + Project.ProjectFilesPath
    else
       Result := oxedProject.Path + Project.ProjectFilesPath;
+end;
+
+function oxedTAndroidSettings.GetAppPath(): StdString;
+begin
+   Result := IncludeTrailingPathDelimiterNonEmpty(oxedAndroidSettings.GetProjectFilesPath()) + 'app';
 end;
 
 function oxedTAndroidSettings.GetCPUType(): oxedTAndroidCPUType;
