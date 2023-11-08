@@ -527,7 +527,7 @@ end;
 
 procedure PrepareGlyph();
 begin
-   size := (r.h - 4) div 2;
+   size := r.h - 4;
 
    if(enabled) then
       oxui.Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0)
@@ -538,8 +538,6 @@ end;
 procedure RenderCheckbox();
 begin
    PrepareGlyph();
-
-   size := r.h - 4;
 
    ir := r;
    inc(ir.x, 2);
@@ -559,7 +557,7 @@ begin
    if(item^.Glyph <> nil) then begin
       PrepareGlyph();
 
-      oxRenderingUtilities.TexturedQuad(r.x + 2 + size, r.y - 1 - size, size, size, item^.Glyph);
+      uiDrawUtilities.Glyph(r.x + 2, r.y - 1, size, size, item^.Glyph);
       oxui.Material.ApplyTexture('texture', nil);
    end;
 
