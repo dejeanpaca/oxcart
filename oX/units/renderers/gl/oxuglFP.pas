@@ -55,7 +55,6 @@ VAR
 
 INITIALIZATION
    oxglFP.Init.Init('ox.gl.fp');
-   oxglFP.Init.DontDetermineState();
 
    ox.PreInit.iAdd(initRoutines, 'ox.gl.fos', @init);
 

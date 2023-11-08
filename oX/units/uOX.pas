@@ -116,9 +116,6 @@ end;
 INITIALIZATION
    appInfo.setOrganization('ox');
 
-   ox.AppProcs.Init('ox.appprocs');
-   ox.AppProcs.DontDetermineState();
-
    ox.AppProcs.Init('ox.app');
 
    dvar.Add('ox', ox.dvar);
