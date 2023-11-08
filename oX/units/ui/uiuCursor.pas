@@ -16,7 +16,7 @@ INTERFACE
       uOX, oxuRunRoutines,
       oxuPlatform, oxuTexture, oxuTextureGenerate, oxuTypes, oxuTransform, oxuRender,
       {ui}
-      oxuUI, uiuTypes, uiuControl, uiuWindowTypes, uiuDraw;
+      oxuUI, uiuTypes, uiuControl, uiuDraw;
 
 TYPE
    uiTLoadedCursors = specialize TSimpleList<uiTCursorType>;
