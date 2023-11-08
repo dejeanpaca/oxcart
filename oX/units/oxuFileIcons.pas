@@ -68,6 +68,8 @@ begin
    f.Texture := tex;
    f.FileType := fileType;
 
+   tex.Path := fileType + ' ' + tex.Path;
+
    if(tex <> nil) then
       tex.MarkUsed();
 
@@ -79,6 +81,7 @@ begin
    oxResource.Destroy(GenericFile.Texture);
 
    GenericFile.Texture := tex;
+   tex.Path := 'file ' + tex.Path;
 
    if(tex <> nil) then
       tex.MarkUsed();
@@ -89,6 +92,7 @@ begin
    oxResource.Destroy(GenericDirectory.Texture);
 
    GenericDirectory.Texture := tex;
+   tex.Path := 'directory ' + tex.Path;
 
    if(tex <> nil) then
       tex.MarkUsed();
@@ -99,6 +103,7 @@ begin
    oxResource.Destroy(GenericDirectoryOpen.Texture);
 
    GenericDirectoryOpen.Texture := tex;
+   tex.Path := 'directory-open ' + tex.Path;
 
    if(tex <> nil) then
       tex.MarkUsed();
