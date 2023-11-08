@@ -65,7 +65,7 @@ end;
 
 procedure uiTSurfaceGlobal.Reset();
 begin
-   ZIndex := 100;
+   ZIndex := 0;
 end;
 
 INITIALIZATION
