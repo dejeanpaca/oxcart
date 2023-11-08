@@ -17,9 +17,9 @@ INTERFACE
       {oX}
       oxuRunRoutines, oxuTypes, oxuWindows, oxuFont, oxuResourcePool,
       oxuPrimitives, oxuWindowTypes, oxuRender, oxuTransform,
-      {ui}
-      oxuUI, uiuSkin, uiuZOrder, uiuTypes, uiuControl,
       oxuTexture, oxuTextureGenerate, oxuRenderer,
+      {ui}
+      oxuUI, uiuSkin, uiuZOrder, uiuTypes, uiuControl, uiuSkinTypes,
       uiuWindowTypes, uiuWidget, uiuDraw, uiWidgets;
 
 CONST
@@ -635,7 +635,7 @@ procedure uiTWindowGlobal.SetupCreatedWindow(wnd: uiTWindow; var createData: uiT
 begin
    wnd.SetSkin(oxui.DefaultSkin);
    wnd.Background       := uiWindow.DefaultBackground;
-   wnd.SetBackgroundColor(wnd.Skin.Window.Colors.cBackground);
+   wnd.SetBackgroundColor(uiTSkin(wnd.Skin).Window.Colors.cBackground);
    wnd.Buttons          := createData.Buttons;
    wnd.Properties       := createData.Properties;
 
@@ -1877,7 +1877,7 @@ begin
 
    {render frame}
    if(Frame <> uiwFRAME_STYLE_NONE) then begin
-      if(Skin.Window.Frames[ord(Frame)].FrameForm = uiwFRAME_FORM_NICE) then begin
+      if(uiTSkin(Skin).Window.Frames[ord(Frame)].FrameForm = uiwFRAME_FORM_NICE) then begin
          renderNiceFrame();
       end else
          renderSimpleFrame();
@@ -1904,7 +1904,7 @@ var
    r: oxTRect;
 
 begin
-   shadowSize := Skin.Window.ShadowSize;
+   shadowSize := uiTSkin(Skin).Window.ShadowSize;
 
    r.x := APosition.x + shadowSize;
    r.w := GetTotalWidth() - shadowSize - fw;
@@ -1929,9 +1929,9 @@ begin
       wSelected := IsSelected();
 
       if(wSelected) then
-         colors := @Skin.Window.Colors
+         colors := @uiTSkin(Skin).Window.Colors
       else
-         colors := @Skin.Window.InactiveColors;
+         colors := @uiTSkin(Skin).Window.InactiveColors;
 
       {if it's a sub-window we can render it's shape}
       if(Parent <> nil) then begin
@@ -2318,17 +2318,17 @@ end;
 
 function uiTWindowHelper.GetTitleHeight(): longint;
 begin
-   Result := Skin.Window.Frames[ord(Frame)].TitleHeight;
+   Result := uiTSkin(Skin).Window.Frames[ord(Frame)].TitleHeight;
 end;
 
 function uiTWindowHelper.GetFrameWidth(): longint;
 begin
-   Result := Skin.Window.Frames[ord(Frame)].FrameWidth;
+   Result := uiTSkin(Skin).Window.Frames[ord(Frame)].FrameWidth;
 end;
 
 function uiTWindowHelper.GetFrameHeight(): longint;
 begin
-   Result := Skin.Window.Frames[ord(Frame)].FrameHeight;
+   Result := uiTSkin(Skin).Window.Frames[ord(Frame)].FrameHeight;
 end;
 
 function uiTWindowHelper.GetNonClientHeight(): longint; inline;

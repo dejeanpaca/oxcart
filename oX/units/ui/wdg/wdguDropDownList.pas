@@ -17,7 +17,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont,
       {ui}
-      uiuWindowTypes, uiuWidget, uiWidgets, uiuDraw, uiuWidgetWindow, uiuWindow,
+      uiuWindowTypes, uiuSkinTypes,
+      uiuWidget, uiWidgets, uiuDraw, uiuWidgetWindow, uiuWindow,
       {}
       wdguList;
 
@@ -162,9 +163,9 @@ var
 
 begin
    if(HighlightedItem <> index) then
-      SetColorBlended(uiTWindow(wnd).Skin.Colors.InputText)
+      SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.InputText)
    else
-      SetColorBlended(uiTWindow(wnd).Skin.Colors.TextInHighlight);
+      SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight);
 
    ir := r;
    inc(ir.x, ItemPadding);
@@ -235,22 +236,25 @@ var
    r: oxTRect;
    f: oxTFont;
    dropWidth: loopint;
+   pSkin: uiTSkin;
 
 begin
    inherited Render;
 
+   pSkin := GetSkinObject();
+
    {draw surface}
-   SetColor(uiTWindow(wnd).Skin.Colors.InputSurface);
+   SetColor(pSkin.Colors.InputSurface);
    uiDraw.Box(RPosition, Dimensions);
 
    {draw rectangle}
    if(wdgpENABLED in Properties) then begin
       if(not IsSelected()) and (not (wdgpHOVERING in Properties)) then
-         SetColor(uiTWindow(wnd).Skin.Colors.Border)
+         SetColor(pSkin.Colors.Border)
       else
-         SetColor(uiTWindow(wnd).Skin.Colors.SelectedBorder);
+         SetColor(pSkin.Colors.SelectedBorder);
    end else
-      SetColor(uiTWindow(wnd).Skin.DisabledColors.Border);
+      SetColor(pSkin.DisabledColors.Border);
 
    uiDraw.Rect(RPosition, Dimensions);
 
@@ -274,7 +278,7 @@ begin
 
       f := CachedFont;
       f.Start();
-         SetColorBlended(uiTWindow(wnd).Skin.Colors.InputText);
+         SetColorBlended(pSkin.Colors.InputText);
          f.WriteCentered(GetValue(CurrentItem), r, [oxfpCenterVertical, oxfpCenterLeft]);
       oxf.Stop();
    end;

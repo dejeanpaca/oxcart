@@ -18,7 +18,7 @@ INTERFACE
       uOX, oxuWindow, oxuWindows, oxuRenderer, oxuRenderers, oxuTypes, oxuResourcePool, oxuRunRoutines,
       oxuShader, oxuMaterial, oxuFont,
       {ui}
-      uiuTypes, uiuControl, uiuWindowTypes, uiuWidget;
+      uiuTypes, uiuControl, uiuWindowTypes, uiuSkinTypes, uiuWidget;
 
 TYPE
    uiTSelectArray = array[0..uiMAXIMUM_LEVELS - 1] of uiTControl;

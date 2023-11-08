@@ -17,7 +17,8 @@ INTERFACE
       {oX}
       uOX, oxuTypes, oxuRender,
       {ui}
-      uiuTypes, oxuUI, uiuWindowTypes, uiuWidget, uiWidgets, uiuDraw, uiuWidgetRender;
+      uiuTypes, oxuUI, uiuWindowTypes, uiuSkinTypes,
+      uiuWidget, uiWidgets, uiuDraw, uiuWidgetRender;
 
 CONST
    {scrollbar actions}
@@ -399,6 +400,7 @@ var
    cx,
    cy: longint; {central x and y positions}
    cSurface: TColor4ub;
+   pSkin: uiTSkin;
 
 begin
    if(LightMode) then begin
@@ -413,8 +415,10 @@ begin
       end;
    end;
 
+   pSkin := uiTSkin(uiTWindow(wnd).Skin);
+
    {first render the scrolling surface}
-   cSurface := uiTWindow(wnd).Skin.Colors.LightSurface;
+   cSurface := pSkin.Colors.LightSurface;
    if(LightMode) then begin
       if(not Permanent) then
          cSurface[3] := round(wdgScrollbar.LightOpacity * OpacityMul)
@@ -433,17 +437,17 @@ begin
 
    {draw button rectangles}
    if(not LightMode) then begin
-      SetColor(uiTWindow(wnd).Skin.Colors.Border);
+      SetColor(pSkin.Colors.Border);
       uiDraw.Rect(b1a);
       uiDraw.Rect(b2a);
 
       {draw button surfaces}
-      SetColor(uiTWindow(wnd).Skin.Colors.Surface);
+      SetColor(pSkin.Colors.Surface);
       uiDraw.Box(b1a.x + 1, b1a.y - 1, b1a.x + b1a.w - 2, b1a.y - b1a.h + 2);
       uiDraw.Box(b2a.x + 1, b2a.y - 1, b2a.x + b2a.w - 2, b2a.y - b2a.h + 2);
 
       {button markings}
-      SetColor(uiTWindow(wnd).Skin.Colors.Text);
+      SetColor(pSkin.Colors.Text);
       {button 1}
       cx := b1a.x + (b1.w div 2);
       cy := b1a.y - (b1.h div 2);
@@ -472,9 +476,9 @@ begin
    {render the handle}
    if(HandleSize > 0) then begin
       if(LightMode) and (oxui.PointerCapture.Wdg = Self) then
-         cSurface := uiTWindow(wnd).Skin.Colors.SelectedBorder
+         cSurface := pSkin.Colors.SelectedBorder
       else
-         cSurface := uiTWindow(wnd).Skin.Colors.Surface;
+         cSurface := pSkin.Colors.Surface;
 
       if(cSurface[3] < 255) then
          oxRender.EnableBlend();
@@ -493,9 +497,9 @@ begin
       if(not LightMode) then begin
          {render lines on the handle}
          if(IsSelected()) then
-            SetColor(uiTWindow(wnd).Skin.Colors.LightSurface)
+            SetColor(pSkin.Colors.LightSurface)
          else
-            SetColor(uiTWindow(wnd).Skin.Colors.SelectedBorder);
+            SetColor(pSkin.Colors.SelectedBorder);
 
          if(not InternalProperties.Horizontal) then begin
             cx := surfa.x + (surfa.w div 2);

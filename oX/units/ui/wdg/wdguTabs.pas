@@ -16,7 +16,8 @@ INTERFACE
       {oX}
       oxuFont, oxuTypes,
       {ui}
-      uiuControl, uiuControls, uiuWindowTypes, oxuUI, uiuWidget, uiWidgets, uiuDraw, wdguEmpty;
+      uiuControl, uiuControls, uiuWindowTypes, uiuSkinTypes,
+      oxuUI, uiuWidget, uiWidgets, uiuDraw, wdguEmpty;
 
 TYPE
 
@@ -285,12 +286,12 @@ end;
 procedure wdgTTabs.SetSelectedColor(associated: uiTControl);
 begin
    if(IsSelected()) then
-      SetColor(uiTWindow(wnd).Skin.Colors.Highlight)
+      SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Highlight)
    else begin
       if((associated <> nil) and (oxui.Select.IsIn(associated) > -1)) then
-         SetColor(uiTWindow(wnd).Skin.Colors.Highlight)
+         SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Highlight)
       else
-         SetColor(uiTWindow(wnd).Skin.Colors.Highlight.Darken(0.3));
+         SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Highlight.Darken(0.3));
    end;
 end;
 
@@ -334,16 +335,19 @@ var
    current: wdgPTabEntry;
    r: oxTRect;
    f: oxTFont;
+   pSkin: uiTSkin;
 
 begin
+   pSkin := GetSkinObject();
+
    if(RenderSurface) then begin
       {render surface border}
-      SetColor(uiTWindow(wnd).Skin.Colors.Border);
+      SetColor(pSkin.Colors.Border);
       uiDraw.Rect(RPosition.x, RPosition.y - HeaderHeight,
          RPosition.x + Dimensions.w - 1, RPosition.y - Dimensions.h + 1);
 
       {fill surface}
-      SetColor(uiTWindow(wnd).Skin.Colors.Surface);
+      SetColor(pSkin.Colors.Surface);
       uiDraw.Box(RPosition.x + 1, RPosition.y - HeaderHeight - 1,
          RPosition.x + Dimensions.w - 2, RPosition.y - Dimensions.h + 2);
    end;
@@ -358,7 +362,7 @@ begin
       y := RPosition.y;
 
       {draw the tab title border}
-      SetColor(uiTWindow(wnd).Skin.Colors.Border);
+      SetColor(pSkin.Colors.Border);
 
       if(Tabs.Selected <> i) then begin
          uiDraw.Rect(x, y - wdgTabs.HeaderNonSelectedDecrease,
@@ -368,7 +372,7 @@ begin
 
       {fill the tab title surface}
       if(Tabs.Selected <> i) then begin
-         SetColor(uiTWindow(wnd).Skin.Colors.Surface.Darken(0.3));
+         SetColor(pSkin.Colors.Surface.Darken(0.3));
 
          uiDraw.Box(x + 1, y - wdgTabs.HeaderNonSelectedDecrease - 1,
             x + current^.TotalWidth - 2, y - HeaderHeight + 1)
@@ -396,9 +400,9 @@ begin
 
       f.Start();
          if(Tabs.Selected <> i) then
-            SetColorBlended(uiTWindow(wnd).Skin.Colors.Text)
+            SetColorBlended(pSkin.Colors.Text)
          else
-            SetColorBlended(uiTWindow(wnd).Skin.Colors.TextInHighlight);
+            SetColorBlended(pSkin.Colors.TextInHighlight);
 
          f.WriteCentered(current^.Title, r);
 
@@ -414,16 +418,19 @@ var
    current: wdgPTabEntry;
    f: oxTFont;
    r: oxTRect;
+   pSkin: uiTSkin;
 
 begin
+   pSkin := GetSkinObject();
+
    if(RenderSurface) then begin
       {render surface border}
-      SetColor(uiTWindow(wnd).Skin.Colors.Border);
+      SetColor(pSkin.Colors.Border);
       uiDraw.Rect(RPosition.x + HeaderWidth, RPosition.y,
          RPosition.x + Dimensions.w - 1, RPosition.y - Dimensions.h + 1);
 
       {fill surface}
-      SetColor(uiTWindow(wnd).Skin.Colors.Surface);
+      SetColor(pSkin.Colors.Surface);
       uiDraw.Box(RPosition.x + HeaderWidth + 1, RPosition.y - 1,
          RPosition.x + Dimensions.w - 2, RPosition.y - Dimensions.h + 2);
    end;
@@ -438,7 +445,7 @@ begin
       y := RPosition.y - current^.y;
 
       {draw the tab title border}
-      SetColor(uiTWindow(wnd).Skin.Colors.Border);
+      SetColor(pSkin.Colors.Border);
 
          if(Tabs.Selected <> i) then begin
          uiDraw.Rect(x + wdgTabs.HeaderNonSelectedDecrease, y,
@@ -448,7 +455,7 @@ begin
 
       {fill the tab title surface}
       if(Tabs.Selected <> i) then begin
-         SetColor(uiTWindow(wnd).Skin.Colors.Surface.Darken(0.3));
+         SetColor(pSkin.Colors.Surface.Darken(0.3));
 
          uiDraw.Box(x + 1 + wdgTabs.HeaderNonSelectedDecrease, y - 1,
             x + current^.TotalWidth - 2, y - current^.TotalHeight + 1)
@@ -475,9 +482,9 @@ begin
 
       f.Start();
          if(Tabs.Selected <> i) then
-            SetColorBlended(uiTWindow(wnd).Skin.Colors.Text)
+            SetColorBlended(pSkin.Colors.Text)
          else
-            SetColorBlended(uiTWindow(wnd).Skin.Colors.TextInHighlight);
+            SetColorBlended(pSkin.Colors.TextInHighlight);
 
          f.WriteCentered(current^.Title, r);
 

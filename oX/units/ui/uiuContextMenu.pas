@@ -17,7 +17,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont, oxuRender, oxuUI, oxuTexture, oxuRenderUtilities, oxuResourcePool,
       {ui}
-      uiuTypes, uiuWindowTypes, uiuWindow, uiuWidget, uiWidgets, uiuControl, uiuWidgetWindow, uiuDraw,
+      uiuTypes, uiuWindowTypes, uiuSkinTypes,
+      uiuWindow, uiuWidget, uiWidgets, uiuControl, uiuWidgetWindow, uiuDraw,
       {wdg}
       wdguList, wdguCheckbox;
 
@@ -471,6 +472,7 @@ var
    keyMapping: string;
    size: longint;
    enabled: boolean;
+   pSkin: uiTSkin;
 
 procedure DetermineColor();
 var
@@ -485,14 +487,14 @@ begin
 
    if(enabled) then begin
       if(not highlight) then
-         clr := uiTWindow(wnd).Skin.Colors.Text
+         clr := pSkin.Colors.Text
       else
-         clr := uiTWindow(wnd).Skin.Colors.TextInHighlight;
+         clr := pSkin.Colors.TextInHighlight;
    end else begin
       if(not highlight) then
-         clr := uiTWindow(wnd).Skin.DisabledColors.Text
+         clr := pSkin.DisabledColors.Text
       else
-         clr := uiTWindow(wnd).Skin.DisabledColors.TextInHighlight;
+         clr := pSkin.DisabledColors.TextInHighlight;
    end;
 end;
 
@@ -516,7 +518,7 @@ begin
 
       f.Write(r.x + Dimensions.w - (5 + f.GetLength(keyMapping)), r.y - (r.h div 2) - f.GetHeight() div 2, keyMapping);
 
-      SetColorBlended(uiTWindow(wnd).Skin.Colors.Text);
+      SetColorBlended(pSkin.Colors.Text);
    end;
 end;
 
@@ -524,6 +526,7 @@ begin
    item := @menu.Items.List[index];
    enabled := item^.Properties.IsSet(uiCONTEXT_MENU_ITEM_ENABLED);
    clr := cWhite4ub;
+   pSkin := uiTSkin(uiTWindow(wnd).Skin);
 
    if(item^.Glyph <> nil) then begin
       size := (r.h - 4) div 2;
@@ -570,16 +573,16 @@ begin
       SetColorBlended(clr.Darken(0.25));
 
       f.Write(r.x + Dimensions.w - (5 + f.GetLength('>')), r.y - (r.h div 2) - f.GetHeight() div 2, '>');
-      SetColorBlended(uiTWindow(wnd).Skin.Colors.Text);
+      SetColorBlended(pSkin.Colors.Text);
    end else if (item^.ItemType = uiCONTEXT_MENU_SEPARATOR) then begin
-      SetColor(uiTWindow(wnd).Skin.Colors.Border);
+      SetColor(pSkin.Colors.Border);
 
       oxui.Material.ApplyTexture('texture', nil);
       uiDraw.HLine(r.x, r.y - (r.h div 2), r.x + r.w - 1);
       CachedFont.Start();
 
       if(not OddColored) then
-         SetColorBlended(uiTWindow(wnd).Skin.Colors.Text);
+         SetColorBlended(pSkin.Colors.Text);
    end;
 end;
 

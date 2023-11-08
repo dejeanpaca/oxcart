@@ -18,7 +18,7 @@ INTERFACE
      uOX, oxuTypes, oxuGlobalKeys, oxuFont, oxuWindow, oxuRun, oxuRunRoutines,
      oxuConsoleBackend, oxuWindowTypes, oxuWindows, oxuRenderUtilities,
      {ui}
-     oxuUI, uiuDraw, uiuTypes, uiuWindowTypes, uiuWindow, uiuControl,
+     oxuUI, uiuDraw, uiuTypes, uiuWindowTypes, uiuWindow, uiuControl, uiuSkinTypes,
      uiuWidget, uiWidgets, uiuSkin, wdguInputBox;
 
 TYPE

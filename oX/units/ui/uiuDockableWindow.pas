@@ -15,7 +15,8 @@ INTERFACE
       {oX}
       uStd, oxuTypes, oxuWindow,
       {ui}
-      uiuWindow, oxuUI, uiuWindowTypes, uiuDraw, uiuTypes, uiWidgets, uiuWidgetWindow, uiuWidget,
+      uiuWindow, oxuUI, uiuWindowTypes, uiuTypes, uiuSkinTypes,
+      uiuDraw, uiWidgets, uiuWidgetWindow, uiuWidget,
       wdguTabs, wdguBlock;
 
 TYPE
@@ -1099,7 +1100,10 @@ begin
       else if(RenderEdge = uiDOCKABLE_WINDOW_EDGE_RIGHT) then {right}
          p.x := p.x + Dimensions.w - (Dimensions.w div BORDER_DIVISOR);
 
-      SetColorBlended(Skin.Colors.Highlight[0], Skin.Colors.Highlight[1], Skin.Colors.Highlight[2], 0.5);
+      SetColorBlended(uiTSkin(Skin).Colors.Highlight[0],
+         uiTSkin(Skin).Colors.Highlight[1],
+         uiTSkin(Skin).Colors.Highlight[2], 0.5);
+
       uiDraw.Box(p, d);
    end;
 end;

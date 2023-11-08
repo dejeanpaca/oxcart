@@ -17,7 +17,8 @@ INTERFACE
       {ui}
       oxuTypes, oxuFont,
       {ui}
-      uiWidgets, uiuWindowTypes, uiuWidget, uiuWindow, uiuTypes, uiuWidgetRender, uiuControl;
+      uiuControl, uiuWindowTypes, uiuTypes, uiuSkinTypes,
+      uiuWidget, uiuWindow, uiuWidgetRender, uiWidgets;
 
 CONST
    wdghBUTTON_CLICKED                     = $0001;
@@ -215,9 +216,9 @@ begin
 
       if(f <> nil) then begin
          if(wdgpENABLED in Properties) then
-            window.SetColorBlended(window.Skin.Colors.Text)
+            window.SetColorBlended(uiTSkin(window.Skin).Colors.Text)
          else
-            window.SetColorBlended(window.Skin.Colors.InactiveText);
+            window.SetColorBlended(uiTSkin(window.Skin).Colors.InactiveText);
 
          f.Start();
             f.WriteCentered(Caption, r);

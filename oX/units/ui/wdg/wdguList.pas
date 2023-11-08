@@ -17,7 +17,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont, oxuTexture,
       {ui}
-      uiuTypes, uiuWindowTypes, uiuWidget, uiWidgets, uiuDraw, uiuWidgetRender, uiuWindow, uiuSettings,
+      uiuTypes, uiuWindowTypes, uiuWidget, uiWidgets, uiuSkinTypes,
+      uiuDraw, uiuWidgetRender, uiuWindow, uiuSettings,
       uiuPointer,
       wdguScrollbar;
 
@@ -365,9 +366,9 @@ begin
    CachedFont.Start();
 
    if(Transparent) then
-      SetColorBlended(uiTWindow(wnd).Skin.Colors.Text)
+      SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.Text)
    else
-      SetColorBlended(uiTWindow(wnd).Skin.Colors.Text);
+      SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.Text);
 end;
 
 procedure wdgTStringListBase.RenderDone();
@@ -380,14 +381,14 @@ begin
    if(HighlightHovered) then begin
       if(Transparent) then begin
          if(index <> HighlightedItem) then
-            SetColorBlended(uiTWindow(wnd).Skin.Colors.Text)
+            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.Text)
          else
-            SetColorBlended(uiTWindow(wnd).Skin.Colors.TextInHighlight);
+            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight);
       end else begin
          if(index <> HighlightedItem) then
-            SetColorBlended(uiTWindow(wnd).Skin.Colors.InputText)
+            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.InputText)
          else
-            SetColorBlended(uiTWindow(wnd).Skin.Colors.TextInHighlight)
+            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight)
       end;
    end;
 end;
@@ -741,6 +742,8 @@ var
    br,
    hbr: oxTRect;
 
+   pSkin: uiTSkin;
+
 procedure _getItemHeight(index: loopint);
 begin
    if(ConstantHeight) then
@@ -754,17 +757,17 @@ end;
 procedure SetOddColor();
 begin
    if(odd(i)) then
-      window.SetColor(window.Skin.Colors.LightSurface.Darken(0.1))
+      window.SetColor(pSkin.Colors.LightSurface.Darken(0.1))
    else
-      window.SetColor(window.Skin.Colors.LightSurface);
+      window.SetColor(pSkin.Colors.LightSurface);
 end;
 
 procedure SetHighlightColor();
 begin
    if(IsEnabled(i)) then
-      window.SetColor(window.Skin.Colors.Highlight)
+      window.SetColor(pSkin.Colors.Highlight)
    else
-      window.SetColor(window.Skin.DisabledColors.Highlight);
+      window.SetColor(pSkin.DisabledColors.Highlight);
 end;
 
 procedure RenderHighlighted(item, offset, itemX: loopint);
@@ -775,9 +778,9 @@ begin
 
    if(GetScissoredRect(r)) then begin
       if(IsEnabled(item)) then
-         window.SetColor(window.Skin.Colors.Highlight)
+         window.SetColor(pSkin.Colors.Highlight)
       else
-         window.SetColor(window.Skin.DisabledColors.Highlight);
+         window.SetColor(pSkin.DisabledColors.Highlight);
 
       if(ItemHighlightWidth > 0) then begin
          inc(r.x, itemX);
@@ -798,7 +801,8 @@ begin
 end;
 
 begin
-   window := uiTWindow(Wnd);
+   window := uiTWindow(wnd);
+   pSkin := uiTSkin(window.Skin);
 
    if(not Transparent) then begin
       if(not OddColored) then
@@ -810,11 +814,11 @@ begin
          renderProperties := renderProperties or wdgRENDER_BLOCK_BORDER;
 
       if(not IsSelected()) or (not SelectBorder) then
-         borderColor := window.Skin.Colors.Border
+         borderColor := pSkin.Colors.Border
       else
-         borderColor := window.Skin.Colors.SelectedBorder;
+         borderColor := pSkin.Colors.SelectedBorder;
 
-      uiRenderWidget.Box(uiTWidget(Self), window.Skin.Colors.LightSurface, borderColor, renderProperties, window.opacity);
+      uiRenderWidget.Box(uiTWidget(Self), pSkin.Colors.LightSurface, borderColor, renderProperties, window.opacity);
    end;
 
    {create rect for items}
@@ -1044,9 +1048,9 @@ end;
 procedure wdgTList.SetTextColor();
 begin
    if(Transparent) then
-      SetColorBlended(uiTWindow(wnd).Skin.Colors.Text)
+      SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.Text)
    else
-      SetColorBlended(uiTWindow(wnd).Skin.Colors.Text);
+      SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.Text);
 end;
 
 procedure wdgTList.SelectNavigableItemFrom(start: loopint);

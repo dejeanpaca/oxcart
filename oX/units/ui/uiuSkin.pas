@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       oxuRunRoutines,
       {ui}
-      oxuUI, uiuTypes, uiuWindowTypes;
+      oxuUI, uiuTypes, uiuWindowTypes, uiuSkinTypes;
 
 CONST
    {window rendering constants}
@@ -192,7 +192,7 @@ var
 
 begin
    oxui.StandardSkin := uiTSkin.Create();
-   oxui.StandardSkin.Name := 'standard';
+   oxui.StandardSkin.Name := 'default';
 
    {set up title and frame sizes}
    normal := ord(uiwFRAME_STYLE_NORMAL);

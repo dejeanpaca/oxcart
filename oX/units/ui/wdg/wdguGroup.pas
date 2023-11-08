@@ -15,7 +15,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont,
       {ui}
-      uiuWindowTypes, uiuWidget, uiuWindow, uiWidgets, uiuWidgetRender, uiuDraw;
+      uiuWindowTypes, uiuSkinTypes,
+      uiuWidget, uiuWindow, uiWidgets, uiuWidgetRender, uiuDraw;
 
 TYPE
 
@@ -46,7 +47,7 @@ IMPLEMENTATION
 VAR
    internal: uiTWidgetClass;
 
-constructor wdgTGroup.Create;
+constructor wdgTGroup.Create();
 begin
    inherited;
 
@@ -65,26 +66,26 @@ begin
    fh := f.GetHeight();
 
    if(not Transparent) then begin
-      SetColor(uiTWindow(wnd).Skin.Colors.Surface);
+      SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Surface);
       uiDraw.Box(RPosition, Dimensions);
    end;
 
    if(RenderBorder) then begin
-      SetColor(uiTWindow(wnd).Skin.Colors.Text);
+      SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Text);
       uiRenderWidget.CurvedFrame(RPosition.x, RPosition.y - Dimensions.h + 1, RPosition.x + Dimensions.w - 1, RPosition.y - fh div 2);
    end;
 
    if(Caption <> '') then begin
       if(RenderBorder) then begin
          if(not Transparent) then
-            SetColor(uiTWindow(wnd).Skin.Colors.Surface)
+            SetColor(uiTSkin(uiTWindow(wnd).Skin).Colors.Surface)
          else
             SetColor(Parent.GetSurfaceColor());
 
          uiDraw.HLine(RPosition.x + 4, RPosition.y - fh div 2, RPosition.x + 12 + f.GetLength(Caption));
       end;
 
-      SetColorBlended(uiTWindow(wnd).Skin.Colors.Text);
+      SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.Text);
       f.Start();
          f.Write(RPosition.x + 8, RPosition.y - fh, Caption);
       oxf.Stop();

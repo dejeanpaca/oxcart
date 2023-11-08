@@ -17,7 +17,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont,
       {ui}
-      uiuWindow, uiuWindowTypes, uiuTypes,
+      uiuWindow, uiuWindowTypes, uiuTypes, uiuSkinTypes,
       uiuWidget, uiWidgets;
 
 TYPE
@@ -145,12 +145,12 @@ var
 
 begin
    pwnd := uiTWindow(wnd);
-   pSkin := pwnd.Skin;
+   pSkin := uiTSkin(pwnd.Skin);
 
    if(pwnd.IsSelected()) then
-      colors := @pwnd.Skin.Window.Colors
+      colors := @pSkin.Window.Colors
    else
-      colors := @pwnd.Skin.Window.InactiveColors;
+      colors := @pSkin.Window.InactiveColors;
 
    if(pwnd.Frame <> uiwFRAME_STYLE_NONE) and (pSkin <> nil) then begin
       if(buttons.n > 0) then begin
@@ -239,7 +239,7 @@ begin
    if(pwnd = nil) then
       exit;
 
-   pSkin := pwnd.Skin;
+   pSkin := uiTSkin(pwnd.Skin);
    if(pwnd.Frame <> uiwFRAME_STYLE_NONE) and (pSkin <> nil) then begin
       th := pwnd.GetTitleHeight();
 

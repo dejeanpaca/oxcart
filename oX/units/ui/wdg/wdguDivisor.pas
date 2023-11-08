@@ -15,7 +15,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont,
       {ui}
-      uiuWidget, uiWidgets, uiuDraw, uiuWindow, uiuWindowTypes;
+      uiuWindowTypes, uiuSkinTypes,
+      uiuWidget, uiWidgets, uiuDraw, uiuWindow;
 
 
 TYPE
@@ -90,7 +91,8 @@ begin
          SetColor(cSurface.Darken(0.8));
          uiDraw.HLine(x, y - 1, x2);
       end else begin
-         SetColorBlendedEnabled(uiTWindow(wnd).Skin.Colors.Text, uiTWindow(wnd).Skin.DisabledColors.Text);
+         SetColorBlendedEnabled(uiTSkin(uiTWindow(wnd).Skin).Colors.Text,
+            uiTSkin(uiTWindow(wnd).Skin).DisabledColors.Text);
 
          CachedFont.Start();
          CachedFont.Write(x + 5 + CachedFont.GetWidth(), y - CachedFont.GetHeight() div 2, Caption);
