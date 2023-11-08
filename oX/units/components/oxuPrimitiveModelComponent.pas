@@ -25,7 +25,7 @@ TYPE
 
       constructor Create(); override;
 
-      procedure Render; override;
+      procedure Render(); override;
 
       procedure GetBoundingBox(out bbox: TBoundingBox); override;
 
@@ -58,7 +58,7 @@ begin
    oxmPrimitive.Init(Model);
 end;
 
-procedure oxTPrimitiveModelComponent.Render;
+procedure oxTPrimitiveModelComponent.Render();
 begin
    Model.Render();
 end;
