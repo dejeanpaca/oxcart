@@ -193,7 +193,6 @@ end;
 
 procedure deinitialize();
 begin
-   console.Selected^.AddCommand('splash', @consoleCallback);
    FreeObject(oxwndSplash);
 end;
 
