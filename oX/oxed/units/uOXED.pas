@@ -71,6 +71,8 @@ TYPE
       {dockable area into which windows are created by default}
       DockableArea: uiTDockableWindow;
 
+      Initialized,
+      Deinitializing,
       {is heap trace used when building OXED}
       UseHeapTrace,
       {is cmem used when building OXED}
