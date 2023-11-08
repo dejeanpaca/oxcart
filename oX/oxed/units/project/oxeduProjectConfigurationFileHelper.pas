@@ -18,8 +18,12 @@ TYPE
    { oxedTProjectConfigurationFileHelper }
 
    oxedTProjectConfigurationFileHelper = object(oxTDvarFile)
-      IsTemp: boolean;
+      {is this a temporary file}
+      IsTemp,
+      {is this a session file}
+      IsSession: boolean;
 
+      {get file name path based on the type above}
       function GetFn(): StdString; virtual;
    end;
 
@@ -29,10 +33,12 @@ implementation
 
 function oxedTProjectConfigurationFileHelper.GetFn(): StdString;
 begin
-   if(not IsTemp) then
-      Result := oxedProject.GetConfigFilePath(FileName)
+   if(IsSession) then
+      Result := oxedProject.GetSessionFilePath(FileName)
+   else if(IsTemp) then
+      Result := oxedProject.GetTempFilePath(FileName)
    else
-      Result := oxedProject.GetTempFilePath(FileName);
+      Result := oxedProject.GetConfigFilePath(FileName);
 end;
 
 INITIALIZATION

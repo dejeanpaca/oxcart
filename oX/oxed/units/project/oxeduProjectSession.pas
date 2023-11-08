@@ -39,7 +39,7 @@ end;
 procedure beforeSave();
 begin
    UpdateVars();
-   oxedProject.RecreateTempDirectory();
+   oxedProject.RecreateSessionDirectory();
 end;
 
 
@@ -54,7 +54,7 @@ INITIALIZATION
 
    oxedProjectSessionFile.Create(dvGroup);
    oxedProjectSessionFile.FileName := OXED_PROJECT_SESSION_FILE;
-   oxedProjectSessionFile.IsTemp := true;
+   oxedProjectSessionFile.IsSession := true;
 
    oxedProjectSessionFile.BeforeLoad := @UpdateVars;
    oxedProjectSessionFile.BeforeSave := @beforeSave;

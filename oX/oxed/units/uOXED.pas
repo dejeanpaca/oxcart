@@ -20,6 +20,8 @@ CONST
    oxPROJECT_DIRECTORY = '.oxproject';
    {project temporary directory}
    oxPROJECT_TEMP_DIRECTORY = '.oxtemp';
+   {project session directory}
+   oxPROJECT_SESSION_DIRECTORY = '.oxsession';
    {project main source name}
    oxPROJECT_MAIN_SOURCE = 'project.pas';
    {project library source name}
