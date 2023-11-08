@@ -47,11 +47,8 @@ var
 
 begin
    if(platform = oxedAndroidPlatform) then begin
-      item := oxedWorkbar.Workbar.FindItemByAction(oxedAndroidBuild.BUILD_TO_PROJECT_ACTION);
-
-      if(item <> nil) then begin
-         oxedWorkbar.Workbar.RemoveItem(item);
-      end;
+      oxedWorkbar.Workbar.RemoveItem(oxedWorkbar.Workbar.FindItemByAction(oxedAndroidBuild.BUILD_TO_PROJECT_ACTION));
+      oxedWorkbar.Workbar.RemoveItem(oxedWorkbar.Workbar.FindItemByAction(oxedAndroidBuild.BUILD_ASSETS_TO_PROJECT_ACTION));
    end;
 end;
 
