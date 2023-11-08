@@ -226,6 +226,7 @@ begin
    {run}
    p := TProcess.Create(nil);
 
+   p.ShowWindow := swoHIDE;
    p.Executable := BuildExec.Output.ExecutableName;
 
    if(BuildExec.Output.ExecutableName <> '') then begin

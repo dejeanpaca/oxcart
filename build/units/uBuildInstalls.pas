@@ -715,7 +715,7 @@ end;
 function TBuildSystemInstalls.GetProcess(): TProcess;
 begin
    Result := TProcess.Create(nil);
-
+   Result.ShowWindow := swoHIDE;
    Result.Options := Result.Options + [poWaitOnExit];
 end;
 

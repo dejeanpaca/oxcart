@@ -63,6 +63,7 @@ begin
    ExitCode := 0;
 
    p := TProcess.Create(nil);
+   p.ShowWindow := swoHIDE;
    p.Executable := path;
    p.Options := p.Options + options;
 
