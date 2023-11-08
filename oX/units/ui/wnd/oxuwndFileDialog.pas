@@ -511,11 +511,11 @@ begin
          uiWidget.SetTarget(wnd, uiTWidgetControlProc(@wdgControl));
 
          {up button}
-         wdg.Up := wdgTButton(wdgButton.Add('^', oxNullPoint, oxNullDimensions, 0).
+         wdg.Up := wdgTButton(wdgButton.Add('^').
             SetID(oxFileDialog.ids.wdgUP));
 
          { path }
-         wdg.Path := wdgTInputBox(wdgInputBox.Add('', oxNullPoint, oxNullDimensions).
+         wdg.Path := wdgTInputBox(wdgInputBox.Add('').
             SetID(oxFileDialog.ids.wdgPATH));
 
          wdg.Path.SetPlaceholder('path');
@@ -524,12 +524,12 @@ begin
          uiWidget.PushTarget();
 
          { system locations list }
-         wdg.SystemGroup := wdgTGroup(wdgGroup.Add('Sytem', oxNullPoint, oxNullDimensions));
+         wdg.SystemGroup := wdgTGroup(wdgGroup.Add('System'));
 
          wdg.SystemGroup.SetTarget();
 
          uiWidget.Create.Instance := TSystemFilesList;
-         wdg.System := wdgTStringList(wdgStringList.Add(oxNullPoint, oxNullDimensions));
+         wdg.System := wdgTStringList(wdgStringList.Add());
          TFileList(wdg.System).Dialog := Self;
 
          wdg.System.Assign(getSystemPaths(Self));
@@ -540,12 +540,12 @@ begin
 
          uiWidget.PushTarget();
 
-         wdg.RecentsGroup := wdgTGroup(wdgGroup.Add('Recents', oxNullPoint, oxNullDimensions));
+         wdg.RecentsGroup := wdgTGroup(wdgGroup.Add('Recents'));
 
          wdg.RecentsGroup.SetTarget();
 
          uiWidget.Create.Instance := TRecentsList;
-         wdg.Recents := wdgTStringList(wdgStringList.Add(oxNullPoint, oxNullDimensions));
+         wdg.Recents := wdgTStringList(wdgStringList.Add());
          TFileList(wdg.Recents).Dialog := Self;
 
          { restore previous target }
@@ -553,7 +553,7 @@ begin
 
          { files }
          uiWidget.Create.Instance := wdgTFileDialogFileList;
-         wdg.Files := wdgTFileDialogFileList(wdgFileList.Add(oxNullPoint, oxNullDimensions));
+         wdg.Files := wdgTFileDialogFileList(wdgFileList.Add());
          wdg.Files.SetDirectoriesOnly(ShowDirectoriesOnly);
          wdg.Files.Dialog := Self;
          wdg.Files.IncludeParentDirectoryLink := false;
@@ -561,17 +561,17 @@ begin
          uiWidget.LastRect.GoLeft();
 
          if(filenameInput) then begin
-            wdg.Filename := wdgInputBox.Add('', oxNullPoint, oxNullDimensions);
+            wdg.Filename := wdgInputBox.Add('');
 
             wdg.Filename.SetPlaceholder('Save file as');
             wdg.Filename.SetControlMethod(@filenameInputControl);
          end;
 
          { divisor }
-         wdg.Separator := wdgDivisor.Add('', uiWidget.LastRect.BelowOf());
+         wdg.Separator := wdgDivisor.Add('');
 
          { cancel button }
-         wdg.Cancel := wdgTButton(wdgButton.Add('Cancel', oxNullPoint, oxNullDimensions, 0).
+         wdg.Cancel := wdgTButton(wdgButton.Add('Cancel').
             SetID(uiWidget.IDs.Cancel));
 
          { save/open button }
@@ -581,7 +581,7 @@ begin
             caption := 'Save';
          end;
 
-         wdg.Ok := wdgTButton(wdgButton.Add(caption, oxNullPoint, oxNullDimensions, 0).
+         wdg.Ok := wdgTButton(wdgButton.Add(caption).
             SetID(uiWidget.IDs.OK));
 
          {disable by default if filename input enabled}
@@ -590,8 +590,7 @@ begin
 
          {create directory}
          if(DialogType <> oxFILE_DLG_OPEN) then begin
-            wdg.CreateDirectory := wdgTButton(wdgButton.Add('Create Directory',
-               oxNullPoint, oxNullDimensions, 0).
+            wdg.CreateDirectory := wdgTButton(wdgButton.Add('Create Directory').
                SetID(oxFileDialog.ids.wdgCREATE_DIRECTORY));
 
             wdg.CreateDirectory.Callback.Use(@createDirectory);
