@@ -57,7 +57,8 @@ TYPE
          Components: TComponentProvider;
          UseRoutines: TProcedures;
          StartRoutines: TProcedures;
-         Init: oxTRunRoutines;
+         Init,
+         AfterInit: oxTRunRoutines;
          OnWindowInit: oxTRendererInitRoutines;
 
          Properties: oxTRendererProperties;
@@ -77,6 +78,11 @@ TYPE
       procedure Initialize(); virtual;
       {deinitialize the renderer}
       procedure DeInitialize(); virtual;
+
+      {after initialize the renderer}
+      procedure AfterInitialize(); virtual;
+      {after deinitialize the renderer}
+      procedure AfterDeinitialize(); virtual;
 
       {initialize the renderer}
       procedure OnInitialize(); virtual;
@@ -200,6 +206,16 @@ begin
    Init.dCall();
 
    OnDeInitialize();
+end;
+
+procedure oxTRenderer.AfterInitialize();
+begin
+   AfterInit.iCall();
+end;
+
+procedure oxTRenderer.AfterDeinitialize();
+begin
+   AfterInit.dCall();
 end;
 
 

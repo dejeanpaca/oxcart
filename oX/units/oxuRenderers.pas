@@ -49,6 +49,8 @@ TYPE
       procedure Initialize();
       procedure DeInitialize();
 
+      procedure Startup();
+
       procedure Register(renderer: oxTRenderer);
       procedure SelectRenderer(renderer: oxTRenderer);
       procedure Use(renderer: oxTRenderer);
@@ -155,6 +157,12 @@ begin
    end;
 end;
 
+procedure oxTRenderers.Startup();
+begin
+   StartRoutines.Call();
+   oxRenderer.StartRoutines.Call();
+end;
+
 procedure oxTRenderers.Register(renderer: oxTRenderer);
 begin
    if(renderer <> nil) then begin
@@ -258,4 +266,3 @@ INITIALIZATION
    parameters.AddHandler(paramHandler, 'ox.renderer', '-ox.renderer', @processParam);
 
 END.
-
