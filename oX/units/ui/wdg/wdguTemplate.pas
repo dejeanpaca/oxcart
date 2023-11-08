@@ -21,8 +21,8 @@ TYPE
    end;
 
    wdgTTemplateGlobal = object(specialize wdgTBase<wdgTTemplate>)
-     {adds a template widget to a window}
-     function Add(const Caption: StdString; const Pos: oxTPoint; const Dim: oxTDimensions): wdgTTemplate;
+      {adds a template widget to a window}
+      function Add(const Caption: StdString; const Pos: oxTPoint; const Dim: oxTDimensions): wdgTTemplate;
    end;
 
 VAR
@@ -35,7 +35,7 @@ function wdgTTemplateGlobal.Add(const Caption: StdString; const Pos: oxTPoint; c
 begin
    Result := inherited AddInternal(Pos, Dim);
 
-  if(Result <> nil) then begin
+   if(Result <> nil) then begin
       {setup the caption}
       Result.SetCaption(Caption);
 
