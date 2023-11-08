@@ -32,6 +32,8 @@ TYPE
       function GetPath(): StdString;
       function GetIdentifier(): StdString;
       function GetDisplayName(): StdString;
+
+      class procedure Init(out p: oxedTPackage); static;
    end;
 
    oxedTPackagesList = specialize TSimpleList<oxedTPackage>;
@@ -59,8 +61,10 @@ function oxedTPackage.GetIdentifier(): StdString;
 begin
    if(Id <> '') then
       Result := Id
+   else if(Path <> '') then
+      Result := '@' + Path
    else
-      Result := '@' + Path;
+      Result := '';
 end;
 
 function oxedTPackage.GetDisplayName(): StdString;
@@ -72,6 +76,11 @@ begin
          Result := Id;
    end else
       Result := Path;
+end;
+
+class procedure oxedTPackage.Init(out p: oxedTPackage);
+begin
+   ZeroOut(p, SizeOf(p));
 end;
 
 END.
