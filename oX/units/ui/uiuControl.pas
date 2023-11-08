@@ -34,12 +34,16 @@ TYPE
    );
 
    uiPControlID = ^uiTControlID;
+
+   { uiTControlID }
+
    uiTControlID = record
       Name: StdString;
       {control Id (negative Ids may indicate external reference)}
       ID: loopint;
 
       function ToString(): StdString;
+      procedure Destroy();
    end;
 
 
@@ -230,6 +234,12 @@ begin
      Result := Name + ', ' + sf(ID)
   else
      Result := sf(ID);
+end;
+
+procedure uiTControlID.Destroy();
+begin
+   Name := '';
+   ID := 0;
 end;
 
 { uiTControlIDs }
