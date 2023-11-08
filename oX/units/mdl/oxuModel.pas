@@ -49,6 +49,9 @@ TYPE
       procedure Scale(x, y, z: single);
       {rotate all model meshes by the given angles around origin (0, 0, 0)}
       procedure Rotate(x, y, z: single);
+
+      {validate the model}
+      procedure Validate();
    end;
 
    { oxTModelGlobal }
@@ -195,6 +198,20 @@ var
 begin
    for i := 0 to Meshes.n - 1 do begin
       Meshes.List[i].Rotate(x, y, z);
+   end;
+end;
+
+procedure oxTModel.Validate();
+var
+   i: loopint;
+
+begin
+   if(Length(Meshes.List) <> Meshes.n) then begin
+      Meshes.n := Length(Meshes.List);
+   end;
+
+   for i := 0 to Meshes.n - 1 do begin
+      Meshes.List[i].Validate();
    end;
 end;
 
