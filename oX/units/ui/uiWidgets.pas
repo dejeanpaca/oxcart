@@ -132,7 +132,7 @@ TYPE
       function ResizeComputed(): uiTWidget;
 
       {auto set widget dimensions}
-      procedure AutoSetWidgetDimensions(force: boolean = false);
+      procedure AutoSetDimensions(force: boolean = false);
 
       {fill the window}
       procedure FillWindow();
@@ -981,7 +981,7 @@ end;
 procedure uiTWidgetHelper.AutoSize();
 begin
    if(not DimensionsSet) then begin
-      AutoSetWidgetDimensions();
+      AutoSetDimensions();
 
       uiWidget.LastRect.Assign(Position, Dimensions);
    end;
@@ -1434,7 +1434,7 @@ begin
    Result := self;
 end;
 
-procedure uiTWidgetHelper.AutoSetWidgetDimensions(force: boolean);
+procedure uiTWidgetHelper.AutoSetDimensions(force: boolean);
 var
    d: oxTDimensions;
 
