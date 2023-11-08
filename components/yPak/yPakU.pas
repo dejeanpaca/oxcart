@@ -3,12 +3,13 @@
    Copyright (C) 2011. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxheader.inc}
 UNIT yPakU;
 
 INTERFACE
 
-   USES uFile, uyPak;
+   USES
+      uFile, uyPak;
 
 CONST
    { filtering modes }
