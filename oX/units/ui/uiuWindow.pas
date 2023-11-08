@@ -926,9 +926,10 @@ begin
 
          Notification(uiWINDOW_MAXIMIZE);
          OnMaximize();
+      end else begin
+         if(IsOxwReady()) then
+            GetPlatform().Fullscreen(oxTWindow(Self));
       end;
-
-      {TODO: Maximize ox window}
    end;
 end;
 
@@ -949,9 +950,10 @@ begin
 
          Move(MaximizedPosition);
          Resize(MaximizedDimensions);
+      end else begin
+         if(IsOxwReady()) then
+            GetPlatform().Restore(oxTWindow(Self));
       end;
-
-      {TODO: Restore ox window}
 
       Notification(uiWINDOW_RESTORE);
    end;
@@ -1869,11 +1871,8 @@ begin
    if(Parent <> nil) then begin
       Result.x := (Parent.Dimensions.w div 2) - (d.w div 2);
       Result.y := (Parent.Dimensions.h div 2) + (d.h div 2);
-   end else begin
-      {TODO: Get screen center position}
-      Result.x := 0;
-      Result.y := 0;
-   end;
+   end else
+      GetPlatform().GetCenterPosition(oxTWindow(Self), Result);
 end;
 
 procedure uiTWindowHelper.AutoCenter();
