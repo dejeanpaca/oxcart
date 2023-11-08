@@ -13,7 +13,7 @@ INTERFACE
       {oX}
       oxuUI, oxuTypes, oxuTexture, oxuFont, oxuRenderUtilities, oxuRender, oxuTransform, oxuResourcePool,
       {ui}
-      uiuTypes, uiuWindowTypes, uiuSkinTypes, uiuDraw,
+      uiuTypes, uiuControl, uiuWindowTypes, uiuSkinTypes, uiuDraw,
       uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuDrawUtilities,
       wdguBase, wdguWorkbar;
 
@@ -97,6 +97,7 @@ TYPE
       Size: loopint;
 
       Properties: wdgTToolbarItemProperties;
+      Parent: uiTControl;
 
       {spin speed}
       SpinSpeed: single;
@@ -105,6 +106,7 @@ TYPE
       procedure Activate(setActive: boolean = true);
       procedure SetSpin(spin: boolean = true);
       procedure SetHighlightable(highligtable: boolean = true);
+      procedure SetHint(const newHint: StdString);
    end;
 
    wdgTToolbarItems = specialize TSimpleList<wdgTToolbarItem>;
@@ -127,6 +129,7 @@ TYPE
       procedure Render(); override;
       procedure Hover(x, y: longint; what: uiTHoverEvent); override;
       procedure Point(var e: appTMouseEvent; x, y: longint); override;
+      procedure Update(); override;
 
       function AddItem(): wdgPToolbarItem;
       function AddSeparator(): wdgPToolbarItem;
@@ -154,6 +157,8 @@ TYPE
 
       protected
          TotalWidth: loopint;
+         {true if a hint was changed on the currently highlighted item}
+         HintChanged: boolean;
 
          {tells what the mouse is over}
          function MouseOver(px, py: longint): longint;
@@ -210,6 +215,12 @@ begin
       Include(Properties, WDG_TOOLBAR_ITEM_HIGHLIGHTABLE)
    else
       Exclude(Properties, WDG_TOOLBAR_ITEM_HIGHLIGHTABLE);
+end;
+
+procedure wdgTToolbarItem.SetHint(const newHint: StdString);
+begin
+   Hint := newHint;
+   wdgTToolbar(Parent).HintChanged := true;
 end;
 
 { wdgTToolbar }
@@ -393,36 +404,49 @@ begin
    end;
 end;
 
+procedure wdgTToolbar.Update();
+begin
+   if(HintChanged) then begin
+      if(HighlightedItem > -1) then begin
+         Hint := Items.List[HighlightedItem].Hint;
+      end;
+
+      HintChanged := false;
+   end;
+end;
+
 function wdgTToolbar.AddItem(): wdgPToolbarItem;
 var
    item: wdgTToolbarItem;
 
 begin
    ZeroOut(item, SizeOf(item));
+
+   item.Parent := Self;
    item.Properties := [WDG_TOOLBAR_ITEM_ENABLED, WDG_TOOLBAR_ITEM_HIGHLIGHTABLE];
    item.Color := GetColor(wdgscTOOLBAR_REGULAR);
    item.SpinSpeed := 1;
 
    Items.Add(item);
 
-   result := @Items.List[Items.n -1];
+   Result := @Items.List[Items.n -1];
 end;
 
 function wdgTToolbar.AddSeparator(): wdgPToolbarItem;
 begin
-   result := AddItem();
-   result^.Typ := WDG_TOOLBAR_ITEM_SEPARATOR;
+   Result := AddItem();
+   Result^.Typ := WDG_TOOLBAR_ITEM_SEPARATOR;
 
    Recalculate();
 end;
 
 function wdgTToolbar.AddButton(glyph: oxTTexture; newAction: TEventID; callback: TProcedure): wdgPToolbarItem;
 begin
-   result := AddItem();
-   result^.Typ := WDG_TOOLBAR_ITEM_BUTTON;
-   result^.Action := newAction;
-   result^.Glyph := glyph;
-   result^.Callback.Use(callback);
+   Result := AddItem();
+   Result^.Typ := WDG_TOOLBAR_ITEM_BUTTON;
+   Result^.Action := newAction;
+   Result^.Glyph := glyph;
+   Result^.Callback.Use(callback);
 
    if(glyph <> nil) then
       glyph.MarkUsed();
@@ -450,11 +474,11 @@ end;
 
 function wdgTToolbar.AddCaption(const newCaption: StdString; newAction: TEventID; callback: TProcedure = nil): wdgPToolbarItem;
 begin
-   result := AddItem();
-   result^.Typ := WDG_TOOLBAR_ITEM_CAPTION;
-   result^.Caption := newCaption;
-   result^.Action := newAction;
-   result^.Callback.Use(callback);
+   Result := AddItem();
+   Result^.Typ := WDG_TOOLBAR_ITEM_CAPTION;
+   Result^.Caption := newCaption;
+   Result^.Action := newAction;
+   Result^.Callback.Use(callback);
 
    Recalculate();
 end;
@@ -484,7 +508,7 @@ begin
    if(index > -1) then
       Result := @Items.List[index]
    else
-      result := nil;
+      Result := nil;
 end;
 
 procedure wdgTToolbar.RemoveItem(item: wdgPToolbarItem);
@@ -634,7 +658,7 @@ begin
       end;
    end;
 
-   result := -1;
+   Result := -1;
 end;
 
 
