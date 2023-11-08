@@ -96,19 +96,19 @@ begin
 
    wnd := oxWindow.Current;
 
-   projections[0] := oxTProjection.Create(oxTProjection(wnd.Projection));
+   projections[0] := oxTProjection.Create(wnd.Projection);
    projections[0].Name := 'ox';
    projections[0].ClearColor.Assign(0.2, 0.2, 1.0, 1.0);
    projections[0].SetViewport(0, 0, wnd.Dimensions.w div 2, wnd.Dimensions.h);
    projections[0].Perspective(60, 0.5, 1000.0);
 
-   projections[1] := oxTProjection.Create(oxTProjection(wnd.Projection));
+   projections[1] := oxTProjection.Create(wnd.Projection);
    projections[1].Name := 'gl';
    projections[1].ClearColor.Assign(1.0, 0.2, 0.2, 1.0);
    projections[1].SetViewport(wnd.Dimensions.w div 2, 0, wnd.Dimensions.w div 2, wnd.Dimensions.h);
    projections[1].Perspective(60, 0.5, 1000.0);
 
-   oxTProjection(wnd.Projection).Enabled := false;
+   wnd.Projection.Enabled := false;
 
    primitive.InitCube();
 end;

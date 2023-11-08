@@ -182,7 +182,7 @@ end;
 
 procedure oxedTSceneWindow.CleanupRender();
 begin
-   oxTProjection(oxTWindow(oxwParent).Projection).Apply(false);
+   oxTWindow(oxwParent).Projection.Apply(false);
    uiWindow.RenderPrepare(oxTWIndow(oxwParent));
 
    uiDraw.Start();
