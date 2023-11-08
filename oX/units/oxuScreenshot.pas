@@ -21,12 +21,15 @@ INTERFACE
       uImage, imguRW, imguOperations;
 
 TYPE
+   oxTScreenshotNameRoutine = function(): StdString;
 
    { oxTScreenshot }
 
    oxTScreenshot = record
       CaptureKey: appTKey;
-      Path: string;
+      Path: StdString;
+
+      GetScreenshotName: oxTScreenshotNameRoutine;
 
       {makes a screenshot}
       function Make(var image: imgTImage; wnd: oxTWindow = nil): longint;
@@ -61,10 +64,10 @@ end;
 
 function oxTScreenshot.CallRenderer(var image: imgTImage; wnd: oxTWindow; x, y, w, h: loopint): longint;
 var
-   errcode: longint;
+   errorCode: longint;
 
 begin
-   result := eNONE;
+   Result := eNONE;
 
    {free the previous image}
    img.Dispose(image);
@@ -94,12 +97,12 @@ begin
       oxRenderer.Screenshot(wnd, image, x, y, w, h);
 
       {get the image to TGA pixel format}
-      errcode := imgOperations.Transform(image, PIXF_BGR);
+      errorCode := imgOperations.Transform(image, PIXF_BGR);
 
-      if(errcode <> 0) then
-         result := oxeIMAGE;
+      if(errorCode <> 0) then
+         Result := oxeIMAGE;
    end else
-      result := oxeIMAGE;
+      Result := oxeIMAGE;
 end;
 
 function oxTScreenshot.Save(const fn: string; var img: imgTImage): longint;
@@ -124,14 +127,15 @@ end;
 function oxTScreenshot.Get(const fn: string; wnd: oxTWindow = nil): longint;
 var
    image: imgTImage = nil;
-   errCode: longint;
+   errorCode: longint;
 
 begin
-   errCode := Make(image, wnd);
-   if(errCode <> 0) then begin
-      log.e('Failed to create a screenshot: ' + sf(errCode));
+   errorCode := Make(image, wnd);
+
+   if(errorCode <> 0) then begin
+      log.e('Failed to create a screenshot: ' + sf(errorCode));
       img.Dispose(image);
-      exit(errCode);
+      exit(errorCode);
    end;
 
    Result := Save(fn, image);
@@ -144,10 +148,15 @@ var
    name: string;
 
 begin
-   name := DateTimeToStr(Now);
+   name := GetScreenshotName();
    fn := appPath.Configuration.Path + 'screenshots' + DirectorySeparator + name + '.tga';
 
    Result := Get(fn, wnd);
+end;
+
+function getScreenshotName(): StdString;
+begin
+   Result := FormatDateTime('yyyymmdd"T"hhmmss', Now);
 end;
 
 procedure gkHandler(wnd: oxTWindow);
@@ -179,6 +188,7 @@ end;
 
 INITIALIZATION
    oxScreenshot.CaptureKey := gkHandlerKey.Key;
+   oxScreenshot.GetScreenshotName := @getScreenshotName;
 
    ox.Init.Add('screenshot', @initialize);
 

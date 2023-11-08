@@ -48,7 +48,7 @@ begin
          FileUtils.CreateDirectory(path);
       end;
 
-      name := DateTimeToStr(Now);
+      name := oxScreenshot.GetScreenshotName();
       path := path + name + '.tga';
 
       oxScreenshot.Make(image, oxTWindow(sceneWnd.oxwParent),
