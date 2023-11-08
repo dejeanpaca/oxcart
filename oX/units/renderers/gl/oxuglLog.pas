@@ -31,14 +31,17 @@ begin
          log.i(sf(i) + ': ' + oglExtensions.pExtensions[i].Name);
    end;
 
-   log.Collapsed('Platform extensions');
+   if(oglExtensions.nPlatformSpecific > 0) then begin
+      log.Collapsed('Platform extensions');
 
-   for i := 0 to oglExtensions.nPlatformSpecific - 1 do begin
-      if(oglExtensions.PlatformSpecific[i].Present) then
-         log.i(sf(i) + ': ' + oglExtensions.PlatformSpecific[i].Name);
+      for i := 0 to oglExtensions.nPlatformSpecific - 1 do begin
+         if(oglExtensions.PlatformSpecific[i].Present) then
+            log.i(sf(i) + ': ' + oglExtensions.PlatformSpecific[i].Name);
+      end;
+
+      log.Leave();
    end;
 
-   log.Leave();
    log.Leave();
 end;
 
