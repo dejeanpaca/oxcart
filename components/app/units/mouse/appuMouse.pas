@@ -97,7 +97,7 @@ TYPE
    appPPointerState = ^appTPointerState;
    appTPointerState = record
       nButtons: longint;
-      btnState: longint;
+      ButtonState: longint;
       x,
       y,
       mx,
@@ -380,7 +380,7 @@ end;
 
 function appTPointerDriver.ButtonState(devID: longint; wnd: pointer): longword;
 begin
-   Result := appm.Pointer[devID].btnState;
+   Result := appm.Pointer[devID].ButtonState;
 end;
 
 INITIALIZATION
