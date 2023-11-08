@@ -49,6 +49,8 @@ TYPE
 
       {center the mesh to 0, 0, 0 origin}
       procedure Center();
+      {translate the model by the given amount}
+      procedure Translate(x, y, z: single);
       {scale all model meshes by the given factor}
       procedure Scale(x, y, z: single);
       {rotate all model meshes by the given angles around origin (0, 0, 0)}
@@ -186,7 +188,6 @@ procedure oxTModel.Center();
 var
    bbox: TBoundingBox;
    offset: TVector3f;
-   i: loopint;
 
 begin
    GetBoundingBox(bbox);
@@ -196,11 +197,16 @@ begin
    offset[1] := 0 - offset[1];
    offset[2] := 0 - offset[2];
 
-   writeln(bbox[0].ToString(), ' ', bbox[1].ToString);
-   writeln(offset.ToString());
+   Translate(offset[0], offset[1], offset[2]);
+end;
 
+procedure oxTModel.Translate(x, y, z: single);
+var
+   i: loopint;
+
+begin
    for i := 0 to Meshes.n - 1 do begin
-      Meshes.List[i].Offset(offset[0], offset[1], offset[2]);
+      Meshes.List[i].Translate(x, y, z);
    end;
 end;
 
