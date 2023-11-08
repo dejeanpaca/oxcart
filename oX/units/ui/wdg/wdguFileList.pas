@@ -410,10 +410,13 @@ begin
 
    uiFiles.SortFiles(CurrentFiles);
 
-   Result.Initialize(Result, CurrentFiles.n);
+   if(CurrentFiles.n > 0) then begin
+      Result.Initialize(Result, CurrentFiles.n);
 
-   for i := 0 to (CurrentFiles.n - 1) do
-      Result.Add(@CurrentFiles.List[i]);
+      for i := 0 to (CurrentFiles.n - 1) do
+         Result.Add(@CurrentFiles.List[i]);
+   end else
+      Result.InitializeEmpty(Result);
 end;
 
 function wdgTHierarchicalFileList.Expandable(index: loopint): boolean;
