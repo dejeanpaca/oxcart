@@ -11,9 +11,9 @@ UNIT oxuwndBuildSettings;
 INTERFACE
 
    USES
-      uStd, uBuild,
+      uStd, uBuild, StringUtils,
       {ox}
-      uOX, oxuTypes, oxuwndSettings,
+      uOX, oxuTypes, oxuwndSettings, uApp,
       {ui}
       uiWidgets, wdguLabel, wdguInputBox, wdguButton, wdguDropDownList, wdguDivisor;
 
@@ -25,9 +25,9 @@ VAR
       ConfigPath: wdgTInputBox;
    end;
 
-procedure InitSettings();
+procedure openBuildPath();
 begin
-
+   app.OpenFileManager(build.Tools.Build);
 end;
 
 procedure revertSettings();
@@ -40,6 +40,7 @@ var
    dropDown: wdgTDropDownList;
    i: loopint;
    platform: PBuildPlatform;
+   laz: PBuildLazarusInstall;
 
 begin
    oxwndSettings.Tabs.AddTab('Build', 'build');
@@ -48,15 +49,16 @@ begin
    wdg.ConfigPath := wdgInputBox.Add('', uiWidget.LastRect.BelowOf(), oxNullDimensions);
 
    wdgButton.Add('Reload Configuration');
-   wdgButton.Add('Open build path', uiWidget.LastRect.RightOf(), oxNullDimensions, 0);
+   wdgButton.Add('Open build path', uiWidget.LastRect.RightOf(), oxNullDimensions, @openBuildPath);
 
    uiWidget.LastRect.GoLeft();
 
    wdgDivisor.Add('Configuration', uiWidget.LastRect.BelowOf());
-   wdgLabel.Add('Lazarus Path: ' + build.LazarusPath);
-   wdgLabel.Add('Tools path:   ' + build.Tools.path);
-   wdgLabel.Add('Build system: ' + build.Tools.build);
+   wdgLabel.Add('Tools path:   ' + build.Tools.Path);
+   wdgLabel.Add('Build system: ' + build.Tools.Build);
    wdgLabel.Add('Build mode:   ' + build.BuildMode);
+
+   uiWidget.LastRect.GoBelow();
 
    for i := 0 to build.Platforms.n - 1 do begin
       platform := @build.Platforms.List[i];
@@ -66,18 +68,38 @@ begin
       else
          wdgDivisor.Add('Platform: ' + platform^.Name, uiWidget.LastRect.BelowOf());
 
-      wdgLabel.Add('FPC Path: ' + platform^.FpcPath);
+      wdgLabel.Add('FPC Path: ' + platform^.Path);
+      wdgLabel.Add('FPC Config Path: ' + platform^.ConfigPath);
    end;
+
+   uiWidget.LastRect.GoBelow();
+
+   for i := 0 to build.LazarusInstalls.n - 1 do begin
+      laz := @build.LazarusInstalls.List[i];
+
+      if(i = 0) then
+         wdgDivisor.Add('Lazarus: Default', uiWidget.LastRect.BelowOf())
+      else
+         wdgDivisor.Add('Lazarus: ' + laz^.Name, uiWidget.LastRect.BelowOf());
+
+      wdgLabel.Add('Lazarus Path: ' + laz^.Path);
+      wdgLabel.Add('Lazarus Config Path: ' + laz^.ConfigPath);
+      wdgLabel.Add('Use FPC: ' + laz^.UseFpc + ' (found: ' + sf(laz^.FPC <> nil) + ')');
+   end;
+
+   uiWidget.LastRect.GoBelow();
 
    wdgDivisor.Add('Preview', uiWidget.LastRect.BelowOf());
 
    wdgLabel.Add('Units');
+
    dropDown := wdgDropDownList.Add(uiWidget.LastRect.BelowOf(), oxDimensions(480, 20));
    for i := 0 to build.Units.n - 1 do begin
       dropDown.Add(build.Units.List[i]);
    end;
 
    wdgLabel.Add('Includes');
+
    dropDown := wdgDropDownList.Add(uiWidget.LastRect.BelowOf(), oxDimensions(480, 20));
    for i := 0 to build.Includes.n - 1 do begin
       dropDown.Add(build.Includes.List[i]);
@@ -86,7 +108,6 @@ end;
 
 procedure init();
 begin
-   oxwndSettings.OnInit.Add(@InitSettings);
    oxwndSettings.OnRevert.Add(@revertSettings);
    oxwndSettings.PreAddTabs.Add(@PreAddTabs);
 end;
