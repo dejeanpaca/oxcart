@@ -340,7 +340,10 @@ begin
       r.w := current^.TotalWidth;
       r.h := current^.TotalHeight;
 
-      RenderTabHeader(r, i, [uiCONTROL_GRID_LEFT]);
+      if(Vertical) then
+         RenderTabHeader(r, i, [uiCONTROL_GRID_LEFT])
+      else
+         RenderTabHeader(r, i, [uiCONTROL_GRID_TOP])
    end;
 
    {now render tab title text}
