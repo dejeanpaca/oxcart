@@ -35,7 +35,7 @@ IMPLEMENTATION
 class procedure oxedTMenuToolbar.OnResize();
 begin
    if(oxedMenuToolbar.Toolbar <> nil) then begin
-      oxedMenuToolbar.Toolbar.AutoSetDimensions(true);
+      oxedMenuToolbar.Toolbar.AutoSetWidgetDimensions(true);
       oxedMenuToolbar.Toolbar.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT, false);
    end;
 end;
