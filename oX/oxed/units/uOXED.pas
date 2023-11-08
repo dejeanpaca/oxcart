@@ -97,7 +97,7 @@ end;
 
 class procedure oxedTGlobal.OpenConfigDirectory();
 begin
-   app.OpenFileManager(appPath.configuration.path);
+   app.OpenFileManager(appPath.Configuration.Path);
 end;
 
 class procedure oxedTGlobal.OpenLogs();

@@ -27,15 +27,15 @@ IMPLEMENTATION
 procedure setString(code: longint; const prop: string);
 begin
    if(code = APP_PATHS_PROP_STRING_PRESET_CONFIG) then
-      appPath.configuration.preset := prop
+      appPath.Configuration.Preset := prop
    else if(code = APP_PATHS_PROP_STRING_CONFIG) then
-      appPath.configuration.path := prop;
+      appPath.Configuration.Path := prop;
 end;
 
 procedure setBoolean(code: longint; prop: boolean);
 begin
    if(code = APP_PATHS_PROP_BOOL_CONFIG_CREATED) then
-      appPath.configuration.created := prop;
+      appPath.Configuration.Created := prop;
 end;
 
 INITIALIZATION

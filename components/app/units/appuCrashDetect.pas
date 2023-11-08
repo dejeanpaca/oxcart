@@ -37,7 +37,7 @@ IMPLEMENTATION
 
 function appTCrashDetect.GetFileName(): string;
 begin
-   result := appPath.configuration.path + 'crashdetect';
+   result := appPath.Configuration.Path + 'crashdetect';
 end;
 
 function appTCrashDetect.Run(): boolean;
