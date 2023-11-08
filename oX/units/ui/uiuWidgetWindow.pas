@@ -177,7 +177,7 @@ begin
 
    uiWindow.Create.Frame := uiwFRAME_STYLE_NONE;
 
-   uiWindow.Create.Properties := uiWindow.Create.Properties + [uiwndpMOVE_BY_SURFACE, uiwndpRESIZABLE];
+   uiWindow.Create.Properties := uiWindow.Create.Properties - [uiwndpMOVE_BY_SURFACE, uiwndpRESIZABLE];
    uiWindow.Create.ZIndex := uiWidgetWindow.ZIndex;
    Include(uiWindow.Create.Properties, uiwndpNO_DISPOSE_OF_EXT_DATA);
 
