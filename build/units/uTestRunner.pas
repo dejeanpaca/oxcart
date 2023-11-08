@@ -3,7 +3,7 @@
    Copyright (C) 2015. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT uTestRunner;
 
 INTERFACE
