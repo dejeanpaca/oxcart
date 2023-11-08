@@ -173,6 +173,9 @@ TYPE
       {load configured units}
       procedure LoadUnits();
 
+      {load the specified config file}
+      procedure LoadConfigFile(const fn: string);
+
       {automatically determine config path}
       procedure AutoDetermineConfigPath();
 
@@ -302,6 +305,7 @@ VAR
    dvUnitsBaseDarwin: TDVar;
 
    currentMode: string = 'fpc';
+   currentConfigFilePath,
    currentValue: string;
 
    dvFPC,
@@ -751,7 +755,14 @@ var
 begin
    fn := ConfigPath + 'units.config';
 
+   LoadConfigFile(fn);
+end;
+
+procedure TBuildSystem.LoadConfigFile(const fn: string);
+begin
    if(FileUtils.Exists(fn) > 0) then begin
+      currentConfigFilePath := ExtractFilePath(fn);
+
       {read units from unit configuration}
       dvarf.ReadText(dvgUnits, fn);
    end;
@@ -1670,10 +1681,8 @@ begin
    Result := False;
    ReplaceDirSeparators(path);
 
-   if(isRelativePath(path)) then begin
-      {TODO: Use current config file path}
-      path := ExpandFileName(build.ConfigPath + currentValue);
-   end;
+   if(isRelativePath(path)) then
+      path := ExpandFileName(currentConfigFilePath + currentValue);
 
    if(doesIncludeAll(path)) then
       exit(True);
@@ -1768,8 +1777,6 @@ var
    platform: PBuildPlatform;
 
 begin
-   {TODO: Check if specified fpc exists in build.Platforms}
-
    if(currentMode = 'lazarus') and (currentLazarus <> nil) then begin
       platform := build.Platforms.findByName(currentValue);
 
