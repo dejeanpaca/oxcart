@@ -90,6 +90,10 @@ TYPE
       PreviousBuildArch: oxedTPlatformArchitecture;
       {current build mechanism}
       BuildMechanism: oxedTBuildMechanism;
+
+      BuildCPU,
+      BuildOS: StdString;
+
       {is the last build ok}
       BuildOk,
       BuildFailed,
@@ -317,7 +321,7 @@ begin
    for i := 0 to oxFeatures.List.n - 1 do begin
       feature := @oxFeatures.List.List[i];
 
-      if(oxFeatures.IsSupported(feature^, BuildInstalls.CurrentPlatform^.OS, IsLibrary())) then begin
+      if(oxFeatures.IsSupported(feature^, BuildOS, IsLibrary())) then begin
          if(lib) then begin
             {skip renderer features as we'll include only a single renderer}
             if(pos('renderer.', feature^.Name) = 1) then
@@ -405,13 +409,17 @@ var
 
 begin
    for idx := 0 to p.Units.n - 1 do begin
-      relativePath := getRelativePath(path, p.Units.List[idx].Path);
-      f.AddUnitPath(relativePath);
+      if(p.Units.List[idx].IsSupported(oxedBuild.BuildOS, oxedBuild.IsLibrary())) then begin
+         relativePath := getRelativePath(path, p.Units.List[idx].Path);
+         f.AddUnitPath(relativePath);
+      end;
    end;
 
    for idx := 0 to p.IncludeFiles.n - 1 do begin
-      relativePath := getRelativePath(path, p.IncludeFiles.List[idx].Path);
-      f.AddIncludePath(relativePath);
+      if(p.Units.List[idx].IsSupported(oxedBuild.BuildOS, oxedBuild.IsLibrary())) then begin
+         relativePath := getRelativePath(path, p.IncludeFiles.List[idx].Path);
+         f.AddIncludePath(relativePath);
+      end;
    end;
 end;
 
@@ -601,19 +609,37 @@ function GetUsesString(): TAppendableString;
 
    procedure processPackage(var p: oxedTPackage);
    var
-      i: loopint;
+      i,
+      j,
+      total: loopint;
       idx: loopint;
       ppath: oxedPPackagePath;
 
    begin
+      total := 0;
+
+      {first, get total number of units supported for this build}
       for i := 0 to p.Units.n - 1 do begin
          ppath := @p.Units.List[i];
 
-         for idx := 0 to ppath^.Units.n - 1 do begin
-           if(i < p.Units.n - 1) or (idx < ppath^.Units.n - 1) then
-              Result.Add('   {%H-}' + ppath^.Units.List[idx] + ',')
-           else
-              Result.Add('   {%H-}' + ppath^.Units.List[idx]);
+         if(ppath^.IsSupported(oxedBuild.BuildOS, oxedBuild.IsLibrary())) then
+            inc(total, ppath^.Units.n);
+      end;
+
+      {include all supported units}
+      idx := 0;
+      for i := 0 to p.Units.n - 1 do begin
+         ppath := @p.Units.List[i];
+
+         if(ppath^.IsSupported(oxedBuild.BuildOS, oxedBuild.IsLibrary())) then begin
+            for j := 0 to ppath^.Units.n - 1 do begin
+               if(idx < total - 1) then
+                  Result.Add('   {%H-}' + ppath^.Units.List[j] + ',')
+               else
+                  Result.Add('   {%H-}' + ppath^.Units.List[j]);
+
+               inc(idx);
+            end;
          end;
       end;
    end;
@@ -1073,13 +1099,10 @@ end;
 procedure SetupFPCBuildOptions();
 var
    arch: oxedTPlatformArchitecture;
-   cpu,
-   os,
    fn: StdString;
 
 begin
    arch := oxedBuild.BuildArch;
-   arch.GetPlatformString().Separate(cpu, os);
 
    {setup build options}
    build.ResetOptions();
@@ -1088,8 +1111,8 @@ begin
    build.FPCOptions.UnitOutputPath := oxedBuild.WorkArea  + 'lib';
 
    {setup base options}
-   build.Target.CPU := cpu;
-   build.Target.OS := os;
+   build.Target.CPU := oxedBuild.BuildCPU;
+   build.Target.OS := oxedBuild.BuildOS;
 
    build.Target.CPUType := arch.DefaultCPUType;
    build.Target.FPUType := arch.DefaultFPUType;
@@ -1138,6 +1161,9 @@ begin
    BuildOk := true;
    BuildFailed := false;
    BuildStart := Now;
+
+   {get cpu and OS from arch}
+   BuildArch.GetPlatformString().Separate(BuildCPU, BuildOS);
 
    {determine if we need third party units}
    oxedBuild.IncludeThirdParty := (not oxedProject.Session.ThirdPartyBuilt) or
