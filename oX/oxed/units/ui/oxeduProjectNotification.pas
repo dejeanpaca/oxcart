@@ -14,13 +14,14 @@ INTERFACE
       {ox}
       oxuWindow,
       {oxed}
-      uOXED, oxeduProject, oxeduProjectManagement, oxuwndToast;
+      uOXED, oxeduSettings,
+      oxeduProject, oxeduProjectManagement, oxuwndToast;
 
 IMPLEMENTATION
 
 procedure openNotify();
 begin
-   if(oxedProject <> nil) then
+   if(oxedProject <> nil) and (oxedSettings.ShowNotifications) then
       oxToast.Show('Project open', oxedProject.Name);
 end;
 

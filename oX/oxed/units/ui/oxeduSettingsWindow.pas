@@ -30,7 +30,8 @@ VAR
       RequireRebuildOnOpen,
       HandleLibraryErrors,
       StartWithLastProject,
-      ShowBuildOutput: wdgTCheckbox;
+      ShowBuildOutput,
+      ShowNotifications: wdgTCheckbox;
    end;
 
 procedure saveCallback();
@@ -42,6 +43,7 @@ begin
    oxedSettings.HandleLibraryErrors := wdg.HandleLibraryErrors.Checked();
    oxedSettings.StartWithLastProject := wdg.StartWithLastProject.Checked();
    oxedSettings.ShowBuildOutput := wdg.ShowBuildOutput.Checked();
+   oxedSettings.ShowNotifications := wdg.ShowNotifications.Checked();
 
    if(wdg.UnixLineEndings.Checked()) then
       oxedSettings.LineEndings := 'lf'
@@ -59,6 +61,7 @@ begin
    wdg.UnixLineEndings.Check(oxedSettings.LineEndings = 'lf');
    wdg.StartWithLastProject.Check(oxedSettings.StartWithLastProject);
    wdg.ShowBuildOutput.Check(oxedSettings.ShowBuildOutput);
+   wdg.ShowNotifications.Check(oxedSettings.ShowNotifications);
 end;
 
 procedure InitSettings();
@@ -83,6 +86,9 @@ begin
 
    wdg.StartWithLastProject := wdgCheckbox.Add('Start with last opened project');
    wdg.StartWithLastProject.SetHint('Starts editor with the last opened project.');
+
+   wdg.ShowNotifications := wdgCheckbox.Add('Show notifications');
+   wdg.ShowNotifications.SetHint('Show toast notifications such as Project Opened, Starting Lazarus ....');
 
    wdgDivisor.Add('Build');
 
