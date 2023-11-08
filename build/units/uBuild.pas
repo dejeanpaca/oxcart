@@ -230,14 +230,14 @@ TYPE
       function GetPlatform(): PBuildPlatform;
       {find platform for specified target and fpc version}
       function FindPlatform(const target: string; const version: string = ''): PBuildPlatform;
+      {find platform by name, returns nil if nothing found}
+      function FindPlatformByName(const name: StdString): PBuildPlatform;
       {get current lazarus install}
       function GetLazarus(): PBuildLazarusInstall;
       {set current platform by its name}
       function SetPlatform(const name: StdString): Boolean;
       {set lazarus by name}
       function SetLazarusInstall(const name: StdString): Boolean;
-      {find platform by name, returns nil if nothing found}
-      function FindPlatform(const name: StdString): PBuildPlatform;
       {find lazarus install by name, returns nil if nothing found}
       function FindLazarusInstall(const name: StdString): PBuildLazarusInstall;
       {find lazarus install by platform}
@@ -295,6 +295,7 @@ begin
    defaultLaz.Initialize(defaultLaz);
 
    defaultLaz.Name := 'default';
+   defaultLaz.FPC := build.FindPlatformByName('default');
    build.LazarusInstalls.Dispose();
    build.LazarusInstalls.Add(defaultLaz);
 
@@ -991,6 +992,11 @@ begin
    Result := nil;
 end;
 
+function TBuildSystem.FindPlatformByName(const name: StdString): PBuildPlatform;
+begin
+   Result := Platforms.FindByName(name);
+end;
+
 function TBuildSystem.GetLazarus(): PBuildLazarusInstall;
 begin
    Result := CurrentLazarus;
@@ -1029,11 +1035,6 @@ begin
 
    CurrentLazarus := @LazarusInstalls.List[0];
    Result := false;
-end;
-
-function TBuildSystem.FindPlatform(const name: StdString): PBuildPlatform;
-begin
-   Result := Platforms.FindByName(name);
 end;
 
 function TBuildSystem.FindLazarusInstall(const name: StdString): PBuildLazarusInstall;
