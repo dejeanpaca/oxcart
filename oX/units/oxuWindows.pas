@@ -41,9 +41,7 @@ TYPE
       OnPostCreate: TProcedures;
 
       {called when window should be rendered}
-      OnRender,
-      {called when overriden rendering should be done}
-      OnOverrideRender: oxTWindowRoutines;
+      OnRender: oxTWindowRoutines;
 
       MaxWindowAllocate: loopint;
       {Indicate to the system if the screen is allowed to go into idle mode (turn off/screensaver)}
@@ -173,7 +171,6 @@ begin
    ExternalWindows.InitializeValues(ExternalWindows);
 
    OnRender.InitializeValues(OnRender);
-   OnOverrideRender.InitializeValues(OnOverrideRender);
 end;
 
 procedure oxTWindows.Setup(var wnd: oxTWindow; const settings: oxTWindowSettings; contextWindow: boolean = false);
