@@ -41,7 +41,7 @@ var
 begin
    appEvents.Init(event, evID, @evh);
 
-   result := appEvents.Queue(event, m, SizeOf(m));
+   Result := appEvents.Queue(event, m, SizeOf(m));
 end;
 
 procedure mouseAction(var event: appTEvent);
