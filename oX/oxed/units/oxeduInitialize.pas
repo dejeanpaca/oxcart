@@ -15,7 +15,7 @@ INTERFACE
    USES
       uStd, uLog,
       {ox}
-      uOX, oxuPaths, oxuRunRoutines, oxuRun,
+      uOX, oxuPaths, oxuRunRoutines,
       {oxed}
       uOXED, oxeduSettings, oxeduRecents,
       oxeduWindow, oxeduSplash, oxeduSplashScreen, oxeduSettingsWindow, oxeduIcons,

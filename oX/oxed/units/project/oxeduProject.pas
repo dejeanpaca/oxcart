@@ -177,6 +177,7 @@ end;
 procedure oxedTProject.SetPath(const newPath: string);
 begin
    Path := IncludeTrailingPathDelimiter(newPath);
+   log.v('Project path set to: ' + Path);
    ConfigPath := IncludeTrailingPathDelimiter(Path + oxPROJECT_DIRECTORY);
    TempPath := IncludeTrailingPathDelimiter(Path + oxPROJECT_TEMP_DIRECTORY);
 end;
