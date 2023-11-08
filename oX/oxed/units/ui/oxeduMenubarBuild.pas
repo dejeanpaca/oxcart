@@ -104,6 +104,9 @@ begin
          if(platform.GlyphCode <> 0) then
             oxedIcons.Create(item, oxedPlatform.GlyphCode, oxedPlatform.GlyphName);
       end;
+
+      if(i < oxedPlatforms.List.n - 1) then
+         oxedMenubar.Build.AddSeparator();
    end;
 
    if(oxedPlatforms.List.n > 0) then
