@@ -31,8 +31,6 @@ begin
    app^.onAppCmd := @AndroidHandleCommand;
    app^.onInputEvent := @AndroidHandleInput;
 
-   androidAutoHideNavBar(app);
-
    finished := false;
    uApp.app.Active := true;
 
@@ -46,6 +44,13 @@ begin
          if(not finished) then begin
             oxRun.GoCycle(true);
             cycledEvents := true;
+         end;
+      end;
+
+      if(ox.Started) then begin
+         if(app^.hideNavbar) then begin
+            androidAutoHideNavBar(app);
+            app^.hideNavbar := false;
          end;
       end;
 

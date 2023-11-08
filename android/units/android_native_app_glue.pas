@@ -175,11 +175,20 @@ TYPE
       cmdPollSource,
       inputPollSource: android_poll_source;
 
+      {app is running}
       running,
+      {state has been saved}
       stateSaved,
+      {app is destroyed}
       destroyed,
+      {we need to redraw the app}
       redrawNeeded,
-      mutexValid: boolean;
+      {is the mutex valid (not destroyed)}
+      mutexValid,
+      {signal hide the navbar}
+      hideNavbar,
+      {if true, will automatically hide the navbar}
+      autoHideNavBar: boolean;
 
       pendingWindow: PANativeWindow;
       pendingContentRect: PARect;
