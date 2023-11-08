@@ -29,8 +29,8 @@ CONST
 
 TYPE
    { oxTCamera }
-
-   oxTCamera = class(oxTSerializable)
+   oxPCamera = ^oxTCamera;
+   oxTCamera = record
       public
       {vectors}
       vPos,
@@ -44,8 +44,8 @@ TYPE
 
       Transform: oxTTransform;
 
-      constructor Create(); override;
-      destructor Destroy; override;
+      procedure Initialize();
+      procedure Dispose();
 
       {move the camera's position in a specified direction}
       procedure Move(const Direction: TVector3);
@@ -283,13 +283,11 @@ end;
 
 { oxTCamera }
 
-constructor oxTCamera.Create();
+procedure oxTCamera.Initialize();
 begin
-   inherited;
-
-   vPos := oxvCameraPosition;
-   vView := oxvCameraView;
-   vUp := oxvCameraUp;
+   vPos   := oxvCameraPosition;
+   vView  := oxvCameraView;
+   vUp    := oxvCameraUp;
    vRight := oxvCameraRight;
 
    SetupRotation();
@@ -297,10 +295,8 @@ begin
    Transform := oxTTransform.Instance();
 end;
 
-destructor oxTCamera.Destroy;
+procedure oxTCamera.Dispose();
 begin
-   inherited Destroy;
-
    FreeObject(Transform);
 end;
 
@@ -345,21 +341,16 @@ begin
    end;
 end;
 
-function instance(): TObject;
-begin
-   Result := oxTCamera.Create();
-end;
-
 INITIALIZATION
-   serialization := oxTSerialization.Create(oxTCamera, @instance);
-   serialization.AddProperty('vPos', @oxTCamera(nil).vPos, oxSerialization.Types.Vector3f);
-   serialization.AddProperty('vView', @oxTCamera(nil).vView, oxSerialization.Types.Vector3f);
-   serialization.AddProperty('vUp', @oxTCamera(nil).vUp, oxSerialization.Types.Vector3f);
-   serialization.AddProperty('vRight', @oxTCamera(nil).vRight, oxSerialization.Types.Vector3f);
+   serialization := oxTSerialization.CreateRecord('oxTCamera');
 
-   serialization.AddProperty('Rotation', @oxTCamera(nil).Rotation, oxSerialization.Types.Vector3f);
-   serialization.AddProperty('Radius', @oxTCamera(nil).Radius, oxSerialization.Types.Single);
+   serialization.AddProperty('vPos', @oxTCamera(nil^).vPos, oxSerialization.Types.Vector3f);
+   serialization.AddProperty('vView', @oxTCamera(nil^).vView, oxSerialization.Types.Vector3f);
+   serialization.AddProperty('vUp', @oxTCamera(nil^).vUp, oxSerialization.Types.Vector3f);
+   serialization.AddProperty('vRight', @oxTCamera(nil^).vRight, oxSerialization.Types.Vector3f);
 
+   serialization.AddProperty('Rotation', @oxTCamera(nil^).Rotation, oxSerialization.Types.Vector3f);
+   serialization.AddProperty('Radius', @oxTCamera(nil^).Radius, oxSerialization.Types.Single);
 
 FINALIZATION
    FreeObject(serialization);

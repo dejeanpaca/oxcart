@@ -58,7 +58,7 @@ constructor oxTCameraComponent.Create();
 begin
    inherited Create;
 
-   Camera := oxTCamera.Create();
+   Camera.Initialize();
    Projection.Initialize();
    UseSceneProjection := true;
 end;
@@ -101,7 +101,8 @@ end;
 
 INITIALIZATION
    serialization := oxTSerialization.Create(oxTCameraComponent, @instance);
-   serialization.AddObjectProperty('Camera', @oxTCameraComponent(nil).Camera);
+   serialization.AddObjectProperty('Camera', @oxTCameraComponent(nil).Camera, 'oxTCamera');
+   serialization.AddObjectProperty('Projection', @oxTCameraComponent(nil).Camera, 'oxTProjection');
 
    descriptor.Create('camera', oxTCameraComponent);
    descriptor.Name := 'Camera';
