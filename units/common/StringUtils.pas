@@ -3,7 +3,7 @@
    Copyright (C) 2010. Dejan Boras
 }
 
-{$MODE OBJFPC}{$H+}{$MODESWITCH TYPEHELPERS}{$MODESWITCH ADVANCEDRECORDS}
+{$INCLUDE oxheader.inc}
 UNIT StringUtils;
 
 {$IFDEF WINDOWS}
@@ -138,18 +138,11 @@ function sf(value: pointer): string; inline;
 procedure StripLeadingWhitespace(var st: string);
 procedure StripTrailingWhitespace(var st: string);
 procedure StripWhitespace(var st: string);
-procedure StripLeadingWhitespace(var st: StdString);
-procedure StripTrailingWhitespace(var st: StdString);
-procedure StripWhitespace(var st: StdString);
 function IsWhitespace(const st: string): boolean;
-function IsWhitespace(const st: StdString): boolean;
 procedure StripEndLine(var st: string);
-procedure StripEndLine(var st: StdString);
 
 {completely remove white space from the string}
 procedure EliminateWhiteSpace(var st: string);
-{completely remove white space from the string}
-procedure EliminateWhiteSpace(var st: StdString);
 {remove a character from the string}
 procedure RemoveChar(var st: string; c: char);
 
@@ -167,40 +160,28 @@ function StringCountInsensitive(const st, sub: string): loopint;
 {FILE NAME ROUTINES}
 {extract the file name from a string}
 function ExtractFileName(const st: string): string;
-function ExtractFileName(const st: StdString): StdString;
 {extracts the file name without the extension}
 function ExtractFileNameNoExt(const st: string): string;
-function ExtractFileNameNoExt(const st: StdString): StdString;
 {extracts everything without the extension}
 function ExtractAllNoExt(const st: string): string;
-function ExtractAllNoExt(const st: StdString): StdString;
 {extract the file directory from a string}
 function ExtractFileDir(const st: string): string;
-function ExtractFileDir(const st: StdString): StdString;
 {extract the file extension from a string}
 function ExtractFileExt(const st: string): string;
-function ExtractFileExt(const st: StdString): StdString;
 {extract file extension without a dot}
 function ExtractFileExtNoDot(const st: string): string;
-function ExtractFileExtNoDot(const st: StdString): StdString;
 {extract multiple extensions from a string (e.g. )}
 function ExtractFileExts(const st: string; level: longint): string;
-function ExtractFileExts(const st: StdString; level: longint): StdString;
 {extract the file path from a string}
 function ExtractFilePath(const st: string): string;
-function ExtractFilePath(const st: StdString): StdString;
 {extract the file drive from a string, good only for Win32}
 function ExtractFileDrive(const st: string): string;
-function ExtractFileDrive(const st: StdString): StdString;
 {replace directory separators with the one used on the current platform}
 procedure ReplaceDirSeparators(var st: string);
-procedure ReplaceDirSeparators(var st: StdString);
 {get parent directory in a given path}
 function GetParentDirectory(const st: string): string;
-function GetParentDirectory(const st: StdString): StdString;
 {include a trailing path delimiter only if specified path is non empty}
 function IncludeTrailingPathDelimiterNonEmpty(const st: string): string;
-function IncludeTrailingPathDelimiterNonEmpty(const st: StdString): StdString;
 
 { SUB STRINGS }
 
@@ -220,12 +201,6 @@ function CopyToDel(var s: string; const chars: array of char): string;
 function CopyToDel(var s: string): string;
 {copy until the specified character is found and delete from string}
 function CopyToDel(var s: string; c: char): string;
-{copy until given chars and delete from string}
-function CopyToDel(var s: StdString; const chars: array of char): StdString;
-{copy until white space and delete from string}
-function CopyToDel(var s: StdString): StdString;
-{copy until the specified character is found and delete from string}
-function CopyToDel(var s: StdString; c: char): StdString;
 
 {copy everything after the first whitespace}
 function CopyAfter(const s: string): string;
@@ -236,10 +211,6 @@ function CopyAfter(const s: string; c: char): string;
 function CopyAfterDel(var s: string): string;
 {copy everything after the first occurence of the specified character, and delete it from string (including the character)}
 function CopyAfterDel(var s: string; c: char): string;
-{copy everything after the first whitespace, and delete it from string (including whitespace)}
-function CopyAfterDel(var s: StdString): StdString;
-{copy everything after the first occurence of the specified character, and delete it from string (including the character)}
-function CopyAfterDel(var s: StdString; c: char): StdString;
 
 {add the specified leading character to make the string have length n}
 procedure AddLeadingPadding(var s: shortstring; c: char; n: longint);
@@ -260,17 +231,65 @@ function PCharToShortString(pcs: pChar): ShortString;
 function strExplode(const s: ansistring; delimiter: char): TAnsiStringArray;
 procedure strExplode(const s: ansistring; delimiter: char; var a: array of ShortString; maxStrings: loopint = 0);
 
-function strExplode(const s: StdString; delimiter: char): TStringArray;
-procedure strExplode(const s: StdString; delimiter: char; var a: array of ShortString; maxStrings: loopint = 0);
-
 {creates a string from bytes}
 procedure StringFromBytes(out s: ansistring; size: loopint; const bytes);
-procedure StringFromBytes(out s: StdString; size: loopint; const bytes);
 
 {get key value from a string}
 function GetKeyValue(const s: string; out key, value: string; const separator: char = '='): boolean;
+
+{$IFDEF OX_UTF8_SUPPORT}
+procedure StripLeadingWhitespace(var st: StdString);
+procedure StripTrailingWhitespace(var st: StdString);
+procedure StripWhitespace(var st: StdString);
+function IsWhitespace(const st: StdString): boolean;
+procedure StripEndLine(var st: StdString);
+{completely remove white space from the string}
+procedure EliminateWhiteSpace(var st: StdString);
+
+{copy until given chars and delete from string}
+function CopyToDel(var s: StdString; const chars: array of char): StdString;
+{copy until white space and delete from string}
+function CopyToDel(var s: StdString): StdString;
+{copy until the specified character is found and delete from string}
+function CopyToDel(var s: StdString; c: char): StdString;
+
+{copy everything after the first whitespace, and delete it from string (including whitespace)}
+function CopyAfterDel(var s: StdString): StdString;
+{copy everything after the first occurence of the specified character, and delete it from string (including the character)}
+function CopyAfterDel(var s: StdString; c: char): StdString;
+
+{extract the file name from a string}
+function ExtractFileName(const st: StdString): StdString;
+{extracts the file name without the extension}
+function ExtractFileNameNoExt(const st: StdString): StdString;
+{extracts everything without the extension}
+function ExtractAllNoExt(const st: StdString): StdString;
+{extract the file directory from a string}
+function ExtractFileDir(const st: StdString): StdString;
+{extract the file extension from a string}
+function ExtractFileExt(const st: StdString): StdString;
+{extract file extension without a dot}
+function ExtractFileExtNoDot(const st: StdString): StdString;
+{extract multiple extensions from a string (e.g. )}
+function ExtractFileExts(const st: StdString; level: longint): StdString;
+{extract the file path from a string}
+function ExtractFilePath(const st: StdString): StdString;
+{extract the file drive from a string, good only for Win32}
+function ExtractFileDrive(const st: StdString): StdString;
+{replace directory separators with the one used on the current platform}
+procedure ReplaceDirSeparators(var st: StdString);
+{get parent directory in a given path}
+function GetParentDirectory(const st: StdString): StdString;
+{include a trailing path delimiter only if specified path is non empty}
+function IncludeTrailingPathDelimiterNonEmpty(const st: StdString): StdString;
+
+function strExplode(const s: StdString; delimiter: char): TStringArray;
+procedure strExplode(const s: StdString; delimiter: char; var a: array of ShortString; maxStrings: loopint = 0);
+{creates a string from bytes}
+procedure StringFromBytes(out s: StdString; size: loopint; const bytes);
 {get key value from a string}
 function GetKeyValue(const s: StdString; out key, value: StdString; const separator: char = '='): boolean;
+{$ENDIF}
 
 IMPLEMENTATION
 
@@ -443,78 +462,7 @@ begin
    StripTrailingWhitespace(st);
 end;
 
-procedure StripLeadingWhitespace(var st: StdString);
-var
-   i,
-   l,
-   strippos: longint;
-
-begin
-   l := Length(st);
-   if(l > 0) then begin
-      {strip leading white space}
-      {find white space}
-      strippos := 0;
-      for i := 1 to l do begin
-         if(st[i] in strWhitespace) then
-            inc(strippos)
-         else
-            break;
-      end;
-
-      {delete white space from the string}
-      if(strippos <> 0) then
-         delete(st, 1, strippos);
-   end;
-end;
-
-procedure StripTrailingWhitespace(var st: StdString);
-var
-   i,
-   l,
-   strippos: longint;
-
-begin
-   l := length(st);
-   if(l > 0) then begin
-      {strip trailing white space}
-      {find white space}
-      strippos := 0;
-      for i := l downto 1 do begin
-         if(st[i] in strWhitespace) then
-            inc(strippos)
-         else
-            break;
-      end;
-
-      {delete white space from the string}
-      if(strippos > 0) then
-         delete(st, l-(strippos-1), strippos);
-   end;
-end;
-
-procedure StripWhitespace(var st: StdString);
-begin
-   StripLeadingWhitespace(st);
-   StripTrailingWhitespace(st);
-end;
-
 function IsWhitespace(const st: string): boolean;
-var
-   len, i: longint;
-
-begin
-   len := Length(st);
-   if(len > 0) then
-      for i := 1 to len do begin
-         if not (st[i] in strWhitespace) then
-            exit(false);
-      end;
-
-   Result := true;
-end;
-
-function IsWhitespace(const st: StdString): boolean;
 var
    len, i: longint;
 
@@ -554,59 +502,7 @@ begin
       SetLength(st, len);
 end;
 
-procedure StripEndLine(var st: StdString);
-var
-   len: loopint;
-
-begin
-   len := Length(st);
-
-   {check if we need to strip any characters off the end}
-   if(st[len] = #13) then
-      len := len - 1
-   else if(st[len] = #10) then begin
-      if(len > 1) then begin
-         if(st[len - 1] = #13) then
-            len := len - 2
-         else
-            len := len - 1;
-      end else
-         len := len - 1;
-   end;
-
-   {correct to new length}
-   if(len <> Length(st)) then
-      SetLength(st, len);
-end;
-
 procedure EliminateWhiteSpace(var st: string);
-var
-   i,
-   l,
-   newlen,
-   count: longint;
-
-begin
-   l := Length(st);
-
-   if(l > 0) then begin
-      newlen := l;
-      count := 0;
-
-      for i := 1 to l do begin
-         if(st[i] in strWhiteSpace) then
-            dec(newlen)
-         else begin
-            inc(count);
-            st[count] := st[i]
-         end;
-      end;
-
-      SetLength(st, newlen);
-   end;
-end;
-
-procedure EliminateWhiteSpace(var st: StdString);
 var
    i,
    l,
@@ -995,63 +891,7 @@ begin
       Result := '';
 end;
 
-function ExtractFileName(const st: StdString): StdString;
-var
-   i,
-   l: longint;
-
-begin
-   l := Length(st);
-
-   if(l > 0) then begin
-      i := l;
-
-      while (i > 0) and (not(st[i] in DirectorySeparators)) do
-         dec(i);
-
-      if(i + 1 < l) then
-         Result := copy(st, i + 1 , 255)
-      else
-         Result := '';
-   end else
-      Result := '';
-end;
-
 function ExtractFileNameNoExt(const st: string): string;
-var
-   i,
-   l,
-   e,
-   dotpos: longint;
-
-begin
-   l := Length(st);
-
-   if(l > 0) then begin
-      i := l;
-
-      while(i > 0) and (not (st[i] in DirectorySeparators)) do
-         dec(i);
-
-      if(i <= l) then begin
-         {now that we've found where the beginning of the filename is,
-         we need to find where the end is(without the extension)}
-         dotpos := StringPos(st, ExtensionSeparator, i);
-
-         if(dotpos > 0) then
-            e := dotpos
-         else
-            e := l;
-
-         {now just copy the filename}
-         Result := copy(st, i + 1, e - i - 1);
-      end else
-         Result := st;
-   end else
-      Result := st;
-end;
-
-function ExtractFileNameNoExt(const st: StdString): StdString;
 var
    i,
    l,
@@ -1113,57 +953,7 @@ begin
       Result := '';
 end;
 
-function ExtractAllNoExt(const st: StdString): StdString;
-var
-   i,
-   l: longint;
-
-begin
-   l := Length(st);
-
-   if(l <> 0) then begin
-      i := l;
-
-      {go backwards through string until an extension separator is encountered}
-      while(i > 1) and (st[i] <> ExtensionSeparator) do begin
-         {quit with original if directory separator encountered before extension separator}
-         if(st[i] in DirectorySeparators) then
-            exit(st);
-
-         dec(i);
-      end;
-
-      if(i > 1) then
-         Result := copy(st, 1, i - 1)
-      else
-        Result := st;
-   end else
-      Result := '';
-end;
-
 function ExtractFileDir(const st: string): string;
-var
-   i,
-   l: longint;
-
-begin
-   l := Length(st);
-
-   if(l > 0) then begin
-      i := l;
-
-      while (i >= 1) and (not (st[i] in DirectorySeparators)) do
-         dec(i);
-
-      if(i >= 2) then
-         Result := copy(st, 1, i - 1)
-      else
-         Result := '';
-   end else
-      Result := '';
-end;
-
-function ExtractFileDir(const st: StdString): StdString;
 var
    i,
    l: longint;
@@ -1207,56 +997,7 @@ begin
       Result := '';
 end;
 
-function ExtractFileExt(const st: StdString): StdString;
-var
-   i,
-   l: longint;
-
-begin
-   l := Length(st);
-
-   if(l > 0) then begin
-      i := l;
-
-      while (i >= 1) and (st[i] <> ExtensionSeparator) do begin
-         if(st[i] in DirectorySeparators) then
-            exit('');
-
-         dec(i);
-      end;
-
-      if(i > 0) then begin
-         {extract the extension and return it}
-         Result := copy(st, i, Length(st) - i + 1);
-      end else
-         Result := '';
-   end else
-      Result := '';
-end;
-
 function ExtractFileExtNoDot(const st: string): string;
-var
-   i,
-   l: longint;
-
-begin
-   l := Length(st);
-
-   if(l > 0) then begin
-      i := l;
-      while (i >= 1) and (st[i] <> ExtensionSeparator) do
-         dec(i);
-
-      if(i > 0) then begin
-         {extract the extension and return it}
-         Result := copy(st, i + 1, 255);
-      end else
-         Result := '';
-   end else
-      Result := '';
-end;
-
-function ExtractFileExtNoDot(const st: StdString): StdString;
 var
    i,
    l: longint;
@@ -1309,37 +1050,6 @@ begin
       Result := '';
 end;
 
-function ExtractFileExts(const st: StdString; level: longint): StdString;
-var
-   i,
-   l,
-   currentLevel: longint;
-
-begin
-   l := Length(st);
-
-   if(l > 0) and (level > 0) then begin
-      i := l;
-      currentLevel := 0;
-
-      while (i > 1) and (level <> currentLevel) do begin
-         dec(i);
-
-         if(st[i] = ExtensionSeparator) then
-            inc(currentLevel)
-         else if(st[i] in DirectorySeparators) then
-            break;
-      end;
-
-      if(currentLevel = level) then begin
-         {extract the extension and return it}
-         Result := copy(st, i, 255);
-      end else
-         Result := '';
-   end else
-      Result := '';
-end;
-
 function ExtractFilePath(const st: string): string;
 var
    i,
@@ -1362,58 +1072,7 @@ begin
       Result := '';
 end;
 
-function ExtractFilePath(const st: StdString): StdString;
-var
-   i,
-   l: longint;
-
-begin
-   l := Length(st);
-
-   if(l > 0) then begin
-     i := l;
-
-     while (i >= 1) and (not (st[i] in DirectorySeparators)) do
-        dec(i);
-
-      if(i >= 2) then
-         Result := copy(st, 1, i)
-      else
-         Result := '';
-   end else
-      Result := '';
-end;
-
 function ExtractFileDrive(const st: string): string;
-var
-   i,
-   l: longint;
-
-begin
-   l := Length(st);
-
-   if(l > 1) then begin
-      if(st[2] = DriveSeparator) then
-         Result := copy(st, 1, 2)
-      else if(st[1] in DirectorySeparators) and (st[2] in DirectorySeparators) then begin
-         {skip the share}
-         i := 2;
-
-         while (i < l) and not (st[i + 1] in DirectorySeparators) do
-            inc(i);
-         inc(i);
-
-         while(i < l) and not (st[i + 1] in DirectorySeparators) do inc
-            (i);
-
-         Result := copy(st, 1, i);
-      end else
-         Result := '';
-   end else
-      Result := '';
-end;
-
-function ExtractFileDrive(const st: StdString): StdString;
 var
    i,
    l: longint;
@@ -1481,20 +1140,7 @@ begin
    Result := ExpandFileName(IncludeTrailingPathDelimiter(st) + '..')
 end;
 
-function GetParentDirectory(const st: StdString): StdString;
-begin
-   Result := ExpandFileName(IncludeTrailingPathDelimiter(st) + '..')
-end;
-
 function IncludeTrailingPathDelimiterNonEmpty(const st: string): string;
-begin
-   if(st <> '') then
-      Result := IncludeTrailingPathDelimiter(st)
-   else
-      Result := '';
-end;
-
-function IncludeTrailingPathDelimiterNonEmpty(const st: StdString): StdString;
 begin
    if(st <> '') then
       Result := IncludeTrailingPathDelimiter(st)
@@ -1642,74 +1288,6 @@ begin
       Result := '';
 end;
 
-function CopyToDel(var s: StdString; const chars: array of char): StdString;
-var
-   i,
-   c,
-   slen: longint;
-
-begin
-   if(High(chars) = 0) then
-      exit(s);
-
-   slen := length(s);
-   Result := '';
-
-   if(slen > 0) then begin
-      i := 1;
-
-      while (i <= slen) do begin
-         for c := 0 to high(chars) do begin
-            if(s[i] = chars[c]) then begin
-               Result := copy(s, 1, i - 1);
-               delete(s, 1, i);
-               exit;
-            end;
-         end;
-
-         inc(i);
-      end;
-   end;
-end;
-
-function CopyToDel(var s: StdString): StdString;
-var
-   i,
-   slen: longint;
-
-begin
-   slen := length(s);
-   if(slen > 0) then begin
-      i := 1;
-
-      while (i <= slen) and (not (s[i] in strWhiteSpace)) do
-         inc(i);
-
-      Result := copy(s, 1, i - 1);
-      delete(s, 1, i);
-   end else
-      Result := '';
-end;
-
-function CopyToDel(var s: StdString; c: char): StdString;
-var
-   i,
-   slen: longint;
-
-begin
-   slen := length(s);
-   if(slen > 0) then begin
-      i := 1;
-
-      while (i <= slen) and (s[i] <> c) do
-         inc(i);
-
-      Result := copy(s, 1, i - 1);
-      delete(s, 1, i);
-   end else
-      Result := '';
-end;
-
 function CopyAfter(const s: string): string;
 var
    i,
@@ -1766,44 +1344,6 @@ begin
 end;
 
 function CopyAfterDel(var s: string; c: char): string;
-var
-   i,
-   slen: longint;
-
-begin
-   slen := length(s);
-   if(slen > 0) then begin
-      i := 1;
-
-      while (i <= slen) and (s[i] <> c) do
-         inc(i);
-
-      Result := copy(s, i + 1, Length(s));
-      delete(s, i, Length(s));
-   end else
-      Result := '';
-end;
-
-function CopyAfterDel(var s: StdString): StdString;
-var
-   i,
-   slen: longint;
-
-begin
-   slen := length(s);
-   if(slen > 0) then begin
-      i := 1;
-
-      while (i <= slen) and (not (s[i] in strWhitespace)) do
-         inc(i);
-
-      Result := copy(s, i + 1, Length(s));
-      delete(s, i, Length(s));
-   end else
-      Result := '';
-end;
-
-function CopyAfterDel(var s: StdString; c: char): StdString;
 var
    i,
    slen: longint;
@@ -2082,113 +1622,6 @@ begin
    end;
 end;
 
-function strExplode(const s: StdString; delimiter: char): TStringArray;
-var
-   i,
-   len,
-   p,
-   prevp,
-   n,
-   charcount: longint; {i, string length, position, previous position, string count}
-   str: StdString;
-   stringarray: TStringArray = nil;
-
-begin
-   if(s <> '') then begin
-      len := Length(s);
-
-      p := -1;
-      n := 0;
-                                                                 ;
-      {figure out how many strings will be required}
-      for i := 1 to len do begin
-         if(s[i] = delimiter) then begin
-            inc(n);
-            p := i;
-         end;
-      end;
-
-      {if there are characters behind the last delimiter we have one more string}
-      if(p <= len) then
-         inc(n);
-
-      {if there are no delimiters we have only one string to explode}
-      if(p = -1) then
-         n := 1;
-
-      {allocate memory for string array}
-      SetLength(stringarray, n);
-
-      {prepare for exploding string}
-      prevp := 0;
-      n     := 0;
-
-      {extract individual strings}
-      for i := 1 to len do begin
-         if(s[i] = delimiter) then begin
-            charcount := i - prevp;
-            str := copy(s, prevp + 1, charcount - 1);
-            inc(n);
-            stringarray[n-1] := str;
-
-            prevp := i;
-         end;
-      end;
-
-      if(prevp < len) then begin
-         stringarray[n] := copy(s, prevp + 1, len-prevp);
-      end else
-         stringarray[n] := '';
-
-      Result := stringarray;
-   end else
-      Result := nil;
-end;
-
-procedure strExplode(const s: StdString; delimiter: char; var a: array of ShortString; maxStrings: loopint);
-var
-   i,
-   len,
-   prevp,
-   n,
-   charcount: longint; {i, string length, position, previous position, string count}
-   str: StdString;
-
-begin
-   if(s <> '') then begin
-      len := Length(s);
-
-      n := 0;
-
-      {prepare for exploding string}
-      prevp := 0;
-      n     := 0;
-
-      {extract individual strings}
-      for i := 1 to len do begin
-         if(s[i] = delimiter) then begin
-            charcount := i - prevp;
-            str := copy(s, prevp + 1, charcount - 1);
-            inc(n);
-            a[n - 1] := str;
-
-            prevp := i;
-            if(maxStrings > 0) and (n >= maxStrings) then
-               break;
-         end;
-      end;
-
-      {leftover string}
-      if(maxStrings > 0) and (n >= maxStrings) then
-         exit;
-
-      if(prevp < len) then
-         a[n] := copy(s, prevp + 1, len - prevp)
-      else
-         a[n] := '';
-   end;
-end;
-
 procedure StringFromBytes(out s: ansistring; size: loopint; const bytes);
 begin
    if(Size > 0) then begin
@@ -2199,41 +1632,7 @@ begin
       s := '';
 end;
 
-procedure StringFromBytes(out s: StdString; size: loopint; const bytes);
-begin
-   if(Size > 0) then begin
-      s := '';
-      SetLength(s, size);
-      Move(bytes, s[1], size);
-   end else
-      s := '';
-end;
-
 function GetKeyValue(const s: string; out key, value: string; const separator: char): boolean;
-var
-   p: loopint;
-
-begin
-   if(s <> '') then begin
-      p := pos(separator, s);
-
-      if(p > 0) then begin
-         key := Copy(s, 0, p - 1);
-         StringUtils.StripWhitespace(key);
-
-         value := Copy(s, p + 1, Length(s) - p);
-         StringUtils.StripWhitespace(value);
-
-         exit(key <> '');
-      end;
-   end;
-
-   key := '';
-   value := '';
-   Result := false;
-end;
-
-function GetKeyValue(const s: StdString; out key, value: StdString; const separator: char): boolean;
 var
    p: loopint;
 
@@ -2507,5 +1906,632 @@ class procedure TSimpleAnsiStringBuffer.Init(out buf: TSimpleAnsiStringBuffer);
 begin
    ZeroOut(buf, SizeOf(buf))
 end;
+
+{$IFDEF OX_UTF8_SUPPORT}
+procedure StripLeadingWhitespace(var st: StdString);
+var
+   i,
+   l,
+   strippos: longint;
+
+begin
+   l := Length(st);
+
+   if(l > 0) then begin
+      {strip leading white space}
+      {find white space}
+      strippos := 0;
+
+      for i := 1 to l do begin
+         if(st[i] in strWhitespace) then
+            inc(strippos)
+         else
+            break;
+      end;
+
+      {delete white space from the string}
+      if(strippos <> 0) then
+         delete(st, 1, strippos);
+   end;
+end;
+
+procedure StripTrailingWhitespace(var st: StdString);
+var
+   i,
+   l,
+   strippos: longint;
+
+begin
+   l := length(st);
+
+   if(l > 0) then begin
+      {strip trailing white space}
+      {find white space}
+      strippos := 0;
+
+      for i := l downto 1 do begin
+         if(st[i] in strWhitespace) then
+            inc(strippos)
+         else
+            break;
+      end;
+
+      {delete white space from the string}
+      if(strippos > 0) then
+         delete(st, l-(strippos-1), strippos);
+   end;
+end;
+
+procedure StripWhitespace(var st: StdString);
+begin
+   StripLeadingWhitespace(st);
+   StripTrailingWhitespace(st);
+end;
+
+function IsWhitespace(const st: StdString): boolean;
+var
+   len, i: longint;
+
+begin
+   len := Length(st);
+   if(len > 0) then
+      for i := 1 to len do begin
+         if not (st[i] in strWhitespace) then
+            exit(false);
+      end;
+
+   Result := true;
+end;
+
+procedure StripEndLine(var st: StdString);
+var
+   len: loopint;
+
+begin
+   len := Length(st);
+
+   {check if we need to strip any characters off the end}
+   if(st[len] = #13) then
+      len := len - 1
+   else if(st[len] = #10) then begin
+      if(len > 1) then begin
+         if(st[len - 1] = #13) then
+            len := len - 2
+         else
+            len := len - 1;
+      end else
+         len := len - 1;
+   end;
+
+   {correct to new length}
+   if(len <> Length(st)) then
+      SetLength(st, len);
+end;
+
+procedure EliminateWhiteSpace(var st: StdString);
+var
+   i,
+   l,
+   newlen,
+   count: longint;
+
+begin
+   l := Length(st);
+
+   if(l > 0) then begin
+      newlen := l;
+      count := 0;
+
+      for i := 1 to l do begin
+         if(st[i] in strWhiteSpace) then
+            dec(newlen)
+         else begin
+            inc(count);
+            st[count] := st[i]
+         end;
+      end;
+
+      SetLength(st, newlen);
+   end;
+end;
+
+function CopyToDel(var s: StdString; const chars: array of char): StdString;
+var
+   i,
+   c,
+   slen: longint;
+
+begin
+   if(High(chars) = 0) then
+      exit(s);
+
+   slen := length(s);
+   Result := '';
+
+   if(slen > 0) then begin
+      i := 1;
+
+      while (i <= slen) do begin
+         for c := 0 to high(chars) do begin
+            if(s[i] = chars[c]) then begin
+               Result := copy(s, 1, i - 1);
+               delete(s, 1, i);
+               exit;
+            end;
+         end;
+
+         inc(i);
+      end;
+   end;
+end;
+
+function CopyToDel(var s: StdString): StdString;
+var
+   i,
+   slen: longint;
+
+begin
+   slen := length(s);
+   if(slen > 0) then begin
+      i := 1;
+
+      while (i <= slen) and (not (s[i] in strWhiteSpace)) do
+         inc(i);
+
+      Result := copy(s, 1, i - 1);
+      delete(s, 1, i);
+   end else
+      Result := '';
+end;
+
+function CopyToDel(var s: StdString; c: char): StdString;
+var
+   i,
+   slen: longint;
+
+begin
+   slen := length(s);
+   if(slen > 0) then begin
+      i := 1;
+
+      while (i <= slen) and (s[i] <> c) do
+         inc(i);
+
+      Result := copy(s, 1, i - 1);
+      delete(s, 1, i);
+   end else
+      Result := '';
+end;
+
+function CopyAfterDel(var s: StdString): StdString;
+var
+   i,
+   slen: longint;
+
+begin
+   slen := length(s);
+   if(slen > 0) then begin
+      i := 1;
+
+      while (i <= slen) and (not (s[i] in strWhitespace)) do
+         inc(i);
+
+      Result := copy(s, i + 1, Length(s));
+      delete(s, i, Length(s));
+   end else
+      Result := '';
+end;
+
+function CopyAfterDel(var s: StdString; c: char): StdString;
+var
+   i,
+   slen: longint;
+
+begin
+   slen := length(s);
+   if(slen > 0) then begin
+      i := 1;
+
+      while (i <= slen) and (s[i] <> c) do
+         inc(i);
+
+      Result := copy(s, i + 1, Length(s));
+      delete(s, i, Length(s));
+   end else
+      Result := '';
+end;
+
+function ExtractFileName(const st: StdString): StdString;
+var
+   i,
+   l: longint;
+
+begin
+   l := Length(st);
+
+   if(l > 0) then begin
+      i := l;
+
+      while (i > 0) and (not(st[i] in DirectorySeparators)) do
+         dec(i);
+
+      if(i + 1 < l) then
+         Result := copy(st, i + 1 , 255)
+      else
+         Result := '';
+   end else
+      Result := '';
+end;
+
+function ExtractFileNameNoExt(const st: StdString): StdString;
+var
+   i,
+   l,
+   e,
+   dotpos: longint;
+
+begin
+   l := Length(st);
+
+   if(l > 0) then begin
+      i := l;
+
+      while(i > 0) and (not (st[i] in DirectorySeparators)) do
+         dec(i);
+
+      if(i <= l) then begin
+         {now that we've found where the beginning of the filename is,
+         we need to find where the end is(without the extension)}
+         dotpos := StringPos(st, ExtensionSeparator, i);
+
+         if(dotpos > 0) then
+            e := dotpos
+         else
+            e := l;
+
+         {now just copy the filename}
+         Result := copy(st, i + 1, e - i - 1);
+      end else
+         Result := st;
+   end else
+      Result := st;
+end;
+
+function ExtractAllNoExt(const st: StdString): StdString;
+var
+   i,
+   l: longint;
+
+begin
+   l := Length(st);
+
+   if(l <> 0) then begin
+      i := l;
+
+      {go backwards through string until an extension separator is encountered}
+      while(i > 1) and (st[i] <> ExtensionSeparator) do begin
+         {quit with original if directory separator encountered before extension separator}
+         if(st[i] in DirectorySeparators) then
+            exit(st);
+
+         dec(i);
+      end;
+
+      if(i > 1) then
+         Result := copy(st, 1, i - 1)
+      else
+        Result := st;
+   end else
+      Result := '';
+end;
+
+function ExtractFileDir(const st: StdString): StdString;
+var
+   i,
+   l: longint;
+
+begin
+   l := Length(st);
+
+   if(l > 0) then begin
+      i := l;
+
+      while (i >= 1) and (not (st[i] in DirectorySeparators)) do
+         dec(i);
+
+      if(i >= 2) then
+         Result := copy(st, 1, i - 1)
+      else
+         Result := '';
+   end else
+      Result := '';
+end;
+
+function ExtractFileExt(const st: StdString): StdString;
+var
+   i,
+   l: longint;
+
+begin
+   l := Length(st);
+
+   if(l > 0) then begin
+      i := l;
+
+      while (i >= 1) and (st[i] <> ExtensionSeparator) do begin
+         if(st[i] in DirectorySeparators) then
+            exit('');
+
+         dec(i);
+      end;
+
+      if(i > 0) then begin
+         {extract the extension and return it}
+         Result := copy(st, i, Length(st) - i + 1);
+      end else
+         Result := '';
+   end else
+      Result := '';
+end;
+
+function ExtractFileExtNoDot(const st: StdString): StdString;
+var
+   i,
+   l: longint;
+
+begin
+   l := Length(st);
+
+   if(l > 0) then begin
+      i := l;
+      while (i >= 1) and (st[i] <> ExtensionSeparator) do
+         dec(i);
+
+      if(i > 0) then begin
+         {extract the extension and return it}
+         Result := copy(st, i + 1, 255);
+      end else
+         Result := '';
+   end else
+      Result := '';
+end;
+
+function ExtractFileExts(const st: StdString; level: longint): StdString;
+var
+   i,
+   l,
+   currentLevel: longint;
+
+begin
+   l := Length(st);
+
+   if(l > 0) and (level > 0) then begin
+      i := l;
+      currentLevel := 0;
+
+      while (i > 1) and (level <> currentLevel) do begin
+         dec(i);
+
+         if(st[i] = ExtensionSeparator) then
+            inc(currentLevel)
+         else if(st[i] in DirectorySeparators) then
+            break;
+      end;
+
+      if(currentLevel = level) then begin
+         {extract the extension and return it}
+         Result := copy(st, i, 255);
+      end else
+         Result := '';
+   end else
+      Result := '';
+end;
+
+function ExtractFilePath(const st: StdString): StdString;
+var
+   i,
+   l: longint;
+
+begin
+   l := Length(st);
+
+   if(l > 0) then begin
+     i := l;
+
+     while (i >= 1) and (not (st[i] in DirectorySeparators)) do
+        dec(i);
+
+      if(i >= 2) then
+         Result := copy(st, 1, i)
+      else
+         Result := '';
+   end else
+      Result := '';
+end;
+
+function ExtractFileDrive(const st: StdString): StdString;
+var
+   i,
+   l: longint;
+
+begin
+   l := Length(st);
+
+   if(l > 1) then begin
+      if(st[2] = DriveSeparator) then
+         Result := copy(st, 1, 2)
+      else if(st[1] in DirectorySeparators) and (st[2] in DirectorySeparators) then begin
+         {skip the share}
+         i := 2;
+
+         while (i < l) and not (st[i + 1] in DirectorySeparators) do
+            inc(i);
+         inc(i);
+
+         while(i < l) and not (st[i + 1] in DirectorySeparators) do inc
+            (i);
+
+         Result := copy(st, 1, i);
+      end else
+         Result := '';
+   end else
+      Result := '';
+end;
+
+
+function GetParentDirectory(const st: StdString): StdString;
+begin
+   Result := ExpandFileName(IncludeTrailingPathDelimiter(st) + '..')
+end;
+
+function IncludeTrailingPathDelimiterNonEmpty(const st: StdString): StdString;
+begin
+   if(st <> '') then
+      Result := IncludeTrailingPathDelimiter(st)
+   else
+      Result := '';
+end;
+
+function strExplode(const s: StdString; delimiter: char): TStringArray;
+var
+   i,
+   len,
+   p,
+   prevp,
+   n,
+   charcount: longint; {i, string length, position, previous position, string count}
+   str: StdString;
+   stringarray: TStringArray = nil;
+
+begin
+   if(s <> '') then begin
+      len := Length(s);
+
+      p := -1;
+      n := 0;
+                                                                 ;
+      {figure out how many strings will be required}
+      for i := 1 to len do begin
+         if(s[i] = delimiter) then begin
+            inc(n);
+            p := i;
+         end;
+      end;
+
+      {if there are characters behind the last delimiter we have one more string}
+      if(p <= len) then
+         inc(n);
+
+      {if there are no delimiters we have only one string to explode}
+      if(p = -1) then
+         n := 1;
+
+      {allocate memory for string array}
+      SetLength(stringarray, n);
+
+      {prepare for exploding string}
+      prevp := 0;
+      n     := 0;
+
+      {extract individual strings}
+      for i := 1 to len do begin
+         if(s[i] = delimiter) then begin
+            charcount := i - prevp;
+            str := copy(s, prevp + 1, charcount - 1);
+            inc(n);
+            stringarray[n-1] := str;
+
+            prevp := i;
+         end;
+      end;
+
+      if(prevp < len) then begin
+         stringarray[n] := copy(s, prevp + 1, len-prevp);
+      end else
+         stringarray[n] := '';
+
+      Result := stringarray;
+   end else
+      Result := nil;
+end;
+
+procedure strExplode(const s: StdString; delimiter: char; var a: array of ShortString; maxStrings: loopint);
+var
+   i,
+   len,
+   prevp,
+   n,
+   charcount: longint; {i, string length, position, previous position, string count}
+   str: StdString;
+
+begin
+   if(s <> '') then begin
+      len := Length(s);
+
+      n := 0;
+
+      {prepare for exploding string}
+      prevp := 0;
+      n     := 0;
+
+      {extract individual strings}
+      for i := 1 to len do begin
+         if(s[i] = delimiter) then begin
+            charcount := i - prevp;
+            str := copy(s, prevp + 1, charcount - 1);
+            inc(n);
+            a[n - 1] := str;
+
+            prevp := i;
+            if(maxStrings > 0) and (n >= maxStrings) then
+               break;
+         end;
+      end;
+
+      {leftover string}
+      if(maxStrings > 0) and (n >= maxStrings) then
+         exit;
+
+      if(prevp < len) then
+         a[n] := copy(s, prevp + 1, len - prevp)
+      else
+         a[n] := '';
+   end;
+end;
+
+procedure StringFromBytes(out s: StdString; size: loopint; const bytes);
+begin
+   if(Size > 0) then begin
+      s := '';
+      SetLength(s, size);
+      Move(bytes, s[1], size);
+   end else
+      s := '';
+end;
+
+function GetKeyValue(const s: StdString; out key, value: StdString; const separator: char): boolean;
+var
+   p: loopint;
+
+begin
+   if(s <> '') then begin
+      p := pos(separator, s);
+
+      if(p > 0) then begin
+         key := Copy(s, 0, p - 1);
+         StringUtils.StripWhitespace(key);
+
+         value := Copy(s, p + 1, Length(s) - p);
+         StringUtils.StripWhitespace(value);
+
+         exit(key <> '');
+      end;
+   end;
+
+   key := '';
+   value := '';
+   Result := false;
+end;
+{$ENDIF}
 
 END.
