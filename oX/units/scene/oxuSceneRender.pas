@@ -142,7 +142,10 @@ begin
       cameraComponent := oxTCameraComponent(cameras.List[i]);
       params.Camera := cameraComponent.Camera;
 
-      params.Projection := cameraComponent.Projection;
+      if(cameraComponent.UseSceneProjection) then
+         params.Projection := projection
+      else
+         params.Projection := cameraComponent.Projection;
 
       RenderCamera(params);
    end;
