@@ -1276,6 +1276,8 @@ end;
 
 function uiTWindowHelper.SetIcon(const fn: string): loopint;
 begin
+   Result := 0;
+
    if(fn <> '') then begin
       if(not IsOxw()) then
          Result := SetIconTexture(fn)
