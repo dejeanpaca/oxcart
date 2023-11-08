@@ -79,10 +79,11 @@ begin
          wdgTControllerTestButton(btn).ControllerIndex := i;
          btn.UseCallback(@testController);
       end;
-   end else begin
+   end else
       wdgLabel.Add('No controllers detected/supported');
-      wdgButton.Add('Rescan').UseCallback(@rescanControllers);
-   end;
+
+   uiWidget.LastRect.GoLeft();
+   wdgButton.Add('Rescan').UseCallback(@rescanControllers);
 end;
 
 procedure init();
