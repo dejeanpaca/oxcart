@@ -15,7 +15,8 @@ INTERFACE
       uAppInfo,
       appuInputTypes, appuKeys, appuEvents, appuKeyEvents, appuMouse, appuMouseEvents,
       {oX}
-      oxuTypes, oxuWindowTypes, oxuWindows, oxuWindow, oxuPlatform, oxuPlatforms, oxuRenderer,
+      oxuTypes, oxuWindowTypes, oxuWindows, oxuWindow, oxuWindowHelper,
+      oxuPlatform, oxuPlatforms, oxuRenderer,
       oxuGlobalInstances, uiuWindowTypes,
       {ui}
       uiuWindow, uiuTypes;
