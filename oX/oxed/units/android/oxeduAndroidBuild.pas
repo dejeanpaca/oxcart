@@ -92,6 +92,7 @@ end;
 procedure buildStartRun();
 var
    arch: oxedTAndroidPlatformArchitecture;
+   llvmPath,
    path: StdString;
 
 begin
@@ -126,8 +127,17 @@ begin
    ReplaceDirSeparators(path);
 
    if(not FileUtils.DirectoryExists(path)) then begin
-       oxedBuild.Fail('Cannot find toolchain utilities at: ' + path);
-       exit;
+      llvmPath := IncludeTrailingPathDelimiterNonEmpty(oxedAndroidSettings.GetNDKPath()) +
+         'toolchains/llvm/prebuilt/' + oxedTAndroidHelpers.HostPlatformPath() + '/bin';
+
+      if(FileUtils.DirectoryExists(llvmPath)) then begin
+         {using llvm, force different prefix}
+         build.Linker.Use := ReplaceDirSeparatorsf(llvmPath + '/ld.exe');
+         path := llvmPath;
+      end else begin
+         oxedBuild.Fail('Cannot find toolchain utilities at: ' + path);
+         exit;
+      end;
    end;
 
    build.FPCOptions.CompilerUtilitiesPath := path;
