@@ -187,8 +187,8 @@ begin
    else
       oxRenderer := oxNilRenderer;
 
-   vSelectedRenderer := renderer.Name;
-   log.i('Using renderer: ' + renderer.Name);
+   vSelectedRenderer := oxRenderer.Name;
+   log.i('Using renderer: ' + vSelectedRenderer);
 end;
 
 procedure oxTRenderers.Use(renderer: oxTRenderer);
