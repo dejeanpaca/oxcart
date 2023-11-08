@@ -29,14 +29,14 @@ TYPE
       ClearMessagesOnStart,
       {focus game view on start}
       FocusGameViewOnStart,
-      {always load last project}
-      AlwaysLoadLastProject,
       {run a build on project open}
       BuildOnProjectOpen,
       {require rebuild when a project is opened}
       RequireRebuildOnOpen,
       {handle library errors}
-      HandleLibraryErrors: boolean;
+      HandleLibraryErrors,
+      {start OXED with last open project}
+      StartWithLastProject: boolean;
 
       {line ending type}
       LineEndings: string;
@@ -54,7 +54,6 @@ VAR
 IMPLEMENTATION
 
 VAR
-   dvAlwaysLoadLastProject,
    dvCameraSpeed,
    dvCameraAngleSpeed,
    dvPointerCenterEnable,
@@ -63,7 +62,8 @@ VAR
    dvLineEndings,
    dvBuildOnProjectOpen,
    dvRequireRebuildOnOpen,
-   dvHandleLibraryErrors: TDVar;
+   dvHandleLibraryErrors,
+   dvStartWithLastProject: TDVar;
 
    dvgDebug: TDVarGroup;
    dvDebugRenderSelectorBBox: TDvar;
@@ -83,14 +83,14 @@ end;
 INITIALIZATION
    oxedSettings.CameraSpeed := 5;
    oxedSettings.CameraAngleSpeed := 5;
-   oxedSettings.AlwaysLoadLastProject := true;
+   oxedSettings.StartWithLastProject := true;
    oxedSettings.PointerCenterEnable := true;
    oxedSettings.ClearMessagesOnStart := true;
    oxedSettings.FocusGameViewOnStart := true;
    oxedSettings.RequireRebuildOnOpen := true;
    oxedSettings.HandleLibraryErrors := true;
+   oxedSettings.StartWithLastProject := true;
 
-   dvgOXED.Add(dvAlwaysLoadLastProject, 'always_load_last_project', dtcBOOL, @oxedSettings.AlwaysLoadLastProject);
    dvgOXED.Add(dvCameraSpeed, 'camera_speed', dtcSINGLE, @oxedSettings.CameraSpeed);
    dvgOXED.Add(dvCameraAngleSpeed, 'camera_angle_speed', dtcSINGLE, @oxedSettings.CameraAngleSpeed);
    dvgOXED.Add(dvPointerCenterEnable, 'pointer_center_enable', dtcBOOL, @oxedSettings.PointerCenterEnable);
@@ -100,6 +100,7 @@ INITIALIZATION
    dvgOXED.Add(dvBuildOnProjectOpen, 'build_on_project_open', dtcBOOL, @oxedSettings.BuildOnProjectOpen);
    dvgOXED.Add(dvRequireRebuildOnOpen, 'require_rebuild_on_open', dtcBOOL, @oxedSettings.RequireRebuildOnOpen);
    dvgOXED.Add(dvHandleLibraryErrors, 'handle_library_errors', dtcBOOL, @oxedSettings.HandleLibraryErrors);
+   dvgOXED.Add(dvStartWithLastProject, 'start with last open project', dtcBOOL, @oxedSettings.StartWithLastProject);
 
    dvgOXED.Add('debug', dvgDebug);
    dvgDebug.Add(dvDebugRenderSelectorBBox, 'render_selector_bbox', dtcBOOL, @oxedSettings.Debug.RenderSelectorBBox);
