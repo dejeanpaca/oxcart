@@ -72,6 +72,7 @@ CONST
    appCONTROLLER_LEFT_TRIGGER          = 20;
    appCONTROLLER_RIGHT_TRIGGER         = 21;
 
+   {namings for functions}
    appCONTROLLER_FUNCTIONS: array[0..41] of appTControllerFunctionDescriptor = (
       (Name: 'none'; MappedFunction: appCONTROLLER_NONE),
 
@@ -146,21 +147,75 @@ TYPE
       appCONTROLLER_EVENT_TRIGGER
    );
 
+   {what does an axis represent}
+   appTControllerAxisRemapType = (
+      {it's an actual axis}
+      appCONTROLLER_AXIS_IS_AXIS,
+      {this is actually a trigger}
+      appCONTROLLER_AXIS_IS_TRIGGER,
+      {axis is actually a dpad}
+      appCONTROLLER_AXIS_IS_DPAD
+   );
+
+   {remap for an individual axis}
+   appTControllerAxisRemap = record
+      {remap to which axis/trigger/dpad index}
+      Index: loopint;
+      {type of remap}
+      RemapType: appTControllerAxisRemapType;
+      {axis function}
+      Func: loopint;
+   end;
+
+   appPControllerDeviceMapping = ^appTControllerDeviceMapping;
+
+   appTControllerDeviceSetting = record
+      {how many axes this device has}
+      AxisCount,
+      {how many buttons this device has}
+      ButtonCount,
+      {how many triggers this device has}
+      TriggerCount,
+      {number of axis groups}
+      AxisGroupCount: loopint;
+
+      {axis groups with X/Y coordinates (thumbsticks)}
+      AxisGroups: array[0..appMAX_CONTROLLER_AXIS_GROUPS] of appiTAxisGroup;
+
+      {is the dpad present}
+      DPadPresent: boolean;
+   end;
+
+   {controller mapping, represents a specific type of controller (xbox, ps)}
+
+   { appTControllerDeviceMapping }
+
+   appTControllerDeviceMapping = record
+      {Id}
+      Id,
+      {string used to recognize this device (from the controller device name)}
+      RecognitionString: StdString;
+
+      Settings: appTControllerDeviceSetting;
+
+      {should we remap axes}
+      RemapAxes: boolean;
+
+      AxisRemaps: array[0..appMAX_CONTROLLER_AXES - 1] of appTControllerAxisRemap;
+
+      Next: appPControllerDeviceMapping;
+
+      class procedure Initialize(out m: appTControllerDeviceMapping); static;
+   end;
+
    { appTControllerDevice }
 
    appTControllerDevice = class
       {device name}
       Name: string;
 
-      {is a dpad present}
-      DPadPresent: boolean;
-
       {counts of axes and buttons}
       DeviceIndex,
-      AxisCount,
-      TriggerCount,
-      ButtonCount,
-      AxisGroupCount,
       {trigger value range}
       TriggerValueRange,
       {axis value range}
@@ -175,13 +230,15 @@ TYPE
       {stretch trigger non dead zone value to full range}
       TriggerDeadZoneStretch: boolean;
 
+      Settings: appTControllerDeviceSetting;
+
       {has the device state been updated}
       Updated,
       {is the device valid (present)}
       Valid: boolean;
 
-      {axis groups with X/Y coordinates (thumbsticks)}
-      AxisGroups: array[0..appMAX_CONTROLLER_AXIS_GROUPS] of appiTAxisGroup;
+      {mapping for this device (if no mapping this should point to generic map)}
+      Mapping: appPControllerDeviceMapping;
 
       State: record
          {pressed state of all buttons, max 64 supported}
@@ -216,6 +273,8 @@ TYPE
 
       {get name of the device}
       function GetName(): string;
+      {get the id of the device mapping}
+      function GetMappingId(): string;
 
       {get button pressure (how pressed it is)}
       function GetButtonPressure(index: loopint): single;
@@ -271,16 +330,17 @@ TYPE
       Device: appTControllerDevice;
       Typ: appTControllerEventType;
 
-      {key number}
+      {button/axis/trigger number}
       KeyCode: loopint;
       {key value (non-zero means pressed)}
       Value: single;
       {which keys are being currently held}
       KeyState: TBitSet;
 
-      {function to which this button/axis is mapped}
+      {function to which this button/trigger/axis is mapped}
       MappedFunction: longint;
 
+      {device associated with this event}
       Controller: appTControllerDevice;
    end;
 
@@ -319,36 +379,69 @@ TYPE
 
    { appTControllers }
    appTControllers = record
+      {handler count}
       nHandlers: loopint;
+      {a list of handlers}
       Handlers: array[0..appMAX_CONTROLLER_HANDLERS - 1] of appPControllerHandler;
+      {device list}
       List: appTControllerDeviceList;
 
+      {callbacks for controller events}
       OnEvent: appTOnControllerEventRoutines;
+      {put events in the event queue (OnEvent will be called in any case)}
       PutInQueue: boolean;
 
+      {event handler}
       evh: appTEventHandler;
       evhp: appPEventHandler;
 
+      {list of mapped devices}
+      MappedDevices: record
+         s,
+         e: appPControllerDeviceMapping;
+      end;
+
+      {queue a controller event}
       procedure Queue(var ev: appTControllerEvent; controller: appTControllerDevice);
 
+      {add handler to the list}
       procedure AddHandler(var handler: appTControllerHandler);
-
+      {add a device to the list}
       procedure Add(device: appTControllerDevice);
+      {reset all devices}
       procedure Reset();
 
       {run individual controllers}
       procedure UpdateControllers();
 
+      {get device by index}
       function GetByIndex(index: loopint): appTControllerDevice;
 
+      {add a device mappping to the list}
+      procedure AddMapping(var mapping: appTControllerDeviceMapping);
+
+      {get a mapped function}
       function GetMappedFunction(const name: string): longint;
+      {get a mapped device by name (if none found, returns generic mapping)}
+      function GetMappedDeviceByName(const name: StdString): appPControllerDeviceMapping;
    end;
 
 
 VAR
+   {generic device mapping }
+   appControllerDeviceGenericMapping: appTControllerDeviceMapping;
+
+   {controllers}
    appControllers: appTControllers;
 
 IMPLEMENTATION
+
+{ appTControllerDeviceMapping }
+
+class procedure appTControllerDeviceMapping.Initialize(out m: appTControllerDeviceMapping);
+begin
+   m := appControllerDeviceGenericMapping;
+end;
 
 { appTOnControllerEventRoutinesHelper }
 
@@ -372,6 +465,9 @@ begin
    OnEvent.Call(ev);
    ev.Controller := controller;
 
+   {associate controller with event so it can be removed by it}
+   event.ExternalData := Controller;
+
    appEvents.Init(event, 0, appControllers.evhp);
 
    if(PutInQueue) then
@@ -387,9 +483,25 @@ begin
 end;
 
 procedure appTControllers.Add(device: appTControllerDevice);
+var
+   m: appPControllerDeviceMapping;
+
 begin
    List.Add(device);
    device.DeviceIndex := List.n - 1;
+
+   device.Mapping := appControllers.GetMappedDeviceByName(device.Name);
+
+   m := device.Mapping;
+
+   {update device according to the device mapping}
+   if(m <> @appControllerDeviceGenericMapping) then begin
+      log.v('Mapped device to: ' + device.GetMappingId());
+
+      device.Settings := m^.Settings;
+   end;
+
+   {TODO: Get device initial state}
 end;
 
 procedure appTControllers.Reset();
@@ -426,6 +538,18 @@ begin
       Result := nil;
 end;
 
+procedure appTControllers.AddMapping(var mapping: appTControllerDeviceMapping);
+begin
+   mapping.Next := nil;
+
+   if(MappedDevices.s = nil) then
+      MappedDevices.s := @mapping
+   else
+      MappedDevices.e^.Next := @mapping;
+
+   MappedDevices.e := @mapping;
+end;
+
 function appTControllers.GetMappedFunction(const name: string): longint;
 var
    i: loopint;
@@ -437,6 +561,23 @@ begin
    end;
 
    result := -1;
+end;
+
+function appTControllers.GetMappedDeviceByName(const name: StdString): appPControllerDeviceMapping;
+var
+   cur: appPControllerDeviceMapping;
+
+begin
+   cur := MappedDevices.s;
+
+   if(cur <> nil) then repeat
+      if(pos(cur^.RecognitionString, name) > 0) then
+         exit(cur);
+
+      cur := cur^.Next;
+   until (cur = nil);
+
+   Result := @appControllerDeviceGenericMapping;
 end;
 
 { appTControllerDevice }
@@ -451,14 +592,17 @@ begin
    TriggerDeadZoneStretch := true;
    TriggerValueRange := 32767;
 
+   Mapping := @appControllerDeviceGenericMapping;
+
    State.Keys.SetupKeys(appMAX_CONTROLLER_BUTTONS, @State.KeyProperties);
 end;
 
 procedure appTControllerDevice.LogDevice();
 begin
-   log.i('Button count: ' + sf(ButtonCount));
-   log.i('Axis count: ' + sf(AxisCount));
-   log.i('Trigger count: ' + sf(TriggerCount));
+   log.i('Button count: ' + sf(Settings.ButtonCount));
+   log.i('Axis count: ' + sf(Settings.AxisCount));
+   log.i('Trigger count: ' + sf(Settings.TriggerCount));
+   log.i('DPad prsent: ' + sf(Settings.DPadPresent));
 end;
 
 procedure appTControllerDevice.DeInitialize();
@@ -481,6 +625,9 @@ procedure appTControllerDevice.Disconnected();
 begin
    log.w('Input controller device seems disconnected: ' + Name);
    Valid := false;
+
+   {disable events associated with this device, as it may be removed}
+   appEvents.DisableWithExternalData(Self);
 end;
 
 function appTControllerDevice.GetName(): string;
@@ -491,11 +638,19 @@ begin
       Result := 'Unknown';
 end;
 
+function appTControllerDevice.GetMappingId(): string;
+begin
+   if(Mapping <> @appControllerDeviceGenericMapping) then
+      Result := Mapping^.Id
+   else
+      Result := '';
+end;
+
 function appTControllerDevice.GetButtonPressure(index: loopint): single;
 begin
    Result := 0;
 
-   if(index >= 0) and (index < ButtonCount) then begin
+   if(index >= 0) and (index < Settings.ButtonCount) then begin
       if(State.KeyState.GetBit(index)) then
          Result := 1.0;
    end;
@@ -505,7 +660,7 @@ function appTControllerDevice.IsButtonPressed(index: loopint): boolean;
 begin
    Result := false;
 
-   if(index > 0) and (index < ButtonCount) then begin
+   if(index > 0) and (index < Settings.ButtonCount) then begin
       if(State.KeyState.GetBit(index)) then
          Result := true;
    end;
@@ -520,7 +675,7 @@ function appTControllerDevice.GetAxisValue(index: loopint): single;
 begin
    Result := 0;
 
-   if(index >= 0) and (index < AxisCount) then
+   if(index >= 0) and (index < Settings.AxisCount) then
       Result := GetNormalizedAxisValue(State.Axes[index]);
 end;
 
@@ -528,7 +683,7 @@ function appTControllerDevice.GetUnitAxisValue(index: loopint): single;
 begin
    Result := 0.5;
 
-   if(index >= 0) and (index < AxisCount) then
+   if(index >= 0) and (index < Settings.AxisCount) then
       Result := GetNormalizedAxisValue(State.Axes[index]) + 1.0 / 2;
 end;
 
@@ -536,7 +691,7 @@ function appTControllerDevice.GetTriggerValue(index: loopint): single;
 begin
    Result := 0;
 
-   if(index >= 0) and (index < TriggerCount) then
+   if(index >= 0) and (index < Settings.TriggerCount) then
       Result := GetNormalizedTriggerValue(State.Triggers[index]);
 end;
 
@@ -585,7 +740,7 @@ end;
 
 procedure appTControllerDevice.SetButtonPressedState(index: loopint; pressed: boolean);
 begin
-   if(index >= 0) and (index < ButtonCount) then begin
+   if(index >= 0) and (index < Settings.ButtonCount) then begin
       if(pressed) then
          State.KeyState.SetBit(index)
       else
@@ -597,17 +752,46 @@ end;
 
 procedure appTControllerDevice.SetTriggerState(index: loopint; raw: loopint);
 begin
-   if(index >= 0) and (index < TriggerCount) then begin
+   if(index >= 0) and (index < Settings.TriggerCount) then begin
       State.Triggers[index].AssignRaw(raw, TriggerValueRange);
       vmClamp(State.Triggers[index], -1.0, 1.0);
    end;
 end;
 
 procedure appTControllerDevice.SetAxisState(index: loopint; raw: loopint);
+var
+   rm: appTControllerAxisRemap;
+   pressed: boolean;
+
 begin
-   if(index >= 0) and (index < AxisCount) then begin
-      State.Axes[index].AssignRaw(raw, AxisValueRange);
-      vmClamp(State.Triggers[index], -1.0, 1.0);
+   if(index >= 0) and (index < Settings.AxisCount) then begin
+      if(Mapping^.RemapAxes) then begin
+         rm := Mapping^.AxisRemaps[index];
+
+         if(rm.RemapType = appCONTROLLER_AXIS_IS_AXIS) then begin
+            State.Axes[index].AssignRaw(raw, AxisValueRange);
+            vmClamp(State.Axes[index], -1.0, 1.0);
+         end else if(rm.RemapType = appCONTROLLER_AXIS_IS_TRIGGER) then begin
+            SetTriggerState(rm.Index, AxisValueRange);
+         end else if(rm.RemapType = appCONTROLLER_AXIS_IS_DPAD) then begin
+            pressed := raw <> 0;
+
+            if(rm.Index = 0) then begin
+               if(raw < 0) then
+                  State.DPad[appbCONTROLLER_DPAD_UP].Prop(kpPRESSED, pressed)
+               else if(raw > 0) then
+                  State.DPad[appbCONTROLLER_DPAD_DOWN].Prop(kpPRESSED, pressed);
+            end else if(rm.Index = 1) then begin
+               if(raw < 0) then
+                  State.DPad[appbCONTROLLER_DPAD_LEFT].Prop(kpPRESSED, pressed)
+               else if(raw > 0) then
+                  State.DPad[appbCONTROLLER_DPAD_RIGHT].Prop(kpPRESSED, pressed);
+            end;
+         end;
+      end else begin
+         State.Axes[index].AssignRaw(raw, AxisValueRange);
+         vmClamp(State.Axes[index], -1.0, 1.0);
+      end;
    end;
 end;
 
@@ -615,7 +799,7 @@ function appTControllerDevice.GetDPadDirection(): loopint;
 begin
    Result := 0;
 
-   if(DPadPresent) then begin
+   if(Settings.DPadPresent) then begin
       if(IsDPadPressed(appbCONTROLLER_DPAD_UP)) then begin
          Result := appCONTROLLER_DIRECTION_UP;
 
@@ -685,8 +869,8 @@ var
 begin
    Result := vmvZero2;
 
-   if(group >= 0) and (group < AxisGroupCount) then begin
-      axisGroup := AxisGroups[group];
+   if(group >= 0) and (group < Settings.AxisGroupCount) then begin
+      axisGroup := Settings.AxisGroups[group];
 
       Result[0] := GetNormalizedAxisValue(State.Axes[axisGroup[0]]);
       Result[1] := GetNormalizedAxisValue(State.Axes[axisGroup[1]]);
@@ -697,7 +881,7 @@ function appTControllerDevice.GetAxisGroupDirectionVector(group: loopint): TVect
 begin
    Result := vmvZero2;
 
-   if(group >= 0) and (group < AxisGroupCount) then
+   if(group >= 0) and (group < Settings.AxisGroupCount) then
       Result := GetAxisGroupVector(group).Normalized();
 end;
 
@@ -705,7 +889,7 @@ function appTControllerDevice.GetAxisGroupDirectionMagnitude(group: loopint): si
 begin
    Result := 0;
 
-   if(group >= 0) and (group < AxisGroupCount) then
+   if(group >= 0) and (group < Settings.AxisGroupCount) then
       Result := GetAxisGroupVector(group).Magnitude();
 end;
 
@@ -736,7 +920,7 @@ end;
 
 function appTControllerHandler.GetName(): StdString;
 begin
-  Result := 'Unknown';
+   Result := 'Unknown';
 end;
 
 procedure checkForDisconnected();
@@ -801,10 +985,26 @@ begin
    end;
 end;
 
+procedure initializeGenericMapping(var m: appTControllerDeviceMapping);
+var
+   i: loopint;
+
+begin
+   ZeroOut(m, SizeOf(m));
+
+   for i := 0 to appMAX_CONTROLLER_AXES - 1 do begin
+      m.AxisRemaps[i].RemapType := appCONTROLLER_AXIS_IS_AXIS;
+      m.AxisRemaps[i].Index := i;
+   end;
+end;
+
 INITIALIZATION
    oxRun.AddRoutine('input_controllers', @run);
    app.InitializationProcs.Add('input_controllers', @initialize, @deinitialize);
 
    appControllers.evhp := appEvents.AddHandler(appControllers.evh, 'input_controller');
+
+   {initialize generic mapping}
+   initializeGenericMapping(appControllerDeviceGenericMapping);
 
 END.
