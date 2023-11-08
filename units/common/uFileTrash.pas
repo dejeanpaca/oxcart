@@ -178,6 +178,8 @@ end;
 {$ENDIF}
 
 INITIALIZATION
+   {$IF DEFINED(LINUX)}
    DetermineTrashPath();
+   {$ENDIF}
 
 END.
