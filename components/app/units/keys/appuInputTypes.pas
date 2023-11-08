@@ -56,6 +56,8 @@ TYPE
       function Interpolated(kc, optionalKC: loopint): single;
 
       procedure UpdateCycle();
+
+      procedure Process(keyCode: loopint; pressed: boolean);
    end;
 
 IMPLEMENTATION
@@ -145,6 +147,19 @@ begin
       pKeys[i].Clear(kpCYCLE_PRESSED or kpPRESSED_RELEASED);
       pKeys[i].Prop(kpWAS_PRESSED, pKeys[i].IsSet(kpPRESSED));
    end;
+end;
+
+procedure appiTKeyStates.Process(keyCode: loopint; pressed: boolean);
+begin
+   {determine if key was pressed in this cycle}
+   if((not pKeys[keyCode].IsSet(kpPRESSED)) and pressed) then
+      pKeys[keyCode].Prop(kpCYCLE_PRESSED);
+
+   {is the key still pressed}
+   pKeys[keyCode].Prop(kpPRESSED, pressed);
+
+   if pKeys[keyCode].IsSet(kpCYCLE_PRESSED) and (not pressed) then
+      pKeys[keyCode].Prop(kpPRESSED_RELEASED);
 end;
 
 
