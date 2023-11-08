@@ -9,12 +9,12 @@ UNIT oxeduRecents;
 INTERFACE
 
    USES
-     uStd, udvars, dvaruFile, sysutils, uFileUtils,
+     uStd, udvars, dvaruFile, sysutils, uFileUtils, uFilePathList,
      {oxed}
      uOXED, oxeduProject, oxeduProjectManagement;
 
 TYPE
-   oxedTRecentsList = TSimpleStringList;
+   oxedTRecentsList = TFilePathStringList;
 
    { oxedTRecents }
 
@@ -27,7 +27,6 @@ TYPE
 
       OnUpdate: TProcedures;
 
-      function FindRecent(const path: StdString): loopint;
       {validates given path (checks if exists)}
       function Validate(const path: StdString): boolean;
 
@@ -79,31 +78,6 @@ end;
 
 { oxedTRecents }
 
-function oxedTRecents.FindRecent(const path: StdString): loopint;
-var
-   i: loopint;
-   {$IFDEF WINDOWS}
-   lpath: StdString;
-   {$ENDIF}
-
-begin
-   {$IFDEF WINDOWS}
-   lpath := LowerCase(path);
-   {$ENDIF}
-
-   for i := 0 to List.n - 1 do begin
-      {$IFDEF WINDOWS}
-      if(LowerCase(List[i]) = lpath) then
-         exit(i);
-      {$ELSE}
-      if(List[i] = path) then
-         exit(i);
-      {$ENDIF}
-   end;
-
-   Result := -1;
-end;
-
 function oxedTRecents.Validate(const path: StdString): boolean;
 begin
    if(not Directories) then
@@ -121,7 +95,7 @@ begin
    correctPath := ExcludeTrailingPathDelimiter(path);
 
    {check if already exists}
-   index := FindRecent(correctPath);
+   index := List.FindPath(correctPath);
 
    if(index > -1) then begin
       {move to top if already exists}
