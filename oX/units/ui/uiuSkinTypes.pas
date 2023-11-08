@@ -112,7 +112,11 @@ TYPE
    { widget skin descriptor }
    uiPWidgetSkinDescriptor = ^uiTWidgetSkinDescriptor;
 
-   uiTWidgetSkinSetupRoutine = procedure(s: TObject; descriptor: uiPWidgetSkin);
+   { called when widget skin is being setup }
+   uiTWidgetSkinSetupRoutine = procedure(skin: TObject; descriptor: uiPWidgetSkin);
+
+   { called when widget skin is loaded }
+   uiTWidgetSkinOnLoad = procedure (skin: TObject; descriptor: uiPWidgetSkin);
 
    { uiTWidgetSkinDescriptor }
 
@@ -131,6 +135,9 @@ TYPE
       Bools: uiPWidgetSkinBoolDescriptors;
       Strings: uiPWidgetSkinStringDescriptors;
       Setup: uiTWidgetSkinSetupRoutine;
+
+      {called when this widget skin is loaded}
+      OnLoad: uiTWidgetSkinOnLoad;
 
       function GetColor(colorIndex: loopint): TColor4ub;
 
@@ -161,6 +168,8 @@ TYPE
       Images: array of uiTWidgetSkinImage;
       Bools: array of uiTWidgetSkinBool;
       Strings: TStringArray;
+      Glyphs: array of oxTGlyph;
+      GlyphStrings: array of String;
 
       procedure SetColor(which: loopint; var clr: TColor4ub);
       function GetColor(which: loopint): TColor4ub;
