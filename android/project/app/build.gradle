@@ -24,6 +24,10 @@ android {
             jniLibs.srcDirs = ["libs"]
         }
     }
+
+    aaptOptions {
+        noCompress 'ypk'
+    }    
 }
 
 dependencies {
