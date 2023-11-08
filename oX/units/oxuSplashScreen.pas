@@ -26,6 +26,8 @@ TYPE
    { oxTSplashScreen }
 
    oxTSplashScreen = class(oxTThreadTask)
+      RC: loopint;
+
       ClearColor: TColor4f;
       ClearBits: TBitSet;
 
@@ -64,6 +66,8 @@ TYPE
 
       procedure TaskStart(); override;
       procedure TaskStop(); override;
+
+      procedure ThreadStart(); override;
    end;
 
    { oxTBasicSplashScreen }
@@ -112,12 +116,12 @@ begin
 
    ClearColor := cBlack4f;
    ClearBits := oxrBUFFER_CLEAR_NOTHING;
-   {$IFNDEF OX_LIBRARY}
    DisplayTime := oxSplashScreen.DefaultDisplayTime;
-   {$ENDIF}
 
    TTimer.Init(Timer);
    Timer.Start();
+
+   EmitAllEvents();
 end;
 
 destructor oxTSplashScreen.Destroy();
@@ -151,7 +155,6 @@ begin
       exit;
 
    if(AssociatedWindow <> nil) then begin
-      oxRenderer.ClearColor(ClearColor);
       oxRenderer.Clear(ClearBits);
 
       RenderContent();
@@ -182,8 +185,6 @@ begin
          oxTimer.Sleep(1);
       until Timer.Elapsed() > DisplayTime;
    end;
-
-   log.v('Ended splash screen: ' + Name);
 end;
 
 procedure oxTSplashScreen.Run();
@@ -197,8 +198,11 @@ end;
 
 procedure oxTSplashScreen.TaskStart();
 begin
-   if(AssociatedWindow <> nil) then
-      oxRenderThread.StartThread(AssociatedWindow);
+   if(AssociatedWindow <> nil) then begin
+      oxRenderThread.StartThread(AssociatedWindow, RC);
+
+      oxRenderer.ClearColor(ClearColor);
+   end;
 end;
 
 procedure oxTSplashScreen.TaskStop();
@@ -207,6 +211,14 @@ begin
 
    if(AssociatedWindow <> nil) then
       oxRenderThread.StopThread(AssociatedWindow);
+
+   log.v('Ended splash screen: ' + Name);
+end;
+
+procedure oxTSplashScreen.ThreadStart();
+begin
+   {get an RC to render the splash screen}
+   RC := oxRenderer.GetRenderingContext(AssociatedWindow);
 end;
 
 { oxTBasicSplashScreen }
@@ -321,7 +333,7 @@ begin
       oxSplashScreen.Startup.WaitForDisplayTime();
       oxSplashScreen.Startup.StopWait();
 
-      FreeObject(oxSplashScreen.Startup);
+      oxThreadEvents.Destroy(oxTThreadTask(oxSplashScreen.Startup));
    end;
 end;
 
