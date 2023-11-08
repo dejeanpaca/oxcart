@@ -16,7 +16,6 @@ INTERFACE
       uiuWidget, uiWidgets, uiuDraw, uiuRegisteredWidgets, oxuUI,
       wdguBase;
 
-
 TYPE
 
    { wdgTControllerButtonState }
@@ -25,9 +24,6 @@ TYPE
       public
          ButtonName: StdString;
          Pressure: single;
-
-         mBorder,
-         mSurface: oxTPrimitiveModel;
 
       procedure Initialize(); override;
 
@@ -50,15 +46,6 @@ VAR
 
 IMPLEMENTATION
 
-procedure wdgTControllerButtonState.Initialize();
-begin
-   {TODO: Get subdivisions from UI settings}
-   {TODO: Get primitive models from global UI primitive models}
-
-   mBorder.InitCircle(1.0, 32);
-   mBorder.InitDisk(1.0, 32);
-end;
-
 procedure wdgTControllerButtonState.SetPressure(newPressure: single);
 begin
    Pressure := newPressure;
@@ -69,6 +56,7 @@ end;
 procedure wdgTControllerButtonState.Render();
 var
    clr: TColor4ub;
+   r: single;
 
 begin
    {render surface}
@@ -77,11 +65,13 @@ begin
 
    oxui.Material.SetColor('color', clr);
 
-   mSurface.Render();
+   r := vmMin(Dimensions.w, Dimensions.h);
+
+   uiDraw.Disk(RPosition.x, RPosition.y, r);
 
    {render border}
    SetColor(GetSkinObject().Colors.Border);
-   mBorder.Render();
+   uiDraw.Circle(RPosition.x, RPosition.y, r);
 
    {render button name, if set}
    if(ButtonName <> '') then begin
