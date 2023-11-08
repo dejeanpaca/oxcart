@@ -47,6 +47,10 @@ IMPLEMENTATION
 function oxglTEGL.RaiseError(): loopint;
 begin
    Result := eglGetError();
+
+   {we always set success as 0}
+   if(Result = EGL_SUCCESS) then
+      Result := 0;
 end;
 
 constructor oxglTEGL.Create();
