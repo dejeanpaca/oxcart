@@ -93,8 +93,8 @@ CONST
 
    {window title buttons}
    uiwBUTTON_CLOSE               = 0;
-   uiwBUTTON_MINIMIZE            = 1;
-   uiwBUTTON_MAXIMIZE            = 2;
+   uiwBUTTON_MAXIMIZE            = 1;
+   uiwBUTTON_MINIMIZE            = 2;
    uiwBUTTON_RESTORE             = 3;
    uiwBUTTON_HELP                = 4;
    uiwBUTTON_TOTRAY              = 5;
