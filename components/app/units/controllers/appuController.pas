@@ -6,6 +6,8 @@
    Triggers are mapped from 0.0 to +1.0
    DPad is assumed to have up/down/left/right buttons (other directions are combined from this)
    Axis groups combine two axes for an X/Y with -1.0 .. 1.0 values assumed left to right, and down to up
+
+   TODO: Implement force feedback support
 }
 
 {$INCLUDE oxheader.inc}
@@ -539,8 +541,6 @@ begin
 
    {update device according to the device mapping}
    if(m <> @appControllerDeviceGenericMapping) then begin
-      log.v('Mapped device to: ' + device.GetMappingId());
-
       ps := device.Settings;
       device.Settings := m^.Settings;
 
@@ -548,7 +548,10 @@ begin
          device.Settings.ButtonCount := ps.ButtonCount;
    end;
 
-   {TODO: Get device initial state}
+   if(device.GetMappingId() <> '') then
+      log.v('Added input controller device: ' + device.GetName() + ' (' + device.GetMappingId() + ')')
+   else
+      log.v('Added input controller device: ' + device.GetName());
 end;
 
 procedure appTControllers.Reset();
