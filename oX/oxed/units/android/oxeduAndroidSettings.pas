@@ -31,7 +31,9 @@ TYPE
          { PROJECT SETTINGS }
 
          {android package name}
-         PackageName: StdString;
+         PackageName,
+         {project files path when manual file management is enabled}
+         ProjectFilesPath: StdString;
          {should you manage android files yourself}
          ManualFileManagement: boolean;
       end;
@@ -44,6 +46,9 @@ TYPE
       function GetNDKPath(): StdString;
       {get the ndk installation path within the SDK}
       function GetNDKPathInSDK(): StdString;
+
+      {get the project files path}
+      function GetProjectFilesPath(): StdString;
    end;
 
 VAR
@@ -64,6 +69,7 @@ procedure oxedTAndroidSettings.ProjectReset();
 begin
   Project.PackageName := '';
   Project.ManualFileManagement := false;
+  Project.ProjectFilesPath := '';
 end;
 
 procedure oxedTAndroidSettings.Validate();
@@ -122,6 +128,15 @@ end;
 function oxedTAndroidSettings.GetNDKPathInSDK(): StdString;
 begin
    Result := SDKPath + 'ndk' + DirectorySeparator;
+end;
+
+function oxedTAndroidSettings.GetProjectFilesPath(): StdString;
+begin
+   if(not Project.ManualFileManagement) then
+      {TODO: Set the project files path from temporary project}
+      Result := Project.ProjectFilesPath
+   else
+      Result := Project.ProjectFilesPath;
 end;
 
 procedure preOpen();
