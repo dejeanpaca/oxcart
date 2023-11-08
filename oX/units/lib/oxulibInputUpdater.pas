@@ -11,9 +11,9 @@ UNIT oxulibInputUpdater;
 INTERFACE
 
    USES
-      uStd, appuRun, appuKeys, uLog,
+      uStd, appuKeys, uLog,
       {ox}
-      uOX, oxuGlobalInstances, oxulibSettings;
+      uOX, oxuRun, oxuRunRoutines, oxuGlobalInstances, oxulibSettings;
 
 IMPLEMENTATION
 
@@ -41,11 +41,12 @@ begin
 end;
 
 VAR
-   routine: appTRunRoutine;
+   initRoutines,
+   routine: oxTRunRoutine;
 
 INITIALIZATION
-   appRun.AddRoutine(routine, 'ox.lib.update_input', @updateInput);
+   oxRun.AddRoutine(routine, 'ox.lib.update_input', @updateInput);
 
-   ox.Init.iAdd('ox.lib.update_input', @init);
+   ox.Init.iAdd(initRoutines, 'ox.lib.update_input', @init);
 
 END.

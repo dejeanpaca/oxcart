@@ -130,8 +130,10 @@ begin
    Result := oxTScene.Create();
 end;
 
+{$IFNDEF OX_LIBRARY}
 VAR
    initRoutines: oxTRunRoutine;
+{$ENDIF}
 
 INITIALIZATION
    oxSceneManagement.Enabled := True;
