@@ -5,7 +5,7 @@
    NOTE: This is just an abstraction. Requires per platform implementation (for platforms that support it).
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuVibrator;
 
 INTERFACE

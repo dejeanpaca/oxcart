@@ -5,7 +5,7 @@
    Works similar to how android 9-patch works.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxu9Patch;
 
 INTERFACE

@@ -15,7 +15,11 @@ INTERFACE
       {app}
       uApp, appuController,
       {ox}
-      uOX, oxuTypes, oxuConsoleBackend, oxuwndBase,
+      uOX, oxuTypes,
+      {$IFDEF OX_FEATURE_CONSOLE}
+      oxuConsoleBackend,
+      {$ENDIF}
+      oxuwndBase,
       {ui}
       uiuControl, uiuWindow,
       uiuWidget, uiWidgets,

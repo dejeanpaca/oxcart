@@ -3,7 +3,7 @@
    Copyright (c) 2013. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuFileIcons;
 
 INTERFACE

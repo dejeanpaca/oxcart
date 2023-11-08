@@ -3,7 +3,7 @@
    Copyright (c) 2007. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuConsoleBackend;
 
 INTERFACE

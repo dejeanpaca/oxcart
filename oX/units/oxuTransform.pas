@@ -6,7 +6,7 @@
    TODO: Maybe JustApply() should be part of oxTRenderer
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuTransform;
 
 INTERFACE

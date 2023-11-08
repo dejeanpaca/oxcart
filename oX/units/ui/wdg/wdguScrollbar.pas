@@ -3,7 +3,7 @@
    Copyright (C) 2011. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT wdguScrollbar;
 
 INTERFACE

@@ -5,7 +5,7 @@
    https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_debug_output.txt
 }
 
-{$INCLUDE oxdefines.inc}{$I-}
+{$INCLUDE oxheader.inc}
 UNIT oxuglDebugOutput;
 
 INTERFACE

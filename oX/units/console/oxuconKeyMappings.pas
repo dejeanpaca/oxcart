@@ -5,7 +5,7 @@
    Configure key mappings via the console
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxuconKeyMappings;
 
 INTERFACE

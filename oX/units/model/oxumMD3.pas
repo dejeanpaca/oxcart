@@ -3,7 +3,7 @@
    Copyright (C) 2007. Dejan Boras
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT oxumMD3;
 
 {The order of MD3 models within the oxTModel structure goes like this:
