@@ -32,12 +32,11 @@ VAR
 
 IMPLEMENTATION
 
-function getEntity(out component: oxTPrimitiveModelComponent): oxTEntity;
+function getEntity(const name: StdString; out component: oxTPrimitiveModelComponent): oxTEntity;
 begin
-   result := oxTEntity.Create();
-
    component := oxTPrimitiveModelComponent.Create();
-   result.Add(component);
+
+   result := oxEntity.New(name, component);
 end;
 
 { oxTPrimitiveModelEntities }
@@ -47,9 +46,7 @@ var
    component: oxTPrimitiveModelComponent;
 
 begin
-   result := getEntity(component);
-   result.Name := 'Cube';
-
+   Result := getEntity('Cube', component);
    component.Cube();
 end;
 
@@ -58,9 +55,7 @@ var
    component: oxTPrimitiveModelComponent;
 
 begin
-   result := getEntity(component);
-   result.Name := 'Sphere';
-
+   Result := getEntity('Sphere', component);
    component.Sphere();
 end;
 
@@ -69,9 +64,7 @@ var
    component: oxTPrimitiveModelComponent;
 
 begin
-   result := getEntity(component);
-   result.Name := 'Plane';
-
+   Result := getEntity('Plane', component);
    component.Plane();
 end;
 
@@ -80,9 +73,7 @@ var
    component: oxTPrimitiveModelComponent;
 
 begin
-   result := getEntity(component);
-   result.Name := 'Circle';
-
+   Result := getEntity('Circle', component);
    component.Circle();
 end;
 
@@ -91,9 +82,7 @@ var
    component: oxTPrimitiveModelComponent;
 
 begin
-   result := getEntity(component);
-   result.Name := 'Disk';
-
+   Result := getEntity('Disk', component);
    component.Disk();
 end;
 
@@ -102,9 +91,7 @@ var
    component: oxTPrimitiveModelComponent;
 
 begin
-   result := getEntity(component);
-   result.Name := 'Cylinder';
-
+   Result := getEntity('Cylinder', component);
    component.Cylinder();
 end;
 
@@ -113,9 +100,7 @@ var
    component: oxTPrimitiveModelComponent;
 
 begin
-   result := getEntity(component);
-   result.Name := 'Torus';
-
+   Result := getEntity('Torus', component);
    component.Torus();
 end;
 
@@ -124,9 +109,7 @@ var
    component: oxTPrimitiveModelComponent;
 
 begin
-   result := getEntity(component);
-   result.Name := 'Cone';
-
+   Result := getEntity('Cone', component);
    component.Cone();
 end;
 

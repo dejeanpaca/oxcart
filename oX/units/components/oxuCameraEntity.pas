@@ -31,11 +31,8 @@ IMPLEMENTATION
 
 class function oxTCameraEntity.GetEntity(out component: oxTCameraComponent): oxTEntity;
 begin
-   Result := oxTEntity.Create();
-
    component := oxTCameraComponent.Create();
-   Result.Name := 'Camera';
-   Result.Add(component);
+   Result := oxEntity.New('Camera', component);
 end;
 
 { oxTCameraEntity }
@@ -45,17 +42,12 @@ var
    component: oxTCameraComponent;
 
 begin
-   Result := getEntity(component);
+   Result := GetEntity(component);
 end;
 
 class function oxTCameraEntity.CreateInScene(): oxTCameraComponent;
-var
-   entity: oxTEntity;
-
 begin
-   entity := GetEntity(Result);
-
-   oxScene.Add(entity);
+   oxScene.Add(GetEntity(Result));
 end;
 
 END.
