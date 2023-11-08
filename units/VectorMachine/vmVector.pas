@@ -2,8 +2,6 @@
    vmVector, base VectorMachine unit
    Copyright (C) 2007. Dejan Boras
 
-   Started On:    14.06.2007.
-
    vmVector is the base unit for VectorMachine, a group of units designed to
    perform math and related operations on vectors and similar data types.
 }

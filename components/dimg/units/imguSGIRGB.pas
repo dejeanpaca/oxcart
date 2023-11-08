@@ -2,8 +2,6 @@
    imguSGIRGB, SGI RGB image format loader
    Copyright (C) 2010. Dejan Boras
 
-   Started On:    12.05.2010.
-
    TODO: Implement support for colormaps, RLE compression and dimension other than 1.
 }
 

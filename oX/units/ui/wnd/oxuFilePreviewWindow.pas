@@ -1,8 +1,6 @@
 {
    oxuFilePreviewWindow, file preview window
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    22.04.2018.
 }
 
 {$INCLUDE oxdefines.inc}

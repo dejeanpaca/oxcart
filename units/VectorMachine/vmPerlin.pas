@@ -2,8 +2,6 @@
    vmPerlin, perlin noise operations
    Copyright (C) 2010. Dejan Boras
 
-   Started On:    03.10.2010.
-
    PERFORMANCE NOTE: The performance of vmPerlin functions is not very
    impressive if FPU exceptions are enabled. Disable FPU exceptions via:
    SetExceptionMask([exInvalidOp, exOverflow, exUnderflow, exPrecision]);

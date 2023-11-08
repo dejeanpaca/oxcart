@@ -1,8 +1,6 @@
 {
    uColors, color types, constants & routines
-   Copyright (C) Dejan Boras 2009.
-
-   Started On:    16.11.2008.
+   Copyright (C) 2008. Dejan Boras
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH TYPEHELPERS}{$MODESWITCH ADVANCEDRECORDS}

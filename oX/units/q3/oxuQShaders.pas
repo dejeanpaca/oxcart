@@ -2,8 +2,6 @@
    oxuQShaders, quake shader processing
    Copyright (C) 2009. Dejan Boras
 
-   Started On:    13.11.2009.
-
    Note: Extensive logging can be enabled by defining the OX_QSHADERS_EXTRA_LOGGING symbol.
 }
 

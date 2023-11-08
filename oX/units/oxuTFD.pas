@@ -1,8 +1,6 @@
 {
    oxuTFD, textured font descriptor (TFD) support
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    11.03.2011.
 }
 
 {$INCLUDE oxdefines.inc}

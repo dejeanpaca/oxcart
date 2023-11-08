@@ -1,8 +1,6 @@
 {
    oxeduEntityMenu, oxed entity menu, create and manipulate entities
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    22.03.2017.
 }
 
 {$INCLUDE oxdefines.inc}

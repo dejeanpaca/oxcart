@@ -1,8 +1,6 @@
 {
    oxuwndInputControllerInfo, controller information/test window
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    25.09.2019.
 }
 
 {$INCLUDE oxdefines.inc}

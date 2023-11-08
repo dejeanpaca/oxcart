@@ -1,8 +1,6 @@
 {
    appuSysInfoBase, basic functionality for system information
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    09.10.2012.
 }
 
 {$INCLUDE oxheader.inc}

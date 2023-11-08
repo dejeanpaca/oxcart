@@ -1,8 +1,6 @@
 {
    uFileTrash, file trash/recycle helpers
    Copyright (C) 2020. Dejan Boras
-
-   Started On:    30.01.2020.
 }
 
 {$INCLUDE oxheader.inc}

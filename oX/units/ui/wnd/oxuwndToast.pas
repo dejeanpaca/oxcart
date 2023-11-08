@@ -1,8 +1,6 @@
 {
    oxuwndToast, toast message box
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    21.04.2011.
 }
 
 {$INCLUDE oxdefines.inc}

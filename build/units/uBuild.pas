@@ -1,8 +1,6 @@
 {
    uBuild
    Copyright (C) 2015. Dejan Boras
-
-   Started On:    08.02.2015.
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}

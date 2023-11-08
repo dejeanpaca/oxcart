@@ -1,8 +1,6 @@
 {
    ufhSub
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    19.02.2011.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}

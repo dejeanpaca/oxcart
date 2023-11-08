@@ -1,8 +1,6 @@
 {
    oxuQ3, quake3 information and data
    Copyright (C) 2010. Dejan Boras
-
-   Started On:    04.10.2010.
 }
 
 {$INCLUDE oxdefines.inc}

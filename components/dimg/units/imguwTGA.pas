@@ -1,8 +1,6 @@
 {
    imguwTGA, Truevision Targa image writer for dImage
    Copyright (C) 2009. Dejan Boras
-
-   Started On:    26.06.2009.
 }
 
 {TODO: Add support for indexed image types and RLE compression}

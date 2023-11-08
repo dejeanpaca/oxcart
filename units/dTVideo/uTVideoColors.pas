@@ -1,8 +1,6 @@
 {
    uTVideoColors
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    26.03.2018.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH TYPEHELPERS}{$MODESWITCH ADVANCEDRECORDS}

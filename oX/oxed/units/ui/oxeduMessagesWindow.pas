@@ -1,8 +1,6 @@
 {
    oxeduMessagesWindow, messages window
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    04.02.2017.
 }
 
 {$INCLUDE oxdefines.inc}

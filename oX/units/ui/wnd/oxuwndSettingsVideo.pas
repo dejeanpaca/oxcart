@@ -1,8 +1,6 @@
 {
    oxuwndSettingsVideo, video settings tab
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    10.11.2019.
 }
 
 {$INCLUDE oxdefines.inc}

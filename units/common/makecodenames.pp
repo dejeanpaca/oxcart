@@ -7,8 +7,6 @@
    stdDataTypeCodes.inc file. It is required to be done whenever
    stdDataTypeCodes.inc is changed to make sure that name list
    matches the codes.
-
-   Started On:    29.10.2009.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}

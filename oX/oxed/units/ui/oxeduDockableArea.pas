@@ -1,8 +1,6 @@
 {
    oxeduDockableArea, oxed base unit
-   Copyright (C) 201/. Dejan Boras
-
-   Started On:    29.05.2017.
+   Copyright (C) 2017. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

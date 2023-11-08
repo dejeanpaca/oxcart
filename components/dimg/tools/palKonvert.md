@@ -1,10 +1,7 @@
 # palKonvert
 
-Copyright (c) Dejan Boras 2008.
+Copyright (c) 2009. Dejan Boras
 All rights reserved.
-
-Documentation Information
-- Started On: 12.02.2009.
 
 ## Introduction
 

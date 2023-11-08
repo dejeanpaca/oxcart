@@ -1,8 +1,6 @@
 {
    oxuDvarFile, dvar file helper
    Copyright (C) 2020. Dejan Boras
-
-   Started On:    20.10.2020.
 }
 
 {$INCLUDE oxdefines.inc}

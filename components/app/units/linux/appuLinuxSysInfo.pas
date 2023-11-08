@@ -1,5 +1,6 @@
 {
-   Started On:		   09.10.2012.
+   Gathers information on linux systems
+   Copyright (C) 2012. Dejan Boras
 
 	TODO: Need to also skip unsupported sections in cpuinfo, and expand support for the hardware section.
 }

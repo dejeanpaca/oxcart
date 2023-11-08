@@ -1,8 +1,6 @@
 {
    q3uParser, Q3 file parser
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    10.08.2007.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}

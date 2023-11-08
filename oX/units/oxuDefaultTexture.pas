@@ -1,10 +1,6 @@
 {
    oxuDefaultTexture, default textue
-
-   This file is part of oX engine. See copyright information in COPYRIGHT.md
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    10.09.2017.
 }
 
 {$INCLUDE oxdefines.inc}

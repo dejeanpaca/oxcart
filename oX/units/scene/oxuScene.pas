@@ -1,8 +1,6 @@
 {
    oxuScene, scene object
    Copyright (c) 2011. Dejan Boras
-
-   Started On:    05.11.2013.
 }
 
 {$INCLUDE oxdefines.inc}

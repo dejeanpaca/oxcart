@@ -1,8 +1,6 @@
 {
    oxeduPasScanner, pascal source scanner
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    20.01.2018.
 }
 
 {$INCLUDE oxdefines.inc}

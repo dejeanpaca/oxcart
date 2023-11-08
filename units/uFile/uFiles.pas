@@ -1,8 +1,6 @@
 {
    uFiles, handles standard file operations for some basic file types
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    21.02.2011.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}

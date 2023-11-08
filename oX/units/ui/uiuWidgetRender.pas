@@ -1,8 +1,6 @@
 {
    uiuWidgetRender, widget rendering utilities
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    15.03.2011.
 }
 
 {$INCLUDE oxdefines.inc}

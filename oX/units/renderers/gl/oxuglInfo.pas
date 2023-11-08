@@ -1,8 +1,6 @@
 {
    oxuglInfo, OpenGL information
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    27.03.2011.
 }
 
 {$INCLUDE oxdefines.inc}

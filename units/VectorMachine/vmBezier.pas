@@ -1,8 +1,6 @@
 {
    vmBezier, Bezier curves and patches
    Copyright (C) 2009. Dejan Boras
-
-   Started On:    22.07.2009.
 }
 
 {$MODE OBJFPC}{$H+}

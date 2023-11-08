@@ -1,8 +1,6 @@
 {
    oxuDefaults, default unit includes for oX
    Copyright (c) 2012. Dejan Boras
-
-   Started On:    14.05.2012.
 }
 
 {$INCLUDE oxdefines.inc}

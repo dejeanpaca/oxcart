@@ -1,10 +1,6 @@
 # dImage
 
-Copyright (C) Dejan Boras
-
-- Document Information
-- Started On: 22.05.2008.
-- Last Update: 06.11.2018.
+Copyright (C) Dejan Boras 2009
 
 ## Introduction
 
@@ -44,7 +40,7 @@ Loading is done via the imgLoad() routine, and writing via the imgWrite() routin
 - PCX
 - SGI RGB
 - PNG (PNG loader rewritten based on code by Benjamin Rosseaux)
-   
+
 ### Limitations
 
 Currently, dImage supports single frame images(and modules will only load the first frame of any image type that supports multiple frames).

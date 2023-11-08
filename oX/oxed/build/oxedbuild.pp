@@ -1,13 +1,12 @@
 {
    OXED build, oX project builder
+   Copyright (C) 2020. Dejan Boras
 
    @define OXED
    @defined OXED_BUILD
    @define NO_UI
    @define OX_PROJECT_DEFINES
    @define OX_LIBRARY_SUPPORT
-
-   Started On:    17.02.2020.
 }
 
 {$INCLUDE oxdefines.inc}

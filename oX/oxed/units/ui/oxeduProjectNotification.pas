@@ -1,8 +1,6 @@
 {
    oxeduProjectNotification, project notifications
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    28.07.2019.
 }
 
 {$INCLUDE oxdefines.inc}

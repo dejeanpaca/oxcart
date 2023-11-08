@@ -1,8 +1,6 @@
 {
    oxuShaderFile, oX shader file management
    Copyright (C) 2010. Dejan Boras
-
-   Started On:    16.04.2010.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    oxuPrimitives, primitives
    Copyright (C) 2010. Dejan Boras
-
-   Started On:    17.11.2010.
 }
 
 {$INCLUDE oxdefines.inc}

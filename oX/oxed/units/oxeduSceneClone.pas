@@ -1,8 +1,6 @@
 {
    oxeduSceneClone, clone a scene
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    22.07.2017.
 }
 
 {$INCLUDE oxdefines.inc}

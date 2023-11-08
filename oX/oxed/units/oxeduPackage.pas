@@ -2,8 +2,6 @@
    oxeduPackage, oxed packages
    Copyright (C) 2020. Dejan Boras
 
-   Started On:    13.01.2020.
-
    - If only a path is set for a package, without an Id, this is just an included path, not an actual package
    - Package identifier starting with @ means it's a path, not a package name
 }

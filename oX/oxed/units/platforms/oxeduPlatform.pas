@@ -1,8 +1,6 @@
 {
    oxeduBuildPlatform, handling build specifics for various platforms
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    19.07.2017.
 }
 
 {$INCLUDE oxdefines.inc}

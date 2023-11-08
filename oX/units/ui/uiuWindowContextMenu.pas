@@ -1,8 +1,6 @@
 {
    uiuWindowContextMenu, window context menu
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    17.04.2019.
 }
 
 {$INCLUDE oxdefines.inc}

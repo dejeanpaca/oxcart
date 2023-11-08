@@ -1,8 +1,6 @@
 {
    imguTGA, Truevision Targa image loader for dImage
    Copyright (C) 2009. Dejan Boras
-
-   Started On:    26.06.2009.
 }
 
 {$INCLUDE oxheader.inc}

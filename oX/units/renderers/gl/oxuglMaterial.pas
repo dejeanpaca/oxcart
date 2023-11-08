@@ -1,8 +1,6 @@
 {
    oxuglShader, gl shader support
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    17.09.2017.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    oxuVulkanRenderer, oX Vulkan renderer base
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    28.11.2016.
 }
 
 {$INCLUDE oxdefines.inc}

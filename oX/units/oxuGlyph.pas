@@ -1,8 +1,6 @@
 {
    oxuGlyph, glyph loading from textures/fonts
    Copyright (c) 2018. Dejan Boras
-
-   Started On:    19.08.2018.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    oxeduProjectManagement, project management for oxed
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    04.05.2017.
 }
 
 {$INCLUDE oxdefines.inc}

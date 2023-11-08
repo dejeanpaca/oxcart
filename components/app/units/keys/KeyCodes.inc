@@ -2,8 +2,6 @@
    KeyCodes.inc, list of standardised keyboard code constants.
    Copyright (C) 2008. Dejan Boras
 
-   Started On:    13.06.2008.
-
    In order to get around some problems with using the keyboard on various
    operating systems I had to make a standardised list of codes, and remap
    values returned from the operating system into these. This way everything is

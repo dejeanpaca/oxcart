@@ -1,8 +1,6 @@
 {
    uFile, file operations and abstraction
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    14.12.2007.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}

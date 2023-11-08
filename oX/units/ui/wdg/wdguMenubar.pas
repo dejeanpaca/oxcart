@@ -1,8 +1,6 @@
 {
    wdguMenubar, menu bar
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    24.11.2016.
 }
 
 {$INCLUDE oxdefines.inc}

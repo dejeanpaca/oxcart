@@ -1,8 +1,6 @@
 {
    oxuFreetype, freetype support
    Copyright (c) 2017. Dejan Boras
-
-   Started On:    23.04.2017.
 }
 
 {$INCLUDE oxdefines.inc}

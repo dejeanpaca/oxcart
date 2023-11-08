@@ -1,8 +1,6 @@
 {
    uTest
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    02.04.2019.
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}

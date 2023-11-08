@@ -1,8 +1,6 @@
 {
    oxeduSceneEdit, oxed scene edit window
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    26.12.2016.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    oxuWindowTypes, oX window data types
    Copyright (c) 2011. Dejan Boras
-
-   Started On:    07.01.2013.
 }
 
 {$INCLUDE oxdefines.inc}

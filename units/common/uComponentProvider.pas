@@ -1,8 +1,6 @@
 {
    uComponentProvider
    Copyright (C) 2014. Dejan Boras
-
-   Started On:    01.08.2014.
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}

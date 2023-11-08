@@ -1,8 +1,6 @@
 {
    oxeduThingies, oxed edit window renderers
-   Copyright (C) 2016. Dejan Boras
-
-   Started On:    24.04.2017.
+   Copyright (C) 2017. Dejan Boras
 
    TODO: Remove lists since we can have the edit renderers in the oxed components list anyways
 }

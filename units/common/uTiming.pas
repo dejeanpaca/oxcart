@@ -2,8 +2,6 @@
    uTiming, timing operations, timers & timing utilities
    Copyright (C) 2011. Dejan Boras
 
-   Started On:    28.01.2011.
-
    TODO: Implement interval logic
 }
 

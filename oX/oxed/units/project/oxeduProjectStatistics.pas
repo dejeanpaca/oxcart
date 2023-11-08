@@ -1,8 +1,6 @@
 {
    oxeduProjectStatistics, project statistics
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    29.10.2019.
 }
 
 {$INCLUDE oxdefines.inc}

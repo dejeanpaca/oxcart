@@ -1,8 +1,6 @@
 {
    oxuScreenshot, captures a screenshot
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    20.09.2016.
 }
 
 {$INCLUDE oxdefines.inc}

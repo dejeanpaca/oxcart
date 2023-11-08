@@ -1,8 +1,6 @@
 {
    oxuSceneManagement, scene management
    Copyright (c) 2019. Dejan Boras
-
-   Started On:    16.10.2019.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    oxuALConsole, manages al console
    Copyright (C) 2009. Dejan Boras
-
-   Started On:    12.09.2009.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}

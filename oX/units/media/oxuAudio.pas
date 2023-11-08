@@ -1,8 +1,6 @@
 {
    oxuAudio, handles audio
    Copyright (C) 2012. Dejan Boras
-
-   Started On:    23.01.2012.
 }
 
 {$INCLUDE oxdefines.inc}

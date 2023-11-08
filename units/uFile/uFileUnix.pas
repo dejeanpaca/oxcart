@@ -1,8 +1,6 @@
 {
    uFileUnix
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    10.03.2011.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}

@@ -1,8 +1,6 @@
 {
    oxuwndSettingsBase, oX settings window base mechanism
    Copyright (C) 2014. Dejan Boras
-
-   Started On:    16.06.2014.
 }
 
 {$INCLUDE oxdefines.inc}

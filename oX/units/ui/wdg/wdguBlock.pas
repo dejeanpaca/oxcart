@@ -1,8 +1,6 @@
 {
    wdguBlock, block widget, gives a block surface
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    26.03.2011.
 }
 
 {$INCLUDE oxdefines.inc}

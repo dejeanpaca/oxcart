@@ -1,8 +1,6 @@
 {
    oxuSceneRender, scene rendering
    Copyright (c) 2017. Dejan Boras
-
-   Started On:    16.01.2017.
 }
 
 {$INCLUDE oxdefines.inc}

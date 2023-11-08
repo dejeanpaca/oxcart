@@ -1,8 +1,6 @@
 {
    oxeduMessages, OXED messages
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    13.03.2017.
 }
 
 {$INCLUDE oxdefines.inc}

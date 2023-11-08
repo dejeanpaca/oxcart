@@ -1,8 +1,6 @@
 {
    oxuMaterialLoader, material resource loader
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    10.09.2019.
 }
 
 {$INCLUDE oxdefines.inc}

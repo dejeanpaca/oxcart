@@ -1,8 +1,6 @@
 {
    oxuThreadJobs, manages threaded jobs
    Copyright (c) 2018. Dejan Boras
-
-   Started On:    18.04.2018.
 }
 
 {$INCLUDE oxdefines.inc}

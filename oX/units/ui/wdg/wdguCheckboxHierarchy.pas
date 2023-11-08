@@ -1,8 +1,6 @@
 {
    wdguChecboxHierarchy, hierarchical list with checkboxes
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    19.12.2017.
 }
 
 {$INCLUDE oxdefines.inc}

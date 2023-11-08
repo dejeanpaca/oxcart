@@ -2,8 +2,6 @@
    oxumPrimitive, primitive models
    Copyright (c) 2011. Dejan Boras
 
-   Started On:    13.02.2011.
-
    TODO: Add normals and texture coords for meshes missing this
 }
 

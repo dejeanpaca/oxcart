@@ -1,8 +1,6 @@
 {
    oxeduStatisticsScanner, project statistics scanner
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    29.09.2019.
 }
 
 {$INCLUDE oxdefines.inc}

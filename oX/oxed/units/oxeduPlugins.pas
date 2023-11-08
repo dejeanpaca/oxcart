@@ -1,8 +1,6 @@
 {
    oxeduPlugins, plugins
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    14.12.2017.
 }
 
 {$INCLUDE oxdefines.inc}

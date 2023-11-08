@@ -1,8 +1,6 @@
 {
    oxuFileIcons, file icons
    Copyright (c) 2013. Dejan Boras
-
-   Started On:    30.04.2017.
 }
 
 {$INCLUDE oxdefines.inc}

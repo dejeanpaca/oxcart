@@ -2,8 +2,6 @@
    oxuwndFileDialog, oX file operations(open/save/save as) dialog
    Copyright (C) 2011. Dejan Boras
 
-   Started On:    17.05.2011.
-
    TODO: Make files selectable, and add file type filters
 }
 

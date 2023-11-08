@@ -1,8 +1,6 @@
 {
    oxeduStatusbar, status bar
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    22.08.2017.
 }
 
 {$INCLUDE oxdefines.inc}

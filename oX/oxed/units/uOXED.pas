@@ -1,8 +1,6 @@
 {
    uOXED, oxed base unit
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    29.12.2016.
 }
 
 {$INCLUDE oxdefines.inc}

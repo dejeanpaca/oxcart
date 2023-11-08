@@ -1,8 +1,6 @@
 {
    oxuMedia, handles media
    Copyright (C) 2012. Dejan Boras
-
-   Started On:    30.01.2012.
 }
 
 {$INCLUDE oxdefines.inc}

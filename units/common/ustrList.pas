@@ -1,8 +1,6 @@
 {
    ustrList, string list management
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    27.03.2011.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}

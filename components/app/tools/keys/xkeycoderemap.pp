@@ -1,8 +1,6 @@
 {
    xkeycodecreate, creates an X Input keysym remapping list from an include file
    Copyright (C) 2009. Dejan Boras
-
-   Started On:    30.09.2009.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}

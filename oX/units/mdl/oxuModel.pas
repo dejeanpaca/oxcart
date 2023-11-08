@@ -1,8 +1,6 @@
 {
    oxuModel, oX model management and operations
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    31.05.2007.
 }
 
 {$INCLUDE oxdefines.inc}

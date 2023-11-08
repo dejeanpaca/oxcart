@@ -1,8 +1,6 @@
 {
    imgExtract, extracts raw data from image files
    Copyright (C) 2008. Dejan Boras
-
-   Started On:    17.04.2008.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}

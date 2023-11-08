@@ -1,8 +1,6 @@
 {
    uiWidgets, UI widget management
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    01.06.2007.
 }
 
 {$INCLUDE oxdefines.inc}

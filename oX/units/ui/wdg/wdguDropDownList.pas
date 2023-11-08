@@ -1,8 +1,6 @@
 {
    wdguDropDownList, drop down list
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    01.10.2016.
 }
 
 {$INCLUDE oxdefines.inc}

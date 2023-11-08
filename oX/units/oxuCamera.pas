@@ -1,8 +1,6 @@
 {
    oxuCamera, oX camera management
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    14.06.2007.
 }
 
 {$INCLUDE oxdefines.inc}

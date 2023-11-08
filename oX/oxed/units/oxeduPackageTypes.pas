@@ -1,8 +1,6 @@
 {
    oxeduPackageTypes, package types
    Copyright (C) 2020. Dejan Boras
-
-   Started On:    10.02.2020.
 }
 
 {$INCLUDE oxdefines.inc}

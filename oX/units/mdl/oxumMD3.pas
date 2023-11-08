@@ -1,8 +1,6 @@
 {
    oxumMD3, MD3 model loader
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    12.06.2007.
 }
 
 {$INCLUDE oxdefines.inc}

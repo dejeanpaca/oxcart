@@ -1,8 +1,6 @@
 {
    oxuInit, oX de/initialization
    Copyright (c) 2011. Dejan Boras
-
-   Started On:    09.02.2011.
 }
 
 {$INCLUDE oxdefines.inc}

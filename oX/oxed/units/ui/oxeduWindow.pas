@@ -1,8 +1,6 @@
 {
    oxeduWindow, oxed base window
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    31.12.2016.
 }
 
 {$INCLUDE oxdefines.inc}

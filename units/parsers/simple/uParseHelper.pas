@@ -1,8 +1,6 @@
 {
    uParseHelper, helps with parsing strings
    Copyright (C) 2010. Dejan Boras
-
-   Started On:    01.05.2010.
 }
 
 {$MODE OBJFPC}{$H+}

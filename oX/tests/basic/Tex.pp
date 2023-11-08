@@ -1,7 +1,6 @@
 {
    uTest, implements basic test functionality
-
-   Started On:    18.02.2011.
+   Copyright (C) 2011. Dejan Boras
 
    This test requires a texture. The texture name is specified with the
    texname constant.

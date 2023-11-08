@@ -1,8 +1,6 @@
 {
    oxuwndFileContextMenu, generic file context menu
-   Copyright (C) 2011. Dejan Boras
-
-   Started On:    27.01.2018.
+   Copyright (C) 2018. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

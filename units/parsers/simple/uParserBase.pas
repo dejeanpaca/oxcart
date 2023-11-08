@@ -1,8 +1,6 @@
 {
    uParserBase, basic parser helper
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    01.03.2018,
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}

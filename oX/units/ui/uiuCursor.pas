@@ -1,8 +1,6 @@
 {
    uiuCursor, cursor management
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    03.03.2017.
 }
 
 {$INCLUDE oxdefines.inc}

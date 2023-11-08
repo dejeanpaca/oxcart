@@ -1,8 +1,6 @@
 {
    oxumBlend, blender model loader for oX
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    14.01.2018.
 }
 
 {$INCLUDE oxdefines.inc}

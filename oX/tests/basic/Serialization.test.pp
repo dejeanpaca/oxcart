@@ -1,7 +1,6 @@
 {
    Serialization, tests serialization
-
-   Started On:    16.05.2017.
+   Copyright (C) 2017. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}{$M+}

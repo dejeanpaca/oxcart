@@ -1,8 +1,6 @@
 {
    oxuShaderFileReader, oX shader file reading
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    26.09.2017.
 }
 
 {$INCLUDE oxdefines.inc}

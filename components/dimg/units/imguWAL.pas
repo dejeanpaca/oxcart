@@ -1,8 +1,6 @@
 {
    imguWAL, Quake WAL image loader for dImage
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    20.12.2007.
 }
 
 {$INCLUDE oxheader.inc}

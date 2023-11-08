@@ -1,8 +1,6 @@
 {
    oxuUIHooks, UI hooks
    Copyright (c) 2014. Dejan Boras
-
-   Started On:    18.01.2014.
 }
 
 {$INCLUDE oxdefines.inc}

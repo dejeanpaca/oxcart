@@ -1,8 +1,6 @@
 {
    uLazXMLUtils, helper utilities for lazarus xml
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    13.06.2019.
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}

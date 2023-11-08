@@ -1,7 +1,7 @@
 {
    runtime error codes
 
-   Started On:    06.11.2008.
+   Copyright (C) 2008. Dejan Boras
 }
 
 {general error codes}

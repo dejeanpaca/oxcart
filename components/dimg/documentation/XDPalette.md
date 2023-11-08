@@ -4,11 +4,7 @@ Palette File Format
 
 Version: 1.0 (0100h)
 
-Documentation Information:
-Started On:    27.01.2009.
-Last Update:   27.01.2009.
-
-Copyright (c) Dejan Boras 2009.
+Copyright (c) 2009. Dejan Boras
 All rights reserved.
 
 ## Introduction

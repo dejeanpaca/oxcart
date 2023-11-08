@@ -1,8 +1,6 @@
 {
    oxeduProjectContextMenu, oxed menu for project browser
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    12.08.2017.
 }
 
 {$INCLUDE oxdefines.inc}

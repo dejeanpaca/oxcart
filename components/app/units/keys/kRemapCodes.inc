@@ -1,8 +1,6 @@
 {
    appkRemapCodes.inc, remap codes for various operating systems
    Copyright (C) 2008. Dejan Boras
-
-   Started On:    23.03.2008.
 }
 
    appkRemapCodes: appTKeyRemapCodes = (

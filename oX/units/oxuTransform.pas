@@ -2,8 +2,6 @@
    oxuTransform, transform handling
    Copyright (C) 2013. Dejan Boras
 
-   Started On:    10.12.2013.
-
    NOTE: Rotation order is YZX
 }
 

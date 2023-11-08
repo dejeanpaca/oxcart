@@ -1,8 +1,6 @@
 {
    oxuInputUpdater, updates input state in library mode
    Copyright (C) 2010. Dejan Boras
-
-   Started On:    25.08.2010.
 }
 
 {$INCLUDE oxdefines.inc}

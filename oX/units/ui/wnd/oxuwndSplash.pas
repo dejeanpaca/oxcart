@@ -1,8 +1,6 @@
 {
    oxuwndSplash, oX splash Window
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    19.09.2016.
 }
 
 {$INCLUDE oxdefines.inc}

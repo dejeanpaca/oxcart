@@ -1,8 +1,6 @@
 {
    oxuDynlib, base unit for dynamic libraries
    Copyright (c) 2017. Dejan Boras
-
-   Started On:    04.06.2017.
 }
 
 {$INCLUDE oxdefines.inc}

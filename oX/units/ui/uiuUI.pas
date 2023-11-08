@@ -1,8 +1,6 @@
 {
    uiuUI, basis for UI interfaces
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    14.10.2019.
 }
 
 {$INCLUDE oxdefines.inc}

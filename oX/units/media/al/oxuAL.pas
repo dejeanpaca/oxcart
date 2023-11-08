@@ -3,8 +3,6 @@
    Copyright (C) 2017. Dejan Boras
 
    TODO: Implement more detailed al error checking, in a similar manner the gl renderer does it
-
-   Started On:    11.09.2017.
 }
 
 {$INCLUDE oxdefines.inc}

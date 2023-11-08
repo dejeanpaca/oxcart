@@ -1,8 +1,6 @@
 {
    wdguToolbar, bar to place widgets on
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    30.07.2017.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -16,8 +16,6 @@
 
    You should have received a copy of the GNU General Public License
    along with dAL.  If not, see <http://www.gnu.org/licenses/>.
-
-   Started On:    17.01.2009.
 }
 
 {$INCLUDE oxdefines.inc}

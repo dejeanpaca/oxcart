@@ -1,8 +1,6 @@
 {
    oxeduLightComponent, oxed light component
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    26.11.2018.
 }
 
 {$INCLUDE oxdefines.inc}

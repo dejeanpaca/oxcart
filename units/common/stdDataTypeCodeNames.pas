@@ -2,8 +2,6 @@
    stdDataTypeCodeNames, standard data type code names
    Copyright (c) 2010. Dejan Boras
 
-   Started on:    01.03.2010.
-
    This is a list of standardised data type codes used within many of my 
    programs and libraries. Instead of using multiple list of codes that do the
    same thing I've created a standardised list.

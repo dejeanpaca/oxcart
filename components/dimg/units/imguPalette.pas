@@ -1,8 +1,6 @@
 {
    imguPalette, palette operations
    Copyright (C) 2013. Dejan Boras
-
-   Started On:    24.12.2013.
 }
 
 {$INCLUDE oxheader.inc}

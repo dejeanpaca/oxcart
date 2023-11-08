@@ -1,8 +1,6 @@
 {
    wdguBase, base functionality and helpers for widgets
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    28.07.2019.
 }
 
 {$INCLUDE oxdefines.inc}

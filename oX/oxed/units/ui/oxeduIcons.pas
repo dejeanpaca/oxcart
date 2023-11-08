@@ -1,8 +1,6 @@
 {
    oxeduIcons, oxed icon management
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    23.04.2017.
 }
 
 {$INCLUDE oxdefines.inc}

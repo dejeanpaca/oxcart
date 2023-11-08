@@ -1,8 +1,6 @@
 {
    oxuNilRenderer, oX nil renderer
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    13.11.2017.
 }
 
 {$INCLUDE oxdefines.inc}

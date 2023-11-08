@@ -1,8 +1,6 @@
 {
    kcUniRemapCodes, universal remap codes(mostly used with console input)
    Copyright (C) 2008. Dejan Boras
-
-   Started On:    20.07.2008.
 }
 
 kcESC, {0001}

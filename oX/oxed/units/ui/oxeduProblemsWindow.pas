@@ -1,8 +1,6 @@
 {
    oxeduProblemsWindow, problems window
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    30.08.2018.
 }
 
 {$INCLUDE oxdefines.inc}

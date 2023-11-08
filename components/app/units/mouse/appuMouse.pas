@@ -1,8 +1,6 @@
 {
    appuMouse, mouse input management
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    24.11.2007.
 }
 
 {$INCLUDE oxheader.inc}

@@ -2,8 +2,6 @@
    oxuGlobalKeys, oX global key management
    Copyright (C) 2010. Dejan Boras
 
-   Started On:    11.04.2010.
-
    Description:   This unit manages global keys and their handlers. It can
    register a handler for a specified key. These callback routines are called
    whenever a key was unprocessed by the UI (because it was either used by a

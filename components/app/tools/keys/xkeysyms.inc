@@ -4,8 +4,6 @@
 
    GENERAL INFORMATION
 
-   Started On:    30.09.2009.
-
    This is not a valid pascal include file. It is a list of keysyms with their
    values and respective dApp keycode remap. The keysyms were obtained from 
    X11 keysymdef.h file and other associated files(found in /usr/include/X11/

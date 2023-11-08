@@ -1,8 +1,6 @@
 {
    oxuStarfield, a simple point star field
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    07.05.2011.
 }
 
 {$INCLUDE oxdefines.inc}

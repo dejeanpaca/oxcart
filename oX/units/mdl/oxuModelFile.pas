@@ -1,8 +1,6 @@
 {
    oxuModelFile, model file loader and writer support
    Copyright (C) 2009. Dejan Boras
-
-   Started On:    22.10.2009.
 }
 
 {$INCLUDE oxdefines.inc}

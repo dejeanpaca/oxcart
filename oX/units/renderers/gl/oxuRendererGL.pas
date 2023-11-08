@@ -1,8 +1,6 @@
 {
    oxuRendererGL, OpenGL Renderer
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    17.01.2016.
 }
 
 {$INCLUDE oxdefines.inc}

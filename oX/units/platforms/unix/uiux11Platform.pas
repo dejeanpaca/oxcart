@@ -1,8 +1,6 @@
 {
    ui x11 platform functionality
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    19.10.2019.
 }
 
 {$INCLUDE oxdefines.inc}

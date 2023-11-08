@@ -1,5 +1,5 @@
 {
-   Started On:    30.10.2009.
+   Copyright (C) 2009. Dejan Boras
 
    This file is an example shader definition file. It is used by q3ParserTest
    to parse the test.shader file. It also explains the shader definition syntax
@@ -42,14 +42,14 @@
    number. Similar definitions (with the same field name, but different subfields)
    are assigned only one unique ID (uID).
 
-   All the above should work reasonably well for Quake 3 shader files, and 
+   All the above should work reasonably well for Quake 3 shader files, and
    possibly for other games which use shader files similar to q3 but this has been
    untested.
 
    To generate an include file to use with your programs use the q3makeshaderdefs
    tool.
 
-   Usually only the following data types are supported: 
+   Usually only the following data types are supported:
       UINTx, INTx, BOOL, SHORTSTRING
 }
 

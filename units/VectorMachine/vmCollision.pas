@@ -1,8 +1,6 @@
 {
    vmCollision, collision detection routines
    Copyright (C) 2009. Dejan Boras
-
-   Started On:    24.06.2009.
 }
 
 {$MODE OBJFPC}{$H+}

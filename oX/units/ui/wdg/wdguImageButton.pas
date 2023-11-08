@@ -1,8 +1,6 @@
 {
    wdguImageButton, image button widget
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    21.02.2017.
 }
 
 {$INCLUDE oxdefines.inc}

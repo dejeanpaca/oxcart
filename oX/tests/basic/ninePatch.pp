@@ -1,7 +1,6 @@
 {
    ninePatch, tests 9patch functionality.
-
-   Started On:    02.04.2017.
+   Copyright (C) 2017. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

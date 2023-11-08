@@ -1,8 +1,6 @@
 {
    oglFeatures, check opengl features
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    21.10.2019.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    oxuglRendererX11, gl renderer X11 (linux/unix) platform component
    Copyright (c) 2016. Dejan Boras
-
-   Started On:    05.01.2016.
 }
 
 {$INCLUDE oxdefines.inc}

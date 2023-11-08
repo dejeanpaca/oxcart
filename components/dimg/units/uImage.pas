@@ -1,8 +1,6 @@
 {
    uImage, image loading/saving and manipulation
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    26.05.2007.
 }
 
 {$INCLUDE oxheader.inc}

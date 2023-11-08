@@ -1,8 +1,6 @@
 {
    oxeduProjectPackagesConfiguration, project packages configuration
    Copyright (C) 2020. Dejan Boras
-
-   Started On:    06.02.2020.
 }
 
 {$INCLUDE oxdefines.inc}

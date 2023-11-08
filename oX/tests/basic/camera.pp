@@ -1,5 +1,5 @@
 {
-   Started On:	   21.03.2012.
+   Copyright (C) 2012. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    oxuTexPax, texture packing
    Copyright (C) 2013. Dejan Boras
-   
-   Started On:    07.04.2013.
 
    Reference: https://github.com/jakesgordon/bin-packing/
 }

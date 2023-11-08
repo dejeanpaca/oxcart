@@ -1,8 +1,6 @@
 {
    oxuX11Platform, oX X11 platform
    Copyright (c) 2011. Dejan Boras
-
-   Started On:    07.03.2011.
 }
 
 {$INCLUDE oxdefines.inc}

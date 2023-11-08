@@ -1,8 +1,6 @@
 {
    uThreadUtils, thread helper functionality
-   Copyright (C) Dejan Boras 2020.
-
-   Started on:    30.01.2020.
+   Copyright (C) 2020. Dejan Boras
 }
 
 {$INCLUDE oxheader.inc}

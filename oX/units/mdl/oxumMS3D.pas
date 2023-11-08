@@ -1,8 +1,6 @@
 {
    oxumMS3D, MS3D(Milkshape 3D) model loader
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    07.05.2008.
 }
 
 {$INCLUDE oxdefines.inc}

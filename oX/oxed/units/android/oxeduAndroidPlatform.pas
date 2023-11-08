@@ -1,8 +1,6 @@
 {
    oxeduAndroidPlatform, android platform build specifics
    Copyright (C) 2019. Dejan Boras
-
-   Started On:    10.06.2019.
 }
 
 {$INCLUDE oxdefines.inc}

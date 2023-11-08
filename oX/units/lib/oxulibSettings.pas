@@ -1,8 +1,6 @@
 {
    oxulibSettings, library mode settings
    Copyright (c) 2019. Dejan Boras
-
-   Started On:    04.02.2019.
 }
 
 {$INCLUDE oxdefines.inc}

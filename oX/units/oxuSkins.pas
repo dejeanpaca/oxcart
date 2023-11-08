@@ -1,8 +1,6 @@
 {
    oxuSkins, skin management
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    14.11.2009.
 }
 
 {$INCLUDE oxdefines.inc}

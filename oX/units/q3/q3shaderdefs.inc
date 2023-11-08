@@ -1,8 +1,7 @@
 {
-   Started On:    28.04.2010.
+   Copyright (c) 2010. Dejan Boras
 
-   Shader definition file for Quake 3 shaders. These definitions may be erroneous
-   or incomplete.
+   Shader definition file for Quake 3 shaders. These definitions may be erroneous or incomplete.
 }
 
 cull                       = (SHORTSTRING);

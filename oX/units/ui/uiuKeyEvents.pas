@@ -1,8 +1,6 @@
 {
    uiuKeyEvents, UI key event management
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    23.04.2011.
 }
 
 {$INCLUDE oxdefines.inc}

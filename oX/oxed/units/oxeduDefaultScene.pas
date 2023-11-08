@@ -1,8 +1,6 @@
 {
    oxeduDefaultScene, creates a default scene
-   Copyright (C) 2016. Dejan Boras
-
-   Started On:    12.01.2017.
+   Copyright (C) 2017. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

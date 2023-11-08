@@ -1,8 +1,6 @@
 {
    uLog, logging backend
    Copyright (C) 2008. Dejan Boras
-
-   Started On:    26.11.2008.
 }
 
 {$IF not defined(NO_THREADS) and not defined(LOG_THREAD_UNSAFE)}

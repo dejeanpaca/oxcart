@@ -1,8 +1,6 @@
 {
    oxuwndSystemInformation, oX System Information window
-   Copyright (C) 2010. Dejan Boras
-
-   Started On:    20.04.2011.
+   Copyright (C) 2011. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

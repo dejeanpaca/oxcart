@@ -1,7 +1,7 @@
 {
    Tests ParamUtils and ConsoleUtils units.
 
-   Started On:    30.10.2011.
+   Copyright (C) 2011. Dejan Boras
 }
 
 PROGRAM test;

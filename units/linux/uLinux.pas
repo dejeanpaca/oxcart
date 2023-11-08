@@ -1,8 +1,6 @@
 {
    uLinux, input controller handling for Linux
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    15.09.2016.
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}{$I-}

@@ -2,9 +2,9 @@
 PROGRAM q3ParserTest;
 
 {
-   Started on:    10.09.2007.
-
    Tests the functionality of q3uParser and q3uShaders.
+
+   Copyright (C) 2007. Dejan Boras
 }
 
    USES uLog, uAppInfo, uStd,
@@ -90,7 +90,7 @@ BEGIN
 
    q3pLoadFile(FileName, data);
    if(q3pError <> 0) then writeln('Failed loading file.');
-   
+
    timUpdate(timer);
 
    log.i('Time parsing file: '+sf(timer.Elapsed)+' ms');

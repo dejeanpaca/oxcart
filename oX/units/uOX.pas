@@ -1,8 +1,6 @@
 {
    uOX, base oX unit
    Copyright (c) 2011. Dejan Boras
-
-   Started On:    08.02.2011.
 }
 
 {$INCLUDE oxdefines.inc}

@@ -1,8 +1,6 @@
 {
    oxeduMenuToolbar, menu bar toolbar
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    02.07.2017.
 }
 
 {$INCLUDE oxdefines.inc}

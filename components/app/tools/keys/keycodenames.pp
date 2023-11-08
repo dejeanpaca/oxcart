@@ -5,8 +5,6 @@
       This program will create a keycode name list from the appKeyCodes.inc
    file. It is required to be done whenever appKeyCodes.inc is changed to make
    sure that keycode names list is valid.
-
-   Started On:    02.10.2009.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}

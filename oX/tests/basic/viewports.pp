@@ -1,7 +1,6 @@
 {
    viewports, test viewport
-
-   Started On:    14.05.2012.
+   Copyright (C) 2012. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

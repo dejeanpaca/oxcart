@@ -1,7 +1,6 @@
 {
    zorder test
-
-   Started On:    23.07.2012.
+   Copyright (C) 2012. Dejan Boras
 
    Tests the functionality of the uiuZOrder unit.
 }

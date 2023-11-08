@@ -1,8 +1,6 @@
 {
    oxuConsoleBackend, command console backend, previously known as dConsole
-   Copyright (c) 2012. Dejan Boras
-
-   Started On:    17.06.2007.
+   Copyright (c) 2007. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

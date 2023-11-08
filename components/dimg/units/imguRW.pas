@@ -1,8 +1,6 @@
 {
    imguRW, image file read/write support for dImage
    Copyright (C) 2007. Dejan Boras
-
-   Started On:    02.04.2013.
 }
 
 {$INCLUDE oxheader.inc}

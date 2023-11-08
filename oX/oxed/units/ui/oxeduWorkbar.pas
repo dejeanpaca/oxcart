@@ -1,8 +1,6 @@
 {
    oxeduWorkbar, toolbar
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    29.07.2017.
 }
 
 {$INCLUDE oxdefines.inc}

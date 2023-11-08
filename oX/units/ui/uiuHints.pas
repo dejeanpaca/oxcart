@@ -1,8 +1,6 @@
 {
    uiuHints, renders widget hints
    Copyright (C) 2016. Dejan Boras
-
-   Started On:    30.01.2017.
 }
 
 {$INCLUDE oxdefines.inc}

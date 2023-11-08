@@ -1,8 +1,6 @@
 {
    oxuTimer, oX timing
    Copyright (C) 2008. Dejan Boras
-
-   Started On:    07.05.2008.
 }
 
 {$INCLUDE oxdefines.inc}

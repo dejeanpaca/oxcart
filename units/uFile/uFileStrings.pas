@@ -1,8 +1,6 @@
 {
    uFileStrings, file string helper
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    25.12.2018.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH ADVANCEDRECORDS}

@@ -1,8 +1,6 @@
 {
    oxurConsoleRender, rendering component
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    28.11.2016.
 }
 
 {$INCLUDE oxdefines.inc}

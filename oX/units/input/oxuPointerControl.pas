@@ -1,8 +1,6 @@
 {
    oxuMouseControl, oX pointing device input control
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    13.02.2011.
 }
 
 {$INCLUDE oxdefines.inc}

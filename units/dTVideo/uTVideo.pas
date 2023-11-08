@@ -13,8 +13,6 @@
 
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-   Started On:    26.12.2006.
 }
 
 {$MODE OBJFPC}{$H+}{$I-}{$MODESWITCH TYPEHELPERS}{$MODESWITCH ADVANCEDRECORDS}

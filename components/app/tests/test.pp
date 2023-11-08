@@ -1,7 +1,6 @@
 {
-   Started On:    09.02.2011.
+   Copyright (C) 2011. Dejan Boras
 }
-
 
 {$MODE OBJFPC}{$H+}
 PROGRAM test;

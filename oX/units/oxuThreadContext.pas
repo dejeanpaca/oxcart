@@ -1,8 +1,6 @@
 {
    oxuThreadContext, thread context
    Copyright (C) 2018. Dejan Boras
-
-   Started On:    31.03.2018.
 }
 
 {$INCLUDE oxdefines.inc}

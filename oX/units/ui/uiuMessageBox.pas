@@ -1,8 +1,6 @@
 {
    uiuMessageBox, message boxes
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    26.04.2011.
 }
 
 {$INCLUDE oxdefines.inc}

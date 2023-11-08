@@ -1,8 +1,6 @@
 {
    oxuShades, oX shader management
-   Copyright (C) 2017.. Dejan Boras
-
-   Started On:    25.04.2017.
+   Copyright (C) 2017. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}

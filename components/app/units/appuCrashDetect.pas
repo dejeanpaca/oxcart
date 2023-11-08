@@ -1,8 +1,6 @@
 {
    appuCrashDetect, detects if a crash occured in the previous instance of the program
    Copyright (C) 2011. Dejan Boras
-
-   Started On:    30.10.2013.
 }
 
 {$INCLUDE oxheader.inc}

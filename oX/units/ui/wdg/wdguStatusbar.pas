@@ -1,8 +1,6 @@
 {
    wdguStatusbar, serves as an empty are to place other widgets to, creates a bar at the bottom of a window
    Copyright (C) 2017. Dejan Boras
-
-   Started On:    05.02.2017.
 }
 
 {$INCLUDE oxdefines.inc}
