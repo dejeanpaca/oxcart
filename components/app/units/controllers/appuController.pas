@@ -385,30 +385,6 @@ TYPE
       Controller: appTControllerDevice;
    end;
 
-   appPControllerHandler = ^appTControllerHandler;
-
-   { appTControllerHandler }
-
-   {a handler for controllers}
-   appTControllerHandler = object
-      constructor Create();
-
-      {initialize all devices}
-      procedure Initialize(); virtual;
-      {initialize all devices}
-      procedure DeInitialize(); virtual;
-      {perform run operations}
-      procedure Run(); virtual;
-      {reinitialize all devices}
-      procedure Reset(); virtual;
-
-      {get a displayable name for this handler}
-      function GetName(): StdString; virtual;
-
-      {periodically rescan for new devices}
-      procedure Rescan(); virtual;
-   end;
-
    appTControllerDeviceList = specialize TSimpleList<appTControllerDevice>;
 
    appTOnControllerEventRoutine = procedure(var ev: appTControllerEvent);
@@ -421,67 +397,10 @@ TYPE
    end;
 
 
-   { appTControllers }
-   appTControllers = record
-      {handler count}
-      nHandlers: loopint;
-      {a list of handlers}
-      Handlers: array[0..appMAX_CONTROLLER_HANDLERS - 1] of appPControllerHandler;
-      {device list}
-      List: appTControllerDeviceList;
-
-      {callbacks for controller events}
-      OnEvent: appTOnControllerEventRoutines;
-      {put events in the event queue (OnEvent will be called in any case)}
-      PutInQueue: boolean;
-
-      {interval to rescan devices}
-      RescanInterval: TTimerInterval;
-
-      {event handler}
-      evh: appTEventHandler;
-      evhp: appPEventHandler;
-
-      {list of mapped devices}
-      MappedDevices: record
-         s,
-         e: appPControllerDeviceMapping;
-      end;
-
-      {queue a controller event}
-      procedure Queue(var ev: appTControllerEvent; controller: appTControllerDevice);
-
-      {add handler to the list}
-      procedure AddHandler(var handler: appTControllerHandler);
-      {add a device to the list}
-      procedure Add(device: appTControllerDevice);
-      {reset all devices}
-      procedure Reset();
-      {periodically rescans for new devices}
-      procedure Rescan();
-
-      {run individual controllers}
-      procedure UpdateControllers();
-
-      {get device by index}
-      function GetByIndex(index: loopint): appTControllerDevice;
-
-      {add a device mappping to the list}
-      procedure AddMapping(var mapping: appTControllerDeviceMapping);
-
-      {get a mapped function}
-      function GetMappedFunction(const name: string): longint;
-      {get a mapped device by name (if none found, returns generic mapping)}
-      function GetMappedDeviceByName(const name: StdString): appPControllerDeviceMapping;
-   end;
-
-
 VAR
    {generic device mapping }
    appControllerDeviceGenericMapping: appTControllerDeviceMapping;
 
-   {controllers}
-   appControllers: appTControllers;
 
 IMPLEMENTATION
 
@@ -505,146 +424,6 @@ begin
    end;
 end;
 
-{ appTControllers }
-
-procedure appTControllers.Queue(var ev: appTControllerEvent; controller: appTControllerDevice);
-var
-   event: appTEvent;
-
-begin
-   OnEvent.Call(ev);
-   ev.Controller := controller;
-
-   {associate controller with event so it can be removed by it}
-   event.ExternalData := Controller;
-
-   appEvents.Init(event, 0, appControllers.evhp);
-
-   if(PutInQueue) then
-      appEvents.Queue(event, ev, SizeOf(ev));
-end;
-
-procedure appTControllers.AddHandler(var handler: appTControllerHandler);
-begin
-   assert(nHandlers < appMAX_CONTROLLER_HANDLERS, 'Too many input controller handlers');
-
-   Handlers[nHandlers] := @handler;
-   Inc(nHandlers);
-end;
-
-procedure appTControllers.Add(device: appTControllerDevice);
-var
-   m: appPControllerDeviceMapping;
-   ps: appTControllerDeviceSettings;
-
-begin
-   List.Add(device);
-   device.DeviceIndex := List.n - 1;
-
-   {try to find a better mapping if we have a generic one}
-   if(device.Mapping = @appControllerDeviceGenericMapping) then
-      device.Mapping := appControllers.GetMappedDeviceByName(device.Name);
-
-   m := device.Mapping;
-
-   {update device according to the device mapping}
-   if(m <> @appControllerDeviceGenericMapping) then begin
-      ps := device.Settings;
-      device.Settings := m^.Settings;
-
-      if(m^.Settings.ButtonCount = -1) then
-         device.Settings.ButtonCount := ps.ButtonCount;
-   end;
-
-   if(device.GetMappingId() <> '') then
-      log.Collapsed('Input controller device: ' + device.GetName() + ' (' + device.GetMappingId() + ')')
-   else
-      log.Collapsed('Input controller device: ' + device.GetName());
-
-   device.LogDevice();
-   log.Leave();
-end;
-
-procedure appTControllers.Reset();
-var
-   i: loopint;
-
-begin
-   List.Dispose();
-
-   for i := 0 to nHandlers - 1 do begin
-      if(Handlers[i] <> nil) then
-         Handlers[i]^.Reset();
-   end;
-end;
-
-procedure appTControllers.Rescan();
-begin
-
-end;
-
-procedure appTControllers.UpdateControllers();
-var
-   i: loopint;
-
-begin
-   if(appControllers.List.n > 0) then begin
-      for i := 0 to (appControllers.List.n - 1) do begin
-         appControllers.List.List[i].UpdateStart();
-         appControllers.List.List[i].Update();
-      end;
-   end;
-end;
-
-function appTControllers.GetByIndex(index: loopint): appTControllerDevice;
-begin
-   if(index >= 0) and (index < List.n) then
-      Result := List.List[index]
-   else
-      Result := nil;
-end;
-
-procedure appTControllers.AddMapping(var mapping: appTControllerDeviceMapping);
-begin
-   mapping.Next := nil;
-
-   if(MappedDevices.s = nil) then
-      MappedDevices.s := @mapping
-   else
-      MappedDevices.e^.Next := @mapping;
-
-   MappedDevices.e := @mapping;
-end;
-
-function appTControllers.GetMappedFunction(const name: string): longint;
-var
-   i: loopint;
-
-begin
-   for i := 0 to high(appCONTROLLER_FUNCTIONS) do begin
-      if(appCONTROLLER_FUNCTIONS[i].Name = name) then
-         exit(appCONTROLLER_FUNCTIONS[i].MappedFunction);
-   end;
-
-   result := -1;
-end;
-
-function appTControllers.GetMappedDeviceByName(const name: StdString): appPControllerDeviceMapping;
-var
-   cur: appPControllerDeviceMapping;
-
-begin
-   cur := MappedDevices.s;
-
-   if(cur <> nil) then repeat
-      if(pos(cur^.RecognitionString, name) > 0) then
-         exit(cur);
-
-      cur := cur^.Next;
-   until (cur = nil);
-
-   Result := @appControllerDeviceGenericMapping;
-end;
 
 { appTControllerDevice }
 
@@ -971,114 +750,6 @@ begin
       Result := GetAxisGroupVector(group).Magnitude();
 end;
 
-{ appTControllerHandler }
-
-constructor appTControllerHandler.Create();
-begin
-
-end;
-
-procedure appTControllerHandler.Initialize();
-begin
-
-end;
-
-procedure appTControllerHandler.DeInitialize();
-begin
-
-end;
-
-procedure appTControllerHandler.Run();
-begin
-end;
-
-procedure appTControllerHandler.Reset();
-begin
-end;
-
-function appTControllerHandler.GetName(): StdString;
-begin
-   Result := 'Unknown';
-end;
-
-procedure appTControllerHandler.Rescan();
-begin
-
-end;
-
-procedure checkForDisconnected();
-var
-   i: loopint;
-
-begin
-   for i := 0 to appControllers.List.n - 1 do begin
-      if(not appControllers.List.List[i].Valid) then begin
-         FreeObject(appControllers.List.List[i]);
-
-         appControllers.List.Remove(i);
-
-         {check recursively until all disconnected devices are removed}
-         checkForDisconnected();
-         break;
-      end;
-   end;
-end;
-
-procedure run();
-var
-   i: loopint;
-
-begin
-   {run all handlers}
-   for i := 0 to appControllers.nHandlers - 1 do begin
-      if(appControllers.Handlers[i] <> nil) then
-         appControllers.Handlers[i]^.Run();
-   end;
-
-   {update all devices}
-   appControllers.UpdateControllers();
-
-   {check if any devices disconnected}
-   checkForDisconnected();
-
-   {check for new/reconnected devices}
-   if(appControllers.RescanInterval.Elapsed()) then begin
-      for i := 0 to appControllers.nHandlers - 1 do begin
-         if(appControllers.Handlers[i] <> nil) then
-            appControllers.Handlers[i]^.Rescan();
-      end;
-   end;
-end;
-
-procedure initialize();
-var
-   i: loopint;
-
-begin
-   appControllers.List.Initialize(appControllers.List, 8);
-   appControllers.OnEvent.Initialize(appControllers.OnEvent);
-
-   for i := 0 to appControllers.nHandlers - 1 do begin
-      if(appControllers.Handlers[i] <> nil) then
-         appControllers.Handlers[i]^.Initialize();
-   end;
-end;
-
-procedure deinitialize();
-var
-   i: loopint;
-
-begin
-   for i := 0 to appControllers.List.n - 1 do begin
-      FreeObject(appControllers.List.List[i]);
-   end;
-
-   for i := 0 to appControllers.nHandlers - 1 do begin
-      if(appControllers.Handlers[i] <> nil) then
-         appControllers.Handlers[i]^.DeInitialize();
-   end;
-end;
-
 procedure initializeGenericMapping(var m: appTControllerDeviceMapping);
 var
    i: loopint;
@@ -1109,12 +780,6 @@ begin
 end;
 
 INITIALIZATION
-   oxRun.AddRoutine('input_controllers', @run);
-   app.InitializationProcs.Add('input_controllers', @initialize, @deinitialize);
-
-   appControllers.evhp := appEvents.AddHandler(appControllers.evh, 'input_controller');
-   TTimerInterval.Initializef(appControllers.RescanInterval, 5.0);
-
    {initialize generic mapping}
    initializeGenericMapping(appControllerDeviceGenericMapping);
 

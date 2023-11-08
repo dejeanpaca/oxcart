@@ -11,7 +11,7 @@ UNIT oxuconInput;
 INTERFACE
 
    USES
-      uStd, appuController,
+      uStd, appuController, appuControllers,
       {oX}
       uOX, oxuRunRoutines, oxuConsoleBackend;
 

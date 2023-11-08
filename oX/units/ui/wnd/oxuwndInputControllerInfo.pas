@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, StringUtils,
       {app}
-      uApp, appuController,
+      uApp, appuController, appuControllers,
       {ox}
       uOX, oxuTypes,
       {$IFDEF OX_FEATURE_CONSOLE}
