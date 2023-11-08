@@ -145,7 +145,7 @@ begin
       uiDraw.HLine(RPosition.x, RPosition.y, x2);
       uiDraw.VLine(RPosition.x, RPosition.y - 1, y2 + 1);
 
-      SetColor(Color.Darken(40));
+      SetColor(Color.Darken(0.4));
       uiDraw.HLine(RPosition.x, y2, RPosition.x + Dimensions.w - 1);
       uiDraw.VLine(x2, Rposition.y, y2);
    end;
