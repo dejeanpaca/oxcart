@@ -186,7 +186,7 @@ begin
    if(oxedPlatform.GlyphCode <> 0) then
       oxedIcons.Create(item, oxedPlatform.GlyphCode, oxedPlatform.GlyphName);
 
-   item := Project.AddItem('Rebuild', oxedActions.BUILD);
+   item := Project.AddItem('Rebuild', oxedActions.REBUILD);
 
    if(oxedPlatform.GlyphCode <> 0) then
       oxedIcons.Create(item, oxedPlatform.GlyphCode, oxedPlatform.GlyphName);

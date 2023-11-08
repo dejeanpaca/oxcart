@@ -25,7 +25,7 @@ VAR
       RUN_PAUSE,
       RUN_STOP,
 
-      BUILD,
+      REBUILD,
       RECODE,
       RECREATE,
       CLEANUP,

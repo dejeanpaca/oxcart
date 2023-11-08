@@ -56,7 +56,7 @@ var
 begin
    enable := oxedBuild.Buildable();
 
-   oxedMenubar.Project.FindByAction(oxedActions.BUILD)^.Enable(enable);
+   oxedMenubar.Project.FindByAction(oxedActions.REBUILD)^.Enable(enable);
    oxedMenubar.Project.FindByAction(oxedActions.RECODE)^.Enable(enable);
    oxedMenubar.Project.FindByAction(oxedActions.CLEANUP)^.Enable(enable);
    oxedMenubar.Project.FindByAction(oxedActions.RESCAN)^.Enable(enable);

@@ -17,7 +17,7 @@ INTERFACE
       {oxed}
       uOXED, oxeduSettings, oxeduEntities,
       {build}
-      oxeduBuild,
+      oxeduBuild, oxeduBuildEditor,
       oxeduPlatform,
       oxeduProjectPlatforms,
       {$IFNDEF OXED_BUILD}
