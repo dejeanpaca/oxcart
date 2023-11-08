@@ -328,7 +328,9 @@ begin
 
    if(oxSplashScreen.Startup <> nil) then begin
       if(oxSplashScreen.StartupThreaded) then begin
-         oxSplashScreen.Startup.RunThreaded(oxWindow.Current);
+         oxSplashScreen.Startup.StartSplash(oxWindow.Current);
+         oxSplashScreen.Startup.Render();
+         oxSplashScreen.Startup.Start();
       end else begin
          oxSplashScreen.Startup.StartSplash(oxWindow.Current);
          oxSplashScreen.Startup.Render();
@@ -354,6 +356,6 @@ INITIALIZATION
    oxSplashScreen.StartupThreaded := true;
    {$ENDIF}
 
-   ox.OnInitialize.Add(@splashInitialize);
+   ox.OnPreInitialize.Add(@splashInitialize);
    ox.OnStart.Add(@splashStart);
 END.
