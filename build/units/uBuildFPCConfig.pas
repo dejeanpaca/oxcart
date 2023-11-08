@@ -21,8 +21,8 @@ TYPE
       function GetFPCCommandLineAsString(): StdString;
       function GetFPCCommandLine(emptyBefore: loopint = 0; emptyAfter: loopint = 0): TStringArray;
 
-      class function GenerateFile(config: TStringArray; const fn: StdString): boolean; static;
-      class function GenerateFile(config: TSimpleStringList; const fn: StdString): boolean; static;
+      class function WriteFile(config: TStringArray; const fn: StdString): boolean; static;
+      class function WriteFile(config: TSimpleStringList; const fn: StdString): boolean; static;
    end;
 
 VAR
@@ -86,15 +86,15 @@ begin
    Result := arguments;
 end;
 
-class function TBuildFPCConfiguration.GenerateFile(config: TStringArray; const fn: StdString): boolean;
+class function TBuildFPCConfiguration.WriteFile(config: TStringArray; const fn: StdString): boolean;
 begin
    Result := FileUtils.WriteStrings(fn, config) >= 0;
 end;
 
-class function TBuildFPCConfiguration.GenerateFile(config: TSimpleStringList;
+class function TBuildFPCConfiguration.WriteFile(config: TSimpleStringList;
    const fn: StdString): boolean;
 begin
-   Result := GenerateFile(config.List, fn);
+   Result := WriteFile(config.List, fn);
 end;
 
 END.
