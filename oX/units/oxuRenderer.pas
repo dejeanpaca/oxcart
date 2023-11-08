@@ -149,7 +149,7 @@ TYPE
       {set a context current}
       procedure ContextCurrent(context: loopint; var {%H-}target: oxTRenderTarget);
       {clear context internal method}
-      procedure InternalClearContext(); virtual;
+      function InternalClearContext(): boolean; virtual;
       {clear given context}
       procedure ClearContext();
       {clear context but mark it as used}
@@ -451,21 +451,27 @@ begin
    ContextCurrent(rtc);
 end;
 
-procedure oxTRenderer.InternalClearContext();
+function oxTRenderer.InternalClearContext(): boolean;
 begin
-
+   Result := true;
 end;
 
 procedure oxTRenderer.ClearContext();
 var
    rc: oxPRenderingContext;
+   ok: boolean;
 
 begin
    rc := @oxRenderingContext;
 
    if(rc^.RC >= 0) then begin
       RenderingContexts[rc^.RC].Used := false;
-      InternalClearContext();
+      ok := InternalClearContext();
+
+      if(ok) then
+         logtv('Cleared context ' + sf(rc^.RC))
+      else
+         logtw('Failed to clear context ' + sf(rc^.RC));
    end;
 end;
 

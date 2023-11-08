@@ -57,7 +57,7 @@ TYPE
       function InternalGetContext(wnd: oxTWindow; shareContext: loopint=-1): loopint; override;
       function GetContextString(index: loopint=0): StdString; override;
       procedure InternalContextCurrent(const context: oxTRenderTargetContext); override;
-      procedure InternalClearContext(); override;
+      function InternalClearContext(): boolean; override;
       function DestroyContext(context: loopint): boolean; override;
 
       procedure StartThread({%H-}wnd: oxTWindow); override;
@@ -300,7 +300,7 @@ begin
       logtw('Failed to set context ' + sf(context.RenderContext) + ' current: ' + GetPlatformErrorDescription(error));
 end;
 
-procedure oxglTRenderer.InternalClearContext();
+function oxglTRenderer.InternalClearContext(): boolean;
 var
    error: loopint;
    wnd: oglTWindow;
@@ -316,9 +316,9 @@ begin
    if(not glPlatform^.ClearContext(wnd)) then
       error := glPlatform^.RaiseError();
 
-   if(error = 0) then
-      logtv('Cleared context ' + sf(rc^.RC))
-   else
+   Result := error = 0;
+
+   if(error <> 0) then
       logtw('Failed to clear context ' + sf(rc^.RC) + ': ' + GetPlatformErrorDescription(error));
 end;
 
