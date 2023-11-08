@@ -16,9 +16,9 @@ UNIT appuControllers;
 INTERFACE
 
    USES
-      uStd, uLog, StringUtils, vmMath, vmVector, uTiming,
+      uStd, uLog, vmMath, uTiming,
       {app}
-      uApp, appuEvents, appuInputTypes, appuController,
+      uApp, appuEvents, appuController,
       {ox}
       oxuRunRoutines, oxuRun;
 
@@ -37,14 +37,15 @@ TYPE
       procedure DeInitialize(); virtual;
       {perform run operations}
       procedure Run(); virtual;
+
       {reinitialize all devices}
-      procedure Reset(); virtual;
+      procedure Scan(); virtual;
+      {periodically rescan for new devices}
+      procedure Rescan(); virtual;
 
       {get a displayable name for this handler}
       function GetName(): StdString; virtual;
 
-      {periodically rescan for new devices}
-      procedure Rescan(); virtual;
    end;
 
 
@@ -83,7 +84,7 @@ TYPE
       {add a device to the list}
       procedure Add(device: appTControllerDevice);
       {reset all devices}
-      procedure Reset();
+      procedure Scan();
       {periodically rescans for new devices}
       procedure Rescan();
 
@@ -170,7 +171,7 @@ begin
    log.Leave();
 end;
 
-procedure appTControllers.Reset();
+procedure appTControllers.Scan();
 var
    i: loopint;
 
@@ -179,13 +180,22 @@ begin
 
    for i := 0 to nHandlers - 1 do begin
       if(Handlers[i] <> nil) then
-         Handlers[i]^.Reset();
+         Handlers[i]^.Scan();
    end;
 end;
 
 procedure appTControllers.Rescan();
-begin
+var
+   i: loopint;
 
+begin
+   {check for new/reconnected devices}
+   if(appControllers.RescanInterval.Elapsed()) then begin
+      for i := 0 to appControllers.nHandlers - 1 do begin
+         if(appControllers.Handlers[i] <> nil) then
+            appControllers.Handlers[i]^.Rescan();
+      end;
+   end;
 end;
 
 procedure appTControllers.UpdateControllers();
@@ -237,13 +247,17 @@ end;
 function appTControllers.GetMappedDeviceByName(const name: StdString): appPControllerDeviceMapping;
 var
    cur: appPControllerDeviceMapping;
+   i: loopint;
 
 begin
    cur := MappedDevices.s;
 
    if(cur <> nil) then repeat
-      if(pos(cur^.RecognitionString, name) > 0) then
-         exit(cur);
+
+      for i := 0 to High(cur^.RecognitionStrings) do begin
+         if(pos(cur^.RecognitionStrings[i], name) > 0) then
+            exit(cur);
+      end;
 
       cur := cur^.Next;
    until (cur = nil);
@@ -272,18 +286,18 @@ procedure appTControllerHandler.Run();
 begin
 end;
 
-procedure appTControllerHandler.Reset();
+procedure appTControllerHandler.Scan();
 begin
-end;
-
-function appTControllerHandler.GetName(): StdString;
-begin
-   Result := 'Unknown';
 end;
 
 procedure appTControllerHandler.Rescan();
 begin
 
+end;
+
+function appTControllerHandler.GetName(): StdString;
+begin
+   Result := 'Unknown';
 end;
 
 procedure checkForDisconnected();
@@ -293,6 +307,10 @@ var
 begin
    for i := 0 to appControllers.List.n - 1 do begin
       if(not appControllers.List.List[i].Valid) then begin
+         {disable events associated with this device, as it may be removed}
+         appEvents.DisableWithExternalData(appControllers.List[i]);
+
+         {remove object}
          FreeObject(appControllers.List.List[i]);
 
          appControllers.List.Remove(i);
@@ -321,13 +339,7 @@ begin
    {check if any devices disconnected}
    checkForDisconnected();
 
-   {check for new/reconnected devices}
-   if(appControllers.RescanInterval.Elapsed()) then begin
-      for i := 0 to appControllers.nHandlers - 1 do begin
-         if(appControllers.Handlers[i] <> nil) then
-            appControllers.Handlers[i]^.Rescan();
-      end;
-   end;
+   appControllers.Rescan();
 end;
 
 procedure initialize();
@@ -341,6 +353,11 @@ begin
    for i := 0 to appControllers.nHandlers - 1 do begin
       if(appControllers.Handlers[i] <> nil) then
          appControllers.Handlers[i]^.Initialize();
+   end;
+
+   for i := 0 to appControllers.nHandlers - 1 do begin
+      if(appControllers.Handlers[i] <> nil) then
+         appControllers.Handlers[i]^.Scan();
    end;
 end;
 

@@ -16,11 +16,9 @@ UNIT appuController;
 INTERFACE
 
    USES
-      uStd, uLog, StringUtils, vmMath, vmVector, uTiming,
+      uStd, uLog, StringUtils, vmMath, vmVector,
       {app}
-      uApp, appuEvents, appuInputTypes,
-      {ox}
-      oxuRunRoutines, oxuRun;
+      appuInputTypes;
 
 TYPE
    appTControllerFunctionDescriptor = record
@@ -223,9 +221,9 @@ TYPE
 
    appTControllerDeviceMapping = record
       {Id}
-      Id,
+      Id: string;
       {string used to recognize this device (from the controller device name)}
-      RecognitionString: StdString;
+      RecognitionStrings: array[0..3] of string;
 
       {device settings for this mapping}
       Settings: appTControllerDeviceSettings;
@@ -472,9 +470,6 @@ procedure appTControllerDevice.Disconnected();
 begin
    log.w('Input controller device seems disconnected: ' + Name);
    Valid := false;
-
-   {disable events associated with this device, as it may be removed}
-   appEvents.DisableWithExternalData(Self);
 end;
 
 function appTControllerDevice.GetName(): string;
