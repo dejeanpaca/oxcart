@@ -2,6 +2,7 @@
    oxuglRenderer, oX OpenGL renderer base
    Copyright (C) 2013. Dejan Boras
 }
+
 {$INCLUDE oxdefines.inc}
 
 {$IFNDEF OX_RENDERER_GL}
@@ -18,17 +19,17 @@ INTERFACE
       {ox}
       uOX, oxuRunRoutines, oxuWindowTypes, oxuTypes, oxuRenderer, oxuRenderers, oxuWindows,
       {renderer.gl}
-      oxuOGL, oxuglExtensions, oxuglInfo, oxuglRendererPlatform,
+      oxuOGL, oxuglExtensions, oxuglInfo, oxuglRendererPlatform
       {platform specific}
-      {$IFDEF WINDOWS}windows, oxuWindowsPlatform{$ENDIF}
-      {$IFDEF X11}GLX, oxuX11Platform, oxuglRendererX11{$ENDIF}
-      {$IFDEF COCOA}oxuglCocoa, oxuCocoaPlatform, oxuglRendererCocoa{$ENDIF};
+      {$IFDEF X11}, GLX, oxuX11Platform, oxuglRendererX11{$ENDIF}
+      {$IFDEF COCOA}, oxuglCocoa, oxuCocoaPlatform, oxuglRendererCocoa{$ENDIF};
 
 TYPE
    { oxglTRenderer }
 
    oxglTRenderer = class(oxTRenderer)
       glPlatform: oxglPPlatform; static;
+      glSystemPlatform: TClass; static;
 
       glRenderingContexts: array[0..oxMAXIMUM_RENDER_CONTEXT] of oglTRenderingContext;
       {$IFDEF OX_LIBRARY_SUPPORT}
@@ -417,8 +418,7 @@ begin
    {$ENDIF}
 
    WindowInstance := oglTWindow;
-
-   {$INCLUDE ../../ox_default_platform_instance.inc}
+   PlatformInstance := glSystemPlatform;
 
    Id := 'gl';
 end;
