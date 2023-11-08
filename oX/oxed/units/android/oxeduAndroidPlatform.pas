@@ -28,7 +28,8 @@ TYPE
    end;
 
    oxedTAndroidPlatformArchitecture = class(oxedTPlatformArchitecture)
-      ToolChainPath: StdString;
+      ToolChainPath,
+      LibPath: StdString;
    end;
 
 VAR
@@ -43,11 +44,14 @@ var
    arch: oxedTAndroidPlatformArchitecture;
    platformToolchainPath: StdString = '';
 
-   procedure completeArch(a: oxedTAndroidPlatformArchitecture);
+   procedure completeArch(a: oxedTAndroidPlatformArchitecture; const archPath: StdString);
    begin
       {complete toolchain path}
-      a.ToolChainPath := arch.ToolChainPath + DirectorySeparator + 'prebuilt' + DirectorySeparator +
-         platformToolchainPath + DirectorySeparator + 'bin';
+      a.ToolChainPath := a.ToolChainPath + DirSep + 'prebuilt' + DirSep +
+         platformToolchainPath + DirSep + 'bin';
+
+      {complete lib path}
+      a.LibPath := archPath + DirSep + 'usr' + DirSep + 'lib';
    end;
 
 begin
@@ -83,14 +87,14 @@ begin
    arch.DefaultCPUType := 'armv7a';
    arch.BinUtilsPrefix := 'arm-linux-androideabi-';
    arch.ToolChainPath := 'arm-linux-androideabi-4.9';
-   completeArch(arch);
+   completeArch(arch, 'arm');
 
    {aarch64}
    arch := oxedTAndroidPlatformArchitecture(
       AddArchitecture(oxedTAndroidPlatformArchitecture.Create('Android Arm x64', 'aarch64')));
    arch.BinUtilsPrefix := 'aarch64-linux-android-';
    arch.ToolChainPath := 'aarch64-linux-android-4.9';
-   completeArch(arch);
+   completeArch(arch, 'arm64');
 
    {x86}
    arch := oxedTAndroidPlatformArchitecture(
@@ -98,14 +102,14 @@ begin
    arch.BinUtilsPrefix := 'i686-linux-android-';
    arch.ToolChainPath := 'arm-linux-androideabi-4.9';
    arch.ToolChainPath := 'x86-4.9';
-   completeArch(arch);
+   completeArch(arch, 'x86');
 
    {x86-64}
    arch := oxedTAndroidPlatformArchitecture(
       AddArchitecture(oxedTAndroidPlatformArchitecture.Create('Android X86 x64', 'x86_64')));
    arch.BinUtilsPrefix := 'x86_64-linux-android-';
    arch.ToolChainPath := 'x86_64-4.9';
-   completeArch(arch);
+   completeArch(arch, 'x86_64');
 end;
 
 procedure oxedTAndroidPlatform.ProjectReset();
