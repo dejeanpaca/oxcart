@@ -34,13 +34,41 @@ TYPE
       class procedure Initialize(out t: oxTTime); static;
    end;
 
+   { oxTRenderingTimer }
+
+   oxTRenderingTimer = record
+      Interval: TTimerInterval;
+      TargetFramerate: loopint;
+
+      class procedure Initialize(out t: oxTRenderingTimer; target_framerate: loopint); static;
+      function Elapsed(): boolean;
+   end;
+
 VAR
    {base timer used for most oX functionality}
    oxBaseTime,
    {game timer used for the game}
    oxTime: oxTTime;
 
+   {default rendering timer}
+   oxRenderingTimer: oxTRenderingTimer;
+
 IMPLEMENTATION
+
+{ oxTRenderingTimer }
+
+class procedure oxTRenderingTimer.Initialize(out t: oxTRenderingTimer; target_framerate: loopint);
+begin
+   t.TargetFramerate := target_framerate;
+   TTimerInterval.Initialize(t.Interval, round((1 / target_framerate) * 1000));
+end;
+
+function oxTRenderingTimer.Elapsed(): boolean;
+begin
+   Result := Interval.Elapsed();
+end;
+
+{ oxTTime }
 
 procedure oxTTime.Pause();
 begin
@@ -105,5 +133,7 @@ INITIALIZATION
    oxTTime.Initialize(oxBaseTime);
 
    ox.OnRun.Add('ox.tick', @tick);
+
+   oxTRenderingTimer.Initialize(oxRenderingTimer, 60);
 
 END.
