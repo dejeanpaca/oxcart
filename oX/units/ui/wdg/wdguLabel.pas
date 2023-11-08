@@ -44,6 +44,10 @@ TYPE
 
       {set a scale}
       procedure SetScale(x, y: single);
+
+      protected
+         FontHeight: loopint;
+         procedure FontChanged(); override;
    end;
 
    { wdgTLabelGlobal }
@@ -73,6 +77,7 @@ begin
    SetPadding(2);
    Transparent := true;
    FontProperties := oxfpCenterHV + oxfpInRectDefaultProperties;
+   Scale := vmvOne2f;
 end;
 
 procedure wdgTLabel.Initialize();
@@ -80,6 +85,7 @@ begin
    inherited Initialize();
 
    Color := uiTSkin(uiTWindow(wnd).Skin).Colors.Text;
+   FontChanged();
 end;
 
 procedure wdgTLabel.Render(clr: TColor4ub);
@@ -107,10 +113,7 @@ begin
       SetColorBlended(clr);
 
       if(not InRectangle) then begin
-         if(Scale[1] = 1) then
-            h := f.GetHeight()
-         else
-            h := round(f.GetHeight() * Scale[1]);
+         h := FontHeight;
 
          {render caption the regular way}
          if(Caption <> '') then begin
@@ -199,11 +202,8 @@ begin
 
    d.h := (CachedFont.GetHeight() + (PaddingTop + PaddingBottom)) * count;
 
-   if(Scale[0] <> 1) then
-      d.w := round(d.w * Scale[0]);
-
-   if(Scale[1] <> 1) then
-      d.h := round(d.h * Scale[1]);
+   d.w := GetScaled(d.w, Scale[0]);
+   d.h := GetScaled(d.h, Scale[1]);
 end;
 
 procedure wdgTLabel.Multiline();
@@ -223,6 +223,14 @@ procedure wdgTLabel.SetScale(x, y: single);
 begin
    Scale[0] := x;
    Scale[1] := y;
+
+   FontChanged();
+end;
+
+procedure wdgTLabel.FontChanged();
+begin
+   inherited FontChanged();
+   FontHeight := GetScaled(CachedFont.GetHeight(), Scale[1]);
 end;
 
 function wdgTLabelGlobal.Add(const Caption: StdString;
