@@ -39,6 +39,11 @@ CONST
    {did we determine the above state already}
    faContainsDirectoriesDetermined  = $00100000;
 
+   {$IFDEF WINDOWS}
+   {work around faHidden not portable warning}
+   faHiddenWindows = $00000002;
+   {$ENDIF}
+
 TYPE
    { TFileTraverse }
 
@@ -201,7 +206,7 @@ begin
    Result := (Name[1] = '.') and (Name <> '..') and (Name <> '.');
 
    {$IFDEF WINDOWS}
-   Result := Result or (Attr and faHidden{%H-} > 0);
+   Result := Result or (Attr and faHiddenWindows > 0);
    {$ENDIF}
 end;
 
@@ -879,7 +884,7 @@ begin
    Result := (f.Name[1] = '.') and (f.Name <> '..') and (f.Name <> '.');
 
    {$IFDEF WINDOWS}
-   Result := Result or (f.Attr and faHidden{%H-} > 0);
+   Result := Result or (f.Attr and faHiddenWindows > 0);
    {$ENDIF}
 end;
 
