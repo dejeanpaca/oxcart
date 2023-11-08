@@ -22,7 +22,7 @@ INTERFACE
       oxeduEntities,
       {build}
       oxeduBuild,
-      oxeduPlatform, oxeduWindowsPlatform, oxeduLinuxPlatform,
+      oxeduPlatform,
       oxeduProjectPlatforms,
       oxeduProjectRunner, oxeduSceneClone,
       oxeduProjectScanner, oxeduPasScanner, oxeduStatisticsScanner,
@@ -44,6 +44,12 @@ INTERFACE
       oxeduWindowTitle, oxeduProjectNotification,
       oxuStandardFilePreviewers, oxeduSceneScreenshot, oxeduPreviewGenerator,
       oxeduiBuildOutput,
+      {editor}
+      oxeduEditorPlatform,
+      {windows}
+      oxeduWindowsPlatform,
+      {linux}
+      oxeduLinuxPlatform,
       {android}
       oxeduAndroidPlatform, oxeduAndroidSettingsWindow,
       {plugins}

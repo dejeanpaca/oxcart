@@ -401,7 +401,7 @@ var
 begin
    build.RemoveAll();
 
-   for i := 0 to (oxedPlatforms.List.n - 1) do begin
+   for i := 1 to (oxedPlatforms.List.n - 1) do begin
       platform := oxedPlatforms.List.list[i];
 
       for archIndex := 0 to platform.Architectures.n - 1 do begin
