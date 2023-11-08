@@ -93,7 +93,7 @@ var
 
 begin
    if(List.n >= oxedRecents.Max) then
-      List.Remove(0);
+      List.RemoveLast();
 
    correctPath := ExcludeTrailingPathDelimiter(path);
 
