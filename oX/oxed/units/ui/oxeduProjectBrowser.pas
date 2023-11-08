@@ -211,7 +211,7 @@ begin
       else
          wnd.wdg.FilePath.SetCaption('');
 
-      wnd.wdg.FilePath.AutoSize();
+      wnd.wdg.FilePath.AutoSetDimensions(true);
 
       if(not suppressChange) then
          wnd.wdg.Navigation.ExpandPath(wnd.wdg.Files.CurrentPath)
@@ -338,7 +338,7 @@ begin
    wdg.Separator.SetVerticalPadding(2);
 
    wdg.FilePath.Move(wdg.Separator.RightOf(0), wdg.Workbar.BelowOf(0));
-   wdg.FilePath.AutoSize();
+   wdg.FilePath.AutoSetDimensions(true);
 
    wdg.Files.Move(wdg.Separator.RightOf(0), wdg.FilePath.BelowOf(0));
    wdg.Files.Resize(wdg.Separator.RemainingWidth(), wdg.FilePath.RemainingHeight());
