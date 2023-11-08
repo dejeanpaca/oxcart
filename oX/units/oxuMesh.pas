@@ -275,6 +275,11 @@ begin
    SetLength(data.n, 0);
    Data.nNormals     := 0;
    Data.n            := nil;
+
+   Data.nFaces := 0;
+   Data.nColors := 0;
+   Data.VertexOffset := 0;
+   Data.nVertexCutoff := 0;
 end;
 
 procedure oxTMesh.Recycle();
