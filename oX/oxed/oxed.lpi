@@ -77,18 +77,10 @@
 -dOX_DEBUG
 -dOX_PROJECT_DEFINES
 -dOX_LIBRARY_SUPPORT"/>
-      <OtherDefines Count="6">
-        <Define0 Value="DEBUG"/>
-        <Define1 Value="OXED"/>
-        <Define2 Value="OX_DEBUG"/>
-        <Define3 Value="OX_PROJECT_DEFINES"/>
-        <Define4 Value="OX_LIBRARY_SUPPORT"/>
-        <Define5 Value="OX_RESOURCE_DEBUG"/>
-      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="10">
+    <Exceptions Count="11">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -119,6 +111,9 @@
       <Item10>
         <Name Value="RunError(210)"/>
       </Item10>
+      <Item11>
+        <Name Value="RunError(201)"/>
+      </Item11>
     </Exceptions>
   </Debugging>
 </CONFIG>
