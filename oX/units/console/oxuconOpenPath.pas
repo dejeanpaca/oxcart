@@ -42,7 +42,7 @@ begin
       if(arg = 'config') then
          Open(appPath.Configuration.Path)
       {$IFNDEF NOLOG}
-      else if(arg = 'logs') or (arg = logs) then
+      else if(arg = 'logs') or (arg = 'log') then
          Open(log.Settings.Path)
       {$ENDIF}
       else if(arg = 'userconfig') then
