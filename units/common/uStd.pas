@@ -60,6 +60,15 @@ TYPE
    TAppendableString = type StdString;
    TErrorString = TAppendableString;
 
+   {string pair}
+   TStringPair = array[0..1] of StdString;
+
+   { TStringPairHelper }
+
+   TStringPairHelper = type helper for TStringPair
+      procedure Assign(const k, v: StdString);
+   end;
+
    { arrays }
    TSingleArray = array of single;
    TDoubleArray = array of double;
@@ -303,6 +312,14 @@ function UTF8Lower(const s: UTF8String): UTF8String;
 {$ENDIF}
 
 IMPLEMENTATION
+
+{ TStringPairHelper }
+
+procedure TStringPairHelper.Assign(const k, v: StdString);
+begin
+   Self[0] := k;
+   Self[1] := v;
+end;
 
 { TLineEndingTypeHelper }
 
