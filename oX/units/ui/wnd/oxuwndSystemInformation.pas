@@ -50,9 +50,8 @@ begin
    if(appSI.SystemDeviceName <> '') then
       wdgLabel.Add('System: ' + appSI.SystemDeviceName);
 
-   {$IFNDEF WINDOWS}
-   wdgLabel.Add('Kernel: ' + appSI.KernelVersion);
-   {$ENDIF}
+   if(appSI.KernelVersion <> '') then
+      wdgLabel.Add('Kernel: ' + appSI.KernelVersion);
 
    wdgDivisor.Add('Hardware Information', uiWidget.LastRect.BelowOf());
 
