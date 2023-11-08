@@ -1,9 +1,16 @@
+{
+   android_native_activity_helper
+   Copyright (c) 2020. Dejan Boras
+}
+
+{$INCLUDE oxheader.inc}
 UNIT android_native_activity_helper;
 
 INTERFACE
 
    USES
-      ctypes, jni, android_native_app_glue, android_env;
+      ctypes, jni, android_native_app_glue, android_env,
+      uAndroid;
 
 procedure androidAutoHideNavBar(var app: android_app);
 
@@ -13,6 +20,8 @@ VAR
    activityClass,
    windowClass,
    viewClass,
+   layoutParamsClass,
+   windowManagerClass,
    window,
    decorView: jclass;
 
@@ -25,7 +34,8 @@ VAR
    flagImmersiveStickyID,
    flagLayoutStableID,
    flagLayoutHideNavigationID,
-   flagLayoutFullscreenID: jfieldID;
+   flagLayoutFullscreenID,
+   layoutInDisplayCutoutMode: jfieldID;
 
    flagFullscreen,
    flagHideNavigation,
@@ -50,7 +60,14 @@ begin
       getDecorView := env^^.GetMethodID(env, windowClass, 'getDecorView', '()Landroid/view/View;');
 
       viewClass := env^^.FindClass(env, 'android/view/View');
+      windowManagerClass := env^^.FindClass(env, 'android/view/WindowManager');
       setSystemUiVisibility := env^^.GetMethodID(env, viewClass, 'setSystemUiVisibility', '(I)V');
+
+      layoutParamsClass := env^^.FindClass(env, 'android/view/WindowManager$LayoutParams');
+
+      if(android_api_level >= 28) then begin
+         layoutInDisplayCutoutMode := env^^.GetFieldID(env, layoutParamsClass, 'layoutInDisplayCutoutMode', 'I');
+      end;
 
       flagFullscreenID := env^^.GetStaticFieldID(env, viewClass, 'SYSTEM_UI_FLAG_FULLSCREEN', 'I');
       flagHideNavigationID := env^^.GetStaticFieldID(env, viewClass, 'SYSTEM_UI_FLAG_HIDE_NAVIGATION', 'I');
