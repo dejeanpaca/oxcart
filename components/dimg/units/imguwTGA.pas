@@ -15,7 +15,7 @@ INTERFACE
    USES
       uImage, uFileHandlers, imguRW,
       {ox}
-      uOX, oxuFile;
+      oxuFile;
 
 IMPLEMENTATION
 
@@ -102,15 +102,11 @@ begin {writeImage}
    {success}
 end;
 
-procedure init();
-begin
-  imgFile.Writers.RegisterHandler(writer, 'TGA', @writeImage);
-  imgFile.Writers.RegisterExt(ext, '.tga', @writer);
-
-  XFileFooter.Signature := tgacFooterSignature;
-end;
 
 INITIALIZATION
-   ox.PreInit.Add('image.write.tga', @init);
+   imgFile.Writers.RegisterHandler(writer, 'TGA', @writeImage);
+   imgFile.Writers.RegisterExt(ext, '.tga', @writer);
+
+   XFileFooter.Signature := tgacFooterSignature;
 
 END.

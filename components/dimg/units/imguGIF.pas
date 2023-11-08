@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uImage, uFileHandlers, imguRW,
       {ox}
-      uOX, oxuFile;
+      oxuFile;
 
 IMPLEMENTATION
 
@@ -79,13 +79,8 @@ begin
    {check the flags}
 end;
 
-procedure init();
-begin
-  imgFile.Readers.RegisterHandler(loader, 'GIF', @load);
-  imgFile.Readers.RegisterExt(ext, '.gif', @loader);
-end;
-
 INITIALIZATION
-   ox.PreInit.Add('image.gif', @init);
+   imgFile.Readers.RegisterHandler(loader, 'GIF', @load);
+   imgFile.Readers.RegisterExt(ext, '.gif', @loader);
 
 END.

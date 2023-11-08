@@ -15,7 +15,7 @@ INTERFACE
       uFileHandlers, imguRW,
       paszlib, ZInflate,
       {ox}
-      uOX, oxuFile;
+      oxuFile;
 
 IMPLEMENTATION
 
@@ -474,13 +474,8 @@ begin
    end;
 end;
 
-procedure init();
-begin
-  imgFile.Readers.RegisterHandler(loader, 'PNG', @load);
-  imgFile.Readers.RegisterExt(ext, '.png', @loader);
-end;
-
 INITIALIZATION
-   ox.PreInit.Add('image.png', @init);
+   imgFile.Readers.RegisterHandler(loader, 'PNG', @load);
+   imgFile.Readers.RegisterExt(ext, '.png', @loader);
 
 END.

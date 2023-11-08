@@ -15,7 +15,7 @@ INTERFACE
    USES
       uStd, uImage, uFileHandlers, imguRW, uColors,
       {ox}
-      uOX, oxuFile;
+      oxuFile;
 
 IMPLEMENTATION
 
@@ -170,13 +170,9 @@ begin
    ld^.BlockRead(imgP.Image^, imgP.Size);
 end;
 
-procedure init();
-begin
-  imgFile.Readers.RegisterHandler(loader, 'SGIRGB', @load);
-  imgFile.Readers.RegisterExt(ext, '.rgb', @loader);
-end;
 
 INITIALIZATION
-   ox.PreInit.Add('image.sgirgb', @init);
+   imgFile.Readers.RegisterHandler(loader, 'SGIRGB', @load);
+   imgFile.Readers.RegisterExt(ext, '.rgb', @loader);
 
 END.

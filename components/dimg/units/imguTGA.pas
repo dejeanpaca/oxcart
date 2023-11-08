@@ -204,13 +204,8 @@ begin {load}
    {the image has been loaded successfully | mission accomplished}
 end;
 
-procedure init();
-begin
+INITIALIZATION
    imgFile.Readers.RegisterHandler(loader, 'TGA', @load);
    imgFile.Readers.RegisterExt(ext, '.tga', @loader);
-end;
-
-INITIALIZATION
-   ox.PreInit.Add('image.tga', @init);
 
 END.
