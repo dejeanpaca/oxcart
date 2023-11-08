@@ -17,7 +17,7 @@ INTERFACE
       {oX}
       oxuWindowTypes, oxuGlobalInstances,
       {ui}
-      uiuWindowTypes, uiuWindow, uiuWidget, uiuTypes, uiWidgets, uiuUI, uiuControl;
+      uiuWindowTypes, uiuWindow, uiuWidget, uiuTypes, uiWidgets, uiuUI, oxuUI, uiuControl;
 
 TYPE
    uiTKeyEventsGlobal = record
@@ -167,6 +167,9 @@ end;
 
 begin
    Result := false;
+
+   if(oxui = nil) then
+      oxui := oxuUI.oxui;
 
    {HOW: Keys are first processed by the widget that has focus (selected).
    If no widget is selected then the keys are processed by keyProcess routine.

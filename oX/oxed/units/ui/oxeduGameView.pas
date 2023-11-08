@@ -18,7 +18,7 @@ INTERFACE
       oxuSceneRender, oxuWindows, oxuWindow,
       oxuKeyboardControl, oxuPointerControl, oxuGlobalKeys,
       {ui}
-      uiuTypes, uiuWindow, uiuWindowTypes,
+      uiuTypes, uiuWindow, uiuWindowTypes, oxuUI,
       {oxed}
       uOXED, oxeduSettings, oxeduSceneWindow, oxeduMenubar, oxeduWindow, oxeduProjectRunner, oxeduLib;
 
@@ -109,7 +109,7 @@ begin
 
       {we don't pass our own global keys to the project}
       if(oxGlobalKeys.Find(k.Key) = -1) then
-         Result := projectKey.Handle(newK);
+         Result := projectKey.Handle(nil, newK);
    end;
 end;
 
