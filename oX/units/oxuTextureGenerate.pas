@@ -390,6 +390,7 @@ end;
 class procedure oxTTextureGenerate.Init(out t: oxTTextureGenerate);
 begin
    ZeroOut(t, SizeOf(t));
+
    t.Origin := oxTextureGenerateSettings.Origin;
    t.Filter := oxTextureGenerateSettings.DefaultFilter;
    t.RepeatType := oxTextureGenerateSettings.DefaultRepeatType;
@@ -438,7 +439,7 @@ end;
 
 INITIALIZATION
    oxTextureGenerateSettings.DefaultFilter := oxTEXTURE_FILTER_TRILINEAR;
-   oxTextureGenerateSettings.DefaultRepeatType := oxTEXTURE_CLAMP_TO_EDGE;
+   oxTextureGenerateSettings.DefaultRepeatType := oxTEXTURE_REPEAT;
    oxTextureGenerateSettings.DefaultDimensions[0] := 64;
    oxTextureGenerateSettings.DefaultDimensions[1] := 64;
 
