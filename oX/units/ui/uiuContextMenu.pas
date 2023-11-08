@@ -109,7 +109,7 @@ TYPE
 
    { uiTContextMenu }
    uiTContextMenu = class
-      Name: StdString;
+      Caption: StdString;
 
       Items: uiTContextMenuItems;
 
@@ -123,29 +123,31 @@ TYPE
 
       Parent: uiTContextMenu;
 
-      constructor Create(const newName: StdString);
+      constructor Create(const newCaption: StdString);
       destructor Destroy(); override;
 
       {insert item at a specific place}
       procedure InsertAt(index: loopint);
       procedure InsertAfter(index: loopint);
 
-      {add an existing item to this menu}
+      {copy over an existing item to this menu (sub menus are added by reference as external)}
       function AddItem(const existing: uiTContextMenuItem): uiPContextMenuItem;
       {add item to menu}
-      function AddItem(const caption: StdString; action: longword = 0; callback: uiTContextMenuCallback = nil): uiPContextMenuItem;
-      function AddItem(const caption: StdString; simpleCallback: TProcedure): uiPContextMenuItem;
-      function AddItem(const caption: StdString; simpleCallback: TObjectProcedure): uiPContextMenuItem;
-      function AddItem(const caption: StdString; simpleCallback: uiTWidgetCallbackRoutine): uiPContextMenuItem;
-      function AddItem(const caption: StdString; simpleCallback: uiTWidgetObjectCallbackRoutine): uiPContextMenuItem;
+      function AddItem(const useCaption: StdString; action: longword = 0; callback: uiTContextMenuCallback = nil): uiPContextMenuItem;
+      function AddItem(const useCaption: StdString; simpleCallback: TProcedure): uiPContextMenuItem;
+      function AddItem(const useCaption: StdString; simpleCallback: TObjectProcedure): uiPContextMenuItem;
+      function AddItem(const useCaption: StdString; simpleCallback: uiTWidgetCallbackRoutine): uiPContextMenuItem;
+      function AddItem(const useCaption: StdString; simpleCallback: uiTWidgetObjectCallbackRoutine): uiPContextMenuItem;
       {add checkbox to the menu}
-      function AddCheckbox(const caption: StdString; checked: boolean = false): uiPContextMenuItem;
+      function AddCheckbox(const useCaption: StdString; checked: boolean = false): uiPContextMenuItem;
       {add separator to menu}
       function AddSeparator(): uiPContextMenuItem;
       {add a sub menu}
-      function AddSub(const caption: StdString): uiTContextMenu;
-      {add an existign context menu}
-      function AddSub(const caption: StdString; existing: uiTContextMenu): uiPContextMenuItem;
+      function AddSub(const useCaption: StdString): uiTContextMenu;
+      {add an existing context menu}
+      function AddSub(const useCaption: StdString; existing: uiTContextMenu): uiPContextMenuItem;
+      {add an existing context menu}
+      function AddSub(existing: uiTContextMenu): uiPContextMenuItem;
 
       {add everything from an existing menu}
       procedure AddFrom(menu: uiTContextMenu);
@@ -164,8 +166,8 @@ TYPE
 
       {find a submenu item index by its reference}
       function FindIndexOfSub(menu: uiTContextMenu): loopint;
-      {get a submenu item that has the specified context menu}
-      function GetSub(menu: uiTContextMenu): uiPContextMenuItem;
+      {find a submenu item that has the specified context menu}
+      function FindSub(menu: uiTContextMenu): uiPContextMenuItem;
       {find an item index by the associated action, returns -1 if nothing found}
       function FindIndexByAction(action: TEventID): loopint;
       {find an item by the associated action}
@@ -177,7 +179,7 @@ TYPE
       procedure Disable();
 
       private
-         function Add(const caption: StdString): uiPContextMenuItem;
+         function Add(const useCaption: StdString): uiPContextMenuItem;
    end;
 
    { uiTContextMenuGlobal }
@@ -702,9 +704,9 @@ end;
 
 { uiTContextMenu }
 
-constructor uiTContextMenu.Create(const newName: StdString);
+constructor uiTContextMenu.Create(const newCaption: StdString);
 begin
-   Name := newName;
+   Caption := newCaption;
 
    ItemHeight := uiContextMenu.ItemHeight;
    ItemPadding := uiContextMenu.ItemPadding;
@@ -763,47 +765,46 @@ begin
    {if we're adding an external sub-menu, then mark it so we do not dispose of it}
    if(existing.Sub <> nil) then
       Result^.Properties.Prop(uiCONTEXT_MENU_ITEM_EXTERNAL);
-
 end;
 
-function uiTContextMenu.AddItem(const caption: StdString; action: longword; callback: uiTContextMenuCallback): uiPContextMenuItem;
+function uiTContextMenu.AddItem(const useCaption: StdString; action: longword; callback: uiTContextMenuCallback): uiPContextMenuItem;
 begin
-   Result := Add(caption);
+   Result := Add(useCaption);
 
    Result^.SetAction(action);
    Result^.Callback := callback;
 end;
 
-function uiTContextMenu.AddItem(const caption: StdString; simpleCallback: TProcedure): uiPContextMenuItem;
+function uiTContextMenu.AddItem(const useCaption: StdString; simpleCallback: TProcedure): uiPContextMenuItem;
 begin
-   Result := AddItem(caption, 0, nil);
+   Result := AddItem(useCaption, 0, nil);
    Result^.Callbacks.Use(simpleCallback);
 end;
 
-function uiTContextMenu.AddItem(const caption: StdString; simpleCallback: TObjectProcedure): uiPContextMenuItem;
+function uiTContextMenu.AddItem(const useCaption: StdString; simpleCallback: TObjectProcedure): uiPContextMenuItem;
 begin
-   Result := AddItem(caption, 0, nil);
+   Result := AddItem(useCaption, 0, nil);
    Result^.Callbacks.Use(simpleCallback);
 end;
 
-function uiTContextMenu.AddItem(const caption: StdString; simpleCallback: uiTWidgetCallbackRoutine): uiPContextMenuItem;
+function uiTContextMenu.AddItem(const useCaption: StdString; simpleCallback: uiTWidgetCallbackRoutine): uiPContextMenuItem;
 begin
-   Result := AddItem(caption, 0, nil);
+   Result := AddItem(useCaption, 0, nil);
    Result^.Callbacks.Use(simpleCallback);
 end;
 
-function uiTContextMenu.AddItem(const caption: StdString; simpleCallback: uiTWidgetObjectCallbackRoutine): uiPContextMenuItem;
+function uiTContextMenu.AddItem(const useCaption: StdString; simpleCallback: uiTWidgetObjectCallbackRoutine): uiPContextMenuItem;
 begin
-   Result := AddItem(caption, 0, nil);
+   Result := AddItem(useCaption, 0, nil);
    Result^.Callbacks.Use(simpleCallback);
 end;
 
-function uiTContextMenu.AddCheckbox(const caption: StdString; checked: boolean): uiPContextMenuItem;
+function uiTContextMenu.AddCheckbox(const useCaption: StdString; checked: boolean): uiPContextMenuItem;
 var
    item: uiPContextMenuItem;
 
 begin
-   item := Add(caption);
+   item := Add(useCaption);
    item^.ItemType := uiCONTEXT_MENU_CHECKBOX;
    item^.SetChecked(checked);
 
@@ -821,31 +822,42 @@ begin
    Result := item;
 end;
 
-function uiTContextMenu.AddSub(const caption: StdString): uiTContextMenu;
+function uiTContextMenu.AddSub(const useCaption: StdString): uiTContextMenu;
 var
    item: uiPContextMenuItem;
 
 begin
-   item := Add(caption);
+   item := Add(useCaption);
    item^.ItemType := uiCONTEXT_MENU_SUB;
-   item^.Sub := uiTContextMenu.Create(caption);
+   item^.Sub := uiTContextMenu.Create(useCaption);
    uiTContextMenu(item^.Sub).Parent := Self;
 
    Result := uiTContextMenu(item^.Sub);
 end;
 
-function uiTContextMenu.AddSub(const caption: StdString; existing: uiTContextMenu): uiPContextMenuItem;
+function uiTContextMenu.AddSub(const useCaption: StdString; existing: uiTContextMenu): uiPContextMenuItem;
 var
    item: uiPContextMenuItem;
 
 begin
-   item := Add(caption);
+   item := Add(useCaption);
    item^.Sub := existing;
    item^.ItemType := uiCONTEXT_MENU_SUB;
+
+   if(useCaption = '') then
+      item^.Caption := existing.Caption;
+
+   item^.Properties.Prop(uiCONTEXT_MENU_ITEM_EXTERNAL);
+
    if(existing.Parent <> nil) then
       existing.Parent := Self;
 
    Result := item;
+end;
+
+function uiTContextMenu.AddSub(existing: uiTContextMenu): uiPContextMenuItem;
+begin
+   Result := AddSub('', existing);
 end;
 
 procedure uiTContextMenu.AddFrom(menu: uiTContextMenu);
@@ -950,7 +962,7 @@ begin
    Result := -1;
 end;
 
-function uiTContextMenu.GetSub(menu: uiTContextMenu): uiPContextMenuItem;
+function uiTContextMenu.FindSub(menu: uiTContextMenu): uiPContextMenuItem;
 var
    i: loopint;
 
@@ -995,7 +1007,7 @@ var
 
 begin
    if(Parent <> nil) then begin
-      sub := Parent.GetSub(Self);
+      sub := Parent.FindSub(Self);
 
       if(enabled) then
          sub^.Properties.Prop(uiCONTEXT_MENU_ITEM_ENABLED)
@@ -1010,19 +1022,19 @@ var
 
 begin
    if(Parent <> nil) then begin
-      sub := Parent.GetSub(Self);
+      sub := Parent.FindSub(Self);
       sub^.Properties.ClearBit(uiCONTEXT_MENU_ITEM_ENABLED);
    end;
 end;
 
-function uiTContextMenu.Add(const caption: StdString): uiPContextMenuItem;
+function uiTContextMenu.Add(const useCaption: StdString): uiPContextMenuItem;
 var
    item: uiTContextMenuItem;
 
 begin
    ZeroPtr(@item, SizeOf(item));
 
-   item.Caption := caption;
+   item.Caption := useCaption;
    item.Properties := uiCONTEXT_MENU_ITEM_ENABLED;
    item.GlyphColor := uiSkin.StandardSkin.Colors.Text;
 
