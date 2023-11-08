@@ -255,6 +255,8 @@ begin
       InputText := cBlack4ub;
       InputPlaceholder.Assign(140, 140, 140, 255);
       InputCursor := cBlack4ub;
+
+      Delete.Assign(232, 64, 64, 255);
    end;
 
    { disabled colors }
