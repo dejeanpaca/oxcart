@@ -15,20 +15,22 @@ INTERFACE
       {ox}
       oxuRunRoutines,
       {oxed}
-      uOXED, oxeduPlatform, oxeduPlatformConfiguration;
+      uOXED, oxeduPlatform, oxeduPlatformConfiguration, oxeduAndroidSettings;
 
 TYPE
    { oxedTAndroidPlatform }
 
    oxedTAndroidPlatform = class(oxedTPlatform)
       constructor Create(); override;
+
+      procedure ProjectReset(); override;
    end;
 
 IMPLEMENTATION
 
 { oxedTAndroidPlatform }
 
-constructor oxedTAndroidPlatform.Create;
+constructor oxedTAndroidPlatform.Create();
 begin
    inherited;
 
@@ -39,6 +41,11 @@ begin
    Configuration := oxedTPlatformConfiguration.Create();
 
    AddArchitecture('Default', '');
+end;
+
+procedure oxedTAndroidPlatform.ProjectReset();
+begin
+   oxedAndroidSettings.Reset();
 end;
 
 procedure init();
