@@ -14,6 +14,8 @@ INTERFACE
       uStd, uLog, StringUtils,
       {app}
       appuController,
+      {ox}
+      uOX, oxuWindow, oxuWindowsOS,
       {dx}
       windows, DirectInput;
 
@@ -91,7 +93,9 @@ end;
 
 procedure appTDirectInputControllerHandler.Reset();
 begin
-   DIInterface.EnumDevices(DI8DEVCLASS_GAMECTRL, @diCallback, nil, DIEDFL_ATTACHEDONLY);
+   if(oxWindow.Current <> nil) then begin
+      DIInterface.EnumDevices(DI8DEVCLASS_GAMECTRL, @diCallback, nil, DIEDFL_ATTACHEDONLY);
+   end;
 end;
 
 procedure appTDirectInputControllerHandler.Run();
@@ -105,6 +109,21 @@ var
    diDevice: IDirectInputDevice8A;
    error: HRESULT;
 
+   capabilities: DIDEVCAPS;
+
+   procedure logError(const what: string);
+   begin
+      log.e('DirectInput > ' + what + ' Device: ' + pchar(lpddi.tszInstanceName) + ' (' + pchar(lpddi.tszProductName) + ')');
+   end;
+
+   function failed(err_what: HRESULT; const what: string): boolean;
+   begin
+      Result := err_what <> DI_OK;
+
+      if(Result) then
+         logError(what + '. ' + winos.FormatMessage(dword(err_what)));
+   end;
+
 begin
    Result := false;
    error := appDirectInputControllerHandler.DIInterface.CreateDevice(lpddi.guidInstance, diDevice, nil);
@@ -117,14 +136,50 @@ begin
       device.GUID := lpddi.guidInstance;
       device.FFGUID := lpddi.guidFFDriver;
 
+      device.Device := diDevice;
+
+      {get device updates when in background and exclusive access when in foreground}
+      if failed(diDevice.SetCooperativeLevel(winosTWindow(oxWindow.Current).wd.h,
+         DISCL_BACKGROUND or DISCL_EXCLUSIVE), 'Failed to set cooperative level') then begin
+         FreeObject(device);
+         exit(false);
+      end;
+
+      {use generic joystick data format}
+      if failed(diDevice.SetDataFormat(c_dfDIJoystick), 'Failed to set data format') then begin
+         FreeObject(device);
+         exit(false);
+      end;
+
+      {get device capabilities}
+      ZeroOut(capabilities, SizeOf(capabilities));
+
+      if failed(diDevice.GetCapabilities(capabilities), 'Failed to get capabilities') then begin
+         FreeObject(device);
+         exit(false);
+      end;
+
+      {get number of axes and buttons}
+      writeln(capabilities.dwAxes, ' ', capabilities.dwButtons);
+
+      {TODO: Get the rest of this functional}
+
       appControllers.Add(device);
       Result := true;
    end else
-      log.e('Failed to create DirectInput device for: ' + pchar(lpddi.tszInstanceName) + ' (' + pchar(lpddi.tszProductName) + ')');
+      logError('Failed to create device.');
+end;
+
+procedure init();
+begin
+   {we can only init a directinput device when we have a window}
+   appDirectInputControllerHandler.Reset();
 end;
 
 INITIALIZATION
    appDirectInputControllerHandler.Create();
    appControllers.AddHandler(appDirectInputControllerHandler);
+
+   ox.OnInitialize.Add('directinput', @init);
 
 END.
