@@ -97,6 +97,10 @@ TYPE
       procedure FitInside(var another: oxTRect);
       {fits another rect inside this one, if it can't fit inside it centers it}
       procedure PositionInside(var another: oxTRect);
+      {center this rect inside and return an offset position}
+      function CenterInside(const r: oxTRect): oxTPoint;
+      {center a rect with specified dimensions inside and return an offset position}
+      function CenterInside(const ow, oh: loopint): oxTPoint;
    end;
 
    { oxTRectf }
@@ -736,6 +740,18 @@ begin
 
    if(another.y <= self.y - Self.h) then
       another.y := self.y - self.h + another.h;
+end;
+
+function oxTRect.CenterInside(const r: oxTRect): oxTPoint;
+begin
+   Result.x := (Self.w - r.w) div 2;
+   Result.y := - (Self.h - r.h) div 2;
+end;
+
+function oxTRect.CenterInside(const ow, oh: loopint): oxTPoint;
+begin
+   Result.x := (Self.w - ow) div 2;
+   Result.y := (Self.h - oh) div 2;
 end;
 
 { oxTDimensions }
