@@ -32,7 +32,7 @@ begin
    inherited Create;
 
    WriteVersion := true;
-   Texture.Path := oxPaths.Data + 'splash.png';
+   Texture.Path := '';
    DisplayTime := 0;
 end;
 
