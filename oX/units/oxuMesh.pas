@@ -86,7 +86,7 @@ TYPE
       procedure ScaleTexture(scalar: single); inline;
       procedure ScaleTexture(x, y: single);
       {offset a primitive model}
-      procedure Offset(x, y, z: single);
+      procedure Translate(x, y, z: single);
 
       {allocate memory}
       procedure SetVertices(count: loopint);
@@ -246,7 +246,7 @@ begin
       vmScale(data.t[0], data.nTexCoords, x, y);
 end;
 
-procedure oxTMesh.Offset(x, y, z: single);
+procedure oxTMesh.Translate(x, y, z: single);
 begin
    {offset all vertices by specified amount}
    if(data.nVertices > 0) then
