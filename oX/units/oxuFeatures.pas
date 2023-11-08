@@ -354,4 +354,7 @@ INITIALIZATION
 
    oxFeatures.Add('models', 'Model support', 'OX_FEATURE_MODELS');
 
+   oxFeatures.Add('pack', 'Packed data (ypk, bundle) support', 'OX_PACK')^.
+      IncludeByDefault := false;
+
 END.
