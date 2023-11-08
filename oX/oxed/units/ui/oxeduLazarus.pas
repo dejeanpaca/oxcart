@@ -85,6 +85,12 @@ begin
          laz.Parameters.Clear();
          laz.Parameters.Add('--no-splash-screen');
          laz.Parameters.Add('--force-new-instance');
+
+         if(build.GetLazarus()^.ConfigPath <> '') then begin
+            laz.Parameters.Add('--pcp=' + build.GetLazarus()^.ConfigPath);
+            log.w('Config path: ' + build.GetLazarus()^.ConfigPath);
+         end;
+
          laz.Parameters.Add(oxedProject.TempPath + oxPROJECT_LIB_LPI);
       end else begin
          if(oxedSettings.ShowNotifications) then
