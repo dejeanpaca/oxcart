@@ -25,6 +25,7 @@ TYPE
       Aspect,
       ZNear,
       ZFar,
+      Size,
       l,
       r,
       b,
@@ -45,7 +46,9 @@ TYPE
       Viewport: oxPViewport;
 
       {is the projection ortographic}
-      IsOrtographic: boolean;
+      IsOrtographic,
+      {use viewport aspect when updating the projection}
+      UseViewportAspect: boolean;
 
       p: oxTProjectionSettings;
       ProjectionMatrix: TMatrix4f;
@@ -58,6 +61,7 @@ CONST
       Aspect:     1.7777777;
       ZNear:      0.5;
       ZFar:       1000.0;
+      Size:       50;
       l:          -50;
       r:          50;
       b:          -50;
@@ -70,6 +74,7 @@ CONST
       Aspect:     1.7777777;
       ZNear:      -1.0;
       ZFar:       1.0;
+      Size:       50;
       l:          -50;
       r:          50;
       b:          -50;
