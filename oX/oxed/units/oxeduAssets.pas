@@ -9,13 +9,19 @@ UNIT oxeduAssets;
 INTERFACE
 
    USES
-      uStd, StringUtils;
+      uStd, StringUtils, uLog,
+      {ox}
+      oxuPaths,
+      {oxed}
+      uOXED, oxeduPackage;
 
 TYPE
 
    { oxedTAssets }
 
    oxedTAssets = record
+      oxPackage: oxedTPackage;
+
       {ignore these file types when building (don't copy over)}
       IgnoreFileTypes,
       ProjectIgnoreFileTypes: TSimpleStringList;
@@ -50,7 +56,15 @@ begin
    Result := false;
 end;
 
+procedure init();
+begin
+   oxedAssets.oxPackage.Id := 'ox';
+   oxedAssets.oxPackage.Path := oxPaths.BasePath;
+end;
+
 INITIALIZATION
+   oxed.Init.Add('assets', @init);
+
    TSimpleStringList.Initialize(oxedAssets.IgnoreFileTypes, 256);
    TSimpleStringList.Initialize(oxedAssets.ProjectIgnoreFileTypes, 256);
 
