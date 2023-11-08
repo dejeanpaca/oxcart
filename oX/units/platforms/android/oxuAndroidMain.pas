@@ -9,22 +9,47 @@ UNIT oxuAndroidMain;
 INTERFACE
 
 USES
-   android_native_app_glue,
+   android_native_app_glue, android_log_helper, native_activity,
+   {app}
+   uApp,
    {ox}
-   oxuRun, oxuAndroidPlatform;
+   uOX, oxuRun, oxuPlatform, oxuAndroidPlatform;
 
 procedure android_main(app: Pandroid_app); cdecl;
 
 IMPLEMENTATION
 
 procedure android_main(app: Pandroid_app); cdecl;
+var
+   finished: boolean;
+
 begin
    AndroidApp := app;
 
    app^.onAppCmd := @AndroidHandleCommand;
    app^.onInputEvent := @AndroidHandleInput;
 
-   oxRun.Go();
+   finished := false;
+
+   repeat
+      if(ox.Initialized) then
+         oxRun.GoCycle(true)
+      else
+         AndroidProcessEvents();
+
+      if ox.InitializationFailed or (not uApp.app.Active) then begin
+         if(not finished) then begin
+            finished := true;
+            ANativeActivity_finish(app^.activity);
+         end;
+      end;
+
+      if(AndroidApp^.destroyRequested) then
+         break;
+   until false;
+
+   if(not ox.InitializationFailed) then
+      oxRun.Done();
 end;
 
 END.
