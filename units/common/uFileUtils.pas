@@ -1124,12 +1124,8 @@ var
 
 begin
    {build path}
-   if(name <> '') then begin
-      if(path <> '') then
-         path := path + DirectorySeparator + name
-      else
-         path := name;
-   end;
+   if(name <> '') then
+      path := IncludeTrailingPathDelimiterNonEmpty(path) + name;
 
    {find first}
    if(path = '') then
