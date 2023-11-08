@@ -1247,14 +1247,12 @@ begin
             ReadLn(f, s);
             Output.LastLine := s;
             Output.OnLine.Call();
-
-            Sleep(1);
          end;
 
          break;
       end;
 
-      Sleep(1);
+      Sleep(5);
    until (not p.Running);
 
    if(Output.Redirect) then begin
