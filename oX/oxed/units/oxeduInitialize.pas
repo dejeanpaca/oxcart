@@ -71,6 +71,8 @@ INTERFACE
       {$ENDIF}
       {plugins}
       {$INCLUDE ../plugins/oxed_plugins.inc}
+      {windows}
+      uiuWindow, uiuWindowTypes,
       {initialize keys last}
       oxeduKeys;
 
@@ -142,6 +144,8 @@ begin
 end;
 
 INITIALIZATION
+   Include(uiWindow.RootDefaultProperties, uiwndpRESIZABLE);
+
    ox.OnInitialize.Add('oxed.init', @initialize, @deinitialize);
    ox.OnStart.Add('oxed.start', @onStart);
 
