@@ -178,7 +178,6 @@ end;
 
 begin
    Result := false;
-   writeln('Hooking: ', h.Key.ToString());
 
    {first let's see if there is any handler already hooked to the key}
    assert(Find(h) = -1, 'Global key handler added twice: ' + h.Name);
