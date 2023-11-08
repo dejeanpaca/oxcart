@@ -325,7 +325,7 @@ var
 
 begin
    options := data.Options;
-   mesh := options^.Model.GetLastMesh();
+   mesh := options^.Model.Meshes.GetLast();
 
    {first read in the number of vertices}
    if(not xblockread(data, nVertices, 2, PreviousChunk)) then
@@ -356,7 +356,7 @@ var
 
 begin
    options := data.Options;
-   mesh := options^.Model.GetLastMesh();
+   mesh := options^.Model.Meshes.GetLast();
 
    {first it is required to read the number of faces}
    if(not xblockread(data, nFaces, 2, PreviousChunk)) then
@@ -423,7 +423,7 @@ var
    nTexUV: longint = 0;
 
 begin
-   mesh := oxPModelFileOptions(data.Options)^.Model.GetLastMesh();
+   mesh := oxPModelFileOptions(data.Options)^.Model.Meshes.GetLast();
 
    {first read in the indice count}
    if(not xblockread(data, nTexUV, 2, PreviousChunk)) then

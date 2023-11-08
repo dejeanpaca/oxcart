@@ -33,8 +33,7 @@ TYPE
       function GetTexture(): oxTTexture;
 
       function AddMesh(): oxPMesh;
-      function GetLastMesh(): oxPMesh;
-      function GetLastSkin(): oxPSkin;
+
       function GetLastMaterial(): oxTMaterial;
 
       procedure GetBoundingBox(out bbox: TBoundingBox);
@@ -115,23 +114,7 @@ var
 begin
    oxTMesh.Init(mesh);
    Meshes.Add(mesh);
-   Result := @Meshes.List[Meshes.n - 1];
-end;
-
-function oxTModel.GetLastMesh(): oxPMesh;
-begin
-   if(Meshes.n > 0) then
-      Result := @Meshes.List[Meshes.n - 1]
-   else
-      Result := nil;
-end;
-
-function oxTModel.GetLastSkin(): oxPSkin;
-begin
-   if(Skins.n > 0) then
-      Result := @Skins.List[Skins.n - 1]
-   else
-      Result := nil;
+   Result := Meshes.GetLast();
 end;
 
 function oxTModel.GetLastMaterial(): oxTMaterial;
