@@ -56,26 +56,15 @@ begin
 end;
 
 procedure MoveWindow();
-var
-   pf: oxTPointf;
-   distance: Single;
-
 begin
-   pf.Assign(p);
-
-   distance := pf.Distance(oxui.PointerCapture.Point);
-
    {move the window by relative coordinates}
    if(not oxui.PointerCapture.Moved) then begin
       oxui.PointerCapture.Moved := true;
 
-      if(distance > 0.5) then begin
-         oxui.PointerCapture.Wnd.OnStartDrag();
-         Include(oxui.PointerCapture.Wnd.Properties, uiwndpMOVED);
-      end;
+      oxui.PointerCapture.Wnd.OnStartDrag();
+      Include(oxui.PointerCapture.Wnd.Properties, uiwndpMOVED);
    end else
-      if(distance > 0.5) then
-         oxui.PointerCapture.Wnd.OnDrag();
+      oxui.PointerCapture.Wnd.OnDrag();
 
    oxui.PointerCapture.Wnd.MoveRelative(mv.x, mv.y);
 end;
@@ -112,6 +101,9 @@ begin
 end;
 
 procedure WindowOperations();
+var
+   distance: Single;
+
 begin
    if(oxui.PointerCapture.Wnd = nil) then begin
       oxui.PointerCapture.Clear();
@@ -122,26 +114,29 @@ begin
       mv.x  := p.x - oxui.WindowMove.x;
       mv.y  := p.y - oxui.WindowMove.y;
 
-      oxui.WindowMove.Assign(p.x, p.y);
+      pf.Assign(p);
+      distance := pf.Distance(oxui.PointerCapture.Point);
 
-      if(mv.x <> 0) or (mv.y <> 0) then begin
-         if(oxui.PointerCapture.WindowOperation = uiWINDOW_POINTER_MOVE) then
-            MoveWindow()
-         else
-            ResizeWindow();
+      if(distance >= uiPointer.ActionMinimumDistance) or (uiwndpMOVED in oxui.PointerCapture.Wnd.Properties) then begin
+         oxui.WindowMove.Assign(p.x, p.y);
+
+         if(mv.x <> 0) or (mv.y <> 0) then begin
+            if(oxui.PointerCapture.WindowOperation = uiWINDOW_POINTER_MOVE) then
+               MoveWindow()
+            else
+               ResizeWindow();
+         end;
       end;
    end;
 
    {let's see if the lock is released}
    if(m.Action.IsSet(appmcRELEASED) and m.Button.IsSet(appmcLEFT)) then begin
       if(oxui.PointerCapture.WindowOperation = uiWINDOW_POINTER_MOVE) then begin
-         pf.Assign(p);
-
-         if(oxui.PointerCapture.Point.Distance(pf) > 0.5) then
+         if(uiwndpMOVED in oxui.PointerCapture.Wnd.Properties) then
             oxui.PointerCapture.Wnd.OnStopDrag();
 
          {lock released}
-         Include(oxui.PointerCapture.Wnd.Properties, uiwndpMOVED);
+         Exclude(oxui.PointerCapture.Wnd.Properties, uiwndpMOVED);
       end;
 
       oxui.PointerCapture.Clear();
@@ -387,6 +382,7 @@ begin
       oxui.PointerCapture.WindowOperation := operation;
       oxui.PointerCapture.Wnd := wnd;
       oxui.PointerCapture.LockWindow();
+      oxui.PointerCapture.Point.Assign(p);
    end else
       {if window not captured then send events to window}
       NotifyEvent();
