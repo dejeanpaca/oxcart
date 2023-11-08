@@ -88,6 +88,8 @@ begin
       oxedTasksUI.Wdg.Tasks^.SetSpin(false);
       oxedTasksUI.Wdg.Tasks^.Hint := 'No tasks running';
    end;
+
+   oxedMenuToolbar.Toolbar.UpdateHint();
 end;
 
 

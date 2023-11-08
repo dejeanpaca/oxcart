@@ -169,7 +169,10 @@ TYPE
       {set the group the widget belongs to}
       function SetGroup(g: longint): uiTWidget; virtual;
 
+      {set a new hint}
       function SetHint(const newHint: string): uiTWidget;
+      {update hint when you changed it}
+      procedure UpdateHint();
 
       {get the widgets container this widget is part of}
       function GetWidgetsContainer(): uiPWidgets;
@@ -201,6 +204,8 @@ TYPE
          procedure FontChanged(); virtual;
          {called when the caption changes}
          procedure CaptionChanged(); virtual;
+         {called when hint is changed}
+         procedure OnHintChanged(); virtual;
    end;
 
    uiTWidgetCallbackRoutine = procedure(wdg: uiTWidget);
@@ -507,7 +512,14 @@ end;
 function uiTWidget.SetHint(const newHint: string): uiTWidget;
 begin
    Hint := newHint;
+   UpdateHint();
+
    Result := Self;
+end;
+
+procedure uiTWidget.UpdateHint();
+begin
+   OnHintChanged();
 end;
 
 function uiTWidget.GetWidgetsContainer(): uiPWidgets;
@@ -597,6 +609,10 @@ begin
 end;
 
 procedure uiTWidget.CaptionChanged();
+begin
+end;
+
+procedure uiTWidget.OnHintChanged();
 begin
 end;
 
