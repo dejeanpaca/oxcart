@@ -4,7 +4,7 @@
 	TODO: Need to also skip unsupported sections in cpuinfo, and expand support for the hardware section.
 }
 
-{$MODE OBJFPC}{$H+}{$GOTO ON}
+{$MODE OBJFPC}{$H+}
 UNIT appuLinuxSysInfo;
 
 INTERFACE
