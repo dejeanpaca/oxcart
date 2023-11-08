@@ -10,7 +10,7 @@ INTERFACE
 
    USES
       uStd, uLog,
-      uFileHandlers, uFile, {%H-}uFiles,
+      uFileHandlers, uFile,
       uImage, imguOperations,
       {oX}
       uOX, oxuFile, oxuGlobalInstances;
