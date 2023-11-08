@@ -35,8 +35,11 @@ TYPE
    wdgTControllerButtonStateGlobal = object(specialize wdgTBase<wdgTControllerButtonState>)
    public
       Defaults: record
-        Width,
-        Height: loopint;
+         Width,
+         Height: loopint;
+
+         SurfaceColor,
+         HighlightColor: TColor4ub;
       end;
    end;
 
@@ -59,9 +62,11 @@ var
    r: oxTRect;
 
 begin
+   clr := wdgControllerButtonState.Defaults.SurfaceColor;
+
    {render surface}
-   clr := GetSkinObject().Colors.Highlight;
-   clr[3] := round(Pressure * 255);
+   clr := TColor4ub.Interpolate(wdgControllerButtonState.Defaults.SurfaceColor,
+      wdgControllerButtonState.Defaults.HighlightColor, Pressure);
 
    SetColor(clr);
 
@@ -97,5 +102,8 @@ INITIALIZATION
 
    wdgControllerButtonState.Defaults.Width := 25;
    wdgControllerButtonState.Defaults.Height := 25;
+
+   wdgControllerButtonState.Defaults.SurfaceColor := cBlack4ub;
+   wdgControllerButtonState.Defaults.HighlightColor := cRed4ub;
 
 END.
