@@ -334,6 +334,7 @@ begin
    oxedBuild.Task := oxedTBuildTask.Create();
    oxedBuild.Task.EmitAllEvents();
 
+   {reset to set values from initialized build}
    oxedBuild.Reset();
 
    oxedProjectScanner.OnDone.Add(@onScanDone);
@@ -342,6 +343,8 @@ end;
 class procedure oxedTBuildGlobal.Deinitialize();
 begin
    oxedBuild.Reset();
+   oxedBuild.BuildArch := nil;
+   oxedBuild.PreviousBuildArch := nil;
    build.DeInitialize();
    lpi.DeInitialize();
    FreeObject(oxedBuild.Task);
@@ -1539,6 +1542,8 @@ begin
    InEditor := false;
    BuildType := OXED_BUILD_TASK_RECODE;
    BuildTarget := OXED_BUILD_LIB;
+
+   BuildArch := nil;
    if(oxedEditorPlatform <> nil) then
       BuildArch := oxedEditorPlatform.Architecture;
 
