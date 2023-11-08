@@ -89,10 +89,13 @@ end;
 
 procedure OnProjectPauseToggle();
 begin
-   if(not oxedProject.Paused) then
-      oxedRunButtons.Wdg.Pause^.Color := cWhite4ub
-   else
-      oxedRunButtons.Wdg.Pause^.Color.Assign(192, 64, 64, 255);
+   if(not oxedProject.Paused) then begin
+      oxedRunButtons.Wdg.Pause^.Color := cWhite4ub;
+      oxedRunButtons.Wdg.Pause^.Hint := 'Pause running';
+   end else begin
+      oxedRunButtons.Wdg.Pause^.Color.Assign(127, 64, 64, 255);
+      oxedRunButtons.Wdg.Pause^.Hint := 'Resume running';
+   end;
 end;
 
 INITIALIZATION
