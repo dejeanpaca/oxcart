@@ -13,7 +13,7 @@
 PROGRAM keycodenames;
 
 USES
-   StringUtils, ConsoleUtils, uFiles,
+   StringUtils, ConsoleUtils,
    uSimpleParser;
 
 TYPE
@@ -26,8 +26,7 @@ TYPE
 VAR
    kcnames: array[0..255] of TKeyCode;
    maxKeycodes: longint = 0;
-   parseData,
-   writeData: TParseData;
+   parseData: TParseData;
 
 function doReadFile(var p: TParseData): boolean;
 var
@@ -145,8 +144,7 @@ begin
 end;
 
 BEGIN
-   writeln('keycodenames v1.0');
-   writeln('This program is open source under GNU GPL v3.');
+   writeln('keycodenames');
    writeln();
 
    {read the file}
@@ -167,11 +165,10 @@ BEGIN
    end;
 
    {write the file}
-   TParseData.Init(writeData);
    writeln('Writing file ...');
-   writeData.Write('kcNames.inc', TParseMethod(@doWriteFile));
+   parseData.Write('kcNames.inc', TParseMethod(@doWriteFile));
 
-   if(writeData.ErrorCode <> 0)
+   if(parseData.ErrorCode <> 0)
       then exit;
 
    Writeln('Operation completed successfully.');
