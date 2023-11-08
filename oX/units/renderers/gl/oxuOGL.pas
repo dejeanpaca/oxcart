@@ -359,17 +359,14 @@ begin
    {try to figure out the OpenGL version}
    ver := versionString;
 
-   code := pos('OpenGL ES', ver);
-   if(code > 0) then begin
-      {handle OpenGL ES}
-      Delete(ver, 1, code);
+   {find where the version number likely is}
+   code := pos('.', ver);
 
-      ver := CopyAfterDel(ver, '-');
-      xver := CopyToDel(ver, ' ');
-      ver := CopyToDel(ver, ')');
-   end;
+   if(code > 0) then
+      ver := copy(ver, code - 1, 255);
 
-   xver  := CopyToDel(ver, separators);
+
+   xver := CopyToDel(ver, separators);
    val(xver, version, code);
 
    if(code = 0) then
@@ -381,6 +378,7 @@ begin
    xver := CopyToDel(ver, separators);
 
    val(xver, version, code);
+
    if(code = 0) then
       minor := version;
 
