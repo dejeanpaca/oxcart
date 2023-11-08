@@ -175,7 +175,8 @@ CONST
          Code: kcF10;
          State: 0
       );
-      Call: @gkHandler;
+      Pressed: nil;
+      Released: @gkHandler;
       Name: 'ox.quickmenu'
    );
 
