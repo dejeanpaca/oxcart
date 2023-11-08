@@ -1,5 +1,5 @@
-default FontAwesome-Solid.otf
-brands FontAwesome-Brands.otf
-regular FontAwesome-Regular.otf
+default other/FontAwesome-Solid.otf
+brands other/FontAwesome-Brands.otf
+regular other/FontAwesome-Regular.otf
 inconsolata Inconsolata.ttf
-material MaterialIcons-Regular.woff
+material other/MaterialIcons-Regular.woff
