@@ -126,9 +126,6 @@ begin
    if(routines.Version = nil) then
       exit('Library loaded, but no unload routine found');
 
-   if(OX_LIBRARY_VERSION_STRING <> routines.Version()) then
-      exit('Library version mismatch. Got ' + routines.Version() + ', expected ' + OX_LIBRARY_VERSION_STRING + '. Please rebuild.');
-
    oxLib := routines.Load();
 
    if(oxLib = nil) then

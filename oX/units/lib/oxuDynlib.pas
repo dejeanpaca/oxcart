@@ -15,10 +15,6 @@ INTERFACE
       {ox}
       uOX, oxuGlobalInstances, oxuInitialize, oxuRun, oxulibSettings;
 
-CONST
-   {library interface version (does not necessarily indicate engine compatibility)}
-   OX_LIBRARY_VERSION_STRING = '3';
-
 TYPE
    { oxTLibrary }
 
@@ -55,7 +51,6 @@ TYPE
 
 function ox_library_load(): oxTLibrary;
 procedure ox_library_unload();
-function ox_library_version(): string;
 
 IMPLEMENTATION
 
@@ -76,11 +71,6 @@ begin
    FreeObject(oxLibrary);
 
    log.v('lib > unloaded');
-end;
-
-function ox_library_version(): string;
-begin
-   Result := OX_LIBRARY_VERSION_STRING;
 end;
 
 { oxTLibrary }
