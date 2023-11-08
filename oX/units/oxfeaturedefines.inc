@@ -4,7 +4,9 @@
    {$IF defined(DARWIN) and not defined(X11)}
       {$DEFINE COCOA}
    {$ELSE}
-      {$DEFINE X11}
+      {$IFNDEF ANDROID}
+         {$DEFINE X11}
+      {$ENDIF}
    {$ENDIF}
 {$ENDIF}
 
@@ -38,6 +40,8 @@
 {$IFDEF ANDROID}
    {$UNDEF OX_FEATURE_CONSOLE}
    {$UNDEF OX_FEATURE_PARAMS}
+   {$UNDEF OX_FEATURE_FREETYPE}
+   {$UNDEF OX_FEATURE_AL_AUDIO}
 {$ENDIF}
 
 {$IFDEF DARWIN}
