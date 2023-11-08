@@ -48,13 +48,13 @@ TYPE
       constructor Create(); override;
 
       {add a component to the list of components}
-      function Add(component: oxTComponent): oxTComponent;
+      function Add(component: oxTComponent): oxTComponent; {$IFDEF OX_LIBRARY_SUPPORT}virtual;{$ENDIF}
       {add an entity to the list of children}
-      function Add(entity: oxTEntity): oxTEntity;
+      function Add(entity: oxTEntity): oxTEntity; {$IFDEF OX_LIBRARY_SUPPORT}virtual;{$ENDIF}
       {remove the specified entity from list of children}
-      procedure Remove(entity: oxTEntity);
+      procedure Remove(entity: oxTEntity); {$IFDEF OX_LIBRARY_SUPPORT}virtual;{$ENDIF}
       {remove component at the specified index}
-      procedure RemoveComponent(index: loopint);
+      procedure RemoveComponent(index: loopint); {$IFDEF OX_LIBRARY_SUPPORT}virtual;{$ENDIF}
 
       {find the specified entity in children, if nothing found return -1}
       function Find(entity: oxTEntity): loopint;
@@ -266,9 +266,12 @@ var
 begin
    for i := 0 to (Children.n - 1) do begin
       if(Children.List[i] = entity) then begin
+         writeln('Removing: ', entity.Name);
+
          oxEntity.OnRemove.Call(entity);
          FreeObject(Children.List[i]);
          Children.Remove(i);
+         writeln('Done');
          exit;
       end;
    end;
