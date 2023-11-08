@@ -32,7 +32,7 @@ IMPLEMENTATION
 
 procedure TFPCPlatformStringHelper.Separate(out cpu, os: StdString);
 var
-   p: loopint;
+   p, p2: loopint;
 
 begin
    cpu := '';
@@ -41,8 +41,17 @@ begin
    p := Pos('-', Self);
 
    if(p > 0) then begin
+      {some string may contain a second '-' such as x86-64-android}
+      p2 := Pos('-', Self, p + 1);
+
+      if(p2 > 0) then
+         p := p2;
+
+      {separate}
       cpu := Copy(Self, 1, p - 1);
       os := Copy(Self, p + 1, Length(Self) - p);
+
+      writeln('CPU: ', cpu, ' OS: ', OS);
    end;
 end;
 
