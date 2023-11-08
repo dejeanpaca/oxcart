@@ -45,6 +45,8 @@ TYPE
       procedure InitStart();
       {start the timer}
       function Cur(): longint;
+      {returns current time}
+      class function Current(): longint; static;
       procedure Start();
       procedure StartOffset(ofs: longint);
       procedure StartOffsetf(ofs: single);
@@ -135,7 +137,6 @@ CONST
 
 VAR
    cZeroTimerInterval: TTimerInterval;
-   timer: TTimer;
 
 IMPLEMENTATION
 
@@ -216,6 +217,11 @@ begin
       Result := TimerLink^.Elapsed();
 end;
 
+class function TTimer.Current(): longint;
+begin
+   Result := DateTimeToTimestamp(Time).time;
+end;
+
 procedure TTimer.Start();
 begin
    StartTime      := Cur();
@@ -279,11 +285,11 @@ end;
 
 function TTimer.Goal(): boolean;
 var
-   current: longint;
+   c: longint;
 
 begin
-   current  := Cur();
-   Result   := (current - ElapsedTime + Add) > GoalTime;
+   c := Cur();
+   Result := (current - ElapsedTime + Add) > GoalTime;
 end;
 
 
@@ -396,7 +402,6 @@ end;
 
 INITIALIZATION
    {setup the default timer}
-   TTimer.Init(timer);
    TTimerInterval.Initialize(cZeroTimerInterval);
 
 END.

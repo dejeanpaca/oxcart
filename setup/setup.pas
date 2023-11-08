@@ -38,8 +38,12 @@ VAR
    build_count: longint = 0;
    fail_count: longint = 0;
    symbolParameters: array of string;
-   cleanBuild: boolean;
+   cleanBuild,
+
+   checkedToolDir: boolean;
    quitOnFail: boolean = true;
+
+   setupTimer: TTimer;
 
 procedure fail(const reason: string);
 begin
@@ -59,6 +63,14 @@ begin
       exit;
 
    BuildExec.ResetOutput();
+
+   if(not checkedToolDir) then begin
+      if not DirectoryExists(build.Tools.Path) then begin
+         fail('Could not find tool output directory: ' + build.Tools.Path);
+      end;
+
+      checkedToolDir := true;
+   end;
 
    if (build_what = 'tools') or can_build(tool.Name) then begin
       log.w('Building: ' + tool.Name);
@@ -158,9 +170,9 @@ begin
 end;
 
 BEGIN
-   timer.Start();
-
+   setupTimer.Start();
    build.Initialize();
+
    if(not build.Initialized) then begin
       if(build.ConfigPath = 'default') then begin
          log.w('Configuration path doesn''t seem set, will attempt to set one');
@@ -218,6 +230,6 @@ BEGIN
          log.e('Failed to change current working directory to: ' + path);
    end;
 
-   timer.Update();
-   log.w('Elapsed: ' + timer.ElapsedfToString() + 's');
+   setupTimer.Update();
+   log.w('Elapsed: ' + setupTimer.ElapsedfToString() + 's');
 END.

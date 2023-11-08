@@ -53,7 +53,7 @@ begin
    ms := oxui.mSelect.GetSelectedWdg();
 
    if(ms <> nil) and (ms.Hint <> '') then begin
-      if(timer.Cur() - oxui.mLastEventTime < uiHints.WaitTime) then
+      if(TTimer.Current() - oxui.mLastEventTime < uiHints.WaitTime) then
          exit;
 
       oxw := uiTWindow(wnd.oxwParent);

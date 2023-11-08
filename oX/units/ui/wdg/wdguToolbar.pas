@@ -298,7 +298,7 @@ begin
          end else begin
             m := oxTransform.Matrix;
 
-            rotation := - (360 * ((timer.Cur() mod 1000) / 1000)) * Items.List[i].SpinSpeed;
+            rotation := - (360 * ((TTimer.Current() mod 1000) / 1000)) * Items.List[i].SpinSpeed;
 
             oxTransform.Identity();
             oxTransform.Translate(px + size / 2, py - size / 2, 0);
