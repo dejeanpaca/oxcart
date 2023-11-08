@@ -395,6 +395,7 @@ var
    w,
    cPos: loopint;
    t: array[0..2] of TVector3f;
+   f: oxTFont;
 
 begin
    y := 0;
@@ -441,14 +442,18 @@ begin
       end;
 
       {text}
-      oxConsole.Font.Start();
+      f := oxConsole.Font;
+      if(f = nil) then
+         f := oxui.GetDefaultFont();
+
+      f.Start();
       wnd.SetColorBlended(225, 255, 255, 255);
 
       if(oxConsole.DrawInputStatus) and (oxConsole.InputStatus <> '') then
-         oxConsole.Font.Write(wnd.RPosition.x + 2, y + 2 + oxConsole.Font.GetHeight() div 2, oxConsole.InputStatus);
+         f.Write(wnd.RPosition.x + 2, y + 2 + f.GetHeight() div 2, oxConsole.InputStatus);
 
       if(oxConsole.StatusHeight > 0) then
-         oxConsole.Font.Write(wnd.RPosition.x + 2, wnd.RPosition.y -  2 - (data.fh), appInfo.GetVersionString());
+         f.Write(wnd.RPosition.x + 2, wnd.RPosition.y -  2 - (data.fh), appInfo.GetVersionString());
 
       if(oxConsole.Console.Contents.n > 0) then begin
          start := oxConsole.Console.Contents.n - data.maxlines;
@@ -473,10 +478,10 @@ begin
 
                {write the string}
                if(oxConsole.WriteTime) then
-                  oxConsole.Font.Write(2, (wnd.RPosition.y - data.outputStartY) - (data.fh * cPos),
+                  f.Write(2, (wnd.RPosition.y - data.outputStartY) - (data.fh * cPos),
                      TimeToStr(oxConsole.Console.Contents.List[i].Time) + ' ' + pStr)
                else
-                  oxConsole.Font.Write(2, (wnd.RPosition.y - data.outputStartY) - (data.fh * cPos), pStr);
+                  f.Write(2, (wnd.RPosition.y - data.outputStartY) - (data.fh * cPos), pStr);
 
                {return the string size back to normal}
                SetLength(pStr, clipSize);
@@ -574,7 +579,7 @@ var
 begin
    Result := false;
 
-   oxf.GetNilDefault(oxConsole.Font);
+   oxui.GetNilDefault(oxConsole.Font);
 
    if(oxConsole.DoLog) then
        log.i('oxCon > Initializing...');
