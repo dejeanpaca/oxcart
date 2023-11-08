@@ -32,7 +32,7 @@ CONST
    wdgHEIGHT_MAX_VERTICAL        = $0002;
 
    {default spacing for widgets}
-   wdgDEFAULT_SPACING: longint = 5;
+   wdgDEFAULT_SPACING: loopint = 5;
 
 TYPE
    uiTWidgetEvents = (
@@ -93,11 +93,14 @@ TYPE
       {hint for the widget}
       Hint: StdString;
 
+      {widget ID}
       ID: uiTControlID;
 
+      {widget properties}
       Properties: uiTWidgetProperties;
 
-      Group: longint; {widget group}
+      {group the widget belongs to, relevant only for widgets which can be grouped}
+      Group: loopint;
 
       {widget font}
       Font,
@@ -120,6 +123,7 @@ TYPE
 
       constructor Create(); override;
 
+      {get relative position, and dimensions as rect}
       procedure GetRelativeRect(out r: oxTRect);
 
       procedure Action({%H-}action: uiTWidgetEvents); virtual;
@@ -141,7 +145,7 @@ TYPE
 
       { actions }
       {notify the widget controller of something}
-      function Control(what: longword): longint;
+      function Control(what: longword): loopint;
       {set a control routine}
       function SetControl(controlProc: uiTWidgetControlProc): uiTWidget; virtual;
 
@@ -167,7 +171,7 @@ TYPE
       {set ID for the widget}
       function SetID(const wdgID: uiTControlID): uiTWidget;
       {set the group the widget belongs to}
-      function SetGroup(g: longint): uiTWidget; virtual;
+      function SetGroup(g: loopint): uiTWidget; virtual;
 
       {set a new hint}
       function SetHint(const newHint: StdString): uiTWidget;
@@ -367,7 +371,7 @@ end;
 
 procedure uiTWidget.PositionUpdate();
 var
-   i: longint;
+   i: loopint;
 
 begin
    RPosition.x := Parent.RPosition.x + Position.x;
@@ -383,7 +387,7 @@ end;
 
 procedure uiTWidget.UpdateParentSize(selfNotify: boolean);
 var
-   i: longint;
+   i: loopint;
 
 begin
    for i := 0 to (Widgets.w.n - 1) do begin
@@ -406,7 +410,7 @@ end;
 
 { ACTIONS }
 
-function uiTWidget.Control(what: longword): longint;
+function uiTWidget.Control(what: longword): loopint;
 begin
    if(wdgControl <> nil) then
       Result := wdgControl(self, what)
@@ -503,7 +507,7 @@ begin
    Result := Self;
 end;
 
-function uiTWidget.SetGroup(g: longint): uiTWidget;
+function uiTWidget.SetGroup(g: loopint): uiTWidget;
 begin
    Group := g;
    Result := Self;
