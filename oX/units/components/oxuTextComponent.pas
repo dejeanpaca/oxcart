@@ -12,7 +12,7 @@ INTERFACE
       uStd, vmVector,
       {ox}
       oxuComponent, oxuComponentDescriptors, oxuRenderComponent, oxuEntity,
-      oxuFont, oxuSerialization;
+      oxuFont, oxuSerialization, oxuMaterial;
 
 TYPE
 
@@ -22,11 +22,13 @@ TYPE
       public
       Font: oxTFont;
       Text: StdString;
+      Material: oxTMaterial;
 
       {cached text}
       Cache: oxTFont2DCache;
 
       constructor Create(); override;
+      destructor Destroy(); override;
 
       procedure Render(); override;
 
@@ -52,13 +54,23 @@ VAR
 constructor oxTTextComponent.Create();
 begin
    inherited Create;
+
    Font := oxFont.GetDefault();
+   Material := oxMaterial.Default;
+end;
+
+destructor oxTTextComponent.Destroy();
+begin
+   inherited Destroy;
+   Cache.Destroy();
 end;
 
 procedure oxTTextComponent.Render();
 begin
-   if(Font <> nil) then
+   if(Font <> nil) and (Material <> nil) then begin
+      Material.Apply();
       Font.RenderCache(Cache);
+   end;
 end;
 
 procedure oxTTextComponent.SetText(const newText: StdString);
@@ -78,6 +90,7 @@ begin
    if(Font <> nil) then begin
       Font.Allocate(Text, Cache);
       Font.Cache(Text, Cache);
+      Font.CenterUnit(Cache);
    end;
 end;
 
