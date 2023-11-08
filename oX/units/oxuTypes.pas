@@ -138,7 +138,8 @@ TYPE
       ItemsTotal: loopint;
 
       {the progress is paused}
-      Paused,
+      Paused: boolean;
+
       {what value to use to show progress with (what would fill up a bar on a progress bar)}
       ShowProgressWith: oxTProgressIndicatorType;
       {show items in text (affects ToString method)}

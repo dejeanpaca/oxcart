@@ -8,7 +8,7 @@ PROGRAM ui;
    USES
       {$INCLUDE oxappuses.inc}, uStd, StringUtils, uLog,
       {oX}
-      oxuWindowTypes, oxuRunRoutines,
+      oxuTypes, oxuWindowTypes, oxuRunRoutines,
       oxuWindows, oxuWindow, oxumPrimitive, oxuTransform, oxuPaths, oxuTexture, oxuTextureGenerate,
       oxuRender, oxuScreenshot, oxuWindowSettings,
       {UI}
@@ -183,8 +183,8 @@ begin
    oxwndAbout.Open();
    oxwndQuickMenu.Open();
    oxwndSplash.Open();
-   oxwndSettings.Open();
-   oxwndColorPicker.Open();}
+   oxwndSettings.Open();}
+   oxwndColorPicker.Open();
 
    showToast();
 end;

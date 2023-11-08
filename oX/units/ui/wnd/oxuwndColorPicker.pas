@@ -11,7 +11,7 @@ INTERFACE
    USES
       sysutils, uStd, uColors, StringUtils,
       {oX}
-      uOX, oxuTypes, oxuRunRoutines, oxuWindows,
+      oxuTypes, oxuWindows,
       {ui}
       uiuControl, uiuWindow, uiWidgets, uiuWidget,
       {widgets}
@@ -29,9 +29,11 @@ TYPE
       Dialog: TObject;
    end;
 
+   oxwndPColorPickerDialog = ^oxwndTColorPickerDialog;
+
    { oxwndTColorPickerDialog }
 
-   oxwndTColorPickerDialog = class(oxTWindowBase)
+   oxwndTColorPickerDialog = object(oxTWindowBase)
       HasAlpha: boolean;
       SelectedColor: TColor4ub;
       DefaultButtonWidth: loopint;
@@ -59,11 +61,11 @@ TYPE
          Preset: array[0..1, 0..9] of wdgTBlock;
       end;
 
-      constructor Create(); override;
+      constructor Create();
 
-      procedure Open(); override;
+      procedure Open(); virtual;
 
-      procedure AddWidgets(); override;
+      procedure AddWidgets(); virtual;
 
       {called when the dialog is finished}
       procedure Done(isCanceled: boolean);
@@ -90,12 +92,12 @@ VAR
    wdgidB,
    wdgidA: uiTControlID;
 
-function colorValueControl(wdg: uiTWidget; what: longword): longint;
+function colorValueControl(wdg: uiTWidget; what: loopint): loopint;
 begin
    Result := -1;
 
    if((wdg = wdgidR) or (wdg = wdgidG) or (wdg = wdgidB) or (wdg = wdgidA)) and (what = wdghINPUTBOX_CHANGED) then begin
-      oxwndTColorPickerDialog(oxuiTColorPickerWindow(wdg.wnd).BaseHandler).UpdateColor();
+      oxwndPColorPickerDialog(oxuiTColorPickerWindow(wdg.wnd).BaseHandler)^.UpdateColor();
    end;
 end;
 
@@ -176,7 +178,8 @@ begin
    Title := 'Color picker';
    Instance := oxuiTColorPickerWindow;
    DefaultButtonWidth := 80;
-   inherited Create();
+
+   inherited;
 end;
 
 procedure oxwndTColorPickerDialog.Open();
@@ -184,7 +187,7 @@ begin
    Canceled := false;
    DoneCalled := false;
 
-   inherited Open();
+   inherited;
 end;
 
 procedure oxwndTColorPickerDialog.AddWidgets();
@@ -272,18 +275,8 @@ begin
    SetupHexColor();
 end;
 
-procedure initialize();
-begin
-   oxwndColorPicker := oxwndTColorPickerDialog.Create();
-end;
-
-procedure deinitialize();
-begin
-   FreeObject(oxwndColorPicker);
-end;
-
 INITIALIZATION
-   ox.Init.Add('ox.about', @initialize, @deinitialize);
+   oxwndColorPicker.Create();
 
    wdgidR := uiControl.GetID('r');
    wdgidG := uiControl.GetID('g');

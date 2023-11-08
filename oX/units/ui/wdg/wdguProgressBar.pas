@@ -13,7 +13,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont,
       {ui}
-      uiuTypes, uiuWidget, uiWidgets, uiuDraw, uiuWidgetRender, uiuSkinTypes,
+      uiuTypes, uiuDraw, uiuSkinTypes,
+      uiuWidget, uiWidgets, uiuWidgetRender, uiuRegisteredWidgets,
       wdguBase;
 
 CONST
