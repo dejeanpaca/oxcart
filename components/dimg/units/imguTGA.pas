@@ -5,7 +5,7 @@
    Started On:    31.05.2007.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxdefines.inc}
 UNIT imguTGA;
 
 INTERFACE

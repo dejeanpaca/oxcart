@@ -12,7 +12,7 @@ INTERFACE
 
    USES
       uStd, uLog,
-      appuController, appuControllerWindows;
+      appuController;
 
 TYPE
 
@@ -24,7 +24,7 @@ TYPE
       procedure Run(); override;
 
       private
-         procedure Add(const fn: string);
+         procedure Add(const {%H-}fn: string);
    end;
 
    { appTDirectInputControllerDevice }

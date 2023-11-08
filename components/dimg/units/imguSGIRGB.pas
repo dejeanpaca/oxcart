@@ -7,7 +7,7 @@
    TODO: Implement support for colormaps, RLE compression and dimension other than 1.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxdefines.inc}
 UNIT imguSGIRGB;
 
 INTERFACE

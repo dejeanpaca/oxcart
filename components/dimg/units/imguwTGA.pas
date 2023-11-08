@@ -7,7 +7,7 @@
 
 {TODO: Add support for indexed image types and RLE compression}
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxdefines.inc}
 UNIT imguwTGA;
 
 INTERFACE

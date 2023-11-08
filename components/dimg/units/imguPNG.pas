@@ -5,7 +5,7 @@
    Started On:    13.11.2007.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxdefines.inc}
 UNIT imguPNG;
 
 INTERFACE

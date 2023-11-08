@@ -5,7 +5,7 @@
    Started On:    29.08.2019.
 }
 
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxdefines.inc}
 UNIT imguGIF;
 
 INTERFACE

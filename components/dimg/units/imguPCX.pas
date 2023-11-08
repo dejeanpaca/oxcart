@@ -5,8 +5,7 @@
    Started On:    20.12.2007.
 }
 
-
-{$MODE OBJFPC}{$H+}{$I-}
+{$INCLUDE oxdefines.inc}
 UNIT imguPCX; {PCX}
 
 {TODO: Implement 4-bit image loading with palette.}

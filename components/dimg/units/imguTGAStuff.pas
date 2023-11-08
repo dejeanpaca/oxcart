@@ -5,7 +5,7 @@
    Started On:    26.06.2009.
 }
 
-{$MODE OBJFPC}{$H+}
+{$INCLUDE oxdefines.inc}
 UNIT imguTGAStuff;
 
 INTERFACE

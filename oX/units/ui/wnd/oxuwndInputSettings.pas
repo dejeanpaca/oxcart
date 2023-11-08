@@ -22,10 +22,6 @@ INTERFACE
 
 IMPLEMENTATION
 
-VAR
-   wdg: record
-   end;
-
 procedure revertSettings();
 begin
 end;
