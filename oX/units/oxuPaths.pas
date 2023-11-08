@@ -189,15 +189,13 @@ end;
 {$IFNDEF OX_LIBRARY}
 procedure init();
 begin
-   {$IFNDEF ANDROID}
+   {$IFNDEF MOBILE}
       oxPaths.WorkingDirectory := appPath.GetExecutablePath();
-      oxPaths.WorkingDirectory := IncludeTrailingPathDelimiterNonEmpty(oxPaths.WorkingDirectory);
+      SetCurrentDir(oxPaths.WorkingDirectory);
 
-      if(oxPaths.WorkingDirectory <> '') then begin
-         {data should be our primary working directory}
-         if(FileUtils.DirectoryExists(oxPaths.WorkingDirectory + 'data')) then
-            oxPaths.WorkingDirectory := oxPaths.WorkingDirectory + oxDataPath;
-      end;
+      {data should be our primary working directory}
+      if FileUtils.DirectoryExists(oxPaths.WorkingDirectory + 'data') then
+         oxPaths.WorkingDirectory := oxDataPath;
 
       {$IFDEF OXED}
       oxPaths.SetDefaultEngineAssetPath();
