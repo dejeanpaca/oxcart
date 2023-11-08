@@ -185,6 +185,8 @@ TYPE
       {mark resource as unused (decrease the reference count)}
       procedure Unused();
 
+      function AddrToString(): string;
+
       {get normalized path}
       function GetPath(): string;
    end;
@@ -390,6 +392,11 @@ end;
 procedure oxTResource.Unused();
 begin
    dec(ReferenceCount);
+end;
+
+function oxTResource.AddrToString(): string;
+begin
+   Result := addr2str(Self);
 end;
 
 function oxTResource.GetPath(): string;
