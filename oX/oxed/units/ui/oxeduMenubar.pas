@@ -321,13 +321,21 @@ end;
 procedure SetupRunItems(running: boolean);
 var
    enable: boolean;
+   item: uiPContextMenuItem;
 
 begin
    enable := oxedBuild.Buildable() and (oxedTasks.Running(nil) = 0);
 
    oxedMenubar.Project.FindByAction(oxedActions.RUN_PLAY)^.Enable(enable and (not running));
-   oxedMenubar.Project.FindByAction(oxedActions.RUN_PAUSE)^.Enable(running);
    oxedMenubar.Project.FindByAction(oxedActions.RUN_STOP)^.Enable(running);
+
+   item := oxedMenubar.Project.FindByAction(oxedActions.RUN_PAUSE);
+   item^.Enable(running);
+
+   if(oxedProject <> nil) and (oxedProject.Paused) then
+      item^.Caption := 'Resume'
+   else
+      item^.Caption := 'Pause';
 end;
 
 procedure OnProjectChange();
@@ -432,6 +440,7 @@ INITIALIZATION
 
    oxedProjectRunner.OnStart.Add(@OnProjectChange);
    oxedProjectRunner.OnStop.Add(@OnProjectChange);
+   oxedProjectRunner.OnPauseToggle.Add(@OnProjectChange);
 
    oxedTasks.OnTaskStart.Add(@OnProjectChange);
    oxedTasks.OnTaskDone.Add(@OnProjectChange);
