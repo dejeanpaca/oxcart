@@ -13,6 +13,7 @@ INTERFACE
 
 TYPE
    oxPRunRoutine = ^ oxTRunRoutine;
+   oxPRunRoutines = ^oxTRunRoutines;
 
    { oxTRunRoutine }
 
