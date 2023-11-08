@@ -11,14 +11,18 @@ UNIT oxeduSceneScreenshot;
 INTERFACE
 
    USES
-      uLog, appuKeys,
+      sysutils, uLog, appuKeys, uFileUtils,
+      uImage,
       {ox}
-      oxuWindowTypes, oxuScreenshot, oxuGlobalKeys, oxeduSceneWindow,
+      oxuRunRoutines, oxuWindowTypes, oxuScreenshot, oxuGlobalKeys, oxeduSceneWindow,
+      {ui}
+      uiuWindowTypes, uiuWindow,
       {oxed}
-      uOXED;
+      uOXED, oxeduProject;
 
 TYPE
    oxedTSceneScreenshot = record
+      Path: string;
       CaptureKey: appTKey;
    end;
 
@@ -27,10 +31,32 @@ VAR
 
 IMPLEMENTATION
 
-procedure gkHandler({%H-}wnd: oxTWindow);
+procedure gkHandler(wnd: oxTWindow);
+var
+   name,
+   path: string;
+   sceneWnd: uiTWindow;
+   image: imgTImage = nil;
+
 begin
-   if(oxedSceneWindows.LastSelectedWindow <> nil) then begin
-      log.v('Taking screenshot from: ' + oxedSceneWindows.LastSelectedWindow.Title);
+   sceneWnd := oxedSceneWindows.LastSelectedWindow;
+
+   if(sceneWnd <> nil) and (sceneWnd.IsSelected()) then begin
+      if(oxedProjectValid()) then begin
+         path := oxedProject.Path + 'screenshots' + DirectorySeparator;
+
+         if(not FileUtils.DirectoryExists(path)) then
+            CreateDir(path);
+      end;
+
+      name := DateTimeToStr(Now);
+      path := path + name + '.tga';
+
+      oxScreenshot.Make(image, oxTWindow(sceneWnd.oxwParent),
+         sceneWnd.RPosition.x, sceneWnd.RPosition.y - sceneWnd.Dimensions.h + 1, sceneWnd.Dimensions.w, sceneWnd.Dimensions.h);
+
+      if(oxScreenshot.Save(path, image) = 0) then
+         log.v('Took screenshot from: ' + oxedSceneWindows.LastSelectedWindow.Title + ' into ' + path);
    end;
 end;
 
@@ -43,17 +69,22 @@ CONST
       );
       Pressed: nil;
       Released: @gkHandler;
-      Name: 'ox.screenshot'
+      Name: 'oxed.scene.screenshot'
    );
 
 procedure initialize();
 begin
+   gkHandlerKey.Key := oxedSceneScreenshot.CaptureKey;
 
+   oxGlobalKeys.Hook(gkHandlerKey);
 end;
+
+VAR
+   initRoutines: oxTRunRoutine;
 
 INITIALIZATION
    oxedSceneScreenshot.CaptureKey := gkHandlerKey.Key;
 
-   oxed.Init.iAdd('screenshot', @initialize);
+   oxed.Init.iAdd(initRoutines, 'scene_screenshot', @initialize);
 
 END.
