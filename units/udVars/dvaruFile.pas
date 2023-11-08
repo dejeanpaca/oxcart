@@ -37,11 +37,11 @@ TYPE
       fn: StdString;
       {root dvar group}
       dv: PDVarGroup;
-      {parser data}
-      parser: TParseData;
+      {Parser data}
+      Parser: TParseData;
 
-      {options}
-      options: dvarTFileOptions;
+      {Options}
+      Options: dvarTFileOptions;
 
       function Write(const parent: StdString; var g: TDVarGroup): boolean;
       function Write(const parent: StdString; var v: TDVar): boolean;
@@ -192,11 +192,11 @@ begin
       options := @opt;
    end;
 
-   data.options := options^;
+   data.Options := options^;
 
-   TParseData.Init(data.parser);
-   data.parser.externalData := @data;
-   data.parser.Read(fn, TParseMethod(@readTextFile));
+   TParseData.Init(data.Parser);
+   data.Parser.externalData := @data;
+   data.Parser.Read(fn, TParseMethod(@readTextFile));
 end;
 
 procedure dvarTFileGlobal.ReadText(const fn: StdString);
@@ -227,10 +227,10 @@ begin
    {go through all sub groups}
    curGroup := g.sub.s;
 
-   if(options.OnSave <> nil) then begin
+   if(Options.OnSave <> nil) then begin
       if(curGroup <> nil) then repeat
          {check if we have any handlers for this group}
-         matchHandler := options.OnSave^.Match(curGroup);
+         matchHandler := Options.OnSave^.Match(curGroup);
 
          {write group or call its handler}
          if(matchHandler = nil) then
@@ -252,7 +252,7 @@ end;
 function dvarTFileData.Write(const parent: StdString; var v: TDVar): boolean;
 begin
    if(not (dvarDO_NOT_SAVE in v.Properties)) then begin
-      parser.WriteLine(parent + v.Name + ' = ' + v.GetAsString());
+      Parser.WriteLine(parent + v.Name + ' = ' + v.GetAsString());
 
       if(dvarNOTIFY_WRITE in v.Properties) then
          dvarf.Notify(@v, @self, DVAR_NOTIFICATION_WRITE);
@@ -264,7 +264,7 @@ end;
 function dvarTFileData.Write(const parent: StdString; var v: TDVar; const what: StdString): boolean;
 begin
    if(not (dvarDO_NOT_SAVE in v.Properties)) then begin
-      parser.WriteLine(parent + v.Name + ' = ' + what);
+      Parser.WriteLine(parent + v.Name + ' = ' + what);
 
       if(dvarNOTIFY_WRITE in v.Properties) then
          dvarf.Notify(@v, @self, DVAR_NOTIFICATION_WRITE);
@@ -344,12 +344,12 @@ begin
       options := @opt;
    end;
 
-   data.options := options^;
+   data.Options := options^;
 
    if(dv.sub.s <> nil) or (dv.vs <> nil) then begin
-      TParseData.Init(data.parser);
-      data.parser.externalData := @data;
-      data.parser.Write(fn, TParseMethod(@writeTextFile));
+      TParseData.Init(data.Parser);
+      data.Parser.externalData := @data;
+      data.Parser.Write(fn, TParseMethod(@writeTextFile));
    end;
 end;
 
