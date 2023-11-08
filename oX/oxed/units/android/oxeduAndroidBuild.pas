@@ -212,7 +212,7 @@ begin
    if(ForceDirectories(targetPath)) then begin
       targetPath := targetPath + DirSep + 'libmain.so';
 
-      oxedBuild.MoveFile(source, targetPath, 'data file');
+      oxedBuild.MoveFile(source, targetPath, 'library');
    end else
       oxedBuild.Fail('Cannot create libs directory at: ' + targetPath);
 end;
