@@ -210,7 +210,7 @@ function wdgTLabelGlobal.Add(const Caption: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions;
             inrect: boolean = false): wdgTLabel;
 begin
-   Result := inherited Add(Pos, Dim);
+   Result := inherited AddInternal(Pos, Dim);
 
    if(Result <> nil) then begin
       Result.InRectangle := inrect;
@@ -229,7 +229,7 @@ function wdgTLabelGlobal.Add(const List: TStringArray;
             const Pos: oxTPoint; const Dim: oxTDimensions;
             inrect: boolean = false): wdgTLabel;
 begin
-   Result := inherited Add(Pos, Dim);
+   Result := inherited AddInternal(Pos, Dim);
 
    if(Result <> nil) then begin
       Result.InRectangle := inrect;
