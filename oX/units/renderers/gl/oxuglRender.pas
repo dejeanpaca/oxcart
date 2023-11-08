@@ -16,7 +16,7 @@ INTERFACE
       {oX}
       uOX, oxuRenderer, oxuRender, oxuTypes, oxuRunRoutines, oxuWindow,
       {ogl}
-      oxuglRenderer, oxuOGL, oxuglExtensions;
+      oxuglRenderer, oxuOGL, oxuglExtensions, oxuglRenderTypes;
 
 TYPE
 
@@ -80,64 +80,13 @@ IMPLEMENTATION
 VAR
    oglRender: oglTRender;
 
-   primitive_translate: array[0..8] of GLenum = (
-      {0} oglNONE,
-      {1} GL_POINTS,
-      {2} GL_LINES,
-      {3} GL_LINE_LOOP,
-      {4} GL_LINE_STRIP,
-      {5} GL_TRIANGLES,
-      {6} GL_TRIANGLE_STRIP,
-      {7} GL_TRIANGLE_FAN,
-      {8} {$IFNDEF GLES}GL_QUADS{$ELSE}GL_ZERO{$ENDIF}
-   );
-
-TYPE
-   {$IFNDEF GLES}
-   TBLendRemap = array[0..2] of GLEnum;
-   {$ELSE}
-   TBLendRemap = array[0..1] of GLEnum;
-   {$ENDIF}
-
-CONST
-   {$IFNDEF GLES}
-   blendRemaps: array[0..longint(oxBLEND_MAX)] of TBlendRemap = (
-      {blend function, left side, right side}
-      (GL_FUNC_ADD, GL_ONE, GL_ONE), {none}
-      (GL_FUNC_ADD, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA), {alpha}
-      (GL_FUNC_ADD, GL_ONE, GL_ONE), {add}
-      (GL_FUNC_SUBTRACT, GL_ONE, GL_ONE), {subtract}
-      (GL_FUNC_ADD, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)  {filter}
-   );
-   {$ELSE}
-   blendRemaps: array[0..longint(oxBLEND_MAX)] of TBlendRemap = (
-      {blend function, left side, right side}
-      (GL_ONE, GL_ONE), {none}
-      (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA), {alpha}
-      (GL_ONE, GL_ONE), {add}
-      (GL_ONE, GL_ONE), {subtract}
-      (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)  {filter}
-   );
-   {$ENDIF}
-
-   functionRemap: array[0..longint(oxTEST_FUNCTION_ALWAYS)] of GLenum = (
-      oglNONE, {oxDEPTH_TEST_NONE}
-      GL_NEVER, {oxDEPTH_TEST_NEVER}
-      GL_EQUAL, {oxDEPTH_TEST_EQUAL}
-      GL_GREATER, {oxDEPTH_TEST_GREATER}
-      GL_GEQUAL, {oxDEPTH_TEST_GEQUAL}
-      GL_LEQUAL, {oxDEPTH_TEST_LEQUAL}
-      GL_LESS, {oxDEPTH_TEST_LESS}
-      GL_ALWAYS {oxDEPTH_TEST_ALWAYS}
-   );
-
 procedure oglTRender.BlendFunction(blendFunc: oxTBlendFunction);
 begin
    if(blendFunc <> oxBLEND_NONE) then begin
       glEnable(GL_BLEND);
       {$IFNDEF GLES}
-      glBlendFunc(blendRemaps[longint(blendFunc)][1], blendRemaps[longint(blendFunc)][2]);
-      glBlendEquation(blendRemaps[longint(blendFunc)][0]);
+      glBlendFunc(oglBlendRemaps[longint(blendFunc)][1], oglBlendRemaps[longint(blendFunc)][2]);
+      glBlendEquation(oglBlendRemaps[longint(blendFunc)][0]);
       {$ELSE}
       glBlendFunc(blendRemaps[longint(blendFunc)][0], blendRemaps[longint(blendFunc)][1]);
       {$ENDIF}
@@ -150,7 +99,7 @@ begin
    if(test <> oxTEST_FUNCTION_NONE) then begin
       glEnable(GL_DEPTH_TEST);
 
-      glDepthFunc(functionRemap[longint(test)]);
+      glDepthFunc(oglFunctionRemaps[longint(test)]);
    end else
       glDisable(GL_DEPTH_TEST);
 end;
@@ -168,7 +117,7 @@ begin
    if(test <> oxTEST_FUNCTION_NONE) then begin
       glEnable(GL_ALPHA_TEST);
 
-      glAlphaFunc(functionRemap[longint(test)], alpha);
+      glAlphaFunc(oglFunctionRemaps[longint(test)], alpha);
    end else
       glDisable(GL_ALPHA_TEST);
 end;
@@ -324,9 +273,9 @@ procedure oglTRender.Primitives(primitive: oxTPrimitives; count: longint; indice
 begin
    if(primitive <> oxPRIMITIVE_NONE) then
       {$IFNDEF GLES}
-      glDrawElements(primitive_translate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, indices);
+      glDrawElements(oglPrimitiveTranslate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, indices);
       {$ELSE}
-      glDrawElements(primitive_translate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, PGLvoid(indices));
+      glDrawElements(oglPrimitiveTranslate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, PGLvoid(indices));
       {$ENDIF}
 
    {$IFDEF DEBUG}LastUsedIndices := indices;{$ENDIF}
@@ -336,9 +285,9 @@ procedure oglTRender.Primitives(primitive: oxTPrimitives; count: longint; indice
 begin
    if(primitive <> oxPRIMITIVE_NONE) then
       {$IFNDEF GLES}
-      glDrawElements(primitive_translate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, indices);
+      glDrawElements(oglPrimitiveTranslate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, indices);
       {$ELSE}
-      glDrawElements(primitive_translate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, PGLvoid(indices));
+      glDrawElements(oglPrimitiveTranslate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, PGLvoid(indices));
       {$ENDIF}
 
    {$IFDEF DEBUG}LastUsedIndices := indices;{$ENDIF}
@@ -348,7 +297,7 @@ end;
 procedure oglTRender.DrawArrays(primitive: oxTPrimitives; count: longint);
 begin
    if(primitive <> oxPRIMITIVE_NONE) then
-      glDrawArrays(primitive_translate[GLenum(primitive)], 0, count);
+      glDrawArrays(oglPrimitiveTranslate[GLenum(primitive)], 0, count);
 end;
 
 procedure oglTRender.CheckError;
@@ -384,8 +333,8 @@ var
 begin
    {$IFNDEF GLES}
    if(not oglExtensions.Supported(cGL_EXT_blend_subtract)) then begin
-      for i := 0 to high(blendRemaps) do begin
-         if(blendRemaps[i][0] = GL_FUNC_SUBTRACT) then
+      for i := 0 to high(oglBlendRemaps) do begin
+         if(oglBlendRemaps[i][0] = GL_FUNC_SUBTRACT) then
             log.w('Disabled blend remap ' + sf(i) + ' because subtractive blend is not supported');
       end;
    end;
