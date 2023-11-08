@@ -13,8 +13,8 @@ INTERFACE
    USES
       uStd, uLog, uTiming,
       {ox}
-      uOX, oxuRunRoutines,
-      oxuGlobalInstances, oxuEntity, oxuScene, oxuWorld, oxuSceneLoader, oxuSceneClone, oxuSerialization;
+      uOX, oxuRunRoutines, oxuGlobalInstances, oxuSerialization,
+      oxuEntity, oxuScene, oxuWorld, oxuSceneManagement, oxuSceneLoader, oxuSceneClone;
 
 IMPLEMENTATION
 
