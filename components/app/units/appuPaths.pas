@@ -9,9 +9,10 @@ UNIT appuPaths;
 INTERFACE
 
    USES
-      uStd,
+      uStd, uLog,
       {$IFDEF UNIX}BaseUnix,{$ENDIF}
       {$IFDEF WINDOWS}uBitSet, windows,{$ENDIF}
+      {$IFDEF ANDROID}uAndroidApp,{$ENDIF}
       sysutils, uFileUtils, StringUtils, ConsoleUtils,
       uAppInfo, uApp,
       oxuRunRoutines;
@@ -99,6 +100,7 @@ var
    path: StdString = '';
    
 begin
+
    {check for preset path}
    if(c = appPATH_CONFIG) and (Configuration.Preset <> '') then
       exit(Configuration.Preset);
@@ -107,7 +109,7 @@ begin
    if(c = appPATH_CONFIG) then
       path := GetUTF8EnvironmentVariable('APPDATA')
    else if(c = appPATH_LOCAL) then
-         path := GetUTF8EnvironmentVariable('LOCALAPPDATA')
+      path := GetUTF8EnvironmentVariable('LOCALAPPDATA')
    else if(c = appPATH_HOME) then
       path := GetUTF8EnvironmentVariable('USERPROFILE')
    else if(c = appPATH_CONFIG_SHARED) then
@@ -116,43 +118,53 @@ begin
       path := IncludeTrailingPathDelimiterNonEmpty(GetUTF8EnvironmentVariable('USERPROFILE')) + 'Documents';
    {$ENDIF}
 
-   {$IFDEF UNIX} {also includes darwin}
+   {$IF DEFINED(ANDROID)}
+   if(c = appPATH_CONFIG) or (c = appPATH_HOME) or (c = appPATH_CONFIG_SHARED) or (c = appPATH_LOCAL) or
+      (c = appPATH_DOCUMENTS) or (c = appPATH_TEMP) then
+      path := androidGetInternalStorage();
+   {$ELSEIF DEFINED(UNIX)} {also includes darwin}
    if(c = appPATH_CONFIG) or (c = appPATH_HOME) or (c = appPATH_CONFIG_SHARED) or (c = appPATH_LOCAL) then
       path := GetUTF8EnvironmentVariable('HOME')
    else if(c = appPATH_DOCUMENTS) then
       path := IncludeTrailingPathDelimiterNonEmpty(GetUTF8EnvironmentVariable('HOME')) + 'Documents';
    {$ENDIF}
 
+   {$IFNDEF ANDROID}
    if(c = appPATH_TEMP) then
       path := GetUTF8EnvironmentVariable('TEMP');
+   {$ENDIF}
 
    {add a directory separator to the end if the path is not empty}
-   path := IncludeTrailingPathDelimiterNonEmpty(path);
+   Result := IncludeTrailingPathDelimiterNonEmpty(path);
 
-   {return path}
-   Result := path;
+   log.i('Got path: ' + Result);
 end;
 
 function appTPath.HomeConfigurationDir(const dir: StdString; local: boolean): StdString;
+{$IFNDEF ANDROID}
 var
    basePath,
    createdPath: StdString;
+{$ENDIF}
 
 begin
-   {$IFDEF WINDOWS}
-   if(not local) then
-      basePath := appPath.Get(appPATH_CONFIG)
-   else
-      basePath := appPath.Get(appPATH_LOCAL);
+   {$IFDEF ANDROID}
+   exit(androidGetInternalStorage());
    {$ELSE}
-   basePath := appPath.Get(appPATH_CONFIG) + 'local' + DirectorySeparator;
+      {$IF DEFINED(WINDOWS)}
+      if(not local) then
+         basePath := appPath.Get(appPATH_CONFIG)
+      else
+         basePath := appPath.Get(appPATH_LOCAL);
+      {$ELSE}
+      basePath := appPath.Get(appPATH_CONFIG) + 'local' + DirectorySeparator;
+      {$ENDIF}
+
+      createdPath := basePath + dir + DirectorySeparator;
+      CreateDir(createdPath);
+
+      Result := createdPath;
    {$ENDIF}
-
-   createdPath := basePath + dir + DirectorySeparator;
-
-   CreateDir(createdPath);
-
-   Result := createdPath;
 end;
 
 function appTPath.GetConfigurationPath(const info: appTInfo; local: boolean): StdString;
@@ -168,11 +180,13 @@ begin
       name := name + info.NameShort;
 
    {determine configuration createdPath}
-   {$IFDEF WINDOWS}
+   {$IF DEFINED(WINDOWS)}
    if(not local) then
       Result := appPath.Get(appPATH_CONFIG) + name
    else
       Result := appPath.Get(appPATH_LOCAL) + name;
+   {$ELSEIF DEFINED(ANDROID)}
+   Result := androidGetInternalStorage();
    {$ELSE}
    if(not local) then
       Result := appPath.Get(appPATH_CONFIG) + name
