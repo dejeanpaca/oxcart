@@ -57,28 +57,17 @@ begin
 end;
 
 procedure saveCallback();
-var
-   p: oxedTAndroidPlatform;
-
 begin
-   p := oxedTAndroidPlatform(oxedPlatforms.FindById('android'));
-
    oxedAndroidSettings.Project.PackageName := wdg.PackageName.GetText();
    oxedAndroidSettings.Project.ManualFileManagement := wdg.ManualFileManagement.Checked();
    oxedAndroidSettings.Project.ProjectFilesPath := wdg.ProjectFilesPath.GetText();
 
-   oxedPlatforms.Enable(p, wdg.Enabled.Checked());
+   oxedPlatforms.Enable(oxedAndroidPlatform, wdg.Enabled.Checked());
 end;
 
 procedure revertCallback();
-var
-   p: oxedTAndroidPlatform;
-
 begin
-   p := oxedTAndroidPlatform(oxedPlatforms.FindById('android'));
-
-   if(p <> nil) then
-      wdg.Enabled.Check(p.Enabled);
+   wdg.Enabled.Check(oxedAndroidPlatform.Enabled);
 
    wdg.PackageName.SetText(oxedAndroidSettings.Project.PackageName);
    wdg.ManualFileManagement.Check(oxedAndroidSettings.Project.ManualFileManagement);
@@ -95,15 +84,10 @@ begin
 end;
 
 procedure PreAddTabs();
-var
-   p: oxedTAndroidPlatform;
-
 begin
-   p := oxedTAndroidPlatform(oxedPlatforms.FindById('android'));
-
    oxedwndProjectSettings.Tabs.AddTab('Android', 'android');
 
-   wdg.Enabled := wdgCheckbox.Add('Enabled').Check(p.Enabled);
+   wdg.Enabled := wdgCheckbox.Add('Enabled').Check(oxedAndroidPlatform.Enabled);
 
    wdgDivisor.Add('Android settings');
 
