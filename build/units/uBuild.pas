@@ -121,7 +121,8 @@ TYPE
       Includes,
       Symbols,
       Libraries,
-      OptimizationLevels: TSimpleStringList;
+      OptimizationLevels,
+      CustomOptions: TSimpleStringList;
 
       OnInitializeStart,
       OnInitialize,
@@ -418,6 +419,8 @@ begin
 
    Options.IsLibrary := false;
    Options.Rebuild := false;
+
+   CustomOptions.Dispose();
 end;
 
 class function TBuildSystem.GetBuiltWithTarget(): TFPCPlatformString;
@@ -472,6 +475,7 @@ INITIALIZATION
    TSimpleStringList.Initialize(build.Symbols);
    TSimpleStringList.Initialize(build.OptimizationLevels);
    TSimpleStringList.Initialize(build.Libraries);
+   TSimpleStringList.Initialize(build.CustomOptions);
 
    parameters.AddHandler(paramHandler, 'build', '--build-verbose', @processParam);
 
