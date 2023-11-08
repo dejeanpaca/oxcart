@@ -18,7 +18,7 @@ INTERFACE
       uOX, oxuWindow, oxuWindows, oxuRenderer, oxuRenderers, oxuTypes, oxuResourcePool, oxuRunRoutines,
       oxuShader, oxuMaterial, oxuFont,
       {ui}
-      uiuTypes, uiuControl, uiuWindowTypes, uiuSkinTypes, uiuWidget;
+      uiuTypes, uiuControl, uiuWindowTypes, uiuSkinTypes, uiuWidget, uiuBase, uiuSkin;
 
 TYPE
    uiTSelectArray = array[0..uiMAXIMUM_LEVELS - 1] of uiTControl;
@@ -86,14 +86,8 @@ TYPE
       {time when the pointer last performed an event on a mouse selected item}
       mLastEventTime: LongWord;
 
-      {standard internal skin}
-      StandardSkin: uiTSkin;
       {default skin}
       DefaultSkin: uiTSkin;
-
-      { skins }
-      nSkins: longint;
-      Skins: array of uiTSkin;
 
       {pointer capture data}
       PointerCapture: uiTPointerCapture;
@@ -110,12 +104,16 @@ TYPE
 
       constructor Create();
 
+      procedure Start();
+
       function GetUseWindow(): uiTWindow;
       procedure SetUseWindow(wnd: uiTWindow);
 
       procedure SetDefaultFont(f: oxTFont);
       function GetDefaultFont(): oxTFont;
       procedure GetNilDefault(var f: oxTFont);
+
+      function GetDefaultSkin(): uiTSkin;
    end;
 
 VAR
@@ -231,6 +229,15 @@ begin
    mLastEventTime := timer.Cur();
 end;
 
+procedure oxTUI.Start();
+begin
+   oxResource.Free(oxui.Material);
+
+   oxui.Material := oxMaterial.Make();
+   oxui.Material.Name := 'ui';
+   oxui.Material.MarkPermanent();
+end;
+
 function oxTUI.GetUseWindow(): uiTWindow;
 begin
    if(oxui.UseWindow = nil) then
@@ -261,6 +268,14 @@ procedure oxTUI.GetNilDefault(var f: oxTFont);
 begin
    if(f = nil) then
       f := GetDefaultFont();
+end;
+
+function oxTUI.GetDefaultSkin(): uiTSkin;
+begin
+   Result := DefaultSkin;
+
+   if(Result = nil) then
+      Result := uiSkin.StandardSkin;
 end;
 
 procedure updateControlWdg(wdg: uiTWidget);
@@ -300,25 +315,29 @@ end;
 
 procedure onUse();
 begin
-   oxResource.Free(oxui.Material);
+   oxui.Start();
+end;
 
-   oxui.Material := oxMaterial.Make();
-   oxui.Material.Name := 'ui';
-   oxui.Material.MarkPermanent();
+procedure init();
+begin
+   oxui := oxTUI.Create();
+   oxRenderers.PostUseRoutines.Add(@onUse);
+end;
+
+procedure deinit();
+begin
+   oxRenderers.PostUseRoutines.Add(@onUse);
+   FreeObject(oxui);
 end;
 
 VAR
-   routine: oxTRunRoutine;
+   routine,
+   initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxui := oxTUI.Create();
-   oxRenderers.PostUseRoutines.Add(@onUse);
-
    ox.OnRun.Add(routine, 'ui.update_controls', @updateControls);
+   ui.BaseInitializationProcs.Add(initRoutines, 'ui.oxui', @init, @deinit);
 
    ox.dvar.Add('ui', oxTUI.dvg);
-
-FINALIZATION
-   FreeObject(oxui);
 
 END.
