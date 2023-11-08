@@ -751,6 +751,14 @@ begin
       parameters.Add('-Xg');
    end;
 
+   {include checks}
+
+   parameters.Add('-Ci'); {I/O}
+   parameters.Add('-Cr'); {Range}
+   parameters.Add('-Co'); {Overflow}
+   parameters.Add('-Ct'); {Stack check}
+   parameters.Add('-Sa'); {Assertions}
+
    if(oxedBuild.IsLibrary()) then begin
       {set position independent code}
       parameters.Add('-Cg');
