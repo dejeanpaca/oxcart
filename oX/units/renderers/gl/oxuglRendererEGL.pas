@@ -11,7 +11,6 @@ INTERFACE
    USES
       uLog, StringUtils,
       egl,
-      {$INCLUDE usesgl.inc},
       {ox.gl}
       oxuOGL, oxuglWindow,
       oxuglRendererPlatform, oxuglRenderer,
@@ -58,7 +57,6 @@ var
    cfg,
    config: EGLConfig;
    surface: EGLSurface;
-   context: EGLContext;
    supportedConfigs: array of EGLConfig;
 
    r, g, b, d: EGLint;
