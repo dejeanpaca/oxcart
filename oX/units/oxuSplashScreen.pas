@@ -12,7 +12,7 @@ INTERFACE
       uTiming, uStd, uLog, uColors, vmVector, StringUtils,
       {oX}
       uOX, oxuTypes, oxuWindowTypes,
-      oxuRenderer, oxuRender, oxuRenderThread,
+      oxuRenderer, oxuRender, oxuRenderThread, oxuSurfaceRender, oxuRenderingContext,
       oxuTexture, oxuTextureGenerate, oxuPaths, oxuThreadTask,
       oxuMaterial, oxuFont, oxumPrimitive, oxuWindow, oxuTransform, oxuResourcePool, oxuPrimitives,
       oxuRunRoutines, oxuTimer,
@@ -51,7 +51,7 @@ TYPE
       {renders the splash screen, with content and overlay}
       procedure Render(); virtual;
       {renders content here}
-      procedure RenderContent(); virtual;
+      procedure RenderContent(var {%H-}context: oxTRenderingContext); virtual;
 
       {run rendering in a separate thread, use instead of Start()}
       procedure RunThreaded(wnd: oxTWindow);
@@ -89,7 +89,7 @@ TYPE
       constructor Create(); override;
       procedure Load(); override;
       procedure Unload(); override;
-      procedure RenderContent(); override;
+      procedure RenderContent(var {%H-}context: oxTRenderingContext); override;
 
       function GetVersionString(): string; virtual;
    end;
@@ -156,15 +156,11 @@ begin
    if(oxCurrentMaterial.Shader = nil) then
       exit;
 
-   if(AssociatedWindow <> nil) then begin
-      oxRenderer.Clear(ClearBits);
-
-      RenderContent();
-      oxTRenderer(AssociatedWindow.Renderer).SwapBuffers(AssociatedWindow);
-   end;
+   if(AssociatedWindow <> nil) then
+      oxSurfaceRender.RenderOnly(AssociatedWindow, @RenderContent);
 end;
 
-procedure oxTSplashScreen.RenderContent();
+procedure oxTSplashScreen.RenderContent(var context: oxTRenderingContext);
 begin
 end;
 
@@ -196,7 +192,6 @@ begin
 
       while(Timer.Elapsed() < DisplayTime) do begin
          oxTimer.Sleep(1);
-
          Timer.Update();
       end;
    end;
@@ -278,7 +273,7 @@ begin
    oxResource.Destroy(Texture.Texture);
 end;
 
-procedure oxTBasicSplashScreen.RenderContent();
+procedure oxTBasicSplashScreen.RenderContent(var context: oxTRenderingContext);
 var
    m: TMatrix4f;
    f: oxTFont;

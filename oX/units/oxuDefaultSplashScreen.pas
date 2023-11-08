@@ -11,7 +11,8 @@ INTERFACE
    USES
       vmVector,
       {ox}
-      oxuTransform, oxuRenderer, oxuRender, oxuRenderUtilities, oxuMaterial, oxuTypes,
+      oxuTransform, oxuRenderer, oxuRender, oxuRenderUtilities, oxuRenderingContext,
+      oxuMaterial, oxuTypes,
       oxuSplashScreen;
 
 TYPE
@@ -29,7 +30,7 @@ TYPE
 
       procedure Load(); override;
       procedure Update(); override;
-      procedure RenderContent(); override;
+      procedure RenderContent(var context: oxTRenderingContext); override;
    end;
 
 IMPLEMENTATION
@@ -65,7 +66,7 @@ begin
    Rotation[2] := Rotation[2] + 180 * TimeFlow;
 end;
 
-procedure oxTDefaultSplashScreen.RenderContent();
+procedure oxTDefaultSplashScreen.RenderContent(var context: oxTRenderingContext);
 begin
    if(Initialized) then begin
       oxRenderer.SetProjectionMatrix(Projection);
@@ -81,7 +82,7 @@ begin
       oxRenderUtilities.Cube();
    end;
 
-   inherited RenderContent;
+   inherited RenderContent(context);
 end;
 
 INITIALIZATION
