@@ -537,7 +537,7 @@ end;
 procedure TFile.SetLineEndings(ln: TLineEndingType);
 begin
    LineEndings := ln;
-   LineEndingChars := GetLineEnding(ln);
+   LineEndingChars := ln.GetChars();
 end;
 
 {READING AND WRITING}

@@ -15,7 +15,7 @@ INTERFACE
       {$IFDEF UNIX}, BaseUnix{$ENDIF};
 
 CONST
-   EmptyShortString: string[1]      = '';
+   EmptyShortString: string[1] = '';
 
    {memory allocation alignment in bytes}
    dcMemoryBlockAlignment: longint  = 16;
@@ -42,6 +42,12 @@ TYPE
       fileint = longint;
    {$ELSE}
       fileint = int64;
+   {$ENDIF}
+
+   {$IF NOT DEFINED(DOS)}
+   StdString = UTF8String;
+   {$ELSE}
+   StdString = AnsiString;
    {$ENDIF}
 
    loopint = SizeInt;
@@ -207,11 +213,25 @@ TYPE
    end;
 
    { line ending type }
+
    TLineEndingType = (
       PLATFORM_LINE_ENDINGS,
       UNIX_LINE_ENDINGS,
       WINDOWS_LINE_ENDINGS
    );
+
+   { TLineEndingTypeHelper }
+
+   TLineEndingTypeHelper = record helper for TLineEndingType
+      {get line ending string}
+      function GetChars(): string;
+      {get line ending type from the given name}
+      function GetFromName(const name: string): TLineEndingType;
+      {get line ending type from the given name}
+      function GetName(): string;
+      {is the line ending name valid}
+      function ValidName(const name: string): boolean;
+   end;
 
 CONST
    DefaultPreallocatedArrayAllocationIncrement: loopint = 32;
@@ -292,13 +312,6 @@ function GetBit(Value: word; Index: Byte): Boolean;
 {return a string for the current call stack}
 function DumpCallStack(skip: longint = 0): string;
 function DumpExceptionCallStack(e: Exception): string;
-
-{get line ending string}
-function GetLineEnding(ln: TLineEndingType): string; inline;
-{get line ending type from the given name}
-function GetLineEndingTypeFromName(const name: string): TLineEndingType;
-{is the line ending name valid}
-function ValidLineEndingName(const name: string): boolean;
 
 IMPLEMENTATION
 
@@ -1254,17 +1267,17 @@ begin
    Result := report;
 end;
 
-function GetLineEnding(ln: TLineEndingType): string;
+function TLineEndingTypeHelper.GetChars(): string;
 begin
-   if(ln = PLATFORM_LINE_ENDINGS) then
+   if(Self = PLATFORM_LINE_ENDINGS) then
       Result := LineEnding
-   else if(ln = UNIX_LINE_ENDINGS) then
+   else if(Self = UNIX_LINE_ENDINGS) then
       Result := UnixLineEnding
    else
       Result := WindowsLineEnding;
 end;
 
-function GetLineEndingTypeFromName(const name: string): TLineEndingType;
+function TLineEndingTypeHelper.GetFromName(const name: string): TLineEndingType;
 begin
    if(name = 'crlf') or (name = 'windows') then
       Result := WINDOWS_LINE_ENDINGS
@@ -1274,7 +1287,17 @@ begin
       Result := PLATFORM_LINE_ENDINGS;
 end;
 
-function ValidLineEndingName(const name: string): boolean;
+function TLineEndingTypeHelper.GetName(): string;
+begin
+   if(Self = WINDOWS_LINE_ENDINGS) then
+      Result := 'crlf'
+   else if(Self = UNIX_LINE_ENDINGS) then
+      Result := 'lf'
+   else
+      Result := '';
+end;
+
+function TLineEndingTypeHelper.ValidName(const name: string): boolean;
 var
    i: loopint;
 
