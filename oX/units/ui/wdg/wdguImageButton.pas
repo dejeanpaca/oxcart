@@ -97,9 +97,7 @@ TYPE
 
    { wdgTImageButtonGlobal }
 
-   wdgTImageButtonGlobal = class(specialize wdgTBase<wdgTImageButton>)
-      Internal: uiTWidgetClass; static;
-
+   wdgTImageButtonGlobal = object(specialize wdgTBase<wdgTImageButton>)
       function Add(const fn: StdString;
             const Pos: oxTPoint; const Dim: oxTDimensions; action: TEventID = 0): wdgTImageButton;
 
@@ -395,16 +393,10 @@ begin
    wdgImageButton.Internal.Instance := wdgTImageButton;
    wdgImageButton.internal.SkinDescriptor := @wdgImageButtonSkinDescriptor;
    wdgImageButton.internal.Done();
-
-   wdgImageButton := wdgTImageButtonGlobal.Create(wdgImageButton.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgImageButton);
 end;
 
 INITIALIZATION
-   wdgImageButton.Internal.Register('image_button', @init, @deinit);
+   wdgImageButton.Create();
+   wdgImageButton.Internal.Register('image_button', @init);
 
 END.

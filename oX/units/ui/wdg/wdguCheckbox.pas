@@ -74,9 +74,7 @@ TYPE
 
    { wdgTCheckboxGlobal }
 
-   wdgTCheckboxGlobal = class(specialize wdgTBase<wdgTCheckbox>)
-      Internal: uiTWidgetClass; static;
-
+   wdgTCheckboxGlobal = object(specialize wdgTBase<wdgTCheckbox>)
       Width,
       Height: longint; static;
       LineWidth: single; static;
@@ -314,13 +312,6 @@ end;
 procedure init();
 begin
    wdgCheckbox.Internal.Done(wdgTCheckbox);
-
-   wdgCheckbox := wdgTCheckboxGlobal.Create(wdgCheckbox.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgCheckbox);
 end;
 
 INITIALIZATION
@@ -328,10 +319,12 @@ INITIALIZATION
    wdgCheckbox.Height := 18;
    wdgCheckbox.LineWidth := 2.0;
 
+   wdgCheckbox.Create();
+
    wdgCheckbox.DisabledColor.Assign(96, 96, 96, 255);
    wdgCheckbox.CheckedColor.Assign(32, 91, 32, 255);
 
-   wdgCheckbox.Internal.Register('checkbox', @init, @deinit);
+   wdgCheckbox.Internal.Register('checkbox', @init);
    wdgCheckbox.Internal.SkinDescriptor.UseColors(wdgCheckboxSkinColorDescriptor);
 
 END.

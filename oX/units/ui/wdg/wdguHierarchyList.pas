@@ -100,8 +100,7 @@ TYPE
          procedure CollapseData({%H-}index, {%H-}count: loopint); virtual;
    end;
 
-   wdgTHierarchyListGlobal = class(specialize wdgTBase<wdgTHierarchyList>)
-      Internal: uiTWidgetClass; static;
+   wdgTHierarchyListGlobal = object(specialize wdgTBase<wdgTHierarchyList>)
    end;
 
 VAR
@@ -474,16 +473,10 @@ end;
 procedure init();
 begin
    wdgHierarchyList.Internal.Done(wdgTHierarchyList);
-
-   wdgHierarchyList := wdgTHierarchyListGlobal.Create(wdgHierarchyList.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgHierarchyList);
 end;
 
 INITIALIZATION
-   wdgHierarchyList.Internal.Register('hierarchy_list', @init, @deinit);
+   wdgHierarchyList.Create();
+   wdgHierarchyList.Internal.Register('hierarchy_list', @init);
 
 END.

@@ -69,9 +69,7 @@ TYPE
 
    { wdgTTitleButtonsGlobal }
 
-   wdgTTitleButtonsGlobal = class(specialize wdgTBase<wdgTTitleButtons>)
-      Internal: uiTWidgetClass; static;
-
+   wdgTTitleButtonsGlobal = object(specialize wdgTBase<wdgTTitleButtons>)
       {title button size ratio, button size:title height,
       used for both button height and width [square]}
       ButtonSizeRatio,
@@ -384,20 +382,14 @@ begin
 
    wdgTitleButtons.Internal.Done(wdgTTitleButtons);
 
-   wdgTitleButtons := wdgTTitleButtonsGlobal.Create(wdgTitleButtons.Internal);
-
    uiWindow.OnCreate.Add(@wdgAdd);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgTitleButtons);
 end;
 
 INITIALIZATION
    wdgTitleButtons.ButtonSizeRatio := 0.85;
    wdgTitleButtons.ButtonSpacingRatio := 0.15;
 
-   wdgTitleButtons.Internal.Register('title_buttons', @init, @deinit);
+   wdgTitleButtons.Create();
+   wdgTitleButtons.Internal.Register('title_buttons', @init);
 
 END.

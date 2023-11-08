@@ -29,9 +29,7 @@ TYPE
 
    { wdgTStatusbarGlobal }
 
-   wdgTStatusbarGlobal = class(specialize wdgTBase<wdgTStatusbar>)
-      Internal: uiTWidgetClass; static;
-
+   wdgTStatusbarGlobal = object(specialize wdgTBase<wdgTStatusbar>)
       {default height}
       Height: longint; static;
       Color: TColor4ub; static;
@@ -39,7 +37,7 @@ TYPE
       function Add(wnd: uiTWindow): wdgTStatusbar;
 
       protected
-         procedure OnAdd(wdg: wdgTStatusbar); override;
+         procedure OnAdd(wdg: wdgTStatusbar); virtual;
    end;
 
 VAR
@@ -98,17 +96,11 @@ end;
 procedure init();
 begin
    wdgStatusbar.Internal.Done(wdgTStatusbar);
-
-   wdgStatusbar := wdgTStatusbarGlobal.Create(wdgStatusbar.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgStatusbar);
 end;
 
 INITIALIZATION
-   wdgStatusbar.Internal.Register('statusbar', @init, @deinit);
+   wdgStatusbar.Create();
+   wdgStatusbar.Internal.Register('statusbar', @init);
 
    wdgStatusbar.Height := wdgWORKBAR_HEIGHT;
    wdgStatusbar.Color.Assign(255, 127, 0, 255);

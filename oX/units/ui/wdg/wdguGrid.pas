@@ -172,14 +172,12 @@ TYPE
 
    { wdgTGridGlobal }
 
-   wdgTGridGlobal = class(specialize wdgTBase<wdgTGrid>)
-      Internal: uiTWidgetClass; static;
+   wdgTGridGlobal = object(specialize wdgTBase<wdgTGrid>)
    end;
 
    { wdgTStringGridGlobal }
 
-   wdgTStringGridGlobal = class(specialize wdgTBase<wdgTStringGrid>)
-      Internal: uiTWidgetClass; static;
+   wdgTStringGridGlobal = object(specialize wdgTBase<wdgTStringGrid>)
    end;
 
 VAR
@@ -762,29 +760,18 @@ end;
 procedure init();
 begin
    wdgGrid.Internal.Done(wdgTGrid);
-
-   wdgGrid := wdgTGridGlobal.Create(wdgGrid.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgGrid);
 end;
 
 procedure initString();
 begin
    wdgStringGrid.Internal.Done(wdgTStringGrid);
-
-   wdgStringGrid := wdgTStringGridGlobal.Create(wdgStringGrid.Internal);
-end;
-
-procedure deinitString();
-begin
-   FreeObject(wdgStringGrid);
 end;
 
 INITIALIZATION
-   wdgGrid.Internal.Register('grid', @init, @deinit);
-   wdgStringGrid.Internal.Register('string_grid', @initString, @deinitString);
+   wdgGrid.Create();
+   wdgGrid.Internal.Register('grid', @init);
+
+   wdgStringGrid.Create();
+   wdgStringGrid.Internal.Register('string_grid', @initString);
 
 END.

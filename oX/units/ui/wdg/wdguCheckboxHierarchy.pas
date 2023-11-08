@@ -21,8 +21,6 @@ TYPE
    { wdgTCheckboxHierarchy }
 
    wdgTCheckboxHierarchy = class(wdgTHierarchyList)
-      Internal: uiTWidgetClass; static;
-
       constructor Create(); override;
 
       procedure Initialize(); override;
@@ -39,8 +37,7 @@ TYPE
       procedure UpdateExpanderWidth();
    end;
 
-   wdgTCheckboxHierarchyGlobal = class(specialize wdgTBase<wdgTCheckboxHierarchy>)
-      Internal: uiTWidgetClass; static;
+   wdgTCheckboxHierarchyGlobal = object(specialize wdgTBase<wdgTCheckboxHierarchy>)
    end;
 
 VAR
@@ -101,16 +98,10 @@ end;
 procedure init();
 begin
    wdgCheckboxHierarchy.Internal.Done(wdgTCheckboxHierarchy);
-
-   wdgCheckboxHierarchy := wdgTCheckboxHierarchyGlobal.Create(wdgCheckboxHierarchy.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgCheckboxHierarchy);
 end;
 
 INITIALIZATION
-   wdgCheckboxHierarchy.Internal.Register('checkbox_hierarchy', @init, @deinit);
+   wdgCheckboxHierarchy.Create();
+   wdgCheckboxHierarchy.Internal.Register('checkbox_hierarchy', @init);
 
 END.

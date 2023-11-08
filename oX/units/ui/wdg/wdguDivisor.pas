@@ -40,8 +40,7 @@ TYPE
 
    { wdgTDivisorGlobal }
 
-   wdgTDivisorGlobal = class(specialize wdgTBase<wdgTDivisor>)
-      Internal: uiTWidgetClass; static;
+   wdgTDivisorGlobal = object(specialize wdgTBase<wdgTDivisor>)
       DefaultColor: TColor4ub; static;
 
       function Add(const Caption: StdString;
@@ -198,16 +197,10 @@ procedure init();
 begin
    wdgDivisor.Internal.NonSelectable := true;
    wdgDivisor.Internal.Done(wdgTDivisor);
-
-   wdgDivisor := wdgTDivisorGlobal.Create(wdgDivisor.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgDivisor);
 end;
 
 INITIALIZATION
-   wdgDivisor.Internal.Register('divisor', @init, @deinit);
+   wdgDivisor.Create();
+   wdgDivisor.Internal.Register('divisor', @init);
 
 END.

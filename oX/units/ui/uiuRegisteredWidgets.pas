@@ -160,7 +160,7 @@ end;
 
 procedure uiTWidgetInternal.Done();
 begin
-   uiRegisteredWidgets.RegisterClass(self);
+   uiRegisteredWidgets.RegisterClass(Self);
 end;
 
 procedure skinInitialize();

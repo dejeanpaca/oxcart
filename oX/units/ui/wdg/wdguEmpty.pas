@@ -17,8 +17,7 @@ INTERFACE
       wdguBase;
 
 TYPE
-   wdgTEmptyGlobal = class(specialize wdgTBase<uiTWidget>)
-      Internal: uiTWidgetClass; static;
+   wdgTEmptyGlobal = object(specialize wdgTBase<uiTWidget>)
    end;
 
 VAR
@@ -29,16 +28,10 @@ IMPLEMENTATION
 procedure init();
 begin
    wdgEmpty.Internal.Done(uiTWidget);
-
-   wdgEmpty := wdgTEmptyGlobal.Create(wdgEmpty.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgEmpty);
 end;
 
 INITIALIZATION
-   wdgEmpty.Internal.Register('empty', @init, @deinit);
+   wdgEmpty.Create();
+   wdgEmpty.Internal.Register('empty', @init);
 
 END.

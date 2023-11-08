@@ -50,9 +50,7 @@ TYPE
 
    { wdgTGroupGlobal }
 
-   wdgTGroupGlobal = class(specialize wdgTBase<wdgTGroup>)
-      Internal: uiTWidgetClass; static;
-
+   wdgTGroupGlobal = object(specialize wdgTBase<wdgTGroup>)
       function Add(const Caption: StdString;
                  const Pos: oxTPoint; const Dim: oxTDimensions): wdgTGroup;
       function Add(const Caption: StdString): wdgTGroup;
@@ -132,17 +130,11 @@ procedure init();
 begin
    wdgGroup.Internal.NonSelectable := true;
    wdgGroup.Internal.Done(wdgTGroup);
-
-   wdgGroup := wdgTGroupGlobal.Create(wdgGroup.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgGroup);
 end;
 
 INITIALIZATION
-   wdgGroup.Internal.Register('group', @init, @deinit);
+   wdgGroup.Create();
+   wdgGroup.Internal.Register('group', @init);
    wdgGroup.Internal.SkinDescriptor.UseColors(wdgGroupSkinColorDescriptor);
 
 END.

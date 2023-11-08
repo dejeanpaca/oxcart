@@ -44,26 +44,13 @@ TYPE
       procedure OnSceneRenderEnd(); virtual;
    end;
 
-   wdgTSceneRenderGlobal = class(specialize wdgTBase<wdgTSceneRender>)
-      Internal: uiTWidgetClass; static;
+   wdgTSceneRenderGlobal = object(specialize wdgTBase<wdgTSceneRender>)
    end;
 
 VAR
    wdgSceneRender: wdgTSceneRenderGlobal;
 
 IMPLEMENTATION
-
-procedure init();
-begin
-   wdgSceneRender.internal.Done(wdgTSceneRender);
-
-   wdgSceneRender := wdgTSceneRenderGlobal.Create(wdgSceneRender.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgSceneRender);
-end;
 
 { wdgTSceneRender }
 
@@ -129,7 +116,13 @@ begin
 
 end;
 
+procedure init();
+begin
+   wdgSceneRender.internal.Done(wdgTSceneRender);
+end;
+
 INITIALIZATION
-   wdgSceneRender.Internal.Register('scene_render', @init, @deinit);
+   wdgSceneRender.Create();
+   wdgSceneRender.Internal.Register('scene_render', @init);
 
 END.

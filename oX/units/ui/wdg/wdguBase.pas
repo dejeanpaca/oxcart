@@ -19,12 +19,11 @@ TYPE
 
    { wdgTBase }
 
-   generic wdgTBase<T> = class
+   generic wdgTBase<T> = object
       public
-      pInternal: uiPWidgetClass;
-      WidgetType: uiTWidgetClassType;
+      Internal: uiTWidgetClass;
 
-      constructor Create(var selfInternal: uiTWidgetClass);
+      constructor Create();
 
       function Add(const Pos: oxTPoint; const Dim: oxTDimensions): T;
       function Add(const Pos: oxTPoint): T;
@@ -47,12 +46,9 @@ IMPLEMENTATION
 
 { wdgTBase }
 
-constructor wdgTBase.Create(var selfInternal: uiTWidgetClass);
+constructor wdgTBase.Create();
 begin
-   WidgetType := T;
-   assert(selfInternal.Instance = WidgetType, 'Widget type not matching for ' + uiTWidgetClassType(T).ClassName);
-
-   pInternal := @selfInternal;
+   Internal.Instance := T;
 end;
 
 function wdgTBase.Add(const Pos: oxTPoint; const Dim: oxTDimensions): T;
@@ -81,7 +77,7 @@ end;
 
 function wdgTBase.AddInternal(const Pos: oxTPoint; const Dim: oxTDimensions): T;
 begin
-  Result := T(uiWidget.Add(pInternal^, Pos, Dim));
+  Result := T(uiWidget.Add(Internal, Pos, Dim));
 
   if(Result <> nil) then
      OnCreate(Result);
@@ -89,7 +85,7 @@ end;
 
 function wdgTBase.AddInternal(const Pos: oxTPoint): T;
 begin
-   Result := T(uiWidget.Add(pInternal^, Pos, oxNullDimensions));
+   Result := T(uiWidget.Add(Internal, Pos, oxNullDimensions));
 
    if(Result <> nil) then
       OnCreate(Result);

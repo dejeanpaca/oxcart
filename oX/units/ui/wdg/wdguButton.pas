@@ -78,9 +78,7 @@ TYPE
 
    { wdgTButtonGlobal }
 
-   wdgTButtonGlobal = class(specialize wdgTBase<wdgTButton>)
-      Internal: uiTWidgetClass; static;
-
+   wdgTButtonGlobal = object(specialize wdgTBase<wdgTButton>)
       function Add(const Caption: StdString;
                   const Pos: oxTPoint; const Dim: oxTDimensions;
                   ActionEvent: TEventID = 0): wdgTButton;
@@ -332,17 +330,11 @@ end;
 procedure init();
 begin
    wdgButton.Internal.Done(wdgTButton);
-
-   wdgButton := wdgTButtonGlobal.Create(wdgButton.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgButton);
 end;
 
 INITIALIZATION
-   wdgButton.Internal.Register('button', @init, @deinit);
+   wdgButton.Create();
+   wdgButton.Internal.Register('button', @init);
    wdgButton.Internal.SkinDescriptor.UseColors(wdgButtonSkinColorDescriptor);
 
 END.

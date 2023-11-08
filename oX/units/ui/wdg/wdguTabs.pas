@@ -145,9 +145,7 @@ TYPE
 
    { wdgTTabsGlobal }
 
-   wdgTTabsGlobal = class(specialize wdgTBase<wdgTTabs>)
-      Internal: uiTWidgetClass; static;
-
+   wdgTTabsGlobal = object(specialize wdgTBase<wdgTTabs>)
       HeaderHeight,
       HeaderWidth: loopint; static;
 
@@ -742,19 +740,13 @@ end;
 procedure init();
 begin
    wdgTabs.Internal.Done(wdgTTabs);
-
-   wdgTabs := wdgTTabsGlobal.Create(wdgTabs.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgTabs);
 end;
 
 INITIALIZATION
    wdgTabs.HeaderHeight := 40;
    wdgTabs.HeaderWidth := 80;
 
-   wdgTabs.internal.Register('tabs', @init, @deinit);
+   wdgTabs.Create();
+   wdgTabs.internal.Register('tabs', @init);
 
 END.

@@ -63,8 +63,7 @@ TYPE
 
    { wdgTLinkGlobal }
 
-   wdgTLinkGlobal = class(specialize wdgTBase<wdgTLink>)
-      Internal: uiTWidgetClass; static;
+   wdgTLinkGlobal = object(specialize wdgTBase<wdgTLink>)
       DefaultColor: TColor4ub; static;
 
       function Add(const Caption: StdString; const Link: StdString;
@@ -161,18 +160,12 @@ end;
 procedure init();
 begin
    wdgLink.Internal.Done(wdgTLink);
-
-   wdgLink := wdgTLinkGlobal.Create(wdgLink.Internal);
-end;
-
-procedure deinit();
-begin
-   FreeObject(wdgLink);
 end;
 
 INITIALIZATION
+   wdgLink.Create();
    wdgLink.DefaultColor := cBlue4ub;
-   wdgLink.Internal.Register('link', @init, @deinit);
+   wdgLink.Internal.Register('link', @init);
    wdgLink.Internal.SkinDescriptor.UseColors(wdgLinkSkinColorDescriptor);
 
 END.
