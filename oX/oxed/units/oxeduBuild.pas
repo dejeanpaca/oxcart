@@ -19,7 +19,8 @@ INTERFACE
       {ox}
       oxuThreadTask, oxuFeatures, oxuRenderer,
       {oxed}
-      uOXED, oxeduMessages, oxeduPackageTypes, oxeduProject, oxeduPlatform, oxeduTasks, oxeduActions, oxeduSettings, oxeduProjectScanner;
+      uOXED, oxeduMessages, oxeduPackageTypes, oxeduPackage, oxeduProject,
+      oxeduPlatform, oxeduTasks, oxeduActions, oxeduSettings, oxeduProjectScanner;
 
 CONST
    OXED_BUILD_3RDPARTY_PATH = '3rdparty';
@@ -374,9 +375,9 @@ begin
    Result := BuildTarget <> OXED_BUILD_STANDALONE;
 end;
 
-function getRelativePath(const unitFile: oxedTPackageUnit): string;
+function getRelativePath(const basePath: StdString; const unitFile: oxedTPackageUnit): string;
 begin
-   Result := ExtractRelativepath(oxedBuild.WorkingArea, oxedProject.Path + ExtractFilePath(unitFile.Path));
+   Result := ExtractRelativepath(oxedBuild.WorkingArea, basePath + ExtractFilePath(unitFile.Path));
 end;
 
 procedure recreateSymbols(var f: TLPIFile);
@@ -393,6 +394,22 @@ procedure lpiLoadedCommon(var f: TLPIFile);
 var
    i: loopint;
    relativePath: string;
+
+procedure processPackage(var p: oxedTPackage; const path: StdString);
+var
+   idx: loopint;
+
+begin
+   for idx := 0 to p.Units.n - 1 do begin
+      relativePath := getRelativePath(path, p.Units.List[idx]);
+      f.AddUnitPath(relativePath);
+   end;
+
+   for idx := 0 to p.IncludeFiles.n - 1 do begin
+      relativePath := getRelativePath(path, p.IncludeFiles.List[idx]);
+      f.AddIncludePath(relativePath);
+   end;
+end;
 
 begin
    f.AddCustomOption('-dOXED');
@@ -418,14 +435,10 @@ begin
    f.compiler.applyConventions := false;
 
    if(oxedBuild.BuildType <> OXED_BUILD_TASK_REBUILD_THIRD_PARTY) then begin
-      for i := 0 to oxedProject.MainPackage.Units.n - 1 do begin
-         relativePath := getRelativePath(oxedProject.MainPackage.Units.List[i]);
-         f.AddUnitPath(relativePath);
-      end;
+      processPackage(oxedProject.MainPackage, oxedProject.Path);
 
-      for i := 0 to oxedProject.MainPackage.IncludeFiles.n - 1 do begin
-         relativePath := getRelativePath(oxedProject.MainPackage.IncludeFiles.List[i]);
-         f.AddIncludePath(relativePath);
+      for i := 0 to oxedProject.Packages.n - 1 do begin
+         processPackage(oxedProject.Packages.List[i], oxedProject.GetPackagePath(oxedProject.Packages.List[i]));
       end;
    end;
 
