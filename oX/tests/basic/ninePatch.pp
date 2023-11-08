@@ -1,23 +1,25 @@
 {
-   test9Patch, tests 9patch functionality.
+   ninePatch, tests 9patch functionality.
 
    Started On:    02.04.2017.
 }
 
 {$INCLUDE oxdefines.inc}
-PROGRAM test9Patch;
+PROGRAM ninePatch;
 
    USES
+      {$INCLUDE oxappuses.inc},
       vmVector,
       {app}
-      uAppInfo, uApp, uColors,
+      uApp, uColors,
       {oX}
-      {$INCLUDE oxappuses.inc}, oxuWindowTypes, oxuWindows, oxuRender, oxu9Patch,
+      oxuWindowTypes, oxuWindows, oxuRender, oxu9Patch, oxuRunRoutines,
       oxuRenderer, oxuTransform, oxuTexture, oxuTextureGenerate, uiuDraw;
 
 VAR
    patch: oxT9Patch;
    texture: oxTTexture;
+   initRoutines: oxTRunRoutine;
 
 procedure Render({%H-}wnd: oxTWindow);
 var
@@ -40,24 +42,19 @@ begin
    patch.Render(384, 256, texture);
 end;
 
-function doRoutine(action: oxTDoAction): boolean;
+procedure Initialize();
 begin
-   result := true;
+   oxTextureGenerate.Generate('data' + DirectorySeparator + '9patch.png', texture);
+   texture.MarkUsed();
 
-   if(action = oxDO_INITIALIZE) then begin
-      oxTextureGenerate.Generate('data' + DirectorySeparator + '9patch.png', texture);
-      patch := oxT9Patch.Create();
-      patch.Compute(4, 16, 16);
-   end;
+   patch := oxT9Patch.Create();
+   patch.Compute(4, 16, 16);
+   oxWindows.OnRender.Add(@Render);
 end;
-
-{$R *.res}
 
 BEGIN
    appInfo.setName('test9Patch');
-   oxWindows.onRender := @Render;
-
-   ox.DoRoutines.Add(@doRoutine);
+   ox.OnInitialize.Add(initRoutines, 'initialize', @Initialize);
 
    oxRun.Go();
 END.
