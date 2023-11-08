@@ -30,7 +30,8 @@ TYPE
    { oxTAboutWindow }
 
    oxTAboutWindow = object(oxTWindowBase)
-      Copyright: string;
+      Copyright,
+      Description: StdString;
       ShowBuiltWith: boolean;
 
       LinkCount: loopint;
@@ -38,7 +39,7 @@ TYPE
 
       constructor Create();
 
-      procedure AddLink(caption, link: string);
+      procedure AddLink(caption, link: StdString);
       procedure ResetLinks();
 
       protected
@@ -58,6 +59,7 @@ end;
 
 procedure oxTAboutWindow.AddWidgets();
 var
+   wdgl: wdgTLabel;
    btnMI,
    btnOk: wdgTButton;
    i: loopint;
@@ -67,8 +69,15 @@ begin
    wdgLabel.Add(appInfo.GetVersionString(0));
    wdgLabel.Add(ox.GetVersionString(0));
 
-   if(Copyright <> '') then
-      wdgLabel.Add(Copyright);
+   if(Copyright <> '') then begin
+      wdgl := wdgLabel.Add(Copyright);
+      wdgl.MultilineConditional();
+   end;
+
+   if(Description <> '') then begin
+      wdgl := wdgLabel.Add(Description);
+      wdgl.MultilineConditional();
+   end;
 
    for i := 0 to high(Links) do begin
       if(Links[i].Link <> '')  then
@@ -115,7 +124,7 @@ begin
    inherited;
 end;
 
-procedure oxTAboutWindow.AddLink(caption, link: string);
+procedure oxTAboutWindow.AddLink(caption, link: StdString);
 begin
    if(LinkCount > High(Links)) then
       exit;
