@@ -115,8 +115,11 @@ begin
    if(currentPath = oxPROJECT_TEMP_DIRECTORY) then
       exit(false);
 
-   {ignore directory if included in ignore lists}
+   {ignore folder if .noassets file is declared in it}
+   if FileUtils.Exists(fd.f.Name + DirectorySeparator + OX_NO_ASSETS_FILE) >= 0 then
+      exit(False);
 
+   {ignore directory if included in ignore lists}
    if(oxedAssets.ShouldIgnoreDirectory(currentPath)) then
       exit(False);
 
@@ -124,10 +127,6 @@ begin
    pp := oxedBuildAssets.CurrentPackage^.Paths.FindClosest(currentPath);
 
    if(pp <> nil) and (pp^.IsOptional()) then
-      exit(False);
-
-   {ignore folder if .noassets file is declared in it}
-   if FileUtils.Exists(fd.f.Name + DirectorySeparator + OX_NO_ASSETS_FILE) >= 0 then
       exit(False);
 end;
 
