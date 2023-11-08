@@ -1647,6 +1647,7 @@ begin
       exit(True);
 end;
 
+{$push}{$warn 5024 off}
 procedure dvUnitNotify({%H-}p: PDVar; {%H-}what: longword);
 begin
    if(processPath(currentValue)) then
@@ -1763,6 +1764,7 @@ begin
       end;
    end;
 end;
+{$pop}
 
 INITIALIZATION
    TFileTraverse.Initialize(Walker);
