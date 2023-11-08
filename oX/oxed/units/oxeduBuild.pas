@@ -1,8 +1,6 @@
 {
    oxeduBuild, oxed build system
    Copyright (C) 2017. Dejan Boras
-
-   TODO: Unify how symbols are added to configs (laz and fpc)
 }
 
 {$INCLUDE oxdefines.inc}
@@ -339,14 +337,14 @@ begin
    Result := BuildTarget <> OXED_BUILD_STANDALONE;
 end;
 
-function getRelativePath(const basePath: StdString; const unitFile: oxedTPackageUnit): string;
+function getRelativePath(const basePath: StdString; const unitPath: StdString): StdString;
 begin
-   Result := ExtractRelativepath(oxedBuild.WorkArea, basePath + ExtractFilePath(unitFile.Path));
+   Result := ExtractRelativepath(oxedBuild.WorkArea, basePath + unitPath);
 end;
 
-function getAbsolutePath(const basePath: StdString; const unitFile: oxedTPackageUnit): string;
+function getAbsolutePath(const basePath: StdString; const unitPath: StdString): StdString;
 begin
-   Result := basePath + ExtractFilePath(unitFile.Path);
+   Result := basePath + unitPath;
 end;
 
 function getSymbols(): TSimpleStringList;
@@ -393,13 +391,13 @@ var
    idx: loopint;
 
 begin
-   for idx := 0 to p.Units.n - 1 do begin
-      relativePath := getRelativePath(path, p.Units.List[idx]);
+   for idx := 0 to p.UnitPaths.n - 1 do begin
+      relativePath := getRelativePath(path, p.UnitPaths.List[idx]);
       f.AddUnitPath(relativePath);
    end;
 
-   for idx := 0 to p.IncludeFiles.n - 1 do begin
-      relativePath := getRelativePath(path, p.IncludeFiles.List[idx]);
+   for idx := 0 to p.IncludePaths.n - 1 do begin
+      relativePath := getRelativePath(path, p.IncludePaths.List[idx]);
       f.AddIncludePath(relativePath);
    end;
 end;
@@ -496,8 +494,6 @@ begin
    if(package.IsEmpty()) then
       exit;
 
-   {TODO: Make sure to not include duplicate paths}
-
    config.Add('');
    if(@package <> @oxedProject.MainPackage) then
       config.Add('# Package: ' + package.Name)
@@ -507,12 +503,12 @@ begin
    config.Add('# Path: ' + path);
    config.Add('');
 
-   for i := 0 to package.Units.n - 1 do begin;
-      config.Add('-Fu' + getAbsolutePath(path, package.Units.List[i]));
+   for i := 0 to package.UnitPaths.n - 1 do begin;
+      config.Add('-Fu' + getAbsolutePath(path, package.UnitPaths.List[i]));
    end;
 
-   for i := 0 to package.IncludeFiles.n - 1 do begin;
-      config.Add('-Fi' + getAbsolutePath(path, package.IncludeFiles.List[i]));
+   for i := 0 to package.IncludePaths.n - 1 do begin;
+      config.Add('-Fi' + getAbsolutePath(path, package.IncludePaths.List[i]));
    end;
 end;
 
