@@ -84,6 +84,7 @@ TYPE
 
    PFileTraverse = ^TFileTraverse;
 
+   PFileTraverseData = ^TFileTraverseData;
    TFileTraverseData = record
       Traverse: PFileTraverse;
       ExternalData: Pointer;
@@ -165,6 +166,8 @@ TYPE
 
       {copy a file from source to destination}
       class function Copy(const source, destination: StdString): longint; static;
+      {copy a file from source to destination}
+      class function CopyDirectory(const source, destination: StdString): longint; static;
 
       {normalize path, correct directory separators and replace special characters}
       class procedure NormalizePath(var s: StdString); static;
@@ -211,6 +214,34 @@ TYPE
       procedure GetFileInfo(const fn: StdString; out f: TFileDescriptor);
    end;
 
+   PDirectoryCopierData = ^TDirectoryCopierData;
+   PDirectoryCopier = ^TDirectoryCopier;
+
+   TDirectoryCopierData = record
+      TraverseData: PFileTraverseData;
+      Copier: PDirectoryCopier;
+      ExternalData: pointer;
+   end;
+
+   { TDirectoryCopier }
+
+   TDirectoryCopier = record
+      Walker: TFileTraverse;
+      {your own external data}
+      ExternalData: Pointer;
+
+      {called when a file is found with matching extension (if any), if returns false traversal is stopped}
+      OnFile: function(const f: TDirectoryCopierData): boolean;
+      OnDirectory: function(const f: TDirectoryCopierData): boolean;
+
+      Source,
+      Destination: StdString;
+
+      function Copy(const sourceDir, destinationDir: StdString): loopint;
+
+      class procedure Initialize(out copier: TDirectoryCopier); static;
+   end;
+
 VAR
    HomePath: StdString;
    FileUtils: TFileUtilsGlobal;
@@ -219,6 +250,86 @@ VAR
 procedure FileSetTextBuf(var f: text; {%H-}out buf); [INTERNPROC:fpc_in_settextbuf_file_x];
 
 IMPLEMENTATION
+
+function copyOnDirectory(const f: TFileTraverseData): boolean;
+var
+   data: PDirectoryCopier;
+   cd: TDirectoryCopierData;
+
+begin
+   data := f.ExternalData;
+   Result := true;
+
+   if(data^.OnFile <> nil) then begin
+      cd.ExternalData := data^.ExternalData;
+      cd.Copier := data;
+      cd.TraverseData := @f;
+
+      Result := data^.OnDirectory(cd);
+
+      if(Result) then begin
+         {TODO: Create target directory}
+      end;
+   end;
+end;
+
+function copyOnFile(const f: TFileTraverseData): boolean;
+var
+   data: PDirectoryCopier;
+   cd: TDirectoryCopierData;
+
+begin
+   data := f.ExternalData;
+   Result := true;
+
+   if(data^.OnFile <> nil) then begin
+      cd.ExternalData := data^.ExternalData;
+      cd.Copier := data;
+      cd.TraverseData := @f;
+
+      Result := data^.OnFile(cd);
+
+      if(Result) then begin
+         {TODO: Copy file}
+      end;
+   end;
+end;
+
+{ TDirectoryCopier }
+
+function TDirectoryCopier.Copy(const sourceDir, destinationDir: StdString): loopint;
+begin
+   Result := 0;
+
+   Source := sourceDir;
+   Destination := destinationDir;
+
+   if DirectoryExists(source) then begin
+      {create target directory}
+      if CreateDir(Destination) then begin
+         Walker.ExternalData := @Self;
+         Walker.OnFile := @copyOnFile;
+         Walker.OnDirectory := @copyOnDirectory;
+
+         Walker.Run(sourceDir);
+      end else
+         Result := eIO
+   end else
+      {no source directory, nothing to do}
+      Result := eNOT_FOUND;
+
+   ioErrorIgn();
+end;
+
+class procedure TDirectoryCopier.Initialize(out copier: TDirectoryCopier);
+begin
+   TFileTraverse.Initialize(copier.Walker);
+   copier.ExternalData := nil;
+   copier.Source := '';
+   copier.Destination := '';
+   copier.OnFile := nil;
+   copier.OnDirectory := nil;
+end;
 
 { TFileDescriptor }
 
@@ -520,6 +631,16 @@ begin
 
    Close(sF);
    ioErrorIgn();
+end;
+
+class function TFileUtilsGlobal.CopyDirectory(const source, destination: StdString): longint;
+var
+   copier: TDirectoryCopier;
+
+begin
+   TDirectoryCopier.Initialize(copier);
+
+   Result := copier.Copy(source, Destination);
 end;
 
 class procedure TFileUtilsGlobal.NormalizePath(var s: StdString);
