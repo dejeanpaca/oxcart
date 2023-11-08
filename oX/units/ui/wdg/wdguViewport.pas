@@ -74,7 +74,6 @@ begin
    inherited Create();
 
    oxTViewport.Create(Viewport);
-   Viewport.ClearColor.Assign(0.2, 0.2, 0.2, 1.0);
 
    AutoProjectionName := true;
    AlwaysClear := true;
