@@ -183,8 +183,7 @@ end;
 
 procedure InitWidget();
 begin
-   wdgImage.Internal.Instance := wdgTImage;
-   wdgImage.Internal.Done();
+   wdgImage.Internal.Done(wdgTImage);
 
    wdgImage := wdgTImageGlobal.Create(wdgImage.Internal);
 end;

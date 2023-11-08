@@ -34,8 +34,7 @@ IMPLEMENTATION
 
 procedure initializeWidget();
 begin
-   wdgBlock.Internal.Instance := wdgTBlock;
-   wdgBlock.Internal.Done();
+   wdgBlock.Internal.Done(wdgTBlock);
 
    wdgBlock := wdgTBlockGlobal.Create(wdgBlock.Internal);
 end;

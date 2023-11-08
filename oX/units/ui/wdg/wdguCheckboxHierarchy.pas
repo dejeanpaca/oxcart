@@ -52,8 +52,7 @@ IMPLEMENTATION
 
 procedure InitWidget();
 begin
-   wdgCheckboxHierarchy.Internal.Instance := wdgTCheckboxHierarchy;
-   wdgCheckboxHierarchy.Internal.Done();
+   wdgCheckboxHierarchy.Internal.Done(wdgTCheckboxHierarchy);
 
    wdgCheckboxHierarchy := wdgTCheckboxHierarchyGlobal.Create(wdgCheckboxHierarchy.Internal);
 end;

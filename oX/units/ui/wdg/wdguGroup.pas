@@ -95,8 +95,7 @@ end;
 procedure InitWidget();
 begin
    wdgGroup.Internal.NonSelectable := true;
-   wdgGroup.Internal.Instance := wdgTGroup;
-   wdgGroup.Internal.Done();
+   wdgGroup.Internal.Done(wdgTGroup);
 
    wdgGroup := wdgTGroupGlobal.Create(wdgGroup.Internal);
 end;

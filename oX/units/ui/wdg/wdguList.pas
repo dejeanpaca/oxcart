@@ -1574,16 +1574,14 @@ end;
 
 procedure InitWidget();
 begin
-   wdgList.Internal.Instance := wdgTList;
-   wdgList.Internal.Done();
+   wdgList.Internal.Done(wdgTList);
 
    wdgList := wdgTListGlobal.Create(wdgList.Internal);
 end;
 
 procedure InitStringWidget();
 begin
-   wdgStringList.Internal.Instance := wdgTStringList;
-   wdgStringList.Internal.Done();
+   wdgStringList.Internal.Done(wdgTStringList);
 
    wdgStringList := wdgTStringListGlobal.Create(wdgStringList.Internal);
 end;

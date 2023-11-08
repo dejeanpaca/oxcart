@@ -137,8 +137,7 @@ end;
 
 procedure InitWidget();
 begin
-   wdgRadioButton.Internal.Instance := wdgTRadioButton;
-   wdgRadioButton.Internal.Done();
+   wdgRadioButton.Internal.Done(wdgTRadioButton);
 
    wdgRadioButton := wdgTRadioButtonGlobal.Create(wdgRadioButton.Internal);
 end;

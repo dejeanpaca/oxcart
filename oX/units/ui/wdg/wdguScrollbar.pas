@@ -644,8 +644,7 @@ end;
 
 procedure InitWidget();
 begin
-   wdgScrollbar.Internal.Instance := wdgTScrollbar;
-   wdgScrollbar.Internal.Done();
+   wdgScrollbar.Internal.Done(wdgTScrollbar);
 
    wdgScrollbar := wdgTScrollbarGlobal.Create(wdgScrollbar.Internal);
 end;

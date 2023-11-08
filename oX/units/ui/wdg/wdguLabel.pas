@@ -198,8 +198,7 @@ end;
 procedure InitWidget();
 begin
    wdgLabel.Internal.NonSelectable := true;
-   wdgLabel.Internal.Instance := wdgTLabel;
-   wdgLabel.Internal.Done();
+   wdgLabel.Internal.Done(wdgTLabel);
 
    wdgLabel := wdgTLabelGlobal.Create(wdgLabel.Internal);
 end;

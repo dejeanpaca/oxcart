@@ -257,9 +257,8 @@ end;
 
 procedure InitWidget();
 begin
-   wdgButton.Internal.Instance := wdgTButton;
-   wdgButton.Internal.skinDescriptor := @wdgButtonSkinDescriptor;
-   wdgButton.Internal.Done();
+   wdgButton.Internal.SkinDescriptor := @wdgButtonSkinDescriptor;
+   wdgButton.Internal.Done(wdgTButton);
 
    wdgButton := wdgTButtonGlobal.Create(wdgButton.Internal);
 end;

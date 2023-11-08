@@ -112,16 +112,14 @@ CONST
 
 procedure initializeWidget();
 begin
-   wdgDropDownList.Internal.Instance := wdgTDropDownList;
-   wdgDropDownList.Internal.Done();
+   wdgDropDownList.Internal.Done(wdgTDropDownList);
 
    wdgDropDownList := wdgTDropDownListGlobal.Create(wdgDropDownList.Internal);
 end;
 
 procedure initializeMenuWidget();
 begin
-   wdgDropDownListMenu.Internal.Instance := wdgTDropDownListMenu;
-   wdgDropDownListMenu.Internal.Done();
+   wdgDropDownListMenu.Internal.Done(wdgTDropDownListMenu);
 
    wdgDropDownListMenu := wdgTDropDownListMenuGlobal.Create(wdgDropDownListMenu.Internal);
 end;

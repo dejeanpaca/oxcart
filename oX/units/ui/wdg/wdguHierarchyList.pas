@@ -113,8 +113,7 @@ IMPLEMENTATION
 
 procedure InitWidget();
 begin
-   wdgHierarchyList.Internal.Instance := wdgTHierarchyList;
-   wdgHierarchyList.Internal.Done();
+   wdgHierarchyList.Internal.Done(wdgTHierarchyList);
 
    wdgHierarchyList := wdgTHierarchyListGlobal.Create(wdgHierarchyList.Internal);
 end;
