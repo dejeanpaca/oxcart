@@ -24,6 +24,7 @@ TYPE
       procedure OnInitialize(); virtual;
       function PreInitWindow({%H-}wnd: oglTWindow): boolean; virtual;
       procedure OnInitWindow({%H-}wnd: oglTWindow); virtual;
+      procedure OnDeInitWindow({%H-}wnd: oglTWindow); virtual;
       procedure SwapBuffers({%H-}wnd: oglTWindow); virtual;
       function GetContext({%H-}wnd: oglTWindow; {%H-}shareContext: oglTRenderingContext): oglTRenderingContext; virtual;
       function ContextCurrent({%H-}wnd: oglTWindow; {%H-}context: oglTRenderingContext): boolean; virtual;
@@ -51,6 +52,11 @@ begin
 end;
 
 procedure oxglTPlatform.OnInitWindow(wnd: oglTWindow);
+begin
+
+end;
+
+procedure oxglTPlatform.OnDeInitWindow(wnd: oglTWindow);
 begin
 
 end;
