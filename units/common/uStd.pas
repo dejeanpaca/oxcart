@@ -62,8 +62,6 @@ TYPE
    generic TPreallocatedArrayList<T> = record
       {step to increment the list size by}
       Increment: loopint;
-      {should memory be initialized when allocation is done}
-      InitializeMemory: boolean;
 
       {elements in the list}
       n,
@@ -673,40 +671,26 @@ end;
 { TPreallocatedArrayList }
 
 procedure TPreallocatedArrayList.Allocate(count: loopint);
-var
-   pa: loopint;
-
 begin
    assert(Increment <> 0, 'Increment is zero for preallocated list');
    assert(count <> 0, 'Tried to allocate 0 elements');
 
-   pa := a;
    a := count;
 
    if(n > a) then
       n := a;
 
    SetLength(List, a);
-
-   {initialize memory}
-   if(InitializeMemory) then begin
-      if(pa = 0) then
-         ZeroPtr(@List[0], SizeOf(T) * (count))
-      else if(pa < a) then
-         ZeroPtr(@List[pa], SizeOf(T) * (a - pa))
-   end;
 end;
 
 procedure TPreallocatedArrayList.AllocateInc(count: loopint);
 var
-   pa,
    remainder: loopint;
 
 begin
    assert(Increment <> 0, 'Increment is zero for preallocated list');
    assert(count <> 0, 'Tried to allocate 0 elements');
 
-   pa := a;
    inc(a, count);
 
    if(Increment > 0) then begin
@@ -719,10 +703,6 @@ begin
    SetLength(List, a);
 
    assert((a = Length(List)) and (a <> 0), 'Preallocated list has invalid length');
-
-   {initialize memory}
-   if(InitializeMemory) then
-      ZeroPtr(@List[pa], SizeOf(T) * (a - pa));
 end;
 
 procedure TPreallocatedArrayList.RequireAllocate(count: loopint);
@@ -877,7 +857,6 @@ begin
    ZeroPtr(@what, SizeOf(what));
 
    what.Increment := setIncrement;
-   what.InitializeMemory := true;
 end;
 
 class procedure TPreallocatedArrayList.InitializeEmpty(out what: specialize TPreallocatedArrayList<T>);
@@ -885,7 +864,6 @@ begin
    ZeroPtr(@what, SizeOf(what));
 
    what.Increment :=  DefaultPreallocatedArrayAllocationIncrement;
-   what.InitializeMemory := true;
 end;
 
 class procedure TPreallocatedArrayList.InitializeValues(out what: specialize TPreallocatedArrayList<T>; setIncrement: loopint);
@@ -896,7 +874,6 @@ begin
    assert(setIncrement > 0, 'Invalid value provided for preallocated list increment');
 
    what.Increment := setIncrement;
-   what.InitializeMemory := True;
 end;
 
 function TPreallocatedArrayList.GetElement(i: loopint): T;
