@@ -537,9 +537,6 @@ function vmxAngle(const v1, v2: TVector4): double; {$IFDEF VM_INLINE}inline;{$EN
 procedure vmRotateAroundPoint(angle, x, y, z: single; point: TVector3;
       var vector: TVector3); {$IFDEF VM_INLINE}inline;{$ENDIF}
 
-{return forward(pointing vector) from rotation (in degrees)}
-function vmForwardFromRotation(const rotation: TVector3f): TVector3f;
-
 { SPHERE }
 
 {convert a vector given in sphere coordinates to cartesian coordinates}
@@ -1102,21 +1099,6 @@ begin
 
    {add the new view to the position to rotate}
    vector := point + vNewPos;
-end;
-
-function vmForwardFromRotation(const rotation: TVector3f): TVector3f;
-var
-   pitch, yaw: single;
-
-begin
-   pitch := rotation[0] * vmcToRad;
-   yaw := rotation[1] * vmcToRad;
-
-   Result[0] := sin(yaw) * cos(pitch);
-   Result[1] := sin(pitch);
-   Result[2] := cos(yaw) * cos(pitch);
-
-   Result.Normalize();
 end;
 
 { SPHERE }
