@@ -74,7 +74,7 @@ CONST
    ALLOCATE_STEP = 64;
 
 TYPE
-   ypkTFilesystem = specialize TPreallocatedArrayList<ypkPFSFile>;
+   ypkTFilesystem = specialize TSimpleList<ypkPFSFile>;
 
 VAR
    filesystem: ypkTFilesystem;

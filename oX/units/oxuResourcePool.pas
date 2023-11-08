@@ -20,7 +20,7 @@ CONST
 TYPE
    { oxTResourcePool }
 
-   oxTResourcePool = class(oxTPreallocatedResourceArrayListClass)
+   oxTResourcePool = class(oxTSimpleResourceListClass)
       Name: string;
 
       constructor Create(); override;

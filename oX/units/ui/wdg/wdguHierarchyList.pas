@@ -30,7 +30,7 @@ TYPE
       Level: longint;
    end;
 
-   wdgTPreallocatedHierarchyListItems = specialize TSimpleList<wdgTHierarchyListItem>;
+   wdgTSimpleHierarchyListItems = specialize TSimpleList<wdgTHierarchyListItem>;
 
    { wdgTHierarchyList }
 
@@ -90,7 +90,7 @@ TYPE
 
       protected
          {visible items}
-         Visible: wdgTPreallocatedHierarchyListItems;
+         Visible: wdgTSimpleHierarchyListItems;
          {width of the current font character}
          FontWidth: loopint;
 

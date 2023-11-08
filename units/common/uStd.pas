@@ -746,7 +746,7 @@ end;
 
 procedure TSimpleList.Allocate(count: loopint);
 begin
-   assert(Increment <> 0, 'Increment is zero for preallocated list');
+   assert(Increment <> 0, 'Increment is zero for simple list');
    assert(count <> 0, 'Tried to allocate 0 elements');
 
    a := count;
@@ -762,7 +762,7 @@ var
    remainder: loopint;
 
 begin
-   assert(Increment <> 0, 'Increment is zero for preallocated list');
+   assert(Increment <> 0, 'Increment is zero for simple list');
    assert(count <> 0, 'Tried to allocate 0 elements');
 
    inc(a, count);
@@ -776,7 +776,7 @@ begin
 
    SetLength(List, a);
 
-   assert((a = Length(List)) and (a <> 0), 'Preallocated list has invalid length');
+   assert((a = Length(List)) and (a <> 0), 'simple list has invalid length');
 end;
 
 procedure TSimpleList.RequireAllocate(count: loopint);
@@ -832,7 +832,7 @@ end;
 
 function TSimpleList.AddTo(var p: T): boolean;
 begin
-   assert(Increment <> 0, 'Increment is zero for preallocated list');
+   assert(Increment <> 0, 'Increment is zero for simple list');
 
    inc(n);
 
@@ -952,7 +952,7 @@ begin
    if(setIncrement = -1) then
       setIncrement := DefaultSimpleListAllocationIncrement;
 
-   assert(setIncrement > 0, 'Invalid value provided for preallocated list increment');
+   assert(setIncrement > 0, 'Invalid value provided for simple list increment');
 
    ZeroPtr(@what, SizeOf(what));
 
@@ -971,7 +971,7 @@ begin
    if(setIncrement = -1) then
       setIncrement := DefaultSimpleListAllocationIncrement;
 
-   assert(setIncrement > 0, 'Invalid value provided for preallocated list increment');
+   assert(setIncrement > 0, 'Invalid value provided for simple list increment');
 
    what.Increment := setIncrement;
 end;

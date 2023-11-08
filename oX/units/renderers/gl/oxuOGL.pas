@@ -58,7 +58,7 @@ TYPE
 
    {$IFDEF X11}
    {glx attributes array}
-   TXAttrIntPreallocatedArray = specialize TSimpleList<XAttrInt>;
+   TXAttrIntSimpleList = specialize TSimpleList<XAttrInt>;
    {$ENDIF}
 
    { oglTWindow }
@@ -70,7 +70,7 @@ TYPE
 
       {$IFDEF X11}
       fbConfig: TGLXFBConfig;
-      glxAttribs: TXAttrIntPreallocatedArray;
+      glxAttribs: TXAttrIntSimpleList;
       {$ENDIF}
 
       glProperties: record

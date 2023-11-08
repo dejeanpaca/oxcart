@@ -36,7 +36,7 @@ IMPLEMENTATION
 
 function oxglTCocoaGlobal.PreInitWindow(wnd: oglTWindow): boolean;
 var
-   Attributes: specialize TPreallocatedArrayList<NSOpenGLPixelFormatAttribute>;
+   Attributes: specialize TSimpleList<NSOpenGLPixelFormatAttribute>;
 
 begin
    ZeroOut(Attributes, SizeOf(Attributes));

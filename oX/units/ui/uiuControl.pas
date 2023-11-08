@@ -188,7 +188,7 @@ TYPE
       procedure SetupUnusableSize(); virtual;
    end;
 
-   uiTPreallocatedControlList = specialize TSimpleList<uiTControl>;
+   uiTSimpleControlList = specialize TSimpleList<uiTControl>;
 
    { uiTControlGlobal }
 

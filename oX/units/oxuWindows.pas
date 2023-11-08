@@ -65,7 +65,7 @@ TYPE
       end;
 
       {list of external windows}
-      ExternalWindows: uiTPreallocatedControlList;
+      ExternalWindows: uiTSimpleControlList;
 
       procedure Create();
 

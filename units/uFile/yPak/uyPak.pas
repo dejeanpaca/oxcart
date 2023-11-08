@@ -50,7 +50,7 @@ TYPE
       fn: string[ypkMAX_FN_LENGTH];
    end;
 
-   ypkTEntries = specialize TPreallocatedArrayList<ypkTEntry>;
+   ypkTEntries = specialize TSimpleList<ypkTEntry>;
 
    ypkTGlobal = record
       error: longint;

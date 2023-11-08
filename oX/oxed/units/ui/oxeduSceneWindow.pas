@@ -85,11 +85,11 @@ TYPE
       procedure RPositionChanged; override;
    end;
 
-   oxedTPreallocatedSceneWindowsList = specialize TSimpleList<oxedTSceneWindow>;
+   oxedTSimpleSceneWindowsList = specialize TSimpleList<oxedTSceneWindow>;
 
    oxedTSceneWindowsGlobal = record
       LastSelectedWindow: oxedTSceneWindow;
-      List: oxedTPreallocatedSceneWindowsList;
+      List: oxedTSimpleSceneWindowsList;
    end;
 
 VAR

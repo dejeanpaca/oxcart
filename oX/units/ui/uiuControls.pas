@@ -21,7 +21,7 @@ TYPE
    uiTControls = record
       public
       s: loopint;
-      w: uiTPreallocatedControlList;
+      w: uiTSimpleControlList;
       z: uiTZOrder;
 
       procedure Initialize();
@@ -39,7 +39,7 @@ TYPE
       function Exists(what: uiTControl): loopint;
    end;
 
-   uiTPreallocatedControlList = specialize TSimpleList<uiTControl>;
+   uiTSimpleControlList = specialize TSimpleList<uiTControl>;
 
 IMPLEMENTATION
 

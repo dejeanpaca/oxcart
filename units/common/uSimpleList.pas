@@ -69,11 +69,11 @@ TYPE
       function GetLast(): pointer;
    end;
 
-   TPreallocatedObjectsArrayListObject = specialize TSimpleListClass<TObject>;
+   TSimpleObjectsList = specialize TSimpleListClass<TObject>;
 
 IMPLEMENTATION
 
-{ TPreallocatedArrayListClass }
+{ TSimpleListClass }
 
 constructor TSimpleListClass.Create();
 begin
@@ -82,7 +82,7 @@ end;
 
 procedure TSimpleListClass.Allocate(count: loopint);
 begin
-   assert(Increment <> 0, 'Increment is zero for preallocated list');
+   assert(Increment <> 0, 'Increment is zero for simple list');
    assert(count <> 0, 'Tried to allocate 0 elements');
 
    a := count;
@@ -98,7 +98,7 @@ var
    remainder: loopint;
 
 begin
-   assert(Increment <> 0, 'Increment is zero for preallocated list');
+   assert(Increment <> 0, 'Increment is zero for simple list');
    assert(count <> 0, 'Tried to allocate 0 elements');
 
    inc(a, count);
@@ -112,7 +112,7 @@ begin
 
    SetLength(List, a);
 
-   assert((a = Length(List)) and (a <> 0), 'Preallocated list has invalid length');
+   assert((a = Length(List)) and (a <> 0), 'Simple list has invalid length');
 end;
 
 procedure TSimpleListClass.RequireAllocate(count: loopint);
@@ -168,7 +168,7 @@ end;
 
 function TSimpleListClass.AddTo(var p: T): boolean;
 begin
-   assert(Increment <> 0, 'Increment is zero for preallocated list');
+   assert(Increment <> 0, 'Increment is zero for simple list');
 
    inc(n);
 
@@ -181,7 +181,7 @@ end;
 
 function TSimpleListClass.Add(p: T): boolean;
 begin
-   assert(Increment <> 0, 'Increment is zero for preallocated list');
+   assert(Increment <> 0, 'Increment is zero for simples list');
 
    inc(n);
 
