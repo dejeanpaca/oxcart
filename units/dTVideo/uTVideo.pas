@@ -402,6 +402,8 @@ TYPE
       {clears the area set by limitation dimensions}
       procedure Clear();
 
+      procedure Update(force: boolean = false);
+
       {plotting functions | various overloaded versions to ensure useability in any occasion}
       procedure Plot(x, y: longint; ch: char);
       procedure Plot(x: longint; ch: char);
@@ -1895,6 +1897,11 @@ begin
          position := position + ((Dimensions.x) * 2);
       end;
    end;
+end;
+
+procedure TVideoWindow.Update(force: boolean);
+begin
+   UpdateScreen(force);
 end;
 
 procedure TVideoWindow.SetClearColor(clr: byte);
