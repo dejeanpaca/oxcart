@@ -111,8 +111,11 @@ end;
 INITIALIZATION
    oxwndSplash.OnInit.Add(@InitSplash);
    oxwndSplash.ShowBuildInformation := true;
-   oxui.initializationProcs.dAdd('oxed.splash', @DeInitialize);
+
+   oxui.BaseInitializationProcs.dAdd('oxed.splash', @DeInitialize);
+
    oxedMenubar.OnInit.Add(@initMenu);
+
    oxedProjectManagement.OnProjectOpen.Add(@projectOpen);
    oxedProjectManagement.OnNewProject.Add(@projectOpen);
 

@@ -305,7 +305,7 @@ begin
 end;
 
 INITIALIZATION
-   oxui.initializationProcs.Add('skin', @Initialize, @DeInitialize);
+   oxui.BaseInitializationProcs.Add('skin', @Initialize, @DeInitialize);
 
 END.
 

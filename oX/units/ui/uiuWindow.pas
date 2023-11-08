@@ -2523,7 +2523,7 @@ INITIALIZATION
    uiWindow.NextWindowKey.Assign(kcTAB, kmCONTROL);
    uiWindow.PreviousWindowKey.Assign(kcTAB, kmCONTROL or kmSHIFT);
 
-   oxui.InitializationProcs.Add('window', @Initialize, @DeInitialize);
+   oxui.BaseInitializationProcs.Add('window', @Initialize, @DeInitialize);
 
    {events}
    uiWindow.evhp := appEvents.AddHandler(uiWindow.evh, 'ox.uiwindow', @actionHandler);

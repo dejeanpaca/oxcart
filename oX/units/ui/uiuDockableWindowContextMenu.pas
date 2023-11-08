@@ -100,7 +100,7 @@ begin
 end;
 
 INITIALIZATION
-   oxui.InitializationProcs.Add('ui.dockable_window', @init, @deinit);
+   oxui.BaseInitializationProcs.Add('ui.dockable_window', @init, @deinit);
 
    {self destroy windows by default}
    uiDockableWindow.SelfDestroy := true;

@@ -1477,7 +1477,7 @@ begin
    uiWidget.Init(self, CopyAfter(name, '.'));
 
    if(initProc <> nil) then
-      oxui.InitializationProcs.iAdd(name, initProc);
+      oxui.BaseInitializationProcs.iAdd(name, initProc);
 
    inc(oxui.nWidgetTypes);
 end;
@@ -1497,7 +1497,7 @@ end;
 INITIALIZATION
    uiWidget.evh := appEvents.AddHandler(uiWidget.EventHandler, 'ox.widget', @eventAction);
 
-   oxui.InitializationProcs.Add('widgets', @InitWidgets, @DeInitWidgets, 100);
+   oxui.BaseInitializationProcs.Add('widgets', @InitWidgets, @DeInitWidgets, 100);
    InitDummyWidgetClass();
 
 END.
