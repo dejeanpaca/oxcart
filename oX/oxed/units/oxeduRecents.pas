@@ -54,7 +54,7 @@ begin
    df.Write(parent, dvFile, oxedRecents.List.List, oxedRecents.List.n);
 end;
 
-procedure dvListFileNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure dvListFileNotify(var {%H-}context: TDVarNotificationContext);
 begin
    oxedRecents.Add(currentListFile);
 end;

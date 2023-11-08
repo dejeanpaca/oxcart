@@ -108,6 +108,8 @@ begin
          oxFilePreviewWindow.Show(GetFilePath(LastGridItemUnderPointer));
 
       Result := true;
+   end else  if(k.Key.Equal(kcF2)) then begin
+      // rename
    end else
       Result := inherited Key(k);
 end;

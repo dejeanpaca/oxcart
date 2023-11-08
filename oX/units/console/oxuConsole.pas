@@ -744,7 +744,7 @@ begin
    df.Write(parent, dvHistory, oxConsole.Console.History.Entries.List, oxConsole.Console.History.Entries.n);
 end;
 
-procedure dvHistoryNotify({%H-}p: PDVar; {%H-}what: longword);
+procedure dvHistoryNotify(var {%H-}context: TDVarNotificationContext);
 begin
    if(not StringUtils.IsWhitespace(currentHistory)) then
       oxConsole.Console.AddHistory(currentHistory);
