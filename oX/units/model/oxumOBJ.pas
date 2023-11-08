@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uLog, StringUtils, uFileHandlers, vmVector, uFile, uFiles, uColors,
       {oX}
-      oxuTypes,
+      oxuTypes, oxuPaths,
       oxuFile, oxuMaterial, oxuModel, oxuModelFile, oxuMesh, oxuSerializationString, oxuPrimitives;
 
 IMPLEMENTATION
@@ -60,15 +60,19 @@ var
 
 begin
    matfn := IncludeTrailingPathDelimiterNonEmpty(ExtractFilePath(data.FileName)) + materialLib;
+   matfn := oxPaths.Find(matfn);
+
    m := nil;
 
    fFile.Init(matf);
    matf.Open(matfn);
+
    if(matf.Error = 0) then begin
       repeat
          matf.Readln(s);
 
          GetKeyValue(s, key, value, ' ');
+
          if(key = 'newmtl') then begin
             m := oxMaterial.Make();
             inc(ld.MaterialCount);
@@ -129,7 +133,7 @@ begin
 
       matf.Close();
    end else
-      data.SetError(matf.Error);
+      data.SetError(matf.Error, 'Failed to read materials file: ' + matf.GetErrorString());
 end;
 
 procedure scan(var data: oxTFileRWData; var ld: TLoaderData);
@@ -191,6 +195,7 @@ begin
       inc(lineCount);
 
       GetKeyValue(s, key, value, ' ');
+
       if(key = 'mtllib') then begin
          loadMaterials(data, ld, value);
       end else begin
@@ -549,155 +554,151 @@ begin
 
       GetKeyValue(s, key, value, ' ');
 
-      if(key = 'matlib') then
-         loadMaterials(data, ld, value)
-      else begin
-         if(key = 'o') then begin
-            materialDone();
-            meshDone();
 
-            if(meshIndex < ld.Model.Meshes.n) then begin
-               m := @ld.Model.Meshes.List[meshIndex];
-               vertsPerFace := m^.Data.nVertsPerFace;
+      if(key = 'o') then begin
+         materialDone();
+         meshDone();
 
-               if(m^.Materials.n > 0) then
-                  m^.Materials.SetSize(m^.Materials.n);
-            end else begin
-               m := nil;
-               data.SetError('Improperly scanned number of meshes');
-               break;
+         if(meshIndex < ld.Model.Meshes.n) then begin
+            m := @ld.Model.Meshes.List[meshIndex];
+            vertsPerFace := m^.Data.nVertsPerFace;
+
+            if(m^.Materials.n > 0) then
+               m^.Materials.SetSize(m^.Materials.n);
+         end else begin
+            m := nil;
+            data.SetError('Improperly scanned number of meshes');
+            break;
+         end;
+
+         m^.Name := value;
+
+         inc(meshIndex);
+         wasUseMtl := false;
+      end else if(m <> nil) then begin
+         if(key = 'v') then begin
+            if(vertexIndex < m^.Data.nVertices) then begin
+               if(not oxsSerialization.Deserialize(value, m^.Data.v[vertexIndex])) then begin
+                  m^.Data.v[vertexIndex] := vmvZero3f;
+                  data.SetError(eINVALID, 'Invalid vertex value: ' + value);
+               end;
+            end else
+               log.e('Vertex count exceed scanned value: ' + sf(m^.Data.nVertices));
+
+            inc(vertexIndex);
+            wasUseMtl := false;
+         end else if(key = 'vn') then begin
+            if(normalIndex < m^.Data.nNormals) then begin
+               if(not oxsSerialization.Deserialize(value, m^.Data.n[normalIndex])) then begin
+                  m^.Data.n[normalIndex] := vmvZero3f;
+                  data.SetError(eINVALID, 'Invalid normal value: ' + value);
+               end;
+            end else
+               log.e('Normal count exceed scanned value: ' + sf(m^.Data.nNormals));
+
+            inc(normalIndex);
+            wasUseMtl := false;
+         end else if(key = 'vt') then begin
+            if(texCoordIndex < m^.Data.nTexCoords) then begin
+               if(not oxsSerialization.Deserialize(value, m^.Data.t[texCoordIndex])) then begin
+                  m^.Data.t[texCoordIndex] := vmvZero2f;
+                  data.SetError(eINVALID, 'Invalid tex coord value: ' + value);
+               end;
+            end else
+               log.e('Tex coord count exceed scanned value: ' + sf(m^.Data.nTexCoords));
+
+            inc(texCoordIndex);
+            wasUseMtl := false;
+         end else if(key = 'f') then begin
+            facePointCount := CharacterCount(value, ' ') + 1;
+
+            {get individual face points as a string}
+            strExplode(value, ' ', faceStrings, facePointCount);
+
+            {initialize structure if we're at the first face}
+            if(currentFace = 0) then begin
+               strExplode(faceStrings[0], '/', indiceStrings, 3);
+
+               hasUV := indiceStrings[1] <> '';
+               hasN := indiceStrings[2] <> '';
+
+               iCurrentOffset := 0;
+
+               ivOffset := getOffset();
+
+               if(hasUV) then
+                 iuvOffset := getOffset()
+              else
+                 iuvOffset := -1;
+
+               if(hasN) then
+                  inOffset := getOffset()
+               else
+                  inOffset := -1;
+
+               nIndices := iCurrentOffset;
+               SetLength(indices, iCurrentOffset);
             end;
 
-            m^.Name := value;
+            {get individual indices for each face point}
+            for i := 0 to facePointCount - 1 do begin
+               strExplode(faceStrings[i], '/', indiceStrings, 3);
 
-            inc(meshIndex);
-            wasUseMtl := false;
-         end else if(m <> nil) then begin
-            if(key = 'v') then begin
-               if(vertexIndex < m^.Data.nVertices) then begin
-                  if(not oxsSerialization.Deserialize(value, m^.Data.v[vertexIndex])) then begin
-                     m^.Data.v[vertexIndex] := vmvZero3f;
-                     data.SetError(eINVALID, 'Invalid vertex value: ' + value);
-                  end;
-               end else
-                  log.e('Vertex count exceed scanned value: ' + sf(m^.Data.nVertices));
+               face[i].v := getIndice(indiceStrings[0]);
 
-               inc(vertexIndex);
-               wasUseMtl := false;
-            end else if(key = 'vn') then begin
-               if(normalIndex < m^.Data.nNormals) then begin
-                  if(not oxsSerialization.Deserialize(value, m^.Data.n[normalIndex])) then begin
-                     m^.Data.n[normalIndex] := vmvZero3f;
-                     data.SetError(eINVALID, 'Invalid normal value: ' + value);
-                  end;
-               end else
-                  log.e('Normal count exceed scanned value: ' + sf(m^.Data.nNormals));
+               if(indiceStrings[1] <> '') then
+                  face[i].uv := getIndice(indiceStrings[1]);
 
-               inc(normalIndex);
-               wasUseMtl := false;
-            end else if(key = 'vt') then begin
-               if(texCoordIndex < m^.Data.nTexCoords) then begin
-                  if(not oxsSerialization.Deserialize(value, m^.Data.t[texCoordIndex])) then begin
-                     m^.Data.t[texCoordIndex] := vmvZero2f;
-                     data.SetError(eINVALID, 'Invalid tex coord value: ' + value);
-                  end;
-               end else
-                  log.e('Tex coord count exceed scanned value: ' + sf(m^.Data.nTexCoords));
+               if(indiceStrings[2] <> '') then
+                  face[i].n := getIndice(indiceStrings[2]);
+            end;
 
-               inc(texCoordIndex);
-               wasUseMtl := false;
-            end else if(key = 'f') then begin
-               facePointCount := CharacterCount(value, ' ') + 1;
+            if(facePointCount = 3) then begin
+               {we have a triangle}
+               setFacePoint(0, 0);
+               setFacePoint(1, 1);
+               setFacePoint(2, 2);
 
-               {get individual face points as a string}
-               strExplode(value, ' ', faceStrings, facePointCount);
+               inc(currentFace);
+            end else if(facePointCount = 4) then begin
+               {convert quads to tris}
+               setFacePoint(0, 0);
+               setFacePoint(1, 1);
+               setFacePoint(3, 2);
+               setFacePoint(3, 3);
+               setFacePoint(1, 4);
+               setFacePoint(2, 5);
 
-               {initialize structure if we're at the first face}
-               if(currentFace = 0) then begin
-                  strExplode(faceStrings[0], '/', indiceStrings, 3);
+               inc(currentFace, 2);
+            end else begin
+               for i := 2 to facePointCount - 1  do begin
+                  index := i - 2;
 
-                  hasUV := indiceStrings[1] <> '';
-                  hasN := indiceStrings[2] <> '';
-
-                  iCurrentOffset := 0;
-
-                  ivOffset := getOffset();
-
-                  if(hasUV) then
-                    iuvOffset := getOffset()
-                 else
-                    iuvOffset := -1;
-
-                  if(hasN) then
-                     inOffset := getOffset()
-                  else
-                     inOffset := -1;
-
-                  nIndices := iCurrentOffset;
-                  SetLength(indices, iCurrentOffset);
-               end;
-
-               {get individual indices for each face point}
-               for i := 0 to facePointCount - 1 do begin
-                  strExplode(faceStrings[i], '/', indiceStrings, 3);
-
-                  face[i].v := getIndice(indiceStrings[0]);
-
-                  if(indiceStrings[1] <> '') then
-                     face[i].uv := getIndice(indiceStrings[1]);
-
-                  if(indiceStrings[2] <> '') then
-                     face[i].n := getIndice(indiceStrings[2]);
-               end;
-
-               if(facePointCount = 3) then begin
-                  {we have a triangle}
-                  setFacePoint(0, 0);
-                  setFacePoint(1, 1);
-                  setFacePoint(2, 2);
+                  {convert quads to tris}
+                  setFacePoint(index, 0);
+                  setFacePoint(index + 1, 1);
+                  setFacePoint(facePointCount - 1, 2);
 
                   inc(currentFace);
-               end else if(facePointCount = 4) then begin
-                  {convert quads to tris}
-                  setFacePoint(0, 0);
-                  setFacePoint(1, 1);
-                  setFacePoint(3, 2);
-                  setFacePoint(3, 3);
-                  setFacePoint(1, 4);
-                  setFacePoint(2, 5);
-
-                  inc(currentFace, 2);
-               end else begin
-                  for i := 2 to facePointCount - 1  do begin
-                     index := i - 2;
-
-                     {convert quads to tris}
-                     setFacePoint(index, 0);
-                     setFacePoint(index + 1, 1);
-                     setFacePoint(facePointCount - 1, 2);
-
-                     inc(currentFace);
-                  end;
                end;
+            end;
 
-               wasUseMtl := false;
-            end else if(key = 'usemtl') then begin
-               wasUseMtl := true;
-               materialName := value;
+            wasUseMtl := false;
+         end else if(key = 'usemtl') then begin
+            wasUseMtl := true;
+            materialName := value;
 
+            materialDone();
+            getMaterial();
+         end else if(key = 's') then begin
+            if(not wasUseMtl) then begin
                materialDone();
                getMaterial();
-            end else if(key = 's') then begin
-               if(not wasUseMtl) then begin
-                  materialDone();
-                  getMaterial();
-               end;
-
-               wasUseMtl := false;
             end;
+
+            wasUseMtl := false;
          end;
       end;
-
    until data.f^.EOF() or (data.f^.Error <> 0) or (data.Error <> 0);
 
    materialDone();
