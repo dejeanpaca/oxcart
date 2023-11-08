@@ -448,18 +448,10 @@ end;
 
 procedure TStandardLogHandler.Flush(log: PLog);
 begin
-   {$IFDEF LOG_THREAD_SAFE}
-   EnterCriticalSection(log^.LogCS);
-   {$ENDIF}
-
    if(log^.Ok()) then begin
       system.flush(log^.Fl^);
       StdError(log^);
    end;
-
-   {$IFDEF LOG_THREAD_SAFE}
-   LeaveCriticalSection(log^.LogCS);
-   {$ENDIF}
 end;
 
 procedure TStandardLogHandler.Writeln(logf: PLog; priority: longint; const s: StdString);
@@ -467,10 +459,6 @@ var
    timeString: StdString = '';
 
 begin
-   {$IFDEF LOG_THREAD_SAFE}
-   EnterCriticalSection(logf^.LogCS);
-   {$ENDIF}
-
    if(logf^.Ok()) then begin
       if(s <> '') then begin
          {construct a time string}
@@ -493,25 +481,14 @@ begin
       {check for errors}
       StdError(logf^);
    end;
-   {$IFDEF LOG_THREAD_SAFE}
-   LeaveCriticalSection(logf^.LogCS);
-   {$ENDIF}
 end;
 
 procedure TStandardLogHandler.WritelnRaw(log: PLog; const s: StdString);
 begin
-   {$IFDEF LOG_THREAD_SAFE}
-   EnterCriticalSection(log^.LogCS);
-   {$ENDIF}
-
    if(log^.Ok()) then begin
       system.writeln(log^.Fl^, s);
       StdError(log^);
    end;
-
-   {$IFDEF LOG_THREAD_SAFE}
-   LeaveCriticalSection(log^.LogCS);
-   {$ENDIF}
 end;
 
 procedure TStandardLogHandler.EnterSection(log: PLog; const s: StdString; collapsed: boolean);
@@ -559,10 +536,6 @@ var
    timeString: StdString = '';
 
 begin
-   {$IFDEF LOG_THREAD_SAFE}
-   EnterCriticalSection(logf^.LogCS);
-   {$ENDIF}
-
    if(logf^.Ok() {$IFDEF WINDOWS}and IsConsole{$ENDIF}) then begin
       if(s <> '') then begin
          {construct a time string}
@@ -588,24 +561,13 @@ begin
       end else
          system.writeln();
    end;
-
-   {$IFDEF LOG_THREAD_SAFE}
-   LeaveCriticalSection(logf^.LogCS);
-   {$ENDIF}
 end;
 
 procedure TConsoleLogHandler.WritelnRaw(log: PLog; const s: StdString);
 begin
-   {$IFDEF LOG_THREAD_SAFE}
-   EnterCriticalSection(log^.LogCS);
-   {$ENDIF}
-
-   if(log^.Ok() {$IFDEF WINDOWS}and IsConsole{$ENDIF}) then
+   if(log^.Ok() {$IFDEF WINDOWS}and IsConsole{$ENDIF}) then begin
       system.writeln(s);
-
-   {$IFDEF LOG_THREAD_SAFE}
-   LeaveCriticalSection(log^.LogCS);
-   {$ENDIF}
+   end;
 end;
 
 procedure TConsoleLogHandler.EnterSection(log: PLog; const s: StdString; collapsed: boolean);
@@ -888,9 +850,13 @@ begin
 
       Flush();
 
+      Flags.Opened := false;
+      Flags.Ok := false;
+      Flags.Closing := false;
+
       {close the file and set the state}
       Handler^.Close(@self);
-
+   end else begin
       Flags.Opened := false;
       Flags.Ok := false;
       Flags.Closing := false;
@@ -930,14 +896,15 @@ begin
 end;
 
 procedure TLog.DeInitialize();
+var
+   wasOk: boolean;
+
 begin
    {$IFNDEF NOLOG}
    Error := logeNONE;
 
    if(log.settings.HandleLogs <> false) and (Flags.Initialized) then begin
-      {$IFDEF LOG_THREAD_SAFE}
-      DoneCriticalSection(LogCS);
-      {$ENDIF}
+      wasOk := Flags.Ok;
 
       {if the file is opened try to close it}
       if(Flags.Opened) then begin
@@ -948,7 +915,13 @@ begin
       end;
 
       Flags.Initialized := false;
-      Flags.ok := false;
+      Flags.Ok := false;
+
+      {we can no longer use the CS}
+      {$IFDEF LOG_THREAD_SAFE}
+      if(wasOk) then
+         DoneCriticalSection(LogCS);
+      {$ENDIF}
    end;
    {$ENDIF}
 end;
@@ -956,17 +929,7 @@ end;
 function TLog.Ok(): boolean;
 begin
    {$IFNDEF NOLOG}
-   {$IFDEF LOG_THREAD_SAFE}
-   EnterCriticalSection(LogCS);
-   {$ENDIF}
-
    Result := Flags.Ok;
-
-   {$IFDEF LOG_THREAD_SAFE}
-   LeaveCriticalSection(LogCS);
-   {$ENDIF}
-   {$ELSE}
-   Result := false;
    {$ENDIF}
 end;
 
@@ -978,17 +941,15 @@ end;
 procedure TLog.SetErrorState(errorCode: longint);
 begin
    {$IFNDEF NOLOG}
-   {$IFDEF LOG_THREAD_SAFE}
-   EnterCriticalSection(LogCS);
-   {$ENDIF}
-
    Error       := errorCode;
    Flags.Error := true;
-   Flags.Ok    := false;
 
-   {$IFDEF LOG_THREAD_SAFE}
-   LeaveCriticalSection(LogCS);
+   {$IFNDEF NO_THREADS}
+   if(Flags.Ok) then
+      DoneCriticalSection(LogCS);
    {$ENDIF}
+
+   Flags.Ok    := false;
    {$ENDIF}
 end;
 
@@ -1045,14 +1006,24 @@ end;
 procedure TLog.Flush();
 begin
    {$IFNDEF NOLOG}
-   Handler^.Flush(@self);
+   if(Flags.Ok) then begin
+      {$IFDEF LOG_THREAD_SAFE}
+      EnterCriticalSection(LogCS);
+      {$ENDIF}
+
+      Handler^.Flush(@self);
+
+      {$IFDEF LOG_THREAD_SAFE}
+      LeaveCriticalSection(LogCS);
+      {$ENDIF}
+   end;
    {$ENDIF}
 end;
 
 procedure TLog.FlushChain();
 begin
    {$IFNDEF NOLOG}
-   Handler^.Flush(@Self);
+   Flush();
 
    if(ChainLog <> nil) then
       ChainLog^.FlushChain();
@@ -1168,7 +1139,7 @@ end;
 procedure TLog.Enter(const title: StdString; collapsed: boolean);
 begin
    {$IFNDEF NOLOG}
-   if(Flags.Initialized) then begin
+   if(Flags.Initialized and Flags.Ok) then begin
       Handler^.EnterSection(@self, title, collapsed);
       inc(SectionLevel);
       assert(SectionLevel < logcMAX_SECTIONS, 'Too many log sections, increase logcMAX_SECTIONS.');
@@ -1193,7 +1164,9 @@ procedure TLog.Leave();
 begin
    {$IFNDEF NOLOG}
    if(SectionLevel > 0) then begin
-      Handler^.LeaveSection(@self);
+      if(Flags.Ok) then
+         Handler^.LeaveSection(@self);
+
       dec(SectionLevel);
 
       if(ChainLog <> nil) then
@@ -1208,10 +1181,18 @@ procedure TLog.HandlerWriteln(priority: longint; const logString: StdString; noC
 begin
    {$IFNDEF NOLOG}
    if(Flags.Ok) then begin
+      {$IFDEF LOG_THREAD_SAFE}
+      EnterCriticalSection(LogCS);
+      {$ENDIF}
+
       Handler^.Writeln(@self, priority, logString);
 
       if(FlushOnWrite) then
          Handler^.Flush(@self);
+
+      {$IFDEF LOG_THREAD_SAFE}
+      LeaveCriticalSection(LogCS);
+      {$ENDIF}
    end;
 
    if(ChainLog <> nil) and (not noChainLog) then
@@ -1223,10 +1204,18 @@ procedure TLog.HandlerWritelnRaw(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
    if(Flags.Ok) then begin
+      {$IFDEF LOG_THREAD_SAFE}
+      EnterCriticalSection(LogCS);
+      {$ENDIF}
+
       Handler^.WritelnRaw(@self, logString);
 
       if(FlushOnWrite) then
          Handler^.Flush(@self);
+
+      {$IFDEF LOG_THREAD_SAFE}
+      LeaveCriticalSection(LogCS);
+      {$ENDIF}
    end;
    {$ENDIF}
 end;
