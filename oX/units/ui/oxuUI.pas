@@ -105,6 +105,7 @@ TYPE
       constructor Create();
 
       procedure Start();
+      procedure Done();
 
       function GetUseWindow(): uiTWindow;
       procedure SetUseWindow(wnd: uiTWindow);
@@ -238,6 +239,11 @@ begin
    oxui.Material.MarkPermanent();
 end;
 
+procedure oxTUI.Done();
+begin
+   oxResource.Free(oxui.Material);
+end;
+
 function oxTUI.GetUseWindow(): uiTWindow;
 begin
    if(oxui.UseWindow = nil) then
@@ -326,6 +332,7 @@ end;
 
 procedure deinit();
 begin
+   oxui.Done();
    oxRenderers.PostUseRoutines.Add(@onUse);
    FreeObject(oxui);
 end;
