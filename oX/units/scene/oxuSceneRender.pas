@@ -135,6 +135,9 @@ begin
    params.Projection := @projection;
 
    for i := 0 to (cameras.n - 1) do begin
+      if(not oxTEntity(cameras.List[i].Parent).Enabled) then
+         continue;
+
       cameraComponent := oxTCameraComponent(cameras.List[i]);
       params.Camera := @cameraComponent.Camera;
 
@@ -158,6 +161,9 @@ var
 begin
    for i := 0 to entities.n - 1 do begin
       params.Entity := oxTEntity(entities.List[i]);
+
+      if(not params.Entity.Enabled) then
+         continue;
 
       RenderEntity(params);
    end;
