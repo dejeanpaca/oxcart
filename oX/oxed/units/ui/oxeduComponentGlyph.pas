@@ -11,7 +11,7 @@ UNIT oxeduComponentGlyph;
 INTERFACE
 
    USES
-      uStd, uInit,
+      uStd,
       {ox}
       oxuComponent, oxuTexture, oxuDefaultTexture, oxuResourcePool,
       {oxed}

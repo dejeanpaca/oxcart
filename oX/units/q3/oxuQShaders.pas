@@ -12,7 +12,7 @@ UNIT oxuQShaders;
 
 INTERFACE
 
-   USES SysUtils, uStd, uLog, uColors, uInit,
+   USES SysUtils, uStd, uLog, uColors,
    {q3Parser}
    q3uParser, q3uShaders,
    {oX}

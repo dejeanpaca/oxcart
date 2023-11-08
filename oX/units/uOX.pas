@@ -11,7 +11,7 @@ UNIT uOX;
 INTERFACE
 
    USES
-      uStd, uInit, uAppInfo, udvars, oxuRunRoutines;
+      uStd, uAppInfo, udvars, oxuRunRoutines;
 
 CONST
    oxEngineName               = 'oX';

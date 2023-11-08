@@ -11,7 +11,7 @@ UNIT uOXED;
 INTERFACE
 
    USES
-      uStd, uLog, uInit, udvars, uApp, appuPaths, StringUtils,
+      uStd, uLog, udvars, uApp, appuPaths, StringUtils,
       {ox}
       oxuRunRoutines, oxuEntity,
       {ui}

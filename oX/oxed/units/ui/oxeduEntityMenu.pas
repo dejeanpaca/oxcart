@@ -11,7 +11,7 @@ UNIT oxeduEntityMenu;
 INTERFACE
 
    USES
-      uStd, uInit, uLog,
+      uStd, uLog,
       {ox}
       oxuRunRoutines, oxuTypes, oxuEntity, oxuScene,
       {entities}
