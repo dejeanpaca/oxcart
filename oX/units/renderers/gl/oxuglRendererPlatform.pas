@@ -19,6 +19,8 @@ TYPE
    { oxglTPlatform }
 
    oxglTPlatform = object
+      Name: string;
+
       constructor Create();
 
       procedure OnInitialize(); virtual;

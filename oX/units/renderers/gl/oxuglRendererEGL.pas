@@ -24,6 +24,8 @@ TYPE
       Major,
       Minor: longint;
 
+      constructor Create();
+
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
       function OnDeInitWindow(wnd: oglTWindow): boolean; virtual;
       function GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext; virtual;
@@ -38,6 +40,11 @@ VAR
 IMPLEMENTATION
 
 { oxglTEGL }
+
+constructor oxglTEGL.Create();
+begin
+   Name := 'egl';
+end;
 
 function oxglTEGL.PreInitWindow(wnd: oglTWindow): boolean;
 var
