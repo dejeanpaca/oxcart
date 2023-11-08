@@ -39,7 +39,9 @@ TYPE
         {is the fullscreen mode windowed}
         WindowedFullscreen,
         {render window even when unfocused}
-        RenderUnfocused: boolean;
+        RenderUnfocused,
+        {render window even when minimized}
+        RenderMinimized: boolean;
       end;
 
       {renderer associated with the window}
