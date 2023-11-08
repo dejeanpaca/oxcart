@@ -36,7 +36,6 @@ TYPE
       Editor,
       Project,
       FileMenu,
-      Entities,
       ObjectMenu,
       SceneMenu: uiTContextMenu;
 
@@ -96,7 +95,7 @@ end;
 procedure CreateRecents(menu: uiTContextMenu);
 begin
    oxedMenubar.Recents := menu.AddSub('Recents');
-   oxedMenubar.Items.Recents := menu.GetSub(oxedMenubar.Recents);
+   oxedMenubar.Items.Recents := menu.FindSub(oxedMenubar.Recents);
    oxedIcons.Create(oxedMenubar.Items.Recents, $f0c5);
 
    oxedMenubar.UpdateRecents();
@@ -171,17 +170,13 @@ begin
    context.AddItem('Default scene', oxedActions.SCENE_DEFAULT);
    SceneMenu.AddItem('Screenshot', oxedActions.SCENE_SCREENSHOT);
 
-   { ENTITIES }
-
-   Entities := Bar.Add('Entities');
-   context := Entities.AddSub('Simple');
-   context.AddItem('Empty');
-   context.AddItem('Cube');
-   context.AddItem('Plane');
+   { OBJECT }
 
    ObjectMenu := Bar.Add('Object');
+
    ObjectMenu.AddItem('Focus', oxedActions.FOCUS_SELECTED);
    ObjectMenu.AddSeparator();
+
    item := ObjectMenu.AddItem('Reset Camera', oxedActions.RESET_CAMERA);
    oxedIcons.Create(item, $f03d);
 
@@ -340,7 +335,6 @@ begin
    oxedMenubar.Project.FindByAction(oxedActions.OPEN_PROJECT_DIRECTORY)^.Enable(oxedProjectValid());
 
    oxedMenubar.SceneMenu.Enable(oxedProject <> nil);
-   oxedMenubar.Entities.Enable(oxedProject <> nil);
    oxedMenubar.Project.Enable(oxedProject <> nil);
    oxedMenubar.ObjectMenu.Enable(oxedProject <> nil);
 end;

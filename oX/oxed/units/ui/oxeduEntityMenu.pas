@@ -53,12 +53,15 @@ TYPE
       function GetCurrentEntity(): oxTEntity;
 
       class procedure RenameEntity(); static;
+      class procedure AddTo(menu: uiTContextMenu); static;
    end;
 
 VAR
    oxedEntityMenu: oxedTEntityMenuGlobal;
 
 IMPLEMENTATION
+
+procedure createBaseItems(menu: uiTContextMenu); forward;
 
 { oxedTEntityMenuGlobal }
 
@@ -180,6 +183,14 @@ begin
       oxedEntityMenu.RenameCallback();
 end;
 
+class procedure oxedTEntityMenuGlobal.AddTo(menu: uiTContextMenu);
+begin
+   createBaseItems(menu);
+   menu.AddSub(oxedEntityMenu.Menus.Primitives);
+end;
+
+{ FUNCTIONALITY }
+
 function newEntity(): oxTEntity;
 begin
    Result := oxEntity.New();
@@ -198,23 +209,26 @@ begin
    Result := addItem(name, func, icon, oxedEntityMenu.Menus.Primitives);
 end;
 
-procedure init();
+procedure createBaseItems(menu: uiTContextMenu);
 var
    item: uiPContextMenuItem;
 
 begin
-   oxedEntityMenu.CurrentMenu := uiTContextMenu.Create('Entity menu');
+   item := addItem('Empty', @newEntity, 0, menu);
+   oxedIcons.Create(item, 0, 'regular:61640');
+   addItem('Camera', @oxCameraEntity.Default, $f03d, menu);
 
-   oxedEntityMenu.Menus.Create := uiTContextMenu.Create('Entity create menu');
-
-   addItem('Empty', @newEntity);
-   addItem('Camera', @oxCameraEntity.Default, $f03d);
-
-   item := addItem('Light', @oxLightEntity.Default, $f0eb);
+   item := addItem('Light', @oxLightEntity.Default, $f0eb, menu);
    item^.GlyphColor := oxedLightThingie.Glyph^.Color;
 
-   item := addItem('UI', @oxUIEntity.Default, $f0eb);
+   item := addItem('UI', @oxUIEntity.Default, $f0eb, menu);
+end;
 
+procedure createPrimitivesMenu();
+var
+   item: uiPContextMenuItem;
+
+begin
    oxedEntityMenu.Menus.Primitives := oxedEntityMenu.Menus.Create.AddSub('Primitives');
 
    addPrimitiveItem('Plane', @oxPrimitiveModelEntities.Plane, $f0c8);
@@ -227,6 +241,15 @@ begin
    addPrimitiveItem('Torus', @oxPrimitiveModelEntities.Torus);
    addPrimitiveItem('Cylinder', @oxPrimitiveModelEntities.Cylinder);
    addPrimitiveItem('Cone', @oxPrimitiveModelEntities.Cone, $f810);
+end;
+
+procedure init();
+begin
+   oxedEntityMenu.CurrentMenu := uiTContextMenu.Create('Entity menu');
+   oxedEntityMenu.Menus.Create := uiTContextMenu.Create('Entity create menu');
+
+   createBaseItems(oxedEntityMenu.Menus.Create);
+   createPrimitivesMenu();
 end;
 
 procedure deinit();
