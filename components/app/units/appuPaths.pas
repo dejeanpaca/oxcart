@@ -297,7 +297,7 @@ begin
             if(pChar(lpVolumeName) = '') then
                Result[offset].Name := '(' + chr(ord('A') + i) + ':)'
             else
-               Result[offset].Name := PChar(lpVolumeName) + ' (' + chr(ord('A') + i) + ':)';
+               Result[offset].Name := '(' + chr(ord('A') + i) + ':) ' + PChar(lpVolumeName);
 
             inc(offset);
          end;
