@@ -64,7 +64,6 @@ end;
 procedure oxedTGenericFileInspector.SetFile(const fn: StdString; fd: PFileDescriptor);
 var
    inspector: oxedTInspectorWindow;
-   fileDescriptor: TFileDescriptor;
    attributes: TAppendableString = '';
 
 begin
@@ -81,6 +80,11 @@ begin
 
       if(fd^.IsDirectory()) then
          attributes.Add('directory', ',');
+      wdg.Icon.SetVisible();
+
+      icon := wdgFileList.GetFileIcon(fd^, false);
+      wdg.Icon.SetImage(icon.Glyph);
+      wdg.Icon.Color := icon.Color;
 
       if(fd^.IsHidden()) then
          attributes.Add('hidden');
