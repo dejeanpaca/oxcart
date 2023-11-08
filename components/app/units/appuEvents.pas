@@ -150,6 +150,8 @@ TYPE
       procedure DisableForWindow(wnd: pointer; hID: appPEventHandler = nil; evID: loopint = -1);
       {disables events with the specified data}
       procedure DisableWithData(data: pointer; hID: appPEventHandler = nil; evID: loopint = -1);
+      {disables events with the specified external data}
+      procedure DisableWithExternalData(externalData: pointer; hID: appPEventHandler = nil; evID: loopint = -1);
 
       { INITIALIZATION }
 
@@ -604,8 +606,7 @@ begin
    until (i >= n);
 end;
 
-procedure appTEventQueue.DisableWithData(data: pointer; hID: appPEventHandler;
-   evID: loopint);
+procedure appTEventQueue.DisableWithData(data: pointer; hID: appPEventHandler; evID: loopint);
 var
    i,
    c: loopint;
@@ -617,6 +618,25 @@ begin
       c := (i + Head) mod Allocated;
 
       if((hID = nil) or (q[c].hID = hID)) and (data = q[c].Data) and ((evID = -1) or (q[c].evID = evID)) then begin
+         q[c].Properties := q[c].Properties or appEVENT_PROP_DISABLED;
+      end;
+
+      inc(i);
+   until (i >= n);
+end;
+
+procedure appTEventQueue.DisableWithExternalData(externalData: pointer; hID: appPEventHandler; evID: loopint);
+var
+   i,
+   c: loopint;
+
+begin
+   i := 0;
+
+   if(n > 0) then repeat
+      c := (i + Head) mod Allocated;
+
+      if((hID = nil) or (q[c].hID = hID)) and (externalData = q[c].externalData) and ((evID = -1) or (q[c].evID = evID)) then begin
          q[c].Properties := q[c].Properties or appEVENT_PROP_DISABLED;
       end;
 
