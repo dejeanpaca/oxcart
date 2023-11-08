@@ -13,7 +13,7 @@ INTERFACE
       {app}
       appuMouse, appuKeys,
       {ox}
-      oxuWindowTypes, oxuGlobalInstances,
+      oxuTypes, oxuWindowTypes, oxuGlobalInstances,
       {ui}
       uiuTypes, uiuWindowTypes;
 
@@ -74,6 +74,11 @@ TYPE
       function FileTrashCapability(): boolean; virtual;
       {send a file or directory into trash (if not available, will remove file/directory)}
       procedure TrashFile(const {%H-}path: StdString); virtual;
+
+      {get center position for a window}
+      procedure GetCenterPosition({%H-}wnd: oxTWindow; out p: oxTPoint); virtual;
+      {get center position for a window}
+      function SetSystemIcon({%H-}wnd: oxTWindow; const {%H-}fn: string): loopint; virtual;
 
       { COMPONENTS }
 
@@ -254,6 +259,16 @@ begin
    end else if(pathType = PATH_TYPE_DIRECTORY) then begin
       FileUtils.RmDir(path);
    end;
+end;
+
+procedure oxTPlatform.GetCenterPosition(wnd: oxTWindow; out p: oxTPoint);
+begin
+   p := oxNullPoint;
+end;
+
+function oxTPlatform.SetSystemIcon(wnd: oxTWindow; const fn: string): loopint;
+begin
+   Result := 0;
 end;
 
 function oxTPlatform.GetComponent(const componentName: StdString): TObject;
