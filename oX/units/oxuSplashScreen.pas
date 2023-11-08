@@ -33,7 +33,7 @@ TYPE
       ClearBits: TBitSet;
 
       {minimum time the splash screen needs to be displayed}
-      DisplayTime: longword;
+      DisplayTime: longint;
       {associated window}
       AssociatedWindow: oxTWindow;
 
