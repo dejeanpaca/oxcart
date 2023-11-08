@@ -44,6 +44,8 @@ begin
    skin.Window.TitleButtonGlyphs[uiwBUTTON_MINIMIZE] := oxGlyphs.LoadGlyph('regular:62161');
    skin.Window.TitleButtonGlyphs[uiwBUTTON_MAXIMIZE] := oxGlyphs.LoadGlyph('regular:62160');
    skin.Window.TitleButtonGlyphs[uiwBUTTON_RESTORE] := oxGlyphs.LoadGlyph($f2d2);
+
+   skin.ChevronRight := oxGlyphs.LoadGlyph($f054);
 end;
 
 class procedure uiTSkinLoader.LoadTexture(const fn: string; out tex: oxTTexture);
