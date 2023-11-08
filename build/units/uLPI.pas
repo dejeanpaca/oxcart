@@ -13,7 +13,7 @@ INTERFACE
    USES
       sysutils, uStd, uLog, uBuild, uFileUtils, StringUtils,
       {LazUtils}
-      Laz2_DOM, laz2_XMLRead, laz2_XMLWrite;
+      uLazXMLUtils, Laz2_DOM, laz2_XMLRead, laz2_XMLWrite;
 
 CONST
    eLPI_NONE                        = 0;
@@ -23,6 +23,9 @@ CONST
    eLPI_FAILED_TO_WRITE             = 4;
 
 TYPE
+   PLPITemplate = ^TLPITemplate;
+   PLPIFile = ^TLPIFile;
+   PLPIContext = ^TLPIContext;
 
    { TLLPITemplate }
 
@@ -36,6 +39,7 @@ TYPE
    { TLPIFile }
 
    TLPIFile = record
+      Version: loopint;
       Path: string;
       xmlDoc: TXMLDocument;
       Error: longint;
@@ -54,6 +58,10 @@ TYPE
             root,
             unit0,
             unit0Filename: TDOMNode;
+         end;
+
+         requiredPackages: record
+            root: TDOMNode;
          end;
       end;
 
@@ -96,7 +104,6 @@ TYPE
          end;
       end;
 
-
       procedure Update();
       procedure ApplyValues();
 
@@ -107,6 +114,8 @@ TYPE
       procedure AddUnitPath(const newPath: string);
       procedure AddIncludePath(const newPath: string);
       procedure SetTitle(const newTitle: string);
+      procedure AddRequiredPackage(const packageName: string);
+      procedure CreatePackagesSection();
 
       class procedure SetValue(node: TDOMNode; const value: string); static;
       class function GetValue(node: TDOMNode): string; static;
@@ -117,7 +126,7 @@ TYPE
    end;
 
    { TLPIContext }
-   PLPIContext = ^TLPIContext;
+
    TLPIContext = record
       Target: string;
       Loaded: procedure(var f: TLPIFile);
@@ -207,9 +216,6 @@ end;
 { TLPIFile }
 
 procedure TLPIFile.Update();
-var
-   attr: TDOMNode;
-
 begin
    try
       project.root := xmlDoc.FirstChild.FindNode('ProjectOptions');
@@ -239,14 +245,8 @@ begin
          if(compiler.target <> nil) then begin
             compiler.targetFilename := compiler.target.FindNode('Filename');
 
-            if(compiler.targetFilename <> nil) then begin
-               attr := compiler.targetFilename.Attributes.GetNamedItem('ApplyConventions');
-
-               if(attr <> nil) then
-                  compiler.applyConventions := not (attr.NodeValue.ToLower() = 'false')
-               else
-                  compiler.applyConventions := true;
-            end;
+            if(compiler.targetFilename <> nil) then
+               compiler.applyConventions := compiler.targetFilename.GetAttributeBool('ApplyConventions', true);
          end;
 
          compiler.searchPaths.root := compiler.root.FindNode('SearchPaths');
@@ -274,8 +274,10 @@ begin
          if(compiler.Linking.root <> nil) then begin
             compiler.Linking.Debugging.root := compiler.Linking.root.FindNode('Debugging');
 
-            if(compiler.Linking.Debugging.root <> nil) then
-               compiler.Linking.Debugging.UseExternalDebugSymbols := compiler.Linking.Debugging.root.FindNode('UseExternalDbgSym');
+            if(compiler.Linking.Debugging.root <> nil) then begin
+               compiler.Linking.Debugging.UseExternalDebugSymbols :=
+                  compiler.Linking.Debugging.root.FindNode('UseExternalDbgSym');
+            end;
          end;
 
          compiler.other.root := compiler.root.FindNode('Other');
@@ -295,18 +297,11 @@ begin
 end;
 
 procedure TLPIFile.ApplyValues();
-var
-   attr: TDOMAttr;
-
 begin
-   if(compiler.applyConventions) then begin
-      if(compiler.targetFilename.Attributes.GetNamedItem('ApplyConventions') <> nil) then
-         compiler.targetFilename.Attributes.RemoveNamedItem('ApplyConventions')
-   end else begin
-      attr := xmlDoc.CreateAttribute('ApplyConventions');
-      attr.NodeValue := 'False';
-      compiler.targetFilename.Attributes.SetNamedItem(attr);
-   end;
+   if(compiler.applyConventions) then
+      compiler.target.RemoveAttribute('applyConventions')
+   else
+      compiler.target.SetAttributeValue('applyConventions', false);
 end;
 
 procedure TLPIFile.Load(const newPath: string);
@@ -403,6 +398,46 @@ end;
 procedure TLPIFile.SetTitle(const newTitle: string);
 begin
    SetValue(project.general.title, newTitle);
+end;
+
+procedure TLPIFile.AddRequiredPackage(const packageName: string);
+var
+   count: loopint;
+   item,
+   valueNode: TDOMNode;
+
+begin
+   if(packageName <> '') then begin
+      CreatePackagesSection();
+
+      {get package count}
+      loopint.TryParse(project.requiredPackages.root.GetAttributeValue('Count', '0'), count);
+
+      {increase count}
+      inc(count);
+
+      {add new item}
+      item := project.requiredPackages.root.CreateChild('Item' + sf(count));
+
+      {add item value}
+      valueNode := item.CreateChild('PackageName');
+      valueNode.SetAttributeValue('Value', packageName);
+   end;
+end;
+
+procedure TLPIFile.CreatePackagesSection();
+var
+   attr: TDOMAttr;
+
+begin
+   if(project.requiredPackages.root = nil) then begin
+      project.requiredPackages.root := xmlDoc.CreateElement('RequiredPackages');
+      project.root.AppendChild(project.requiredPackages.root);
+
+      attr := xmlDoc.CreateAttribute('Count');
+      attr.NodeValue := '0';
+      project.requiredPackages.root.Attributes.SetNamedItem(attr);
+   end;
 end;
 
 class procedure TLPIFile.SetValue(node: TDOMNode; const value: string);
@@ -618,6 +653,7 @@ procedure TLPIGlobal.Initialize(out f: TLPIFile);
 begin
    ZeroPtr(@f, SizeOf(f));
    f.compiler.applyConventions := true;
+   f.Version := 11;
 end;
 
 procedure TLPIGlobal.Initialize(out context: TLPIContext);
