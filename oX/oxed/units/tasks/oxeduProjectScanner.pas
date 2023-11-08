@@ -31,8 +31,14 @@ TYPE
    end;
 
    oxedTScannerFile = record
+      {complete file name (including package path)}
       FileName,
-      Extension: StdString;
+      {file name within the package}
+      PackageFileName,
+      {file extension}
+      Extension,
+      {path of the package}
+      PackagePath: StdString;
 
       Package: oxedPPackage;
 
@@ -55,6 +61,7 @@ TYPE
       Task: oxedTProjectScannerTask;
 
       CurrentPackage: oxedPPackage;
+      CurrentPath: StdString;
 
       OnStart,
       OnDone: TProcedures;
@@ -86,7 +93,10 @@ begin
    f.FileName := fd.Name;
    f.Extension := ext;
    f.fd := fd;
+
    f.Package := oxedProjectScanner.CurrentPackage;
+   f.PackagePath := oxedProjectScanner.CurrentPath;
+   f.PackageFileName := ExtractRelativepath(f.PackagePath, f.FileName);
 
    oxedProjectScanner.OnFile.Call(f);
 
@@ -164,11 +174,13 @@ procedure oxedTProjectScannerTask.Run();
 var
    i: loopint;
 
-procedure scanPackage(var p: oxedTPackage; const path: StdString);
+procedure scanPackage(var p: oxedTPackage);
 begin
-   log.v('Scanning: ' + path);
    oxedProjectScanner.CurrentPackage := @p;
-   oxedProjectScanner.Walker.Run(path);
+   oxedProjectScanner.CurrentPath := oxedProject.GetPackagePath(p);
+
+   log.v('Scanning: ' + oxedProjectScanner.CurrentPath);
+   oxedProjectScanner.Walker.Run(oxedProjectScanner.CurrentPath);
 end;
 
 begin
@@ -177,10 +189,10 @@ begin
    log.v('Project scan started ...');
 
    try
-      scanPackage(oxedProject.MainPackage, oxedProject.Path);
+      scanPackage(oxedProject.MainPackage);
 
       for i := 0 to oxedProject.Packages.n - 1 do begin
-         scanPackage(oxedProject.Packages.List[i], oxedProject.GetPackagePath(oxedProject.Packages.List[i]));
+         scanPackage(oxedProject.Packages.List[i]);
       end;
    except
       on e: Exception do begin
