@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uInit, vmVector, vmCollision, uColors,
       {app}
-      appuMouse, appuActionEvents,
+      appuMouse, appuActionEvents, appuKeys,
       {ox}
       oxuRunRoutines, oxuGridRender, oxuCamera, oxuRender, oxuRenderUtilities,
       oxuScene, oxuSceneRender, oxuEntity, oxuTypes, oxuTransform, oxumPrimitive, oxuResourcePool,
@@ -52,6 +52,8 @@ TYPE
       Transform: oxTTransform;
       ConeModel: oxTPrimitiveModel;
 
+      CameraOrbitMode: boolean;
+
       SelectionRay: record
         Origin,
         EndPosition: TVector3f;
@@ -77,6 +79,8 @@ TYPE
 
       function GetDistanceScale(const p: TVector3f): single;
 
+      {camera rotation control}
+      function OrbitControl(var e: appTMouseEvent): boolean;
       procedure Point(var e: appTMouseEvent; x, y: longint); override;
       {called when the current tool changes}
       procedure ToolChanged();
@@ -421,20 +425,65 @@ begin
    Result := Camera.vPos.Distance(p) * OXED_DISTANCE_SCALE;
 end;
 
+function oxedTSceneEditWindow.OrbitControl(var e: appTMouseEvent): boolean;
+begin
+   {middle button}
+   if(e.Button.IsSet(appmcMIDDLE) and e.IsPressed()) or
+      {shift + right button}
+      (e.bState.IsSet(appmcRIGHT) and (e.IsPressed() or e.IsMoved()) and appk.Shift()) then begin
+      if(not CameraOrbitMode) then begin
+         LockPointer();
+
+         if(oxedSettings.PointerCenterEnable) then
+            SetPointerCentered();
+
+         CursorControl.CursorAngleSpeed := oxedSettings.CameraAngleSpeed;
+         CursorControl.Start();
+      end;
+
+      CameraOrbitMode := true;
+   end else begin
+      if(CameraOrbitMode) then begin
+         UnlockPointer();
+         CameraOrbitMode := false;
+      end;
+   end;
+
+   if(CameraOrbitMode) then begin
+      CursorControl.OrbitControl(Self, camera, oxedSettings.PointerCenterEnable);
+      exit(true);
+   end;
+
+   Result := false;
+end;
+
 procedure oxedTSceneEditWindow.Point(var e: appTMouseEvent; x, y: longint);
 var
    enter,
    leave: TVector3f;
 
 begin
+   if(OrbitControl(e)) then
+      exit;
+
+   {move camera forward/backward in view direction via the scroll wheel}
+   if(e.IsWheel()) then begin
+      if(not appk.Shift()) then
+         Camera.vPos := Camera.vPos + (Camera.vView * -1.0 * e.Value * oxedSettings.CameraScrollSpeed)
+      else
+         Camera.vPos := Camera.vPos + (Camera.vUp * -1.0 * e.Value * oxedSettings.CameraScrollSpeed);
+   end;
+
    inherited Point(e, x, y);
 
    if(e.Button.IsSet(appmcLEFT) and e.IsPressed()) then begin
+      {selection translation}
       if(oxedScene.SelectedEntity <> nil) then begin
          if(CurrentTool = OXED_SCENE_EDIT_TOOL_TRANSLATE) then begin
             Camera.GetPointerRay(x, y, SelectionRay.Origin, SelectionRay.EndPosition, Projection);
 
             UpdateAxisBBoxes();
+
             if(vmRayAABBCollide(AxisBBoxes[0], SelectionRay.Origin, SelectionRay.EndPosition, enter, leave)) then
                SelectedAxis := 0
             else  if(vmRayAABBCollide(AxisBBoxes[1], SelectionRay.Origin, SelectionRay.EndPosition, enter, leave)) then
