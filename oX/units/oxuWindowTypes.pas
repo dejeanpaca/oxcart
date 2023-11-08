@@ -55,8 +55,10 @@ TYPE
       {external ox parent window}
       oxwExternal: oxTWindow;
 
-      {rendering contexts}
+      {rendering context}
       RenderingContext: loopint;
+      {rendering target}
+      RenderTarget: oxTRenderTarget;
 
       {viewport for this window}
       Viewport: oxTViewport;
@@ -114,6 +116,9 @@ begin
    Frame := uiwFRAME_STYLE_DEFAULT;
 
    Dimensions.Assign(640, 480);
+
+   RenderTarget.Typ := oxRENDER_TARGET_WINDOW;
+   RenderTarget.Target := Self;
 end;
 
 procedure oxTWindow.RaiseError(code: longint; const description: StdString);
