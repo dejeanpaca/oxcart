@@ -8,7 +8,8 @@ UNIT oxuConsoleBackend;
 
 INTERFACE
 
-   USES sysutils, uStd, StringUtils, uColors, uLog;
+   USES
+      sysutils, uStd, StringUtils, uColors, uLog;
 
 CONST
    {actions}
@@ -391,17 +392,17 @@ procedure conTConsole.Initialize();
 begin
    SetDefaultSizes();
 
-   if(console.Selected = nil) then
+   if console.Selected = nil then
       Select();
 
    Commands.Initialize(Commands);
 
    ErrorReset();
-   if(Initialized) then
+   if Initialized then
       exit;
 
    {call the initialization routine}
-   if(Action(CON_ACTION_INITIALIZE) = CON_RESULT_FALSE) then
+   if Action(CON_ACTION_INITIALIZE) = CON_RESULT_FALSE then
       exit;
 
    {add the default command handler}
@@ -414,14 +415,15 @@ end;
 procedure conTConsole.DeInitialize();
 begin
    ErrorReset();
-   if(not Initialized) then
+
+   if not Initialized then
       exit;
 
    {deactivate the console}
    DeActivate();
 
    {call the de-initialization routine}
-   if(Action(CON_ACTION_DEINITIALIZE) = CON_RESULT_FALSE) then
+   if Action(CON_ACTION_DEINITIALIZE) = CON_RESULT_FALSE then
       exit;
 
    {dispose of the console}
@@ -433,7 +435,7 @@ end;
 
 procedure conTConsole.SetDefaultSizes();
 begin
-   if(Contents.a = 0) then
+   if Contents.a = 0 then
       SetContentsSize(128);
 
    Arguments.RequireAllocate(16);
@@ -458,18 +460,18 @@ var
 
 begin
    {initialize}
-   if(count = 0) or (not con.Initialized) or (con.Contents.a = 0) then
+   if (count = 0) or (not con.Initialized) or (con.Contents.a = 0) then
       exit;
 
-   if(count > con.Contents.n) then
+   if count > con.Contents.n then
       count := con.Contents.n;
 
    {free the memory of the items to be disposed of}
-   for i := 0 to (count - 1) do
+   for i := 0 to count - 1 do
       conDisposeLine(con.Contents.List[i]);
 
    {move the contents up}
-   if(count < con.Contents.a) then
+   if count < con.Contents.a then
       for i := count to (con.Contents.n - 1) do
          con.Contents.List[i - count] := con.Contents.List[i];
 end;
@@ -480,18 +482,18 @@ var
 
 begin
    {initialize}
-   if(count = 0) or (not con.Initialized) or (con.History.Entries.a = 0) then
+   if (count = 0) or (not con.Initialized) or (con.History.Entries.a = 0) then
       exit;
 
-   if(count > con.History.Entries.n) then
+   if count > con.History.Entries.n then
       count := con.History.Entries.n;
 
    {free the memory of the items to be disposed of}
-   for i := 0 to (count - 1) do
+   for i := 0 to count - 1 do
       con.History.Entries.List[i] := '';
 
    {move the History up}
-   if(count < con.History.Entries.a) then
+   if count < con.History.Entries.a then
       for i := count to (con.History.Entries.n - 1) do
          con.History.Entries.List[i - count] := con.History.Entries.List[i];
 end;
@@ -517,24 +519,24 @@ begin
    {initialize}
    Result := false;
 
-   if(con.Initialized) and (con.Arguments.a > 0) then begin
+   if (con.Initialized) and (con.Arguments.a > 0) then begin
       con.Arguments.n := 0;
 
-      if(length(con.Entry) > 0) then begin
+      if length(con.Entry) > 0 then begin
          entry := con.Entry;
 
          repeat
             StripLeadingWhiteSpace(entry);
 
             arg := CopyToDel(entry);
-            if(arg = '') and (length(entry) <> 0) then
+            if (arg = '') and (length(entry) <> 0) then
                continue;
 
             con.Arguments.List[con.Arguments.n] := arg;
             inc(con.Arguments.n);
          until (length(entry) = 0) or (con.Arguments.n = con.Arguments.a);
 
-         if(con.Arguments.n > 0) then
+         if con.Arguments.n > 0 then
             Result := true;
       end;
    end;
@@ -554,11 +556,11 @@ var
 begin
    Result := false;
 
-   if(Arguments.n > 0) then begin
+   if Arguments.n > 0 then begin
       cur := FindCommand(Arguments.List[0], cmd);
 
-      if(cur <> nil) then begin
-         if(cur^.Notify <> nil) then begin
+      if cur <> nil then begin
+         if cur^.Notify <> nil then begin
             cur^.Notify(@self, cmd^.nID);
             exit(true);
          end
@@ -573,7 +575,7 @@ var
 begin
    Result := false;
 
-   if(Arguments.n > 0) then begin
+   if Arguments.n > 0 then begin
       callback := FindCommand(Arguments.list[0]);
 
       if callback <> nil then begin
@@ -595,9 +597,10 @@ CONST
 
 function isEcho(var con: conTConsole): boolean;
 begin
-   if(con.Arguments.n > 0) then
-      if(pos('echo', lowercase(con.Arguments.List[0])) > 0) then
+   if con.Arguments.n > 0 then begin
+      if pos('echo', lowercase(con.Arguments.List[0])) > 0 then
          exit(true);
+   end;
 
    Result := False;
 end;
@@ -615,12 +618,12 @@ begin
    sArg := Entry;
    delete(sArg, 1, delc);
 
-   if(sArg <> '') then
-      if(typ = cECHO_NORMAL) then
+   if sArg <> '' then
+      if typ = cECHO_NORMAL then
          i(sArg)
-      else if(typ = cECHO_ERROR) then
+      else if typ = cECHO_ERROR then
          e(sArg)
-      else if(typ = cECHO_STATEMENT) then
+      else if typ = cECHO_STATEMENT then
          s(sArg);
 end;
 
@@ -630,46 +633,46 @@ begin
    {remove white space}
    StripWhiteSpace(Entry);
 
-   if(Entry <> '') then begin
+   if Entry <> '' then begin
       {add to history and process the arguments}
       conProcessArguments(self);
 
-      if(not isEcho(self)) then
+      if not isEcho(self) then
          cmdWriteln();
 
       {check for a simple command}
-      if(PerformSimpleCommand()) then
+      if PerformSimpleCommand() then
          goto endit;
 
       {check for a command}
-      if(PerformCommand()) then
+      if PerformCommand() then
          goto endit;
 
       {otherwise a entry handler}
-      if(Arguments.n > 0) then begin
+      if Arguments.n > 0 then begin
          {first, try to see if any arguments can be processed by the console itself}
          sArg := LowerCase(Arguments.list[0]);
 
          {close the console}
-         if(sArg = 'close') or (sArg = 'exit') then begin
+         if (sArg = 'close') or (sArg = 'exit') then begin
             DeActivate();
             goto endit;
          {echo commands}
-         end else if(sArg = 'echo') then begin
+         end else if sArg = 'echo' then begin
             echo(5, cECHO_NORMAL);
             goto endit;
-         end else if(sArg = 'echoe') then begin
+         end else if sArg = 'echoe' then begin
             echo(7, cECHO_ERROR);
             goto endit;
-         end else if(sArg = 'echos') then begin
+         end else if sArg = 'echos' then begin
             echo(7, cECHO_STATEMENT);
             goto endit;
          {execute a console command file}
-         end else if(sArg = 'conexec') then begin
+         end else if sArg = 'conexec' then begin
             sArg := Entry;
             delete(sArg, 1, 8);
 
-            if(sArg <> '') then begin
+            if sArg <> '' then begin
                s('Executing console command file: ' + sArg);
                Exec(sArg);
             end else
@@ -683,23 +686,23 @@ begin
 
          {if the primary entry processing routine failed to process the entry,
          then call all the other entry handlers.}
-         if(not Result) and (EntryHandlers.n > 0) and (Arguments.n > 0) then begin
-            for ni := 0 to (EntryHandlers.n - 1) do begin
-               if(EntryHandlers.list[ni] <> nil) then
+         if (not Result) and (EntryHandlers.n > 0) and (Arguments.n > 0) then begin
+            for ni := 0 to EntryHandlers.n - 1 do begin
+               if EntryHandlers.list[ni] <> nil then
                   Result := EntryHandlers.list[ni](@self);
 
-               if(Result) then
+               if Result then
                   break;
             end;
          end;
 
-         if(not Result) then
+         if not Result then
             e('Invalid or unknown command: ' + arguments.list[0]);
       end;
 
 endit:
       {save whatever was entered into the history, except if the current entry is skipped}
-      if(not SkipHistoryCurrent) then
+      if not SkipHistoryCurrent then
          AddHistory(Entry)
       else
          SkipHistoryCurrent := false;
@@ -732,7 +735,7 @@ begin
    Assign(fl, fn);
    system.Reset(fl);
 
-   if(ioerror() <> 0) then begin
+   if ioerror() <> 0 then begin
       e('IO Error(' + sf(ioE) + '): Unable to open file.');
       exit;
    end;
@@ -741,7 +744,7 @@ begin
    repeat
       ReadLn(fl, ln);
 
-      if(ioerror <> 0) then begin
+      if ioerror <> 0 then begin
          e('IO Error(' + sf(ioE) + '): Cannot read file.');
          break;
       end;
@@ -752,7 +755,7 @@ begin
    {close the file}
    Close(fl);
 
-   if(ioerror() <> 0) then begin
+   if ioerror() <> 0 then begin
       e('IO Error(' + sf(ioE) + '): Unable to close the file.');
       exit;
    end;
@@ -760,7 +763,7 @@ end;
 
 function conTConsole.Action(a: longint): longint;
 begin
-   if(ActionHandler <> nil) then
+   if ActionHandler <> nil then
       exit(ActionHandler(a));
 
    Result := CON_RESULT_IGNORE;
@@ -771,9 +774,9 @@ procedure conTConsole.Activate();
 begin
    ErrorReset();
 
-   if(Initialized) and (not Active) then begin
+   if (Initialized) and (not Active) then begin
       {call the activation routine}
-      if(Action(CON_ACTION_ACTIVATE) = CON_RESULT_FALSE) then
+      if Action(CON_ACTION_ACTIVATE) = CON_RESULT_FALSE then
          exit;
 
       {console activated}
@@ -785,9 +788,9 @@ procedure conTConsole.DeActivate();
 begin
    ErrorReset();
 
-   if(Initialized) and (Active) then begin
+   if (Initialized) and (Active) then begin
       {call the activation routine}
-      if(Action(CON_ACTION_DEACTIVATE) = CON_RESULT_FALSE) then
+      if Action(CON_ACTION_DEACTIVATE) = CON_RESULT_FALSE then
          exit;
 
       {console deactivated}
@@ -799,7 +802,7 @@ procedure conTConsole.Reset();
 begin
    ErrorReset();
 
-   if(Initialized) and (Active) then begin
+   if (Initialized) and (Active) then begin
       DeActivate();
       Activate();
    end;
@@ -812,9 +815,9 @@ var
    ni: longint;
 
 begin
-   if(History.Entries.n > 0) then begin
+   if History.Entries.n > 0 then begin
       {free memory used by content data}
-      for ni := 0 to (History.Entries.n - 1) do
+      for ni := 0 to History.Entries.n - 1 do
          History.Entries.List[ni] := '';
    end;
 
@@ -830,14 +833,15 @@ var
 begin
    {initialize}
    ErrorReset();
-   if(History.Entries.a = 0) then
+
+   if History.Entries.a = 0 then
       exit;
 
    {first check if the same string has already been entered}
-   if(History.Entries.n > 0) then
-      for ni := 0 to (History.Entries.n - 1) do begin
+   if History.Entries.n > 0 then
+      for ni := 0 to History.Entries.n - 1 do begin
          {if the same string is already in history then we will move it to top, only if the string is not already on top}
-         if(History.Entries.List[ni] = st) and (ni < (History.Entries.n - 1)) then begin
+         if (History.Entries.List[ni] = st) and (ni < (History.Entries.n - 1)) then begin
             temp := History.Entries.List[ni];
 
             {stack back the other entries}
@@ -850,7 +854,7 @@ begin
       end;
 
    {move to the next line or move or lines by 1}
-   if(History.Entries.n < History.Entries.a) then
+   if History.Entries.n < History.Entries.a then
       inc(History.Entries.n)
    else
       conLineMoveHistory(self, 1);
@@ -870,9 +874,9 @@ var
    ni: longint;
 
 begin
-   if(Arguments.n > 0) then begin
+   if Arguments.n > 0 then begin
       {free memory used by argument data}
-      for ni := 0 to (Arguments.n - 1) do
+      for ni := 0 to Arguments.n - 1 do
          Arguments.List[ni] := '';
 
       Arguments.n := 0;
@@ -888,7 +892,7 @@ begin
    Contents.RequireAllocate(size);
 
    {initialize all contents pointers}
-   for ni := 0 to (size - 1) do
+   for ni := 0 to size - 1 do
       conInitLine(Contents.List[ni]);
 end;
 
@@ -898,7 +902,7 @@ var
 
 begin
 
-   for ni := 0 to (Contents.n - 1) do
+   for ni := 0 to Contents.n - 1 do
       conDisposeLine(Contents.List[ni]);
 
    Contents.Dispose();
@@ -909,9 +913,9 @@ var
    ni: longint;
 
 begin
-   if(Contents.n > 0) then begin
+   if Contents.n > 0 then begin
       {free memory used by content data}
-      for ni := 0 to (Contents.n - 1) do
+      for ni := 0 to Contents.n - 1 do
          conDisposeLine(Contents.list[ni]);
 
       contents.n := 0;
@@ -962,11 +966,11 @@ var
    sID: StdString;
 
 begin
-   if(Commands.n > 0) then begin
+   if Commands.n > 0 then begin
       sID := lowercase(command);
 
-      for ni := 0 to (Commands.n - 1) do begin
-         if(Commands.List[ni].sID = sID) then
+      for ni := 0 to Commands.n - 1 do begin
+         if Commands.List[ni].sID = sID then
             exit(@Commands.List[ni]);
       end;
    end;
@@ -981,7 +985,7 @@ begin
    inc(CommandHandlers.n);
    handler.Next := nil;
 
-   if(CommandHandlers.s = nil) then
+   if CommandHandlers.s = nil then
       CommandHandlers.s := @handler
    else
       CommandHandlers.e^.Next := @handler;
@@ -1011,16 +1015,16 @@ begin
 
    cur := CommandHandlers.s;
    {there must be at least 1 handler and 1 argument}
-   if(cur <> nil) and (Arguments.n > 0) then begin
+   if (cur <> nil) and (Arguments.n > 0) then begin
       cmd := LowerCase(Arguments.List[0]);
 
       {go through each handler}
       repeat
-         if(cur^.nCommands > 0) then begin
+         if cur^.nCommands > 0 then begin
             {go through each command}
-            for ni := 0 to (cur^.nCommands - 1) do begin
+            for ni := 0 to cur^.nCommands - 1 do begin
                {check if the command matches}
-               if(cmd = LowerCase(cur^.Commands^[ni].sID)) then begin
+               if cmd = LowerCase(cur^.Commands^[ni].sID) then begin
                   {if it matches then notify the command handler}
                   c := @cur^.Commands^[ni];
                   exit(cur);
@@ -1030,7 +1034,7 @@ begin
 
          {next handler}
          cur := cur^.Next;
-      until (cur = nil);
+      until cur = nil;
    end;
 end;
 
@@ -1046,18 +1050,18 @@ var
    n: longint;
 
 begin
-   {$IFDEF WINDOWS}if(isConsole) then{$ENDIF}
-   if(StdOut) then
+   {$IFDEF WINDOWS}if isConsole then{$ENDIF}
+   if StdOut then
       system.WriteLn(s);
 
    {initialize}
    ErrorReset();
 
-   if(Contents.a = 0) then
+   if Contents.a = 0 then
       exit;
 
    {move to the next line or move or lines by 1}
-   if(Contents.n < Contents.a) then
+   if Contents.n < Contents.a then
       inc(Contents.n)
    else
       conLineMove(self, 1);
@@ -1065,7 +1069,7 @@ begin
    n := Contents.n - 1;
 
    {write the string to the console contents}
-   if(Length(s) > 0) then begin
+   if Length(s) > 0 then begin
       Contents.List[n].Txt   := s;
       Contents.List[n].Color := clr;
       Contents.List[n].Time  := Now();
@@ -1077,7 +1081,7 @@ procedure conTConsole.Writeln(const s: StdString; const clr: conTColor);
 begin
    RawWriteln(s, clr);
 
-   if(LogOutput <> nil) then
+   if LogOutput <> nil then
       LogOutput^.i(s);
 end;
 
@@ -1085,7 +1089,7 @@ procedure conTConsole.i(const s: StdString);
 begin
    RawWriteln(s, Colors.Statement);
 
-   if(LogOutput <> nil) then
+   if LogOutput <> nil then
       LogOutput^.i(s);
 end;
 
@@ -1093,7 +1097,7 @@ procedure conTConsole.i();
 begin
    i('');
 
-   if(LogOutput <> nil) then
+   if LogOutput <> nil then
       LogOutput^.i();
 end;
 
@@ -1101,7 +1105,7 @@ procedure conTConsole.e(const s: StdString);
 begin
    RawWriteln(s, Colors.Error);
 
-   if(LogOutput <> nil) then
+   if LogOutput <> nil then
       LogOutput^.e(s);
 end;
 
@@ -1109,7 +1113,7 @@ procedure conTConsole.w(const s: StdString);
 begin
    RawWriteln(s, Colors.Warning);
 
-   if(LogOutput <> nil) then
+   if LogOutput <> nil then
       LogOutput^.w(s);
 end;
 
@@ -1117,7 +1121,7 @@ procedure conTConsole.d(const s: StdString);
 begin
    RawWriteln(s, Colors.Debug);
 
-   if(LogOutput <> nil) then
+   if LogOutput <> nil then
       LogOutput^.d(s);
 end;
 
@@ -1125,7 +1129,7 @@ procedure conTConsole.v(const s: StdString);
 begin
    RawWriteln(s, Colors.Verbose);
 
-   if(LogOutput <> nil) then
+   if LogOutput <> nil then
       LogOutput^.v(s);
 end;
 
@@ -1133,7 +1137,7 @@ procedure conTConsole.f(const s: StdString);
 begin
    RawWriteln(s, Colors.Fatal);
 
-   if(LogOutput <> nil) then
+   if LogOutput <> nil then
       LogOutput^.f(s);
 end;
 
@@ -1141,7 +1145,7 @@ procedure conTConsole.k(const s: StdString);
 begin
    RawWriteln(s, Colors.Ok);
 
-   if(LogOutput <> nil) then
+   if LogOutput <> nil then
       LogOutput^.k(s);
 end;
 
@@ -1153,7 +1157,7 @@ begin
    cmd := '>' + Entry;
    Writeln(cmd, Colors.Command);
 
-   if(LogOutput <> nil) then
+   if LogOutput <> nil then
       LogOutput^.i(cmd);
 end;
 
@@ -1161,7 +1165,7 @@ procedure conTConsole.s(const st: StdString);
 begin
    Writeln(st, Colors.Statement);
 
-   if(LogOutput <> nil) then
+   if LogOutput <> nil then
       LogOutput^.i(st);
 end;
 
@@ -1170,26 +1174,26 @@ var
    color: TColor4ub;
 
 begin
-   if(priority = logcINFO) then
+   if priority = logcINFO then
       color := Colors.Statement
-   else if(priority = logcWARNING) then
+   else if priority = logcWARNING then
       color := Colors.Warning
-   else if(priority = logcERROR) then
+   else if priority = logcERROR then
       color := Colors.Error
-   else if(priority = logcVERBOSE) then
+   else if priority = logcVERBOSE then
       color := Colors.Verbose
-   else if(priority = logcFATAL) then
+   else if priority = logcFATAL then
       color := Colors.Fatal
-   else if(priority = logcDEBUG) then
+   else if priority = logcDEBUG then
       color := Colors.Debug
-   else if(priority = logcOK) then
+   else if priority = logcOK then
       color := Colors.Ok
    else
       color := Colors.Statement;
 
    RawWriteln(st, color);
 
-   if(LogOutput <> nil) then
+   if LogOutput <> nil then
       LogOutput^.s(priority, st);
 end;
 
@@ -1253,7 +1257,7 @@ var
 begin
    new(con);
 
-   if(con <> nil) then
+   if con <> nil then
       console.Init(con^);
 
    {success}
@@ -1262,7 +1266,7 @@ end;
 
 procedure conTConsoleGlobal.Dispose(var con: conPConsole);
 begin
-   if(con <> nil) then begin
+   if con <> nil then begin
       con^.Dispose();
       Dispose(con);
       con := nil;
@@ -1271,43 +1275,43 @@ end;
 
 procedure conTConsoleGlobal.i(const s: StdString);
 begin
-   if(Selected <> nil) then
+   if Selected <> nil then
       Selected^.i(s);
 end;
 
 procedure conTConsoleGlobal.i();
 begin
-   if(Selected <> nil) then
+   if Selected <> nil then
       Selected^.i('');
 end;
 
 procedure conTConsoleGlobal.e(const s: StdString);
 begin
-   if(Selected <> nil) then
+   if Selected <> nil then
       Selected^.e(s);
 end;
 
 procedure conTConsoleGlobal.w(const s: StdString);
 begin
-   if(Selected <> nil) then
+   if Selected <> nil then
       Selected^.w(s);
 end;
 
 procedure conTConsoleGlobal.d(const s: StdString);
 begin
-   if(Selected <> nil) then
+   if Selected <> nil then
       Selected^.d(s);
 end;
 
 procedure conTConsoleGlobal.v(const s: StdString);
 begin
-   if(Selected <> nil) then
+   if Selected <> nil then
       Selected^.v(s);
 end;
 
 procedure conTConsoleGlobal.f(const s: StdString);
 begin
-   if(Selected <> nil) then
+   if Selected <> nil then
       Selected^.f(s);
 end;
 
