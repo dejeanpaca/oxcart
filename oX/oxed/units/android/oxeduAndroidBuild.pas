@@ -37,7 +37,7 @@ IMPLEMENTATION
 
 { oxedTAndroidBuild }
 
-procedure oxedTAndroidBuild.BuildToProject();
+procedure buildStart();
 var
    cpuType: loopint;
 
@@ -45,17 +45,19 @@ begin
    cpuType := loopint(oxedAndroidSettings.GetCPUType());
 
    oxedBuild.BuildTarget := OXED_BUILD_LIB;
+end;
+
+procedure oxedTAndroidBuild.BuildToProject();
+begin
+   buildStart();
+
    oxedBuild.StartTask(OXED_BUILD_TASK_RECODE, oxedAndroidPlatform.Architectures.List[cpuType]);
 end;
 
 procedure oxedTAndroidBuild.BuildAssetsToProject();
-var
-   cpuType: loopint;
-
 begin
-   cpuType := loopint(oxedAndroidSettings.GetCPUType());
+   buildStart();
 
-   oxedBuild.BuildTarget := OXED_BUILD_LIB;
    oxedBuild.BuildAssets := true;
    oxedBuild.BuildBinary := false;
    oxedBuild.StartTask(OXED_BUILD_TASK_RECODE, oxedAndroidPlatform.Architectures.List[cpuType]);
