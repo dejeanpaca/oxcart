@@ -13,6 +13,7 @@ INTERFACE
       uFileUtils, uFile, ufUtils,
       {build}
       uFPCHelpers, uBuild, uBuildInstalls, uBuildExec, uBuildConfiguration, uBuildLibraries, uPasSourceHelper,
+      uBuildFPCConfig,
       {app}
       uApp, appuActionEvents,
       {ox}
@@ -46,6 +47,11 @@ TYPE
       OXED_BUILD_STANDALONE
    );
 
+   oxedTBuildMechanism = (
+      OXED_BUILD_VIA_FPC,
+      OXED_BUILD_VIA_LAZ
+   );
+
    { oxedTBuildTask }
 
    oxedTBuildTask = class(oxedTTask)
@@ -68,6 +74,7 @@ TYPE
       BuildTarget: oxedTBuildTarget;
       BuildStart: TDateTime;
       BuildArch: oxedTPlatformArchitecture;
+      BuildMechanism: oxedTBuildMechanism;
 
       Features: oxTFeaturePDescriptorList;
 
@@ -469,6 +476,14 @@ begin
    Result := lpi.Error = 0;
 end;
 
+function RecreateFPCConfig(lib: boolean): boolean;
+var
+   config: TSimpleStringList;
+
+begin
+   Result := false;
+end;
+
 function getSourceHeader(includeFunctional: boolean = true): TAppendableString;
 var
    i: loopint;
@@ -594,7 +609,7 @@ end;
 
 class function oxedTBuildGlobal.Recreate(): boolean;
 var
-   lpiFile,
+   configFile,
    source: StdString;
 
 begin
@@ -612,12 +627,21 @@ begin
    end;
 
    {recreate library}
-   if(oxedBuild.IsLibrary()) then begin
-      lpiFile := oxPROJECT_LIB_LPI;
-      source := oxPROJECT_LIB_SOURCE;
-   end else begin
-      lpiFile := oxPROJECT_MAIN_LPI;
+   if(oxedBuild.IsLibrary()) then
+      source := oxPROJECT_LIB_SOURCE
+   else
       source := oxPROJECT_MAIN_SOURCE;
+
+   if(oxedBuild.BuildMechanism = OXED_BUILD_VIA_FPC) then begin
+      if(oxedBuild.IsLibrary()) then
+         configFile := oxPROJECT_LIB_LPI
+      else
+         configFile := oxPROJECT_MAIN_LPI;
+   end else begin
+         if(oxedBuild.IsLibrary()) then
+            configFile := oxPROJECT_LIB_CFG
+         else
+            configFile := oxPROJECT_MAIN_CFG;
    end;
 
    {recreate library}
@@ -629,10 +653,17 @@ begin
          RecreateProgram();
    end;
 
-   if(ShouldRecreate(lpiFile)) then begin
-      if(not RecreateLPI(oxedBuild.IsLibrary())) then begin
-         oxedConsole.e('Failed to create project library lpi file. lpi error: ' + sf(lpi.Error));
-         exit(false);
+   if(ShouldRecreate(configFile)) then begin
+      if(oxedBuild.BuildMechanism = OXED_BUILD_VIA_FPC) then begin
+         if(not RecreateFPCConfig(oxedbuild.IsLibrary())) then begin
+            oxedConsole.e('Failed to create project fpc config file.');
+            exit(false);
+         end;
+      end else begin
+         if(not RecreateLPI(oxedBuild.IsLibrary())) then begin
+            oxedConsole.e('Failed to create project library lpi file. lpi error: ' + sf(lpi.Error));
+            exit(false);
+         end;
       end;
    end;
 
@@ -915,9 +946,14 @@ begin
       RunBuild();
    end else if(BuildType = OXED_BUILD_TASK_CLEANUP) then
       DoCleanup()
-   else if(BuildType = OXED_BUILD_TASK_RECREATE) then
-      Recreate()
-   else if(BuildType = OXED_BUILD_TASK_REBUILD_THIRD_PARTY) then begin
+   else if(BuildType = OXED_BUILD_TASK_RECREATE) then begin
+      {recreate fpc files}
+      BuildMechanism := OXED_BUILD_VIA_FPC;
+      Recreate();
+      {recreate laz files}
+      BuildMechanism := OXED_BUILD_VIA_LAZ;
+      Recreate();
+   end else if(BuildType = OXED_BUILD_TASK_REBUILD_THIRD_PARTY) then begin
       RebuildThirdParty();
    end else if(BuildType = OXED_BUILD_TASK_STANDALONE) then begin
       build.Options.Rebuild := true;
