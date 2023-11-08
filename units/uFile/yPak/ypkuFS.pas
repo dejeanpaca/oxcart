@@ -34,13 +34,13 @@ TYPE
       vfs: TVFileSystem;
 
       {add a file to the vfs file list}
-      function Add(const fn: string): ypkPFSFile;
+      function Add(const fn: StdString): ypkPFSFile;
       {$IFDEF UNIX}
       function Add(d: cint; offs, size: fileint): ypkPFSFile;
       function Add(handleID: longint; d: cint; offs, size: fileint): ypkPFSFile;
       {$ENDIF}
       {add a pool of ypk files to the vfs file list}
-      procedure AddPool(const fn: string);
+      procedure AddPool(const fn: StdString);
       {mount and unmount the filesystem}
       procedure Mount();
       procedure Unmount();
@@ -50,11 +50,11 @@ TYPE
 
       { UTILITIES }
       {find a file inside the filesystem and return a pointer to the corresponding ypk fs}
-      function Find(const fn: string; out entryIdx: longint): ypkPFSFile;
+      function Find(const fn: StdString; out entryIdx: longint): ypkPFSFile;
       {finds a file inside the filesystem and stores its information, returns true if found, false if not}
-      function Find(const fn: string; var offs, size: fileint): boolean;
+      function Find(const fn: StdString; var offs, size: fileint): boolean;
       {finds the ypk file which contains the specified file by it's name}
-      function GetFS(const fn: string): ypkPFSFile;
+      function GetFS(const fn: StdString): ypkPFSFile;
 
       {returns the number of files total in a single fs file}
       function FileCount(var fs: ypkTFSFile): longint;
@@ -69,7 +69,6 @@ IMPLEMENTATION
 
 CONST
    tag = 'ypkvfs > ';
-   ALLOCATE_STEP = 64;
 
 TYPE
    ypkTFilesystem = specialize TSimpleList<ypkPFSFile>;
@@ -77,16 +76,18 @@ TYPE
 VAR
    filesystem: ypkTFilesystem;
 
-procedure writeLog(var fs: ypkTFSFile; const s: string);
+procedure writeLog(var fs: ypkTFSFile; const s: StdString);
 var
-   e: string;
+   e: StdString;
 
 begin
    e := 'ypkError: ' + sf(ypk.error) + ', fError:' + sf(fs.f.error);
+
    if(ioE <> 0) then
       e := e + ', ioE:' + sf(ioE);
 
    log.e(tag + 'Error(' + e + '): ' + fs.f.fn);
+
    if(s <> '') then
       log.e('Description: ' + s);
 end;
@@ -94,43 +95,21 @@ end;
 procedure InitFSFile(var fs: ypkTFSFile);
 begin
    ZeroOut(fs, SizeOf(fs));
-   fInit(fs.f);
+   fFile.Init(fs.f);
 end;
 
 function getFile(): longint;
 var
-   idx, pn, i: longint;
+   f: ypkPFSFile = nil;
 
 begin
-   result := -1;
+   Result := -1;
 
-   {need to allocate more fs pointers}
-   if(filesystem.nFiles >= filesystem.nAllocated) then begin
-      pn := filesystem.nAllocated;
-
-      inc(filesystem.nAllocated, ALLOCATE_STEP);
-      {try to allocate memory}
-      try
-         SetLength(filesystem.files, filesystem.nAllocated);
-
-         {initialize file pointers}
-         for i := pn to (filesystem.nAllocated-1) do
-            filesystem.files[i] := nil;
-      except
-         Exit;
-      end;
-   end;
+   new(f);
 
    {get an index to a fs pointer}
-   idx := filesystem.nFiles;
-   inc(filesystem.nFiles);
-
-   {allocate memory for that pointer}
-   new(filesystem.files[idx]);
-   if(filesystem.files[idx] <> nil) then begin
-      InitFSFile(filesystem.files[idx]^);
-      result := idx;
-   end;
+   filesystem.Add(f);
+   InitFSFile(f^);
 end;
 
 function ypkfsAdd(var fs: ypkTFSFile): ypkPFSFile;
@@ -138,14 +117,14 @@ var
    hdr: ypkTHeader;
 
 begin
-   result := nil;
+   Result := nil;
 
    ypk.ReadHeader(fs.f, hdr);
    if(fs.f.error = 0) then begin
       ypk.ReadEntries(fs.f, fs.entries, hdr.Files);
 
       if(fs.f.error = 0) then begin
-         result := @fs;
+         Result := @fs;
 
          log.i(tag + 'Loaded file successfully: ' + fs.f.fn + '(handleID: ' + sf(fs.f.handleID) +
             ', files: ' + sf(hdr.Files) + ', offs: ' + sf(fs.f.fOffset) + ', size: ' + sf(fs.f.fSize) + ')');
@@ -155,19 +134,19 @@ begin
       writeLog(fs, 'Invalid or unsupported file header.')
 end;
 
-function ypkTFileSystemGlobal.Add(const fn: string): ypkPFSFile;
+function ypkTFileSystemGlobal.Add(const fn: StdString): ypkPFSFile;
 var
    fsidx: longint;
    fs: ypkPFSFile;
 
 begin
-   result := nil;
+   Result := nil;
 
    if(fn <> '') then begin
       fsidx := getFile();
 
       if(fsidx > -1) then begin
-         fs := filesystem.files[fsidx];
+         fs := filesystem.List[fsidx];
 
          {open the file}
          fs^.f.Open(fn);
@@ -175,7 +154,7 @@ begin
             if(bufferSize > 0) then
                fs^.f.Buffer(bufferSize);
 
-            result := ypkfsAdd(fs^)
+            Result := ypkfsAdd(fs^)
          end else
             writeLog(fs^, 'Cannot open file.')
       end;
@@ -213,7 +192,7 @@ end;
 
 {$ENDIF}
 
-procedure ypkTFileSystemGlobal.AddPool(const fn: string);
+procedure ypkTFileSystemGlobal.AddPool(const fn: StdString);
 begin
    if(fn <> '') then begin
    end;
@@ -225,13 +204,14 @@ var
 
 begin
    {initialize filesystem}
-   if(filesystem.nFiles > 0) then
-      for i := 0 to (filesystem.nFiles-1) do begin
-         if(filesystem.files[i] <> nil) then
-            filesystem.files[i]^.f.Buffer(fcMinimumBufferSize);
+   if(filesystem.n > 0) then begin
+      for i := 0 to (filesystem.n - 1) do begin
+         if(filesystem.List[i] <> nil) then
+            filesystem.List[i]^.f.Buffer(fFile.MinimumBufferSize);
       end;
+   end;
 
-   if(filesystem.nFiles > 0) then
+   if(filesystem.n > 0) then
       log.i(tag+'Filesystem successfully mounted.')
    else
       log.i(tag+'Filesystem not mounted. No files.')
@@ -243,15 +223,16 @@ var
 
 begin
    {close all files}
-   if(filesystem.nFiles > 0) then
-   for i := 0 to (filesystem.nFiles-1) do begin
-      if(filesystem.files[i] <> nil) then
-         if(filesystem.files[i]^.f.fMode <> fcfNONE) then
-            filesystem.files[i]^.f.Close();
+   if(filesystem.n > 0) then begin
+      for i := 0 to (filesystem.n -1 ) do begin
+         if(filesystem.List[i] <> nil) then
+            if(filesystem.List[i]^.f.fMode <> fcfNONE) then
+               filesystem.List[i]^.f.Close();
+      end;
    end;
 
    {dispose of pool}
-   ypkTFileSystemGlobal.DisposePool();
+   DisposePool();
 
    log.i(tag + 'Filesystem successfully unmounted.');
 end;
@@ -261,24 +242,23 @@ var
    i: longint;
 
 begin
-   if(filesystem.nFiles > 0) then
-      for i := 0 to (filesystem.nFiles-1) do begin
-         if(filesystem.files[i] <> nil) then begin
-            filesystem.files[i]^.f.Dispose();
+   if(filesystem.n > 0) then begin
+      for i := 0 to (filesystem.n - 1) do begin
+         if(filesystem.List[i] <> nil) then begin
+            filesystem.List[i]^.f.Dispose();
 
-            dispose(filesystem.files[i]);
-            filesystem.files[i] := nil;
+            Dispose(filesystem.List[i]);
+            filesystem.List[i] := nil;
          end;
       end;
+   end;
 
-   SetLength(filesystem.files, 0);
-   filesystem.nFiles       := 0;
-   filesystem.nAllocated   := 0;
+   filesystem.Dispose();
 end;
 
 { HANDLER }
 {checks whether the specified file can be found in the filesystem}
-function finFS(const fn: string): fileint;
+function finFS(const fn: StdString): fileint;
 var
    entryIdx: longint;
    fs: ypkPFSFile;
@@ -287,83 +267,86 @@ begin
    fs := ypkfs.Find(fn, entryIdx);
 
    if(entryIdx > -1) then
-      result := fs^.entries.e[entryIdx].size
+      Result := fs^.entries.List[entryIdx].size
    else
-      result := -1;
+      Result := -1;
 end;
 
-function OpenFile(var f: TFile; const fn: string): boolean;
+function OpenFile(var f: TFile; const fn: StdString): boolean;
 var
    entry: ypkPEntry;
    entryIdx: longint;
    fs: ypkPFSFile;
 
 begin
-   result := false;
+   Result := false;
 
    fs := ypkfs.Find(fn, entryIdx);
    if(entryIdx > -1) then begin
-      entry := @fs^.entries.e[entryIdx].offs;
+      entry := @fs^.entries.List[entryIdx].offs;
 
       f.Open(fs^.f, entry^.offs, entry^.size);
-      if(fs^.f.error = 0) then begin
-         result := fs^.f.Seek(entry^.offs) > -1;
-      end;
+
+      if(fs^.f.error = 0) then
+         Result := fs^.f.Seek(entry^.offs) > -1;
    end;
 end;
 
 { UTILITIES }
-function ypkTFileSystemGlobal.Find(const fn: string; var offs, size: fileint): boolean;
+function ypkTFileSystemGlobal.Find(const fn: StdString; var offs, size: fileint): boolean;
 var
    fs: ypkPFSFile;
    entryIdx: longint;
 
 begin
-   fs := ypkTFileSystemGlobal.Find(fn, entryIdx);
+   fs := Find(fn, entryIdx);
+
    if(entryIdx > -1) then begin
-      offs := fs^.entries.e[entryIdx].offs;
-      size := fs^.entries.e[entryIdx].size;
+      offs := fs^.entries.List[entryIdx].offs;
+      size := fs^.entries.List[entryIdx].size;
       exit(true);
    end;
 
-   result := false;
+   Result := false;
 end;
 
-function ypkTFileSystemGlobal.Find(const fn: string; out entryIdx: longint): ypkPFSFile;
+function ypkTFileSystemGlobal.Find(const fn: StdString; out entryIdx: longint): ypkPFSFile;
 var
    i: longint;
 
 begin
    entryIdx := -1;
+   Result := nil;
 
-   if(filesystem.nFiles > 0) then
-   for i := (filesystem.nFiles-1) downto 0 do begin
-      if(filesystem.files[i] <> nil) then begin
-         entryIdx := ypk.Find(filesystem.files[i]^.entries, fn);
+   if(filesystem.n > 0) then begin
+      for i := (filesystem.n - 1) downto 0 do begin
+         if(filesystem.List[i] <> nil) then begin
+            entryIdx := ypk.Find(filesystem.List[i]^.entries, fn);
 
-         if(entryIdx > -1) then
-            exit(filesystem.files[i]);
+            if(entryIdx > -1) then
+               exit(filesystem.List[i]);
+         end;
       end;
    end;
 end;
 
-function ypkTFileSystemGlobal.GetFS(const fn: string): ypkPFSFile;
+function ypkTFileSystemGlobal.GetFS(const fn: StdString): ypkPFSFile;
 var
    entryIdx: longint;
    fs: ypkPFSFile;
 
 begin
-   fs := ypkTFileSystemGlobal.Find(fn, entryIdx);
+   fs := Find(fn, entryIdx);
 
    if(entryIdx > -1) then
       exit(fs);
 
-   result := nil;
+   Result := nil;
 end;
 
 function ypkTFileSystemGlobal.FileCount(var fs: ypkTFSFile): longint;
 begin
-   result := fs.entries.n;
+   Result := fs.entries.n;
 end;
 
 function ypkTFileSystemGlobal.FileCount(): longint;
@@ -374,13 +357,13 @@ var
 begin
    count := 0;
 
-   if(filesystem.nFiles > 0) then
-      for i := 0 to (filesystem.nFiles-1) do begin
-         if(filesystem.files[i] <> nil) then
-            inc(count, filesystem.files[i]^.entries.n);
+   if(filesystem.n > 0) then
+      for i := 0 to (filesystem.n - 1) do begin
+         if(filesystem.List[i] <> nil) then
+            inc(count, filesystem.List[i]^.entries.n);
       end;
 
-   result := 0;
+   Result := 0;
 end;
 
 { ypkTFSFile }
@@ -393,18 +376,17 @@ end;
 INITIALIZATION
    ypkfs.correctPaths := true;
    ypkfs.bufferSize := 8192;
-   fsInit(ypkfs.vfs);
+   fFile.fsInit(ypkfs.vfs);
    ypkfs.vfsh:= @subfHandler;
 
    ypkfs.vfs.Name             := 'ypkVFS';
    ypkfs.vfs.FileInFS         := @finFS;
    ypkfs.vfs.OpenFile         := @OpenFile;
 
-   fsAdd(ypkfs.vfs);
+   fFile.fsAdd(ypkfs.vfs);
 
    {initialize filesystem}
-   filesystem.nFiles       := 0;
-   filesystem.nAllocated   := 0;
+   filesystem.InitializeValues(filesystem);
 
 FINALIZATION
    ypkfs.DisposePool();
