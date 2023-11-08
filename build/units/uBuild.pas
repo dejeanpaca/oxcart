@@ -1574,46 +1574,62 @@ begin
          log.v('build > auto fpc defaults for linux');
 
       DefaultPlatform^.Path := '/usr/bin/';
-
-      if(Tools.Path = '') then
-         Tools.Path := '~/bin/';
       {$ELSEIF DEFINED(DARWIN)}
       if(VerboseLog) then
          log.v('build > auto fpc defaults for darwin');
 
       DefaultPlatform^.Path := '/usr/local/bin/'
-
-      if(Tools.Path = '') then
-         Tools.Path := '~/bin/';
       {$ELSEIF DEFINED(WINDOWS)}
       {TODO: Determine default fpc path for windows}
       if(VerboseLog) then
          log.v('build > auto fpc defaults for windows');
-
-      if(Tools.Path = '') then
-         Tools.Path :=  ExpandFileName(IncludeTrailingPathDelimiterNonEmpty(ConfigPath) + '..\tools');
-      {$ENDIF}
-
-      if(ConfigPath <> 'default') then
-         Tools.Build := ConfigPath;
-
-      FileUtils.NormalizePathEx(Tools.Path);
-      FileUtils.NormalizePathEx(Tools.Build);
-
-      if(VerboseLog) then begin
-         log.v('Auto build path: ' + Tools.Build);
-         log.v('Auto tools path: ' + Tools.Path);
-      end;
-
-      {$IF DEFINED(CPUX86_64) OR DEFINEDCPUX86_32)}
-      DefaultPlatform^.OptimizationLevels.Add('sse');
-      DefaultPlatform^.OptimizationLevels.Add('sse2');
-      DefaultPlatform^.OptimizationLevels.Add('sse3');
       {$ENDIF}
 
       if(VerboseLog) then
          log.v('build > using auto defaults for fpc platform');
    end;
+
+   if(Tools.Path = '') then begin
+      {$IF DEFINED(LINUX)}
+      if(VerboseLog) then
+         log.v('build > auto tools/build defaults for linux');
+
+      Tools.Path := '~/bin/';
+      {$ELSEIF DEFINED(DARWIN)}
+      if(VerboseLog) then
+         log.v('build > auto tools/build defaults for darwin');
+
+      Tools.Path := '~/bin/';
+      {$ELSEIF DEFINED(WINDOWS)}
+      {TODO: Determine default fpc path for windows}
+      if(VerboseLog) then
+         log.v('build > auto tools/build defaults for windows');
+
+      Tools.Path :=  ExpandFileName(IncludeTrailingPathDelimiterNonEmpty(ConfigPath) + '..\tools');
+      {$ENDIF}
+
+      FileUtils.NormalizePathEx(Tools.Path);
+
+      if(VerboseLog) then
+         log.v('Auto tools path: ' + Tools.Path);
+   end;
+
+   if(ConfigPath <> 'default') or (Tools.Build = '') then begin
+      Tools.Build := ConfigPath;
+      FileUtils.NormalizePathEx(Tools.Build);
+
+      if(VerboseLog) then
+         log.v('Auto build path: ' + Tools.Build);
+   end;
+
+   if(DefaultPlatform^.OptimizationLevels.n = 0) then begin
+      {$IF DEFINED(CPUX86_64) OR DEFINEDCPUX86_32)}
+      DefaultPlatform^.OptimizationLevels.Add('sse');
+      DefaultPlatform^.OptimizationLevels.Add('sse2');
+      DefaultPlatform^.OptimizationLevels.Add('sse3');
+      {$ENDIF}
+   end;
+
 
    if(DefaultLazarus^.Path = '') then begin
       {$IF DEFINED(LINUX)}
@@ -1766,6 +1782,11 @@ var
 begin
    currentMode := 'fpc';
 
+   if(currentValue = 'default') then begin
+      currentPlatform := build.DefaultPlatform;
+      exit;
+   end;
+
    platform.Initialize(platform);
    platform.Name := currentValue;
 
@@ -1779,6 +1800,11 @@ var
 
 begin
    currentMode := 'lazarus';
+
+   if(currentValue = 'default') then begin
+      currentLazarus := build.DefaultLazarus;
+      exit;
+   end;
 
    laz.Initialize(laz);
    laz.Name := currentValue;
