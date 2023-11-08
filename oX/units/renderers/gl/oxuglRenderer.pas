@@ -109,13 +109,6 @@ function oxglTRenderer.InitWindow(wnd: oxTWindow): boolean;
 begin
    wnd.RenderingContext := oxTRenderer(wnd.Renderer).GetContext(wnd);
 
-   if(wnd.ErrorCode = 0) and (not wnd.oxProperties.Context)  then begin
-      wnd.ThreadRenderingContext := oxTRenderer(wnd.Renderer).GetContext(wnd, wnd.RenderingContext);
-
-      if(wnd.ErrorCode = 0) then
-         log.v('gl > Created thread render context');
-   end;
-
    if(wnd.RenderingContext = -1) or (wnd.ErrorCode <> 0) then begin
       if(wnd.ErrorCode = 0) then
          wnd.CreateFail('gl > Failed to get a rendering context')
