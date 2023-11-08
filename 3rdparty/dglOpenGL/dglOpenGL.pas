@@ -20409,29 +20409,6 @@ begin
   ImplementationRead := True;
 end;
 
-{$IFDEF DGL_WIN}
-// =============================================================================
-// RaiseLastOSError
-// =============================================================================
-// Needed for compatibility with older Delphiversions
-// =============================================================================
-
-procedure RaiseLastOSError;
-begin
-{$IFDEF FPC}
-  raise Exception.Create('RaiseLastOSError!'); // To-Do: find a better solution
-{$ELSE}
-  {$IFDEF DELPHI6_AND_DOWN} // If Delphi 6 or later
-    SysUtils.RaiseLastWin32Error;
-  {$ELSE}
-    SysUtils.RaiseLastOSError;
-  {$ENDIF}
-{$ENDIF}
-end;
-
-{$ENDIF}
-
-
 initialization
 
 {$IFDEF CPU386}{$IFNDEF DARWIN}
