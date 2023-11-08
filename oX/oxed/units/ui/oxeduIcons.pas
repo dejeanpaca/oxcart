@@ -11,7 +11,7 @@ UNIT oxeduIcons;
 INTERFACE
 
    USES
-      uStd, StringUtils,
+      uStd,
       {ox}
       uOX, oxuPaths, oxuFreetype, oxuTexture, oxuTexturePool, uiuContextMenu, oxuDefaultTexture,
       oxuGlyph,
@@ -22,11 +22,6 @@ TYPE
    { oxedTIconsGlobal }
 
    oxedTIconsGlobal = record
-      {default size for glyphs}
-      DefaultSize: loopint;
-      {will return glyph even if one cannot be loaded due to issues (to prevent any potential crashes)}
-      AlwaysReturnGlyphs: boolean;
-
       function Create(c: longword; size: longint = 0; const name: string = ''): oxTTexture;
       function Create(const c: string; size: longint = 0): oxTTexture;
 
@@ -100,20 +95,15 @@ end;
 function oxedTIconsGlobal.Create(c: longword; size: longint; const name: string): oxTTexture;
 var
    map: oxPGlyphMap = nil;
-   codeName: string;
 
 begin
-   if(name = '') then begin
-      codeName := sf(c);
-      map := oxGlyphs.Load(codeName, codeName, size);
-   end else
+   if(name = '') then
+      map := oxGlyphs.Load(c)
+   else
       map := oxGlyphs.Load(name, name, size);
 
-   if(map <> nil) and (map^.Texture <> nil) then
-      exit(map^.Texture);
-
-   if(AlwaysReturnGlyphs) then
-      exit(oxDefaultTexture.Texture);
+   if(map <> nil) then
+      exit(map^.GetTexture());
 
    Result := nil;
 end;
@@ -135,9 +125,6 @@ begin
 end;
 
 INITIALIZATION
-   oxedIcons.DefaultSize := 64;
-   oxedIcons.AlwaysReturnGlyphs := true;
-
    oxed.Init.iAdd('oxed.icons', @init);
 
 END.
