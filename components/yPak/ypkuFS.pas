@@ -10,7 +10,7 @@ INTERFACE
 
    USES uStd, ufhStandard, {$IFDEF UNIX}BaseUnix, uFileUnix, {$ENDIF}
       uLog, StringUtils,
-      uFileUtils, uFile, {%H-}uFiles, ufhSub, uyPak;
+      uFileUtils, uFile, {%H-}uFiles, ufhSub, uyPakFile;
 
 TYPE
    ypkPFSFile = ^ypkTFSFile;

@@ -9,7 +9,7 @@ UNIT oxeduYPK;
 INTERFACE
 
    USES
-      ypkuFS, uyPak;
+      ypkuFS, ypkuBuilder;
 
 IMPLEMENTATION
 
