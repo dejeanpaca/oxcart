@@ -1424,7 +1424,7 @@ begin
       DimensionsSet := true;
 
       SizeChanged();
-      UpdateParentSize(false);
+      UpdateParentSize();
    end;
 
    if(wdgpVISIBLE in Properties) then

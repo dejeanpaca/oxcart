@@ -127,6 +127,8 @@ TYPE
       procedure ResizeAdjusted(w, h: loopint; ignoreRestrictions: boolean = false);
       procedure ResizeAdjusted(const newSize: oxTDimensions; ignoreRestrictions: boolean = false);
 
+      procedure UpdateResize();
+
       {adjust width and height according to window restrictions}
       procedure AdjustSizesWithRestrictions(var w, h: loopint);
       procedure AdjustSizesWithRestrictions(var d: oxTDimensions);
@@ -272,7 +274,7 @@ TYPE
       {updates positions for all child windows}
       procedure UpdatePositions();
       {notifies all children that the parent resized}
-      procedure UpdateParentSize(selfNotify: boolean = true);
+      procedure UpdateParentSize();
 
       {adjusts the window position}
       procedure AdjustPosition();
@@ -1075,7 +1077,6 @@ begin
       Position.x := x;
       Position.y := y;
 
-      Notification(uiWINDOW_MOVE);
       UpdatePositions();
    end;
 end;
@@ -1129,14 +1130,11 @@ begin
       Dimensions.w := w;
       Dimensions.h := h;
 
-      Notification(uiWINDOW_RESIZE);
-      SizeChanged();
+      UpdateResize();
 
       if(horizontalMove) then
          {we have to update RPositions and other data}
          UpdatePositions();
-
-      UpdateParentSize(false);
    end;
 end;
 
@@ -1166,6 +1164,13 @@ begin
    AdjustDimensions(d);
 
    Resize(d.w, d.h, ignoreRestrictions);
+end;
+
+procedure uiTWindowHelper.UpdateResize();
+begin
+   Notification(uiWINDOW_RESIZE);
+   UpdateParentSize();
+   SizeChanged();
 end;
 
 procedure uiTWindowHelper.AdjustSizesWithRestrictions(var w, h: loopint);
@@ -1796,6 +1801,8 @@ var
    ext: uiTWindow;
 
 begin
+   Notification(uiWINDOW_MOVE);
+
    if(Parent <> nil) then begin
       {update relative positions}
       RPosition := Parent.RPosition;
@@ -1834,7 +1841,7 @@ begin
    RPositionChanged();
 end;
 
-procedure uiTWindowHelper.UpdateParentSize(selfNotify: boolean = true);
+procedure uiTWindowHelper.UpdateParentSize();
 var
    i: loopint;
    child: uiTWindow;
@@ -1851,9 +1858,6 @@ begin
       if(child <> nil) then
          child.UpdateParentSize();
    end;
-
-   if(selfNotify) then
-      ParentSizeChange();
 end;
 
 procedure uiTWindowHelper.AdjustPosition();
