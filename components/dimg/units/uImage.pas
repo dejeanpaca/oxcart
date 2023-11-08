@@ -391,7 +391,7 @@ TYPE
 
    imgTPalette = class
       public
-      fn: string;
+      fn: StdString;
       nColors: longword;
       PixF: imgTPixelFormat;
       Size: longint;
@@ -400,7 +400,7 @@ TYPE
       sAuthor,
       sName,
       sDescription,
-      sProgram: string;
+      sProgram: StdString;
 
       {data is external}
       DataExternal: boolean;
@@ -436,7 +436,7 @@ TYPE
    imgTImage = class
       public
       Name,
-      FileName: string;
+      FileName: StdString;
       Properties: longword;
 
       Width,
@@ -502,7 +502,7 @@ TYPE
       e,
       f,
       io: longint;
-      description: string;
+      description: StdString;
    end;
 
    { imgTGlobal }
