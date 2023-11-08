@@ -851,16 +851,16 @@ end;
 procedure oxTFont.Assign(const tfd: oxTTFD);
 begin
    {assign attributes}
-   Width        := tfd.Width;
-   Height        := tfd.Height;
-   HorizontalSpacing        := tfd.SpaceX;
-   VerticalSpacing        := tfd.SpaceY;
-   Base      := tfd.Base;
-   Chars     := tfd.Chars;
-   CPLine    := tfd.CPLine;
-   Lines     := tfd.Lines;
+   Width := tfd.Width;
+   Height := tfd.Height;
+   HorizontalSpacing := tfd.SpaceX;
+   VerticalSpacing := tfd.SpaceY;
+   Base := tfd.Base;
+   Chars := tfd.Chars;
+   CPLine := tfd.CPLine;
+   Lines := tfd.Lines;
 
-   TexName   := tfd.TextureName;
+   TexName := tfd.TextureName;
 end;
 
 function oxTFont.Valid(): boolean;
@@ -874,11 +874,9 @@ function oxTFontGlobal.Load(var f: oxTFont; const fn: StdString): longint;
 var
    tfd: oxTTFD;
    tfn: StdString;
-   errCode: longint;
    gen: oxTTextureGenerate;
 
 begin
-   Result := eNONE;
    oxTTextureGenerate.Init(gen);
 
    if(f <> nil) then
@@ -891,28 +889,25 @@ begin
 
    f.fn := oxPaths.Find(f.fn);
 
-   errCode := oxTFD.Load(tfd, f.fn);
-   if(errCode = 0) then begin
+   Result := oxTFD.Load(tfd, f.fn);
+   if(errorCode = 0) then begin
       f.Assign(tfd);
 
       {try to load the texture}
       tfn := ExtractFilePath(f.fn) + tfd.TextureName;
       gen.Filter := oxFont.Filter;
 
-      errCode := gen.Generate(tfn, f.Texture);
+      Result := gen.Generate(tfn, f.Texture);
 
-      if(errCode = 0) then
+      if(Result = 0) then
          f.FirstBuild();
    end;
 
    gen.Dispose();
-
-   Result := errCode;
 end;
 
 function oxTFontGlobal.Load(var f: oxTFont; var tfd: oxTTFD; const extension: StdString; var textureFile: TFile): longint;
 var
-   errCode: longint;
    gen: oxTTextureGenerate;
 
 begin
@@ -929,13 +924,11 @@ begin
    {try to load the texture}
    gen.Filter := oxFont.Filter;
 
-   errCode := gen.Generate(extension, textureFile, f.Texture);
-   if(errCode = 0) then
+   Result := gen.Generate(extension, textureFile, f.Texture);
+   if(Result = 0) then
       f.FirstBuild();
 
    gen.Dispose();
-
-   Result := errCode;
 end;
 
 
