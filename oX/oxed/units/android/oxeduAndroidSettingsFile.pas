@@ -38,12 +38,14 @@ end;
 
 class procedure oxedTAndroidSettingsFile.Load();
 begin
-   dvarf.ReadText(oxedAndroidSettings.dvg, GetFn());
+   if(oxedAndroidSettings.Enabled) then
+      dvarf.ReadText(oxedAndroidSettings.dvg, GetFn());
 end;
 
 class procedure oxedTAndroidSettingsFile.Save();
 begin
-   dvarf.WriteText(oxedAndroidSettings.dvg, GetFn());
+   if(oxedAndroidSettings.Enabled) then
+      dvarf.WriteText(oxedAndroidSettings.dvg, GetFn());
 end;
 
 INITIALIZATION

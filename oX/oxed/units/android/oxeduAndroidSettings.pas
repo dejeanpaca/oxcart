@@ -23,6 +23,8 @@ TYPE
 
       {android package name}
       PackageName: StdString;
+      {is android support enabled}
+      Enabled,
       {should you manage android files yourself}
       ManualFileManagement: boolean;
 
@@ -35,6 +37,8 @@ VAR
 IMPLEMENTATION
 
 VAR
+   dvEnabled,
+   dvManualFileManagement,
    dvPackageName: TDVar;
 
 { oxedTAndroidSettings }
@@ -44,6 +48,7 @@ begin
   with oxedAndroidSettings do begin
      PackageName := '';
      ManualFileManagement := false;
+     Enabled := false;
   end;
 end;
 
@@ -53,6 +58,9 @@ INITIALIZATION
 
    dvar.Init(oxedAndroidSettings.dvg, 'android');
 
+   dvgOXED.Add(dvEnabled, 'enabled', dtcBOOL, @oxedAndroidSettings.Enabled);
+
+   oxedAndroidSettings.dvg.Add(dvManualFileManagement, 'manual_file_management', dtcBOOL, @oxedAndroidSettings.ManualFileManagement);
    oxedAndroidSettings.dvg.Add(dvPackageName, 'package_name', dtcSTRING, @oxedAndroidSettings.PackageName);
 
    oxedProjectManagement.OnNew.Add(@oxedAndroidSettings.Reset);
