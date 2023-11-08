@@ -51,11 +51,7 @@ VAR
    dvConfigLocation: TDVar;
 
    dvUnitsUnit,
-   dvUnitsInclude,
-   dvUnitsBaseWin,
-   dvUnitsBaseUnix,
-   dvUnitsBaseLinux,
-   dvUnitsBaseDarwin: TDVar;
+   dvUnitsInclude: TDVar;
 
    currentMode: StdString = 'fpc';
    currentConfigFilePath,
@@ -72,11 +68,6 @@ VAR
    dvToolsPath,
    dvBuildPath,
    dvBuildLibOptimizationLevels: TDVar;
-
-   {current base path read from units.config}
-   winBasePath,
-   unixBasePath,
-   darwinBasePath: StdString;
 
    currentPlatform: PBuildPlatform;
    currentLazarus: PBuildLazarusInstall;
@@ -220,24 +211,6 @@ begin
    build.AutoDeterminedConfigPath := true;
 end;
 
-function getBasePath(): StdString;
-begin
-   {$IFDEF UNIX}
-   {$IFDEF DARWIN}
-   Result := darwinBasePath;
-   {$ELSE}
-   Result := unixBasePath;
-   {$ENDIF}
-   {$ELSE}
-      {$IFDEF WINDOWS}
-      Result := winBasePath;
-      {$ELSE}
-      Result := '';
-      {$FATAL uBuild BasePath not support on this platform}
-      {$ENDIF}
-   {$ENDIF}
-end;
-
 function doesIncludeAll(const path: StdString): boolean;
 begin
    Result := strutils.AnsiEndsStr('*', path);
@@ -327,7 +300,7 @@ begin
    if(processPath(currentValue)) then
       scanUnits(ExtractFilePath(currentValue))
    else
-      build.Units.Add(getBasePath() + currentValue);
+      build.Units.Add(currentValue);
 end;
 
 procedure dvIncludeNotify(var {%H-}context: TDVarNotificationContext);
@@ -335,12 +308,7 @@ begin
    if(processPath(currentValue)) then
       scanIncludes(ExtractFilePath(currentValue))
    else
-      build.Includes.Add(getBasePath() + currentValue);
-end;
-
-procedure dvNotifyBasePath(var context: TDVarNotificationContext);
-begin
-   FileUtils.NormalizePathEx(StdString(context.DVar^.Variable^));
+      build.Includes.Add(currentValue);
 end;
 
 procedure dvFPCNotify(var {%H-}context: TDVarNotificationContext);
@@ -501,24 +469,6 @@ INITIALIZATION
 
    BuildConfiguration.dvgUnits := dvar.RootGroup;
    BuildConfiguration.dvgUnits.Add('base', BuildConfiguration.dvgUnitsBase);
-
-   BuildConfiguration.dvgUnitsBase.Add(dvUnitsBaseWin, 'win', dtcSTRING, @winBasePath);
-   BuildConfiguration.dvgUnitsBase.Add(dvUnitsBaseUnix, 'unix', dtcSTRING, @unixBasePath);
-   BuildConfiguration.dvgUnitsBase.Add(dvUnitsBaseLinux, 'linux', dtcSTRING, @unixBasePath);
-   BuildConfiguration.dvgUnitsBase.Add(dvUnitsBaseDarwin, 'darwin', dtcString, @darwinBasePath);
-
-   {$IFDEF WINDOWS}
-   dvUnitsBaseWin.pNotify := @dvNotifyBasePath;
-   {$ENDIF}
-
-   {$IFDEF DARWIN}
-      dvUnitsBaseDarwin.pNotify := @dvNotifyBasePath;
-   {$ELSE}
-     {$IFDEF UNIX}
-     dvUnitsBaseUnix.pNotify := @dvNotifyBasePath;
-     dvUnitsBaseLinux.pNotify := @dvNotifyBasePath;
-     {$ENDIF}
-   {$ENDIF}
 
    BuildConfiguration.dvgUnits.Add(dvUnitsUnit, 'unit', dtcSTRING, @currentValue);
    dvUnitsUnit.pNotify := @dvUnitNotify;
