@@ -10,7 +10,7 @@ INTERFACE
 
    USES
       sysutils,
-      uBuild,
+      uBuildExec,
       oxeduSettings, oxeduConsole;
 
 IMPLEMENTATION
@@ -18,15 +18,14 @@ IMPLEMENTATION
 procedure onOutputLine();
 begin
    if(oxedSettings.ShowBuildOutput) then begin
-
-      if (Pos('Error:',  build.Output.LastLine) > 0) or (Pos('Fatal:',  build.Output.LastLine) > 0) then
-         oxedConsole.e(build.Output.LastLine)
+      if (Pos('Error:',  BuildExec.Output.LastLine) > 0) or (Pos('Fatal:',  BuildExec.Output.LastLine) > 0) then
+         oxedConsole.e(BuildExec.Output.LastLine)
       else
-         oxedConsole.v(build.Output.LastLine);
+         oxedConsole.v(BuildExec.Output.LastLine);
    end;
 end;
 
 INITIALIZATION
-   build.Output.OnLine.Add(@onOutputLine);
+   BuildExec.Output.OnLine.Add(@onOutputLine);
 
 END.
