@@ -12,7 +12,8 @@ INTERFACE
 
    USES
       uLog, uFileUtils,
-      uAppInfo, appuPaths, uApp;
+      uAppInfo, appuPaths, uApp,
+      oxuRunRoutines;
 
 TYPE
    appTLog = record
@@ -75,7 +76,10 @@ begin
       appLog.Initialize();
 end;
 
+VAR
+   initRoutines: oxTRunRoutine;
+
 INITIALIZATION
-   app.InitializationProcs.iAdd('log', @initialize, 1990);
+   app.InitializationProcs.iAdd(initRoutines, 'log', @initialize);
 
 END.
