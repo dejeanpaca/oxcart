@@ -99,7 +99,7 @@ begin
    arch := oxedTAndroidPlatformArchitecture(
       AddArchitecture(oxedTAndroidPlatformArchitecture.Create('Android X86 x32', 'i386')));
    arch.BinUtilsPrefix := 'i686-linux-android-';
-   arch.ToolChainPathPrefix := 'arm-linux-androideabi-4.9';
+   arch.ToolChainPathPrefix := 'x86-4.9';
    arch.LibSource := 'i686-linux-android';
    arch.LibTarget := 'x86';
    arch.DefaultCPUType := 'PENTIUM4';
