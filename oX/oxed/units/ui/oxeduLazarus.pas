@@ -9,7 +9,8 @@ UNIT oxeduLazarus;
 INTERFACE
 
    USES
-      process, sysutils, uLog,
+      process, sysutils, uLog, uStd,
+      {build}
       uBuild, uBuildInstalls,
       {app}
       appuActionEvents,
@@ -81,7 +82,7 @@ begin
 
       if(laz = nil) then begin
          laz := TProcess.Create(nil);
-         laz.Executable := BuildInstalls.GetLazarusStartExecutable();
+         laz.Executable := BuildInstalls.GetLazarusExecutable();
       end;
 
       if(not laz.Running) then begin
@@ -95,6 +96,8 @@ begin
          end;
 
          laz.Parameters.Add(oxedProject.TempPath + oxPROJECT_LIB_LPI);
+
+         log.v('Running lazarus: ' + laz.Executable + ' ' + laz.Parameters.GetText);
       end else begin
          if(oxedSettings.ShowNotifications) then
             oxToast.Show('Lazarus', 'Already running');
@@ -115,10 +118,16 @@ begin
       log.v('Cannot open lazarus. No valid project');
 end;
 
+procedure deinit();
+begin
+   FreeObject(laz);
+end;
 
 INITIALIZATION
    oxedBuild.OnDone.Add(@openLazarusAfterRecreate);
 
    oxedActions.OPEN_LAZARUS := appActionEvents.SetCallback(@oxedLazarus.OpenLazarus);
+
+   oxed.Init.dAdd('lazarus_run', @deinit);
 
 END.
