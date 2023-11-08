@@ -2,8 +2,8 @@
 PROGRAM setup;
 
 USES
-   sysutils, uStd, uLog, ParamUtils, uFileUtils,
-   uBuild, uBuildLibraries, uBuildConfiguration, uLPI;
+   sysutils, uStd, uLog, ParamUtils, uFileUtils, uProcessHelpers,
+   uBuild, uBuildLibraries, uBuildConfiguration, uBuildExec, uLPI;
 
 {$R *.res}
 
@@ -45,8 +45,8 @@ BEGIN
 
    if(isMode(MODE_RESOURCES)) then begin
       log.i('Building resources');
-      build.RunCommand('file2code', ['-pas', '-lf', 'data/fonts/default/font.tga', 'units/resources/default_font.inc', 'default_font']);
-      build.RunCommand('file2code', ['-pas', '-lf', 'data/textures/default/default.tga', 'units/resources/default_texture.inc', 'default_texture']);
+      ProcessHelpers.RunCommand('file2code', ['-pas', '-lf', 'data/fonts/default/font.tga', 'units/resources/default_font.inc', 'default_font']);
+      ProcessHelpers.RunCommand('file2code', ['-pas', '-lf', 'data/textures/default/default.tga', 'units/resources/default_texture.inc', 'default_texture']);
       log.i('Done building resources');
    end;
 
@@ -68,6 +68,6 @@ BEGIN
       log.i('Building OXED');
       log.i('Done building OXED');
 
-      build.Laz('oxed' + DirectorySeparator + 'oxed.lpi');
+      BuildExec.Laz('oxed' + DirectorySeparator + 'oxed.lpi');
    end;
 END.
