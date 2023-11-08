@@ -9,14 +9,11 @@ UNIT oxuUI;
 INTERFACE
 
    USES
-      uStd, uLog, uTiming, udvars,
-      {app}
-      appuMouse,
+      uStd,
       {oX}
-      uOX, oxuWindow, oxuWindows, oxuRenderer, oxuRenderers, oxuResourcePool, oxuRunRoutines,
-      oxuShader, oxuMaterial, oxuFont,
+      uOX, oxuWindows, oxuRenderers,
       {ui}
-      uiuTypes, uiuControl, uiuWindowTypes, uiuWidget, uiuBase, uiuUI, uiuSkin;
+      uiuWindowTypes, uiuWidget, uiuBase, uiuUI;
 
 VAR
    oxui: uiTUI;
