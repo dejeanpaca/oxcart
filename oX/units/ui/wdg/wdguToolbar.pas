@@ -13,7 +13,7 @@ INTERFACE
       {oX}
       oxuUI, oxuTypes, oxuTexture, oxuFont, oxuRenderUtilities, oxuRender, oxuTransform, oxuResourcePool,
       {ui}
-      uiuTypes, uiuWindowTypes, uiuSkinTypes,
+      uiuTypes, uiuWindowTypes, uiuSkinTypes, uiuDraw,
       uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuDrawUtilities,
       wdguBase, wdguWorkbar;
 
@@ -309,7 +309,7 @@ begin
       end;
    end;
 
-   oxui.Material.ApplyTexture('texture', nil);
+   uiDraw.ClearTexture();
 
    {render separators}
    for i := 0 to Items.n - 1 do begin

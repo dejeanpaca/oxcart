@@ -17,7 +17,7 @@ INTERFACE
       oxuPlatform, oxuTexture, oxuTextureGenerate, oxuTypes, oxuTransform, oxuRender,
       oxuRenderUtilities,
       {ui}
-      oxuUI, uiuTypes, uiuControl, uiuWindow, uiuWindowTypes;
+      oxuUI, uiuTypes, uiuControl, uiuWindow, uiuWindowTypes, uiuDraw;
 
 TYPE
    uiTLoadedCursors = specialize TSimpleList<uiTCursorType>;
@@ -144,9 +144,8 @@ begin
 
       {bind texture}
       oxRender.EnableBlend();
-      oxui.Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
-      oxRenderingUtilities.StartQuad(tex);
-      oxRenderingUtilities.Quad();
+      uiDraw.Color(1.0, 1.0, 1.0, 1.0);
+      uiDraw.Quad(tex);
 
       oxTransform.Identity();
       oxTransform.Apply();

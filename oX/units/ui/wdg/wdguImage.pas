@@ -141,10 +141,10 @@ begin
    SetColor(Color);
 
    if(Texture.Has()) then begin
-      oxui.Material.ApplyTexture('texture', Texture.Texture);
+      uiDraw.Texture(Texture.Texture);
       oxRender.TextureCoords(QuadTexCoords[0]);
       Quad.Render();
-      oxui.Material.ApplyTexture('texture', nil);
+      uiDraw.ClearTexture();
    end else
       uiDraw.Box(0, 0, Dimensions.w - 1, -(Dimensions.h - 1));
 

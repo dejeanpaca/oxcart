@@ -306,7 +306,7 @@ begin
 
    {render the surface}
    if(properties.IsSet(wdgRENDER_BLOCK_SURFACE)) then begin
-      oxui.Material.ApplyColor('color', sc);
+      uiDraw.Color(sc);
 
       if(properties.IsSet(wdgRENDER_BLOCK_SIMPLE)) then
          uiDraw.Box(x1, y1, x2, y2)
@@ -337,7 +337,7 @@ begin
 
    {render the border}
    if(properties.IsSet(wdgRENDER_BLOCK_BORDER)) then begin
-      oxui.Material.ApplyColor('color', bc);
+      uiDraw.Color(bc);
 
       if(properties.IsSet(wdgRENDER_BLOCK_SIMPLE)) then
          uiDraw.Rect(x1, y1, x2, y2)

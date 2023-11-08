@@ -118,13 +118,13 @@ begin
             vmOffset(tx[0], 4, Background.Offset[0], Background.Offset[1]);
       end;
 
-      oxui.Material.ApplyTexture('texture', texture);
+      uiDraw.Texture(texture);
       oxRender.TextureCoords(tx[0]);
 
       {render background}
       renderBackgroundBox();
 
-      oxui.Material.ApplyTexture('texture', nil);
+      uiDraw.ClearTexture();
    end;
 end;
 
@@ -327,7 +327,6 @@ var
 begin
    m := oxTTransform.OrthoFrustum(0 + 0.375, wnd.Dimensions.w + 0.375, 0 + 0.375, wnd.Dimensions.h + 0.375, -1.0, 1.0);
    oxRenderer.SetProjectionMatrix(m);
-   oxui.Material.Apply();
 
    uiDraw.Start();
 end;
