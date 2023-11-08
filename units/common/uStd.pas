@@ -260,11 +260,11 @@ procedure Pass();
 function addr2str(address: pointer): StdString;
 
 {fill a buffer quickly with zero's}
-procedure Zero(var buf; size: int64);
-procedure ZeroOut(out buf; size: int64);
-procedure ZeroPtr(buf: pointer; size: int64); inline;
+procedure Zero(var buf; size: loopint);
+procedure ZeroOut(out buf; size: loopint);
+procedure ZeroPtr(buf: pointer; size: loopint); inline;
 {pretend we zero out so the compiler doesn't complain for data we don't need to initialize}
-procedure FakeZeroOut(out {%H-}buf; {%H-}size: int64);
+procedure FakeZeroOut(out {%H-}buf; {%H-}size: loopint);
 
 { EXTENDED MEMORY MANAGEMENT }
 function MemAlignment(size: PtrInt; alignment: loopint = -1): ptrint;
@@ -356,7 +356,7 @@ begin
    Result := hexStr(addressWord, SizeOf(pointer) * 2);
 end;
 
-procedure Zero(var buf; size: int64);
+procedure Zero(var buf; size: loopint);
 var
    left: int64;
 
@@ -372,12 +372,12 @@ begin
    end;
 end;
 
-procedure ZeroOut(out buf; size: int64);
+procedure ZeroOut(out buf; size: loopint);
 begin
    Zero((@buf)^, size);
 end;
 
-procedure ZeroPtr(buf: pointer; size: int64);
+procedure ZeroPtr(buf: pointer; size: loopint);
 var
    left: int64;
 
@@ -393,7 +393,7 @@ begin
    end;
 end;
 
-procedure FakeZeroOut(out buf; size: int64);
+procedure FakeZeroOut(out buf; size: loopint);
 begin
 
 end;
