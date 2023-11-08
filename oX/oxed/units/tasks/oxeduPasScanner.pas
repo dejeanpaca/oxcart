@@ -14,6 +14,7 @@ INTERFACE
       {pas}
       PScanner, PParser, PasTree,
       {oxed}
+      uOXED,
       oxeduPackage, oxeduPackageTypes, oxeduProject,
       oxeduProjectWalker, oxeduProjectScanner;
 
@@ -118,13 +119,17 @@ end;
 
 procedure onStart();
 begin
-
    {get command line parameters with room for one more}
    oxedPasScanner.FpcCommandLine := TBuildFPCConfiguration.GetFPCCommandLine(1);
 end;
 
-INITIALIZATION
+procedure initialize();
+begin
    oxedProjectScanner.OnStart.Add(@onStart);
    oxedProjectScanner.OnFile.Add(@onFile);
+end;
+
+INITIALIZATION
+   oxed.Init.Add('pas_scanner', @initialize);
 
 END.

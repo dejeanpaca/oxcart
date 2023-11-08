@@ -9,7 +9,7 @@ UNIT oxeduProjectScanner;
 INTERFACE
 
    USES
-      sysutils, uStd, uError, uLog, StringUtils, uFileUtils, uBuild,
+      sysutils, uStd, uLog, uFileUtils, uBuild,
       {app}
       appuActionEvents,
       {ox}
@@ -31,70 +31,37 @@ TYPE
       procedure ThreadDone(); override;
    end;
 
-   { oxedTProjectScannerGlobal }
+   { oxedTProjectScanner }
 
-   oxedTProjectScannerGlobal = record
-      Walker: TFileTraverse;
+   oxedTProjectScanner = class(oxedTProjectWalker)
       Task: oxedTProjectScannerTask;
 
-      Current: oxedTProjectWalkerCurrent;
+      constructor Create(); override;
 
-      OnStart,
-      OnDone: TProcedures;
-      OnFile: oxedTProjectWalkerFileProcedures;
-
-      procedure Run();
-      class procedure Initialize(); static;
+      procedure Scan();
       class procedure RunTask(); static;
 
-      {checks if the path is valid (not ignored or excluded)}
-      function ValidPath(const packagePath, fullPath: StdString): Boolean;
-      {get valid path}
-      function GetValidPath(const basePath, fullPath: StdString): StdString;
+      protected
+         function HandlePackage(var {%H-}package: oxedTPackage): boolean; override;
+         function HandleDirectory(var dir: StdString; const fd: TFileTraverseData): boolean; override;
    end;
 
 VAR
-   oxedProjectScanner: oxedTProjectScannerGlobal;
+   oxedProjectScanner: oxedTProjectScanner;
 
 IMPLEMENTATION
 
-function scanFile(const fd: TFileTraverseData): boolean;
-var
-   f: oxedTProjectWalkerFile;
+{ oxedTProjectScanner }
 
+constructor oxedTProjectScanner.Create();
 begin
-   Result := true;
+   inherited Create();
 
-   oxedProjectScanner.Current.FormFile(f, fd.f);
-   oxedProjectScanner.OnFile.Call(f);
-
-   if(oxedProjectScanner.Task.Terminated) then
-      exit(false);
+   Task := oxedTProjectScannerTask.Create();
+   Task.EmitAllEvents();
 end;
 
-function onDirectory(const fd: TFileTraverseData): boolean;
-var
-   dir: StdString;
-   path: oxedPPackagePath;
-
-begin
-   Result := true;
-
-   dir := oxedProjectScanner.GetValidPath(oxedProjectScanner.Current.Path, fd.f.Name);
-
-   if(dir <> '') then begin
-      {load package path properties if we have any}
-      if(FileExists(fd.f.Name + DirSep + OX_PACKAGE_PROPS_FILE_NAME)) then begin
-         path := oxedProjectScanner.Current.Package^.Paths.Get(dir);
-         path^.LoadPathProperties(oxedProjectScanner.Current.Path);
-      end;
-   end else
-      Result := false;
-end;
-
-{ oxedTProjectScannerGlobal }
-
-procedure oxedTProjectScannerGlobal.Run();
+procedure oxedTProjectScanner.Scan();
 begin
    if(oxTThreadTask.IsRunning(Task)) then begin
       log.w('Project scanner already running');
@@ -104,51 +71,29 @@ begin
    Task.Start();
 end;
 
-class procedure oxedTProjectScannerGlobal.Initialize();
+class procedure oxedTProjectScanner.RunTask();
 begin
-   with oxedProjectScanner do begin
-      TFileTraverse.Initialize(Walker);
-
-      Walker.OnFile:= @scanFile;
-      Walker.OnDirectory := @onDirectory;
-
-      Task := oxedTProjectScannerTask.Create();
-      Task.EmitAllEvents();
-   end;
+   oxedProjectScanner.Scan();
 end;
 
-class procedure oxedTProjectScannerGlobal.RunTask();
+function oxedTProjectScanner.HandlePackage(var package: oxedTPackage): boolean;
 begin
-   oxedProjectScanner.Run();
+   Result := true;
+   log.v('Scanning: ' + oxedProjectScanner.Current.Path);
 end;
 
-function oxedTProjectScannerGlobal.ValidPath(const packagePath, fullPath: StdString): Boolean;
+function oxedTProjectScanner.HandleDirectory(var dir: StdString; const fd: TFileTraverseData): boolean;
+var
+   path: oxedPPackagePath;
+
 begin
    Result := true;
 
-   {ignore project config directory}
-   if(packagePath = oxPROJECT_DIRECTORY) then
-      exit(false);
-
-   {ignore project temporary directory}
-   if(packagePath = oxPROJECT_TEMP_DIRECTORY) then
-      exit(false);
-
-   {ignore folder if .noassets file is declared in it}
-   if FileUtils.Exists(fullPath + DirSep + OX_NO_ASSETS_FILE) >= 0 then
-      exit(False);
-
-   {ignore directory if included in ignore lists}
-   if(oxedAssets.ShouldIgnoreDirectory(packagePath)) then
-      exit(False);
-end;
-
-function oxedTProjectScannerGlobal.GetValidPath(const basePath, fullPath: StdString): StdString;
-begin
-   Result := Copy(fullPath, Length(basePath) + 1, Length(fullPath));
-
-   if(not oxedProjectScanner.ValidPath(Result, fullPath)) then
-      exit('');
+   {load package path properties if we have any}
+   if(FileExists(fd.f.Name + DirSep + OX_PACKAGE_PROPS_FILE_NAME)) then begin
+      path := Current.Package^.Paths.Get(dir);
+      path^.LoadPathProperties(oxedProjectScanner.Current.Path);
+   end;
 end;
 
 { oxedTProjectScannerTask }
@@ -161,39 +106,12 @@ begin
 end;
 
 procedure oxedTProjectScannerTask.Run();
-var
-   i: loopint;
-
-procedure scanPackage(var p: oxedTPackage);
-begin
-   oxedProjectScanner.Current.Package := @p;
-   oxedProjectScanner.Current.Path := oxedProject.GetPackagePath(p);
-
-   log.v('Scanning: ' + oxedProjectScanner.Current.Path);
-   oxedProjectScanner.Walker.Run(oxedProjectScanner.Current.Path);
-end;
-
 begin
    inherited Run;
 
    log.v('Project scan started ...');
 
-   try
-      scanPackage(oxedAssets.oxPackage);
-      scanPackage(oxedAssets.oxDataPackage);
-      scanPackage(oxedProject.MainPackage);
-
-      for i := 0 to oxedProject.Packages.n - 1 do begin
-         scanPackage(oxedProject.Packages.List[i]);
-      end;
-   except
-      on e: Exception do begin
-         log.e('Project scanner failed running');
-         log.e(DumpExceptionCallStack(e));
-      end;
-   end;
-
-   oxedProjectScanner.Current.Package := nil;
+   oxedProjectScanner.Run();
 
    oxedProject.Session.InitialScanDone := true;
    log.v('Done project scan');
@@ -223,7 +141,12 @@ begin
    oxedProjectScanner.OnDone.Call();
 end;
 
-procedure deinit();
+procedure initialize();
+begin
+   oxedProjectScanner := oxedTProjectScanner.Create();
+end;
+
+procedure deinitialize();
 begin
    FreeObject(oxedProjectScanner.Task);
 end;
@@ -242,15 +165,11 @@ procedure projectOpen();
 begin
    projectClosed();
 
-   oxedProjectScanner.Run();
+   oxedProjectScanner.Scan();
 end;
 
 INITIALIZATION
-   oxed.Init.Add('project_scanner', @oxedProjectScanner.Initialize, @deinit);
-
-   TProcedures.InitializeValues(oxedProjectScanner.OnStart);
-   TProcedures.InitializeValues(oxedProjectScanner.OnDone);
-   oxedTProjectWalkerFileProcedures.InitializeValues(oxedProjectScanner.OnFile);
+   oxed.Init.Add('project_scanner', @initialize, @deinitialize);
 
    oxedProjectManagement.OnOpen.Add(@projectOpen);
    oxedProjectManagement.OnClosed.Add(@projectClosed);
