@@ -36,6 +36,9 @@ CONST
    ypkeINVALID_ID          = $0103;
 
 TYPE
+
+   { ypkfTHeader }
+
    ypkfTHeader = packed record
       {file ID}
       ID: ypkTID;
@@ -51,6 +54,9 @@ TYPE
       FilesOffset,
       {total size for files block}
       FilesSize: fileint;
+
+      {returns total size for all data, excluding header}
+      function DataSize(): fileint;
    end;
 
    ypkfPEntry = ^ypkfTEntry;
@@ -99,6 +105,13 @@ CONST
    ypkENTRY_SIZE        = SizeOf(ypkfTEntry);
 
 IMPLEMENTATION
+
+{ ypkfTHeader }
+
+function ypkfTHeader.DataSize(): fileint;
+begin
+   Result := BlobSize + FilesSize;
+end;
 
 { ERROR HANDLING }
 
