@@ -701,14 +701,31 @@ begin
    FileUtils.WriteString(oxedBuild.WorkArea + oxPROJECT_MAIN_SOURCE, p);
 end;
 
+procedure CreateIncludesList(const list: TSimpleStringList; var s: TAppendableString);
+var
+   i: loopint;
+
+begin
+   if list.n > 0 then begin
+      for i := 0 to list.n - 1 do begin
+         {check for comment}
+         if pos('{', list.List[i]) <> 1 then begin
+           if i < list.n - 1 then
+              s.Add(list.List[i] + ',')
+           else
+              s.Add(list.List[i]);
+         end else
+            s.Add(list.List[i]);
+      end;
+   end;
+end;
+
 procedure RecreateLib();
 var
    p: TAppendableString;
    u: TPascalSourceBuilder;
    fn,
    target: string;
-
-   i: loopint;
 
 begin
    u.Name := oxedProject.Identifier;
@@ -719,27 +736,10 @@ begin
    if oxedBuild.Parameters.IncludeUses.n > 0 then begin
       u.sUses := u.sUses + ',';
 
-      for i := 0 to oxedBuild.Parameters.IncludeUses.n - 1 do begin
-         {check for comment}
-         if pos('{', oxedBuild.Parameters.IncludeUses.List[i]) <> 1 then begin
-           if i < oxedBuild.Parameters.IncludeUses.n - 1 then
-              u.sUses.Add(oxedBuild.Parameters.IncludeUses.List[i] + ',')
-           else
-              u.sUses.Add(oxedBuild.Parameters.IncludeUses.List[i]);
-         end else
-            u.sUses.Add(oxedBuild.Parameters.IncludeUses.List[i]);
-      end;
+      CreateIncludesList(oxedBuild.Parameters.IncludeUses, u.sUses);
    end;
 
-
-   if oxedBuild.Parameters.ExportSymbols.n > 0 then begin
-      for i := 0 to oxedBuild.Parameters.ExportSymbols.n - 1 do begin
-         if i < oxedBuild.Parameters.ExportSymbols.n - 1 then
-            u.sExports.Add(oxedBuild.Parameters.ExportSymbols.List[i] + ',')
-         else
-            u.sExports.Add(oxedBuild.Parameters.ExportSymbols.List[i]);
-      end;
-   end;
+   CreateIncludesList(oxedBuild.Parameters.ExportSymbols, u.sExports);
 
    u.sInitialization.Add('{$INCLUDE ./appinfo.inc}');
 
