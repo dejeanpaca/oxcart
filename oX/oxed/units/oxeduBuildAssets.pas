@@ -12,7 +12,7 @@ INTERFACE
       sysutils, uStd, uError, uLog, uFileUtils, StringUtils,
       {oxed}
       uOXED,
-      oxeduProject, oxeduProjectScanner, oxeduAssets, oxeduPackage;
+      oxeduProject, oxeduProjectScanner, oxeduAssets, oxeduPackage, oxeduConsole;
 
 TYPE
 
@@ -20,6 +20,8 @@ TYPE
 
    oxedTBuildAssets = record
       Walker: TFileTraverse;
+
+      FileCount: loopint;
 
       CurrentPackage: oxedPPackage;
       CurrentPath,
@@ -85,9 +87,11 @@ begin
       Result := false;
 
    if(FileUtils.Copy(source, target) < 0) then begin
-      log.e('Failed to copy source file (' + source + ') to target (' + target + ')');
+      oxedConsole.ne('Failed to copy source file (' + source + ') to target (' + target + ')');
       Result := false;
    end;
+
+   inc(oxedBuildAssets.FileCount);
 
    oxedBuildAssets.OnFile.Call(f);
 end;
@@ -123,7 +127,9 @@ var
 
 begin
    Target := IncludeTrailingPathDelimiter(useTarget);
-   log.i('Deploying asset files to ' + useTarget);
+   oxedConsole.ni('Deploying asset files to ' + useTarget);
+
+   FileCount := 0;
 
    try
       {deploy assets from ox, but only those in the data directory}
@@ -140,14 +146,14 @@ begin
       DeployPackage(oxedProject.MainPackage);
    except
       on e: Exception do begin
-         log.e('Asset deployment failed running');
-         log.e(DumpExceptionCallStack(e));
+         oxedConsole.ne('Asset deployment failed running');
+         oxedConsole.ne(DumpExceptionCallStack(e));
       end;
    end;
 
    CurrentPackage := nil;
 
-   log.v('Done assets deploy');
+   oxedConsole.ni('Done assets deploy (files: ' + sf(FileCount) + ')');
 end;
 
 procedure oxedTBuildAssets.DeployPackage(var p: oxedTPackage);
@@ -160,7 +166,7 @@ begin
    else
       CurrentTarget := IncludeTrailingPathDelimiter(Target + TargetSuffix);
 
-   log.v('Deploying package: ' + CurrentPath);
+   oxedConsole.nv('Deploying package: ' + CurrentPath);
    Walker.Run(oxedBuildAssets.CurrentPath);
 
    TargetSuffix := '';
