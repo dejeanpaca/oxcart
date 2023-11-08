@@ -315,6 +315,12 @@ begin
    arguments := nil;
    SetLength(arguments, count);
 
+   if(build.Options.Rebuild) then
+      AddArgument('-B');
+
+   if(build.FPCOptions.UnitOutputDirectory <> '') then
+      AddArgument('-FU' + build.FPCOptions.UnitOutputDirectory);
+
    for i := 0 to Units.n - 1 do begin
       AddArgument('-Fu' + Units.List[i]);
    end;

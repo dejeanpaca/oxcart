@@ -1,5 +1,5 @@
 {
-   uBuildExec
+   uBuildExec, executes build processes
    Copyright (C) 2020. Dejan Boras
 }
 
@@ -9,8 +9,8 @@ UNIT uBuildExec;
 INTERFACE
 
    USES
-      uStd, StringUtils, uLog, uSimpleParser, uFileUtils, ConsoleUtils,
-      sysutils, process, StreamIO,
+      sysutils, uStd, StringUtils, uLog, uSimpleParser, uFileUtils, ConsoleUtils,
+      process, StreamIO,
       uBuild, uBuildInstalls;
 
 TYPE
@@ -194,6 +194,7 @@ var
    path: StdString;
    i: loopint;
    platform: PBuildPlatform;
+   parameters: StringUtils.TStringArray;
 
 begin
    path := originalPath;
@@ -207,28 +208,11 @@ begin
    p := GetToolProcess();
 
    p.Executable := build.GetExecutableName(platform^.Path + 'fpc');
-   if(build.Options.Rebuild) then
-      p.Parameters.Add('-B');
 
-   if(build.FPCOptions.UnitOutputDirectory <> '') then
-      p.Parameters.Add('-FU' + build.FPCOptions.UnitOutputDirectory);
+   parameters := build.GetFPCCommandLine();
 
-   if(build.Units.n > 0) then begin
-      for i := 0 to build.Units.n - 1 do begin
-         p.Parameters.Add('-Fu' + build.Units.List[i]);
-      end;
-   end;
-
-   if(build.Includes.n > 0) then begin
-      for i := 0 to build.Includes.n - 1 do begin
-         p.Parameters.Add('-Fi' + build.Includes.List[i]);
-      end;
-   end;
-
-   if(build.Symbols.n > 0) then begin
-      for i := 0 to build.Symbols.n - 1 do begin
-         p.Parameters.Add('-d' + build.Symbols.List[i]);
-      end;
+   for i := 0 to High(parameters) do begin
+      p.Parameters.Add(parameters[i]);
    end;
 
    p.Parameters.Add(path);
