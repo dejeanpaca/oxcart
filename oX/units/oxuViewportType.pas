@@ -23,9 +23,7 @@ TYPE
        Name: StdString;
 
        {is the viewport enabled}
-       Enabled,
-       {update from source (window) when source is resized}
-       UpdateFromSource: boolean;
+       Enabled: boolean;
 
        Position,
        {offset the position}
