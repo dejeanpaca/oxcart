@@ -11,7 +11,7 @@ UNIT oxuPlatform;
 INTERFACE
 
    USES
-      uLog, uComponentProvider, uFileUtils,
+      uStd, uLog, uComponentProvider, uFileUtils,
       {app}
       appuMouse, appuKeys,
       {ox}
@@ -24,7 +24,7 @@ TYPE
 
    oxTPlatform = class
       public
-         Name: string;
+         Name: StdString;
          {pointer driver used by the platform}
          PointerDriver: appTPointerDriver;
          {platforms have components}
@@ -39,7 +39,7 @@ TYPE
       function Initialize(): boolean; virtual;
       function DeInitialize(): boolean; virtual;
 
-      procedure SetTitle({%H-}wnd: oxTWindow; const {%H-}newTitle: string); virtual;
+      procedure SetTitle({%H-}wnd: oxTWindow; const {%H-}newTitle: StdString); virtual;
 
       function TitleHeight({%H-}wnd: oxTWindow): longint; virtual;
       function FrameWidth({%H-}wnd: oxTWindow): longint; virtual;
@@ -62,8 +62,8 @@ TYPE
       procedure Minimize({%H-}wnd: oxTWindow); virtual;
       procedure Restore({%H-}wnd: oxTWindow); virtual;
 
-      procedure ErrorMessageBox(const {%H-}title, {%H-}say: string);
-      function MessageBox({%H-}wParent: uiTWindow; const {%H-}Title, {%H-}Say: string;
+      procedure ErrorMessageBox(const {%H-}title, {%H-}say: StdString);
+      function MessageBox({%H-}wParent: uiTWindow; const {%H-}Title, {%H-}Say: StdString;
          {%H-}Style: uiTMessageBoxStyle; {%H-}Buttons: longword): longword; virtual;
 
       procedure LoadCursor({%H-}cursorType: uiTCursorType); virtual;
@@ -75,14 +75,14 @@ TYPE
       {checks if the platform supports a file trash/recycle mechanism}
       function FileTrashCapability(): boolean; virtual;
       {send a file or directory into trash (if not available, will remove file/directory)}
-      procedure TrashFile(const {%H-}path: UTF8String); virtual;
+      procedure TrashFile(const {%H-}path: StdString); virtual;
 
       { COMPONENTS }
 
       {get a component from the renderer}
-      function GetComponent(const componentName: string): TObject;
+      function GetComponent(const componentName: StdString): TObject;
       {find component}
-      function FindComponent(const componentName: string): PSingleComponent;
+      function FindComponent(const componentName: StdString): PSingleComponent;
    end;
 
    oxTPlatformClass = class of oxTPlatform;
@@ -129,7 +129,7 @@ begin
    Result := true;
 end;
 
-procedure oxTPlatform.SetTitle(wnd: oxTWindow; const newTitle: string);
+procedure oxTPlatform.SetTitle(wnd: oxTWindow; const newTitle: StdString);
 begin
 
 end;
@@ -215,12 +215,12 @@ begin
 
 end;
 
-procedure oxTPlatform.ErrorMessageBox(const title, say: string);
+procedure oxTPlatform.ErrorMessageBox(const title, say: StdString);
 begin
    MessageBox(nil, title, say, uimbsCRITICAL, uimbcOK);
 end;
 
-function oxTPlatform.MessageBox(wParent: uiTWindow; const Title, Say: string;
+function oxTPlatform.MessageBox(wParent: uiTWindow; const Title, Say: StdString;
    Style: uiTMessageBoxStyle; Buttons: longword): longword;
 begin
    Result := uimbcNONE;
@@ -244,7 +244,7 @@ begin
    Result := false;
 end;
 
-procedure oxTPlatform.TrashFile(const path: UTF8String);
+procedure oxTPlatform.TrashFile(const path: StdString);
 var
    pathType: TFilePathType;
 
@@ -258,7 +258,7 @@ begin
    end;
 end;
 
-function oxTPlatform.GetComponent(const componentName: string): TObject;
+function oxTPlatform.GetComponent(const componentName: StdString): TObject;
 var
    p: PSingleComponent;
 
@@ -271,12 +271,14 @@ begin
       result := nil;
 end;
 
-function oxTPlatform.FindComponent(const componentName: string): PSingleComponent;
+function oxTPlatform.FindComponent(const componentName: StdString): PSingleComponent;
 begin
    Result := Components.FindComponent(componentName);
 
-   if(Result = nil) then
+   if(Result = nil) then begin
       log.w('Requested component <' + componentName + '> not found for platform ' + Name);
+      writeln('Requested component <' + componentName + '> not found for platform ' + Name);
+   end;
 end;
 VAR
    grPlatform: oxPGlobalInstance;

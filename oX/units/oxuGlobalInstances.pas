@@ -29,13 +29,13 @@ TYPE
 
    oxTGlobalInstancesList = specialize TSimpleList<oxTGlobalInstance>;
 
-   oxTGlobalInstancesReferenceChangeCallback = procedure(const instanceType: string; newReference: Pointer);
+   oxTGlobalInstancesReferenceChangeCallback = procedure(const instanceType: StdString; newReference: Pointer);
    oxTGlobalInstancesReferenceChangeCallbacks = specialize TSimpleList<oxTGlobalInstancesReferenceChangeCallback>;
 
    { oxTGlobalInstancesReferenceChangeCallbacksHelper }
 
    oxTGlobalInstancesReferenceChangeCallbacksHelper = record helper for oxTGlobalInstancesReferenceChangeCallbacks
-      procedure Call(const instanceType: string; newReference: pointer);
+      procedure Call(const instanceType: StdString; newReference: pointer);
    end;
 
    { oxTGlobalInstances }
@@ -49,17 +49,17 @@ TYPE
       {add class based instance}
       function Add(instanceType: TClass; location: pointer; method: oxTGlobalInstanceMethod = nil): oxPGlobalInstance;
       {add instance of other type (record)}
-      function Add(const instanceName: string; location: pointer): oxPGlobalInstance;
+      function Add(const instanceName: StdString; location: pointer): oxPGlobalInstance;
 
       procedure Initialize();
       procedure Deinitialize();
 
       {find an instance reference by classname, and return the index, or -1 if nothing found}
-      function FindReference(const cName: string): loopint;
+      function FindReference(const cName: StdString): loopint;
       {find an instance reference by classname, and return the instance reference, or -1 if nothing found}
-      function FindInstance(const cName: string): TObject;
+      function FindInstance(const cName: StdString): TObject;
       {find an instance reference by type name, and return pointer to the instance, or -1 if nothing found}
-      function FindInstancePtr(const typeName: string): pointer;
+      function FindInstancePtr(const typeName: StdString): pointer;
 
       procedure CopyOver(target: oxTGlobalInstances);
       procedure CopyOverReferences(target: oxTGlobalInstances);
@@ -74,7 +74,7 @@ IMPLEMENTATION
 
 { oxTGlobalInstancesReferenceChangeCallbacksHelper }
 
-procedure oxTGlobalInstancesReferenceChangeCallbacksHelper.Call(const instanceType: string; newReference: pointer);
+procedure oxTGlobalInstancesReferenceChangeCallbacksHelper.Call(const instanceType: StdString; newReference: pointer);
 var
    i: loopint;
 
@@ -109,7 +109,7 @@ begin
    result := List.GetLast();
 end;
 
-function oxTGlobalInstances.Add(const instanceName: string; location: pointer): oxPGlobalInstance;
+function oxTGlobalInstances.Add(const instanceName: StdString; location: pointer): oxPGlobalInstance;
 var
    instance: oxTGlobalInstance;
 
@@ -149,7 +149,7 @@ begin
    end;
 end;
 
-function oxTGlobalInstances.FindReference(const cName: string): loopint;
+function oxTGlobalInstances.FindReference(const cName: StdString): loopint;
 var
    i: loopint;
 
@@ -162,7 +162,7 @@ begin
    result := -1;
 end;
 
-function oxTGlobalInstances.FindInstance(const cName: string): TObject;
+function oxTGlobalInstances.FindInstance(const cName: StdString): TObject;
 var
    ref: longint;
    instance: oxPGlobalInstance;
@@ -179,7 +179,7 @@ begin
    result := nil;
 end;
 
-function oxTGlobalInstances.FindInstancePtr(const typeName: string): pointer;
+function oxTGlobalInstances.FindInstancePtr(const typeName: StdString): pointer;
 var
    ref: longint;
    instance: oxPGlobalInstance;

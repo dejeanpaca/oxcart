@@ -82,7 +82,7 @@ TYPE
       function DestroyWindow(wnd: oxTWindow): boolean; override;
       procedure ProcessEvents(); override;
 
-      procedure SetTitle(wnd: oxTWindow; const newTitle: string); override;
+      procedure SetTitle(wnd: oxTWindow; const newTitle: StdString); override;
 
       procedure Move(wnd: oxTWindow; x, y: longint); override;
       procedure Resize(wnd: oxTWindow; w, h: longint); override;
@@ -503,7 +503,7 @@ begin
       MouseEventDone();
 end;
 
-procedure oxTX11Platform.SetTitle(wnd: oxTWindow; const newTitle: string);
+procedure oxTX11Platform.SetTitle(wnd: oxTWindow; const newTitle: StdString);
 var
    xwnd: x11TWindow;
 
@@ -518,7 +518,7 @@ end;
 function oxTX11Platform.MakeWindow(window: oxTWindow): boolean;
 var
    Window_title_property: TXTextProperty;
-   title: AnsiString;
+   title: StdString;
    cm: TColormap;
 
    wnd: x11TWindow;
@@ -938,7 +938,7 @@ begin
    dec(appm.pointer[devID].shown);
 end;
 
-procedure onReferenceChange(const instanceType: string; {%H-}reference: pointer);
+procedure onReferenceChange(const instanceType: StdString; {%H-}reference: pointer);
 begin
    if(instanceType = 'oxTPlatform') then
       x11 := oxTX11Platform(oxPlatform)
