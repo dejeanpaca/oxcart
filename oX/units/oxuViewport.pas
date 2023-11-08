@@ -31,7 +31,6 @@ TYPE
        {set viewport properties}
        procedure SetViewport(newW, newH: longint);
        procedure SetViewport(newX, newY, newW, newH: longint);
-       procedure SetViewportf(newX, newY, newW, newH: single);
        {set the new offset}
        procedure SetOffset(offsetX, offsetY: longint);
        procedure SetOffset(const p: oxTPoint); inline;
@@ -117,22 +116,6 @@ begin
    end;
 end;
 
-procedure oxTViewportHelper.SetViewportf(newX, newY, newW, newH: single);
-begin
-   Relative := true;
-
-   if (Dimensionsf.w <> newW) or (Dimensionsf.h <> newH) or (Positionf.x <> newX) or (Positionf.y <> newY) then begin
-      Dimensionsf.w := newW;
-      Dimensionsf.h := newH;
-
-      Positionf.x := newX;
-      Positionf.y := newY;
-
-      a.Calculate(Dimensionsf.w, Dimensionsf.h);
-      Changed := true;
-   end;
-end;
-
 procedure oxTViewportHelper.SetOffset(offsetX, offsetY: longint);
 begin
    Offset.x := offsetX;
@@ -147,13 +130,8 @@ end;
 
 procedure oxTViewportHelper.Viewport();
 begin
-   if(Enabled) then begin
-      if(not Relative) then
-         oxRenderer.Viewport(Offset.x + Position.x, Offset.y + Position.y, Dimensions.w, Dimensions.h)
-      else
-         oxRenderer.Viewport(Offset.x + round(Dimensions.w * Positionf.x), Offset.y + round(Dimensions.h * Positionf.y),
-            round(Dimensions.w * Dimensionsf.w), round(Dimensions.h  * Dimensionsf.h));
-   end;
+   if(Enabled) then
+      oxRenderer.Viewport(Offset.x + Position.x, Offset.y + Position.y, Dimensions.w, Dimensions.h)
 end;
 
 procedure oxTViewportHelper.Clear();
