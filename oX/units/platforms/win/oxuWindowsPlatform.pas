@@ -50,7 +50,7 @@ TYPE
 
       function DeInitialize(): boolean; override;
 
-      procedure SetTitle(wnd: oxTWindow; const newTitle: string); override;
+      procedure SetTitle(wnd: oxTWindow; const newTitle: StdString); override;
 
       function TitleHeight(wnd: oxTWindow): longint; override;
       function FrameWidth(wnd: oxTWindow): longint; override;
@@ -676,7 +676,7 @@ end;
 
 function oxTWindowsPlatform.MakeWindow(wnd: oxTWindow): boolean;
 
-   procedure quit(const s: string);
+   procedure quit(const s: StdString);
    begin
       wnd.CreateFail('win-gdi > ' + s);
       Result := false;
@@ -770,7 +770,7 @@ begin
    Result := true;
 end;
 
-procedure oxTWindowsPlatform.SetTitle(wnd: oxTWindow; const newTitle: string);
+procedure oxTWindowsPlatform.SetTitle(wnd: oxTWindow; const newTitle: StdString);
 begin
    SetWindowText(winosTWindow(wnd).wd.h, pchar(newTitle));
 end;
