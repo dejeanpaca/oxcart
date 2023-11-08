@@ -66,8 +66,6 @@ TYPE
       BaseInit,
       {engine initialization}
       Init: oxTRunRoutines;
-      {program/application initialization}
-      AppProcs: TInitializationProcs;
 
       dvar: TDVarGroup;
 
@@ -113,8 +111,6 @@ end;
 
 INITIALIZATION
    appInfo.setOrganization('ox');
-
-   ox.AppProcs.Init('ox.app');
 
    dvar.Add('ox', ox.dvar);
    ox.dvar.Add(dv_version, 'version', dtcSTRING, @ox_version);
