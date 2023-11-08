@@ -22,6 +22,8 @@ INTERFACE
       oxuglRendererX11, oxuX11Platform,
       {$ELSEIF DEFINED(COCOA)}
       oxuglRendererCocoa, oxuCocoaPlatform,
+      {$ELSEIF DEFINED(ANDROID)}
+      oxuglRendererEGL, oxuAndroidPlatform,
       {$ENDIF}
       oxuglTextureComponent,
       oxuglTextureGenerate,
