@@ -35,6 +35,8 @@ TYPE
    oxedTScannerFile = record
       FileName,
       Extension: StdString;
+
+      fd: TFileDescriptor;
    end;
 
    oxedTProjectScannerFileProcedure = procedure(var f: oxedTScannerFile);
@@ -66,7 +68,7 @@ VAR
 
 IMPLEMENTATION
 
-function scanFile(const fn: StdString): boolean; forward;
+function scanFile(const fd: TFileDescriptor): boolean; forward;
 
 { oxedTScannerOnFileProceduresHelper }
 
@@ -96,10 +98,8 @@ class procedure oxedTProjectScannerGlobal.Initialize();
 begin
    with oxedProjectScanner do begin
       TFileTraverse.Initialize(Walker);
-      Walker.AddExtension('.pas');
-      Walker.AddExtension('.inc');
 
-      Walker.OnFile := @scanFile;
+      Walker.OnFileDescriptor := @scanFile;
 
       Task := oxedTProjectScannerTask.Create();
       Task.EmitAllEvents();
@@ -161,7 +161,7 @@ begin
    oxedProjectScanner.OnDone.Call();
 end;
 
-function scanFile(const fn: StdString): boolean;
+function scanFile(const fd: TFileDescriptor): boolean;
 var
    ext: StdString;
    f: oxedTScannerFile;
@@ -170,12 +170,13 @@ begin
    Result := true;
 
    {ignore stuff in the temp directory}
-   if(Pos(oxPROJECT_TEMP_DIRECTORY, fn) = 1) then
+   if(Pos(oxPROJECT_TEMP_DIRECTORY, fd.Name) = 1) then
       exit;
 
-   ext := ExtractFileExt(fn);
-   f.FileName := fn;
+   ext := ExtractFileExt(fd.Name);
+   f.FileName := fd.Name;
    f.Extension := ext;
+   f.fd := fd;
 
    oxedProjectScanner.OnFile.Call(f);
 
