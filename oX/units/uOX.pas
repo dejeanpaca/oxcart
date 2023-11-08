@@ -193,7 +193,6 @@ begin
    end;
 
    Result := errorCode;
-
    InitializationFailed := true;
 end;
 

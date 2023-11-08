@@ -9,7 +9,7 @@ UNIT oxuRun;
 INTERFACE
 
    USES
-      uStd, uLog, sysutils, uTiming, StringUtils,
+      uStd, uLog, sysutils, uTiming,
       {app}
       uApp, appuEvents, appuActionEvents,
       {oX}
@@ -39,6 +39,8 @@ TYPE
      procedure Go();
      {run a single cycle}
      procedure GoCycle(dosleep: boolean = true);
+     {updates engine state on a cycle call (called by GoCycle)}
+     procedure UpdateCycleState();
      {run a restart}
      procedure Restart();
      {handle a restart}
@@ -135,18 +137,7 @@ end;
 
 procedure oxTRunGlobal.GoCycle(dosleep: boolean);
 begin
-   {are we waiting for initialization}
-   if(ox.Initialized and PreInitializeSuccess) then begin
-      if(oxMainInitTask.IsFinished()) then begin
-         if(oxProgramInitTask.Task = nil) then
-            oxProgramInitTask.Go();
-      end;
-
-      if(oxProgramInitTask.IsFinished()) then begin
-         if(not ox.Started) then
-            Start();
-      end;
-   end;
+   UpdateCycleState();
 
    {cycle stuff}
    if(LogDebugCycle) then
@@ -190,6 +181,25 @@ begin
    {give the system a break}
    if(dosleep) then
       oxTimer.Sleep();
+end;
+
+procedure oxTRunGlobal.UpdateCycleState();
+begin
+   {are we waiting for initialization}
+   if(ox.Initialized and PreInitializeSuccess) then begin
+      if(oxMainInitTask.IsFinished()) then begin
+         if(oxProgramInitTask.Task = nil) then
+            oxProgramInitTask.Go();
+      end;
+
+      if(oxProgramInitTask.IsFinished()) then begin
+         if(not ox.Started) then
+            Start();
+      end;
+   end;
+
+   if(ox.InitializationFailed) then
+      app.Active := false;
 end;
 
 procedure oxTRunGlobal.Restart();

@@ -275,6 +275,7 @@ begin
    if(not Started) then
       exit;
 
+   app.Active := false;
    ox.DeInitializing := true;
 
    Started := false;
