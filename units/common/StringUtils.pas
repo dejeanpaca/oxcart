@@ -29,6 +29,32 @@ TYPE
    TAnsiStringArray = array of ansistring;
    TStringArray = array of string;
 
+   { TPackedStrings }
+
+   TPackedStrings = record
+      {number of strings in the structure}
+      n,
+      {size of the index table}
+      IndexTableSize: loopint;
+      {pointer to the string content}
+      Content,
+      {memory structure holding the index table and shortstrings}
+      p: Pointer;
+
+      {initialize this structure}
+      class procedure Init(out ps: TPackedStrings); static;
+
+      {allocate for given number of strings and content size(excluding shortstring length byte)}
+      procedure Allocate(count: loopint; stringContentSize: loopint);
+
+      {get a pointer to the specified string from the structure}
+      function GetStringLength(index: loopint): loopint;
+      {get a pointer to the specified string from the structure}
+      function GetString(index: loopint): PShortString;
+      {store the string}
+      procedure Store(var s: shortstring; index: loopint);
+   end;
+
    { TSimpleAnsiStringBuffer }
 
    TSimpleAnsiStringBuffer = record
@@ -1567,6 +1593,54 @@ begin
    key := '';
    value := '';
    Result := false;
+end;
+
+{ TPackedStrings }
+
+class procedure TPackedStrings.Init(out ps: TPackedStrings);
+begin
+   ZeroPtr(@ps, SizeOf(ps));
+end;
+
+procedure TPackedStrings.Allocate(count: loopint; stringContentSize: loopint);
+begin
+   n := count;
+   IndexTableSize := count * SizeOf(PtrInt);
+
+   {calculate size to store strings, plus storage of }
+   stringContentSize := stringContentSize {string content} +
+      (count * 1) {string length} +
+      IndexTableSize;
+
+   GetMem(p, stringContentSize);
+
+   Content := (p + IndexTableSize);
+end;
+
+function TPackedStrings.GetStringLength(index: loopint): loopint;
+var
+   ps: PShortString;
+
+begin
+   ps := GetString(index);
+
+   if(ps <> nil) then
+      Result := Length(ps^)
+   else
+      Result := 0;
+end;
+
+function TPackedStrings.GetString(index: loopint): PShortString;
+begin
+   if(index < n) then
+      Result := PShortString(Content + PPtrInt(p)[index])
+   else
+      Result := nil;
+end;
+
+procedure TPackedStrings.Store(var s: shortstring; index: loopint);
+begin
+   Move(s[0], GetString(index)^, Length(s) + 1);
 end;
 
 { TAnsiStringBuffer }
