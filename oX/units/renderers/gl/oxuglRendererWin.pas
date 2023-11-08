@@ -42,29 +42,31 @@ begin
    {build required pixel format}
    ZeroOut(pfd, SizeOf(pfd));
 
-   pfd.nSize         := sizeof(pfd);
-   pfd.nVersion      := 1;
+   pfd.nSize    := sizeof(pfd);
+   pfd.nVersion := 1;
 
    objType := GetObjectType(wnd.wd.dc);
 
-   if(winos.LogError('Failed to get dc object type') <> 0) then begin
-      winosTWindow(wnd).wd.LastError := winos.LastError;
-      wnd.ErrorDescription.Add(winos.LastErrorDescription);
-      exit(false);
+   if(objType = 0) then begin
+      if(winos.LogError('Failed to get dc object type') <> 0) then begin
+         winosTWindow(wnd).wd.LastError := winos.LastError;
+         wnd.ErrorDescription.Add(winos.LastErrorDescription);
+         exit(false);
+      end;
    end;
 
-   dwFlags        := PFD_SUPPORT_OPENGL;
+   dwFlags := PFD_SUPPORT_OPENGL;
    if(objType in oxwinMemoryDCs) then
-      dwFlags     := dwFlags or PFD_DRAW_TO_BITMAP
+      dwFlags := dwFlags or PFD_DRAW_TO_BITMAP
    else
-      dwFlags     := dwFlags or PFD_DRAW_TO_WINDOW;
+      dwFlags := dwFlags or PFD_DRAW_TO_WINDOW;
 
    if(wnd.RenderSettings.DoubleBuffer) then
-      dwFlags     := dwFlags or PFD_DOUBLEBUFFER;
+      dwFlags := dwFlags or PFD_DOUBLEBUFFER;
    if(wnd.RenderSettings.Software) then
-      dwFlags     := dwFlags or PFD_SUPPORT_GDI;
+      dwFlags := dwFlags or PFD_SUPPORT_GDI;
    if(wnd.RenderSettings.Stereo) then
-      dwFlags     := dwFlags or PFD_STEREO;
+      dwFlags := dwFlags or PFD_STEREO;
 
    pfd.dwFlags       := dwFlags;
    pfd.iPixelType    := PFD_TYPE_RGBA;
@@ -88,12 +90,14 @@ end;
 function setPF(wnd: oglTWindow; pFormat: longint; const pfd: PIXELFORMATDESCRIPTOR): boolean;
 begin
    Result := SetPixelFormat(wnd.wd.dc, pFormat, @pfd);
-   if(not Result) then
+
+   if(not Result) then begin
       log.e('Failed to SetPixelFormat with format ' + sf(pFormat));
 
-   wnd.wd.LastError := winos.GetLastError();
-   if(wnd.wd.LastError <> 0) then begin
-      log.e('SetPixelFormat returned error: ' + winos.FormatMessage(wnd.wd.LastError));
+      wnd.wd.LastError := winos.GetLastError();
+      if(wnd.wd.LastError <> 0) then begin
+         log.e('SetPixelFormat returned error: ' + winos.FormatMessage(wnd.wd.LastError));
+      end;
    end;
 end;
 
@@ -344,7 +348,11 @@ begin
 
       {create the OpenGL rendering context}
       Result := wglCreateContext(wnd.wd.dc);
-      wnd.wd.LastError := winos.GetLastError();
+
+      wnd.wd.LastError := 0;
+
+      if(Result <> 0) then begin
+         wnd.wd.LastError := winos.GetLastError();
 
       if(wnd.wd.LastError = 0) and (not wnd.oxProperties.Context) and (shareContext <> 0) then begin
          wglShareLists(Result, shareContext);
@@ -353,6 +361,7 @@ begin
          if(wnd.wd.LastError <> 0) then
             log.w('gl > (' + method + ') Failed to share lists with context ' + sf(shareContext));
       end;
+   end;
    end;
 
    if(wnd.wd.LastError <> 0) then
