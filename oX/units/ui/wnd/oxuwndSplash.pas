@@ -186,7 +186,7 @@ end;
 
 procedure initialize();
 begin
-   console.Selected^.AddCommand('splash', @consoleCallback);
+   console.Selected^.AddCommand('wnd:splash', @consoleCallback);
 
    oxwndSplash := oxTSplashWindow.Create();
 end;

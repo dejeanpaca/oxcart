@@ -95,7 +95,7 @@ end;
 procedure Initialize();
 begin
    oxwndSystemInformation := oxTSystemInformationWindow.Create();
-   console.Selected^.AddCommand('sysinfo', @consoleCallback);
+   console.Selected^.AddCommand('wnd:sysinfo', @consoleCallback);
 end;
 
 procedure deinitialize();

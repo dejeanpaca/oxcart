@@ -151,7 +151,7 @@ begin
 
    Instance := oxeduiTRunSettingsWindow;
 
-   console.Selected^.AddCommand('run_settings', @consoleCallback);
+   console.Selected^.AddCommand('wnd:run_settings', @consoleCallback);
 
    inherited Create;
 

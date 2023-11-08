@@ -170,7 +170,7 @@ end;
 procedure Initialize();
 begin
    oxwndResourceInspector := oxTResourceInspectorWindow.Create();
-   console.Selected^.AddCommand('resource_inspector', @consoleCallback);
+   console.Selected^.AddCommand('wnd:resource_inspector', @consoleCallback);
 end;
 
 procedure deinitialize();
