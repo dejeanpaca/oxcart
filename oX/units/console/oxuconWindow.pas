@@ -11,9 +11,9 @@ UNIT oxuconWindow;
 INTERFACE
 
    USES
-      StringUtils,
+      uStd, StringUtils,
       {oX}
-      uOX, oxuRunRoutines, oxuConsoleBackend,
+      uOX, oxuTypes, oxuRunRoutines, oxuConsoleBackend,
       oxuWindowTypes, oxuWindows, oxuWindow, oxuWindowHelper;
 
 IMPLEMENTATION
@@ -29,9 +29,10 @@ VAR
    selectedWindow: longint;
    conHandler: conTHandler;
 
-function getIntParameter(const con: conTConsole; const prefix: string; out value: longint; index: longint = 2): boolean;
+function getIntParameter(const con: conTConsole; const prefix: string; out value: loopint; index: longint = 2): boolean;
 var
-   temp_value, code: longint;
+   temp_value,
+   code: loopint;
 
 begin
    if(con.arguments.n >= index + 1) then begin
@@ -75,48 +76,34 @@ end;
 procedure setGetDimensions(const con: conTConsole);
 var
    ok: boolean;
-   w, h, code: longint;
-   wString, hString, wdString: string;
+   dimensions: oxTDimensions;
+   wdString: string;
 
 begin
    if(con.arguments.n >= 3) then begin
       ok := false;
       wdString := con.arguments.list[2];
-
-      w := 0;
-      h := 0;
+      dimensions := oxNullDimensions;
 
       if(Pos('x', wdString) > 0) then begin
-         wString := Copy(wdString, 1, pos('x', wdString) - 1);
-         hString := Copy(wdString, pos('x', wdString) + 1, Length(wdString));
-
-         if(wString <> '') and (hString <> '') then begin
-            val(wString, w, code);
-
-            if(code = 0) then begin
-               val(hString, h, code);
-
-               if(code = 0) then
-                  ok := true;
-            end;
-         end;
+         ok := dimensions.FromString(wdString);
 
          if(not ok) then
-            con.e('Invalid dimensions format or values (should be WxH, e.g. 1280x720): ' + con.arguments.list[2]);
+            con.e('Invalid dimensions format or values (should be WxH, e.g. 1280x720): ' + wdString);
       end;
 
       if(not ok) then begin
-         if(getIntParameter(con, 'width', w, 2) and getIntParameter(con, 'height', h, 3)) then
+         if(getIntParameter(con, 'width', dimensions.w, 2) and getIntParameter(con, 'height', dimensions.h, 3)) then
             ok := true;
       end;
 
       if(ok) then begin
-         if(w <= 0) then
+         if(dimensions.w <= 0) then
             con.e('Width must be a positive value')
-         else if(h <= 0) then
+         else if(dimensions.h <= 0) then
             con.e('Height must be a positive value')
          else
-            oxWindows.w[selectedWindow].SetDimensions(w, h);
+            oxWindows.w[selectedWindow].SetDimensions(dimensions.w, dimensions.h);
       end;
    end else
       writeOutDimensions(con);
