@@ -77,10 +77,8 @@ begin
    end;
 
    Result := oxTTexture(GlyphPool.FindByPath(path));
-   if(Result <> nil) then begin
-      writeln('From pool: ', path);
+   if(Result <> nil) then
       exit();
-   end;
 
    if(source <> '') then
       font := oxFreetypeManager.FindFont(source)
@@ -101,8 +99,6 @@ begin
       font.Square := true;
       font.ExactSize := true;
       font.AlphaType := oxFREETYPE_ALPHA_AVERAGE;
-
-      writeln(font.FontName, ' ', code);
 
       if(code <> 0) then
          font.CreateGlyphTexture(code, Result, Size)
