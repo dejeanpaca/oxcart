@@ -166,8 +166,13 @@ begin
    cameras.Initialize(cameras);
    layers.Initialize(layers);
 
+   {$IFNDEF OX_LIBRARY}
    Scene.GetComponentsInChildren(oxTCameraComponent, cameras);
    Scene.GetComponents(oxTRenderLayerComponent, layers);
+   {$ELSE}
+   Scene.GetComponentsInChildren('oxTCameraComponent', cameras);
+   Scene.GetComponents('oxTRenderLayerComponent', layers);
+   {$ENDIF}
 
    oxTSceneRenderParameters.Init(params);
    params.Projection := @projection;
