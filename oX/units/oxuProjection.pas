@@ -359,14 +359,14 @@ end;
 
 procedure oxTProjection.From(source: oxTProjection);
 begin
-   Name := source.Name;
    Enabled := source.Enabled;
-   ScissorOnClear := source.ScissorOnClear;
+   Name := source.Name;
 
    Position := source.Position;
    Offset := source.Offset;
    Dimensions := source.Dimensions;
    Relative := source.Relative;
+   ScissorOnClear := source.ScissorOnClear;
    Positionf := source.Positionf;
    Dimensionsf := source.Dimensionsf;
 
