@@ -341,12 +341,15 @@ var
 begin
    lVersion := LowerCase(versionString);
 
+   major := 0;
+   minor := 0;
+   revision := 0;
+   profile := oglPROFILE_ANY;
+
    if(Pos('core', lVersion) > 0) then
       profile := oglPROFILE_CORE
    else if(Pos('compatibility', lVersion) > 0) then
-      profile := oglPROFILE_COMPATIBILITY
-   else
-      profile := oglPROFILE_ANY;
+      profile := oglPROFILE_COMPATIBILITY;
 
    {try to figure out the OpenGL version}
    ver := versionString;
@@ -359,27 +362,22 @@ begin
       ver := CopyAfterDel(ver, '-');
       xver := CopyToDel(ver, ' ');
       ver := CopyToDel(ver, ')');
-   end else
-      ver := CopyToDel(ver);
+   end;
 
    xver  := CopyToDel(ver, separators);
    val(xver, version, code);
 
    if(code = 0) then
       major := version
-   else begin
-      major := 0;
+   else
       exit;
-   end;
 
    {after version we can have both a . and - (e.g '3.2-core' or '3.2.1 core')}
    xver := CopyToDel(ver, separators);
 
    val(xver, version, code);
    if(code = 0) then
-      minor := version
-   else
-      minor := 0;
+      minor := version;
 
    revision := 0;
    if(Length(ver) <> 0) then begin
@@ -387,9 +385,7 @@ begin
       val(xver, version, code);
 
       if(code = 0) then
-         revision := version
-      else
-         revision := 0;
+         revision := version;
    end;
 end;
 
