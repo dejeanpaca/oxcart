@@ -56,7 +56,7 @@ INTERFACE
       oxeduiBuildOutput,
       oxeduPluginsUI,
       {platforms}
-      oxeduwndAndroidSettings,
+      oxeduwndAndroidSettings, oxeduwndAndroidGeneralSettings,
       {$ENDIF}
       {plugins}
       {$INCLUDE ../plugins/oxed_plugins.inc};
