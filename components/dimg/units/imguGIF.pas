@@ -5,7 +5,7 @@
    Started On:    29.08.2019.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT imguGIF;
 
 INTERFACE

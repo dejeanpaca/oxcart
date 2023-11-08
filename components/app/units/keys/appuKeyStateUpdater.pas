@@ -5,7 +5,7 @@
    Started On:    01.05.2007.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT appuKeyStateUpdater;
 
 INTERFACE

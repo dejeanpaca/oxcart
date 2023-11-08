@@ -7,7 +7,7 @@
    NOTE: An action with value 0 indicates no action.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT appuActionEvents;
 
 INTERFACE

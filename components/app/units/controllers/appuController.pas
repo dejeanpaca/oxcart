@@ -7,7 +7,7 @@
    Axes are mapped from -1.0 to +1.0
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT appuController;
 
 INTERFACE

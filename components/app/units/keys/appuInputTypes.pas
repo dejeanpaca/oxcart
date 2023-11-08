@@ -5,7 +5,7 @@
    Started On:    23.09.2019.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT appuInputTypes;
 
 INTERFACE

@@ -5,7 +5,7 @@
    Started On:    05.11.2007.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT imguJPEG;
 
 INTERFACE

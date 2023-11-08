@@ -5,7 +5,7 @@
    Started On:    30.10.2013.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT appuCrashDetect;
 
 INTERFACE

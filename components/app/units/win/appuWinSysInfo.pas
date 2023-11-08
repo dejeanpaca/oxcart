@@ -2,7 +2,7 @@
    Started On:		   09.10.2012.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT appuWinSysInfo;
 
 INTERFACE

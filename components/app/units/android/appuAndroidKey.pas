@@ -7,7 +7,7 @@
    TODO: Remap the rest of the keycodes.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT appuAndroidKey;
 
 INTERFACE

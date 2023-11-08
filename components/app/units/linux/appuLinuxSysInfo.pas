@@ -4,7 +4,7 @@
 	TODO: Need to also skip unsupported sections in cpuinfo, and expand support for the hardware section.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT appuLinuxSysInfo;
 
 INTERFACE

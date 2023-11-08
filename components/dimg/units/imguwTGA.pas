@@ -7,7 +7,7 @@
 
 {TODO: Add support for indexed image types and RLE compression}
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT imguwTGA;
 
 INTERFACE

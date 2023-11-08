@@ -7,7 +7,7 @@
    TODO: Implement support for colormaps, RLE compression and dimension other than 1.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT imguSGIRGB;
 
 INTERFACE

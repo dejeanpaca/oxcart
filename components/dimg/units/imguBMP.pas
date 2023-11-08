@@ -5,7 +5,7 @@
    Started On:    25.05.2007.
 }
 
-{$INCLUDE oxdefines.inc}
+{$INCLUDE oxheader.inc}
 UNIT imguBMP;
 
 {This loader currently supports non-compressed 8, 16, 24 and 32 bit bitmaps
