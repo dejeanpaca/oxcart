@@ -23,7 +23,7 @@ INTERFACE
       {ui}
       uiuControl, uiuWindow,
       uiuWidget, uiWidgets,
-      wdguLabel, wdguButton, wdguDivisor, wdguControllerInputState;
+      wdguLabel, wdguButton, wdguDivisor, wdguControllerInputState, wdguProgressBar;
 
 TYPE
 
@@ -41,6 +41,8 @@ TYPE
 
       wdg: record
          Buttons: array[0..appMAX_CONTROLLER_BUTTONS - 1] of wdgTControllerButtonState;
+         Axes: array[0..appMAX_CONTROLLER_AXES - 1] of wdgTProgressBar;
+         Triggers: array[0..appMAX_CONTROLLER_TRIGGERS - 1] of wdgTProgressBar;
       end;
 
       constructor Create();
@@ -72,6 +74,8 @@ procedure oxTControllerInfoWindow.AddWidgets();
 var
    btnOk: wdgTButton;
    btnWidget: wdgTControllerButtonState;
+   triggerWidget,
+   axisWidget: wdgTProgressBar;
 
    buttonsPerRow,
    i: loopint;
@@ -92,17 +96,46 @@ begin
       buttonsPerRow := 10;
 
    ZeroOut(wdg.Buttons, SizeOf(wdg.Buttons));
+   ZeroOut(wdg.Axes, SizeOf(wdg.Axes));
+   ZeroOut(wdg.Triggers, SizeOf(wdg.Triggers));
 
    for i := 0 to Controller.ButtonCount - 1 do begin
+      if(i mod buttonsPerRow = 0) and (i >= buttonsPerRow) then
+         uiWidget.LastRect.NextLine();
+
       btnWidget := wdgControllerButtonState.Add(uiWidget.LastRect.RightOf());
       btnWidget.ButtonName := sf(i);
       btnWidget.ButtonIndex := i;
 
       wdg.Buttons[i] := btnWidget;
+   end;
 
-      if(i mod buttonsPerRow = 0) and (i > 0) then begin
+   if(Controller.AxisCount > 0) then
+      uiWidget.LastRect.NextLine();
+
+   for i := 0 to Controller.AxisCount - 1 do begin
+      if(i mod 2 = 0) and (i > 0) then
          uiWidget.LastRect.NextLine();
-      end;
+
+      axisWidget := wdgProgressBar.Add(uiWidget.LastRect.RightOf(), oxDimensions(60, 25));
+      axisWidget.SetCaption(sf(i));
+      axisWidget.Progress.PercentageInText := false;
+
+      wdg.Axes[i] := axisWidget;
+   end;
+
+   if(Controller.TriggerCount > 0) then
+      uiWidget.LastRect.NextLine();
+
+   for i := 0 to Controller.TriggerCount - 1 do begin
+      if(i mod 2 = 0) and (i > 0) then
+         uiWidget.LastRect.NextLine();
+
+      triggerWidget := wdgProgressBar.Add(uiWidget.LastRect.RightOf(), oxDimensions(60, 25));
+      triggerWidget.SetCaption(sf(i));
+      triggerWidget.Progress.PercentageInText := false;
+
+      wdg.Triggers[i] := triggerWidget;
    end;
 
    {add a cancel button}
@@ -122,12 +155,18 @@ begin
       exit;
 
    for i := 0 to Controller.ButtonCount - 1 do begin
-      if(wdg.Buttons[i] <> nil) then begin
-         if(Controller.GetButtonPressure(i) > 0) then
-            writeln('pressed: ', i);
-
+      if(wdg.Buttons[i] <> nil) then
          wdg.Buttons[i].SetPressure(Controller.GetButtonPressure(i));
-      end;
+   end;
+
+   for i := 0 to Controller.AxisCount - 1 do begin
+      if(wdg.Axes[i] <> nil) then
+         wdg.Axes[i].SetRatio(Controller.GetUnitAxisValue(i));
+   end;
+
+   for i := 0 to Controller.TriggerCount - 1 do begin
+      if(wdg.Triggers[i] <> nil) then
+         wdg.Triggers[i].SetRatio(Controller.GetTriggerValue(i));
    end;
 end;
 
