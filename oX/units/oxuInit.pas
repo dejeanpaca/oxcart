@@ -217,19 +217,6 @@ begin
    {call UI initialization routines}
    oxui.Initialize();
 
-   {call application initialization routines}
-   if(ox.AppProcs.iList.n > 0) then begin
-      elapsedTime := Time();
-      ox.AppProcs.iCall();
-
-      if(ox.Error <> 0) then begin
-         ErrorDescription := 'Application initialization failed';
-         exit(oxeGENERAL);
-      end;
-
-      log.i('Called all application initialization routines (elapsed: ' + elapsedTime.ElapsedfToString() + 's)');
-   end;
-
    {success}
    log.i('Initialization done. Elapsed: ' + GlobalStartTime.ElapsedfToString() + 's');
    log.Leave();
@@ -297,11 +284,6 @@ begin
 
       {save configuration before objects are destroyed}
       appDVarTextConfiguration.Save();
-   end;
-
-   if(ox.AppProcs.dlist.n > 0) then begin
-      ox.AppProcs.dCall();
-      log.i('Called all application de-initialization routines');
    end;
 
    {dispose all windows except primary}
