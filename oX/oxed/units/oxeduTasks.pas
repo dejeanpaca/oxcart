@@ -18,7 +18,8 @@ INTERFACE
       uOXED;
 
 TYPE
-   {base task type, blocking}
+   { oxedTBaseTask }
+
    oxedTBaseTask = class
    end;
 
