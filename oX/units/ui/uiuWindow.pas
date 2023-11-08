@@ -11,16 +11,16 @@ UNIT uiuWindow;
 INTERFACE
 
    USES
-      uStd, uLog, uColors, vmVector,
+      uStd, uLog, uColors,
       {app}
       uApp, appuEvents, appuKeys, appuActionEvents, appuMouse,
       {oX}
-      oxuRunRoutines, oxuTypes, oxuWindows, oxuFont, oxuResourcePool, oxuWindow,
-      oxuPrimitives, oxuWindowTypes, oxuRender, oxuTransform,
-      oxuTexture, oxuTextureGenerate, oxuRenderer, oxuRenderUtilities,
+      oxuRunRoutines, oxuTypes, oxuWindows, oxuResourcePool,
+      oxuWindowTypes, oxuRender,
+      oxuTexture, oxuTextureGenerate,
       {ui}
       oxuUI, uiuSkin, uiuZOrder, uiuTypes, uiuControl, uiuSkinTypes,
-      uiuWindowTypes, uiuWidget, uiuDraw, uiWidgets;
+      uiuWindowTypes, uiuWidget, uiWidgets;
 
 CONST
    wndevDISPOSE = 1;
