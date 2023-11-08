@@ -193,7 +193,7 @@ end;
 
 class function oxedTProjectRunner.Valid(): boolean;
 begin
-   Result := oxedProjectValid() and Loaded() and (not oxedProject.Paused) and (not oxedLib.oxLib.ErrorState);
+   Result := oxedProjectValid() and Loaded() and (not oxedLib.oxLib.ErrorState);
 end;
 
 class function oxedTProjectRunner.CanRender(): boolean;
@@ -213,7 +213,7 @@ end;
 
 procedure projectRun();
 begin
-   if(oxedTProjectRunner.Valid()) then begin
+   if oxedTProjectRunner.Valid() and (not oxedProject.Paused) then begin
       try
          oxedLib.oxLib.Run();
 
