@@ -55,6 +55,9 @@ INTERFACE
          {$IF DEFINED(UNIX) AND NOT DEFINED(DARWIN)}
          {%H-}appuControllerLinux,
          {$ENDIF}
+         {$IF DEFINED(WINDOWS)}
+         {%H-}appuControllerXInput,
+         {$ENDIF}
       {$ENDIF}
 
       { renderers }
