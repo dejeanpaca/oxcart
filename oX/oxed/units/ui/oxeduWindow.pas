@@ -151,31 +151,31 @@ var
    i: loopint;
 
 begin
-  if(oxedMenubar.Windows <> nil) and (oxedMenubar.Bar <> nil) then begin
-     context := oxedMenubar.Windows;
+   if(oxedMenubar.Windows <> nil) and (oxedMenubar.Bar <> nil) then begin
+      context := oxedMenubar.Windows;
 
-     context.RemoveAll();
-     oxedMenubar.SetupWindowsMenu();
+      context.RemoveAll();
+      oxedMenubar.SetupWindowsMenu();
 
-     // TODO: Maybe just remove the window items by implementing a RemoveFrom() method
+      // TODO: Maybe just remove the window items by implementing a RemoveFrom() method
 
-     if(oxedWindows.n > 0) then begin
-        context.AddSeparator();
+      if(oxedWindows.n > 0) then begin
+         context.AddSeparator();
 
-        for i := 0 to (oxedWindows.n - 1) do
-            context.AddItem(oxedWindows.list[i].Title, 0, @windowContextCallback)^.Index := i;
-     end;
-  end;
+         for i := 0 to (oxedWindows.n - 1) do
+            context.AddItem(oxedWindows.List[i].Title, 0, @windowContextCallback)^.Index := i;
+      end;
+   end;
 end;
 
 procedure oxedTWindow.Initialize();
 begin
-   inherited Initialize;
+   inherited;
+
+   if(WindowClass <> nil) then
+      oxedTWindowClass(WindowClass).LastSelected := Self;
 
    ListWindow();
-
-  if(WindowClass <> nil) then
-     oxedTWindowClass(WindowClass).LastSelected := Self;
 end;
 
 procedure oxedTWindow.DeInitialize();
@@ -183,9 +183,10 @@ var
    idx: loopint;
 
 begin
-   inherited DeInitialize;
+   inherited;
 
    idx := oxedWindows.Find(Self);
+
    if(idx > -1) then begin
       oxedWindows.Remove(idx);
 
