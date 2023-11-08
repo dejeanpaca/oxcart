@@ -66,6 +66,8 @@ TYPE
       Init: oxTRunRoutines;
 
       dvar: TDVarGroup;
+      {dvar group specifically for the program so the settings are not mixed with the engine}
+      ProgramDvar: TDVarGroup;
 
       function GetVersionString(properties: longword = 0): string;
       function GetErrorDescription(errcode: longint): string;
