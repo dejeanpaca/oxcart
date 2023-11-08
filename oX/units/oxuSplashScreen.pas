@@ -42,7 +42,7 @@ TYPE
       constructor Create(); override;
       destructor Destroy(); override;
 
-      {start rendering in the current thread, renders a single frame}
+      {startup splash screen for a window}
       procedure StartSplash(wnd: oxTWindow);
       {load and initialize all required resources}
       procedure Load(); virtual;
