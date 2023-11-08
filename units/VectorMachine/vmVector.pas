@@ -578,6 +578,11 @@ function vmDirectionAB(const a, b: TVector3f): TVector3f;
 
 { OPERATOR OVERLOAD }
 
+{ EQUALITY }
+operator = (const v1, v2: TVector2): Boolean;
+operator = (const v1, v2: TVector3): Boolean;
+operator = (const v1, v2: TVector4): Boolean;
+
 { VECTOR/VECTOR OPERATIONS }
 
 {SHORT (SMALLINT)}
@@ -1312,6 +1317,23 @@ end;
 
 
 { OPERATOR OVERLOAD }
+
+{ EQUALITY }
+
+operator = (const v1, v2: TVector2): Boolean;
+begin
+   Result := CompareDWord(v1, v2, 2) = 0;
+end;
+
+operator = (const v1, v2: TVector3): Boolean;
+begin
+   Result := CompareDWord(v1, v2, 3) = 0;
+end;
+
+operator = (const v1, v2: TVector4): Boolean;
+begin
+   Result := CompareDWord(v1, v2, 4) = 0;
+end;
 
 { VECTOR/VECTOR OPERATIONS }
 
