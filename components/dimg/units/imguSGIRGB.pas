@@ -33,9 +33,7 @@ CONST
    cCM_COLORMAP         = 3;
 
    {dimensions}
-   {%H-}cDIMENSION_1D        = 0;{%H-}
    cDIMENSION_2D        = 1;
-   {%H-}cDIMENSION_3D        = 2;
 
 TYPE
    THeader = packed record
