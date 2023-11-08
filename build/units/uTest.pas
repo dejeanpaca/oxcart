@@ -26,11 +26,11 @@ TYPE
       {name of the test}
       Name,
       {description why a test failed, or any remarks}
-      Description: string;
+      Description: StdString;
       {did the test pass}
       Success: boolean;
 
-      function SuccessString(): string;
+      function SuccessString(): StdString;
    end;
 
    TUnitTestDescriptors = specialize TPreallocatedArrayList<TUnitTestDescriptor>;
@@ -42,14 +42,14 @@ TYPE
 
    TUnitTestResults = record
       {tests group name}
-      Group: string;
+      Group: StdString;
       {have all tests passed}
       Success: boolean;
 
       List: TUnitTestDescriptors;
 
       procedure Allocate(count: longint);
-      procedure Add(const testName: string; const description: string = '');
+      procedure Add(const testName: StdString; const description: StdString = '');
 
       procedure RemoveAll();
    end;
@@ -75,7 +75,7 @@ TYPE
       procedure Stop(); virtual;
 
       {simple assert, will fail the test if expression is untrue}
-      function Assert(expression: boolean; const failureReason: string = ''): boolean;
+      function Assert(expression: boolean; const failureReason: StdString = ''): boolean;
 
       constructor Create();
    end;
@@ -89,19 +89,19 @@ TYPE
 
       Results: TUnitTestResults;
 
-      ErrorDescription: string;
+      ErrorDescription: StdString;
       Enabled: boolean;
 
       {add results into the pool}
       procedure SetResultsFrom(var r: TUnitTestResults);
       {add a new subgroup}
-      function Add(const g: string): PUnitTestResultsPool;
+      function Add(const g: StdString): PUnitTestResultsPool;
       {add a new subgroup to the top-level}
-      function AddTop(const g: string): PUnitTestResultsPool;
+      function AddTop(const g: StdString): PUnitTestResultsPool;
       {find a subgroup, can have multiple levels}
-      function Find(const g: string): PUnitTestResultsPool;
+      function Find(const g: StdString): PUnitTestResultsPool;
       {find a subgroup, but only in the top level}
-      function FindTop(const g: string): PUnitTestResultsPool;
+      function FindTop(const g: StdString): PUnitTestResultsPool;
 
       {get the total group count for this pool and its children}
       function GroupCount(): longint;
@@ -125,7 +125,7 @@ TYPE
 
    TUnitTests = record
       {test group name}
-      Group: string;
+      Group: StdString;
       {currently running test}
       Current: TUnitTest;
 
@@ -138,7 +138,7 @@ TYPE
       {run in information mode}
       InfoMode: boolean;
 
-      ErrorDescription: string;
+      ErrorDescription: StdString;
 
       {list of tests}
       Tests: record
@@ -149,19 +149,19 @@ TYPE
       Pool: TUnitTestResultsPool;
 
       {initializes testing}
-      procedure Initialize(const s: string);
+      procedure Initialize(const s: StdString);
 
       {add a test instance to the list}
-      function Add(const testName: string; const description: string; test: TUnitTest): TUnitTest;
-      function Add(const testName: string; test: TUnitTest): TUnitTest;
+      function Add(const testName: StdString; const description: StdString; test: TUnitTest): TUnitTest;
+      function Add(const testName: StdString; test: TUnitTest): TUnitTest;
       {add a simple test to the list}
-      function Add(const testName: string; const description: string; run: TProcedure): TUnitTest;
-      function Add(const testName: string; run: TProcedure): TUnitTest;
+      function Add(const testName: StdString; const description: StdString; run: TProcedure): TUnitTest;
+      function Add(const testName: StdString; run: TProcedure): TUnitTest;
       {run all tests}
       procedure Run();
 
       {current test asert}
-      function Assert(expression: boolean; const failureReason: string = ''): boolean;
+      function Assert(expression: boolean; const failureReason: StdString = ''): boolean;
 
       {writes test results to a file}
       function WriteResults(): boolean;
@@ -180,7 +180,7 @@ IMPLEMENTATION
 
 { TUnitTestDescriptor }
 
-function TUnitTestDescriptor.SuccessString(): string;
+function TUnitTestDescriptor.SuccessString(): StdString;
 begin
    if(Success) then
       Result := 'pass'
@@ -208,10 +208,10 @@ begin
    end;
 end;
 
-function TUnitTestResultsPool.Add(const g: string): PUnitTestResultsPool;
+function TUnitTestResultsPool.Add(const g: StdString): PUnitTestResultsPool;
 var
    l: longint = 0;
-   groups: TAnsiStringArray;
+   groups: TStringArray;
    current,
    next: PUnitTestResultsPool;
 
@@ -235,7 +235,7 @@ begin
    Result := next;
 end;
 
-function TUnitTestResultsPool.AddTop(const g: string): PUnitTestResultsPool;
+function TUnitTestResultsPool.AddTop(const g: StdString): PUnitTestResultsPool;
 begin
    Result := FindTop(g);
    if(Result = nil) then begin
@@ -251,10 +251,10 @@ begin
    end;
 end;
 
-function TUnitTestResultsPool.Find(const g: string): PUnitTestResultsPool;
+function TUnitTestResultsPool.Find(const g: StdString): PUnitTestResultsPool;
 var
    l: longint = 0;
-   groups: TAnsiStringArray;
+   groups: TStringArray;
    current, next: PUnitTestResultsPool;
 
 begin
@@ -274,7 +274,7 @@ begin
    Result := next;
 end;
 
-function TUnitTestResultsPool.FindTop(const g: string): PUnitTestResultsPool;
+function TUnitTestResultsPool.FindTop(const g: StdString): PUnitTestResultsPool;
 var
    i: longint;
 
@@ -350,11 +350,11 @@ begin
          inc(Result, List[i].FailCount());
 end;
 
-procedure writeGroup(const parent: string; const pool: TUnitTestResultsPool; recursive: boolean);
+procedure writeGroup(const parent: StdString; const pool: TUnitTestResultsPool; recursive: boolean);
 var
    i: longint;
    p: PUnitTestDescriptor;
-   what: string;
+   what: StdString;
 
 begin
    if(pool.Results.List.n > 0) then begin
@@ -426,7 +426,7 @@ begin
    List.Allocate(count);
 end;
 
-procedure TUnitTestResults.Add(const testName: string; const description: string = '');
+procedure TUnitTestResults.Add(const testName: StdString; const description: StdString = '');
 var
    t: TUnitTestDescriptor;
 
@@ -445,7 +445,7 @@ end;
 
 { TUnitTests }
 
-procedure TUnitTests.Initialize(const s: string);
+procedure TUnitTests.Initialize(const s: StdString);
 begin
    group := s;
 
@@ -458,7 +458,7 @@ begin
       InfoMode := true;
 end;
 
-function TUnitTests.Add(const testName: string; const description: string; test: TUnitTest): TUnitTest;
+function TUnitTests.Add(const testName: StdString; const description: StdString; test: TUnitTest): TUnitTest;
 begin
    inc(tests.n);
    SetLength(Tests.List, Tests.n);
@@ -474,19 +474,19 @@ begin
    Result := test;
 end;
 
-function TUnitTests.Add(const testName: string; test: TUnitTest): TUnitTest;
+function TUnitTests.Add(const testName: StdString; test: TUnitTest): TUnitTest;
 begin
    Result := Add(testName, '', test);
 end;
 
-function TUnitTests.Add(const testName: string; const description: string; run: TProcedure): TUnitTest;
+function TUnitTests.Add(const testName: StdString; const description: StdString; run: TProcedure): TUnitTest;
 begin
    Result := Add(testName, description, TUnitTest(nil));
 
    Result.Callback := run;
 end;
 
-function TUnitTests.Add(const testName: string; run: TProcedure): TUnitTest;
+function TUnitTests.Add(const testName: StdString; run: TProcedure): TUnitTest;
 begin
    Result := Add(testName, '', run);
 end;
@@ -546,7 +546,7 @@ begin
    log.i('Done');
 end;
 
-function TUnitTests.Assert(expression: boolean; const failureReason: string): boolean;
+function TUnitTests.Assert(expression: boolean; const failureReason: StdString): boolean;
 begin
    if(current <> nil) then
       current.Assert(expression, failureReason);
@@ -578,7 +578,7 @@ end;
 
 function TUnitTests.WriteResults(): boolean;
 var
-   fn: string;
+   fn: StdString;
 
    p:TParseData;
 
@@ -706,7 +706,7 @@ begin
 
 end;
 
-function TUnitTest.Assert(expression: boolean; const failureReason: string): boolean;
+function TUnitTest.Assert(expression: boolean; const failureReason: StdString): boolean;
 begin
    {since success is assumed from the start, we only fail when the assert fails,
    so any subsequent assert will not pass the test}
