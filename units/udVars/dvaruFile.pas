@@ -161,7 +161,8 @@ begin
 
    context.f := @Self;
    context.Group := group;
-   context.Parent := parent + group^.Name + '.';
+   context.Parent := group^.ConstructPath(parent);
+
    context.What := DVAR_NOTIFICATION_WRITE;
    context.Result := -1;
 end;
@@ -194,9 +195,9 @@ begin
             curGroup^.pNotify(context);
 
             if(context.Result = -1) then
-               Write(parent + curGroup^.Name + '.', curGroup^);
+               Write(curGroup^.ConstructPath(parent), curGroup^);
          end else
-            Write(parent + curGroup^.Name + '.', curGroup^);
+            Write(curGroup^.ConstructPath(parent), curGroup^);
 
          curGroup := curGroup^.Next;
       until (curGroup = nil);
