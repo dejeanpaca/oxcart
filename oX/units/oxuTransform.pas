@@ -99,9 +99,9 @@ begin
 
    Translate(vPosition);
 
-   RotateX(vRotation[0]);
-   RotateY(vRotation[1]);
-   RotateZ(vRotation[2]);
+   Rotate(vRotation[2], 0, 0, 1);
+   Rotate(vRotation[1], 0, 1, 0);
+   Rotate(vRotation[0], 1, 0, 0);
 
    Scale(vScale);
 end;
@@ -132,9 +132,9 @@ end;
 
 procedure oxTTransform.Rotate(x, y, z: single);
 begin
-   Rotate(x, 1, 0, 0);
-   Rotate(y, 0, 1, 0);
    Rotate(z, 0, 0, 1);
+   Rotate(y, 0, 1, 0);
+   Rotate(x, 1, 0, 0);
 end;
 
 procedure oxTTransform.Rotate(w, x, y, z: single);
@@ -166,8 +166,8 @@ begin
    m[1][1] := (y * cy) + c;
    m[1][2] := (y * cz) - x * s;
 
-   m[2][0] := (x * cz) - y * s;
-   m[2][1] := (y * cz) + x * s;
+   m[2][0] := (z * cx) - y * s;
+   m[2][1] := (z * cy) + x * s;
    m[2][2] := (z * cz) + c;
 
    Matrix := Matrix * m;
