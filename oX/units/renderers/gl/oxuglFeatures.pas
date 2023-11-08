@@ -30,13 +30,13 @@ begin
    glr := oxglRenderer;
 
    {$IFNDEF GLES}
-   glr.Properties.Textures.NonPowerOf2 := oglExtensions.Supported(cGL_ARB_texture_non_power_of_two);
+   glr.Properties.Textures.Npot := oglExtensions.Supported(cGL_ARB_texture_non_power_of_two);
    {$ELSE}
-   glr.Properties.Textures.NonPowerOf2 := false;
-   glr.Properties.Textures.WarnedPot := true;
+   glr.Properties.Textures.Npot := false;
+   glr.Properties.Textures.WarnedNpot := true;
    {$ENDIF}
 
-   log.v('Supports non power of two textures: ' + sf(glr.Properties.Textures.NonPowerOf2));
+   log.v('Supports non power of two textures: ' + sf(glr.Properties.Textures.Npot));
 end;
 
 procedure initGl();
