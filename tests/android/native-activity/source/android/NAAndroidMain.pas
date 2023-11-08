@@ -40,7 +40,7 @@ TYPE
       state: TSavedState;
    end;
 
-function engine_init_display(engine: PEngine): int32;
+function engine_init_display(engine: PEngine): boolean;
 var
    attribs: array[0..8] of EGLint = (
       EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
@@ -63,6 +63,8 @@ var
    r, g, b, d: EGLint;
 
 begin
+   Result := false;
+
    display := eglGetDisplay(EGL_DEFAULT_DISPLAY);
    eglInitialize(display, nil, nil);
 
@@ -98,7 +100,7 @@ begin
 
    if (config = nil) then begin
        logw('Unable to initialize EGLConfig');
-       exit(-1);
+       exit(false);
    end;
 
    (* EGL_NATIVE_VISUAL_ID is an attribute of the EGLConfig that is
@@ -111,7 +113,7 @@ begin
 
    if (eglMakeCurrent(display, surface, surface, context) = EGL_FALSE) then begin
        logw('Unable to eglMakeCurrent');
-       exit(-1);
+       exit(false);
    end;
 
    eglQuerySurface(display, surface, EGL_WIDTH, @w);
@@ -136,7 +138,7 @@ begin
    glShadeModel(GL_SMOOTH);
    glDisable(GL_DEPTH_TEST);
 
-   Result := 0;
+   Result := true;
 end;
 
 (**
@@ -144,7 +146,7 @@ end;
  *)
 procedure engine_draw_frame(engine: PEngine);
 begin
-    if (engine^.display = nil) then
+    if engine^.display = nil then
        exit;
 
     // Just fill the screen with a color.
@@ -160,12 +162,12 @@ end;
  *)
 procedure engine_term_display(engine: PEngine);
 begin
-    if (engine^.display <> EGL_NO_DISPLAY) then begin
+    if engine^.display <> EGL_NO_DISPLAY then begin
         eglMakeCurrent(engine^.display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-        if (engine^.context <> EGL_NO_CONTEXT)  then
+        if engine^.context <> EGL_NO_CONTEXT  then
             eglDestroyContext(engine^.display, engine^.context);
 
-        if (engine^.surface <> EGL_NO_SURFACE) then
+        if engine^.surface <> EGL_NO_SURFACE then
             eglDestroySurface(engine^.display, engine^.surface);
 
         eglTerminate(engine^.display);
@@ -187,7 +189,7 @@ var
 begin
    engine := app^.userData;
 
-    if (AInputEvent_getType(event) = AINPUT_EVENT_TYPE_MOTION) then begin
+    if AInputEvent_getType(event) = AINPUT_EVENT_TYPE_MOTION then begin
         engine^.animating := true;
         engine^.state.x := round(AMotionEvent_getX(event, 0));
         engine^.state.y := round(AMotionEvent_getY(event, 0));
@@ -209,44 +211,42 @@ begin
     engine := app^.userData;
 
     case cmd of
-        APP_CMD_SAVE_STATE: begin
-            // The system has asked us to save our current state.  Do so.
-            engine^.app^.savedState := GetMem(sizeof(TSavedState));
-            TSavedState(engine^.app^.savedState^) := engine^.state;
-            engine^.app^.savedStateSize := SizeOf(TSavedState);
+      APP_CMD_SAVE_STATE: begin
+         // The system has asked us to save our current state.  Do so.
+         engine^.app^.savedState := GetMem(sizeof(TSavedState));
+         TSavedState(engine^.app^.savedState^) := engine^.state;
+         engine^.app^.savedStateSize := SizeOf(TSavedState);
+      end;
+      APP_CMD_INIT_WINDOW: begin
+         // The window is being shown, get it ready.
+         if (engine^.app^.window <> nil) then begin
+            if engine_init_display(engine) then
+               engine_draw_frame(engine);
          end;
-        APP_CMD_INIT_WINDOW: begin
-            // The window is being shown, get it ready.
-            if (engine^.app^.window <> nil) then begin
-                engine_init_display(engine);
-                engine_draw_frame(engine);
-            end;
       end;
       APP_CMD_TERM_WINDOW: begin
-            // The window is being hidden or closed, clean it up.
-            engine_term_display(engine);
+         // The window is being hidden or closed, clean it up.
+         engine_term_display(engine);
       end;
       APP_CMD_GAINED_FOCUS: begin
-            // When our app gains focus, we start monitoring the accelerometer.
-            (*if (engine->accelerometerSensor != nullptr) {
-                ASensorEventQueue_enableSensor(engine->sensorEventQueue,
-                                               engine->accelerometerSensor);
-                // We'd like to get 60 events per second (in us).
-                ASensorEventQueue_setEventRate(engine->sensorEventQueue,
-                                               engine->accelerometerSensor,
-                                               (1000L/60)*1000);
-            } *)
-         end;
-        APP_CMD_LOST_FOCUS: begin
-            // When our app loses focus, we stop monitoring the accelerometer.
-            // This is to avoid consuming battery while not being used.
-(*            if (engine->accelerometerSensor != nullptr) {
-                ASensorEventQueue_disableSensor(engine->sensorEventQueue,
-                                                engine->accelerometerSensor);
-            }*)
-            // Also stop animating.
-            engine^.animating := false;
-            engine_draw_frame(engine);
+         // When our app gains focus, we start monitoring the accelerometer.
+         (*if (engine->accelerometerSensor != nullptr) {
+            ASensorEventQueue_enableSensor(engine->sensorEventQueue, engine->accelerometerSensor);
+            // We'd like to get 60 events per second (in us).
+            ASensorEventQueue_setEventRate(engine->sensorEventQueue,
+               engine->accelerometerSensor, (1000L/60)*1000);
+         } *)
+      end;
+      APP_CMD_LOST_FOCUS: begin
+         // When our app loses focus, we stop monitoring the accelerometer.
+         // This is to avoid consuming battery while not being used.
+         (* if (engine->accelerometerSensor != nullptr) {
+               ASensorEventQueue_disableSensor(engine->sensorEventQueue, engine->accelerometerSensor);
+            }
+         *)
+         // Also stop animating.
+         engine^.animating := false;
+         engine_draw_frame(engine);
       end;
    end;
 end;
@@ -267,9 +267,8 @@ begin
    app^.onInputEvent := @engine_handle_input;
    engine.app := app;
 
-   if(app^.savedState <> nil) then begin
+   if(app^.savedState <> nil) then
       engine.state := TSavedState(app^.savedState^);
-   end;
 
    nEvents := 0;
    pSource := nil;
@@ -277,18 +276,17 @@ begin
    repeat
       ident := ALooper_pollAll(0, nil, @nEvents, @pSource);
 
-      if(ident >= 0) then begin
-         if(pSource <> nil) then begin
+      if ident >= 0 then begin
+         if pSource <> nil then
             pSource^.process(app, pSource);
-         end;
       end;
 
-      if(app^.destroyRequested) then begin
+      if app^.destroyRequested then begin
          engine_term_display(@engine);
          exit;
       end;
 
-      if (engine.animating) then begin
+      if engine.animating then begin
           engine.state.angle := engine.state.angle + 0.01;
 
           if (engine.state.angle > 1) then
