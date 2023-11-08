@@ -21,7 +21,7 @@ INTERFACE
       {$ELSE}
       uAndroidCrashHandler,
       {$ENDIF}
-      ufhStandard,
+      uFiles,
       {$IFDEF ANDROID}
       ulogAndroid,
       {$ENDIF}
@@ -171,10 +171,10 @@ INTERFACE
       oxuwndSettingsAudio,
       oxuwndSettingsInput,
       oxuwndSettingsOther,
-        {$IFDEF OX_FEATURE_WND_ABOUT}
-        { ui windows }
-        oxuwndAbout,
-        {$ENDIF}
+         {$IFDEF OX_FEATURE_WND_ABOUT}
+         { ui windows }
+         oxuwndAbout,
+         {$ENDIF}
       {$ENDIF}
 
       {loaders}
