@@ -49,9 +49,6 @@ TYPE
       {$ENDIF}
 
       procedure Get({%H-}wnd: oxTWindow);
-      {$IFNDEF OX_LIBRARY}
-      procedure Log({%H-}wnd: oxTwindow);
-      {$ENDIF}
       function PlatformSupported(i: loopint): boolean;
       function Supported(i: loopint): boolean;
       function FindDescriptor(const ext: string): loopint;
@@ -101,33 +98,6 @@ begin
    nPlatformSpecific := pExternal^.nPlatformSpecific;
    {$ENDIF}
 end;
-
-{$IFNDEF OX_LIBRARY}
-procedure oglTExtensions.Log(wnd: oxTwindow);
-var
-   i: loopint;
-
-begin
-   uLog.log.Collapsed('OpenGL Extensions');
-
-   writeln(pExtensions = nil);
-
-   for i := 0 to oglnExtensionDescriptors - 1 do begin
-      if(pExtensions[i].Present) then
-         uLog.log.i(sf(i) + ': ' + pExtensions[i].Name);
-   end;
-
-   uLog.log.Collapsed('Platform extensions');
-
-   for i := 0 to nPlatformSpecific - 1 do begin
-      if(PlatformSpecific[i].Present) then
-         uLog.log.i(sf(i) + ': ' + PlatformSpecific[i].Name);
-   end;
-
-   uLog.log.Leave();
-   uLog.log.Leave();
-end;
-{$ENDIF}
 
 function oglTExtensions.PlatformSupported(i: loopint): boolean;
 begin
