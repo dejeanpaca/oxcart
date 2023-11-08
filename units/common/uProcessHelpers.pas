@@ -38,7 +38,7 @@ TYPE
 
       function RunCommand(const path: StdString; const commands: TStringArray; options: TProcessOptions = [poWaitOnExit]): boolean;
       function AsyncCommand(const path: StdString; const commands: TStringArray; options: TProcessOptions = []): boolean;
-      function RunCommandCurrentDir(const path: StdString; const commands: TStringArray; options: TProcessOptions = []): boolean;
+      function RunCommandCurrentDir(const path: StdString; const commands: TStringArray; options: TProcessOptions = [poWaitOnExit]): boolean;
 
       procedure DisableLog();
 
