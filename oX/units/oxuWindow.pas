@@ -138,7 +138,6 @@ begin
 
    wnd.oxProperties.Created := true;
    wnd.SetDimensions(externalWindow.Dimensions.w, externalWindow.Dimensions.h, false);
-   wnd.SetupProjection();
 
    windowCreateCommon(wnd);
 
@@ -156,7 +155,6 @@ function windowCreate(wnd: oxTWindow): boolean;
 var
    s: string;
    renderer: oxTRenderer;
-   rendererOk: boolean;
 
 begin
    Result := false;
@@ -215,10 +213,9 @@ begin
 
    windowCreateCommon(wnd);
 
-   rendererOk := renderer.SetupWindow(wnd);
-   Result := rendererOk;
+   Result := renderer.SetupWindow(wnd);
 
-   if(rendererOk) then
+   if(Result) then
       windowCreateFinalize(wnd);
 end;
 
@@ -358,8 +355,6 @@ begin
 
       if(oxProperties.Created) then
          oxUIHooks.SetPosition(self, oxPoint(x, y));
-
-      SetupProjection();
    end;
 end;
 
