@@ -25,10 +25,10 @@ USES
 
 TYPE
 
-   { oxTWindowSplash }
+   { uiTWindowSplash }
 
    uiTWindowSplash = class(oxuiTWindowBase)
-      procedure OnDeactivate; override;
+      procedure OnDeactivate(); override;
    end;
 
    { oxTSplashWindow }
@@ -83,9 +83,9 @@ begin
    oxwndSplash.Close();
 end;
 
-{ oxTWindowSplash }
+{ uiTWindowSplash }
 
-procedure uiTWindowSplash.OnDeactivate;
+procedure uiTWindowSplash.OnDeactivate();
 begin
    oxwndSplash.Close();
 end;
