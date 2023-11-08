@@ -11,6 +11,8 @@ INTERFACE
    USES
       Keyboard, Mouse,
       uStd, uLog,
+      {app}
+      appuKeys, appuKeyEvents,
       {oX}
       oxuWindowTypes, oxuPlatform;
 
@@ -21,8 +23,8 @@ TYPE
       constructor Create(); override;
 
       procedure ProcessEvents(); override;
-      function MakeWindow(wnd: oxTWindow): boolean; override;
-      function DestroyWindow(wnd: oxTWindow): boolean; override;
+      function MakeWindow({%H-}wnd: oxTWindow): boolean; override;
+      function DestroyWindow({%H-}wnd: oxTWindow): boolean; override;
    end;
 
 IMPLEMENTATION
@@ -32,6 +34,7 @@ IMPLEMENTATION
 constructor oxTConsolePlatform.Create();
 begin
    Name := 'console';
+   MultipleWindows := false;
 end;
 
 procedure oxTConsolePlatform.ProcessEvents();
@@ -40,15 +43,24 @@ var
    m: TMouseEvent;
    hasEvent: boolean;
 
+   kE: appTKeyEvent;
+
 begin
    ZeroOut(m, SizeOf(m));
    ZeroOut(k, SizEOf(k));
 
    repeat
-     k := PollKeyEvent();
+      k := PollKeyEvent();
 
-     if(k <> 0) then
+      if(k <> 0) then begin
         Keyboard.GetKeyEvent();
+
+         appk.Init(kE);
+         kE.Key.Code := kcESC;
+         kE.PlatformScanCode := k;
+
+         appKeyEvents.Queue(kE.Key);
+      end;
    until (k = 0);
 
    repeat
