@@ -1213,8 +1213,13 @@ begin
 
    if(l > 0) then begin
       i := l;
-      while (i >= 1) and (st[i] <> ExtensionSeparator) do
+
+      while (i >= 1) and (st[i] <> ExtensionSeparator) do begin
+         if(st[i] in DirectorySeparators) then
+            exit('');
+
          dec(i);
+      end;
 
       if(i > 0) then begin
          {extract the extension and return it}
