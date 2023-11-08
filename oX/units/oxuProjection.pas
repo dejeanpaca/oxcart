@@ -334,12 +334,12 @@ end;
 function oxTProjectionHelper.GetDescription(): StdString;
 begin
    if(not p.IsOrthographic) then begin
-      Result := 'Projection > Aspect: ' + sf(p.Aspect, 3) + ', FovY: ' + sf(p.FovY, 2) + ', Z(' + sf(p.ZNear, 3) + ', ' + sf(p.ZFar, 3) + ')';
+      Result := 'Perspective > Aspect: ' + sf(p.Aspect, 3) + ', FovY: ' + sf(p.FovY, 2) + ', Z(' + sf(p.ZNear, 3) + ' .. ' + sf(p.ZFar, 3) + ')';
    end else begin
       if(p.Size > 0) then
-         Result := 'Ortho > Aspect: ' + sf(p.Aspect, 3) + ', Size: ' + sf(p.Size, 3) + ', Z(' + sf(p.ZNear, 3) + ', ' + sf(p.ZFar, 3) + ')'
+         Result := 'Ortho > Aspect: ' + sf(p.Aspect, 3) + ', Size: ' + sf(p.Size, 3) + ', Z(' + sf(p.ZNear, 3) + ' .. ' + sf(p.ZFar, 3) + ')'
       else
-         Result := 'Ortho > Aspect: ' + sf(p.Aspect, 3) + ', Z(' + sf(p.ZNear, 3) + ', ' + sf(p.ZFar, 3) + '), ' +
+         Result := 'Ortho > Aspect: ' + sf(p.Aspect, 3) + ', Z(' + sf(p.ZNear, 3) + ' .. ' + sf(p.ZFar, 3) + '), ' +
             'l: ' + sf(p.l, 3) + ', r: ' + sf(p.r, 3) + ', t: ' + sf(p.t, 3) + ', b: ' + sf(p.b, 3);
    end;
 end;
