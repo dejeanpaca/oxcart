@@ -1448,7 +1448,7 @@ begin
          index := -1;
 
          repeat
-            if(pointedOffset >= currentY) and (pointedOffset < ItemOffsets.list[i] + GetItemHeight(i)) then begin
+            if(pointedOffset >= currentY) and (pointedOffset <= ItemOffsets.list[i] + GetItemHeight(i)) then begin
                offs := currentY;
                index := i;
                break;
