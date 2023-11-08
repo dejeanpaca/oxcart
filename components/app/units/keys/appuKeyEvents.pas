@@ -45,14 +45,14 @@ begin
 
    if(process) then begin
       {determine if key was pressed in this cycle}
-      if((not appk.Pressed[k.Code]) and k.IsPressed()) then
-         appk.CurrentCyclePressed[k.Code] := True;
+      if((not appk.Properties[k.Code].IsSet(kpPRESSED)) and k.IsPressed()) then
+         appk.Properties[k.Code].Prop(kpCYCLE_PRESSED);
 
       {is the key still pressed}
-      appk.Pressed[k.Code] := k.IsPressed();
+      appk.Properties[k.Code].Prop(kpPRESSED, k.IsPressed());
 
-      if(appk.CurrentCyclePressed[k.Code] and (not appk.Pressed[k.Code])) then
-         appk.ReleasePressed[k.Code] := true;
+      if(appk.Properties[k.Code].IsSet(kpCYCLE_PRESSED) and (not appk.Properties[k.Code].IsSet(kpPRESSED))) then
+         appk.Properties[k.Code].Prop(kpPRESSED_RELEASED);
 
       {set modifiers and only modifiers to the existing state}
       k.State := k.State or (appk.Modifiers and kmMODIFIERS_MASK);
