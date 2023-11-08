@@ -81,7 +81,7 @@ VAR
    oglRender: oglTRender;
 
    primitive_translate: array[0..8] of GLenum = (
-      {0} GL_NONE,
+      {0} oglNONE,
       {1} GL_POINTS,
       {2} GL_LINES,
       {3} GL_LINE_LOOP,
@@ -89,7 +89,7 @@ VAR
       {5} GL_TRIANGLES,
       {6} GL_TRIANGLE_STRIP,
       {7} GL_TRIANGLE_FAN,
-      {8} GL_QUADS
+      {8} {$IFNDEF GLES}GL_QUADS{$ELSE}GL_ZERO{$ENDIF}
    );
 
 TYPE
@@ -104,7 +104,7 @@ CONST
    );
 
    functionRemap: array[0..longint(oxTEST_FUNCTION_ALWAYS)] of GLenum = (
-      GL_NONE, {oxDEPTH_TEST_NONE}
+      oglNONE, {oxDEPTH_TEST_NONE}
       GL_NEVER, {oxDEPTH_TEST_NEVER}
       GL_EQUAL, {oxDEPTH_TEST_EQUAL}
       GL_GREATER, {oxDEPTH_TEST_GREATER}
@@ -301,7 +301,11 @@ end;
 procedure oglTRender.Primitives(primitive: oxTPrimitives; count: longint; indices: PWord);
 begin
    if(primitive <> oxPRIMITIVE_NONE) then
+      {$IFNDEF GLES}
       glDrawElements(primitive_translate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, indices);
+      {$ELSE}
+      glDrawElements(primitive_translate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, PGLvoid(indices));
+      {$ENDIF}
 
    {$IFDEF DEBUG}LastUsedIndices := indices;{$ENDIF}
 end;
@@ -309,7 +313,11 @@ end;
 procedure oglTRender.Primitives(primitive: oxTPrimitives; count: longint; indices: PLongWord);
 begin
    if(primitive <> oxPRIMITIVE_NONE) then
-      glDrawElements(primitive_translate[GLenum(primitive)], count, GL_UNSIGNED_INT, indices);
+      {$IFNDEF GLES}
+      glDrawElements(primitive_translate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, indices);
+      {$ELSE}
+      glDrawElements(primitive_translate[GLenum(primitive)], count, GL_UNSIGNED_SHORT, PGLvoid(indices));
+      {$ENDIF}
 
    {$IFDEF DEBUG}LastUsedIndices := indices;{$ENDIF}
 end;

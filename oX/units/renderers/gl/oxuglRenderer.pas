@@ -129,7 +129,7 @@ begin
    oxTRenderer(wnd.Renderer).ContextCurrent(wnd.RenderingContext);
    ogl.ActivateRenderingContext();
 
-   {$IFDEF WINDOWS}
+   {$IF DEFINED(WINDOWS) AND (NOT DEFINED(GLES))}
    wglChoosePixelFormatARB := TwglChoosePixelFormatARB(wglGetProcAddress('wglChoosePixelFormatARB'));
    {$ENDIF}
 
@@ -407,8 +407,10 @@ begin
       glClearBits := glClearBits or GL_DEPTH_BUFFER_BIT;
    if(clearBits and oxrBUFFER_CLEAR_STENCIL > 0) then
       glClearBits := glClearBits or GL_STENCIL_BUFFER_BIT;
+   {$IFNDEF GLES}
    if(clearBits and oxrBUFFER_CLEAR_ACCUM > 0) then
       glClearBits := glClearBits or GL_ACCUM_BUFFER_BIT;
+   {$ENDIF}
 
    glClear(glClearBits);
 end;

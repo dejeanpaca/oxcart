@@ -21,10 +21,12 @@ INTERFACE
       oxuglTextureGenerate,
       oxuglTransform,
       oxuglRender,
+      {$IFNDEF GLES}
       oxuglShader,
       oxuglShaderLoader,
-      oxuglMaterial
-      {$IFNDEF OX_LIBRARY}, oxuglDebugOutput{$ENDIF},
+      {$ENDIF}
+      oxuglMaterial,
+      {$IF (NOT DEFINED(OX_LIBRARY)) AND (NOT DEFINED(GLES))}oxuglDebugOutput,{$ENDIF}
       oxuglFP,
       oxuglFPShaders;
 
