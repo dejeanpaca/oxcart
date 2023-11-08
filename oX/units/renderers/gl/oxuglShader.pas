@@ -62,10 +62,14 @@ TYPE
       procedure Detach(var obj: oxglTShaderObject);
       procedure DestroyProgramShaders();
 
-      constructor Create; override;
-      destructor Destroy; override;
+      constructor Create(); override;
+      destructor Destroy(); override;
+
+      {$IFNDEF GLES}
+      class function GetShaderTypeString(shaderType: GLenum): string; static;
+      {$ENDIF}
    end;
-   
+
 IMPLEMENTATION
 
 function componentReturn(): TObject;
@@ -101,7 +105,7 @@ var
    typeString: string;
 
 begin
-   typeString := ogl.GetShaderTypeString(shaderType);
+   typeString := GetShaderTypeString(shaderType);
 
    Result := '(gl ' + typeString + ') ' + GetDescriptor();
 end;
@@ -267,7 +271,7 @@ begin
    Fragment.Dispose();
 end;
 
-constructor oxglTShader.Create;
+constructor oxglTShader.Create();
 begin
    inherited Create;
 
@@ -275,10 +279,30 @@ begin
    glUniformLocations.InitializeValues(glUniformLocations);
 end;
 
-destructor oxglTShader.Destroy;
+destructor oxglTShader.Destroy();
 begin
    inherited Destroy;
 end;
+
+{$IFNDEF GLES}
+class function oxglTShader.GetShaderTypeString(shaderType: GLenum): string;
+begin
+   if(shaderType = GL_VERTEX_SHADER) then
+      Result := 'vertex'
+   else if(shaderType = GL_FRAGMENT_SHADER) then
+      Result := 'fragment'
+   else if (shaderType = GL_GEOMETRY_SHADER) then
+      Result := 'geometry'
+   else if (shaderType = GL_TESS_EVALUATION_SHADER) then
+      Result := 'tess_evaluation'
+   else if (shaderType = GL_TESS_CONTROL_SHADER) then
+      Result := 'tess_control'
+   else if (shaderType = GL_COMPUTE_SHADER) then
+      Result := 'compute'
+   else
+      Result := 'unknown';
+end;
+{$ENDIF}
 
 procedure init();
 begin
