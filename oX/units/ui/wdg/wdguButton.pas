@@ -68,7 +68,7 @@ TYPE
 
       ButtonGridPosition: uiTControlGridPosition;
 
-      constructor Create; override;
+      constructor Create(); override;
 
       procedure Action(what: uiTWidgetEvents); override;
       procedure RenderBase();
@@ -153,11 +153,12 @@ begin
    end;
 end;
 
-constructor wdgTButton.Create;
+constructor wdgTButton.Create();
 begin
    inherited Create;
 
-   SetPadding(8);
+   SetPadding(wdgGRID_SIZE);
+   SetHorizontalPadding(wdgELEMENT_PADDING);
    SetBorder(1);
 end;
 
@@ -250,6 +251,8 @@ begin
 
    d.w := f.GetLength(Caption) + PaddingLeft + PaddingTop + Border;
    d.h := f.GetHeight() + PaddingBottom + PaddingTop + Border;
+
+   FitToGrid(d);
 end;
 
 function wdgTButton.SetButtonPosition(pos: uiTControlGridPosition): wdgTButton;
