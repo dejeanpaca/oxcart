@@ -33,6 +33,7 @@ begin
 
    Name := 'Linux';
    Id := 'linux';
+   OS := 'linux';
    GlyphName := 'brands:61820';
 
    Configuration := oxedTPlatformConfiguration.Create();

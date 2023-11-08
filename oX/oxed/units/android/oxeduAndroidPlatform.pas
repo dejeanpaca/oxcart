@@ -37,7 +37,8 @@ begin
    inherited;
 
    Name := 'Android';
-   id := 'android';
+   Id := 'android';
+   OS := 'android';
    GlyphName := 'brands:61819';
 
    Configuration := oxedTPlatformConfiguration.Create();

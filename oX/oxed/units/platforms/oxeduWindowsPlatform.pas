@@ -31,7 +31,8 @@ begin
    inherited;
 
    Name := 'Windows';
-   id := 'windows';
+   Id := 'windows';
+   OS := 'windows';
    GlyphName := 'brands:61818';
 
    Configuration := oxedTPlatformConfiguration.Create();
