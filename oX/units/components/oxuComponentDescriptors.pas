@@ -22,7 +22,7 @@ TYPE
 
    oxTComponentDescriptor = object
       Id,
-      Name: string;
+      Name: StdString;
 
       {$IFDEF OX_LIBRARY_SUPPORT}
       {does this component reside in a library}
@@ -31,7 +31,7 @@ TYPE
 
       Component: TClass;
 
-      constructor Create(const newId: string; componentType: TClass);
+      constructor Create(const newId: StdString; componentType: TClass);
    end;
 
    { oxTUnknownComponentDescriptor }
@@ -67,7 +67,7 @@ end;
 
 { oxTComponentDescriptor }
 
-constructor oxTComponentDescriptor.Create(const newId: string; componentType: TClass);
+constructor oxTComponentDescriptor.Create(const newId: StdString; componentType: TClass);
 begin
    if(newId = '') then
       Id := 'unknown'
