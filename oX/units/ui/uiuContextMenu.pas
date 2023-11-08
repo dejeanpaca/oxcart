@@ -222,7 +222,7 @@ CONST
    {border size when there is a border rendererd (for now always 1px)}
    BORDER_SIZE_DEFAULT = 2;
    {border size when there is no border rendered (but still want some space around)}
-   BORDER_SIZE_NONE = 1;
+   BORDER_SIZE_NONE = 0;
    ITEM_HEIGHT = 20;
    SEPARATOR_ITEM_HEIGHT = 6;
    ITEM_PADDING = 3;
@@ -1067,7 +1067,7 @@ INITIALIZATION
    uiContextMenu.RenderBorder := true;
 
    uiContextMenu.BackgroundColor.Assign(48, 48, 48, 244);
-   uiContextMenu.BorderColor.Assign(32, 32, 64, 255);
+   uiContextMenu.BorderColor.Assign(8, 8, 8, 255);
 
    internalWidget.Register('widget.context_menu', @initializeWidget);
 END.
