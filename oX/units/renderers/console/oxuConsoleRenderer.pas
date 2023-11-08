@@ -33,14 +33,11 @@ TYPE
 
       procedure OnInitialize(); override;
 
-      procedure SetupData(wnd: oxTWindow); override;
       function SetupWindow(wnd: oxTWindow): boolean; override;
-      function PreInitWindow(wnd: oxTWindow): boolean; override;
-      function InitWindow(wnd: oxTWindow): boolean; override;
       function DeInitWindow(wnd: oxTWindow): boolean; override;
 
       procedure SwapBuffers(wnd: oxTWindow); override;
-      procedure Clear(clearBits: longword); override;
+      procedure Clear({%H-}clearBits: longword); override;
   end;
    
 VAR
@@ -73,11 +70,15 @@ procedure oxTConsoleRenderer.OnInitialize();
 begin
 end;
 
-procedure oxTConsoleRenderer.SetupData(wnd: oxTWindow);
+function oxTConsoleRenderer.SetupWindow(wnd: oxTWindow): boolean;
 begin
-   inherited SetupData(wnd);
+   Result := tvGlobal.Initialize();
 
-   tvGlobal.Initialize();
+   if(Result) then begin
+      {we can't use console log in video mode}
+      consoleLog.Close();
+   end else
+      exit(False);
 
    tvGlobal.LogDC();
    tvGlobal.LogModes();
@@ -86,25 +87,14 @@ begin
       wnd.Dimensions.w := tvGlobal.Mode.Col;
       wnd.Dimensions.h := tvGlobal.Mode.Row;
    end;
-end;
 
-function oxTConsoleRenderer.SetupWindow(wnd: oxTWindow): boolean;
-begin
-   Result := true;
-end;
-
-function oxTConsoleRenderer.PreInitWindow(wnd: oxTWindow): boolean;
-begin
-   Result:=inherited PreInitWindow(wnd);
-end;
-
-function oxTConsoleRenderer.InitWindow(wnd: oxTWindow): boolean;
-begin
-   Result := true;
+   tvCurrent.ClearScreen();
+   tvCurrent.Update();
 end;
 
 function oxTConsoleRenderer.DeInitWindow(wnd: oxTWindow): boolean;
 begin
+   tvGlobal.Deinitialize();
    Result := true;
 end;
 
@@ -115,6 +105,7 @@ end;
 
 procedure oxTConsoleRenderer.Clear(clearBits: longword);
 begin
+   tvCurrent.Clear();
 end;
 
 procedure init();
