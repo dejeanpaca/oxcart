@@ -102,7 +102,8 @@ begin
    inherited;
 
    bwnd := oxTDVarEditorWindow(oxuiTDVarEditorWindow(wnd).BaseHandler);
-   if(bwnd.wdg.Vars <> nil) then
+
+   if(bwnd <> nil) and (bwnd.wdg.Vars <> nil) then
       oxTDVarEditorWindow(oxuiTDVarEditorWindow(wnd).BaseHandler).wdg.Vars.SelectQueue();
 end;
 
@@ -240,7 +241,8 @@ procedure oxuiTDVarEditorWindow.SizeChanged();
 begin
    inherited SizeChanged();
 
-   oxTDVarEditorWindow(BaseHandler).Resized();
+   if(BaseHandler <> nil) then
+      oxTDVarEditorWindow(BaseHandler).Resized();
 end;
 
 procedure oxTDVarEditorWindow.AddWidgets();

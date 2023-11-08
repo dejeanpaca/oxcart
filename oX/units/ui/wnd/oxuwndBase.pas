@@ -51,7 +51,7 @@ TYPE
       OpenWindowAction: TEventID;
 
       constructor Create(); virtual;
-      destructor Destroy; override;
+      destructor Destroy(); override;
 
       {opens/creates the window}
       procedure Open(); virtual;
@@ -76,8 +76,10 @@ procedure oxuiTWindowBase.DeInitialize();
 begin
    inherited DeInitialize();
 
-   oxTWindowBase(BaseHandler).WindowDestroyed(Self);
-   oxTWindowBase(BaseHandler).Window := nil;
+   if(BaseHandler <> nil) then begin
+      oxTWindowBase(BaseHandler).WindowDestroyed(Self);
+      oxTWindowBase(BaseHandler).Window := nil;
+   end;
 end;
 
 { oxTWindowBase }
@@ -96,12 +98,14 @@ begin
    doDestroy := true;
 end;
 
-destructor oxTWindowBase.Destroy;
+destructor oxTWindowBase.Destroy();
 begin
    inherited Destroy;
 
-   if(Window <> nil) then
+   if(Window <> nil) then begin
+      Window.BaseHandler := nil;
       uiWindow.DisposeQueue(uiTWindow(Window));
+   end;
 end;
 
 procedure oxTWindowBase.CreateWindow();
