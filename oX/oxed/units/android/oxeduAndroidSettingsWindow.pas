@@ -24,16 +24,19 @@ IMPLEMENTATION
 VAR
    wdg: record
       PackageName: wdgTInputBox;
+      ManualFileManagement: wdgTCheckbox;
    end;
 
 procedure saveCallback();
 begin
    oxedAndroidSettings.PackageName := wdg.PackageName.GetText();
+   oxedAndroidSettings.ManualFileManagement := wdg.ManualFileManagement.Checked();
 end;
 
 procedure revertCallback();
 begin
    wdg.PackageName.SetText(oxedAndroidSettings.PackageName);
+   wdg.ManualFileManagement.Check(oxedAndroidSettings.ManualFileManagement);
 end;
 
 procedure InitSettings();
@@ -50,6 +53,10 @@ begin
 
    wdgLabel.Add('Package name');
    wdg.PackageName := wdgInputBox.Add('', uiWidget.LastRect.BelowOf(), oxNullDimensions);
+
+   uiWidget.LastRect.GoBelow();
+
+   wdg.ManualFileManagement := wdgCheckbox.Add('Manual file management (aka do it yourself)', uiWidget.LastRect.BelowOf(), oxedAndroidSettings.ManualFileManagement);
 end;
 
 procedure init();

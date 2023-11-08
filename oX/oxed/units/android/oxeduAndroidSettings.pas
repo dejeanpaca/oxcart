@@ -23,6 +23,8 @@ TYPE
 
       {android package name}
       PackageName: string;
+      {should you manage android files yourself}
+      ManualFileManagement: boolean;
 
       class procedure Reset(); static;
    end;
@@ -41,6 +43,7 @@ class procedure oxedTAndroidSettings.Reset();
 begin
   with oxedAndroidSettings do begin
      PackageName := '';
+     ManualFileManagement := false;
   end;
 end;
 
