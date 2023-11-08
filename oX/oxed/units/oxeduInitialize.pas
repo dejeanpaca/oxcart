@@ -37,7 +37,7 @@ INTERFACE
       oxeduRunButtons, oxeduStatusInfo, oxeduSettingsWindow,
       oxeduProjectFeaturesWindow, oxeduProjectStatisticsWindow,
       {components}
-      oxeduCameraComponent, oxeduLightComponent,
+      oxeduCameraComponent, oxeduLightComponent, oxeduUIComponent,
       {initialize keys last}
       oxeduKeys,
       {ui}
