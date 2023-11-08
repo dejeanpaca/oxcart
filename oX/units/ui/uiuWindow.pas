@@ -385,6 +385,11 @@ TYPE
       {routines to call whenever an ox window rendering has finished}
       OxwPostRender: uiTWindowGlobalOn;
 
+      {default icon}
+      DefaultIcon: oxTTexture;
+      {use default icon if no other icon is set}
+      UseDefaultIcon: boolean;
+
       {checks if the window is of the specified type}
       function IsType(wnd, whatType: uiTWindowClass): boolean;
 
@@ -684,6 +689,9 @@ begin
    {set window data}
    uiSkin.SetWindowDefault(wnd);
    wnd.Frame := createData.Frame;
+
+   if(uiWindow.UseDefaultIcon) then
+      wnd.SetIcon(uiWindow.DefaultIcon);
 
    {adjust positions}
    if(autoAdjustPosition) then
@@ -1421,9 +1429,8 @@ end;
 
 procedure uiTWindowHelper.DisposeIcon();
 begin
-   if(Icon <> nil) then begin
+   if(Icon <> nil) and (uiWindow.DefaultIcon <> Icon) then
       oxResource.Destroy(Icon);
-   end;
 
    {TODO: Dispose system icon}
 end;
@@ -1943,8 +1950,10 @@ begin
       tex := oxTTexture(Icon);
       d := GetIconDimensions();
 
-      x := APosition.x + fw;
-      y := APosition.y - ((GetTitleHeight() - d.h) div 2);
+      SetColorBlended(colors^.cTitleIcon);
+
+      x := APosition.x + fw + d.w / 2;
+      y := APosition.y - ((GetTitleHeight() - d.h) div 2) - d.h / 2;
 
       oxRenderingUtilities.TexturedQuad(x, y, d.w / 2, d.h / 2, tex);
    end;
@@ -1991,6 +2000,7 @@ begin
       end else
          renderSimpleFrame();
 
+      renderIcon();
       renderTitleString();
    end;
 end;
@@ -2468,7 +2478,7 @@ end;
 function uiTWindowHelper.GetIconDimensions(): oxTDimensions;
 begin
    if(Icon <> nil) then begin
-      Result.w := round(GetTitleHeight() * 0.8);
+      Result.w := round(GetTitleHeight() * 0.5);
       Result.h := Result.w;
    end else begin
       Result.w := 0;
@@ -2674,6 +2684,7 @@ INITIALIZATION
    uiWindow.DefaultConfirmationKey  := defaultConfirmationKey;
    uiWindow.DefaultBackground       := defaultBackground;
    uiWindow.DefaultDimensions.Assign(320, 240);
+   uiWindow.UseDefaultIcon := true;
 
    {initialize default values}
    uiWindow.RestoreCreateDefaults();

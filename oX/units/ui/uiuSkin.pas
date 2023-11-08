@@ -241,6 +241,7 @@ begin
       Colors.cInnerFrame.Assign(16, 16, 16, 255);
       Colors.cTitleBt.Assign(255, 255, 255, 255); {close}
       Colors.cTitleBtHighlight.Assign(255, 0, 0, 255); {close}
+      Colors.cTitleIcon.Assign(255, 255, 255, 255); {close}
       Colors.Shadow.Assign(0, 0, 0, 63);
 
       InactiveColors := Colors;
