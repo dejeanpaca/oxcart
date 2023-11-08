@@ -36,7 +36,7 @@ CONST
       '</body>'#10 +
       '</html>';
 
-   htmlTypeClasses: array[0..logcPRIORITY_MAX] of string = (
+   htmlTypeClasses: array[0..logcPRIORITY_MAX] of StdString = (
       'info',
       'warning',
       'error',
@@ -45,6 +45,20 @@ CONST
       'debug',
       'ok'
    );
+
+function encode(const htmlString: StdString): StdString;
+begin
+  Result :=
+  StringReplace(
+    StringReplace(
+    StringReplace(
+    StringReplace(
+      htmlString,
+      '&','&amp;', [rfReplaceAll]),
+      '<','&lt;', [rfReplaceAll]),
+      '>','&gt;', [rfReplaceAll]),
+      '"','&quot;', [rfReplaceAll]);
+end;
 
 procedure hopen(logFile: PLog);
 begin
@@ -71,6 +85,7 @@ begin
    buf.Write('<div class="logentry"><span class="timestamp">');
    buf.Write(TimeToStr(td));
    buf.Write('</span><span ');
+
    if(priority <> 0) then begin
       buf.Write('class="');
       buf.Write(htmlTypeClasses[priority]);
@@ -78,7 +93,7 @@ begin
    end;
 
    buf.Write('>');
-   buf.Write(s);
+   buf.Write(encode(s));
    buf.Write('</span></div>');
 
    logf^.HandlerWritelnRaw(buf.Get());
@@ -93,7 +108,8 @@ end;
 procedure hEnterSection(logf: PLog; const s: StdString; collapsed: boolean);
 begin
    logf^.HandlerWritelnRaw('<div class="sectionenclosure">');
-   logf^.HandlerWritelnRaw('<div class="sectiontitle">' + s + '</div>');
+   logf^.HandlerWritelnRaw('<div class="sectiontitle">' + encode(s) + '</div>');
+
    if(not collapsed) then
       logf^.HandlerWritelnRaw('<div class="section">')
    else
