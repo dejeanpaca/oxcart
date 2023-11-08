@@ -13,7 +13,7 @@ PROGRAM run;
       {$INCLUDE oxappuses.inc};
 
 BEGIN
-   appInfo.setName('Run Test');
+   appInfo.SetName('Run Test');
 
    oxRun.Go();
 END.
