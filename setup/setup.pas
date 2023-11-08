@@ -5,7 +5,7 @@
 PROGRAM setup;
 
    USES
-      sysutils, uStd, StringUtils, uLog, uFiles, uFileUtils, uBuild, uLPI, uTest, appuPaths, ParamUtils, uTiming;
+      sysutils, uStd, StringUtils, uLog, uFileUtils, uBuild, uLPI, uTest, appuPaths, ParamUtils, uTiming;
 
 TYPE
    TTool = record
@@ -79,8 +79,8 @@ var
    i: longint;
 
 begin
-   log.v('FPC: ' + build.GetPlatform()^.FpcPath);
-   log.v('Lazarus: ' + build.lazarusPath);
+   log.v('FPC: ' + build.GetPlatform()^.Path);
+   log.v('Lazarus: ' + build.CurrentLazarus^.Path);
    log.v('');
 
    for i := 0 to length(laz_tools) - 1 do

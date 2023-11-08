@@ -23,9 +23,6 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <WorkingDirectory Value="$(ProjPath)"/>
-      </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
@@ -66,7 +63,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="../units/common;../build/units;../units/parsers/simple;../units/udVars;../components/app/units;../units/uFile"/>
+      <OtherUnitFiles Value="../units/common;../build/units;../units/parsers/simple;../units/udVars;../components/app/units;../units/uFile;../oX/units"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CompileReasons Run="False"/>
