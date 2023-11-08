@@ -62,7 +62,7 @@ TYPE
       procedure Scale(s: single);
 
       procedure Translate(const v: TVector3f); virtual;
-      procedure Rotate(const v: TVector4f); virtual;
+      procedure Rotate(const v: TVector4f); inline;
       procedure Scale(const v: TVector3f); virtual;
 
       function GetForward(): TVector3f; virtual;
@@ -173,9 +173,9 @@ procedure oxTTransform.Rotate(const angles: TVector3f);
 begin
    vRotation := angles;
 
-   Rotate(angles[1], 0, 1, 0);
-   Rotate(angles[2], 0, 0, 1);
-   Rotate(angles[0], 1, 0, 0);
+   RotateY(angles[1]);
+   RotateZ(angles[2]);
+   RotateX(angles[0]);
 end;
 
 procedure oxTTransform.Rotate(x, y, z: single);
@@ -426,8 +426,13 @@ begin
 end;
 
 procedure oxTTransform.Rotate(const v: TVector4f);
+var
+   m: TMatrix4f;
+
 begin
-   Rotate(v[3], v[0], v[1], v[2]);
+   GetRotationMatrix(v[3], v[0], v[1], v[2], m);
+
+   Matrix := Matrix * m;
 end;
 
 procedure oxTTransform.Scale(const v: TVector3f);
