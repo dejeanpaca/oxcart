@@ -71,6 +71,8 @@ TYPE
       OnPrepare,
       {called when build is starting to run, to setup additional build options}
       OnStartRun,
+      {called when build is finishing}
+      OnFinish,
       {called when build is done}
       OnDone: TProcedures;
 
@@ -859,6 +861,10 @@ var
 begin
    OnStartRun.Call();
 
+   {OnStartRun failed the build, quit}
+   if(not BuildOk) then
+      exit;
+
    oxedBuildLog.v('Building platform: ' + BuildArch.GetPlatformString());
    oxedBuildLog.v('Building into: ' + TargetPath);
    oxedBuildLog.v('Working area: ' + WorkArea);
@@ -933,8 +939,13 @@ begin
    end else
       Fail(modestring + ' failed (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
 
-   {if successful rebuild, we've made an initial build}
-   oxedProject.Session.InitialBuildDone := true;
+   if(BuildOk) then begin
+      OnFinish.Call();
+
+      if(BuildOk) then
+         {if successful rebuild, we've made an initial build}
+         oxedProject.Session.InitialBuildDone := true;
+   end;
 
    {cleanup}
    DoneBuild();
@@ -1328,6 +1339,7 @@ INITIALIZATION
    oxed.Init.Add('build', @oxedTBuildGlobal.Initialize, @oxedTBuildGlobal.Deinitialize);
 
    TProcedures.InitializeValues(oxedBuild.OnStartRun);
+   TProcedures.InitializeValues(oxedBuild.OnFinish);
    TProcedures.InitializeValues(oxedBuild.OnPrepare);
    TProcedures.InitializeValues(oxedBuild.OnDone);
 
