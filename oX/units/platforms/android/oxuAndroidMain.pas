@@ -30,6 +30,7 @@ begin
    app^.onInputEvent := @AndroidHandleInput;
 
    finished := false;
+   uApp.app.Active := true;
 
    repeat
       if(ox.Initialized) then
@@ -40,6 +41,7 @@ begin
       if ox.InitializationFailed or (not uApp.app.Active) then begin
          if(not finished) then begin
             finished := true;
+            logv('CLOSING ACTIVITY');
             ANativeActivity_finish(app^.activity);
          end;
       end;
@@ -47,11 +49,6 @@ begin
       if(AndroidApp^.destroyRequested) then
          break;
    until false;
-
-   if(not ox.InitializationFailed) then
-      oxRun.Done();
-
-   oxInitialization.DeInitialize();
 end;
 
 END.
