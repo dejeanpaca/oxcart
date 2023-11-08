@@ -13,7 +13,7 @@ UNIT uBuild;
 INTERFACE
 
    USES
-      process, sysutils, classes,
+      process, sysutils, classes, strutils,
       uStd, uLog, uFileUtils, StringUtils, ConsoleUtils, uSimpleParser, ParamUtils,
       udvars, dvaruFile,
       appuPaths
@@ -1399,16 +1399,109 @@ begin
    {$ENDIF}
 end;
 
+function doesIncludeAll(const path:  string): boolean;
+begin
+   Result := strutils.AnsiEndsStr('*', path);
+end;
+
+function isRelativePath(const path:  string): boolean;
+begin
+   Result := strutils.AnsiContainsStr(path, '..');
+end;
+
+var
+   Walker: TFileTraverse;
+
+function onUnit(const fn: string): boolean;
+var
+   path: string;
+
+begin
+   Result := true;
+
+   path := ExtractFilePath(fn);
+
+   if(build.Units.FindString(path) < 0) then begin
+      build.Units.Add(path);
+
+      log.v('Auto find unit path: ' + path);
+   end;
+end;
+
+function onInclude(const fn: string): boolean;
+var
+   path: string;
+
+begin
+   Result := true;
+
+   path := ExtractFilePath(fn);
+
+   if(build.Includes.FindString(path) < 0) then begin
+      build.Includes.Add(path);
+
+      log.v('Auto find include path: ' + ExtractFilePath(fn));
+   end;
+end;
+
+procedure scanUnits(const startPath: string);
+begin
+   log.v('build > Will scan path for units: ' + startPath);
+
+   if(Walker = nil) then
+      Walker := TFileTraverse.Create();
+
+   Walker.ResetExtensions();
+
+   Walker.AddExtension('.pas');
+
+   Walker.onFile := @onUnit;
+   Walker.Run(startPath);
+end;
+
+procedure scanIncludes(const startPath: string);
+begin
+   log.v('build > Will scan path for includes: ' + startPath);
+
+   if(Walker = nil) then
+      Walker := TFileTraverse.Create();
+
+   Walker.ResetExtensions();
+
+   Walker.AddExtension('.inc');
+
+   Walker.onFile := @onInclude;
+   Walker.Run(startPath);
+end;
+
+function processPath(var path: string): boolean;
+begin
+   Result := False;
+   ReplaceDirSeparators(currentValue);
+
+   if(isRelativePath(currentValue)) then begin
+      {TODO: Use current config file path}
+      currentValue := ExpandFileName(build.ConfigPath + currentValue);
+   end;
+
+   if(doesIncludeAll(currentValue)) then
+      exit(True);
+end;
+
 procedure dvUnitNotify({%H-}p: PDVar; {%H-}what: longword);
 begin
-   ReplaceDirSeparators(currentValue);
-   build.Units.Add(getBasePath() + currentValue);
+   if(processPath(currentValue)) then
+      scanUnits(ExtractFilePath(currentValue))
+   else
+      build.Units.Add(getBasePath() + currentValue);
 end;
 
 procedure dvIncludeNotify({%H-}p: PDVar; {%H-}what: longword);
 begin
-   ReplaceDirSeparators(currentValue);
-   build.Includes.Add(getBasePath() + currentValue);
+   if(processPath(currentValue)) then
+      scanIncludes(ExtractFilePath(currentValue))
+   else
+      build.Includes.Add(getBasePath() + currentValue);
 end;
 
 procedure dvNotifyBasePath({%H-}p: PDVar; {%H-}what: longword);
