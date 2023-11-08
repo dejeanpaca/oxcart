@@ -15,10 +15,10 @@ INTERFACE
       {app}
       appuMouse, appuActionEvents, appuKeys,
       {ox}
-      oxuRunRoutines, oxuGridRender, oxuCamera, oxuRender, oxuRenderUtilities,
-      oxuScene, oxuSceneRender, oxuEntity, oxuTypes, oxuTransform, oxumPrimitive, oxuResourcePool,
+      oxuGridRender, oxuCamera, oxuRender, oxuRenderUtilities,
+      oxuSceneRender, oxuEntity, oxuTypes, oxuTransform, oxumPrimitive, oxuResourcePool,
       {ui}
-      oxuUI, uiuWindow, oxuMaterial,
+      uiuWindow, oxuMaterial,
       {oxed}
       uOXED, oxeduMenubar, oxeduWindow, oxeduSceneWindow, oxeduScene, oxeduComponent, oxeduEditRenderers, oxeduEntityTypes,
       oxeduSettings, oxeduProjectRunner, oxeduComponentGlyph, oxeduActions;
@@ -495,13 +495,13 @@ begin
                SelectedAxis := -1;
 
             if(SelectedAxis <> -1) then
-               oxui.PointerCapture.LockWindow();
+               GetUI().PointerCapture.LockWindow();
          end;
       end;
    end else if(e.Button.IsSet(appmcLEFT) and e.IsReleased()) then begin
       // TODO: Release lock if any
       if(SelectedAxis <> -1) then
-         oxui.PointerCapture.Clear();
+         GetUI().PointerCapture.Clear();
    end;
 end;
 

@@ -12,12 +12,10 @@ INTERFACE
 
    USES
       sysutils, uStd, uColors,
-      {app}
-      appuMouse,
       {ox}
-      oxuTypes, oxuScene, oxuPaths, oxuFont, oxuRunRoutines,
+      oxuTypes, oxuFont,
       {ui}
-      uiuControl, uiuTypes, uiuWindow, uiWidgets, wdguWorkbar, wdguToolbar, wdguList,
+      uiuControl, uiuTypes, uiWidgets, wdguWorkbar, wdguToolbar, wdguList,
       {oxed}
       uOXED, oxeduSettings, oxeduWindow, oxeduMenubar, oxeduMessages, oxeduIcons,
       oxeduProjectRunner, oxeduProjectManagement;

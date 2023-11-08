@@ -11,7 +11,7 @@ UNIT oxeduSceneClone;
 INTERFACE
 
    USES
-      uStd, uLog,
+      uLog,
       {ox}
       oxuEntity, oxuScene, oxuWorld, oxuSceneManagement, oxuSceneRender,
       {oxed}

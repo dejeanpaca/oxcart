@@ -15,9 +15,8 @@ INTERFACE
       {app}
       appuKeys, appuMouse,
       {ox}
-      oxuRunRoutines,
-      oxuScene, oxuSceneRender, oxuWindows, oxuRenderer, oxuWindow,
-      oxuGlobalInstances, oxuKeyboardControl, oxuPointerControl, oxuGlobalKeys,
+      oxuSceneRender, oxuWindows, oxuWindow,
+      oxuKeyboardControl, oxuPointerControl, oxuGlobalKeys,
       {ui}
       uiuTypes, uiuWindow, uiuWindowTypes,
       {oxed}
