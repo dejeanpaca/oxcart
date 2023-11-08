@@ -521,7 +521,7 @@ function oxedTSceneEditWindow.Key(var k: appTKeyEvent): boolean;
 begin
    if(k.Key.Equal(kcF)) then begin
       appActionEvents.Queue(oxedActions.FOCUS_SELECTED);
-      exit;
+      exit(true);
    end;
 
    Result := inherited Key(k);

@@ -117,7 +117,7 @@ var
 
    m: oxPMesh;
 
-   procedure reset();
+   procedure reset(); inline;
    begin
       hasVertex := false;
       hasFaces := false;
@@ -258,7 +258,7 @@ var
    newV: array of TVector3f;
    newUV: array of TVector2f;
 
-   procedure reset();
+   procedure reset(); inline;
    begin
       ivOffset := 0;
       iuvOffset := 0;
@@ -391,6 +391,7 @@ begin
    if(data.f^.Error <> 0) then
       exit;
 
+   reset();
    nIndices := 0;
    meshIndex := 0;
 
@@ -402,25 +403,6 @@ begin
    faceStrings[1] := '';
    faceStrings[2] := '';
    faceStrings[3] := '';
-
-   ivOffset := 0;
-   iuvOffset := 0;
-   inOffset := 0;
-
-   currentFace := 0;
-   previousFace := 0;
-   currentMaterial := 0;
-   iCurrentOffset := 0;
-
-   vertexIndex := 0;
-   normalIndex := 0;
-   vertsPerFace := 0;
-
-   hasUV := false;
-   hasN := false;
-
-   m := nil;
-   pM := nil;
 
    ZeroPtr(@face, SizeOf(face));
 

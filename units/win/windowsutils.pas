@@ -34,6 +34,9 @@ var
    hwndFound: HWND;
 
 begin
+   pszOldWindowTitle[0] := #0;
+   pszNewWindowTitle[0] := #0;
+
    windows.GetConsoleTitle(pszOldWindowTitle, BUFSIZE);
 
    pszNewWindowTitle := '' + sf(Now()) + sf(GetCurrentProcessId());

@@ -414,6 +414,8 @@ var
    error: DWORD;
 
 begin
+   error := 0;
+
    if(not hasClass) then begin
       WindowClass.Style          := CS_HREDRAW or CS_VREDRAW or CS_OWNDC;
 

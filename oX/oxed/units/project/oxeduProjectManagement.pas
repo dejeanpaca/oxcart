@@ -139,7 +139,7 @@ begin
       {prevent opening the same project}
       if(oxedProject <> nil) and (fn = oxedProject.Path) then begin
          oxedConsole.i('Project already open');
-         exit;
+         exit(true);
       end;
 
       {check if the project exists}

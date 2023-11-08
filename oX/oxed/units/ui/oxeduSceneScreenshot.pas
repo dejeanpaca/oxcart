@@ -40,11 +40,11 @@ begin
    sceneWnd := oxedSceneWindows.LastSelectedWindow;
 
    if(sceneWnd <> nil) and (sceneWnd.IsSelected()) then begin
-      if(oxedProjectValid()) then begin
-         path := oxedProject.Path + 'screenshots' + DirectorySeparator;
+      if(not oxedProjectValid()) then
+         exit;
 
-         FileUtils.CreateDirectory(path);
-      end;
+      path := oxedProject.Path + 'screenshots' + DirectorySeparator;
+      FileUtils.CreateDirectory(path);
 
       name := oxScreenshot.GetScreenshotName();
       path := path + name + '.tga';

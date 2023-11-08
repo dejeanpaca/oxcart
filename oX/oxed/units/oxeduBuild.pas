@@ -831,6 +831,7 @@ begin
    createPath('work area', WorkArea);
    createPath('target', TargetPath);
 
+   modeString := 'unknown';
    if(BuildType = OXED_BUILD_TASK_REBUILD) then
       modeString := 'rebuild'
    else if(BuildType = OXED_BUILD_TASK_RECODE) then
