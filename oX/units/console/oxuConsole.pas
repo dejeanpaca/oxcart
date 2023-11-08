@@ -124,7 +124,6 @@ VAR
    dvHeight: TDVar;
    currentHistory: string;
 
-
 procedure consoleReconfigure();
 var
    clientTotal: longint = 0;
@@ -729,8 +728,10 @@ procedure DeInitialize();
 begin
    dvarf.WriteText(dvgConsoleHistory, appPath.configuration.path + 'console.history');
 
-   oxConsole.Font := nil;
    oxConsole.Console.DeInitialize();
+   oxConsole.wdgInput := nil;
+   oxConsole.ParentWindow := nil;
+   oxConsole.Font := nil;
    oxConsole.Window := nil;
 
    uiSkin.DisposeWidget(consoleInputSkin);
