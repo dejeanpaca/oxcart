@@ -739,9 +739,13 @@ end;
 
 { DVAR HANDLER }
 
-procedure dvSaveHandler(var df: dvarTFileData; const parent: StdString);
+procedure dvSaveHandler(var context: TDVarNotificationContext);
 begin
-   df.Write(parent, dvHistory, oxConsole.Console.History.Entries.List, oxConsole.Console.History.Entries.n);
+   if(context.What = DVAR_NOTIFICATION_WRITE) then begin
+      context.Result := 0;
+
+      dvarPFileData(context.f)^.Write(context.Parent, dvHistory, oxConsole.Console.History.Entries.List, oxConsole.Console.History.Entries.n);
+   end;
 end;
 
 procedure dvHistoryNotify(var {%H-}context: TDVarNotificationContext);
@@ -795,5 +799,5 @@ INITIALIZATION
 
    dvHistory.pNotify := @dvHistoryNotify;
 
-   dvarf.OnSave.Add(@dvgConsoleHistory, @dvSaveHandler);
+   dvgConsoleHistory.pNotify := @dvSaveHandler;
 END.

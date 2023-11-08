@@ -106,15 +106,20 @@ begin
    adjustVariables();
 end;
 
-procedure dvSaveHandler(var df: dvarTFileData; const parent: StdString);
+procedure dvSaveHandler(var context: TDVarNotificationContext);
 var
    i: longint;
 
 begin
+   if(context.What <> DVAR_NOTIFICATION_WRITE) then
+      exit;
+
+   context.Result := 0;
+
    for i := 0 to (oxWindowSettings.n - 1) do begin
       dvIndex.Assign(i);
 
-      df.Write(parent, dvgWindow);
+      dvarPFileData(context.f)^.Write(context.Parent, dvgWindow);
    end;
 end;
 
@@ -143,7 +148,7 @@ INITIALIZATION
    dvgWindow.Add(dvFullscreen, 'fullscreen', dtcBOOL, @oxWindowSettings.w[0].Fullscreen);
    dvgWindow.Add(dvWindowedFullscreen, 'windowed_fullscreen', dtcBOOL, @oxWindowSettings.w[0].WindowedFullscreen);
 
-   dvarf.OnSave.Add(@dvgWindow, @dvSaveHandler);
+   dvgWindow.pNotify := @dvSaveHandler;
 
    oxWindowSettings.AllocateCount := 1;
    initializeSettings();

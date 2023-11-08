@@ -102,18 +102,23 @@ begin
    oxedProject.RunParameters.Add(runParameter);
 end;
 
-procedure dvSaveHandler(var df: dvarTFileData; const parent: StdString);
+procedure dvSaveHandler(var context: TDVarNotificationContext);
 begin
-   df.Write(parent, dvName, oxedProject.Name);
-   df.Write(parent, dvShortName, oxedProject.ShortName);
-   df.Write(parent, dvIdentifier, oxedProject.Identifier);
-   df.Write(parent, dvOrganization, oxedProject.Organization);
-   df.Write(parent, dvOrganizationShort, oxedProject.OrganizationShort);
+   if(context.What <> DVAR_NOTIFICATION_WRITE) then
+      exit;
+
+   context.Result := 0;
+
+   dvarPFileData(context.f)^.Write(context.Parent, dvName, oxedProject.Name);
+   dvarPFileData(context.f)^.Write(context.Parent, dvShortName, oxedProject.ShortName);
+   dvarPFileData(context.f)^.Write(context.Parent, dvIdentifier, oxedProject.Identifier);
+   dvarPFileData(context.f)^.Write(context.Parent, dvOrganization, oxedProject.Organization);
+   dvarPFileData(context.f)^.Write(context.Parent, dvOrganizationShort, oxedProject.OrganizationShort);
 
    if(oxedProject.MainUnit <> '') then
-      df.Write(parent, dvMainUnit, oxedProject.MainUnit);
+      dvarPFileData(context.f)^.Write(context.Parent, dvMainUnit, oxedProject.MainUnit);
 
-   df.Write(parent, dvRunParameter, oxedProject.RunParameters.List, oxedProject.RunParameters.n);
+   dvarPFileData(context.f)^.Write(context.Parent, dvRunParameter, oxedProject.RunParameters.List, oxedProject.RunParameters.n);
 end;
 
 INITIALIZATION
@@ -131,6 +136,6 @@ INITIALIZATION
    dvGroup.Add(dvRunParameter, 'run_parameter', dtcSTRING, @runParameter);
    dvRunParameter.pNotify := @dvRunParameterNotify;
 
-   dvarf.OnSave.Add(@dvGroup, @dvSaveHandler);
+   dvGroup.pNotify := @dvSaveHandler;
 
 END.

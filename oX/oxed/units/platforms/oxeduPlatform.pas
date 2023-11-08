@@ -11,7 +11,7 @@ UNIT oxeduPlatform;
 INTERFACE
 
    USES
-      uStd,
+      uStd, udvars,
       {ox}
       oxuRunRoutines,
       {oxed}
@@ -27,6 +27,9 @@ TYPE
 
    { oxedTPlatform }
    oxedTPlatform = class
+      {is this platform enabled}
+      Enabled: boolean;
+
       {platform name}
       Name,
       {platform id, should match the fpc compiler define for the platform (windows, linux, android, darwin)}
@@ -134,7 +137,7 @@ begin
          exit(List.List[i]);
    end;
 
-   result := nil;
+   Result := nil;
 end;
 
 procedure oxedTPlatforms.Dispose();
@@ -155,9 +158,13 @@ begin
 end;
 
 VAR
+   platformEnabled: boolean;
+   dvPlatformEnabled: TDVar;
    oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
+   dvgOXED.Add(dvPlatformEnabled, 'platform_enabled', dtcBOOL, @platformEnabled);
+
    oxed.Init.dAdd(oxedInitRoutines, 'platforms', @deinit);
 
    oxedPlatforms.List.InitializeValues(oxedPlatforms.List);
