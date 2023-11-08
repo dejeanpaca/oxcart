@@ -264,6 +264,7 @@ procedure oxedTMenubarGlobal.Deinitialize();
 begin
    OnDeinit.Call();
    FreeObject(oxedMenubar.OpenWindows);
+   oxedMenubar.Project := nil;
 end;
 
 procedure clearRecents();
@@ -355,13 +356,15 @@ begin
 
    oxedMenubar.Recents.Enable(not running);
 
-   oxedMenubar.Project.FindByAction(oxedwndProjectSettings.OpenWindowAction)^.Enable(enableRun);
-   oxedMenubar.Project.FindByAction(oxedwndRunSettings.OpenWindowAction)^.Enable(oxedProjectValid());
-   oxedMenubar.Project.FindByAction(oxedActions.OPEN_LAZARUS)^.Enable(oxedProjectValid());
-   oxedMenubar.Project.FindByAction(oxedActions.OPEN_PROJECT_DIRECTORY)^.Enable(oxedProjectValid());
+   if(oxedMenubar.Project <> nil) then begin
+      oxedMenubar.Project.FindByAction(oxedwndProjectSettings.OpenWindowAction)^.Enable(enableRun);
+      oxedMenubar.Project.FindByAction(oxedwndRunSettings.OpenWindowAction)^.Enable(oxedProjectValid());
+      oxedMenubar.Project.FindByAction(oxedActions.OPEN_LAZARUS)^.Enable(oxedProjectValid());
+      oxedMenubar.Project.FindByAction(oxedActions.OPEN_PROJECT_DIRECTORY)^.Enable(oxedProjectValid());
+      oxedMenubar.Project.Enable(oxedProject <> nil);
+   end;
 
    oxedMenubar.SceneMenu.Enable(oxedProject <> nil);
-   oxedMenubar.Project.Enable(oxedProject <> nil);
    oxedMenubar.ObjectMenu.Enable(oxedProject <> nil);
 end;
 

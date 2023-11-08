@@ -35,18 +35,20 @@ var
    item: uiPContextMenuItem;
 
 begin
-   enable := oxedBuild.Buildable() and (oxedTasks.Running(nil) = 0);
+   if(oxedMenubar.Project <> nil) then begin
+      enable := oxedBuild.Buildable() and (oxedTasks.Running(nil) = 0);
 
-   oxedMenubar.Project.FindByAction(oxedActions.RUN_PLAY)^.Enable(enable and (not running));
-   oxedMenubar.Project.FindByAction(oxedActions.RUN_STOP)^.Enable(running);
+      oxedMenubar.Project.FindByAction(oxedActions.RUN_PLAY)^.Enable(enable and (not running));
+      oxedMenubar.Project.FindByAction(oxedActions.RUN_STOP)^.Enable(running);
 
-   item := oxedMenubar.Project.FindByAction(oxedActions.RUN_PAUSE);
-   item^.Enable(running);
+      item := oxedMenubar.Project.FindByAction(oxedActions.RUN_PAUSE);
+      item^.Enable(running);
 
-   if(oxedProject <> nil) and (oxedProject.Paused) then
-      item^.Caption := 'Resume'
-   else
-      item^.Caption := 'Pause';
+      if(oxedProject <> nil) and (oxedProject.Paused) then
+         item^.Caption := 'Resume'
+      else
+         item^.Caption := 'Pause';
+   end;
 end;
 
 procedure OnProjectChange();
@@ -56,13 +58,15 @@ var
 begin
    enable := oxedBuild.Buildable();
 
-   oxedMenubar.Project.FindByAction(oxedActions.REBUILD)^.Enable(enable);
-   oxedMenubar.Project.FindByAction(oxedActions.RECODE)^.Enable(enable);
-   oxedMenubar.Project.FindByAction(oxedActions.CLEANUP)^.Enable(enable);
-   oxedMenubar.Project.FindByAction(oxedActions.RESCAN)^.Enable(enable);
-   oxedMenubar.Project.FindByAction(oxedActions.RECREATE)^.Enable(enable);
-   oxedMenubar.Project.FindByAction(oxedActions.ABORT_BUILD)^.Enable(oxedTasks.Running(oxedTBuildTask) > 0);
-   oxedMenubar.Project.FindByAction(oxedActions.REBUILD_THIRD_PARTY)^.Enable(enable);
+   if(oxedMenubar.Project <> nil) then begin
+      oxedMenubar.Project.FindByAction(oxedActions.REBUILD)^.Enable(enable);
+      oxedMenubar.Project.FindByAction(oxedActions.RECODE)^.Enable(enable);
+      oxedMenubar.Project.FindByAction(oxedActions.CLEANUP)^.Enable(enable);
+      oxedMenubar.Project.FindByAction(oxedActions.RESCAN)^.Enable(enable);
+      oxedMenubar.Project.FindByAction(oxedActions.RECREATE)^.Enable(enable);
+      oxedMenubar.Project.FindByAction(oxedActions.ABORT_BUILD)^.Enable(oxedTasks.Running(oxedTBuildTask) > 0);
+      oxedMenubar.Project.FindByAction(oxedActions.REBUILD_THIRD_PARTY)^.Enable(enable);
+   end;
 
    oxedMenubar.Build.Enable(enable);
 
