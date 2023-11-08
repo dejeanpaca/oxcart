@@ -73,8 +73,8 @@ TYPE
    { wdgTOXEDMenubar }
 
    wdgTOXEDMenubar = class(wdgTMenubar)
-      procedure SizeChanged; override;
-      procedure DeInitialize; override;
+      procedure SizeChanged(); override;
+      procedure DeInitialize(); override;
    end;
 
 
@@ -257,14 +257,14 @@ end;
 
 { wdgTOXEDMenubar }
 
-procedure wdgTOXEDMenubar.SizeChanged;
+procedure wdgTOXEDMenubar.SizeChanged();
 begin
    inherited SizeChanged;
 
    oxedMenubar.OnResize.Call();
 end;
 
-procedure wdgTOXEDMenubar.DeInitialize;
+procedure wdgTOXEDMenubar.DeInitialize();
 begin
    inherited DeInitialize;
 
