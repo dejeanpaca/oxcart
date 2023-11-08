@@ -278,6 +278,7 @@ var
 begin
    defaultPlatform.Initialize(defaultPlatform);
    defaultPlatform.Name := 'default';
+   defaultPlatform.Platform := build.GetBuiltWithTarget();
 
    build.Platforms.Dispose();
    build.Platforms.Add(defaultPlatform);
