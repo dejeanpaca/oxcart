@@ -372,7 +372,7 @@ var
 begin
    Result := true;
 
-   dirPath := IncludeTrailingPathDelimiterNonEmpty(dir);
+   dirPath := ExcludeTrailingPathDelimiter(dir);
 
    {find first}
    if(dirPath = '') then
@@ -1194,7 +1194,7 @@ end;
 
 procedure TFileTraverse.Run(const startPath: StdString);
 begin
-   path           := IncludeTrailingPathDelimiterNonEmpty(startPath);
+   path           := ExcludeTrailingPathDelimiter(startPath);
    stopTraverse   := false;
    Running        := true;
 
@@ -1243,13 +1243,13 @@ var
 begin
    {build path}
    if(name <> '') then
-      path := path + name;
+      path := IncludeTrailingPathDelimiterNonEmpty(path) + ExcludeTrailingPathDelimiter(name);
 
    {find first}
    if(path = '') then
       result := FindFirst('*', faReadOnly or faDirectory, src)
    else
-      result := FindFirst(UTF8Decode(path + '*'), faReadOnly or faDirectory, src);
+      result := FindFirst(UTF8Decode(Path + DirectorySeparator + '*'), faReadOnly or faDirectory, src);
 
    if(result = 0) then begin
       repeat
@@ -1292,7 +1292,7 @@ begin
                if(ok) then begin
                   {build filename}
                   if(path <> '') then
-                     fname := path + UTF8Encode(src.Name)
+                     fname := path + DirectorySeparator + UTF8Encode(src.Name)
                   else
                      fname := UTF8Encode(src.Name);
 
