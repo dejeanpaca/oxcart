@@ -33,10 +33,14 @@ TYPE
    TProcessHelpers = record
       OutputString: AnsiString;
       ExitCode: loopint;
+      LogFailure,
+      LogOutput: boolean;
 
-      function RunCommand(const path: StdString; const commands: TStringArray; options: TProcessOptions = []): boolean;
+      function RunCommand(const path: StdString; const commands: TStringArray; options: TProcessOptions = [poWaitOnExit]): boolean;
       function AsyncCommand(const path: StdString; const commands: TStringArray; options: TProcessOptions = []): boolean;
       function RunCommandCurrentDir(const path: StdString; const commands: TStringArray; options: TProcessOptions = []): boolean;
+
+      class procedure Initialize(out p: TProcessHelpers); static;
    end;
 
 VAR
@@ -58,7 +62,7 @@ begin
 
    p := TProcess.Create(nil);
    p.Executable := path;
-   p.Options := options;
+   p.Options := p.Options + options;
 
    if(commands <> nil) then begin
       for i := 0 to high(commands) do
@@ -74,11 +78,12 @@ begin
       Result := true;
    except
       on e: Exception do begin
-         log.e('Failed to execute: ' + path);
+         if(LogFailure) then
+            log.e('Failed to execute: ' + path);
       end;
    end;
 
-   if(OutputString <> '') then
+   if LogOutput and (OutputString <> '')then
       console.i(OutputString);
 
    FreeObject(p);
@@ -93,6 +98,13 @@ end;
 function TProcessHelpers.RunCommandCurrentDir(const path: StdString; const commands: TStringArray; options: TProcessOptions): boolean;
 begin
    Result := RunCommand(IncludeTrailingPathDelimiterNonEmpty(GetCurrentDir()) + path, commands, options);
+end;
+
+class procedure TProcessHelpers.Initialize(out p: TProcessHelpers);
+begin
+   ZeroOut(p, SizeOf(p));
+   p.LogFailure := true;
+   p.LogOutput := true;
 end;
 
 { TProcessHelper }
@@ -159,5 +171,8 @@ begin
       exit;
    end;
 end;
+
+INITIALIZATION
+   TProcessHelpers.Initialize(ProcessHelpers);
 
 END.
