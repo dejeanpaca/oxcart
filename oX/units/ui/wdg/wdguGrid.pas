@@ -127,9 +127,11 @@ TYPE
 
       protected
          procedure ItemClicked(index: loopint); override;
+         procedure ItemDoubleClicked(index: loopint; button: TBitSet); override;
          procedure ItemClickedSecondary(index: loopint); override;
 
          procedure GridItemClicked({%H-}index: loopint); virtual;
+         procedure GridItemDoubleClicked({%H-}index: loopint; {%H-}button: TBitSet); virtual;
          procedure GridItemClickedSecondary({%H-}index: loopint); virtual;
 
          function GetItemUnderPointer(x, y: loopint; out offs: loopint): loopint; override;
@@ -654,6 +656,18 @@ begin
       GridItemClicked(SelectedItem);
 end;
 
+procedure wdgTGrid.ItemDoubleClicked(index: loopint; button: TBitSet);
+begin
+   inherited ItemDoubleClicked(index, button);
+
+   SelectedGridItem := LastGridItemUnderPointer;
+
+   if(GridMode) then
+      GridItemDoubleClicked(SelectedGridItem, button)
+   else
+      GridItemDoubleClicked(SelectedItem, button);
+end;
+
 procedure wdgTGrid.ItemClickedSecondary(index: loopint);
 begin
    inherited ItemClickedSecondary(index);
@@ -667,6 +681,11 @@ begin
 end;
 
 procedure wdgTGrid.GridItemClicked(index: loopint);
+begin
+
+end;
+
+procedure wdgTGrid.GridItemDoubleClicked(index: loopint; button: TBitSet);
 begin
 
 end;
