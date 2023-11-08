@@ -14,6 +14,7 @@ INTERFACE
       uStd,
       ufhStandard,
       { app }
+      appuKeyStateUpdater,
       appuCtrlBreak,
       appuPaths,
       appuLog,

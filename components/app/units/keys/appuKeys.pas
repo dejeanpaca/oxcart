@@ -13,7 +13,7 @@ INTERFACE
    USES
       sysutils, StringUtils, uStd,
       {app}
-      appukcNames, appuRun;
+      appukcNames;
 
 CONST
    {key state and modifier constants}
@@ -202,9 +202,6 @@ VAR
 operator = (const a: appTKey; const b: appTKey): boolean;
 
 IMPLEMENTATION
-
-VAR
-   runRoutine: appTRunRoutine;
 
 operator = (const a: appTKey; const b: appTKey): boolean;
 begin
@@ -671,11 +668,6 @@ begin
    Result := Find(k.Code, k.State);
 end;
 
-procedure run();
-begin
-   appk.UpdateCycle();
-end;
-
 procedure initialize();
 var
    i: loopint;
@@ -685,8 +677,6 @@ begin
       if(appkRemapCodes[i] <> 0) then
          appk.ReverseRemapCodes[appkRemapCodes[i]] := i;
    end;
-
-   appRun.AddPreRoutine(runRoutine, 'appKeys', @run);
 end;
 
 INITIALIZATION
