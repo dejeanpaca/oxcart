@@ -14,7 +14,7 @@ USES
    {app}
    uApp,
    {ox}
-   uOX, oxuRun, oxuPlatform, oxuAndroidPlatform, oxuInit;
+   uOX, oxuRun, oxuPlatform, oxuAndroidPlatform;
 
 procedure android_main(app: Pandroid_app); cdecl;
 

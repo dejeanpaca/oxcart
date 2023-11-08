@@ -154,7 +154,7 @@ end;
 function oxglTEGL.OnDeInitWindow(wnd: oglTWindow): boolean;
 begin
    if(wnd.wd.Surface <> EGL_NO_SURFACE) then
-      eglDestroySurface(wnd.wd.display, wnd.wd.Surface);
+      eglDestroySurface(wnd.wd.Display, wnd.wd.Surface);
 
    if(wnd.wd.Display <> EGL_NO_DISPLAY) then
       eglTerminate(wnd.wd.Display);
