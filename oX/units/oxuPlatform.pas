@@ -11,7 +11,7 @@ UNIT oxuPlatform;
 INTERFACE
 
    USES
-      uLog, uComponentProvider,
+      uLog, uComponentProvider, uFileUtils,
       {app}
       appuMouse, appuKeys,
       {ox}
@@ -71,6 +71,11 @@ TYPE
 
       {translate key into character}
       function TranslateKey(k: appTKeyEvent): char; virtual;
+
+      {checks if the platform supports a file trash/recycle mechanism}
+      function FileTrashCapability(): boolean; virtual;
+      {send a file or directory into trash (if not available, will remove file/directory)}
+      procedure TrashFile(const {%H-}path: UnicodeString); virtual;
 
       { COMPONENTS }
 
@@ -232,6 +237,25 @@ end;
 function oxTPlatform.TranslateKey(k: appTKeyEvent): char;
 begin
    Result := appk.Translate(k.Key);
+end;
+
+function oxTPlatform.FileTrashCapability(): boolean;
+begin
+   Result := false;
+end;
+
+procedure oxTPlatform.TrashFile(const path: UnicodeString);
+var
+   pathType: TFilePathType;
+
+begin
+   pathType := FileUtils.PathType(path);
+
+   if(pathType = PATH_TYPE_FILE) then begin
+      FileUtils.Erase(path);
+   end else if(pathType = PATH_TYPE_DIRECTORY) then begin
+      FileUtils.RmDir(path);
+   end;
 end;
 
 function oxTPlatform.GetComponent(const componentName: string): TObject;
