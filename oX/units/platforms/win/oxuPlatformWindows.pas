@@ -9,7 +9,8 @@ UNIT oxuPlatformWindows;
 INTERFACE
 
    USES
-      oxuWindowsPlatform, uiuwinPlatform;
+      oxuWindowsPlatform,
+      uiuwinPlatform, oxuwinPlatformClipboard;
 
 IMPLEMENTATION
 
