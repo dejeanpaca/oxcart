@@ -12,26 +12,12 @@ INTERFACE
 
    USES ctypes, uStd, StringUtils;
 
-CONST
-   STRL_MAX_POINTERS                = $10000; {65536, should suffice}
-
-   {string list properties}
-   slcLIST_NO_OFFSETS               = $0001;
-   slcLIST_SEQUENTIAL               = $0002;
-   slcLIST_NAMES                    = $0004;
-   slcLIST_STRINGS                  = $0008;
-
 TYPE
    TStringListProcessCallback = procedure(i: longint; const s: string);
 
    { TStringListGlobal }
 
    TStringListGlobal = record
-      defaultString,
-      defaultStringName: string;
-
-      { STRING LISTS }
-
       { compact pchar string arrays }
       {move the string pointer to the next string in the list}
       function NextString(var s: pchar): boolean;
@@ -63,8 +49,6 @@ TYPE
       procedure Dispose(var l: TpShortStringArray);
       procedure Dispose(var l: TShortStringArray);
       procedure Dispose(var l: TpCharDynArray);
-      procedure Dispose(var l: TAnsiStringArray);
-      procedure Dispose(var l: pchar);
 
       {disposing of compact lists}
       procedure Dispose(var p: pointer; var list: TpShortStringArray);
@@ -647,27 +631,6 @@ begin
    end;
 end;
 
-procedure TStringListGlobal.Dispose(var l: TAnsiStringArray);
-var
-   i, n: longint;
-
-begin
-   n := Length(l);
-
-   if(n > 0) then begin
-      for i := 0 to (n-1) do
-         SetLength(l[i], 0);
-
-      SetLength(l, 0);
-      l := nil;
-   end;
-end;
-
-procedure TStringListGlobal.Dispose(var l: pchar);
-begin
-   XFreeMem(l);
-end;
-
 {disposing of compact lists}
 procedure TStringListGlobal.Dispose(var p: pointer; var list: TpShortStringArray);
 begin
@@ -680,4 +643,3 @@ begin
 end;
 
 END.
-
