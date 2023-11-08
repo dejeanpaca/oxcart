@@ -1,1 +1,0 @@
-SET PATH=C:\fpcandroidarmv6\bin\i386-win32;%PATH%
