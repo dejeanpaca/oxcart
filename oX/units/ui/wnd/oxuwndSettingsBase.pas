@@ -50,7 +50,7 @@ TYPE
       OnCancel: TProcedures;
       OnValidate: oxTSettingsWindowStringFunctions;
 
-      constructor Create; override;
+      constructor Create(); override;
 
       protected
       procedure CreateTabsWidget();
@@ -69,13 +69,13 @@ TYPE
 
 IMPLEMENTATION
 
-constructor oxTSettingsWindowBase.Create;
+constructor oxTSettingsWindowBase.Create();
 begin
    inherited;
 
    OnInit.InitializeValues(OnInit);
    PreAddTabs.InitializeValues(PreAddTabs);
-   OnAddTabs.InitializeValues(PreAddTabs);
+   OnAddTabs.InitializeValues(OnAddTabs);
    PostAddTabs.InitializeValues(PostAddTabs);
 
    OnSave.InitializeValues(OnSave);
