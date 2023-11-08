@@ -1322,7 +1322,6 @@ begin
 
       oxedBuild.Parameters.ExportSymbols.Add('ox_library_load');
       oxedBuild.Parameters.ExportSymbols.Add('ox_library_unload');
-      oxedBuild.Parameters.ExportSymbols.Add('ox_library_version');
    end;
 end;
 

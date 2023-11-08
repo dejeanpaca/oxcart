@@ -117,7 +117,6 @@ begin
 
    routines.Load := oxTLibraryLoadRoutine(dynlibs.GetProcedureAddress(Lib, 'ox_library_load'));
    routines.Unload := oxTLibraryUnloadRoutine(dynlibs.GetProcedureAddress(Lib, 'ox_library_unload'));
-   routines.Version := oxTLibraryVersionRoutine(dynlibs.GetProcedureAddress(Lib, 'ox_library_version'));
 
    if(routines.Load = nil) then
       exit('Library loaded, but no version routine found');
