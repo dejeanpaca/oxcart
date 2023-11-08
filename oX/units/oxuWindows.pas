@@ -131,7 +131,8 @@ begin
    oxWindowSettings.AllocateCount := oxExternalWindows^.ExternalWindows.n;
    if(oxWindowSettings.AllocateCount > 0) then begin
       {get the renderer from the first window}
-      oxRenderers.vSelectedRenderer := oxTRenderer(oxTWindow(oxExternalWindows^.ExternalWindows.List[0].oxwParent).Renderer).Name;
+      oxRenderers.vSelectedRenderer :=
+         oxTRenderer(oxTWindow(oxExternalWindows^.ExternalWindows.List[0].oxwParent).Renderer).Name;
 
       log.v('Using external renderer: ' + oxRenderers.vSelectedRenderer);
       oxRenderers.SetRenderer();
