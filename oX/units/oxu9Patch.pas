@@ -13,7 +13,7 @@ UNIT oxu9Patch;
 INTERFACE
 
    USES
-      uStd, vmVector,
+      uStd, vmVector, oxuMaterial,
       {ox}
       oxuTypes, oxuTexture, oxuPrimitives, oxuRender;
 
@@ -25,38 +25,38 @@ CONST
 
 TYPE
    oxTBuffered9Patch = record
-      vertex: array[0..ox9PATCH_VERTICES - 1] of TVector2f;
-      indices: array[0..ox9PATCH_INDICES - 1] of Word;
-      texcoords: array[0..ox9PATCH_TEXCOORDS - 1] of TVector2f;
+      Vertex: array[0..ox9PATCH_VERTICES - 1] of TVector2f;
+      Indices: array[0..ox9PATCH_INDICES - 1] of Word;
+      TexCoords: array[0..ox9PATCH_TEXCOORDS - 1] of TVector2f;
    end;
 
    { oxT9Patch }
    oxT9Patch = class
       Sizes: record
-         width,
-         height: single;
+         Width,
+         Height: single;
 
-         topLeft,
-         topRight,
-         bottomLeft,
-         bottomRight,
-         up,
-         down,
-         left,
-         right,
-         center: TVector2f;
+         TopLeft,
+         TopRight,
+         BottomLeft,
+         BottomRight,
+         Up,
+         Down,
+         Left,
+         Right,
+         Center: TVector2f;
       end;
 
       Coords: record
-         topLeft,
-         topRight,
-         bottomLeft,
-         bottomRight,
-         up,
-         down,
-         left,
-         right,
-         center: TQuadTextureCoords;
+         TopLeft,
+         TopRight,
+         BottomLeft,
+         BottomRight,
+         Up,
+         Down,
+         Left,
+         Right,
+         Center: TQuadTextureCoords;
       end;
 
       {compute a 9-patch from the given sizes}
@@ -80,24 +80,25 @@ IMPLEMENTATION
 
 procedure oxT9Patch.Compute(cornerSize, xSize, ySize: loopint);
 begin
-   Sizes.topLeft[0] := cornerSize;
-   Sizes.topLeft[1] := cornerSize;
-   Sizes.topRight := Sizes.topLeft;
-   Sizes.bottomLeft := Sizes.topLeft;
-   Sizes.bottomRight := Sizes.topLeft;
+   Sizes.TopLeft[0] := cornerSize;
+   Sizes.TopLeft[1] := cornerSize;
 
-   Sizes.up[0] := xSize - (cornerSize * 2);
-   Sizes.up[1] := cornerSize;
+   Sizes.TopRight := Sizes.TopLeft;
+   Sizes.BottomLeft := Sizes.TopLeft;
+   Sizes.BottomRight := Sizes.TopLeft;
 
-   Sizes.down := Sizes.up;
+   Sizes.Up[0] := xSize - (cornerSize * 2);
+   Sizes.Up[1] := cornerSize;
 
-   Sizes.left[0] := cornerSize;
-   Sizes.left[1] := ySize - (cornerSize * 2);
+   Sizes.Down := Sizes.Up;
 
-   Sizes.right := Sizes.left;
+   Sizes.Left[0] := cornerSize;
+   Sizes.Left[1] := ySize - (cornerSize * 2);
 
-   Sizes.center[0] := xSize - (cornerSize * 2);
-   Sizes.center[1] := ySize - (cornerSize * 2);
+   Sizes.Right := Sizes.Left;
+
+   Sizes.Center[0] := xSize - (cornerSize * 2);
+   Sizes.Center[1] := ySize - (cornerSize * 2);
 
    Build();
 end;
@@ -107,42 +108,42 @@ var
    width, height: single;
 
 begin
-   width := Sizes.topLeft[0] + Sizes.center[0] + Sizes.topRight[0];
-   height := Sizes.topLeft[1] + Sizes.center[1] + Sizes.bottomLeft[1];
+   width := Sizes.TopLeft[0] + Sizes.Center[0] + Sizes.TopRight[0];
+   height := Sizes.TopLeft[1] + Sizes.Center[1] + Sizes.BottomLeft[1];
 
-   Sizes.width := width;
-   Sizes.height := height;
+   Sizes.Width := width;
+   Sizes.Height := height;
 
    {top left}
    oxPrimitives.GetQuadTextureCoords(width, height, 0, 0,
-      Sizes.topLeft[0], Sizes.topLeft[1], Coords.topLeft);
+      Sizes.TopLeft[0], Sizes.TopLeft[1], Coords.TopLeft);
    {top right}
-   oxPrimitives.GetQuadTextureCoords(width, height, Sizes.topLeft[0] + Sizes.center[0], 0,
-      Sizes.topRight[0], Sizes.topRight[1], Coords.topRight);
+   oxPrimitives.GetQuadTextureCoords(width, height, Sizes.TopLeft[0] + Sizes.Center[0], 0,
+      Sizes.TopRight[0], Sizes.TopRight[1], Coords.TopRight);
    {bottom left}
-   oxPrimitives.GetQuadTextureCoords(width, height, 0, height - Sizes.bottomLeft[1],
-      Sizes.bottomLeft[0], Sizes.bottomLeft[1], Coords.bottomLeft);
+   oxPrimitives.GetQuadTextureCoords(width, height, 0, height - Sizes.BottomLeft[1],
+      Sizes.BottomLeft[0], Sizes.BottomLeft[1], Coords.BottomLeft);
    {bottom right}
-   oxPrimitives.GetQuadTextureCoords(width, height, width - Sizes.bottomRight[1], height - Sizes.bottomRight[1],
-      Sizes.bottomRight[0], Sizes.bottomRight[1], Coords.bottomRight);
+   oxPrimitives.GetQuadTextureCoords(width, height, width - Sizes.BottomRight[1], height - Sizes.BottomRight[1],
+      Sizes.BottomRight[0], Sizes.BottomRight[1], Coords.BottomRight);
 
    {center}
-   oxPrimitives.GetQuadTextureCoords(width, height, Sizes.topLeft[0], Sizes.topLeft[1],
-      Sizes.center[0], Sizes.center[1], Coords.center);
+   oxPrimitives.GetQuadTextureCoords(width, height, Sizes.TopLeft[0], Sizes.TopLeft[1],
+      Sizes.Center[0], Sizes.Center[1], Coords.Center);
 
    {up}
-   oxPrimitives.GetQuadTextureCoords(width, height, sizes.topLeft[0], 0,
-      Sizes.up[0], Sizes.up[1], Coords.up);
+   oxPrimitives.GetQuadTextureCoords(width, height, sizes.TopLeft[0], 0,
+      Sizes.Up[0], Sizes.Up[1], Coords.Up);
    {down}
-   oxPrimitives.GetQuadTextureCoords(width, height, Sizes.bottomLeft[0], height - Sizes.down[1],
-      Sizes.down[0], Sizes.down[1], Coords.down);
+   oxPrimitives.GetQuadTextureCoords(width, height, Sizes.BottomLeft[0], height - Sizes.Down[1],
+      Sizes.Down[0], Sizes.Down[1], Coords.Down);
 
    {left}
-   oxPrimitives.GetQuadTextureCoords(width, height, 0, Sizes.topLeft[1],
-      Sizes.left[0], Sizes.left[1], Coords.left);
+   oxPrimitives.GetQuadTextureCoords(width, height, 0, Sizes.TopLeft[1],
+      Sizes.Left[0], Sizes.Left[1], Coords.Left);
    {right}
-   oxPrimitives.GetQuadTextureCoords(width, height, width - Sizes.right[0], Sizes.topLeft[1],
-      Sizes.right[0], Sizes.right[1], Coords.right);
+   oxPrimitives.GetQuadTextureCoords(width, height, width - Sizes.Right[0], Sizes.TopLeft[1],
+      Sizes.Right[0], Sizes.Right[1], Coords.Right);
 end;
 
 procedure oxT9Patch.BuildBuffer(width, height: single; out buffer: oxTBuffered9Patch);
@@ -158,47 +159,47 @@ var
 
 procedure renderPart(x, y, w, h: single; coords: PVector2f);
 begin
-   oxPrimitives.SetQuadVertices(x, y, x + w, y + h, PVector2f(@buffer.vertex[current * QUAD_VERTICES]));
-   oxPrimitives.SetQuadIndices(current * QUAD_VERTICES, pword(@buffer.indices[current * QUAD_INDICES]));
-   oxPrimitives.SetQuadTextureCoords(@buffer.texcoords[current * QUAD_TEXCOORDS], coords);
+   oxPrimitives.SetQuadVertices(x, y, x + w, y + h, PVector2f(@buffer.Vertex[current * QUAD_VERTICES]));
+   oxPrimitives.SetQuadIndices(current * QUAD_VERTICES, pword(@buffer.Indices[current * QUAD_INDICES]));
+   oxPrimitives.SetQuadTextureCoords(@buffer.TexCoords[current * QUAD_TEXCOORDS], coords);
 
    inc(current);
 end;
 
 begin
-   ratioX := (width - Sizes.topLeft[0] + Sizes.topRight[0]) / Sizes.center[0];
-   ratioY := (height - Sizes.topLeft[1] + Sizes.topRight[1]) / Sizes.center[1];
+   ratioX := (width - Sizes.TopLeft[0] + Sizes.TopRight[0]) / Sizes.Center[0];
+   ratioY := (height - Sizes.TopLeft[1] + Sizes.TopRight[1]) / Sizes.Center[1];
 
-   right := Sizes.topLeft[0] + Sizes.center[0] * ratioX;
-   top := Sizes.bottomLeft[1] + Sizes.center[1] * ratioY;
+   right := Sizes.TopLeft[0] + Sizes.Center[0] * ratioX;
+   top := Sizes.BottomLeft[1] + Sizes.Center[1] * ratioY;
 
-   centerWidth := Sizes.center[0] * ratioX;
-   centerHeight := Sizes.center[1] * ratioY;
+   centerWidth := Sizes.Center[0] * ratioX;
+   centerHeight := Sizes.Center[1] * ratioY;
 
    current := 0;
 
    {top left}
-   renderPart(0, top, Sizes.topLeft[0], Sizes.topLeft[1], Coords.topLeft);
+   renderPart(0, top, Sizes.TopLeft[0], Sizes.TopLeft[1], Coords.TopLeft);
    {top right}
-   renderPart(right, top, Sizes.topRight[0], Sizes.topRight[1], Coords.topRight);
+   renderPart(right, top, Sizes.TopRight[0], Sizes.TopRight[1], Coords.TopRight);
 
    {up}
-   renderPart(Sizes.topLeft[0], top, centerWidth, Sizes.up[1], Coords.up);
+   renderPart(Sizes.TopLeft[0], top, centerWidth, Sizes.Up[1], Coords.Up);
    {down}
-   renderPart(Sizes.bottomLeft[0], 0, centerWidth, Sizes.down[1], Coords.down);
+   renderPart(Sizes.BottomLeft[0], 0, centerWidth, Sizes.Down[1], Coords.Down);
 
    {center}
-   renderPart(Sizes.topLeft[0], Sizes.bottomLeft[1], centerWidth, centerHeight, Coords.center);
+   renderPart(Sizes.TopLeft[0], Sizes.BottomLeft[1], centerWidth, centerHeight, Coords.Center);
 
    {bottomLeft}
-   renderPart(0, 0, Sizes.bottomLeft[0], Sizes.bottomLeft[1], Coords.bottomLeft);
+   renderPart(0, 0, Sizes.BottomLeft[0], Sizes.BottomLeft[1], Coords.BottomLeft);
    {bottomRight}
-   renderPart(right, 0, Sizes.bottomRight[0], Sizes.bottomRight[1], Coords.bottomRight);
+   renderPart(right, 0, Sizes.BottomRight[0], Sizes.BottomRight[1], Coords.BottomRight);
 
    {left}
-   renderPart(0, Sizes.topLeft[1], Sizes.left[0], centerHeight, Coords.left);
+   renderPart(0, Sizes.TopLeft[1], Sizes.Left[0], centerHeight, Coords.Left);
    {bottomRight}
-   renderPart(right, Sizes.topRight[1], Sizes.right[0], centerHeight, Coords.right);
+   renderPart(right, Sizes.TopRight[1], Sizes.Right[0], centerHeight, Coords.Right);
 end;
 
 procedure oxT9Patch.Render(width, height: single; tex: oxTTexture);
@@ -213,14 +214,13 @@ end;
 
 class procedure oxT9Patch.Render(tex: oxTTexture; var buffer: oxTBuffered9Patch);
 begin
-   oxRender.EnableTexture();
-   tex.rId.Bind();
+   oxCurrentMaterial.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
+   oxCurrentMaterial.ApplyTexture('texture', tex);
 
-   oxRender.Color4f(1, 1, 1, 1);
+   oxRender.TextureCoords(buffer.TexCoords[0]);
+   oxRender.Vertex(buffer.Vertex[0]);
 
-   oxRender.TextureCoords(buffer.texcoords[0]);
-   oxRender.Vertex(buffer.vertex[0]);
-   oxRender.Primitives(oxPRIMITIVE_TRIANGLES, ox9PATCH_QUADS * QUAD_INDICES, pword(@buffer.indices[0]));
+   oxRender.Primitives(oxPRIMITIVE_TRIANGLES, ox9PATCH_QUADS * QUAD_INDICES, pword(@buffer.Indices[0]));
 end;
 
 END.
