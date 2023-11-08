@@ -171,6 +171,8 @@ TYPE
 
       Next: PDVarGroup;
 
+      pNotify: TDVarNotifyRoutine;
+
       {adds a group as a subgroup to the specified parent group}
       procedure Add(var g: TDVarGroup);
       procedure Add(const newName: StdString; out g: TDVarGroup);
@@ -190,6 +192,8 @@ TYPE
       function GetGroupCountRecursive(): longint;
       function GetVariableCount(): longint;
       function GetVariableCountRecursive(): longint;
+
+      procedure Notify(what: loopint);
    end;
 
    { TDVarGlobal }
@@ -514,6 +518,20 @@ begin
 
       cur := cur^.Next;
    until (cur = nil);
+end;
+
+procedure TDVarGroup.Notify(what: loopint);
+var
+   context: TDVarNotificationContext;
+
+begin
+   if(pNotify <> nil) then begin
+      TDVarNotificationContext.Initialize(context);
+      context.Group := @Self;
+      context.What := what;
+
+      pNotify(context);
+   end;
 end;
 
 operator := (a: TDVarQuick): TDVar;
