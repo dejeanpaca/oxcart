@@ -677,7 +677,7 @@ begin
 
    build.Output.Redirect := true;
 
-   uBuild.build.Laz(oxedBuild.WorkingArea + whichLpi);
+   build.Laz(oxedBuild.WorkingArea + whichLpi);
 
    build.Output.Redirect := previousRedirect;
 end;
@@ -761,12 +761,12 @@ begin
       exit;
    end;
 
-   uBuild.build.Options.IsLibrary := BuildTarget = OXED_BUILD_LIB;
+   build.Options.IsLibrary := BuildTarget = OXED_BUILD_LIB;
 
-   if(uBuild.build.Options.IsLibrary) then begin
+   if(build.Options.IsLibrary) then begin
       {check if used fpc version matches us}
-      if(pos(FPC_VERSION, uBuild.build.CurrentPlatform^.Version) <> 1) then begin
-         oxedMessages.e('Library fpc version mismatch. Got ' + uBuild.build.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
+      if(pos(FPC_VERSION, build.CurrentPlatform^.Version) <> 1) then begin
+         oxedMessages.e('Library fpc version mismatch. Got ' + build.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
          exit;
       end;
 
