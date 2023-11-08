@@ -15,6 +15,8 @@ TYPE
    oxPFeatureDescriptor = ^oxTFeatureDescriptor;
    oxTFeaturePDescriptorList = specialize TSimpleList<oxPFeatureDescriptor>;
 
+   { oxTFeaturePlatforms }
+
    oxTFeaturePlatforms = record
       {platforms on which this feature is always excluded}
       Excluded: TStringArray;
@@ -30,6 +32,8 @@ TYPE
       function IsExcluded(const platform: string): boolean;
       function IsIncluded(const platform: string): boolean;
       function IsEnabled(const platform: string): boolean;
+
+      function IsSupported(const platform: string; isLibrary: boolean = false): boolean;
    end;
 
    { oxTFeatureDescriptor }
@@ -71,7 +75,7 @@ TYPE
       function BuildFeatureSymbols(platform: string; isLibrary: boolean = false): TStringArray;
       function GetSupported(platform: string; isLibrary: boolean = false): oxTFeaturePDescriptorList;
       function IsSupported(const feature: oxTFeatureDescriptor;
-         platform: string; isLibrary: boolean = false): boolean;
+         const platform: string; isLibrary: boolean = false): boolean;
 
       {find a feature by its name}
       function FindByName(const name: string): oxPFeatureDescriptor;
@@ -207,6 +211,25 @@ begin
    Result := true;
 end;
 
+function oxTFeaturePlatforms.IsSupported(const platform: string; isLibrary: boolean): boolean;
+var
+   p: StdString;
+
+begin
+   p := platform;
+
+   if(p = 'win32') or (p = 'win64') then
+      p := 'windows';
+
+   if(IsIncluded(p)) then begin
+      if(isLibrary and IsExcluded('library')) then
+         Result := false
+      else
+         Result := true;
+   end else
+      Result := false;
+end;
+
 class procedure oxTFeatureDescriptor.Initialize(out f: oxTFeatureDescriptor);
 begin
    ZeroOut(f, SizeOf(f));
@@ -262,16 +285,10 @@ begin
 end;
 
 function oxTFeaturesGlobal.IsSupported(const feature: oxTFeatureDescriptor;
-   platform: string; isLibrary: boolean): boolean;
+   const platform: string; isLibrary: boolean): boolean;
 
 begin
-   if(feature.Platforms.IsIncluded(platform)) then begin
-      if(isLibrary and feature.Platforms.IsExcluded('library')) then
-         Result := false
-      else
-         Result := true;
-   end else
-      Result := false;
+   Result := feature.Platforms.IsSupported(platform, isLibrary);
 end;
 
 function oxTFeaturesGlobal.FindByName(const name: string): oxPFeatureDescriptor;
