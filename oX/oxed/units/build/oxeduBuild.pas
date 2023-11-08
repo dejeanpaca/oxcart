@@ -384,7 +384,7 @@ begin
    for i := 0 to oxFeatures.List.n - 1 do begin
       feature := @oxFeatures.List.List[i];
 
-      if(oxFeatures.IsSupported(feature^, BuildOS, IsLibrary())) then begin
+      if(oxFeatures.IsSupported(feature^, BuildOS, lib)) then begin
          if(lib) then begin
             {skip renderer features as we'll include only a single renderer}
             if(pos('renderer.', feature^.Name) = 1) then
@@ -398,6 +398,10 @@ begin
             if(feature^.Name = 'feature.console') and (not oxedProject.Session.EnableConsole) then
                continue;
          end;
+
+         {check if feature is enabled for this platform}
+         if not feature^.Platforms.IsEnabled(BuildOS) then
+            continue;
 
          if(feature^.IncludeByDefault) then
             Result.Add(feature);
