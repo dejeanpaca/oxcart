@@ -143,6 +143,8 @@ function ExtractFilePath(const st: string): string;
 function ExtractFileDrive(const st: string): string;
 {replace directory separators with the one used on the current platform}
 procedure ReplaceDirSeparators(var st: string);
+{replace directory separators with the one used on the current platform}
+procedure ReplaceDirSeparators(var st: StdString);
 {get parent directory in a given path}
 function GetParentDirectory(const st: string): string;
 {include a trailing path delimiter only if specified path is non empty}
@@ -210,6 +212,8 @@ procedure StringFromBytes(out s: StdString; size: loopint; const bytes);
 function GetKeyValue(const s: string; out key, value: string; const separator: char = '='): boolean;
 {get key value from a string}
 function GetKeyValue(const s: StdString; out key, value: StdString; const separator: char = '='): boolean;
+
+function GetAnsiStrings(const s: array of StdString): TAnsiStringArray;
 
 IMPLEMENTATION
 
@@ -1095,6 +1099,23 @@ begin
    end;
 end;
 
+procedure ReplaceDirSeparators(var st: StdString);
+var
+   rds: char; {the directory separator which must be replaced}
+   i: longint;
+
+begin
+   {decide which separator to replace}
+   {$IFDEF WINDOWS}rds := '/';{$ENDIF}
+   {$IFDEF LINUX}rds := '\';{$ENDIF}
+   {$IFDEF DARWIN}rds := '\';{$ENDIF}
+
+   for i := 1 to Length(st) do begin
+      if(st[i] = rds) then
+         st[i] := DirectorySeparator;
+   end
+end;
+
 function GetParentDirectory(const st: string): string;
 begin
    Result := ExpandFileName(IncludeTrailingPathDelimiter(st) + '..')
@@ -1694,6 +1715,17 @@ begin
    key := '';
    value := '';
    Result := false;
+end;
+
+function GetAnsiStrings(const s: array of StdString): TAnsiStringArray;
+var
+   i: loopint;
+
+begin
+   SetLength(Result, Length(s));
+
+   for i := 0 to Length(s) - 1 do
+      Result[i] := s[i];
 end;
 
 { TPackedStrings }

@@ -44,11 +44,7 @@ TYPE
       fileint = int64;
    {$ENDIF}
 
-   {$IF NOT DEFINED(DOS)}
    StdString = UTF8String;
-   {$ELSE}
-   StdString = AnsiString;
-   {$ENDIF}
 
    loopint = SizeInt;
 
@@ -131,11 +127,19 @@ TYPE
    TPreallocatedDWordArrayList = specialize TPreallocatedArrayList<dword>;
    TPreallocatedQWordArrayList = specialize TPreallocatedArrayList<QWord>;
 
-   TPreallocatedStringArrayList = specialize TPreallocatedArrayList<string>;
+   TPreallocatedStringArrayList = specialize TPreallocatedArrayList<StdString>;
+   TPreallocatedAnsiStringArrayList = specialize TPreallocatedArrayList<ansistring>;
 
    { TPreallocatedStringArrayListHelper }
 
    TPreallocatedStringArrayListHelper = record helper for TPreallocatedStringArrayList
+      function FindString(const s: StdString): loopint;
+      function FindLowercase(const s: StdString): loopint;
+   end;
+
+   { TPreallocatedAnsiStringArrayListHelper }
+
+   TPreallocatedAnsiStringArrayListHelper = record helper for TPreallocatedAnsiStringArrayList
       function FindString(const s: string): loopint;
       function FindLowercase(const s: string): loopint;
    end;
@@ -452,7 +456,7 @@ end;
 
 { TPreallocatedStringArrayListHelper }
 
-function TPreallocatedStringArrayListHelper.FindString(const s: string): loopint;
+function TPreallocatedStringArrayListHelper.FindString(const s: StdString): loopint;
 var
    i: loopint;
 
@@ -465,7 +469,40 @@ begin
    Result := -1;
 end;
 
-function TPreallocatedStringArrayListHelper.FindLowercase(const s: string): loopint;
+function TPreallocatedStringArrayListHelper.FindLowercase(const s: StdString): loopint;
+var
+   i: loopint;
+   l: string;
+
+begin
+   if(n > 0) then begin
+      l := LowerCase(s);
+
+      for i := 0 to n - 1 do begin
+         if(LowerCase(List[i]) = l) then
+            exit(i);
+      end;
+   end;
+
+   Result := -1;
+end;
+
+{ TPreallocatedAnsiStringArrayListHelper }
+
+function TPreallocatedAnsiStringArrayListHelper.FindString(const s: string): loopint;
+var
+   i: loopint;
+
+begin
+   for i := 0 to n - 1 do begin
+      if(List[i] = s) then
+         exit(i);
+   end;
+
+   Result := -1;
+end;
+
+function TPreallocatedAnsiStringArrayListHelper.FindLowercase(const s: string): loopint;
 var
    i: loopint;
    l: string;

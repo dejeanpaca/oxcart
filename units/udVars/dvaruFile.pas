@@ -33,7 +33,7 @@ TYPE
 
    dvarTFileData = record
       {filename}
-      fn: string;
+      fn: StdString;
       {root dvar group}
       dv: PDVarGroup;
       {parser data}
@@ -42,15 +42,15 @@ TYPE
       {options}
       options: dvarTFileOptions;
 
-      function Write(const parent: string; var g: TDVarGroup): boolean;
-      function Write(const parent: string; var v: TDVar): boolean;
-      function Write(const parent: string; var v: TDVar; const what: string): boolean;
-      function Write(const parent: string; var v: TDVar; const items: array of string; count: longint = 0): boolean;
-      function Write(const parent: string; var v: TDVar; items: pstring; count: longint = 0): boolean;
+      function Write(const parent: StdString; var g: TDVarGroup): boolean;
+      function Write(const parent: StdString; var v: TDVar): boolean;
+      function Write(const parent: StdString; var v: TDVar; const what: StdString): boolean;
+      function Write(const parent: StdString; var v: TDVar; const items: array of StdString; count: longint = 0): boolean;
+      function Write(const parent: StdString; var v: TDVar; items: pstring; count: longint = 0): boolean;
    end;
 
    {called when a matching group is saved}
-   dvarTFileSaveHandler = procedure(var dv: dvarTFileData; const parent: string);
+   dvarTFileSaveHandler = procedure(var dv: dvarTFileData; const parent: StdString);
 
    {handler associated with a dvar group, called when the dv is matched while saving}
    dvarTFileOnSave = record
@@ -80,12 +80,12 @@ TYPE
       procedure InitializeOptions(out options: dvarTFileOptions);
 
       { TEXT FILE }
-      procedure ReadText(var dv: TDVarGroup; const fn: string; options: dvarPFileOptions = nil);
-      procedure WriteText(var dv: TDVarGroup; const fn: string; options: dvarPFileOptions = nil);
+      procedure ReadText(var dv: TDVarGroup; const fn: StdString; options: dvarPFileOptions = nil);
+      procedure WriteText(var dv: TDVarGroup; const fn: StdString; options: dvarPFileOptions = nil);
 
       { TEXT FILE }
-      procedure ReadText(const fn: string);
-      procedure WriteText(const fn: string);
+      procedure ReadText(const fn: StdString);
+      procedure WriteText(const fn: StdString);
    end;
 
 VAR
@@ -97,7 +97,8 @@ IMPLEMENTATION
 
 function readTextFile(var parseData: TParseData): boolean;
 var
-   key, value: string;
+   key,
+   value: StdString;
    pvar: PDVar;
    pd: PDVarGroup;
 
@@ -156,7 +157,7 @@ begin
    options.OnSave := @OnSave;
 end;
 
-procedure dvarTFileGlobal.ReadText(var dv: TDVarGroup; const fn: string; options: dvarPFileOptions);
+procedure dvarTFileGlobal.ReadText(var dv: TDVarGroup; const fn: StdString; options: dvarPFileOptions);
 var
    data: dvarTFileData;
    opt: dvarTFileOptions;
@@ -177,7 +178,7 @@ begin
    data.parser.Read(fn, TParseMethod(@readTextFile));
 end;
 
-procedure dvarTFileGlobal.ReadText(const fn: string);
+procedure dvarTFileGlobal.ReadText(const fn: StdString);
 begin
    ReadText(dvar.dvars, fn);
 end;
@@ -185,7 +186,7 @@ end;
 { WRITE TEXT FILE }
 
 {write a group into a text file}
-function dvarTFileData.Write(const parent: string; var g: TDVarGroup): boolean;
+function dvarTFileData.Write(const parent: StdString; var g: TDVarGroup): boolean;
 var
    curGroup: PDVarGroup;
    curVar: PDVar = nil;
@@ -227,7 +228,7 @@ begin
    end;
 end;
 
-function dvarTFileData.Write(const parent: string; var v: TDVar): boolean;
+function dvarTFileData.Write(const parent: StdString; var v: TDVar): boolean;
 begin
    if(not (dvarDO_NOT_SAVE in v.Properties)) then
       parser.WriteLine(parent + v.Name + ' = ' + v.GetAsString());
@@ -235,7 +236,7 @@ begin
    Result := true;
 end;
 
-function dvarTFileData.Write(const parent: string; var v: TDVar; const what: string): boolean;
+function dvarTFileData.Write(const parent: StdString; var v: TDVar; const what: StdString): boolean;
 begin
    if(not (dvarDO_NOT_SAVE in v.Properties)) then
       parser.WriteLine(parent + v.Name + ' = ' + what);
@@ -243,7 +244,7 @@ begin
    Result := true;
 end;
 
-function dvarTFileData.Write(const parent: string; var v: TDVar; const items: array of string; count: longint = 0): boolean;
+function dvarTFileData.Write(const parent: StdString; var v: TDVar; const items: array of StdString; count: longint = 0): boolean;
 var
    i: longint;
 
@@ -261,7 +262,7 @@ begin
    Result := true;
 end;
 
-function dvarTFileData.Write(const parent: string; var v: TDVar; items: pstring; count: longint): boolean;
+function dvarTFileData.Write(const parent: StdString; var v: TDVar; items: pstring; count: longint): boolean;
 var
    i: longint;
 
@@ -300,7 +301,7 @@ begin
    Result := true;
 end;
 
-procedure dvarTFileGlobal.WriteText(var dv: TDVarGroup; const fn: string; options: dvarPFileOptions);
+procedure dvarTFileGlobal.WriteText(var dv: TDVarGroup; const fn: StdString; options: dvarPFileOptions);
 var
    data: dvarTFileData;
    opt: dvarTFileOptions;
@@ -323,7 +324,7 @@ begin
    end;
 end;
 
-procedure dvarTFileGlobal.WriteText(const fn: string);
+procedure dvarTFileGlobal.WriteText(const fn: StdString);
 begin
    WriteText(dvar.dvars, fn);
 end;

@@ -10,7 +10,9 @@ UNIT ulogHTML;
 
 INTERFACE
 
-   USES sysutils, StringUtils, uLog;
+   USES
+      sysutils,
+      uStd, uLog, StringUtils;
 
 VAR
    loghHTML: TLogHandler;
@@ -57,7 +59,7 @@ begin
    logf^.HandlerWritelnRaw(htmlBody);
 end;
 
-procedure hwriteln(logf: PLog; priority: longint; const s: string);
+procedure hwriteln(logf: PLog; priority: longint; const s: StdString);
 var
    td: TDateTime;
    buf: TSimpleAnsiStringBuffer;
@@ -88,7 +90,7 @@ begin
    log.handler.standard.close(logf);
 end;
 
-procedure hEnterSection(logf: PLog; const s: string; collapsed: boolean);
+procedure hEnterSection(logf: PLog; const s: StdString; collapsed: boolean);
 begin
    logf^.HandlerWritelnRaw('<div class="sectionenclosure">');
    logf^.HandlerWritelnRaw('<div class="sectiontitle">' + s + '</div>');

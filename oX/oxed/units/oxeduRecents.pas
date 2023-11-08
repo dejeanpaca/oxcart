@@ -45,10 +45,10 @@ VAR
    dvLastOpen: TDVar;
    dvgRecents: TDVarGroup;
 
-   currentListFile: string;
+   currentListFile: StdString;
    dvFile: TDVar;
 
-procedure dvSaveHandler(var df: dvarTFileData; const parent: string);
+procedure dvSaveHandler(var df: dvarTFileData; const parent: StdString);
 begin
    df.Write(parent, dvLastOpen, oxedRecents.LastOpen);
    df.Write(parent, dvFile, oxedRecents.List.List, oxedRecents.List.n);

@@ -38,9 +38,9 @@ VAR
 
 IMPLEMENTATION
 
-function RecursiveOnFile(const fn: string): boolean;
+function RecursiveOnFile(const fn: StdString): boolean;
 var
-   ext: string;
+   ext: StdString;
 
 begin
    Result := true;
