@@ -10,7 +10,7 @@ INTERFACE
 
    USES
       uStd, uLog, StringUtils, uFileUtils,
-      uBuild;
+      uBuild, uBuildInstalls;
 
 TYPE
    { TBuildSystemLibraries }
@@ -46,7 +46,7 @@ end;
 
 function getPath(): StdString;
 begin
-   Result := Source + IncludeTrailingPathDelimiterNonEmpty(build.CurrentPlatform^.GetName());
+   Result := Source + IncludeTrailingPathDelimiterNonEmpty(BuildInstalls.CurrentPlatform^.GetName());
 end;
 
 begin
@@ -60,13 +60,13 @@ begin
 
       repeat
          optimizationSource := getPath() +
-            IncludeTrailingPathDelimiterNonEmpty(build.GetOptimizationLevelName(optimizationLevel)) + name;
+            IncludeTrailingPathDelimiterNonEmpty(BuildInstalls.GetOptimizationLevelName(optimizationLevel)) + name;
 
          if(FileUtils.Exists(optimizationSource) > 0) then begin
             if(optimizationLevel <> build.OptimizationLevel) then
                log.w('Could not find optimized library ' + name + ' at level ' +
-                  build.GetOptimizationLevelNameHuman(build.OptimizationLevel) + ', used ' +
-                  build.GetOptimizationLevelNameHuman(optimizationLevel) + ' instead');
+                  BuildInstalls.GetOptimizationLevelNameHuman(build.OptimizationLevel) + ', used ' +
+                  BuildInstalls.GetOptimizationLevelNameHuman(optimizationLevel) + ' instead');
 
             usedSource := optimizationSource;
             break;
@@ -88,9 +88,9 @@ begin
       usedSource := '';
 
       if(optimizationLevel <= 0) then begin
-         for optimizationLevel := 1 to build.CurrentPlatform^.OptimizationLevels.n do begin
+         for optimizationLevel := 1 to BuildInstalls.CurrentPlatform^.OptimizationLevels.n do begin
             usedSource := getPath() +
-               IncludeTrailingPathDelimiterNonEmpty(build.GetOptimizationLevelName(optimizationLevel)) + name;
+               IncludeTrailingPathDelimiterNonEmpty(BuildInstalls.GetOptimizationLevelName(optimizationLevel)) + name;
 
             if(FileUtils.Exists(usedSource) > 0) then begin
                log.w('Using optimized library: ' + usedSource + ' because regular not found');
