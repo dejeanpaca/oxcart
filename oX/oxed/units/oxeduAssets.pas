@@ -19,6 +19,15 @@ INTERFACE
 
 TYPE
 
+   { oxedTAssetsIgnorePaths }
+
+   oxedTAssetsIgnorePaths = record
+      FileTypes,
+      Directories: TSimpleStringList;
+
+      class procedure Initialize(out ig: oxedTAssetsIgnorePaths); static;
+   end;
+
    { oxedTAssets }
 
    oxedTAssets = record
@@ -26,21 +35,27 @@ TYPE
       oxDataPackage: oxedTPackage;
 
       {ignore these file types when building (don't copy over)}
-      IgnoreFileTypes,
-      IgnoreDirectories,
-      ProjectIgnoreFileTypes,
-      ProjectIgnoreDirectories: TSimpleStringList;
+      Ignore,
+      ProjectIgnore: oxedTAssetsIgnorePaths;
 
       function ShouldIgnore(const ext: StdString): boolean;
       function ShouldIgnoreDirectory(const name: StdString): boolean;
 
-      function IsLastPath(const path: StdString): boolean;
+      function IsLastPath(const path: StdString; var list: TSimpleStringList): boolean;
    end;
 
 VAR
    oxedAssets: oxedTAssets;
 
 IMPLEMENTATION
+
+{ oxedTAssetsIgnorePaths }
+
+class procedure oxedTAssetsIgnorePaths.Initialize(out ig: oxedTAssetsIgnorePaths);
+begin
+   ZeroOut(ig, SizeOf(ig));
+   ig.Initialize(ig);
+end;
 
 { oxedTAssets }
 
@@ -54,10 +69,10 @@ begin
    {$IFDEF WINDOWS}
    lext := LowerCase(ext);
 
-   if(IgnoreFileTypes.FindLowercase(lext) >= 0) or (ProjectIgnoreFileTypes.FindLowercase(lext) >= 0) then
+   if(Ignore.FileTypes.FindLowercase(lext) >= 0) or (ProjectIgnore.FileTypes.FindLowercase(lext) >= 0) then
       exit(true);
    {$ELSE}
-   if(IgnoreFileTypes.FindString(ext) >= 0) or (ProjectIgnoreFileTypes.FindString(ext) >= 0) then
+   if(Ignore.FileTypes.FindString(ext) >= 0) or (ProjectIgnore.FileTypes.FindString(ext) >= 0) then
       exit(true);
    {$ENDIF}
 
@@ -65,26 +80,11 @@ begin
 end;
 
 function oxedTAssets.ShouldIgnoreDirectory(const name: StdString): boolean;
-{$IFDEF WINDOWS}
-var
-   lname: StdString;
-{$ENDIF}
-
 begin
-   {$IFDEF WINDOWS}
-   lname := LowerCase(name);
-
-   if(IgnoreDirectories.FindLowercase(lname) >= 0) or (ProjectIgnoreDirectories.FindLowercase(lname) >= 0) then
-      exit(true);
-   {$ELSE}
-   if(IgnoreFolders.FindString(name) >= 0) or (ProjectIgnoreFolders.FindString(name) >= 0) then
-      exit(true);
-   {$ENDIF}
-
-   Result := false;
+   Result := IsLastPath(name, Ignore.Directories) or IsLastPath(name, ProjectIgnore.Directories);
 end;
 
-function oxedTAssets.IsLastPath(const path: StdString): boolean;
+function oxedTAssets.IsLastPath(const path: StdString; var list: TSimpleStringList): boolean;
 var
    i,
    len: loopint;
@@ -100,22 +100,12 @@ begin
       lpath := LowerCase(path);
       {$ENDIF}
 
-      for i := 0 to IgnoreDirectories.n - 1 do begin
+      for i := 0 to list.n - 1 do begin
          {$IFDEF WINDOWS}
-         if(StringPos(IgnoreDirectories.List[i], lpath, Length(IgnoreDirectories.List[i]) - len) > 0) then
+         if(StringPos(list.List[i], lpath, Length(list.List[i]) - len) > 0) then
             exit(true);
          {$ELSE}
-         if(StringPos(IgnoreDirectories.List[i], path, Length(IgnoreDirectories.List[i]) - len) > 0) then
-            exit(true);
-         {$ENDif}
-      end;
-
-      for i := 0 to ProjectIgnoreDirectories.n - 1 do begin
-         {$IFDEF WINDOWS}
-         if(StringPos(ProjectIgnoreDirectories.List[i], lpath, Length(ProjectIgnoreDirectories.List[i]) - len) > 0) then
-            exit(true);
-         {$ELSE}
-         if(StringPos(ProjectIgnoreDirectories.List[i], path, Length(ProjectIgnoreDirectories.List[i]) - len) > 0) then
+         if(StringPos(list.List[i], path, Length(list.List[i]) - len) > 0) then
             exit(true);
          {$ENDif}
       end;
@@ -133,19 +123,18 @@ end;
 INITIALIZATION
    oxed.Init.Add('assets', @init);
 
-   TSimpleStringList.Initialize(oxedAssets.IgnoreFileTypes, 256);
-   TSimpleStringList.Initialize(oxedAssets.IgnoreDirectories, 256);
-   TSimpleStringList.Initialize(oxedAssets.ProjectIgnoreFileTypes, 256);
+   oxedTAssetsIgnorePaths.Initialize(oxedAssets.Ignore);
+   oxedTAssetsIgnorePaths.Initialize(oxedAssets.ProjectIgnore);
 
-   oxedAssets.IgnoreFileTypes.Add('.pas');
-   oxedAssets.IgnoreFileTypes.Add('.pp');
-   oxedAssets.IgnoreFileTypes.Add('.inc');
-   oxedAssets.IgnoreFileTypes.Add('.gitignore');
-   oxedAssets.IgnoreFileTypes.Add('.blend');
-   oxedAssets.IgnoreFileTypes.Add('.temp');
-   oxedAssets.IgnoreFileTypes.Add('.tmp');
-   oxedAssets.IgnoreFileTypes.Add('.md');
+   oxedAssets.Ignore.FileTypes.Add('.pas');
+   oxedAssets.Ignore.FileTypes.Add('.pp');
+   oxedAssets.Ignore.FileTypes.Add('.inc');
+   oxedAssets.Ignore.FileTypes.Add('.gitignore');
+   oxedAssets.Ignore.FileTypes.Add('.blend');
+   oxedAssets.Ignore.FileTypes.Add('.temp');
+   oxedAssets.Ignore.FileTypes.Add('.tmp');
+   oxedAssets.Ignore.FileTypes.Add('.md');
 
-   oxedAssets.IgnoreDirectories.Add('backup');
+   oxedAssets.Ignore.Directories.Add('backup');
 
 END.
