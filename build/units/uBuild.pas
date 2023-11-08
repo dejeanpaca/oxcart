@@ -1722,7 +1722,7 @@ end;
 
 procedure dvNotifyBasePath(var context: TDVarNotificationContext);
 begin
-   FileUtils.NormalizePathEx(StdString(context.p^.Variable^));
+   FileUtils.NormalizePathEx(StdString(context.DVar^.Variable^));
 end;
 
 procedure dvFPCNotify(var {%H-}context: TDVarNotificationContext);

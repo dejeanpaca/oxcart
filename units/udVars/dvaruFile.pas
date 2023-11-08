@@ -170,7 +170,7 @@ var
 begin
    TDVarNotificationContext.Initialize(context);
 
-   context.p := @pdvar;
+   context.DVar := @pdvar;
    context.f := f;
    context.What := what;
 

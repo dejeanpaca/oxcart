@@ -46,7 +46,8 @@ TYPE
    { TDVarNotificationContext }
 
    TDVarNotificationContext = record
-      p: PDVar;
+      DVar: PDVar;
+      Group: PDVarGroup;
       f: pointer;
       What: longword;
 
@@ -783,7 +784,7 @@ var
 begin
    if(pNotify <> nil) then begin
       TDVarNotificationContext.Initialize(context);
-      context.p := @self;
+      context.DVar := @self;
       context.What := what;
 
       pNotify(context);
