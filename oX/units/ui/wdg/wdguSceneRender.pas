@@ -37,6 +37,9 @@ TYPE
       destructor Destroy(); override;
 
       procedure Render(); override;
+      procedure PerformRender(); override;
+
+      procedure ProjectionStart(); override;
 
       procedure OnSceneRenderEnd(); virtual;
    end;
@@ -85,14 +88,20 @@ begin
 end;
 
 procedure wdgTSceneRender.Render();
+begin
+   if(IsEnabled()) then
+      PerformRender();
+end;
+
+procedure wdgTSceneRender.PerformRender();
 var
    params: oxTSceneRenderParameters;
 
 begin
-   ProjectionStart();
+   oxTSceneRenderParameters.Init(params);
 
-   if(Viewport.Changed) then
-      Projection.UpdateViewport();
+   ProjectionStart();
+   SceneRenderer.Viewport := @Viewport;
 
    SceneRenderer.Scene := Scene;
 
@@ -106,6 +115,14 @@ begin
    OnSceneRenderEnd();
 
    CleanupRender();
+end;
+
+procedure wdgTSceneRender.ProjectionStart();
+begin
+   inherited ProjectionStart();
+
+   if(Viewport.Changed) then
+      Projection.UpdateViewport();
 end;
 
 procedure wdgTSceneRender.OnSceneRenderEnd();

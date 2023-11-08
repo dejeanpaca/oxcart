@@ -31,10 +31,13 @@ TYPE
 
       constructor Create(); override;
       procedure Initialize(); override;
+      {this will render the viewport widget if enabled}
       procedure Render(); override;
+      {actually renders the viewport}
+      procedure PerformRender(); virtual;
 
-      procedure ProjectionStart();
-      procedure CleanupRender();
+      procedure ProjectionStart(); virtual;
+      procedure CleanupRender(); virtual;
 
       procedure UpdateViewport();
 
@@ -86,6 +89,12 @@ begin
 end;
 
 procedure wdgTViewport.Render();
+begin
+   if(IsEnabled()) then
+      PerformRender();
+end;
+
+procedure wdgTViewport.PerformRender();
 begin
    ProjectionStart();
    CleanupRender();
