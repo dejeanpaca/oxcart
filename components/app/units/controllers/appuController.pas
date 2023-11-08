@@ -11,7 +11,7 @@ UNIT appuController;
 INTERFACE
 
    USES
-      uStd, uLog, StringUtils, vmMath,
+      uStd, uLog, StringUtils, vmMath, vmVector,
       {app}
       uApp, appuEvents, appuInputTypes,
       {ox}
@@ -246,6 +246,10 @@ TYPE
 
       {get direction of the dpad}
       function GetDPadDirection(): loopint;
+      {get the dpad direction vector for a given direction}
+      class function GetDPadDirectionVector(direction: loopint): TVector2;
+      {get the dpad direction vector for this device}
+      function GetDPadDirectionVector(): TVector2;
    end;
 
    { appTControllerEvent }
@@ -619,6 +623,47 @@ begin
       else if(IsDPadPressed(appbCONTROLLER_DPAD_RIGHT)) then
          Result := appCONTROLLER_DIRECTION_RIGHT;
    end;
+end;
+
+class function appTControllerDevice.GetDPadDirectionVector(direction: loopint): TVector2;
+var
+   v: TVector2;
+
+begin
+   v := vmvZero2;
+
+   if(direction = appCONTROLLER_DIRECTION_UP) then begin
+      v[1] := +1;
+   end else if(direction = appCONTROLLER_DIRECTION_DOWN) then begin
+      v[1] := -1;
+   end else if(direction = appCONTROLLER_DIRECTION_LEFT) then begin
+      v[0] := -1;
+   end else if(direction = appCONTROLLER_DIRECTION_RIGHT) then begin
+      v[0] := +1;
+   end else if(direction = appCONTROLLER_DIRECTION_UP_LEFT) then begin
+      v[0] := -1;
+      v[1] := +1;
+   end else if(direction = appCONTROLLER_DIRECTION_UP_RIGHT) then begin
+      v[0] := +1;
+      v[1] := +1;
+   end else if(direction = appCONTROLLER_DIRECTION_DOWN_LEFT) then begin
+      v[0] := -1;
+      v[1] := -1;
+   end else if(direction = appCONTROLLER_DIRECTION_DOWN_RIGHT) then begin
+      v[0] := 1;
+      v[1] := -1
+   end;
+
+   Result := v.Normalized();
+end;
+
+function appTControllerDevice.GetDPadDirectionVector(): TVector2;
+var
+   direction: loopint;
+
+begin
+   direction := GetDPadDirection();
+   Result := GetDPadDirectionVector(direction);
 end;
 
 { appTControllerHandler }
