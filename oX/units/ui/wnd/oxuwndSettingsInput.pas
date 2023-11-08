@@ -15,10 +15,15 @@ INTERFACE
       {ox}
       uOX, oxuTypes, oxuRunRoutines, oxuwndSettings, oxuwndInputControllerInfo,
       {ui}
-      uiWidgets, wdguLabel, wdguButton, wdguDivisor;
+      uiWidgets, uiuWidget, wdguLabel, wdguButton, wdguDivisor;
 
 
 IMPLEMENTATION
+
+TYPE
+   wdgTControllerTestButton = class(wdgTButton)
+      ControllerIndex: loopint;
+   end;
 
 procedure revertSettings();
 begin
@@ -33,9 +38,14 @@ procedure configurePointer();
 begin
 end;
 
-procedure testController();
+procedure testController(wdg: uiTWidget);
 begin
-   oxwndControllerInfo.Open();
+   if(wdgTControllerTestButton(wdg).ControllerIndex > -1) then begin
+      oxwndControllerInfo.Controller :=
+         appControllers.GetByIndex(wdgTControllerTestButton(wdg).ControllerIndex);
+
+      oxwndControllerInfo.Open();
+   end;
 end;
 
 procedure rescanControllers();
@@ -46,6 +56,7 @@ end;
 procedure addTabs();
 var
    i: loopint;
+   btn: wdgTButton;
 
 begin
    oxwndSettings.Tabs.AddTab('Input', 'input');
@@ -63,7 +74,10 @@ begin
    if(appControllers.List.n > 0) then begin
       for i := 0 to appControllers.List.n - 1 do begin
          wdgButton.Add(appControllers.List[i].GetName());
-         wdgButton.Add('Information / Test', uiWidget.LastRect.RightOf(), oxNullDimensions, @testController);
+         uiWidget.Create.Instance := wdgTControllerTestButton;
+         btn := wdgButton.Add('Information / Test', uiWidget.LastRect.RightOf(), oxNullDimensions, 0);
+         wdgTControllerTestButton(btn).ControllerIndex := i;
+         btn.UseCallback(@testController);
       end;
    end else begin
       wdgLabel.Add('No controllers detected/supported');

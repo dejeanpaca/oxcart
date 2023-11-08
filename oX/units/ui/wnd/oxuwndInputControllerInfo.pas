@@ -1,6 +1,8 @@
 {
    oxuwndInputControllerInfo, controller information/test window
    Copyright (C) 2019. Dejan Boras
+
+   TODO: Close window if controller disconnected
 }
 
 {$INCLUDE oxdefines.inc}
@@ -9,7 +11,7 @@ UNIT oxuwndInputControllerInfo;
 INTERFACE
 
    USES
-      uStd,
+      uStd, StringUtils,
       {app}
       uApp, appuController,
       {ox}
@@ -24,7 +26,11 @@ TYPE
    { oxTControllerInfoWindow }
 
    oxTControllerInfoWindow = object(oxTWindowBase)
+      public
+      Controller: appTControllerDevice;
+
       constructor Create();
+      procedure Open(); virtual;
 
       protected
       procedure AddWidgets(); virtual;
@@ -40,17 +46,22 @@ var
    btnOk: wdgTButton;
 
 begin
+   wdgLabel.Add('Controller: ' + controller.GetName() + ' (' + appPControllerHandler(Controller.Handler)^.GetName() + ')');
+   wdgDivisor.Add('');
+   wdgLabel.Add('Buttons: ' + sf(controller.ButtonCount));
+   wdgLabel.Add('Axes: ' + sf(controller.AxisCount));
+   wdgLabel.Add('Triggers: ' + sf(controller.TriggerCount));
+   wdgLabel.Add('Hats: ' + sf(controller.HatCount));
+
    {add a cancel button}
    btnOk := wdgButton.Add('Close', uiWidget.LastRect.BelowOf(), oxNullDimensions, @Close);
-
+   btnOk.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT);
 
    Window.ContentAutoSize();
    Window.AutoCenter();
-
-   btnOk.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT);
 end;
 
-constructor oxTControllerInfoWindow.Create;
+constructor oxTControllerInfoWindow.Create();
 begin
    ID := uiControl.GetID('ox.controller_info');
    Width := 540;
@@ -58,6 +69,12 @@ begin
    Title := 'Controller Info';
 
    inherited;
+end;
+
+procedure oxTControllerInfoWindow.Open();
+begin
+   if(Controller <> nil) then
+      inherited;
 end;
 
 {$IFDEF OX_FEATURE_CONSOLE}
