@@ -17,10 +17,10 @@ TYPE
 
    { appTLinuxControllerHandler }
 
-   appTLinuxControllerHandler = class(appTControllerHandler)
-      procedure Initialize(); override;
-      procedure Reset(); override;
-      procedure Run(); override;
+   appTLinuxControllerHandler = object(appTControllerHandler)
+      procedure Initialize(); virtual;
+      procedure Reset(); virtual;
+      procedure Run(); virtual;
 
       private
          procedure Add(const fn: string);
@@ -68,6 +68,9 @@ TYPE
    js_event_helper = record helper for js_event
       function GetTypeString(): string;
    end;
+
+VAR
+   appLinuxControllerHandler: appTLinuxControllerHandler;
 
 { js_event_helper }
 
@@ -263,6 +266,7 @@ begin
 end;
 
 INITIALIZATION
-   appControllerHandler := appTLinuxControllerHandler.Create();
+   appLinuxControllerHandler.Create();
+   appControllers.AddHandler(appLinuxControllerHandler);
 
 END.

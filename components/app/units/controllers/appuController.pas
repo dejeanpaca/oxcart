@@ -201,10 +201,14 @@ TYPE
       Controller: appTControllerDevice;
    end;
 
+   appPControllerHandler = ^appTControllerHandler;
+
    { appTControllerHandler }
 
    {a handler for controllers}
-   appTControllerHandler = class
+   appTControllerHandler = object
+      constructor Create();
+
       {initialize all devices}
       procedure Initialize(); virtual;
       {initialize all devices}
@@ -232,7 +236,7 @@ TYPE
    { appTControllers }
    appTControllers = record
       nHandlers: loopint;
-      Handlers: array[0..appMAX_CONTROLLER_HANDLERS - 1] of appTControllerHandler;
+      Handlers: array[0..appMAX_CONTROLLER_HANDLERS - 1] of appPControllerHandler;
       List: appTControllerDeviceList;
 
       OnEvent: appTOnControllerEventRoutines;
@@ -243,7 +247,7 @@ TYPE
 
       procedure Queue(var ev: appTControllerEvent; controller: appTControllerDevice);
 
-      procedure AddHandler(handler: appTControllerHandler);
+      procedure AddHandler(var handler: appTControllerHandler);
 
       procedure Add(device: appTControllerDevice);
       procedure Reset();
@@ -285,11 +289,11 @@ begin
       appEvents.Queue(event, ev, SizeOf(ev));
 end;
 
-procedure appTControllers.AddHandler(handler: appTControllerHandler);
+procedure appTControllers.AddHandler(var handler: appTControllerHandler);
 begin
    assert(nHandlers < appMAX_CONTROLLER_HANDLERS, 'Too many input controller handlers');
 
-   Handlers[nHandlers] := handler;
+   Handlers[nHandlers] := @handler;
    Inc(nHandlers);
 end;
 
@@ -308,7 +312,7 @@ begin
 
    for i := 0 to nHandlers - 1 do begin
       if(Handlers[i] <> nil) then
-         Handlers[i].Reset();
+         Handlers[i]^.Reset();
    end;
 end;
 
@@ -391,6 +395,11 @@ end;
 
 { appTControllerHandler }
 
+constructor appTControllerHandler.Create();
+begin
+
+end;
+
 procedure appTControllerHandler.Initialize();
 begin
 
@@ -447,7 +456,7 @@ var
 begin
    for i := 0 to appControllers.nHandlers - 1 do begin
       if(appControllers.Handlers[i] <> nil) then
-         appControllers.Handlers[i].Run();
+         appControllers.Handlers[i]^.Run();
    end;
 
    checkForDisconnected();
@@ -463,7 +472,7 @@ begin
 
    for i := 0 to appControllers.nHandlers - 1 do begin
       if(appControllers.Handlers[i] <> nil) then
-         appControllers.Handlers[i].Initialize();
+         appControllers.Handlers[i]^.Initialize();
    end;
 end;
 
@@ -478,7 +487,7 @@ begin
 
    for i := 0 to appControllers.nHandlers - 1 do begin
       if(appControllers.Handlers[i] <> nil) then
-         appControllers.Handlers[i].DeInitialize();
+         appControllers.Handlers[i]^.DeInitialize();
 
       FreeObject(appControllers.Handlers[i]);
    end;
