@@ -62,6 +62,8 @@ TYPE
       {which axis is currently selected for a tool (-1 means none)}
       SelectedAxis: loopint;
 
+      Material: oxTMaterial;
+
       procedure Initialize; override;
       procedure DeInitialize; override;
       procedure SceneRenderEnd; override;
@@ -88,6 +90,7 @@ TYPE
    oxedTSceneEditRenderer = class(oxTSceneRenderer)
       public
       Window: oxedTSceneEditWindow;
+      Material: oxTMaterial;
 
       procedure RenderEntity(var params: oxTSceneRenderParameters); override;
 
@@ -148,10 +151,10 @@ begin
 
    oxRender.BlendDefault();
    oxRender.DepthWrite(false);
-   oxCurrentMaterial.ApplyColor('color', 0.5, 0.5, 0.5, 0.5);
+   Material.ApplyColor('color', 0.5, 0.5, 0.5, 0.5);
    oxRender.DepthDefault();
    oxGridRender.Render2D(OXED_LINE_GRID_LENGTH, 50);
-   oxCurrentMaterial.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
+   Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
    oxRender.DepthWrite(true);
    oxRender.DisableBlend();
 
@@ -177,18 +180,22 @@ procedure oxedTSceneEditWindow.Initialize;
 begin
    inherited Initialize;
 
-   SceneRenderer := oxedTSceneEditRenderer.Create();
-   SceneRenderer.Scene := Scene;
-
-   oxedTSceneEditRenderer(SceneRenderer).Window := Self;
    Transform := oxTransform.Instance();
    SelectedAxis := -1;
 
    StateWidgetEnabled := false;
 
+   {TODO: Rotate cone vertices, so no rotation transformation is necessary}
    InitCone(ConeModel);
 
-   {TODO: Rotate cone vertices, so no rotation transformation is necessary}
+   Material := oxMaterial.Make();
+   Material.Name := 'oxed.scene_edit';
+   Material.MarkPermanent();
+
+   SceneRenderer := oxedTSceneEditRenderer.Create();
+   SceneRenderer.Scene := Scene;
+   oxedTSceneEditRenderer(SceneRenderer).Material := Material;
+   oxedTSceneEditRenderer(SceneRenderer).Window := Self;
 end;
 
 procedure oxedTSceneEditWindow.DeInitialize;
@@ -261,11 +268,13 @@ begin
    Camera.Transform.Rotate(rX, rY, Rz);
 
    Camera.Transform.Apply();
-   oxCurrentMaterial.ApplyColor('color', AxisColors[index]);
+   Material.ApplyColor('color', AxisColors[index]);
    ConeModel.Render();
 end;
 
 begin
+   Material.Apply();
+
    oxedScene.SelectedEntity.GetWorldPosition(p);
    oxedScene.SelectedEntity.GetWorldRotation(rotation);
 
@@ -298,15 +307,15 @@ begin
       BBox[0].Assign(-CONE_LENGTH / 2, -CONE_LENGTH / 2, -CONE_LENGTH / 2);
       BBox[1].Assign(CONE_LENGTH / 2, CONE_LENGTH / 2, CONE_LENGTH / 2);
 
-      oxCurrentMaterial.ApplyColor('color', AxisColors[0]);
+      Material.ApplyColor('color', AxisColors[0]);
       p.Assign(1.0 - CONE_LENGTH / 2, 0, 0);
       oxRenderingUtilities.BBox(p, BBox);
 
-      oxCurrentMaterial.ApplyColor('color', AxisColors[1]);
+      Material.ApplyColor('color', AxisColors[1]);
       p.Assign(0, 1.0 - CONE_LENGTH / 2, 0);
       oxRenderingUtilities.BBox(p, BBox);
 
-      oxCurrentMaterial.ApplyColor('color', AxisColors[2]);
+      Material.ApplyColor('color', AxisColors[2]);
       p.Assign(0, 0, 1.0 - CONE_LENGTH / 2);
       oxRenderingUtilities.BBox(p, BBox);
    end;
@@ -315,7 +324,7 @@ begin
    RenderCone(1, {pos} 0.0, 1.0 - CONE_LENGTH, 0.0, {rot} 0.0, 0.0, 0.0);
    RenderCone(2, {pos} 0.0, 0.0, 1.0 - CONE_LENGTH, {rot}  90, 0.0, 0.0);
 
-   oxCurrentMaterial.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
+   Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
    oxRender.DepthDefault();
 
    Camera.Transform.Apply(camMatrix);
@@ -337,11 +346,12 @@ begin
    end;
 
    RenderGlyphDone();
-   oxCurrentMaterial.ApplyTexture('texture', nil);
+   Material.ApplyTexture('texture', nil);
 end;
 
 procedure oxedTSceneEditWindow.RenderGlyphStart();
 begin
+   Material.Apply();
    oxRender.BlendDefault();
    oxRender.CullFace(oxCULL_FACE_NONE);
    oxRender.DepthTest(oxTEST_FUNCTION_LEQUAL);
@@ -385,13 +395,13 @@ begin
    Camera.Transform.Scale(1.15, 1.15, 1);
    Camera.Transform.Apply();
 
-   oxCurrentMaterial.ApplyColor('color', 0.0, 0.0, 0.0, 0.75);
+   Material.ApplyColor('color', 0.0, 0.0, 0.0, 0.75);
    oxRenderingUtilities.Quad();
 
    {glyph}
    Camera.Transform.Apply(pMatrix);
 
-   oxCurrentMaterial.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
+   Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
    oxRenderingUtilities.Quad();
 
    Camera.Transform.Matrix := camMatrix;
@@ -399,7 +409,7 @@ end;
 
 procedure oxedTSceneEditWindow.RenderGlyphDone();
 begin
-   oxCurrentMaterial.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
+   Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
    oxRender.CullFace(oxCULL_FACE_DEFAULT);
    oxRender.AlphaTest(oxTEST_FUNCTION_NONE, 1);
    oxRender.DepthDefault();
