@@ -70,11 +70,15 @@ end;
 procedure saveCallback();
 begin
    oxedAndroidSettings.SDKPath := wdg.SDKPath.GetText();
+
+   if(wdg.NDKPath.GetText <> '') then
+      oxedAndroidSettings.NDKPath := wdg.NDKPath.GetText();
 end;
 
 procedure revertCallback();
 begin
    wdg.SDKPath.SetText(oxedAndroidSettings.SDKPath);
+   wdg.NDKPath.SetText(oxedAndroidSettings.NDKPath);
 end;
 
 procedure PreAddTabs();
