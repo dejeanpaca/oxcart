@@ -79,78 +79,85 @@ var
    numConfigs: EGLint;
    cfg,
    config: EGLConfig;
-   surface: EGLSurface;
    supportedConfigs: array of EGLConfig;
 
    r, g, b, d: EGLint;
 
 begin
    Result := false;
-   wnd.wd.Display := eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
-   if(wnd.wd.Display <> nil) then begin
-      eglInitialize(wnd.wd.Display, nil, nil);
+   if(wnd.wd.Display = nil) then begin
+      wnd.wd.Display := eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
-      if(not wnd.oxProperties.Created) then begin
-         log.v('EGL Vendor: ' + eglQueryString(wnd.wd.Display, EGL_VENDOR));
-         log.v('EGL Version: ' + eglQueryString(wnd.wd.Display, EGL_VERSION));
+      if(wnd.wd.Display <> nil) then begin
+         eglInitialize(wnd.wd.Display, nil, nil);
+
+         if(not wnd.oxProperties.Created) then begin
+            log.v('EGL Vendor: ' + eglQueryString(wnd.wd.Display, EGL_VENDOR));
+            log.v('EGL Version: ' + eglQueryString(wnd.wd.Display, EGL_VERSION));
+         end;
       end;
-   end else begin
+   end;
+
+   if(wnd.wd.Display = nil) then begin
       log.e('Failed to get default EGL display');
       exit(false);
    end;
 
-   supportedConfigs := nil;
+   if(wnd.wd.Config = nil) then begin
+      supportedConfigs := nil;
 
-   eglChooseConfig(wnd.wd.Display, attribs, nil, 0, @numConfigs);
-   SetLength(supportedConfigs, numConfigs);
-   eglChooseConfig(wnd.wd.Display, attribs, @supportedConfigs[0], numConfigs, @numConfigs);
+      eglChooseConfig(wnd.wd.Display, attribs, nil, 0, @numConfigs);
+      SetLength(supportedConfigs, numConfigs);
+      eglChooseConfig(wnd.wd.Display, attribs, @supportedConfigs[0], numConfigs, @numConfigs);
 
-   config := nil;
+      config := nil;
 
-   for i := 0 to numConfigs do begin
-       if(i = numConfigs) then
-           break;
+      for i := 0 to numConfigs do begin
+         if(i = numConfigs) then
+            break;
 
-       cfg := supportedConfigs[i];
+         cfg := supportedConfigs[i];
 
-       if ((eglGetConfigAttrib(wnd.wd.Display, cfg, EGL_RED_SIZE, @r) <> 0) and
-           (eglGetConfigAttrib(wnd.wd.Display, cfg, EGL_GREEN_SIZE, @g) <> 0) and
-           (eglGetConfigAttrib(wnd.wd.Display, cfg, EGL_BLUE_SIZE,  @b) <> 0) and
-           (eglGetConfigAttrib(wnd.wd.Display, cfg, EGL_DEPTH_SIZE, @d) <> 0) and
-           (r = 8) and (g = 8) and (b = 8) and (d = 0) )  then begin
+         if ((eglGetConfigAttrib(wnd.wd.Display, cfg, EGL_RED_SIZE, @r) <> 0) and
+            (eglGetConfigAttrib(wnd.wd.Display, cfg, EGL_GREEN_SIZE, @g) <> 0) and
+            (eglGetConfigAttrib(wnd.wd.Display, cfg, EGL_BLUE_SIZE,  @b) <> 0) and
+            (eglGetConfigAttrib(wnd.wd.Display, cfg, EGL_DEPTH_SIZE, @d) <> 0) and
+            (r = 8) and (g = 8) and (b = 8) and (d = 0) )  then begin
                config := supportedConfigs[i];
                break;
-       end;
+         end;
+      end;
+
+      if i = numConfigs then
+         config := supportedConfigs[0];
+
+      if config = nil then begin
+         wnd.RaiseError('Unable to initialize EGLConfig');
+         exit(false);
+      end;
+
+      if eglGetConfigAttrib(wnd.wd.Display, config, EGL_NATIVE_VISUAL_ID, @format) = EGL_FALSE then begin
+         wnd.RaiseError('Failed to get EGL_NATIVE_VISUAL_ID');
+         exit(false);
+      end;
+
+      wnd.wd.Config := config;
    end;
 
-   if i = numConfigs then
-      config := supportedConfigs[0];
+   if(wnd.wd.Surface = nil) then begin
+      wnd.wd.Surface := eglCreateWindowSurface(wnd.wd.Display, config, AndroidApp^.window, nil);
 
-   if config = nil then begin
-      wnd.RaiseError('Unable to initialize EGLConfig');
-      exit(false);
+      if(wnd.wd.Surface = nil) then begin
+         wnd.RaiseError('Failed to create window surface');
+         exit(false);
+      end;
+
+      wnd.wd.ValidSurface := true;
    end;
 
-   if eglGetConfigAttrib(wnd.wd.Display, config, EGL_NATIVE_VISUAL_ID, @format) = EGL_FALSE then begin
-      wnd.RaiseError('Failed to get EGL_NATIVE_VISUAL_ID');
-      exit(false);
-   end;
-
-   wnd.wd.Config := config;
-
-   surface := eglCreateWindowSurface(wnd.wd.Display, config, AndroidApp^.window, nil);
-
-   if(surface = nil) then begin
-      wnd.RaiseError('Failed to create window surface');
-      exit(false);
-   end;
-
-   wnd.wd.Surface := surface;
-   wnd.wd.ValidSurface := true;
-
-   eglQuerySurface(wnd.wd.Display, surface, EGL_WIDTH, @w);
-   eglQuerySurface(wnd.wd.Display, surface, EGL_HEIGHT, @h);
+   eglQuerySurface(wnd.wd.Display, wnd.wd.Surface, EGL_WIDTH, @w);
+   eglQuerySurface(wnd.wd.Display, wnd.wd.Surface, EGL_HEIGHT, @h);
 
    wnd.Dimensions.Assign(w, h);
 
@@ -159,14 +166,16 @@ end;
 
 function oxglTEGL.OnDeInitWindow(wnd: oglTWindow): boolean;
 begin
-   if(wnd.wd.Surface <> EGL_NO_SURFACE) then
+   if(wnd.wd.Surface <> EGL_NO_SURFACE) then begin
       eglDestroySurface(wnd.wd.Display, wnd.wd.Surface);
+      wnd.wd.Surface := EGL_NO_SURFACE;
+   end;
 
-   if(wnd.wd.Display <> EGL_NO_DISPLAY) then
+   if(wnd.wd.Display <> EGL_NO_DISPLAY) then begin
       eglTerminate(wnd.wd.Display);
+      wnd.wd.Display := EGL_NO_DISPLAY;
+   end;
 
-   wnd.wd.Display := EGL_NO_DISPLAY;
-   wnd.wd.Surface := EGL_NO_SURFACE;
    Result := true;
 end;
 
