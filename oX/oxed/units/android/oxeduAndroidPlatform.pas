@@ -50,7 +50,7 @@ constructor oxedTAndroidPlatform.Create();
 var
    arch: oxedTAndroidPlatformArchitecture;
 
-   procedure completeArch(a: oxedTAndroidPlatformArchitecture; const archPath: StdString);
+   procedure completeArch(a: oxedTAndroidPlatformArchitecture);
    begin
       {set extensions}
       a.LibraryExtension := '.so';
@@ -82,7 +82,7 @@ begin
    arch.ToolChainPathPrefix := 'arm-linux-androideabi-4.9';
    arch.LibSource := 'arm-linux-androideabi';
    arch.LibTarget := 'armeabi-v7a';
-   completeArch(arch, 'arm');
+   completeArch(arch);
 
    {aarch64}
    arch := oxedTAndroidPlatformArchitecture(
@@ -91,7 +91,7 @@ begin
    arch.ToolChainPathPrefix := 'aarch64-linux-android-4.9';
    arch.LibSource := 'aarch64-linux-android';
    arch.LibTarget := 'arm64-v8a';
-   completeArch(arch, 'arm64');
+   completeArch(arch);
 
    {x86}
    arch := oxedTAndroidPlatformArchitecture(
@@ -102,7 +102,7 @@ begin
    arch.LibTarget := 'x86';
    arch.DefaultCPUType := 'PENTIUM4';
    arch.DefaultFPUType := 'SSE3';
-   completeArch(arch, 'x86');
+   completeArch(arch);
 
    {x86-64}
    arch := oxedTAndroidPlatformArchitecture(
@@ -111,7 +111,7 @@ begin
    arch.ToolChainPathPrefix := 'x86_64-4.9';
    arch.LibSource := 'x86_64-linux-android';
    arch.LibTarget := 'x86_64';
-   completeArch(arch, 'x86_64');
+   completeArch(arch);
 end;
 
 procedure oxedTAndroidPlatform.ProjectReset();
