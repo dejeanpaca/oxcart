@@ -13,6 +13,7 @@ INTERFACE
       {ui}
       uiWidgets, uiuFiles, wdguToolbar,
       {oxed}
+      oxeduUI,
       oxeduProject, oxeduProjectManagement,
       oxeduIcons, oxeduActions, oxeduProjectSettingsWindow;
 
@@ -74,7 +75,7 @@ begin
 
    btn := Workbar.AddButton(oxedIcons.Create($f1b0), oxedActions.OPEN_LAZARUS);
    btn^.Hint := 'Open lazarus for project';
-   btn^.Color.Assign(160, 160, 255, 255);
+   btn^.Color := oxedUI.LazarusColor;
    Buttons.OpenLazarus := btn;
 
    projectChange();

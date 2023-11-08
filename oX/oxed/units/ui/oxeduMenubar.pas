@@ -19,7 +19,8 @@ INTERFACE
       {widgets}
       uiWidgets, wdguMenubar, uiuWidget, uiuFiles, uiuSkin,
       {oxed}
-      uOXED, oxeduActions, oxeduRecents, oxeduIcons, oxeduBuild, oxeduPlatform, oxuwndDVarEditor, oxeduTasks,
+      uOXED, oxeduUI,
+      oxeduActions, oxeduRecents, oxeduIcons, oxeduBuild, oxeduPlatform, oxuwndDVarEditor, oxeduTasks,
       oxeduProject, oxeduProjectManagement, oxeduProjectSettingsWindow, oxeduRunSettingsWindow, oxeduProjectRunner,
       oxeduSettings;
 
@@ -218,6 +219,7 @@ begin
    item := Project.AddItem('Settings', oxedwndProjectSettings.OpenWindowAction);
    oxedIcons.Create(item, $f013);
    item := Project.AddItem('Open Lazarus', oxedActions.OPEN_LAZARUS);
+   item^.GlyphColor := oxedUI.LazarusColor;
    oxedIcons.Create(item, $f1b0);
    item := Project.AddItem('Open Project Directory', oxedActions.OPEN_PROJECT_DIRECTORY);
    item^.GlyphColor := uiFiles.DirectoryColor;
@@ -300,6 +302,7 @@ begin
 
       Recents.AddSeparator();
       item := Recents.AddItem('Clear all', CLEAR_RECENTS_EVENT);
+      oxedIcons.Create(item, $f00d);
       item^.GlyphColor := uiSkin.StandardSkin.Colors.Delete;
    end else
       Recents.Disable();

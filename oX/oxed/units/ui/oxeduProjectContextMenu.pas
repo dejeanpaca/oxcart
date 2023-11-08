@@ -18,7 +18,7 @@ INTERFACE
       uiuContextMenu, uiuWidgetWindow,
       wdguFileList, oxuwndFileContextMenu, oxuFilePreviewWindow,
       {oxed}
-      uOXED, oxeduIcons, oxeduActions;
+      uOXED, oxeduUI, oxeduIcons, oxeduActions;
 
 TYPE
    { oxedTProjectContextMenuGlobal }
@@ -242,6 +242,7 @@ begin
    Menus.Current.AddSeparator();
    Items.Preview := Menus.Current.AddItem('Preview', @previewFile);
    item := Menus.Current.AddItem('Open Lazarus', @openLazarus);
+   item^.GlyphColor := oxedUI.LazarusColor;
    oxedIcons.Create(item, $f1b0);
 end;
 
