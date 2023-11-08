@@ -33,7 +33,6 @@ TYPE
 
       {return matrix to identity state (does not alter other properties)}
       procedure Identity(); virtual;
-      procedure IdentityVectors();
 
       {setup matrix from vPosition, vScale and vRotation properties}
       procedure SetupMatrix();
@@ -53,7 +52,7 @@ TYPE
 
       procedure Rotate(const angles: TVector3f);
       procedure Rotate(x, y, z: single);
-      procedure Rotate(w, x, y, z: single);
+      procedure Rotate(w, x, y, z: single); inline;
       procedure GetRotationMatrix(w, x, y, z: single; out m: TMatrix4f); virtual;
       procedure RotateX(w: single); virtual;
       procedure RotateY(w: single); virtual;
@@ -115,13 +114,6 @@ begin
    vRotation := vmvZero3f;
    vPosition := vmvZero3f;
    vScale := vmvOne3f;
-end;
-
-procedure oxTTransform.IdentityVectors();
-begin
-   vPosition := vmvZero3f;
-   vScale := vmvUnit3f;
-   vRotation := vmvZero3f;
 end;
 
 procedure oxTTransform.SetupMatrix();
