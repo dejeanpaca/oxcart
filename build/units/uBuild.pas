@@ -100,6 +100,11 @@ TYPE
          Rebuild: boolean;
       end;
 
+      {fpc optimization options}
+      Optimization: record
+         Level: loopint;
+      end;
+
       Checks: record
          IO,
          Range,
