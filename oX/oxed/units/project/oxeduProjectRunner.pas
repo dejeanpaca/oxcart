@@ -115,7 +115,7 @@ begin
       except
          on e: Exception do begin
             oxedMessages.e('Exception while initializing library engine');
-            oxedMessages.e(e.ToString());
+            oxedMessages.e(DumpExceptionCallStack(e));
 
             initialized := false;
          end;
@@ -134,7 +134,7 @@ begin
          except
             on e: Exception do begin
                oxedMessages.e('Exception while initializing library project');
-               oxedMessages.e(e.ToString());
+               oxedMessages.e(DumpExceptionCallStack(e));
 
                initialized := false;
             end;
@@ -224,8 +224,8 @@ begin
             if(oxedSettings.HandleLibraryErrors) then begin
                oxedLib.oxLib.ErrorState := true;
 
-               log.e('Exception while running ox library');
-               log.e(DumpExceptionCallStack(e));
+               oxedMessages.e('Exception while running ox library');
+               oxedMessages.e(DumpExceptionCallStack(e));
             end else
                raise e;
          end;
