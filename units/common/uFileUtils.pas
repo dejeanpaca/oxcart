@@ -189,7 +189,7 @@ TYPE
       {write a file}
       class function WriteString(const fn: StdString; const data: StdString): longint; static;
       {write a file}
-      class function WriteStrings(const fn: StdString; const data: TStringArray): fileint; static;
+      class function WriteStrings(const fn: StdString; const data: TStringArray; count: loopint = -1): fileint; static;
 
       {save specified memory to file}
       class function SaveMem(const fn: StdString; var m; size: int64): int64; static;
@@ -944,7 +944,7 @@ begin
       Result := CreateFile(fn);
 end;
 
-class function TFileUtilsGlobal.WriteStrings(const fn: StdString; const data: TStringArray): fileint;
+class function TFileUtilsGlobal.WriteStrings(const fn: StdString; const data: TStringArray; count: loopint): fileint;
 var
    f: file;
    i,
@@ -966,7 +966,25 @@ begin
    if(error <> 0) then
       exit(-error);
 
-   for i := 0 to High(data) do begin
+   {nothing to do here}
+   if(count = 0) then begin
+      cleanup();
+      exit(0);
+   end;
+
+   {no limit}
+   if(count = -1) then
+      count := High(data)
+   else begin
+      {limit number of strings written}
+      count := count - 1;
+
+      {make sure we're not indicated more strings than there are in the array}
+      if(count > High(data)) then
+         count := High(data);
+   end;
+
+   for i := 0 to count do begin
       size := Length(data[i]);
       currentCount := 0;
 
