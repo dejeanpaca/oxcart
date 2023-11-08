@@ -82,7 +82,7 @@ begin
    if(oxedTProjectRunner.CanRender()) then begin
       oxedLib.oxWindows^.Render();
 
-      CleanupRender();
+      wdg.SceneRender.CleanupRender();
    end;
 end;
 
