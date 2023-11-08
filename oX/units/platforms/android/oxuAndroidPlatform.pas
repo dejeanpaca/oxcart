@@ -199,11 +199,10 @@ begin
    kc := AKeyEvent_getKeyCode(event);
    action := AKeyEvent_getAction(event);
 
-   if(etype = AINPUT_EVENT_TYPE_KEY) then begin
-      getKeyEvent(kc, action, etype);
-   end else if(etype = AINPUT_EVENT_TYPE_MOTION) then begin
+   if(etype = AINPUT_EVENT_TYPE_KEY) then
+      getKeyEvent(kc, action, etype)
+   else if(etype = AINPUT_EVENT_TYPE_MOTION) then
       getMotionEvent(kc, action, etype, event);
-   end;
 
    Result := 0;
 end;

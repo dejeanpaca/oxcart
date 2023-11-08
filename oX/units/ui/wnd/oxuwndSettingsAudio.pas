@@ -36,8 +36,8 @@ begin
 
    wdgLabel.Add('Backend', uiWidget.LastRect.BelowOf(0, -4), oxNullDimensions);
    list := wdgDropDownList.Add(uiWidget.LastRect.RightOf(0, 4), oxDimensions(90, 20));
-
    list.Add('Default');
+   list.SelectItem(0);
 end;
 
 
