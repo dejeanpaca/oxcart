@@ -27,6 +27,9 @@ TYPE
      {Routine called when a cycle is performed (take care if you override this)}
      CycleRoutine: appTRunRoutine;
 
+     PreRunRoutines,
+     RunRoutines: appTRunRoutines;
+
      {perform initialization before running}
      function Initialize(): boolean;
      {start running}
@@ -43,6 +46,12 @@ TYPE
      procedure Restart();
      {handle a restart}
      function HandleRestart(): boolean;
+
+     {adds a run routine to the execution list}
+     procedure AddRoutine(var routine: appTRunRoutine);
+     procedure AddRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
+     procedure AddPreRoutine(var routine: appTRunRoutine);
+     procedure AddPreRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
    end;
 
 VAR
@@ -137,10 +146,10 @@ function oxTRunGlobal.GoCycle(dosleep: boolean): boolean;
 begin
    Result := true;
 
-   appRun.PreRunRoutines.Call();
+   PreRunRoutines.Call();
 
    oxPlatform.ProcessEvents();
-   appRun.RunRoutines.Call();
+   RunRoutines.Call();
 
    appRun.ControlEvents();
 
@@ -180,6 +189,26 @@ begin
       RestartFlag := false;
       app.Active := true;
    end;
+end;
+
+procedure oxTRunGlobal.AddRoutine(var routine: appTRunRoutine);
+begin
+   RunRoutines.Add(routine);
+end;
+
+procedure oxTRunGlobal.AddRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
+begin
+   RunRoutines.Add(routine, name, exec);
+end;
+
+procedure oxTRunGlobal.AddPreRoutine(var routine: appTRunRoutine);
+begin
+   PreRunRoutines.Add(routine);
+end;
+
+procedure oxTRunGlobal.AddPreRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
+begin
+   PreRunRoutines.Add(routine, name, exec);
 end;
 
 END.

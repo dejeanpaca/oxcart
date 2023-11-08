@@ -14,7 +14,8 @@ INTERFACE
 
    USES
       uStd, uLog, StringUtils,
-      uApp, appuRun, appuEvents;
+      uApp, appuRun, appuEvents,
+      oxuRun;
 
 TYPE
    appTControllerFunctionDescriptor = record
@@ -373,7 +374,7 @@ CONST
    runRoutine: appTRunRoutine = (name: 'input_controllers'; exec: @run; next: nil);
 
 INITIALIZATION
-   appRun.AddRoutine(runRoutine);
+   oxRun.AddRoutine(runRoutine);
    app.InitializationProcs.Add('input_controllers', @initialize, @deinitialize);
 
    appControllers.evhp := appEvents.AddHandler(appControllers.evh, 'input_controller');

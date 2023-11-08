@@ -40,17 +40,8 @@ TYPE
    { appTRunGlobal }
 
    appTRunGlobal = record
-      PreRunRoutines,
-      RunRoutines: appTRunRoutines;
-
       {main app control routine}
       procedure ControlEvents();
-
-      {adds a run routine to the execution list}
-      procedure AddRoutine(var routine: appTRunRoutine);
-      procedure AddRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
-      procedure AddPreRoutine(var routine: appTRunRoutine);
-      procedure AddPreRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
    end;
 
 VAR
@@ -152,26 +143,6 @@ begin
       end;
    {if uinEvents is 0 then there are no more events}
    until(appEvents.n = 0);
-end;
-
-procedure appTRunGlobal.AddRoutine(var routine: appTRunRoutine);
-begin
-   RunRoutines.Add(routine);
-end;
-
-procedure appTRunGlobal.AddRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
-begin
-   RunRoutines.Add(routine, name, exec);
-end;
-
-procedure appTRunGlobal.AddPreRoutine(var routine: appTRunRoutine);
-begin
-   PreRunRoutines.Add(routine);
-end;
-
-procedure appTRunGlobal.AddPreRoutine(out routine: appTRunRoutine; const name: string; exec: TProcedure);
-begin
-   PreRunRoutines.Add(routine, name, exec);
 end;
 
 END.
