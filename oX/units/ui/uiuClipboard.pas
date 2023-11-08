@@ -9,8 +9,8 @@ UNIT uiuClipboard;
 INTERFACE
 
    USES
-      uStd,
-      oxuPlatformClipboard;
+      uStd, udvars,
+      oxuUI, oxuPlatformClipboard;
 
 TYPE
 
@@ -41,6 +41,9 @@ VAR
    uiClipboard: uiTClipboard;
 
 IMPLEMENTATION
+
+VAR
+   dvInternalClipboard: TDVar;
 
 { uiTClipboard }
 
@@ -107,5 +110,8 @@ begin
       Storage.Str := what;
    end;
 end;
+
+INITIALIZATION
+   oxui.dvg.Add(dvInternalClipboard, 'internal_clipboard', dtcBOOL, @uiClipboard.Internal);
 
 END.
