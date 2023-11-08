@@ -120,6 +120,7 @@ TYPE
 
       SourceData: record
          PackageList: TPreallocatedStringArrayList;
+         Symbols: TPreallocatedStringArrayList;
       end;
 
       procedure Initialize();
@@ -137,6 +138,7 @@ TYPE
       procedure AddIncludePath(const newPath: string);
       procedure SetTitle(const newTitle: string);
       procedure AddRequiredPackage(const packageName: string);
+      procedure AddSymbol(const symbol: string);
       procedure CreatePackagesSection();
 
       class procedure SetValue(node: TDOMNode; const value: string); static;
@@ -243,7 +245,9 @@ procedure TLPIFile.Initialize();
 begin
    compiler.applyConventions := true;
    MinimumVersion := 11;
+
    SourceData.PackageList.InitializeValues(SourceData.PackageList, 128);
+   SourceData.Symbols.InitializeValues(SourceData.Symbols, 128);
 end;
 
 procedure TLPIFile.Update();
@@ -345,10 +349,12 @@ begin
    else
       compiler.target.SetAttributeValue('applyConventions', false);
 
-   if(SourceData.PackageList.n > 0) then begin
-      for i := 0 to SourceData.PackageList.n - 1 do begin
-         AddRequiredPackage(SourceData.PackageList.List[i]);
-      end;
+   for i := 0 to SourceData.PackageList.n - 1 do begin
+      AddRequiredPackage(SourceData.PackageList.List[i]);
+   end;
+
+   for i := 0 to SourceData.Symbols.n - 1 do begin
+      AddSymbol(SourceData.Symbols.List[i]);
    end;
 end;
 
@@ -397,12 +403,13 @@ end;
 function parseRead(var p: TParseData): boolean;
 const
    requireString = '@lazpackage';
+   symbolString = '@define';
 
 var
    f: PLPIFile;
-   requirePos: loopint;
+   definePos: loopint;
 
-   packageName,
+   define,
    currentLine: StdString;
 
 begin
@@ -410,16 +417,29 @@ begin
    f := p.ExternalData;
 
    currentLine := LowerCase(p.CurrentLine);
-   requirePos := pos(requireString, currentLine);
 
-   if(requirePos > 0) then begin
-      packageName := Copy(p.CurrentLine, requirePos + Length(requireString));
-      StripWhitespace(packageName);
+   definePos := pos(requireString, currentLine);
+
+   if(definePos > 0) then begin
+      define := Copy(p.CurrentLine, definePos + Length(requireString));
+      StripWhitespace(define);
 
       if(f^.Mode = lpiMODE_TEST) then
-         log.i('Found lazarus package dependency: ' + packageName);
+         log.i('Found lazarus package dependency: ' + define);
 
-      f^.SourceData.PackageList.Add(packageName);
+      f^.SourceData.PackageList.Add(define);
+   end;
+
+   definePos := pos(symbolString, currentLine);
+
+   if(definePos > 0) then begin
+      define := Copy(p.CurrentLine, definePos + Length(symbolString));
+      StripWhitespace(define);
+
+      if(f^.Mode = lpiMODE_TEST) then
+         log.i('Found symbol define dependency: ' + define);
+
+      f^.SourceData.Symbols.Add(define);
    end;
 end;
 
@@ -456,7 +476,6 @@ begin
 
    if(compiler.other.customOptions = nil) then
       compiler.other.customOptions := compiler.other.root.CreateChild('CustomOptions');
-
 
    nodeValue := GetValue(compiler.other.customOptions);
 
@@ -535,6 +554,11 @@ begin
 
       SetValue(valueNode, packageName);
    end;
+end;
+
+procedure TLPIFile.AddSymbol(const symbol: string);
+begin
+   AddCustomOption('-d' + symbol);
 end;
 
 procedure TLPIFile.CreatePackagesSection();
