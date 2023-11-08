@@ -320,6 +320,8 @@ begin
 end;
 
 class procedure oglTGlobal.GetVersion(const versionString: string; out major, minor, revision: longword; out profile: oglTProfile);
+const
+   separators: array[0..2] of char = (' ', '-', '.');
 var
    ver,
    xver: string;
@@ -351,14 +353,20 @@ begin
    end else
       ver := CopyToDel(ver);
 
-   xver  := CopyToDel(ver, '.');
+   xver  := CopyToDel(ver, separators);
+   writeln('xver: ', xver);
    val(xver, version, code);
+
    if(code = 0) then
       major := version
-   else
+   else begin
       major := 0;
+      exit;
+   end;
 
-   xver  := CopyToDel(ver, '.');
+   {after version we can have both a . and - (e.g '3.2-core' or '3.2.1 core')}
+   xver := CopyToDel(ver, separators);
+
    val(xver, version, code);
    if(code = 0) then
       minor := version
@@ -367,7 +375,9 @@ begin
 
    revision := 0;
    if(Length(ver) <> 0) then begin
-      val(ver, version, code);
+      xver := CopyToDel(ver, separators);
+      val(xver, version, code);
+
       if(code = 0) then
          revision := version
       else
