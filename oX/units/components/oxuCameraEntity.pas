@@ -13,13 +13,15 @@ INTERFACE
    USES
       uStd,
       {ox}
-      oxuEntity, oxuCameraComponent;
+      oxuScene, oxuEntity, oxuCameraComponent;
 
 TYPE
    { oxTCameraEntity }
 
    oxTCameraEntity = record
+      class function GetEntity(out component: oxTCameraComponent): oxTEntity; static;
       class function Default(): oxTEntity; static;
+      class function CreateInScene(): oxTCameraComponent; static;
    end;
 
 VAR
@@ -27,13 +29,13 @@ VAR
 
 IMPLEMENTATION
 
-function getEntity(out component: oxTCameraComponent): oxTEntity;
+class function oxTCameraEntity.GetEntity(out component: oxTCameraComponent): oxTEntity;
 begin
-   result := oxTEntity.Create();
+   Result := oxTEntity.Create();
 
    component := oxTCameraComponent.Create();
-   result.Name := 'Camera';
-   result.Add(component);
+   Result.Name := 'Camera';
+   Result.Add(component);
 end;
 
 { oxTCameraEntity }
@@ -43,7 +45,17 @@ var
    component: oxTCameraComponent;
 
 begin
-   result := getEntity(component);
+   Result := getEntity(component);
+end;
+
+class function oxTCameraEntity.CreateInScene(): oxTCameraComponent;
+var
+   entity: oxTEntity;
+
+begin
+   entity := GetEntity(Result);
+
+   oxScene.Add(entity);
 end;
 
 END.
