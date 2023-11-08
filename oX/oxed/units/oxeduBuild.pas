@@ -242,6 +242,7 @@ end;
 class procedure oxedTBuildGlobal.Deinitialize();
 begin
    FreeObject(oxedBuild.Task);
+   FreeObject(oxedBuild.InitializationTask);
 end;
 
 function oxedTBuildGlobal.BuildEnabled(): boolean;
