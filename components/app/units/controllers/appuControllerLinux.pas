@@ -158,9 +158,7 @@ var
    event: appTControllerEvent;
 
 begin
-   {$IFDEF DEBUG}
-   jsevent.typ := 0;
-   {$ENDIF}
+   ZeroPtr(@jsevent, SizeOf(jsevent));
 
    repeat
       {no need for event to be initialized, since we read it}
