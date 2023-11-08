@@ -1,8 +1,8 @@
 {
    uPasSourceHelper
-   Copyright (C) 2019. Dejan Boras
+   Copyright (C) 2020. Dejan Boras
 
-   Started On:    13.01.2019.
+   Started On:    13.01.2020.
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}
