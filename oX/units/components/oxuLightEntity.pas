@@ -29,7 +29,8 @@ IMPLEMENTATION
 
 function getEntity(out component: oxTLightComponent): oxTEntity;
 begin
-   Result := oxEntity.New('Light', oxTLightComponent.Create());
+   component := oxTLightComponent.Create();
+   Result := oxEntity.New('Light', component);
 end;
 
 { oxTLightEntity }
