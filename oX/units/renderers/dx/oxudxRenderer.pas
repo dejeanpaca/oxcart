@@ -1,5 +1,5 @@
 {
-   oxudxRenderer, DirectX enderer base
+   oxudxRenderer, DirectX renderer base
    Copyright (C) 2016. Dejan Boras
 
    Started On:    07.02.2016.
