@@ -127,6 +127,8 @@ TYPE
       procedure ResizeAdjusted(w, h: loopint; ignoreRestrictions: boolean = false);
       procedure ResizeAdjusted(const newSize: oxTDimensions; ignoreRestrictions: boolean = false);
 
+      procedure UpdateResize();
+
       {adjust width and height according to window restrictions}
       procedure AdjustSizesWithRestrictions(var w, h: loopint);
       procedure AdjustSizesWithRestrictions(var d: oxTDimensions);
@@ -1075,7 +1077,6 @@ begin
       Position.x := x;
       Position.y := y;
 
-      Notification(uiWINDOW_MOVE);
       UpdatePositions();
    end;
 end;
@@ -1129,14 +1130,11 @@ begin
       Dimensions.w := w;
       Dimensions.h := h;
 
-      Notification(uiWINDOW_RESIZE);
-      SizeChanged();
+      UpdateResize();
 
       if(horizontalMove) then
          {we have to update RPositions and other data}
          UpdatePositions();
-
-      UpdateParentSize(false);
    end;
 end;
 
@@ -1166,6 +1164,13 @@ begin
    AdjustDimensions(d);
 
    Resize(d.w, d.h, ignoreRestrictions);
+end;
+
+procedure uiTWindowHelper.UpdateResize();
+begin
+   Notification(uiWINDOW_RESIZE);
+   UpdateParentSize(false);
+   SizeChanged();
 end;
 
 procedure uiTWindowHelper.AdjustSizesWithRestrictions(var w, h: loopint);
@@ -1796,6 +1801,8 @@ var
    ext: uiTWindow;
 
 begin
+   Notification(uiWINDOW_MOVE);
+
    if(Parent <> nil) then begin
       {update relative positions}
       RPosition := Parent.RPosition;
