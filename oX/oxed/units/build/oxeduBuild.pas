@@ -562,11 +562,6 @@ begin
    symbols := getSymbols();
    config.AddSymbols(symbols.List, symbols.n);
 
-   config.Add('-Mobjfpc');
-   config.Add('-Sh');
-   config.Add('-Si');
-   config.Add('-Sc');
-
    { write config file }
 
    fn := oxedBuild.WorkArea + oxedBuild.Props.ConfigFile;
