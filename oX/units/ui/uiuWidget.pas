@@ -634,13 +634,13 @@ end;
 
 procedure uiTWidget.FitWidthToGrid(var d: oxTDimensions);
 begin
-   if(d.w mod wdgGRID_SIZE > 0) then
+   if(d.w > 0) and (d.w mod wdgGRID_SIZE > 0) then
       d.w := d.w + (wdgGRID_SIZE - (d.w mod wdgGRID_SIZE));
 end;
 
 procedure uiTWidget.FitHeightToGrid(var d: oxTDimensions);
 begin
-   if(d.h mod wdgGRID_SIZE > 0) then
+   if(d.h > 0) and (d.h mod wdgGRID_SIZE > 0) then
       d.h := d.h + (wdgGRID_SIZE - (d.h mod wdgGRID_SIZE));
 end;
 
