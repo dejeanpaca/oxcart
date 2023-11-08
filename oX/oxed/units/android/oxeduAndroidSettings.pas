@@ -16,7 +16,7 @@ INTERFACE
 
 CONST
    {android 5.1 is our default target version}
-   OXED_ANDROID_DEFAULT_TARGET_VERSION = 29;
+   OXED_ANDROID_DEFAULT_TARGET_VERSION = 30;
 
 TYPE
    { oxedTAndroidSettings }
