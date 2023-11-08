@@ -487,12 +487,14 @@ var
    index: loopint;
 
 begin
-   index := FindItemIndexByAction(actionId);
+   if(actionId > 0) then begin
+      index := FindItemIndexByAction(actionId);
 
-   if(index > -1) then
-      Result := @Items.List[index]
-   else
-      Result := nil;
+      if(index > -1) then
+         Result := @Items.List[index]
+      else
+         Result := nil;
+   end;
 end;
 
 procedure wdgTToolbar.RemoveItem(item: wdgPToolbarItem);
@@ -500,9 +502,11 @@ var
    i: loopint;
 
 begin
-   for i := 0 to Items.n - 1 do begin
-      if(@Items.List[i] = item) then
-         RemoveItem(i);
+   if(item <> nil) then begin
+      for i := 0 to Items.n - 1 do begin
+         if(@Items.List[i] = item) then
+            RemoveItem(i);
+      end;
    end;
 end;
 
