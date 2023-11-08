@@ -9,7 +9,8 @@ UNIT oxeduInspectEntity;
 INTERFACE
 
    USES
-      uStd, vmVector, sysutils, uColors,
+      uStd, sysutils, uColors,
+      vmVector, vmQuaternions,
       {ox}
       oxuEntity, oxuComponent, oxuComponentDescriptors,
       {ui}
@@ -230,6 +231,7 @@ var
    inspector: oxedTInspectorWindow;
    i: loopint;
    descriptor: oxPComponentDescriptor;
+   v: TVector3;
 
 begin
    Entity := newEntity;
@@ -245,7 +247,8 @@ begin
          wdg.Name.SetText(Entity.Name);
 
       wdg.Position.SetValue(Entity.vPosition, false, true);
-      wdg.Rotation.SetValue(Entity.vRotation, false, true);
+      vmqToEulerDeg(Entity.vRotation, v);
+      wdg.Rotation.SetValue(v, false, true);
       wdg.Scale.SetValue(Entity.vScale, false, true);
 
       for i := 0 to (Entity.Components.n - 1) do begin
@@ -356,10 +359,14 @@ begin
 end;
 
 procedure oxedTInspectEntity.Update(wnd: oxedTWindow);
+var
+   v: TVector3f;
+
 begin
    if(Entity <> nil) then begin
       wdg.Position.SetValue(Entity.vPosition, false);
-      wdg.Rotation.SetValue(Entity.vRotation, false);
+      vmqToEulerDeg(Entity.vRotation, v);
+      wdg.Rotation.SetValue(v, false);
       wdg.Scale.SetValue(Entity.vScale, false);
 
       if(Entity.Name <> wdg.Name.GetText()) then begin
