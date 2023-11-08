@@ -207,9 +207,9 @@ TYPE
       {get remaining height (below)}
       function RemainingHeight(): loopint;
 
-      procedure FitToGrid(var d: oxTDimensions);
-      procedure FitWidthToGrid(var d: oxTDimensions);
-      procedure FitHeightToGrid(var d: oxTDimensions);
+      class procedure FitToGrid(var d: oxTDimensions); static;
+      class procedure FitWidthToGrid(var d: oxTDimensions); static;
+      class procedure FitHeightToGrid(var d: oxTDimensions); static;
 
       protected
          {called when the font changes}
@@ -626,19 +626,19 @@ begin
    Result := BelowOf(0) + 1;
 end;
 
-procedure uiTWidget.FitToGrid(var d: oxTDimensions);
+class procedure uiTWidget.FitToGrid(var d: oxTDimensions);
 begin
    FitWidthToGrid(d);
    FitHeightToGrid(d);
 end;
 
-procedure uiTWidget.FitWidthToGrid(var d: oxTDimensions);
+class procedure uiTWidget.FitWidthToGrid(var d: oxTDimensions);
 begin
    if(d.w > 0) and (d.w mod wdgGRID_SIZE > 0) then
       d.w := d.w + (wdgGRID_SIZE - (d.w mod wdgGRID_SIZE));
 end;
 
-procedure uiTWidget.FitHeightToGrid(var d: oxTDimensions);
+class procedure uiTWidget.FitHeightToGrid(var d: oxTDimensions);
 begin
    if(d.h > 0) and (d.h mod wdgGRID_SIZE > 0) then
       d.h := d.h + (wdgGRID_SIZE - (d.h mod wdgGRID_SIZE));
