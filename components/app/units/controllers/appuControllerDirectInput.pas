@@ -131,7 +131,6 @@ function appTDirectInputControllerHandler.Add(var lpddi: TDIDeviceInstanceA): bo
 var
    device: appTDirectInputControllerDevice;
    diDevice: IDirectInputDevice8A;
-   error: HRESULT;
 
    capabilities: DIDEVCAPS;
 
@@ -165,43 +164,40 @@ begin
       CoTaskMemFree(pc);
    end;
 
-   error := appDirectInputControllerHandler.DIInterface.CreateDevice(lpddi.guidInstance, diDevice, nil);
+   if failed(appDirectInputControllerHandler.DIInterface.CreateDevice(lpddi.guidInstance, diDevice, nil), 'Failed to create device') then
+      exit(false);
 
-   {only create our own device if DI created a device}
-   if(error = DI_OK) then begin
-      {get device updates when in background and exclusive access when in foreground}
-      if failed(diDevice.SetCooperativeLevel(0,
-         DISCL_BACKGROUND and DISCL_EXCLUSIVE), 'Failed to set cooperative level') then
-         exit(false);
+   {get device updates when in background and exclusive access when in foreground}
+   if failed(diDevice.SetCooperativeLevel(0,
+      DISCL_BACKGROUND and DISCL_EXCLUSIVE), 'Failed to set cooperative level') then
+      exit(false);
 
-      {use generic joystick data format}
-      if failed(diDevice.SetDataFormat(c_dfDIJoystick), 'Failed to set data format') then
-         exit(false);
+   {use generic joystick data format}
+   if failed(diDevice.SetDataFormat(c_dfDIJoystick), 'Failed to set data format') then
+      exit(false);
 
-      {get device capabilities}
-      ZeroOut(capabilities, SizeOf(capabilities));
+   {get device capabilities}
+   ZeroOut(capabilities, SizeOf(capabilities));
 
-      if failed(diDevice.GetCapabilities(capabilities), 'Failed to get capabilities') then begin
-         exit(false);
-      end;
+   if failed(diDevice.GetCapabilities(capabilities), 'Failed to get capabilities') then begin
+      exit(false);
+   end;
 
-      device := appTDirectInputControllerDevice.Create();
+   device := appTDirectInputControllerDevice.Create();
 
-      device.Name := pchar(lpddi.tszProductName);
-      device.GUID := lpddi.guidInstance;
-      device.FFGUID := lpddi.guidFFDriver;
+   device.Name := pchar(lpddi.tszProductName);
+   device.GUID := lpddi.guidInstance;
+   device.FFGUID := lpddi.guidFFDriver;
 
-      device.Device := diDevice;
+   device.Device := diDevice;
 
-      {get number of axes and buttons}
-      writeln(capabilities.dwAxes, ' ', capabilities.dwButtons);
+   {get number of axes and buttons}
+   writeln(capabilities.dwAxes, ' ', capabilities.dwButtons);
 
-      {TODO: Get the rest of this functional}
+   {TODO: Get the rest of this functional}
 
-      appControllers.Add(device);
-      Result := true;
-   end else
-      logError('Failed to create device.');
+   appControllers.Add(device);
+   Result := true;
 end;
 
 procedure init();
