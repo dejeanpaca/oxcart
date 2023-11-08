@@ -11,7 +11,7 @@ INTERFACE
    USES
       appuMouse, appuEvents, appuMouseEvents,
    	{oX}
-	   oxuPlatform, oxuWindowTypes, oxuUI, oxuGlobalInstances, oxuWindow,
+	   oxuPlatform, oxuUI, oxuGlobalInstances, oxuWindow,
       {ui}
       uiuUI, uiuPointerEvents;
 
@@ -19,7 +19,7 @@ TYPE
    { oxTPointerGlobal }
 
    oxTPointerGlobal = class
-      procedure Handle(oxui: uiTUI; var e: appTEvent; var m: appTMouseEvent; wnd: oxTWindow); virtual;
+      procedure Handle(oxui: uiTUI; var e: appTEvent); virtual;
       procedure Handle(oxui: uiTUI; var m: appTMouseEvent); virtual;
    end;
 
@@ -28,11 +28,8 @@ VAR
 
 IMPLEMENTATION
 
-procedure oxTPointerGlobal.Handle(oxui: uiTUI; var e: appTEvent; var m: appTMouseEvent; wnd: oxTWindow);
+procedure oxTPointerGlobal.Handle(oxui: uiTUI; var e: appTEvent);
 begin
-   {need to get the client position}
-   oxPlatform.GetClientAreaCoordinates(wnd, m.x, m.y);
-
    uiPointerEvents.Action(oxui, e);
 end;
 
@@ -43,8 +40,9 @@ var
 begin
    appEvents.Init(e, appMOUSE_EVENT, @appMouseEvents.evh);
    e.ExternalData := @m;
+   e.wnd := oxWindow.Current;
 
-   Handle(oxui, e, m, oxWindow.Current);
+   Handle(oxui, e);
 end;
 
 procedure processPointer(var e: appTEvent);
@@ -55,7 +53,7 @@ begin
    data := e.GetData();
 
   if(data <> nil) and (e.wnd <> nil) then
-      oxPointer.Handle(oxui, e, appPMouseEvent(data)^, oxTWindow(e.wnd));
+      oxPointer.Handle(oxui, e);
 end;
 
 function instance(): TObject;
