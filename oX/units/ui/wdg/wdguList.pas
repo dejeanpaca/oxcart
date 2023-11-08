@@ -292,10 +292,10 @@ TYPE
       function Assign(items_list: TAnsiStringArray): wdgTStringList;
       procedure RenderItem(index: loopint; r: oxTRect); override;
 
-      procedure Add(const item: string);
+      procedure Add(const item: StdString);
       procedure Remove(index: loopint);
 
-      function GetValue(index: loopint): string; virtual;
+      function GetValue(index: loopint): StdString; virtual;
 
       function GetItemWidth(index: loopint): loopint; override;
       function GetMaxWidth: loopint; override;
@@ -437,7 +437,7 @@ begin
    f.WriteCentered(GetValue(index), r, [oxfpCenterVertical]);
 end;
 
-procedure wdgTStringList.Add(const item: string);
+procedure wdgTStringList.Add(const item: StdString);
 begin
    if(not ItemsExternal) then begin
       Items.Add(item);
@@ -453,7 +453,7 @@ begin
    end;
 end;
 
-function wdgTStringList.GetValue(index: loopint): string;
+function wdgTStringList.GetValue(index: loopint): StdString;
 begin
    if(Items.n > 0) then
       Result := Items[index]

@@ -47,14 +47,14 @@ TYPE
    { oxedTWindowClass }
 
    oxedTWindowClass = class
-      Name: string;
+      Name: StdString;
       {should there only be one instance of this window}
       SingleInstance: boolean;
       WindowType: oxedTUIWindowClass;
       {last (or only) instance of this window}
       Instance: oxedTWindow;
 
-      constructor Create(const sName: string; wndType: oxedTUIWindowClass); virtual;
+      constructor Create(const sName: StdString; wndType: oxedTUIWindowClass); virtual;
 
       function CreateWindow(): oxedTWindow;
       {called when a window is created}
@@ -87,7 +87,7 @@ end;
 
 { oxedTWindowClass }
 
-constructor oxedTWindowClass.Create(const sName: string; wndType: oxedTUIWindowClass);
+constructor oxedTWindowClass.Create(const sName: StdString; wndType: oxedTUIWindowClass);
 begin
    Name := sName;
    WindowType := wndType;

@@ -42,7 +42,7 @@ TYPE
    wdgTDivisorGlobal = record
       DefaultColor: TColor4ub;
 
-      function Add(const Caption: string;
+      function Add(const Caption: StdString;
                  const Pos: oxTPoint; Vertical: boolean = false): wdgTDivisor;
    end;
 
@@ -175,7 +175,7 @@ begin
       Resize(GetComputedDimensionsf());
 end;
 
-function wdgTDivisorGlobal.Add(const Caption: string;
+function wdgTDivisorGlobal.Add(const Caption: StdString;
             const Pos: oxTPoint; Vertical: boolean): wdgTDivisor;
 var
    lastRectX: loopint;

@@ -30,7 +30,7 @@ TYPE
 
    oxedwdgTPluginsGrid = class(wdgTStringGrid)
       function GetItemCount(): loopint; override;
-      function GetValue(index, column: loopint): string; override;
+      function GetValue(index, column: loopint): StdString; override;
    end;
 
    { oxedTPluginsWindow }
@@ -79,7 +79,7 @@ begin
    Result := oxedPlugins.List.n;
 end;
 
-function oxedwdgTPluginsGrid.GetValue(index, column: loopint): string;
+function oxedwdgTPluginsGrid.GetValue(index, column: loopint): StdString;
 begin
    if(column = 0) then
       Result := oxedPlugins.List.List[index].Name

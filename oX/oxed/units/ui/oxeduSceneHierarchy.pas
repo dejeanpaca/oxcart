@@ -36,7 +36,7 @@ TYPE
 
       procedure Assign(newScene: oxTEntity);
 
-      function GetValue(index: loopint): string; override;
+      function GetValue(index: loopint): StdString; override;
       function GetSubItems({%H-}index: loopint; ref: pointer): TPreallocatedPointerArrayList; override;
       function Expandable(index: loopint): boolean; override;
 
@@ -68,7 +68,7 @@ TYPE
    { oxedTSceneHierarchyClass }
 
    oxedTSceneHierarchyClass = class(oxedTWindowClass)
-      constructor Create(const sName: string; InstanceType: oxedTUIWindowClass); override;
+      constructor Create(const sName: StdString; InstanceType: oxedTUIWindowClass); override;
 
       procedure SetScene();
    end;
@@ -188,7 +188,7 @@ end;
 
 procedure oxedwdgTEntityRename.Confirmed();
 var
-   text: string;
+   text: StdString;
 
 begin
    text := GetText();
@@ -211,7 +211,7 @@ end;
 
 { oxedTSceneHierarchyClass }
 
-constructor oxedTSceneHierarchyClass.Create(const sName: string; InstanceType: oxedTUIWindowClass);
+constructor oxedTSceneHierarchyClass.Create(const sName: StdString; InstanceType: oxedTUIWindowClass);
 begin
    inherited Create(sName, InstanceType);
 
@@ -241,7 +241,7 @@ begin
    Load();
 end;
 
-function wdgTSceneHierarchy.GetValue(index: loopint): string;
+function wdgTSceneHierarchy.GetValue(index: loopint): StdString;
 begin
    Result := oxTEntity(Visible.List[index].Item).Name
 end;

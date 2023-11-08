@@ -29,7 +29,7 @@ TYPE
    wdgTOXEDProblems = class(wdgTStringList)
       constructor Create; override;
 
-      function GetValue(index: loopint): string; override;
+      function GetValue(index: loopint): StdString; override;
       function GetItemCount: loopint; override;
 
       procedure RenderItem(index: loopint; r: oxTRect); override;
@@ -57,7 +57,7 @@ TYPE
    { oxedTProblemsClass }
 
    oxedTProblemsWindowClass = class(oxedTWindowClass)
-      constructor Create(const sName: string; InstanceType: oxedTUIWindowClass); override;
+      constructor Create(const sName: StdString; InstanceType: oxedTUIWindowClass); override;
 
       procedure Update();
    end;
@@ -110,7 +110,7 @@ begin
    Selectable := true;
 end;
 
-function wdgTOXEDProblems.GetValue(index: loopint): string;
+function wdgTOXEDProblems.GetValue(index: loopint): StdString;
 begin
    result := TimeToStr(oxedProblems.con.contents.list[index].Time) + ' ' + oxedProblems.con.contents.list[index].Txt;
 end;
@@ -147,7 +147,7 @@ end;
 
 { oxedTProblemsClass }
 
-constructor oxedTProblemsWindowClass.Create(const sName: string; InstanceType: oxedTUIWindowClass);
+constructor oxedTProblemsWindowClass.Create(const sName: StdString; InstanceType: oxedTUIWindowClass);
 begin
    inherited Create(sName, InstanceType);
 

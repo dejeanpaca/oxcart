@@ -74,7 +74,7 @@ TYPE
 
    {widget skin color descriptor }
    uiTWidgetSkinColorDescriptor = record
-      Name: string;
+      Name: StdString;
       Color: TColor4ub;
    end;
 
@@ -83,20 +83,20 @@ TYPE
 
    { widget skin image descriptor }
    uiTWidgetSkinImageDescriptor = record
-      Name: string;
-      Default: string;
+      Name: StdString;
+      Default: StdString;
    end;
 
    { widget skin bool descriptor }
    uiTWidgetSkinBoolDescriptor = record
-      Name: string;
+      Name: StdString;
       Default: Boolean;
    end;
 
    { widget skin string descriptor }
    uiTWidgetSkinStringDescriptor = record
-      Name: string;
-      Default: String;
+      Name: StdString;
+      Default: StdString;
    end;
 
    uiPWidgetSkinImageDescriptors = ^uiTWidgetSkinImageDescriptors;
@@ -116,7 +116,7 @@ TYPE
    { uiTWidgetSkinDescriptor }
 
    uiTWidgetSkinDescriptor = record
-      Name: string;
+      Name: StdString;
 
       nColors,
       nImages,
@@ -138,7 +138,7 @@ TYPE
    { widget skin image }
    uiTWidgetSkinImage = record
       Texture: oxTTexture;
-      Image: string;
+      Image: StdString;
    end;
 
    uiTWidgetSkinBool = Boolean;
@@ -175,10 +175,10 @@ TYPE
    end;
 
    uiTSkin = class
-      Name: string;
+      Name: StdString;
       Window: uiTWindowSkin;
       {path for this skins resources}
-      ResourcePath: string;
+      ResourcePath: StdString;
 
       {widget skins}
       wdgSkins: array of uiTWidgetSkin;

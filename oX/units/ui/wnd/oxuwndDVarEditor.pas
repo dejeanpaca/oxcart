@@ -40,7 +40,7 @@ TYPE
 
       constructor Create; override;
 
-      function GetValue(index, column: loopint): string; override;
+      function GetValue(index, column: loopint): StdString; override;
       function GetItemCount(): loopint; override;
 
       procedure ItemClicked(index: loopint; button: TBitSet = appmcLEFT); override;
@@ -118,7 +118,7 @@ begin
    Vars.InitializeValues(Vars, 512);
 end;
 
-function oxwdgTDVarEditorGrid.GetValue(index, column: loopint): string;
+function oxwdgTDVarEditorGrid.GetValue(index, column: loopint): StdString;
 var
    p: oxPDVarEditorPointer;
 
@@ -172,7 +172,7 @@ begin
    end;
 end;
 
-procedure LoadVars(var vars: oxTDVarEditorPointers; var group: TDVarGroup; const parentPath: string);
+procedure LoadVars(var vars: oxTDVarEditorPointers; var group: TDVarGroup; const parentPath: StdString);
 var
    current: PDVar;
    currentGroup: PDVarGroup;

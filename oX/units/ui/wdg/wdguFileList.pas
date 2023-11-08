@@ -28,7 +28,7 @@ TYPE
 
    wdgTFileList = class(wdgTStringGrid)
       CurrentPath,
-      Pattern: string;
+      Pattern: StdString;
       Files: TFileDescriptorList;
       FileAttributes: LongInt;
       Today: TDateTime;
@@ -52,13 +52,13 @@ TYPE
       procedure RenderStart(); override;
       procedure RenderColumn(index, columnIndex: loopint; var r: oxTRect); override;
 
-      function GetValue(index, column: loopint): string; override;
+      function GetValue(index, column: loopint): StdString; override;
       function GetFile(index, column: loopint): PFileDescriptor;
-      function GetModifiedTime(givenTime: longint; full: boolean = false): string;
-      function GetFilePath(index: loopint): string;
+      function GetModifiedTime(givenTime: longint; full: boolean = false): StdString;
+      function GetFilePath(index: loopint): StdString;
 
       {find everything in the given path}
-      procedure FindAll(const path: string);
+      procedure FindAll(const path: StdString);
       {load the current directory}
       procedure LoadCurrent();
       {loads current path as empty (limit to current path)}
@@ -104,7 +104,7 @@ TYPE
       {base path}
       Path,
       {pattern to match files against}
-      Pattern: string;
+      Pattern: StdString;
       {all files}
       Files,
       {currently found files, temporarily stored}
@@ -119,13 +119,13 @@ TYPE
       {show hidden files}
       ShowHiddenFiles: Boolean;
 
-      RootFile: string;
+      RootFile: StdString;
       BaseLevel: loopint;
 
       constructor Create; override;
       destructor Destroy; override;
 
-      function GetValue(index: loopint): string; override;
+      function GetValue(index: loopint): StdString; override;
       function GetGlyph(index: loopint): wdgTListGlyph; override;
 
       procedure Load; override;
@@ -135,14 +135,14 @@ TYPE
       {loads current directory}
       procedure LoadCurrentEmpty();
       {load path}
-      procedure LoadPath(const newPath: string);
+      procedure LoadPath(const newPath: StdString);
       {load path}
-      procedure LoadPathEmpty(const newPath: string);
+      procedure LoadPathEmpty(const newPath: StdString);
       {expands path}
-      procedure ExpandPath(const newPath: string);
+      procedure ExpandPath(const newPath: StdString);
 
       {get complete path for a given item}
-      function GetPath(index: loopint): string;
+      function GetPath(index: loopint): StdString;
 
       function GetSubItems(index: loopint; ref: pointer): TPreallocatedPointerArrayList; override;
       function Expandable(index: loopint): boolean; override;
@@ -159,7 +159,7 @@ TYPE
 
          {Return the index for the file reference matching the name and level, or -1 if nothing found.
          Can be given a starting point to speed up the process.}
-         function FindFileReference(const name: string; fileLevel: loopint; startFrom: loopint = 0): loopint;
+         function FindFileReference(const name: StdString; fileLevel: loopint; startFrom: loopint = 0): loopint;
    end;
 
    { wdgTFileListGlobal }
@@ -235,7 +235,7 @@ begin
    Files.Dispose();
 end;
 
-function wdgTHierarchicalFileList.GetValue(index: loopint): string;
+function wdgTHierarchicalFileList.GetValue(index: loopint): StdString;
 begin
    Result := PFileDescriptor(Visible.List[index].Item)^.Name
 end;
@@ -297,22 +297,23 @@ begin
    LoadPathEmpty(GetCurrentDir());
 end;
 
-procedure wdgTHierarchicalFileList.LoadPath(const newPath: string);
+procedure wdgTHierarchicalFileList.LoadPath(const newPath: StdString);
 begin
    path := newPath;
 
    Load();
 end;
 
-procedure wdgTHierarchicalFileList.LoadPathEmpty(const newPath: string);
+procedure wdgTHierarchicalFileList.LoadPathEmpty(const newPath: StdString);
 begin
    LoadPath(newPath);
    Path := '';
 end;
 
-procedure wdgTHierarchicalFileList.ExpandPath(const newPath: string);
+procedure wdgTHierarchicalFileList.ExpandPath(const newPath: StdString);
 var
-   current, restOfPath: string;
+   current,
+   restOfPath: StdString;
    index,
    currentLevel,
    currentIndex: loopint;
@@ -351,10 +352,10 @@ begin
       Expand(index);
 end;
 
-function wdgTHierarchicalFileList.GetPath(index: loopint): string;
+function wdgTHierarchicalFileList.GetPath(index: loopint): StdString;
 var
    cur, l: loopint;
-   currentPath: string = '';
+   currentPath: StdString = '';
 
 begin
    if(RootFile <> '') and (index = 0) then
@@ -384,7 +385,7 @@ end;
 function wdgTHierarchicalFileList.GetSubItems(index: loopint; ref: pointer): TPreallocatedPointerArrayList;
 var
    props: TBitSet;
-   p: string;
+   p: StdString;
    i: loopint;
 
 begin
@@ -479,7 +480,7 @@ begin
    Files.RemoveRange(index, count);
 end;
 
-function wdgTHierarchicalFileList.FindFileReference(const name: string;
+function wdgTHierarchicalFileList.FindFileReference(const name: StdString;
    fileLevel: loopint; startFrom: loopint): loopint;
 var
    i: loopint;
@@ -630,7 +631,7 @@ begin
    end;
 end;
 
-function wdgTFileList.GetValue(index, column: loopint): string;
+function wdgTFileList.GetValue(index, column: loopint): StdString;
 var
    fileIndex: loopint;
 
@@ -693,7 +694,7 @@ begin
    exit(@Files.List[index]);
 end;
 
-function wdgTFileList.GetModifiedTime(givenTime: longint; full: boolean): string;
+function wdgTFileList.GetModifiedTime(givenTime: longint; full: boolean): StdString;
 var
    time: TDateTime;
 
@@ -709,9 +710,9 @@ begin
       Result := DateTimeToStr(time);
 end;
 
-function wdgTFileList.GetFilePath(index: loopint): string;
+function wdgTFileList.GetFilePath(index: loopint): StdString;
 var
-   path: string;
+   path: StdString;
 
 begin
    Result := '';
@@ -726,7 +727,7 @@ begin
    end;
 end;
 
-procedure wdgTFileList.FindAll(const path: string);
+procedure wdgTFileList.FindAll(const path: StdString);
 var
    props: TBitSet;
 

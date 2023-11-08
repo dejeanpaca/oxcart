@@ -37,7 +37,7 @@ TYPE
    { wdgTGrid }
    wdgPGridColumn = ^wdgTGridColumn;
    wdgTGridColumn = record
-      Title: string;
+      Title: StdString;
       Width: loopint;
       Ratio: single;
       Show: boolean; {should the column be shown or not}
@@ -74,7 +74,7 @@ TYPE
       constructor Create(); override;
 
       {add a new column}
-      function AddColumn(const columnTitle: string): wdgPGridColumn;
+      function AddColumn(const columnTitle: StdString): wdgPGridColumn;
       {call when done adding columns}
       procedure ColumnAddDone();
       {show or hide a column}
@@ -158,7 +158,7 @@ TYPE
       constructor Create; override;
 
       {get the value for the current column, intended to be overriden to get a string from a source}
-      function GetValue({%H-}index, {%H-}column: loopint): string; virtual;
+      function GetValue({%H-}index, {%H-}column: loopint): StdString; virtual;
 
       procedure RenderStart; override;
       procedure RenderDone; override;
@@ -204,7 +204,7 @@ begin
    VerticalSeparation := 0.75;
 end;
 
-function wdgTStringGrid.GetValue(index, column: loopint): string;
+function wdgTStringGrid.GetValue(index, column: loopint): StdString;
 begin
    Result := '';
 end;
@@ -227,7 +227,7 @@ end;
 procedure wdgTStringGrid.RenderColumn(index, columnIndex: loopint; var r: oxTRect);
 var
    f: oxTFont;
-   s: string;
+   s: StdString;
    props: oxTFontPropertiesSet;
 
 begin
@@ -312,7 +312,7 @@ begin
    inherited Create;
 end;
 
-function wdgTGrid.AddColumn(const columnTitle: string): wdgPGridColumn;
+function wdgTGrid.AddColumn(const columnTitle: StdString): wdgPGridColumn;
 var
    g: wdgTGridColumn;
 

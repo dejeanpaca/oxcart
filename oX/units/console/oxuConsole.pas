@@ -61,7 +61,7 @@ TYPE
       end;
 
       DrawInputStatus: boolean;
-      InputStatus: string;
+      InputStatus: StdString;
 
       procedure SetFont(newFont: oxTFont);
       procedure Activate();
@@ -165,7 +165,7 @@ end;
 { oxTConsoleInputBox }
 
 VAR
-   currentEntry: string;
+   currentEntry: StdString;
    historyIndex: longint = 0;
 
 { oxTConsoleWindow }
@@ -264,7 +264,7 @@ procedure oxconWriteAbout();
 var
    color: TColor4ub;
    previousLog: PLog;
-   s: string;
+   s: StdString;
 
 begin
    previousLog := oxConsole.Console.LogOutput;
@@ -333,7 +333,7 @@ end;
 procedure consoleCommand(var con: conTConsole);
 var
    i: loopint;
-   cmd: string;
+   cmd: StdString;
 
 begin
    if(con.arguments.n > 1) then begin
@@ -386,7 +386,7 @@ procedure consoleRender(var wnd: uiTWindow);
 var
    i,
    clipSize: longint;
-   pStr: string;
+   pStr: StdString;
    width,
    x,
    y,
@@ -561,7 +561,7 @@ VAR
 { WIDGET CONTROL }
 function consoleWidgetControl(wdg: uiTWidget; what: longword): longint;
 var
-   s: string;
+   s: StdString;
 
 begin
    Result := -1;
