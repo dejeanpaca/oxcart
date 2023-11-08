@@ -114,6 +114,7 @@ VAR
 INITIALIZATION
    oxwndSplash.OnInit.Add(@InitSplash);
    oxwndSplash.ShowBuildInformation := true;
+   oxwndSplash.ImageFileName := 'oxed' + DirectorySeparator + 'data' + DirectorySeparator + 'oxed.jpg';
 
    oxui.BaseInitializationProcs.dAdd(initRoutines, 'oxed.splash', @DeInitialize);
 
