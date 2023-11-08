@@ -53,7 +53,7 @@ begin
    oxwndSettings.Tabs.AddTab('Build', 'build');
 
    wdgLabel.Add('Configuration location');
-   wdg.ConfigPath := wdgInputBox.Add('', uiWidget.LastRect.BelowOf(), oxNullDimensions);
+   wdg.ConfigPath := wdgInputBox.Add('');
 
    wdgButton.Add('Reload Configuration').Callback.Use(@reloadBuildConfiguration);
    wdgButton.Add('Open build path', uiWidget.LastRect.RightOf(), oxNullDimensions, @openBuildPath);
@@ -61,7 +61,7 @@ begin
    uiWidget.LastRect.GoLeft();
    uiWidget.LastRect.GoBelow();
 
-   wdgDivisor.Add('Built with FPC', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('Built with FPC');
    wdgLabel.Add('Version: ' + FPC_VERSION);
    wdgLabel.Add('OS: ' + FPC_TARGETOS);
    wdgLabel.Add('Target: ' + FPC_TARGET);
@@ -69,7 +69,7 @@ begin
 
    uiWidget.LastRect.GoBelow();
 
-   wdgDivisor.Add('Configuration', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('Configuration');
    wdgLabel.Add('Tools path:   ' + build.Tools.Path);
    wdgLabel.Add('Build system: ' + build.Tools.Build);
    wdgLabel.Add('Build mode:   ' + build.BuildMode);
@@ -83,9 +83,9 @@ begin
       platform := @build.Platforms.List[i];
 
       if(i = 0) then
-         wdgDivisor.Add('FPC Platform: Default', uiWidget.LastRect.BelowOf())
+         wdgDivisor.Add('FPC Platform: Default')
       else
-         wdgDivisor.Add('FPC Platform: ' + platform^.Name, uiWidget.LastRect.BelowOf());
+         wdgDivisor.Add('FPC Platform: ' + platform^.Name);
 
       wdgLabel.Add('Version: ' + platform^.Version);
       wdgLabel.Add('Platform: ' + platform^.Platform);
@@ -99,9 +99,9 @@ begin
       laz := @build.LazarusInstalls.List[i];
 
       if(i = 0) then
-         wdgDivisor.Add('Lazarus: Default', uiWidget.LastRect.BelowOf())
+         wdgDivisor.Add('Lazarus: Default')
       else
-         wdgDivisor.Add('Lazarus: ' + laz^.Name, uiWidget.LastRect.BelowOf());
+         wdgDivisor.Add('Lazarus: ' + laz^.Name);
 
       wdgLabel.Add('Lazarus Path: ' + laz^.Path);
       wdgLabel.Add('Lazarus Config Path: ' + laz^.ConfigPath);
@@ -110,11 +110,12 @@ begin
 
    uiWidget.LastRect.GoBelow();
 
-   wdgDivisor.Add('Preview', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('Preview');
 
    wdgLabel.Add('Units');
 
    dropDown := wdgDropDownList.Add(uiWidget.LastRect.BelowOf(), oxDimensions(480, 20));
+
    for i := 0 to build.Units.n - 1 do begin
       dropDown.Add(build.Units.List[i]);
    end;
