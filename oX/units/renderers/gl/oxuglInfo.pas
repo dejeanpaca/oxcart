@@ -95,22 +95,20 @@ end;
 function oglVersionCheck(): longint;
 var
    required,
-   default,
-   v: oglTSettings;
+   default: oglTVersion;
 
 begin
-   required := oxglRendererInfo.GetRequiredSettings();
-   default := oxglRendererInfo.GetExpectedSettings();
-   v.Version := oxglRendererInfo.Version;
+   required := oxglRendererInfo.GetRequiredVersion();
+   default := oxglRendererInfo.GetExpectedVersion();
 
-   if(ogl.CompareVersions(v.Version, required.Version) < 0) then begin
-      log.e('OpenGL version ' + v.GetString() + ' is lower than required ' + required.GetString());
+   if(ogl.CompareVersions(oxglRendererInfo.Version, required) < 0) then begin
+      log.e('OpenGL version ' + oxglRendererInfo.Version.GetString() + ' is lower than required ' + required.GetString());
 
       exit(ogleVERSION_UNSUPPORTED);
    end;
 
-   if(ogl.CompareVersions(oxglRendererInfo.Version, default.Version) < 0) then begin
-      log.w('OpenGL version ' + v.GetString() + ' is lower than targeted ' + default.GetString());
+   if(ogl.CompareVersions(oxglRendererInfo.Version, default) < 0) then begin
+      log.w('OpenGL version ' + oxglRendererInfo.Version.GetString() + ' is lower than targeted ' + default.GetString());
 
       exit(ogleVERSION_LOWER);
    end;

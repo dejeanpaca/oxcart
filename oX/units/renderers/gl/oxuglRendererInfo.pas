@@ -44,8 +44,8 @@ TYPE
          MaxTextureStackDepth: GLuint;
       end;
 
-     function GetRequiredSettings(): oglTSettings;
-     function GetExpectedSettings(): oglTSettings;
+     function GetRequiredVersion(): oglTVersion;
+     function GetExpectedVersion(): oglTVersion;
    end;
 
 VAR
@@ -55,20 +55,20 @@ IMPLEMENTATION
 
 { oxglTRendererInfo }
 
-function oxglTRendererInfo.GetRequiredSettings(): oglTSettings;
+function oxglTRendererInfo.GetRequiredVersion(): oglTVersion;
 begin
    if(not oxWindow.Current.oxProperties.Context) then
-      Result := oglRequiredSettings
+      Result := oglRequiredVersion
    else
-      Result := oglContextSettings;
+      Result := oglContextVersion;
 end;
 
-function oxglTRendererInfo.GetExpectedSettings(): oglTSettings;
+function oxglTRendererInfo.GetExpectedVersion(): oglTVersion;
 begin
    if(not oxWindow.Current.oxProperties.Context) then
-      Result := oglDefaultSettings
+      Result := oglDefaultVersion
    else
-      Result := oglContextSettings;
+      Result := oglContextVersion;
 end;
 
 END.

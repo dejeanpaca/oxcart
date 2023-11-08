@@ -46,7 +46,6 @@ TYPE
       {$IFDEF OX_LIBRARY}
       function InitWindowLibrary(wnd: oxTWindow): boolean; override;
       {$ENDIF}
-      procedure LogWindow(window: oxTWindow); override;
       function ContextWindowRequired(): boolean; override;
 
       {rendering}
@@ -107,6 +106,8 @@ begin
    ogl.InitializePre();
 
    glPlatform^.OnInitialize();
+
+   log.i('Target version: ' + oglDefaultVersion.GetString());
 end;
 
 procedure oxglTRenderer.OnDeInitialize();
@@ -193,8 +194,8 @@ begin
       {check if versions match}
       if(oglVersionCheck() = ogleVERSION_UNSUPPORTED) then begin
          wnd.RaiseError(eUNSUPPORTED, 'Got OpenGL version ' +
-            oglTWindow(wnd).gl.GetString() + ' which is unsupported, minimum required ' +
-            oglTWindow(wnd).glRequired.GetString());
+            oxglRendererInfo.Version.GetString() + ' which is unsupported, minimum required ' +
+            oxglRendererInfo.GetRequiredVersion().GetString());
       end;
    end;
 
@@ -206,14 +207,9 @@ begin
    Result := glPlatform^.PreInitWindow(oglTWindow(wnd));
 end;
 
-procedure oxglTRenderer.LogWindow(window: oxTWindow);
-begin
-   log.i('OpenGL Target: ' + oglTWindow(window).gl.GetString());
-end;
-
 function oxglTRenderer.ContextWindowRequired(): boolean;
 begin
-   Result := ogl.ContextRequired(oglDefaultSettings);
+   Result := ogl.ContextRequired(oglDefaultVersion);
 end;
 
 procedure oxglTRenderer.SwapBuffers(wnd: oxTWindow);
