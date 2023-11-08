@@ -70,7 +70,7 @@ INTERFACE
          {$IF DEFINED(UNIX) AND NOT DEFINED(DARWIN)}
          {%H-}appuControllerLinux,
          {$ENDIF}
-         {$IF DEFINED(WINDOWS) AND DEFINED(OX_FEATURE_DX)}
+         {$IF DEFINED(WINDOWS) AND DEFINED(OX_FEATURE_DX_INPUT)}
          {%H-}appuControllerXInput,
          {%H-}appuControllerDirectInput,
          {$ENDIF}
