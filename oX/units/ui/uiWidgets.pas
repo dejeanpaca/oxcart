@@ -634,6 +634,8 @@ begin
          w^.s := -1;
    end;
 
+   oxui.Select.Deselect(Self);
+
    {perform actions if we're not disposing of the widget}
    if(not (wdgpDESTROY_IN_PROGRESS in Properties)) then begin
       {notify the widget it lost focus, if it was selected}
@@ -1024,10 +1026,8 @@ begin
    {remove any other pending events for this widget}
    appEvents.DisableWithData(Self);
 
-   if(Parent <> nil) then
-      Deselected();
-
-   oxui.mSelect.Deselect(uiTControl(Self));
+   Deselected();
+   oxui.mSelect.Deselect(Self);
 
    {de-initialize the widget}
    DeInitialize();
