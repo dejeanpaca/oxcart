@@ -12,8 +12,8 @@ INTERFACE
       sysutils, uStd, uLog, uLPI, StringUtils, uTiming,
       uFileUtils, uFile, ufUtils,
       {build}
-      uFPCHelpers, uBuild, uBuildInstalls, uBuildExec, uBuildConfiguration, uBuildLibraries, uPasSourceHelper,
-      uBuildFPCConfig,
+      uFPCHelpers, uPasSourceHelper,
+      uBuild, uBuildInstalls, uBuildExec, uBuildConfiguration, uBuildLibraries, uBuildFPCConfig,
       {app}
       uApp, appuActionEvents,
       {ox}
@@ -581,10 +581,12 @@ var
 begin
    Result := oxedAppInfo.GetSourceHeader(false);
 
-   Result.Add(LineEnding + '   Features included:');
+   if(oxedBuild.Features.n > 0) then begin
+      Result.Add(LineEnding + '   Features included:');
 
-   for i := 0 to oxedBuild.Features.n - 1 do begin
-      Result.Add('   - ' + oxedBuild.Features.List[i]^.Name);
+      for i := 0 to oxedBuild.Features.n - 1 do begin
+         Result.Add('   - ' + oxedBuild.Features.List[i]^.Name);
+      end;
    end;
 
    Result.Add('}' + LineEnding);
@@ -701,6 +703,11 @@ class function oxedTBuildGlobal.Recreate(force: boolean): boolean;
 begin
    oxedProject.RecreateTempDirectory();
 
+   if(not FileUtils.CreateDirectory(build.FPCOptions.UnitOutputDirectory)) then begin
+      oxedConsole.e('Failed to create unit output directory: ' + build.FPCOptions.UnitOutputDirectory);
+      exit(false);
+   end;
+
    if force or (ShouldRecreate(oxPROJECT_APP_INFO_INCLUDE)) then
       oxedAppInfo.Recreate(oxedBuild.WorkArea + oxPROJECT_APP_INFO_INCLUDE);
 
@@ -808,13 +815,6 @@ begin
 
    if(not oxedProject.Valid()) then
       exit;
-
-   build.Options.IsLibrary := IsLibrary();
-   BuildStart := Now;
-   Features := GetFeatures();
-
-   TargetPath := GetTargetPath();
-   WorkArea := GetWorkingAreaPath();
 
    log.v('Building into: ' + TargetPath);
    log.v('Working area: ' + WorkArea);
@@ -1043,6 +1043,8 @@ begin
    if(not oxedBuild.Buildable(true)) then
       exit;
 
+   BuildStart := Now;
+
    build.ResetOptions();
 
    if(taskType <> OXED_BUILD_TASK_STANDALONE) then
@@ -1051,6 +1053,7 @@ begin
       BuildTarget := OXED_BUILD_STANDALONE;
 
    BuildType := taskType;
+   BuildMechanism := OXED_BUILD_VIA_FPC;
 
    build.Options.IsLibrary := IsLibrary();
 
@@ -1076,12 +1079,18 @@ begin
 
    TargetPath := GetTargetPath();
    WorkArea := GetWorkingAreaPath();
+   Features := GetFeatures();
 
    {$IFOPT D+}
    build.IncludeDebugInfo := true;
    {$ELSE}
    build.IncludeDebugInfo := false;
    {$ENDIf}
+
+   if(BuildArch <> nil) then
+      build.FPCOptions.UnitOutputDirectory := oxedBuild.WorkArea  + 'lib-' + BuildArch.Platform
+   else
+      build.FPCOptions.UnitOutputDirectory := oxedBuild.WorkArea  + 'lib';
 
    if(BuildType = OXED_BUILD_TASK_RECODE) then begin
       build.Options.Rebuild := false;
