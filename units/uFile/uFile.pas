@@ -274,11 +274,6 @@ TYPE
       procedure Init(out f: TFile);
       procedure Init(out h: TFileHandler);
 
-      {Compare two files.
-       Returns 0 if completely matching. Otherwise position of first mismatching byte.
-       Returns negative number on error (error code)}
-      function Compare(var f1, f2: TFile): fileint;
-
       { FILESYSTEM }
       {$IFNDEF FILE_NOFS}
       procedure fsInit(var fs: TVFileSystem);
@@ -880,55 +875,6 @@ end;
 procedure TFileGlobal.Init(out h: TFileHandler);
 begin
    h := DummyHandler;
-end;
-
-function TFileGlobal.Compare(var f1, f2: TFile): fileint;
-var
-   maxRead,
-   readCount1,
-   readCount2,
-   mismatchPosition: fileint;
-
-   buf1,
-   buf2: array[0..16383] of byte;
-
-begin
-   f1.SeekStart();
-   f2.SeekStart();
-
-   maxRead := 16384;
-   mismatchPosition := 0;
-
-   if(f1.bSize <> 0) and (f1.bSize < maxRead) then
-      maxRead := f1.bSize;
-
-   maxRead := 2048;
-
-   repeat
-      readCount1 := f1.Read(buf1, maxRead);
-      if(f1.Error <> 0) then
-         break;
-
-      readCount2 := f2.Read(buf2, maxRead);
-      if(f2.Error <> 0) then
-         break;
-
-      if(readCount1 <> readCount2) then begin
-         mismatchPosition := f1.fPosition + (readCount2 - readCount1);
-         break;
-      end;
-
-      mismatchPosition := abs(CompareMemRange(@buf1[0], @buf2[0], readCount1));
-      if(mismatchPosition <> 0) then begin
-         mismatchPosition := f1.fPosition - readCount1 + mismatchPosition;
-         break;
-      end;
-   until f1.EOF();
-
-   if(f1.Error <> 0) or (f2.Error <> 0) then
-      exit(-f1.Error);
-
-   Result := mismatchPosition;
 end;
 
 {DUMMY FILE HANDLER}
