@@ -9,7 +9,9 @@ UNIT oxuglRendererPlatform;
 INTERFACE
 
    USES
-      uStd, oxuOGL;
+      uStd,
+      {ox}
+      oxuOGL, oxuglWindow;
 
 TYPE
    oxglPPlatform = ^oxglTPlatform;

@@ -151,7 +151,7 @@ TYPE
 
       { GENERIC }
 
-      function GetSummary({%H-}wnd: oxTWindow): TStringArray; virtual;
+      function GetSummary(): TStringArray; virtual;
       {selects this renderer for use}
       procedure Use(); virtual;
       {capture a screenshot of the given window}
@@ -420,7 +420,7 @@ begin
       log.w('Requested component <' + componentName + '> not found for renderer ' + Name);
 end;
 
-function oxTRenderer.GetSummary(wnd: oxTWindow): TStringArray;
+function oxTRenderer.GetSummary(): TStringArray;
 var
    list: array[0..0] of StdString;
 

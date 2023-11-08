@@ -11,7 +11,7 @@ INTERFACE
 	USES uStd, uLog, StringUtils,
      {$INCLUDE usesglext.inc},
      windows, oxuWindowsOS, oxuRenderer,
-     oxuOGL, oxuglExtensions, oxuglRendererPlatform, oxuglRenderer
+     oxuOGL, oxuglExtensions, oxuglRendererPlatform, oxuglRenderer, oxuglWindow
      {$IFNDEF GLES}
      ,oxuWGL
      {$ENDIF};
