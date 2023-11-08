@@ -35,9 +35,8 @@ begin
 
    if(etype = AINPUT_EVENT_TYPE_KEY) then begin
       if(kc = AKEYCODE_BACK) then begin
-         if(action = AKEY_STATE_UP) then begin
-            app^.destroyRequested = 1;
-         end;
+         if(action = AKEY_STATE_UP) then
+            app^.destroyRequested := true;
       end;
    end;
 
@@ -68,7 +67,7 @@ begin
          end;
       end;
 
-      if(app^.destroyRequested <> 0) then
+      if(app^.destroyRequested) then
          exit;
    until false;
 end;
