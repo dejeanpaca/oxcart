@@ -70,10 +70,10 @@ TYPE
       WidgetWindow: uiPWidgetWindow;
       ExternalData: TObject;
 
-      constructor Create; override;
-      procedure OnDeactivate; override;
-      procedure OnClose; override;
-      procedure DeInitialize; override;
+      constructor Create(); override;
+      procedure OnDeactivate(); override;
+      procedure OnClose(); override;
+      procedure DeInitialize(); override;
    end;
 
    uiTWidgetWindowGlobal = record
@@ -121,14 +121,14 @@ end;
 
 { uiTWidgetWindowInternal }
 
-constructor uiTWidgetWindowInternal.Create;
+constructor uiTWidgetWindowInternal.Create();
 begin
    inherited;
 
    DestroyOnDeactivate := true;
 end;
 
-procedure uiTWidgetWindowInternal.OnDeactivate;
+procedure uiTWidgetWindowInternal.OnDeactivate();
 begin
    inherited;
 
@@ -136,7 +136,7 @@ begin
       Close();
 end;
 
-procedure uiTWidgetWindowInternal.OnClose;
+procedure uiTWidgetWindowInternal.OnClose();
 var
    ww: uiPWidgetWindow;
 
@@ -150,7 +150,7 @@ begin
 
 end;
 
-procedure uiTWidgetWindowInternal.DeInitialize;
+procedure uiTWidgetWindowInternal.DeInitialize();
 begin
    inherited DeInitialize;
 end;
