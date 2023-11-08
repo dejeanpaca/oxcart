@@ -80,7 +80,7 @@ var
 begin
    {make sure we're not given any object}
    if(TObject(resource) <> nil) then begin
-      ox.assert(ox.IsType(TObject(resource), oxTResource), 'Tried to load resource which doesn''t inherit from oxTResource: ' + TObject(resource).ClassName);
+      ox.Assert(ox.IsType(TObject(resource), oxTResource), 'Tried to load resource which doesn''t inherit from oxTResource: ' + TObject(resource).ClassName);
 
       if(oxTResource(resource).Pool <> nil) then begin
          {if resource in pool, call the pool method}
@@ -90,7 +90,7 @@ begin
             {otherwise we find the loader}
             loader := oxPResourceLoader(oxTResource(resource).GetLoader());
 
-            ox.assert(loader <> nil, 'Resource loader not found for class type ' + oxTResource(resource).ClassName);
+            ox.Assert(loader <> nil, 'Resource loader not found for class type ' + oxTResource(resource).ClassName);
 
             loader^.Load(oxTResource(resource));
          end;
@@ -107,7 +107,7 @@ begin
    if(TObject(resource) = nil) then
       exit;
 
-   ox.assert(ox.IsType(TObject(resource), oxTResource), 'Tried to destroy resource which doesn''t inherit from oxTResource: ' + TObject(resource).ClassName);
+   ox.Assert(ox.IsType(TObject(resource), oxTResource), 'Tried to destroy resource which doesn''t inherit from oxTResource: ' + TObject(resource).ClassName);
 
    if(res <> nil) and (res.ReferenceCount <> -1) then begin
       {make sure we're not given any object}
@@ -122,7 +122,7 @@ begin
             log.w('Current: ' + DumpCallStack(1));
       end;
       {$ELSE}
-      ox.assert(res.ReferenceCount > 0, 'Tried to dispose resource with a zero reference count');
+      ox.Assert(res.ReferenceCount > 0, 'Tried to dispose resource with a zero reference count');
       {$ENDIF}
 
       if(res.ReferenceCount > 0) then
@@ -152,7 +152,7 @@ begin
    if(TObject(resource) = nil) then
       exit;
 
-   ox.assert(ox.IsType(TObject(resource), oxTResource), 'Tried to free resource which doesn''t inherit from oxTResource ' + TObject(resource).ClassName);
+   ox.Assert(ox.IsType(TObject(resource), oxTResource), 'Tried to free resource which doesn''t inherit from oxTResource ' + TObject(resource).ClassName);
 
    {$IFDEF OX_RESOURCE_DEBUG}
    res := oxTResource(resource);
@@ -290,7 +290,7 @@ end;
 
 procedure oxTResourcePool.AddResource(resource: oxTResource);
 begin
-   ox.assert(resource.Pool = nil, 'resource being added to a pool is already part of some other pool');
+   ox.Assert(resource.Pool = nil, 'resource being added to a pool is already part of some other pool');
 
    resource.Pool := Self;
    Add(resource);
@@ -311,7 +311,7 @@ end;
 
 procedure oxTResourcePool.Load();
 begin
-   ox.assert(true, 'Load method not overriden for resource pool of type ' + ClassName);
+   ox.Assert(true, 'Load method not overriden for resource pool of type ' + ClassName);
 end;
 
 INITIALIZATION

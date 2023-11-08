@@ -274,9 +274,9 @@ var
 
 begin
    if(ValuePool <> nil) and (index > -1) then begin
-      ox.assert(Shader <> nil, 'Shader not set but trying to set value for material ' + Name);
-      ox.assert(Values <> nil, 'Values not set but trying to set value for material ' + Name);
-      ox.assert(ValueIndexes <> nil, 'Values not set but trying to set value for material ' + Name);
+      ox.Assert(Shader <> nil, 'Shader not set but trying to set value for material ' + Name);
+      ox.Assert(Values <> nil, 'Values not set but trying to set value for material ' + Name);
+      ox.Assert(ValueIndexes <> nil, 'Values not set but trying to set value for material ' + Name);
 
       size := Shader.GetUniformSize(index);
       position := ValuePool + ValueIndexes[index];

@@ -79,7 +79,7 @@ TYPE
 
       class function IsType(what, whatType: TClass): boolean; static;
       class function IsType(what: TObject; whatType: TClass): boolean; static;
-      class procedure assert(expression: boolean; const description: string); static;
+      class procedure Assert(expression: boolean; const description: string); static;
    end;
 
 VAR
@@ -160,15 +160,17 @@ begin
    Result := false;
 end;
 
-class procedure oxTGlobal.assert(expression: boolean; const description: string);
+class procedure oxTGlobal.Assert(expression: boolean; const description: string);
 begin
-   {$IFNDEF OX_LIBRARY}
-   system.Assert(expression, description);
-   {$ELSE}
    {$IFOPT C+}
-   if (not expression) then
-      log.e('Assertion failed: ' + description);
-   {$ENDIF}
+      {$IFNDEF OX_LIBRARY}
+      system.Assert(expression, description);
+      {$ELSE}
+      if (not expression) then
+         log.e('Assertion failed: ' + description);
+      {$ENDIF}
+   {$ELSE}
+   system.Assert(expression, description);
    {$ENDIF}
 end;
 
