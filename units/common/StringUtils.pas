@@ -296,6 +296,8 @@ procedure StringFromBytes(out s: StdString; size: loopint; const bytes);
 function GetKeyValue(const s: StdString; out key, value: StdString; const separator: char = '='): boolean;
 {$ENDIF}
 
+function StringToBool(const s: string): boolean;
+
 IMPLEMENTATION
 
 CONST
@@ -2590,6 +2592,20 @@ begin
    value := '';
    Result := false;
 end;
+
+function StringToBool(const s: string): boolean;
+var
+   ls: string;
+
+begin
+   ls := LowerCase(s);
+
+   if(ls = '1') or (ls = 'true') then
+      Result := true
+   else
+      Result := false;
+end;
+
 {$ENDIF}
 
 END.
