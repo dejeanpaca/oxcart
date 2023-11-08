@@ -45,6 +45,11 @@ begin
 end;
 
 procedure oxTAboutWindow.AddWidgets();
+var
+   btnMI,
+   btnOk: wdgTButton;
+
+
 begin
    {add the label}
    wdgLabel.Add(appInfo.GetVersionString(0));
@@ -61,12 +66,14 @@ begin
       uiWidget.LastRect.BelowOf(), oxNullDimensions);
 
    {add a cancel button}
-   wdgButton.Add('Ok', uiWidget.LastRect.BelowOf(), oxDimensions(80, 20), @Close).
-      SetPosition( wdgPOSITION_HORIZONTAL_RIGHT);
-   wdgButton.Add('More Information', uiWidget.LastRect.RightOf(), oxDimensions(200, 20), @showInformation).
-      SetPosition(wdgPOSITION_HORIZONTAL_LEFT);
+   btnMI := wdgButton.Add('Ok', uiWidget.LastRect.BelowOf(), oxDimensions(80, 20), @Close);
+
+   btnOk := wdgButton.Add('More Information', uiWidget.LastRect.RightOf(), oxDimensions(200, 20), @showInformation);
 
    Window.ContentAutoSize();
+
+   btnMI.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT);
+   btnOk.SetPosition(wdgPOSITION_HORIZONTAL_LEFT);
 end;
 
 constructor oxTAboutWindow.Create;
