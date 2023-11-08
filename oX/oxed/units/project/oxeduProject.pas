@@ -167,6 +167,7 @@ begin
    SetIdentifier(Name);
    Session.IncludeThirdPartyUnits := true;
    Session.EnableConsole := true;
+   LineEndings := 'lf';
 
    Units.Initialize(Units);
    IncludeFiles.Initialize(IncludeFiles);
