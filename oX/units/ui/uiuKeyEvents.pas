@@ -130,8 +130,20 @@ begin
 end;
 
 function callKeyMappings(): boolean;
+var
+   mapping: appPKeyMapping;
+
 begin
-   Result := appKeyMappings.Call(d.Key) <> nil;
+   mapping := appKeyMappings.Find(d.Key);
+
+   if(mapping <> nil) then begin
+      if(d.Key.Released()) then
+         mapping^.Call();
+
+      exit(true);
+   end;
+
+   Result := false;
 end;
 
 function callFurther(): boolean;
