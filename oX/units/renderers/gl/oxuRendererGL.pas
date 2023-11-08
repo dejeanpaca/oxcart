@@ -29,9 +29,11 @@ INTERFACE
       oxuglTransform,
       oxuglRender,
       {$IFNDEF GLES}
-      oxuglShader,
-      oxuglShaderLoader,
-      oxugl1Shims,
+         oxuglShader,
+         oxuglShaderLoader,
+         {$IFDEF OX_GL_1_1_SUPPORT}
+         oxugl1Shims,
+         {$ENDIF}
          {$IFNDEF OX_LIBRARY}
          oxuglDebugOutput,
          {$ENDIF}
