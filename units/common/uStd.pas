@@ -6,6 +6,8 @@
 {$INCLUDE oxheader.inc}
 UNIT uStd;
 
+{$INCLUDE oxutf8.inc}
+
 INTERFACE
 
    USES
