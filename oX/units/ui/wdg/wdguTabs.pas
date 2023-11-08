@@ -37,6 +37,9 @@ TYPE
       {tab ID}
       ID: StdString;
 
+      {does this entry require a surface to be rendered (disable if surface is overdrawn)}
+      RequiresSurfaceRender: boolean;
+
       {relative horizontal position}
       x,
       {relative vertical position}
@@ -299,6 +302,7 @@ procedure wdgTTabs.Render();
 var
    i: loopint;
 
+   requiresSurface: boolean;
    current: wdgPTabEntry;
 
    f: oxTFont;
@@ -309,7 +313,13 @@ var
 begin
    pSkin := GetSkinObject();
 
-   if(RenderSurface) then begin
+   requiresSurface := RenderSurface;
+
+   {don't render if this tab doesn't require it}
+   if(Tabs.Selected > 0) then
+      requiresSurface := requiresSurface and Tabs.t[Tabs.Selected].RequiresSurfaceRender;
+
+   if(requiresSurface) then begin
       r.x := RPosition.x + SurfaceOffset.x;
       r.y := RPosition.y - SurfaceOffset.y;
       r.w := SurfaceDimensions.w;
@@ -558,6 +568,7 @@ begin
 
    t.Title := Title;
    t.ID := tabID;
+   t.RequiresSurfaceRender := true;
    uiTControls.Initialize(uiTControls(t.Widgets));
 
    Tabs.t.Add(t);
