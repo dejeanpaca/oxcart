@@ -176,7 +176,7 @@ begin
 
    {get an RC to render the splash screen}
    RC := renderer.GetRenderingContext(AssociatedWindow);
-   log.v('Render task: ' + ClassName + ' got RC: ' + sf(RC));
+   log.v('Render task: ' + Name + ' got RC: ' + sf(RC));
 
 
    {restore old context before proceeding}
