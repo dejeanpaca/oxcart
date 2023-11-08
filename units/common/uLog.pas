@@ -164,6 +164,8 @@ TYPE
 
       {log string with specified priority}
       procedure s({%H-}priority: longint; const {%H-}logString: StdString);
+      procedure s({%H-}priority: longint; {%H-}args: array of const);
+
       {flush log file}
       procedure Flush();
       {flush log file}
@@ -171,19 +173,26 @@ TYPE
 
       {log information}
       procedure i(const {%H-}logString: StdString);
+      procedure i({%H-}args: array of const);
       procedure i();
       {log error}
       procedure e(const {%H-}logString: StdString);
+      procedure e({%H-}args: array of const);
       {log warning}
       procedure w(const {%H-}logString: StdString);
+      procedure w({%H-}args: array of const);
       {log debug}
       procedure d(const {%H-}logString: StdString);
+      procedure d({%H-}args: array of const);
       {log verbose}
       procedure v(const {%H-}logString: StdString);
+      procedure v({%H-}args: array of const);
       {log fatal}
       procedure f(const {%H-}logString: StdString);
+      procedure f({%H-}args: array of const);
       {log ok}
       procedure k(const {%H-}logString: StdString);
+      procedure k({%H-}args: array of const);
 
       {enter section}
       procedure Enter(const {%H-}title: StdString; {%H-}collapsed: boolean);
@@ -990,6 +999,32 @@ begin
    {$ENDIF}
 end;
 
+procedure TLog.s(priority: longint; args: array of const);
+{$IFNDEF NOLOG}
+var
+   index: loopint;
+   logString: StdString = '';
+{$ENDIF}
+
+begin
+   {$IFNDEF NOLOG}
+   for index := 0 to high(args) do begin
+      case args[index].VType of
+         vtInteger:     logString := logString + sf(args[index].VInteger);
+         vtInt64:       logString := logString + sf(args[index].VInt64^);
+         vtQWord:       logString := logString + sf(args[index].VQWord^);
+         vtBoolean:     logString := logString + sf(args[index].VBoolean);
+         vtAnsiString:  logString := logString + AnsiString(args[index].VAnsiString^);
+         vtString:      logString := logString + args[index].VString^; {shortstring}
+         vtChar:        logString := logString + args[index].VChar;
+         vtPointer:     logString := logString + addr2str(args[index].VPointer);
+      end;
+   end;
+
+   HandlerWriteln(priority, logString, false);
+   {$ENDIF}
+end;
+
 procedure TLog.Flush();
 begin
    {$IFNDEF NOLOG}
@@ -1014,6 +1049,13 @@ begin
    {$ENDIF}
 end;
 
+procedure TLog.i(args: array of const);
+begin
+   {$IFNDEF NOLOG}
+   s(logcINFO, args);
+   {$ENDIF}
+end;
+
 procedure TLog.i();
 begin
    {$IFNDEF NOLOG}
@@ -1028,6 +1070,13 @@ begin
    {$ENDIF}
 end;
 
+procedure TLog.e(args: array of const);
+begin
+   {$IFNDEF NOLOG}
+   s(logcERROR, args);
+   {$ENDIF}
+end;
+
 procedure TLog.w(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
@@ -1035,10 +1084,24 @@ begin
    {$ENDIF}
 end;
 
+procedure TLog.w(args: array of const);
+begin
+   {$IFNDEF NOLOG}
+   s(logcWARNING, args);
+   {$ENDIF}
+end;
+
 procedure TLog.d(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
    HandlerWriteln(logcDEBUG, logString, false);
+   {$ENDIF}
+end;
+
+procedure TLog.d(args: array of const);
+begin
+   {$IFNDEF NOLOG}
+   s(logcDEBUG, args);
    {$ENDIF}
 end;
 
@@ -1050,6 +1113,13 @@ begin
    {$ENDIF}
 end;
 
+procedure TLog.v(args: array of const);
+begin
+   {$IFNDEF NOLOG}
+   s(logcVERBOSE, args);
+   {$ENDIF}
+end;
+
 procedure TLog.f(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
@@ -1057,10 +1127,24 @@ begin
    {$ENDIF}
 end;
 
+procedure TLog.f(args: array of const);
+begin
+   {$IFNDEF NOLOG}
+   s(logcFATAL, args);
+   {$ENDIF}
+end;
+
 procedure TLog.k(const logString: StdString);
 begin
    {$IFNDEF NOLOG}
    HandlerWriteln(logcOK, logString, false);
+   {$ENDIF}
+end;
+
+procedure TLog.k(args: array of const);
+begin
+   {$IFNDEF NOLOG}
+   s(logcOK, args);
    {$ENDIF}
 end;
 
