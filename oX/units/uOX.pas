@@ -9,7 +9,7 @@ UNIT uOX;
 INTERFACE
 
    USES
-      uStd, uAppInfo, udvars, oxuRunRoutines;
+      uStd, uAppInfo, udvars, oxuRunRoutines, uError;
 
 CONST
    oxEngineName               = 'oX';
@@ -104,7 +104,7 @@ begin
    if(errcode > $FF) then begin
    end;
 
-   exit(uStd.GetErrorCodeString(errcode));
+   exit(uError.GetErrorCodeString(errcode));
 end;
 
 INITIALIZATION

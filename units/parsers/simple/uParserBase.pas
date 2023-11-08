@@ -9,7 +9,7 @@ UNIT uParserBase;
 INTERFACE
 
    USES
-      uStd, uLog,
+      uStd, uError, uLog,
       uFile, uFiles;
 
 TYPE
