@@ -60,11 +60,13 @@ end;
 
 function oxglTEGL.PreInitWindow(wnd: oglTWindow): boolean;
 var
-   attribs: array[0..8] of EGLint = (
+   attribs: array[0..12] of EGLint = (
       EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
       EGL_BLUE_SIZE, 8,
       EGL_GREEN_SIZE, 8,
       EGL_RED_SIZE, 8,
+      EGL_DEPTH_SIZE, 24,
+      EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
       EGL_NONE
    );
 
