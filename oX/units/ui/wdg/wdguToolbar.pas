@@ -238,7 +238,6 @@ begin
 
    for i := 0 to Items.n - 1 do begin
       oxResource.Destroy(Items.List[i].Glyph);
-      Items.List[i].Glyph := nil;
    end;
 
    Items.Dispose();
