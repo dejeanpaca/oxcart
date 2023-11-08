@@ -220,7 +220,7 @@ end;
 function DumpExceptionHeader(e: Exception): StdString;
 begin
    if(e <> nil) then
-      Result := 'Exception ' + E.ClassName + ' ' + E.Message + ' (unit: ' + e.UnitName + ')' + LineEnding
+      Result := '(t: ' + getThreadIdentifier() + ') Exception ' + E.ClassName + ' ' + E.Message + ' (unit: ' + e.UnitName + ')' + LineEnding
    else
       Result := '';
 end;
