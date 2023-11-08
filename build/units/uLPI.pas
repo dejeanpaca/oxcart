@@ -39,13 +39,16 @@ TYPE
    { TLPIFile }
 
    TLPIFile = record
-      Version: loopint;
+      MinimumVersion,
+      LPIVersion: loopint;
+
       Path: string;
       xmlDoc: TXMLDocument;
       Error: longint;
 
       project: record
-         root: TDOMNode;
+         root,
+         version: TDOMNode;
 
          general: record
             root,
@@ -66,7 +69,8 @@ TYPE
       end;
 
       compiler: record
-         root: TDOMNode;
+         root,
+         version: TDOMNode;
 
          searchPaths: record
             root,
@@ -103,6 +107,8 @@ TYPE
             customOptions: TDOMNode;
          end;
       end;
+
+      procedure Initialize();
 
       procedure Update();
       procedure ApplyValues();
@@ -153,6 +159,7 @@ TYPE
 
       procedure Create(const source: string; context: PLPIContext = nil);
       procedure Update(const lpiFile: string; context: PLPIContext = nil);
+      function Test(const lpiFile: string; context: PLPIContext = nil): boolean;
 
       procedure Initialize(out f: TLPIFile);
       procedure Initialize(out context: TLPIContext);
@@ -215,11 +222,19 @@ end;
 
 { TLPIFile }
 
+procedure TLPIFile.Initialize();
+begin
+   compiler.applyConventions := true;
+   MinimumVersion := 11;
+end;
+
 procedure TLPIFile.Update();
 begin
    try
       project.root := xmlDoc.FirstChild.FindNode('ProjectOptions');
       if(project.root <> nil) then begin
+         project.version := project.root.FindNode('Version');
+
          project.general.root := project.root.FindNode('General');
 
          if(project.general.root <> nil) then
@@ -240,6 +255,7 @@ begin
       compiler.root := xmlDoc.FirstChild.FindNode('CompilerOptions');
 
       if(compiler.root <> nil) then begin
+         compiler.version := compiler.root.FindNode('Version');
          compiler.target := compiler.root.FindNode('Target');
 
          if(compiler.target <> nil) then begin
@@ -282,10 +298,15 @@ begin
 
          compiler.other.root := compiler.root.FindNode('Other');
 
-         if(compiler.other.root <> nil) then begin
+         if(compiler.other.root <> nil) then
             compiler.other.customOptions := compiler.other.root.FindNode('CustomOptions');
-         end else
-            log.e('custom options not found');
+      end;
+
+      if(project.version <> nil) then begin
+         lpiVersion := project.version.GetAttributeInt('Value');
+
+         if(LPIVersion < MinimumVersion) then
+            log.w('LPI version mismatch, got ' + GetValue(project.version) + ', expected ' + sf(MinimumVersion) + ' for: ' + Path);
       end;
    except
       on E: Exception do begin
@@ -352,17 +373,21 @@ var
    nodeValue: string;
 
 begin
-   if(compiler.other.customOptions <> nil) then begin
-      nodeValue := GetValue(compiler.other.customOptions);
+   if(compiler.other.root = nil) then
+      compiler.other.root := compiler.root.CreateChild('Other');
 
-      s := option;
+   if(compiler.other.customOptions = nil) then
+      compiler.other.customOptions := compiler.other.root.CreateChild('CustomOptions');
 
-      if(nodeValue <> '') then
-         SetValue(compiler.other.customOptions, nodeValue + LineEnding + s)
-      else
-         SetValue(compiler.other.customOptions, s);
-   end else
-      log.e('Could not set custom option ' +  option + ' in lpi xml, as the node was not found');
+
+   nodeValue := GetValue(compiler.other.customOptions);
+
+   s := option;
+
+   if(nodeValue <> '') then
+      SetValue(compiler.other.customOptions, nodeValue + LineEnding + s)
+   else
+      SetValue(compiler.other.customOptions, s);
 end;
 
 procedure TLPIFile.AddUnitPath(const newPath: string);
@@ -370,6 +395,9 @@ var
    units: string;
 
 begin
+   if(compiler.searchPaths.otherUnits = nil) then
+      compiler.searchPaths.otherUnits := compiler.searchPaths.root.CreateChild('OtherUnitFiles');
+
    units := GetValue(compiler.searchPaths.otherUnits);
 
    if(units <> '') then
@@ -385,6 +413,9 @@ var
    includes: string;
 
 begin
+   if(compiler.searchPaths.includeFiles = nil) then
+      compiler.searchPaths.includeFiles := compiler.searchPaths.root.CreateChild('IncludeFiles');
+
    includes := GetValue(compiler.searchPaths.includeFiles);
 
    if(includes <> '') then
@@ -421,36 +452,23 @@ begin
 
       {add item value}
       valueNode := item.CreateChild('PackageName');
-      valueNode.SetAttributeValue('Value', packageName);
+
+      SetValue(valueNode, packageName);
    end;
 end;
 
 procedure TLPIFile.CreatePackagesSection();
-var
-   attr: TDOMAttr;
-
 begin
    if(project.requiredPackages.root = nil) then begin
-      project.requiredPackages.root := xmlDoc.CreateElement('RequiredPackages');
-      project.root.AppendChild(project.requiredPackages.root);
-
-      attr := xmlDoc.CreateAttribute('Count');
-      attr.NodeValue := '0';
-      project.requiredPackages.root.Attributes.SetNamedItem(attr);
+      project.requiredPackages.root := project.root.CreateChild('RequiredPackages');
+      project.requiredPackages.root.SetAttributeValue('Count', '0');
    end;
 end;
 
 class procedure TLPIFile.SetValue(node: TDOMNode; const value: string);
-var
-   valueNode: TDOMNode;
-
 begin
-   if(node <> nil) then begin
-      valueNode := node.Attributes.GetNamedItem('Value');
-
-      if(valueNode <> nil) then
-         valueNode.NodeValue := Value;
-   end;
+   if(node <> nil) then
+      node.SetAttributeValue('Value', value);
 end;
 
 class function TLPIFile.GetValue(node: TDOMNode): string;
@@ -649,11 +667,52 @@ begin
    end;
 end;
 
+function TLPIGlobal.Test(const lpiFile: string; context: PLPIContext): boolean;
+var
+   f: TLPIFile;
+
+begin
+   Result := False;
+
+   if(not IsInitialized()) then begin
+      Error := eLPI_NOT_INITIALIZED;
+      exit(False);
+   end;
+
+   Error := 0;
+   Initialize(f);
+
+   {load a template as a string}
+   if(FileExists(lpiFile)) then begin
+      Initialize(f);
+
+      f.Load(lpiFile);
+
+      if(f.Error <> 0) then begin
+         Error := f.Error;
+         exit(False);
+      end;
+
+      log.i('Loaded ' + f.Path);
+
+      if(context <> nil) and (context^.Loaded <> nil) then
+         context^.Loaded(f);
+
+      log.i('Version ' + sf(f.LPIVersion));
+
+      f.Destroy();
+      exit(True);
+   end else begin
+      log.e('Failure finding lpi file at ' + lpiFile + ': ' + getRunTimeErrorDescription(ioE));
+
+      Error := eLPI_FAILED_TO_LOAD;
+   end;
+end;
+
 procedure TLPIGlobal.Initialize(out f: TLPIFile);
 begin
    ZeroPtr(@f, SizeOf(f));
-   f.compiler.applyConventions := true;
-   f.Version := 11;
+   f.Initialize();
 end;
 
 procedure TLPIGlobal.Initialize(out context: TLPIContext);
