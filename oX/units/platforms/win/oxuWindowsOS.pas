@@ -121,7 +121,6 @@ end;
 begin
    len := windows.FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nil, messsageID, 0, @buf, Length(buf) - 1, nil);
 
-   {remove newlines which are returned for some reason}
    if(includeCode) then
       Result := '(0x' + hexstr(messsageID, 8) + ') ' + copyMessage()
    else
