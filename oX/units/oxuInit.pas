@@ -15,11 +15,12 @@ INTERFACE
      {app}
      uAppInfo, uApp, appuLog, appudvarConfiguration,
      {oX}
-     uOX, oxuPlatform, oxuWindows, oxuUIHooks, oxuUI, oxuGlobalInstances, oxuPlatforms,
-     oxuRenderer, oxuRenderers
+     uOX, oxuPlatform, oxuWindows, oxuUIHooks, oxuGlobalInstances, oxuPlatforms,
+     oxuRenderer, oxuRenderers,
      {$IFNDEF OX_LIBRARY}
-     , oxuContextWindow
-     {$ENDIF};
+     oxuContextWindow,
+     {$ENDIF}
+     uiuBase;
 
 TYPE
    oxTInitializationGlobal = record
@@ -146,7 +147,7 @@ begin
    {$ENDIF}
 
    {initialize UI}
-   oxui.BaseInitialize();
+   ui.BaseInitialize();
 
    log.i('Pre-initialization done (Elapsed: ' + GlobalStartTime.ElapsedfToString() + 's)');
 
@@ -215,7 +216,7 @@ begin
    log.i('Called all initialization routines (elapsed: ' + elapsedTime.ElapsedfToString() + 's)');
 
    {call UI initialization routines}
-   oxui.Initialize();
+   ui.Initialize();
 
    {success}
    log.i('Initialization done. Elapsed: ' + GlobalStartTime.ElapsedfToString() + 's');
@@ -294,15 +295,13 @@ begin
       oxUIHooks.DestroyWindow(oxWindows.w[0]);
 
    {done with UI}
-   if(oxui <> nil) then
-      oxui.Deinitialize();
+   ui.Deinitialize();
 
    {call any de-initializers}
    ox.Init.dCall();
 
    {de-initialize UI}
-   if(oxui <> nil) then
-      oxui.BaseDeInitialize();
+   ui.BaseDeInitialize();
 
    ox.BaseInit.dCall();
    log.i('Called de-initialization routines');

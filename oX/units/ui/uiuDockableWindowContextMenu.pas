@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       uStd, oxuTypes, oxuWindow, oxuRunRoutines,
       {ui}
-      uiuWindow, oxuUI, uiuTypes, uiWidgets, uiuWidget,
+      uiuBase, uiuWindow, oxuUI, uiuTypes, uiWidgets, uiuWidget,
       uiuContextMenu, uiuDockableWindow, uiuWidgetWindow,
       wdguTabs, wdguBlock;
 
@@ -103,7 +103,7 @@ VAR
    initRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxui.BaseInitializationProcs.Add(initRoutines, 'ui.dockable_window', @init, @deinit);
+   ui.BaseInitializationProcs.Add(initRoutines, 'ui.dockable_window', @init, @deinit);
 
    {self destroy windows by default}
    uiDockableWindow.SelfDestroy := true;

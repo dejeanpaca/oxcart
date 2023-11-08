@@ -74,12 +74,6 @@ TYPE
    { oxTUI }
 
    oxTUI = class
-      {ui is initialized and ready}
-      Initialized,
-      {ui started initialization (if false it means it never attempted to initialize)}
-      StartedInitialization,
-      PointerHover: boolean;
-
       {currently selected window}
       Select: uiTSelectInfo;
       {which window to use for further actions}
@@ -104,10 +98,6 @@ TYPE
       {pointer capture data}
       PointerCapture: uiTPointerCapture;
 
-      {initialization procedures}
-      BaseInitializationProcs,
-      InitializationProcs: oxTRunRoutines;
-
       WindowMove: oxTPoint;
 
       {Material used for the UI}
@@ -119,12 +109,6 @@ TYPE
       dvg: TDVarGroup; static;
 
       constructor Create();
-
-      procedure Initialize();
-      procedure DeInitialize();
-
-      procedure BaseInitialize();
-      procedure BaseDeInitialize();
 
       function GetUseWindow(): uiTWindow;
       procedure SetUseWindow(wnd: uiTWindow);
@@ -237,8 +221,6 @@ constructor oxTUI.Create();
 begin
    inherited;
 
-   PointerHover := true;
-
    PointerCapture.Typ := uiPOINTER_CAPTURE_NONE;
 
    {make sure that no window is selected}
@@ -247,41 +229,6 @@ begin
 
    mSelectHoverTime := timer.Cur();
    mLastEventTime := timer.Cur();
-end;
-
-procedure oxTUI.Initialize();
-begin
-   InitializationProcs.iCall();
-end;
-
-procedure oxTUI.DeInitialize();
-begin
-   InitializationProcs.dCall();
-
-   Font := nil;
-   oxResource.Free(Material);
-end;
-
-procedure oxTUI.BaseInitialize();
-begin
-   oxui.StartedInitialization := true;
-   oxui.BaseInitializationProcs.iCall();
-
-   log.i('Initialized UI');
-end;
-
-procedure oxTUI.BaseDeInitialize();
-begin
-   if(StartedInitialization) then begin
-      StartedInitialization := false;
-
-      {de-initialize UI}
-      oxui.BaseInitializationProcs.dCall();
-
-      oxResource.Free(Material);
-
-      log.i('Deinitialized UI');
-   end;
 end;
 
 function oxTUI.GetUseWindow(): uiTWindow;

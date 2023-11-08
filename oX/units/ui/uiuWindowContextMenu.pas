@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuRunRoutines,
       {ui}
-      oxuUI, uiuWindowTypes, uiuWindow, uiuPointerEvents, uiuContextMenu;
+      uiuBase, oxuUI, uiuWindowTypes, uiuWindow, uiuPointerEvents, uiuContextMenu;
 
 TYPE
 
@@ -132,7 +132,7 @@ begin
 end;
 
 INITIALIZATION
-   oxui.InitializationProcs.dAdd(initRoutines, 'ui.window_context_menu', @DeInitialize);
+   ui.InitializationProcs.dAdd(initRoutines, 'ui.window_context_menu', @DeInitialize);
    uiPointerEvents.OpenContextWindow := @openContextWindow;
    uiWindow.OnDestroy.Add(@windowDestroyed);
 

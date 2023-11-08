@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       oxuRunRoutines,
       {ui}
-      uiuTypes, uiuWidget, oxuUI, uiuSkinTypes, uiuSkin;
+      uiuBase, uiuTypes, uiuWidget, oxuUI, uiuSkinTypes, uiuSkin;
 
 TYPE
 
@@ -142,7 +142,7 @@ begin
    Init(self, CopyAfter(name, '.'));
 
    if(initProc <> nil) then begin
-      oxui.BaseInitializationProcs.iAdd(InitRoutines, name, initProc);
+      ui.BaseInitializationProcs.iAdd(InitRoutines, name, initProc);
    end;
 
    inc(uiRegisteredWidgets.nWidgetTypes);
@@ -168,7 +168,7 @@ VAR
    skinInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxui.BaseInitializationProcs.Add(skinInitRoutines, 'widget.skin', @skinInitialize);
+   ui.BaseInitializationProcs.Add(skinInitRoutines, 'widget.skin', @skinInitialize);
 
    InitDummyWidgetClass();
 

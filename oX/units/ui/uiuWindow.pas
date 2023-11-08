@@ -19,7 +19,7 @@ INTERFACE
       oxuWindowTypes, oxuRender,
       oxuTexture, oxuTextureGenerate,
       {ui}
-      oxuUI, uiuSkin, uiuZOrder, uiuTypes, uiuControl, uiuSkinTypes,
+      uiuBase, oxuUI, uiuSkin, uiuZOrder, uiuTypes, uiuControl, uiuSkinTypes,
       uiuWindowTypes, uiuWidget, uiWidgets;
 
 CONST
@@ -2220,7 +2220,7 @@ INITIALIZATION
    uiWindow.NextWindowKey.Assign(kcTAB, kmCONTROL);
    uiWindow.PreviousWindowKey.Assign(kcTAB, kmCONTROL or kmSHIFT);
 
-   oxui.BaseInitializationProcs.Add(initRoutines, 'window', @Initialize, @DeInitialize);
+   ui.BaseInitializationProcs.Add(initRoutines, 'window', @Initialize, @DeInitialize);
 
    {events}
    uiWindow.evhp := appEvents.AddHandler(uiWindow.evh, 'ox.uiwindow', @actionHandler);
