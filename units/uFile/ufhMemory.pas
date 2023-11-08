@@ -23,7 +23,7 @@ TYPE
    end;
 
 VAR
-   memFileHandler: TFileHandler;
+   memfHandler: TMemoryFileHandler;
    memMemFileHandler: TFileMemHandler;
 
 IMPLEMENTATION
@@ -35,7 +35,6 @@ CONST
 
 constructor TMemoryFileHandler.Create();
 begin
-   inherited;
    Name := 'memory';
    UseBuffering := false;
    DoReadUp := false;
@@ -101,11 +100,12 @@ end;
 
 INITIALIZATION
    {memory file handler}
-   memFileHandler.Create();
+   memfHandler.Create();
 
-   memMemFileHandler.Handler := @memFileHandler;
+   memMemFileHandler.Handler := @memfHandler;
    memMemFileHandler.Open    := @memfOpen;
    memMemFileHandler.New     := @memfNew;
+
    fFile.Handlers.Mem := @memMemFileHandler;
 END.
 

@@ -37,8 +37,8 @@ TYPE
    end;
 
 VAR
-   stdfHandler: TFileHandler;
-   stdfHandlerBuffered: TFileHandler;
+   stdfHandler: TStandardFileHandler;
+   stdfHandlerBuffered: TStandardBufferedFileHandler;
 
    stdStdFileHandler: TFileStdHandler;
 

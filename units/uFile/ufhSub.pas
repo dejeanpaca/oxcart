@@ -24,7 +24,7 @@ TYPE
    end;
 
 VAR
-   subfHandler: TFileHandler;
+   subfHandler: TSubFileHandler;
    subSubFileHandler: TFileSubHandler;
 
 IMPLEMENTATION
