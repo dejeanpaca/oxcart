@@ -18,7 +18,7 @@ INTERFACE
       oxuTypes, oxuFont, oxuTexture,
       {ui}
       uiuTypes, uiuWindowTypes, uiuWidget, uiWidgets, uiuDraw, uiuWidgetRender, uiuWindow, uiuSettings,
-      uiuPointerEvents,
+      uiuPointer,
       wdguScrollbar;
 
 TYPE
@@ -991,7 +991,7 @@ begin
    LastPointerPosition.y := y;
 
    if(e.Action.IsSet(appmcRELEASED)) then begin
-      if(not uiPointerEvents.IsDoubleClick()) then begin
+      if(not uiPointer.IsDoubleClick()) then begin
          if(e.Button = appmcLEFT) then begin
             SelectedItem := SelectPointer();
             SelectedItemOffset := HighlightedItemOffset;
