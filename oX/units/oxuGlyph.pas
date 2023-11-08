@@ -19,6 +19,8 @@ TYPE
    { oxTGlyph }
 
    oxTGlyph = record
+     Width,
+     Height,
      BearingX,
      BearingY,
      Advance: loopint;
