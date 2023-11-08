@@ -263,9 +263,7 @@ var
    wnd: oxedTInspectorWindow;
 
 begin
-   wnd := oxedTInspectorWindow(oxedInspector.Instance);
-
-   if(wnd = nil) then
+   if(not oxedInspector.GetWindow(wnd)) then
       exit;
 
    if(entity <> nil) then begin
