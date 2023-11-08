@@ -342,7 +342,7 @@ end;
 
 function getRelativePath(const basePath: StdString; const unitPath: StdString): StdString;
 begin
-   Result := ExtractRelativepath(oxedBuild.WorkArea, basePath + unitPath);
+   Result := ExtractRelativePath(oxedBuild.WorkArea, basePath + unitPath);
 end;
 
 function getAbsolutePath(const basePath: StdString; const unitPath: StdString): StdString;
@@ -676,8 +676,6 @@ end;
 
 class function oxedTBuildGlobal.Recreate(force: boolean): boolean;
 begin
-   oxedProject.RecreateTempDirectory();
-
    if(not FileUtils.CreateDirectory(build.FPCOptions.UnitOutputPath)) then begin
       oxedBuildLog.e('Failed to create unit output directory: ' + build.FPCOptions.UnitOutputPath);
       exit(false);
@@ -884,6 +882,8 @@ begin
       if(FileUtils.DirectoryExists(WorkArea)) then
          FileUtils.RmDir(WorkArea);
    end;
+
+   oxedProject.RecreateTempDirectory();
 
    createPath('work area', WorkArea);
    createPath('target', TargetPath);
