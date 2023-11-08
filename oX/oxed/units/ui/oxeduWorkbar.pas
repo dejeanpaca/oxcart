@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, uColors,
       {ui}
-      uiWidgets, wdguToolbar, wdguFileList,
+      uiWidgets, uiuFiles, wdguToolbar,
       {oxed}
       oxeduProject, oxeduProjectManagement,
       oxeduIcons, oxeduActions, oxeduProjectSettingsWindow;
@@ -69,7 +69,7 @@ begin
 
    btn := Workbar.AddButton(oxedIcons.Create($f07b), oxedActions.OPEN_PROJECT_DIRECTORY);
    btn^.Hint := 'Open project directory';
-   btn^.Color := wdgFileList.DirectoryColor;
+   btn^.Color := uiFiles.DirectoryColor;
    Buttons.ProjectDirectory := btn;
 
    btn := Workbar.AddButton(oxedIcons.Create($f1b0), oxedActions.OPEN_LAZARUS);
