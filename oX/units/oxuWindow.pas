@@ -49,8 +49,6 @@ TYPE
       procedure Maximize();
       procedure Minimize();
       procedure Restore();
-      {set title of window}
-      procedure SetTitle(const newTitle: string);
 
       {set a frame for the window}
       procedure SetFrame(fs: uiTWindowFrameStyle);
@@ -434,20 +432,6 @@ begin
 
    if(oxUIHooks <> nil) then
       oxUIHooks.Restore(Self);
-end;
-
-procedure oxTWindowHelper.SetTitle(const newTitle: string);
-begin
-   log.v('oX > Set window title to: ' + newTitle + ' from ' + Title);
-
-   Title := newTitle;
-
-   if(oxProperties.Created) then begin
-      if(not oxProperties.Context) and (oxProperties.Created) then begin
-         uiTWindow(Self).Title := newTitle;
-         oxTPlatform(Platform).SetTitle(Self, newTitle);
-      end;
-   end;
 end;
 
 procedure oxTWindowHelper.SetFrame(fs: uiTWindowFrameStyle);

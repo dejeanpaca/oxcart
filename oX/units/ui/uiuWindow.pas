@@ -14,7 +14,7 @@ INTERFACE
       uApp, appuEvents, appuKeys, appuActionEvents, appuMouse,
       {oX}
       oxuRunRoutines, oxuTypes, oxuWindows, oxuResourcePool,
-      oxuWindowTypes, oxuRender,
+      oxuWindowTypes, oxuRender, oxuPlatform,
       oxuTexture, oxuTextureGenerate,
       {ui}
       uiuBase, uiuUI, oxuUI, uiuSkin, uiuZOrder, uiuTypes, uiuControl, uiuSkinTypes,
@@ -1276,12 +1276,21 @@ begin
 end;
 
 function uiTWindowHelper.SetTitle(const newTitle: StdString): uiTWindow;
+var
+   oxw: oxTWindow;
+
 begin
    Title := newTitle;
 
    {top level window}
-   if(oxwParent = nil) then
-      oxTWindow(Self).Viewport.Name := newTitle;
+   if(oxwParent = nil) then begin
+      oxw := oxTWindow(Self);
+      oxw.Viewport.Name := newTitle;
+
+      if(not oxw.oxProperties.Context) and (oxw.oxProperties.Created) then begin
+         oxTPlatform(oxw.Platform).SetTitle(oxw, newTitle);
+      end;
+   end;
 
    Result := Self;
 end;
