@@ -120,8 +120,7 @@ begin
    ClearBits := oxrBUFFER_CLEAR_NOTHING;
    DisplayTime := oxSplashScreen.DefaultDisplayTime;
 
-   TTimer.Init(Timer);
-   Timer.Start();
+   Timer.InitStart();
 
    EmitAllEvents();
 end;
@@ -138,6 +137,7 @@ begin
    AssociatedWindow := wnd;
 
    Load();
+   Timer.Start();
 end;
 
 procedure oxTSplashScreen.Load();
@@ -192,16 +192,19 @@ end;
 procedure oxTSplashScreen.WaitForDisplayTime();
 begin
    if(DisplayTime > 0) then begin
-      repeat
+      Timer.Update();
+
+      while(Timer.Elapsed() < DisplayTime) do begin
          oxTimer.Sleep(1);
-      until Timer.Elapsed() > DisplayTime;
+
+         Timer.Update();
+      end;
    end;
 end;
 
 procedure oxTSplashScreen.Run();
 begin
    if(AssociatedWindow.IsSelected()) then begin
-      Update();
       TimeFlow := Timer.TimeFlow();
       Render();
    end;

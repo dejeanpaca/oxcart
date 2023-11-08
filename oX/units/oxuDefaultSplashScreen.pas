@@ -38,7 +38,7 @@ IMPLEMENTATION
 
 constructor oxTDefaultSplashScreen.Create();
 begin
-   inherited Create();
+   inherited;
 
    ClearBits := oxrBUFFER_CLEAR_COLOR;
    {$IFDEF DEBUG}
