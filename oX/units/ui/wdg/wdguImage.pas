@@ -32,6 +32,8 @@ TYPE
       function SetImage(newTexture: oxTTexture): boolean;
 
       function Has(): boolean;
+
+      procedure Destroy();
    end;
 
    { wdgTImage }
@@ -85,10 +87,7 @@ begin
 
    oxTextureGenerate.Generate(fn, Texture);
 
-   if(Texture <> nil) then begin
-      Texture.MarkUsed();
-      Result := true;
-   end;
+   Result := Texture <> nil;
 end;
 
 function wdgTImageTexture.SetImage(newTexture: oxTTexture): boolean;
@@ -98,15 +97,17 @@ begin
    FileName := '';
    Texture := newTexture;
 
-   if(Texture <> nil) then begin
-      Texture.MarkUsed();
-      Result := true;
-   end;
+   Result := Texture <> nil;
 end;
 
 function wdgTImageTexture.Has(): boolean;
 begin
    Result := (Texture <> nil) and (Texture.rId <> 0);
+end;
+
+procedure wdgTImageTexture.Destroy();
+begin
+   oxResource.Destroy(Texture);
 end;
 
 constructor wdgTImage.Create();
@@ -154,7 +155,7 @@ procedure wdgTImage.DeInitialize();
 begin
    inherited DeInitialize();
 
-   oxResource.Destroy(Texture.Texture);
+   Texture.Destroy();
 end;
 
 procedure wdgTImage.CalculateQuad();

@@ -123,7 +123,7 @@ procedure wdgTImageButton.DeInitialize();
 begin
    inherited DeInitialize();
 
-   oxResource.Destroy(Texture);
+   Texture.Destroy();
 end;
 
 procedure wdgTImageButton.Render();
