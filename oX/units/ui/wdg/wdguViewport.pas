@@ -9,14 +9,26 @@ UNIT wdguViewport;
 INTERFACE
 
    USES
-      uStd,
+      uStd, uColors,
       {oX}
-      oxuTypes,
+      oxuTypes, oxuProjectionType, oxuProjection,
       {ui}
       uiuWidget, uiWidgets, uiuRegisteredWidgets, wdguBase;
 
 TYPE
+
+   { wdgTViewport }
+
    wdgTViewport = class(uiTWidget)
+      Projection: oxTProjection;
+
+      constructor Create(); override;
+      procedure Render(); override;
+
+      procedure UpdateViewport();
+
+      procedure SizeChanged(); override;
+      procedure PositionChanged(); override;
    end;
 
    wdgTViewportGlobal = class(specialize wdgTBase<wdgTViewport>)
@@ -39,6 +51,39 @@ end;
 procedure deinit();
 begin
    FreeObject(wdgViewport);
+end;
+
+{ wdgTViewport }
+
+constructor wdgTViewport.Create();
+begin
+   inherited Create();
+
+   oxTProjection.Create(Projection);
+   Projection.Initialize(0, 0, 640, 480);
+   Projection.Name := Caption;
+   Projection.ClearColor.Assign(0.2, 0.2, 0.2, 1.0);
+   Projection.Perspective(60, 0.5, 1000.0);
+end;
+
+procedure wdgTViewport.Render();
+begin
+   Projection.Apply();
+end;
+
+procedure wdgTViewport.UpdateViewport();
+begin
+   Projection.SetViewport(RPosition.x, RPosition.y, Dimensions.w, Dimensions.h);
+end;
+
+procedure wdgTViewport.SizeChanged();
+begin
+   UpdateViewport();
+end;
+
+procedure wdgTViewport.PositionChanged();
+begin
+   UpdateViewport();
 end;
 
 INITIALIZATION
