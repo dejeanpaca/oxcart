@@ -881,7 +881,7 @@ begin
    if((p.ExitStatus = 0) and (p.ExitCode = 0)) then begin
       {NOTE: we exepect file name in LPI to not have a path}
 
-      executableName := GetExecutableNameFromLPI(path);
+      executableName := GetExecutableName(GetExecutableNameFromLPI(path));
 
       if(executableName <> '') then
          Output.ExecutableName := ExtractFilePath(path) + executableName
@@ -1115,15 +1115,20 @@ end;
 function TBuildSystem.GetExecutableName(const name: StdString; isLibrary: boolean): StdString;
 begin
    {$IFDEF WINDOWS}
-   if(not isLibrary) then
-      Result := name + '.exe'
-   else
-      Result := name + '.dll';
+   if(ExtractFileExt(name) = '') then begin
+      if(not isLibrary) then
+         Result := name + '.exe'
+      else
+         Result := name + '.dll';
+   end else
+      Result := name;
    {$ELSE}
    if(not isLibrary) then
       Result := name
-   else
-      Result := 'lib' + name + '.so';
+   else begin
+      if(ExtractFileExt(name) = '') then
+         Result := 'lib' + name + '.so';
+   end;
    {$ENDIF}
 end;
 
