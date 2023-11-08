@@ -205,9 +205,14 @@ begin
       oxedSceneManagement.Save();
 end;
 
+procedure newProject();
+begin
+   oxedProjectManagement.New();
+end;
+
 INITIALIZATION
    oxedActions.OPEN_PROJECT := appActionEvents.SetCallback(@oxedProjectDialog.OpenDialog);
-   oxedActions.NEW_PROJECT := appActionEvents.SetCallback(@oxedProjectManagement.New);
+   oxedActions.NEW_PROJECT := appActionEvents.SetCallback(@newProject);
    oxedActions.SAVE_PROJECT := appActionEvents.SetCallback(@oxedProjectDialog.SaveDialog);
    oxedActions.CLOSE_PROJECT := appActionEvents.SetCallback(@oxedProjectDialog.Close);
 
