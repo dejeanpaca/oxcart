@@ -191,6 +191,9 @@ TYPE
       {write a file}
       class function WriteStrings(const fn: StdString; const data: TStringArray; count: loopint = -1): fileint; static;
 
+      {write a string to an opened regular file}
+      class function WriteString(var f: file; const data: StdString; includeLineEnding: boolean = true): longint; static;
+
       {save specified memory to file}
       class function SaveMem(const fn: StdString; var m; size: int64): int64; static;
       {load file to memory, with the specified amount of bytes}
@@ -913,7 +916,6 @@ begin
       exit(-error);
 
    if(size > 0) then begin
-
       BlockWrite(f, data, size, countWritten);
       if (countWritten <> size) then begin
          error := ioerror();
@@ -948,8 +950,6 @@ class function TFileUtilsGlobal.WriteStrings(const fn: StdString; const data: TS
 var
    f: file;
    i,
-   size,
-   currentCount,
    totalWritten: loopint;
    error: loopint;
 
@@ -985,24 +985,13 @@ begin
    end;
 
    for i := 0 to count do begin
-      size := Length(data[i]);
-      currentCount := 0;
-
-      BlockWrite(f, data[i], size, currentCount);
-
-      if(currentCount <> size) then begin
-         error := ioerror();
+      error := WriteString(f, data[i], true);
+      if(error < 0) then begin
          cleanup();
-         exit(-error);
+         exit(error);
       end;
 
-      error := ioerror();
-      if(error <> 0) then begin
-         cleanup();
-         exit(-error)
-      end;
-
-      inc(totalWritten, currentCount);
+      inc(totalWritten, error);
    end;
 
    Close(f);
@@ -1012,6 +1001,47 @@ begin
       Result := -error
    else
       Result := totalWritten;
+end;
+
+class function TFileUtilsGlobal.WriteString(var f: file; const data: StdString; includeLineEnding: boolean): longint;
+var
+   error,
+   size,
+   stringCount,
+   currentCount: loopint;
+begin
+   stringCount := 0;
+   {$IFDEF DEBUG}
+   currentCount := 0;
+   {$ENDIF}
+
+   size := Length(data);
+
+   if(size > 0) then begin
+      BlockWrite(f, data[1], size, currentCount);
+
+      error := ioerror();
+
+      if(currentCount <> size) or (error <> 0) then
+         exit(-error);
+
+      inc(stringCount, currentCount);
+   end;
+
+   inc(stringCount, currentCount);
+
+   if(includeLineEnding) then begin
+      BlockWrite(f, LineEnding[1], Length(LineEnding), currentCount);
+
+      error := ioerror();
+
+      if(currentCount <> Length(LineEnding)) or (error <> 0) then
+         exit(-error);
+
+      inc(stringCount, currentCount);
+   end;
+
+   Result := stringCount;
 end;
 
 class function TFileUtilsGlobal.SaveMem(const fn: StdString; var m; size: int64): int64;
