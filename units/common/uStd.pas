@@ -320,6 +320,8 @@ procedure UTF8Assign(var f: file; const fn: UTF8String);
 function UTF8Lower(const s: UTF8String): UTF8String;
 {$ENDIF}
 
+function getThreadIdentifier(): string;
+
 IMPLEMENTATION
 
 { TStringPairHelper }
@@ -1068,6 +1070,11 @@ end;
 function UTF8Lower(const s: UTF8String): UTF8String;
 begin
    Result := UTF8Encode(UnicodeLowerCase(UTF8Decode(s)));
+end;
+
+function getThreadIdentifier(): string;
+begin
+   Result := HexStr(GetThreadID(), SizeOf(TThreadID) * 2);
 end;
 
 {$ENDIF}
