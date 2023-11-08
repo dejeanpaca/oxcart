@@ -296,7 +296,7 @@ TYPE
       function GetValue(index: loopint): StdString; virtual;
 
       function GetItemWidth(index: loopint): loopint; override;
-      function GetMaxWidth: loopint; override;
+      function GetMaxWidth(): loopint; override;
 
       function Load(): wdgTStringList;
 
@@ -445,7 +445,7 @@ begin
    Result := f.GetLength(GetValue(index));
 end;
 
-function wdgTStringList.GetMaxWidth: loopint;
+function wdgTStringList.GetMaxWidth(): loopint;
 var
    i: loopint;
    f: oxTFont;
@@ -722,25 +722,33 @@ begin
       window.SetColor(pSkin.Colors.LightSurface);
 end;
 
-procedure SetHighlightColor();
+procedure SetHighlightColor(item: loopint);
 begin
-   if(IsEnabled(i)) then
+   if(IsEnabled(item)) then
       window.SetColor(pSkin.Colors.Highlight)
    else
       window.SetColor(pSkin.DisabledColors.Highlight);
 end;
 
-procedure RenderHighlighted(item, offset, itemX: loopint);
+procedure SetFocalColor(item: loopint);
+begin
+   if(IsEnabled(item)) then
+      window.SetColor(pSkin.Colors.Focal)
+   else
+      window.SetColor(pSkin.DisabledColors.Focal);
+end;
+
+procedure RenderHighlighted(item, offset, itemX: loopint; selected: boolean = false);
 begin
    _getItemHeight(item);
 
    dec(r.y, offset);
 
    if(GetScissoredRect(r)) then begin
-      if(IsEnabled(item)) then
-         window.SetColor(pSkin.Colors.Highlight)
+      if(selected) then
+         SetHighlightColor(item)
       else
-         window.SetColor(pSkin.DisabledColors.Highlight);
+         SetFocalColor(item);
 
       if(ItemHighlightWidth > 0) then begin
          inc(r.x, itemX);
@@ -810,7 +818,7 @@ begin
             if (not highlightable) then
                SetOddColor()
             else
-               SetHighlightColor();
+               SetHighlightColor(i);
 
             DrawHBR();
 
@@ -828,7 +836,7 @@ begin
 
             if(i < ItemCount) then begin
                if(HighlightedItem = i) then begin
-                  SetHighlightColor();
+                  SetFocalColor(i);
 
                   inc(hbr.x, HighlightedItemX);
                   hbr.w :=  ItemHighlightWidth;
@@ -837,7 +845,7 @@ begin
 
                   uiDraw.Box(hbr);
                end else if(SelectedItem = i) and (Selectable) then begin
-                  SetHighlightColor();
+                  SetHighlightColor(i);
 
                   inc(hbr.x, SelectedItemX);
                   hbr.w :=  ItemHighlightWidth;
@@ -858,11 +866,10 @@ begin
       hbr := r;
 
       if((HighlightedItem <> -1) and ShouldHighlight(HighlightedItem)) then
-         RenderHighlighted(HighlightedItem, HighlightedItemOffset, HighlightedItemX);
-
-      if(SelectedItem <> -1) and (Selectable) then begin
+         RenderHighlighted(HighlightedItem, HighlightedItemOffset, HighlightedItemX)
+      else if(SelectedItem <> -1) and (Selectable) then begin
          r := hbr;
-         RenderHighlighted(SelectedItem, SelectedItemOffset, SelectedItemX);
+         RenderHighlighted(SelectedItem, SelectedItemOffset, SelectedItemX, true);
       end;
    end;
 
