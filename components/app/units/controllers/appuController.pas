@@ -27,6 +27,22 @@ CONST
    {no mapped function}
    appCONTROLLER_NONE = 0;
 
+   {controller direction}
+   appCONTROLLER_DIRECTION_NONE        = 0;
+   appCONTROLLER_DIRECTION_UP          = 1;
+   appCONTROLLER_DIRECTION_DOWN        = 2;
+   appCONTROLLER_DIRECTION_LEFT        = 3;
+   appCONTROLLER_DIRECTION_RIGHT       = 4;
+   appCONTROLLER_DIRECTION_UP_LEFT     = 5;
+   appCONTROLLER_DIRECTION_UP_RIGHT    = 6;
+   appCONTROLLER_DIRECTION_DOWN_LEFT   = 7;
+   appCONTROLLER_DIRECTION_DOWN_RIGHT  = 8;
+
+   appbCONTROLLER_DPAD_UP     = 0;
+   appbCONTROLLER_DPAD_RIGHT  = 1;
+   appbCONTROLLER_DPAD_BOTTOM = 2;
+   appbCONTROLLER_DPAD_LEFT   = 3;
+
    {directional buttons}
    appCONTROLLER_DPAD_UP               = 1;
    appCONTROLLER_DPAD_DOWN             = 2;
@@ -198,6 +214,8 @@ TYPE
       function GetButtonPressure(index: loopint): single;
       {is a button pressed}
       function IsButtonPressed(index: loopint): boolean;
+      {is a dpad button pressed}
+      function IsDPadPressed(direction: loopint): boolean;
       {get axis value}
       function GetAxisValue(index: loopint): single;
       {get axis value}
@@ -224,6 +242,9 @@ TYPE
       procedure SetTriggerState(index: loopint; raw: loopint);
       {set the state of an axis}
       procedure SetAxisState(index: loopint; raw: loopint);
+
+      {get direction of the dpad}
+      function GetDPadDirection(): loopint;
    end;
 
    { appTControllerEvent }
@@ -471,6 +492,11 @@ begin
    end;
 end;
 
+function appTControllerDevice.IsDPadPressed(direction: loopint): boolean;
+begin
+   Result := State.DPad[direction].IsSet(kpPRESSED);
+end;
+
 function appTControllerDevice.GetAxisValue(index: loopint): single;
 begin
    Result := 0;
@@ -564,6 +590,32 @@ begin
    if(index >= 0) and (index < AxisCount) then begin
       State.Axes[index].AssignRaw(raw, AxisValueRange);
       vmClamp(State.Triggers[index], -1.0, 1.0);
+   end;
+end;
+
+function appTControllerDevice.GetDPadDirection(): loopint;
+begin
+   Result := 0;
+
+   if(DPadPresent) then begin
+      if(IsDPadPressed(appbCONTROLLER_DPAD_UP)) then begin
+         Result := appCONTROLLER_DIRECTION_UP;
+
+         if(IsDPadPressed(appbCONTROLLER_DPAD_LEFT)) then
+            Result := appCONTROLLER_DIRECTION_UP_LEFT
+         else if(IsDPadPressed(appbCONTROLLER_DPAD_RIGHT)) then
+            Result := appCONTROLLER_DIRECTION_UP_RIGHT;
+      end else if(IsDPadPressed(appbCONTROLLER_DPAD_BOTTOM)) then begin
+         Result := appCONTROLLER_DIRECTION_DOWN;
+
+         if(IsDPadPressed(appbCONTROLLER_DPAD_LEFT)) then
+            Result := appCONTROLLER_DIRECTION_DOWN
+         else if(IsDPadPressed(appbCONTROLLER_DPAD_RIGHT)) then
+            Result := appCONTROLLER_DIRECTION_DOWN_RIGHT;
+      end else if(IsDPadPressed(appbCONTROLLER_DPAD_LEFT)) then
+         Result := appCONTROLLER_DIRECTION_LEFT
+      else if(IsDPadPressed(appbCONTROLLER_DPAD_RIGHT)) then
+         Result := appCONTROLLER_DIRECTION_RIGHT;
    end;
 end;
 
