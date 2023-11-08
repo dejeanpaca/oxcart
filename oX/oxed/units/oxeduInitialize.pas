@@ -74,20 +74,6 @@ begin
    oxedStatusbar.Initialize();
    oxedToolbar.Initialize();
    oxedDockableArea.Initialize();
-
-   if(oxPaths.List.n = 0) then
-      oxedMessages.w('oX asset path doesn''t seem set (set ' + OX_ASSET_PATH_ENV + ' environment variable or config)');
-
-   {open a project}
-   if(oxedSettings.StartWithLastProject) and (oxedRecents.LastOpen <> '') then begin
-      log.v('project > Opening last opened project: ' + oxedRecents.LastOpen);
-
-      if(not oxedProjectManagement.Open(oxedRecents.LastOpen)) then
-         {failed to open last open project, so clear it}
-         oxedRecents.LastOpen := '';
-   end;
-
-   oxed.Initialized := true;
 end;
 
 procedure oxedInitialize();
@@ -102,6 +88,11 @@ begin
    SetupWorkspace();
 
    oxed.PostInit.iCall();
+
+  if(oxPaths.List.n = 0) then
+     oxedMessages.w('oX asset path doesn''t seem set (set ' + OX_ASSET_PATH_ENV + ' environment variable or config)');
+
+  oxed.Initialized := true;
 end;
 
 procedure oxedDeInitialize();
@@ -117,7 +108,20 @@ begin
    oxed.Init.dCall();
 end;
 
+procedure onStart();
+begin
+  {open a project}
+  if(oxedSettings.StartWithLastProject) and (oxedRecents.LastOpen <> '') then begin
+     log.v('project > Opening last opened project: ' + oxedRecents.LastOpen);
+
+     if(not oxedProjectManagement.Open(oxedRecents.LastOpen)) then
+        {failed to open last open project, so clear it}
+        oxedRecents.LastOpen := '';
+  end;
+end;
+
 INITIALIZATION
    ox.OnInitialize.Add('oxed.init', @oxedInitialize, @oxedDeInitialize);
+   ox.OnStart.Add('oxed.start', @onStart);
 
 END.
