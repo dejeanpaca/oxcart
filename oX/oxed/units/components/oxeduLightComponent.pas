@@ -9,41 +9,42 @@ UNIT oxeduLightComponent;
 INTERFACE
 
    USES
-      uStd,
+      uStd, uColors,
       {ox}
       oxuRunRoutines,
       oxuLightComponent, oxeduThingies, oxeduComponent, oxeduComponentGlyphs;
 
 TYPE
-   { oxedTLightEditRenderer }
+   { oxedTLightThingie }
 
-   oxedTLightEditRenderer = class(oxedTThingie)
+   oxedTLightThingie = class(oxedTThingie)
       constructor Create();
    end;
 
 VAR
-   oxedLightEditRenderer: oxedTLightEditRenderer;
+   oxedLightThingie: oxedTLightThingie;
 
 IMPLEMENTATION
 
 { oxedTLightEditRenderer }
 
-constructor oxedTLightEditRenderer.Create();
+constructor oxedTLightThingie.Create();
 begin
    Name := 'Light';
 
-   oxedComponentGlyphs.Add(oxTLightComponent, '', $f0eb);
+   Glyph := oxedComponentGlyphs.Add(oxTLightComponent, '', $f0eb);
+   Glyph^.Color.Assign(255, 255, 32, 255);
    Associate(oxTLightComponent);
 end;
 
 procedure init();
 begin
-   oxedLightEditRenderer := oxedTLightEditRenderer.Create();
+   oxedLightThingie := oxedTLightThingie.Create();
 end;
 
 procedure deinit();
 begin
-   FreeObject(oxedLightEditRenderer);
+   FreeObject(oxedLightThingie);
 end;
 
 INITIALIZATION
