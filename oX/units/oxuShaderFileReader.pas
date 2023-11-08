@@ -23,9 +23,9 @@ VAR
 
 procedure handleFile(var f: TFile; var data: oxTFileRWData; var {%H-}shaderData: oxTShaderFileData);
 var
-   s: string = '';
+   s,
    key,
-   value: string;
+   value: StdString;
    shader: oxTShader = nil;
    code: longint;
 
@@ -39,6 +39,7 @@ var
    uniformIndex: loopint;
 
 begin
+   s := '';
    key := '';
    value := '';
    values.name := '';

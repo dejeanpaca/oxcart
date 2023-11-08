@@ -40,7 +40,7 @@ var
    matfn: string;
    s,
    key,
-   value: string;
+   value: StdString;
    m: oxTMaterial;
    diffuse: TColor4f;
    color: TColor3f;
@@ -102,7 +102,7 @@ procedure scan(var data: oxTFileRWData; var ld: TLoaderData);
 var
    s,
    key,
-   value: string;
+   value: StdString;
 
    vertexCount,
    normalCount,
@@ -207,7 +207,7 @@ var
    s,
    key,
    value,
-   materialName: string;
+   materialName: StdString;
 
    m: oxPMesh = nil;
    pM: oxPMeshMaterial;

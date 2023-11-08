@@ -401,14 +401,15 @@ const
 var
    f: PLPIFile;
    requirePos: loopint;
-   packageName: string;
-   currentLine: String;
+
+   packageName,
+   currentLine: StdString;
 
 begin
    Result := true;
    f := p.ExternalData;
 
-   currentLine := p.CurrentLine.ToLower();
+   currentLine := LowerCase(p.CurrentLine);
    requirePos := pos(requireString, currentLine);
 
    if(requirePos > 0) then begin

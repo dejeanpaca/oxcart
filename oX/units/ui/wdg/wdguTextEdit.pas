@@ -11,7 +11,7 @@ UNIT wdguTextEdit;
 INTERFACE
 
    USES
-      uStd, uTiming, uColors, uLog,
+      uStd, StringUtils, uTiming, uColors, uLog,
       {app}
       appuKeys, appuRegional,
       {oX}
@@ -73,9 +73,9 @@ TYPE
          procedure Render(); override;
 
          {load a file}
-         function Load(const fn: string): boolean;
+         function Load(const fn: StdString): boolean;
          {load a file}
-         function Load(const text: array of string): boolean;
+         function Load(const text: TStringArray): boolean;
 
          {clears a text box}
          procedure Clear();
@@ -409,10 +409,10 @@ begin
       Control(wdghINPUTBOX_DRAW_CURSOR);
 end;
 
-function wdgTTextEdit.Load(const fn: string): boolean;
+function wdgTTextEdit.Load(const fn: StdString): boolean;
 var
    f: TFile;
-   newLines: array of string;
+   newLines: TStringArray;
 
 begin
    Result := false;
@@ -434,7 +434,7 @@ begin
    f.Close();
 end;
 
-function wdgTTextEdit.Load(const text: array of string): boolean;
+function wdgTTextEdit.Load(const text: TStringArray): boolean;
 var
    i: loopint;
 
