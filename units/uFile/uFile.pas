@@ -607,7 +607,7 @@ begin
          if(c = #10) then
             break;
 
-         if (c <> #13) and (c <> #10) then begin
+         if (c <> #13) then begin
             inc(chars);
             SetLength(s, chars);
             s[chars] := c;
