@@ -69,8 +69,7 @@ TYPE
       Internal: uiTWidgetClass; static;
 
       {adds a image to a window}
-      function Add(const fn: StdString;
-            const Pos: oxTPoint; const Dim: oxTDimensions): wdgTImage;
+      function Add(const fn: StdString; const Pos: oxTPoint; const Dim: oxTDimensions): wdgTImage;
    end;
 
 VAR
@@ -81,18 +80,13 @@ IMPLEMENTATION
 { wdgTImageTexture }
 
 function wdgTImageTexture.SetImage(const fn: StdString): boolean;
-var
-   path: String;
-
 begin
    Result := false;
    oxResource.Destroy(Texture);
    FileName := fn;
    Texture := nil;
 
-   path := oxPaths.Find(fn);
-
-   oxTextureGenerate.Generate(path, Texture);
+   oxTextureGenerate.Generate(fn, Texture);
 
    if(Texture <> nil) then begin
       Texture.MarkUsed();
@@ -181,8 +175,7 @@ begin
    CalculateQuad();
 end;
 
-function wdgTImageGlobal.Add(const fn: StdString;
-      const Pos: oxTPoint; const Dim: oxTDimensions): wdgTImage;
+function wdgTImageGlobal.Add(const fn: StdString; const Pos: oxTPoint; const Dim: oxTDimensions): wdgTImage;
 
 begin
    Result := inherited AddInternal(Pos, Dim);
