@@ -183,21 +183,21 @@ begin
    wdgLabel.Add('Project path: ' + oxedProject.Path);
    uiWidget.LastRect.VerticalSpacing();
 
-   wdgDivisor.Add('Project basics', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('Project basics');
 
    wdgLabel.Add('Project name');
-   widgets.Project.Name := wdgInputBox.Add('', uiWidget.LastRect.BelowOf(), oxNullDimensions);
+   widgets.Project.Name := wdgInputBox.Add('');
    wdgLabel.Add('Project short name (used for config directory), if empty set to default automatically');
-   widgets.Project.ShortName := wdgInputBox.Add('', uiWidget.LastRect.BelowOf(), oxNullDimensions);
+   widgets.Project.ShortName := wdgInputBox.Add('');
    wdgLabel.Add('Project identifier (pascal compatible identifier)');
-   widgets.Project.Identifier := wdgInputBox.Add('', uiWidget.LastRect.BelowOf(), oxNullDimensions);
+   widgets.Project.Identifier := wdgInputBox.Add('');
    wdgLabel.Add('Project organization (not required)');
-   widgets.Project.Organization := wdgInputBox.Add('', uiWidget.LastRect.BelowOf(), oxNullDimensions);
+   widgets.Project.Organization := wdgInputBox.Add('');
    wdgLabel.Add('Project organization short name (used for config directory), if empty set to default automatically');
-   widgets.Project.OrganizationShort := wdgInputBox.Add('', uiWidget.LastRect.BelowOf(), oxNullDimensions);
-   wdgDivisor.Add('', uiWidget.LastRect.BelowOf());
-   widgets.Project.UnixLineEndings := wdgCheckbox.Add('Unix line endings', uiWidget.LastRect.BelowOf());
-   widgets.Project.EnableConsole := wdgCheckbox.Add('Enable engine console in project', uiWidget.LastRect.BelowOf());
+   widgets.Project.OrganizationShort := wdgInputBox.Add('');
+   wdgDivisor.Add('');
+   widgets.Project.UnixLineEndings := wdgCheckbox.Add('Unix line endings');
+   widgets.Project.EnableConsole := wdgCheckbox.Add('Enable engine console in project');
 end;
 
 procedure addGlobalSymbol();
