@@ -16,7 +16,7 @@ UNIT appuController;
 INTERFACE
 
    USES
-      uStd, uLog, StringUtils, vmMath, vmVector,
+      uStd, uLog, StringUtils, vmMath, vmVector, uTiming,
       {app}
       uApp, appuEvents, appuInputTypes,
       {ox}
@@ -404,6 +404,9 @@ TYPE
 
       {get a displayable name for this handler}
       function GetName(): StdString; virtual;
+
+      {periodically rescan for new devices}
+      procedure Rescan(); virtual;
    end;
 
    appTControllerDeviceList = specialize TSimpleList<appTControllerDevice>;
@@ -432,6 +435,9 @@ TYPE
       {put events in the event queue (OnEvent will be called in any case)}
       PutInQueue: boolean;
 
+      {interval to rescan devices}
+      RescanInterval: TTimerInterval;
+
       {event handler}
       evh: appTEventHandler;
       evhp: appPEventHandler;
@@ -451,6 +457,8 @@ TYPE
       procedure Add(device: appTControllerDevice);
       {reset all devices}
       procedure Reset();
+      {periodically rescans for new devices}
+      procedure Rescan();
 
       {run individual controllers}
       procedure UpdateControllers();
@@ -565,6 +573,11 @@ begin
       if(Handlers[i] <> nil) then
          Handlers[i]^.Reset();
    end;
+end;
+
+procedure appTControllers.Rescan();
+begin
+
 end;
 
 procedure appTControllers.UpdateControllers();
@@ -985,6 +998,11 @@ begin
    Result := 'Unknown';
 end;
 
+procedure appTControllerHandler.Rescan();
+begin
+
+end;
+
 procedure checkForDisconnected();
 var
    i: loopint;
@@ -1008,14 +1026,25 @@ var
    i: loopint;
 
 begin
+   {run all handlers}
    for i := 0 to appControllers.nHandlers - 1 do begin
       if(appControllers.Handlers[i] <> nil) then
          appControllers.Handlers[i]^.Run();
    end;
 
+   {update all devices}
    appControllers.UpdateControllers();
 
+   {check if any devices disconnected}
    checkForDisconnected();
+
+   {check for new/reconnected devices}
+   if(appControllers.RescanInterval.Elapsed()) then begin
+      for i := 0 to appControllers.nHandlers - 1 do begin
+         if(appControllers.Handlers[i] <> nil) then
+            appControllers.Handlers[i]^.Rescan();
+      end;
+   end;
 end;
 
 procedure initialize();
@@ -1081,6 +1110,7 @@ INITIALIZATION
    app.InitializationProcs.Add('input_controllers', @initialize, @deinitialize);
 
    appControllers.evhp := appEvents.AddHandler(appControllers.evh, 'input_controller');
+   TTimerInterval.Initializef(appControllers.RescanInterval, 5.0);
 
    {initialize generic mapping}
    initializeGenericMapping(appControllerDeviceGenericMapping);
