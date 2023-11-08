@@ -136,8 +136,8 @@ procedure oxTSplashScreen.StartSplash(wnd: oxTWindow);
 begin
    AssociatedWindow := wnd;
 
-   Load();
    Timer.Start();
+   Load();
 end;
 
 procedure oxTSplashScreen.Load();
