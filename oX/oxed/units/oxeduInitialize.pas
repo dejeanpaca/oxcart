@@ -24,7 +24,7 @@ INTERFACE
       oxeduBuild,
       oxeduPlatform, oxeduWindowsPlatform, oxeduLinuxPlatform,
       oxeduProjectRunner, oxeduSceneClone,
-      oxeduProjectScanner, oxeduPasScanner,
+      oxeduProjectScanner, oxeduPasScanner, oxeduStatisticsScanner,
       {additional}
       oxeduBuildEvents, oxeduLazarus,
       {windows}
@@ -34,6 +34,7 @@ INTERFACE
       oxeduTasksUI, oxeduProjectContextMenu, oxeduProjectSettingsWindow,
       oxeduViewScene, oxeduSceneView, oxeduProjectDialog, oxeduSceneEditTools,
       oxeduRunButtons, oxeduStatusInfo, oxeduSettingsWindow,
+      oxeduProjectFeaturesWindow, oxeduProjectStatisticsWindow,
       {components}
       oxeduCameraComponent, oxeduLightComponent,
       {initialize keys last}
