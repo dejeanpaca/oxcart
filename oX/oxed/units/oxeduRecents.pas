@@ -11,7 +11,7 @@ UNIT oxeduRecents;
 INTERFACE
 
    USES
-     uStd, udvars, dvaruFile, sysutils,
+     uStd, udvars, dvaruFile, sysutils, uFileUtils,
      {oxed}
      uOXED, oxeduProject, oxeduProjectManagement;
 
@@ -22,6 +22,7 @@ TYPE
 
    oxedTRecents = record
       Max: longint;
+      Directories: boolean;
 
       List: oxedTRecentsList;
       LastOpen: string;
@@ -29,6 +30,9 @@ TYPE
       OnUpdate: TProcedures;
 
       function FindRecent(const path: string): boolean;
+      {validates given path (checks if exists)}
+      function Validate(const path: string): boolean;
+
       procedure Add(const path: string);
    end;
 
@@ -96,6 +100,15 @@ begin
    Result := false;
 end;
 
+function oxedTRecents.Validate(const path: string): boolean;
+begin
+   if(not Directories) then begin
+     Result := FileUtils.Exists(path) > 0;
+   end else begin
+     Result := FileUtils.DirectoryExists(path);
+   end;
+end;
+
 procedure oxedTRecents.Add(const path: string);
 var
    correctPath: string;
@@ -106,13 +119,16 @@ begin
    if(FindRecent(correctPath)) then
       exit;
 
-   List.Add(correctPath);
+   if(oxedRecents.Validate(correctPath)) then
+      List.Add(correctPath);
 end;
 
 INITIALIZATION
    oxedRecents.Max := 10;
+   oxedRecents.Directories := true;
    oxedTRecentsList.Initialize(oxedRecents.List);
    TProcedures.Initialize(oxedRecents.OnUpdate);
+
    dvgOXED.Add('recent', dvgRecents);
 
    dvgRecents.Add(dvLastOpen, 'last_open', dtcSTRING, @oxedRecents.LastOpen);
