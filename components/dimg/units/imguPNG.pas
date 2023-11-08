@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uImage, StringUtils,
       uFileHandlers, imguRW,
-      paszlib;
+      paszlib, ZInflate;
 
 IMPLEMENTATION
 
@@ -228,7 +228,7 @@ begin
       end;
 
       repeat
-         error := {%H-}inflate(data.fzStream, Z_NO_FLUSH);
+         error := zinflate.inflate(data.fzStream, Z_NO_FLUSH);
 
          if(error < 0) then begin
             ld.eDescription := 'z_stream error(' + sf(error) + ',' + zError(error) + ') while unpacking';
@@ -425,7 +425,7 @@ begin
 
       if(data.pngBuffer <> nil) then begin
          {initialize inflate}
-         error := {%H-}inflateInit_(data.fzStream, ZLIB_VERSION, SizeOf(TZStream));
+         error := zinflate.inflateInit_(@data.fzStream, ZLIB_VERSION, SizeOf(TZStream));
          if(error = 0) then begin
             data.fzStream.next_out  := data.pngBuffer;
             data.fzStream.avail_out := getPNGBufferSize(img);
@@ -443,7 +443,7 @@ begin
    end else
       ld.error := eNO_MEMORY;
 
-   {%H-}inflateEnd(data.fzStream);
+   zinflate.inflateEnd(data.fzStream);
    XFreeMem(data.zBuffer);
    XFreeMem(data.pngBuffer);
 end;
