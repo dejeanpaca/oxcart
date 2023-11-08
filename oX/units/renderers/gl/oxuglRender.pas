@@ -12,11 +12,11 @@ INTERFACE
 
    USES
       {$INCLUDE usesgl.inc},
-      uColors, vmVector,
+      uStd, uLog, uColors, vmVector, StringUtils,
       {oX}
-      uOX, oxuRenderer, oxuRender, oxuTypes, oxuRunRoutines,
+      uOX, oxuRenderer, oxuRender, oxuTypes, oxuRunRoutines, oxuWindow,
       {ogl}
-      oxuglRenderer, oxuOGL;
+      oxuglRenderer, oxuOGL, oxuglExtensions;
 
 TYPE
 
@@ -373,20 +373,37 @@ begin
    result := oglRender;
 end;
 
+VAR
+   renderInitRoutines,
+   initRoutines: oxTRunRoutine;
+
+procedure renderInit();
+var
+   i: loopint;
+
+begin
+   {$IFNDEF GLES}
+   if(not oglExtensions.Supported(cGL_EXT_blend_subtract)) then begin
+      for i := 0 to high(blendRemaps) do begin
+         if(blendRemaps[i][0] = GL_FUNC_SUBTRACT) then
+            log.w('Disabled blend remap ' + sf(i) + ' because subtractive blend is not supported');
+      end;
+   end;
+   {$ENDIF}
+end;
+
 procedure init();
 begin
    oglRender := oglTRender.Create();
 
    oxglRenderer.components.RegisterComponent('render', @componentReturn);
+   oxglRenderer.AfterInit.Add(renderInitRoutines, 'render', @renderInit);
 end;
 
 procedure deinit();
 begin
    oglRender.Free();
 end;
-
-VAR
-   initRoutines: oxTRunRoutine;
 
 INITIALIZATION
    ox.PreInit.Add(initRoutines, 'ox.gl.render', @init, @deinit);
