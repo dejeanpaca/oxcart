@@ -19,7 +19,6 @@ INTERFACE
       {$ENDIF};
 
 CONST
-   OX_THREAD_TASK_START = 1;
    OX_THREAD_TASK_DONE = 2;
 
 TYPE
@@ -326,6 +325,12 @@ begin
    {$ENDIF}
    {$ENDIF}
 
+   {call start event}
+   if(OX_THREAD_TASK_EMIT_START in Events.Emit) then begin
+      ThreadStart();
+      Events.ThreadStart.Call(Self);
+   end;
+
    {$IFNDEF NO_THREADS}
    StartPrepare();
    Thread.Start();
@@ -440,10 +445,6 @@ procedure oxTThreadTask.Startup();
 begin
    Finished := false;
 
-   if(OX_THREAD_TASK_EMIT_START in Events.Emit) then begin
-      oxThreadEvents.Queue(Self, OX_THREAD_TASK_START);
-   end;
-
    TaskStart();
 end;
 
@@ -474,10 +475,7 @@ end;
 
 procedure processEvents(var event: appTEvent);
 begin
-   if(event.evID = OX_THREAD_TASK_START) then begin
-      oxTThreadTask(event.ExternalData).ThreadStart();
-      oxTThreadTask(event.ExternalData).Events.ThreadStart.Call(oxTThreadTask(event.ExternalData));
-   end else if(event.evID = OX_THREAD_TASK_DONE) then begin
+   if(event.evID = OX_THREAD_TASK_DONE) then begin
       oxTThreadTask(event.ExternalData).ThreadDone();
       oxTThreadTask(event.ExternalData).Events.ThreadDone.Call(oxTThreadTask(event.ExternalData));
    end;
