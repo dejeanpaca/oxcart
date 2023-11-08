@@ -25,6 +25,8 @@ CONST
    wdgPOSITION_VERTICAL_CENTER   = $0020;
    wdgPOSITION_RESIZE            = $0040;
 
+   wdgPOSITION_CENTER = wdgPOSITION_HORIZONTAL_CENTER or wdgPOSITION_VERTICAL_CENTER;
+
    {widget size properties}
    wdgWIDTH_MAX_HORIZONTAL       = $0001;
    wdgHEIGHT_MAX_VERTICAL        = $0002;
