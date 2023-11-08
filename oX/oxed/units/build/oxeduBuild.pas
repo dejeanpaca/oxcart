@@ -394,6 +394,7 @@ begin
    if(oxedBuild.InEditor) then begin
       Result.Add('LIBRARY');
       Result.Add('OX_LIBRARY');
+      Result.Add('OX_LIBRARY_SUPPORT');
    end;
 end;
 
