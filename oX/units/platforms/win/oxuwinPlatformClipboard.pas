@@ -14,7 +14,6 @@ INTERFACE
       oxuPlatform, oxuPlatforms, oxuWindow,
       oxuPlatformClipboard,
       oxuWindowsPlatform, oxuWindowsOS,
-
       {windows}
       windows;
 
