@@ -326,8 +326,8 @@ begin
    enable := oxedBuild.Buildable() and (oxedTasks.Running(nil) = 0);
 
    oxedMenubar.Project.FindByAction(oxedActions.RUN_PLAY)^.Enable(enable and (not running));
-   oxedMenubar.Project.FindByAction(oxedActions.RUN_PAUSE)^.Enable(enable);
-   oxedMenubar.Project.FindByAction(oxedActions.RUN_STOP)^.Enable(enable and running);
+   oxedMenubar.Project.FindByAction(oxedActions.RUN_PAUSE)^.Enable(running);
+   oxedMenubar.Project.FindByAction(oxedActions.RUN_STOP)^.Enable(running);
 end;
 
 procedure OnProjectChange();
