@@ -70,33 +70,33 @@ end;
 
 procedure TMemoryFileHandler.Destroy(var f: TFile);
 begin
-   if(f.extData <> nil) then begin
-      if(f.handlerProps and PROP_EXTERNAL > 0) then begin
-         Freemem(f.extData);
-         f.extData := nil;
+   if(f.ExtData <> nil) then begin
+      if(f.HandlerProps and PROP_EXTERNAL > 0) then begin
+         Freemem(f.ExtData);
+         f.ExtData := nil;
       end;
    end;
 end;
 
 procedure memfOpen(var f: TFile; mem: pointer; size: fileint);
 begin
-   f.fn           := 'mem:' + addr2str(mem) + ':' + sf(Size);
+   f.fn := 'mem:' + addr2str(mem) + ':' + sf(Size);
 
-   f.extData      := mem;
+   f.ExtData     := mem;
    f.fSizeLimit   := size;
    f.fSize        := size;
 end;
 
 procedure memfNew(var f: TFile; size: fileint);
 begin
-   GetMem(f.extData, size);
-   f.handlerProps := f.handlerProps or PROP_EXTERNAL;
+   GetMem(f.ExtData, size);
+   f.HandlerProps := f.HandlerProps or PROP_EXTERNAL;
 
-   if(f.extData <> nil) then begin
+   if(f.ExtData <> nil) then begin
       f.fSizeLimit := size;
-      f.fn := 'mem:' + addr2str(f.extData) + ':' + sf(Size);
+      f.fn := 'mem:' + addr2str(f.ExtData) + ':' + sf(Size);
    end else
-      f.raiseError(eNO_MEMORY);
+      f.RaiseError(eNO_MEMORY);
 end;
 
 INITIALIZATION
