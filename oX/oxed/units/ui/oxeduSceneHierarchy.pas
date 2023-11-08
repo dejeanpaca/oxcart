@@ -11,7 +11,7 @@ UNIT oxeduSceneHierarchy;
 INTERFACE
 
    USES
-      uStd,
+      uStd, uColors,
       {app}
       appuKeys, appuMouse,
       {ox}
@@ -32,7 +32,9 @@ TYPE
    wdgTSceneHierarchy = class(wdgTHierarchyList)
       Scene: oxTEntity;
 
-      constructor Create; override;
+      constructor Create(); override;
+
+      function GetFontColor(index: longint): TColor4ub; override;
 
       procedure Assign(newScene: oxTEntity);
 
@@ -57,7 +59,7 @@ TYPE
          Hierarchy: wdgTSceneHierarchy;
       end;
 
-      constructor Create; override;
+      constructor Create(); override;
 
       procedure Initialize(); override;
       procedure SetScene(newScene: oxTScene);
@@ -226,12 +228,24 @@ end;
 
 { wdgTSceneHierarchy }
 
-constructor wdgTSceneHierarchy.Create;
+constructor wdgTSceneHierarchy.Create();
 begin
    inherited Create;
 
    Selectable := true;
    HasGlyphs := true;
+end;
+
+function wdgTSceneHierarchy.GetFontColor(index: longint): TColor4ub;
+begin
+   if(index > -1) then begin
+      if(not oxTEntity(Visible.List[index].Item).Enabled) then begin
+         exit(inherited GetFontColor(index).Darken(0.5));
+      end;
+
+   end;
+
+   Result := inherited GetFontColor(index);
 end;
 
 procedure wdgTSceneHierarchy.Assign(newScene: oxTEntity);
@@ -334,7 +348,7 @@ begin
    end;
 end;
 
-procedure wdgTSceneHierarchy.ItemCleared;
+procedure wdgTSceneHierarchy.ItemCleared();
 begin
    oxedScene.SelectEntity(nil);
    SetInspector(nil);
@@ -357,12 +371,12 @@ end;
 
 { oxedTSceneHierarchyWindow }
 
-constructor oxedTSceneHierarchyWindow.Create;
+constructor oxedTSceneHierarchyWindow.Create();
 begin
    inherited Create;
 end;
 
-procedure oxedTSceneHierarchyWindow.Initialize;
+procedure oxedTSceneHierarchyWindow.Initialize();
 begin
    inherited Initialize;
 
