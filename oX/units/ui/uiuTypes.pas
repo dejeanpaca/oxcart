@@ -95,11 +95,12 @@ CONST
    uiwBUTTON_CLOSE               = 0;
    uiwBUTTON_MINIMIZE            = 1;
    uiwBUTTON_MAXIMIZE            = 2;
-   uiwBUTTON_HELP                = 3;
-   uiwBUTTON_TOTRAY              = 4;
+   uiwBUTTON_RESTORE             = 3;
+   uiwBUTTON_HELP                = 4;
+   uiwBUTTON_TOTRAY              = 5;
 
-   uiwcBUTTON_MAX                = 4;
-   uiwcbNMAX                     = 5;
+   uiwcBUTTON_MAX                = 5;
+   uiwcbNMAX                     = 6;
 
    {window title button bit-masks}
    uiwbCLOSE                     = $0001;
