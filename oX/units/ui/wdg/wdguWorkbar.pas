@@ -108,16 +108,16 @@ begin
       end;
 
       if(AutoPositionTarget = wdgWORKBAR_POSITION_BOTTOM) then
-         p.y := p.y - d.h + wdgWorkbar.Height;
+         p.y := p.y - d.h + Height;
 
       if(AutoPositionTarget = wdgWORKBAR_POSITION_TOP) or (AutoPositionTarget = wdgWORKBAR_POSITION_BOTTOM) then
-         d.h := wdgWorkbar.Height;
+         d.h := Height;
 
       if(AutoPositionTarget = wdgWORKBAR_POSITION_RIGHT) then
-         p.x := d.w - wdgWorkbar.Height;
+         p.x := d.w - Height;
 
       if(AutoPositionTarget = wdgWORKBAR_POSITION_LEFT) or (AutoPositionTarget = wdgWORKBAR_POSITION_RIGHT) then
-         d.w := wdgWorkbar.Height;
+         d.w := Height;
 
       Move(p);
       Resize(d);
