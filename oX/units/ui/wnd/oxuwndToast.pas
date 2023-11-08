@@ -19,7 +19,8 @@ INTERFACE
       oxuWindows, oxuFont, oxuPaths, oxuWindow,
       oxuTexture, oxuTextureGenerate, oxuResourcePool,
       {ui}
-      uiuControl, uiuWindowTypes, uiuWindow, uiuTypes, uiuSkinTypes, uiuWidget, uiWidgets, oxuUI,
+      uiuControl, uiuWindowTypes, uiuWindow, uiuTypes, uiuSkinTypes, uiuSkinLoader,
+      uiuWidget, uiWidgets, oxuUI, uiuBase,
       oxuwndBase,
       wdguBlock, wdguLabel, wdguDivisor;
 
@@ -241,8 +242,6 @@ end;
 procedure initToast();
 begin
    oxToast.Create();
-
-   oxTextureGenerate.Generate(oxPaths.UI + 'textures' + DirectorySeparator + 'toast.png', oxToast.BackgroundTexture);
 end;
 
 procedure deInitToast();
@@ -251,10 +250,16 @@ begin
    oxToast.Destroy();
 end;
 
+procedure initTexture();
+begin
+   uiTSkinLoader.LoadTexture(oxPaths.UI + 'textures' + DirectorySeparator + 'toast.png', oxToast.BackgroundTexture);
+end;
+
 INITIALIZATION
    wdgidLABEL := uiControl.GetID('toast.label');
    wdgidTITLE := uiControl.GetID('toast.title');
 
+   ui.InitializationProcs.Add('toast.texture', @initTexture);
    ox.Init.Add('toast', @initToast, @deInitToast);
 
 END.
