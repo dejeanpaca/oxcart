@@ -32,6 +32,7 @@ function vmSign(x: longint): longint; inline;
 function vmSign(x: int64): int64; inline;
 function vmCopySign(x, y: single): single; inline;
 function vmMax(x, y: single): single; inline;
+function vmMin(x, y: single): single; inline;
 
 { CLAMPING }
 procedure vmClamp(var value: single; min, max: single); inline;
@@ -59,7 +60,9 @@ IMPLEMENTATION
 
 function vmSqrt(i: longint): longint;
 var
-   r, rnew, rold: longint;
+   r,
+   rnew,
+   rold: longint;
 
 begin
    rnew := 1;
@@ -72,7 +75,7 @@ begin
       rnew  := rnew shr 1;
    until (rold = rnew);
 
-   result := rnew;
+   Result := rnew;
 end;
 
 function vmSqrt(i: int64): int64;
@@ -92,7 +95,7 @@ begin
       rnew   := rnew shr 1;
    until (rold = rnew);
 
-   result := rnew;
+   Result := rnew;
 end;
 
 function vmIsPrime(i: longint): boolean;
@@ -108,12 +111,13 @@ begin
          exit(false);
 	end;
 	
-	result := true;
+	Result := true;
 end;
 
 function vmIsPrime(i: int64): boolean;
 var
-   si, j: int64;
+   si,
+   j: int64;
 
 begin
 	si := vmSqrt(i);
@@ -125,25 +129,26 @@ begin
       inc(j);
    until (j > si);
 	
-	result := true;	
+	Result := true;	
 end;
 
 { INTERPOLATION }
 
 function vmLinearInterpolation(a, b, z: single): single;
 begin
-   result := a * (1 - z) + b * z;
+   Result := a * (1 - z) + b * z;
 end;
 
 function vmCosineInterpolation(a, b, z: single): single;
 var
-   ft, f: single;
+   ft,
+   f: single;
 
 begin
    ft := z * vmcPi;
    f  := (1 - cos(ft)) * 0.5;
 
-   result := a * (1 - f) + b * f;
+   Result := a * (1 - f) + b * f;
 end;
 
 function vmCubicInterpolation(v0, v1, v2, v3, z: single): single;
@@ -156,7 +161,7 @@ begin
    r := v2 - v0;
    s := v1;
 
-   result := power(p * z, 3) + sqr(q * z) + r * z + s;
+   Result := power(p * z, 3) + sqr(q * z) + r * z + s;
 end;
 
 { STANDARD }
@@ -173,15 +178,23 @@ end;
 
 function vmCopySign(x, y: single): single; inline;
 begin
-   result := abs(x) * sign(y);
+   Result := abs(x) * sign(y);
 end;
 
 function vmMax(x, y: single): single; inline;
 begin
    if(x < y) then
-      result := y
+      Result := y
    else
-      result := x;
+      Result := x;
+end;
+
+function vmMin(x, y: single): single;
+begin
+   if(y < x) then
+      Result := y
+   else
+      Result := x;
 end;
 
 procedure vmClamp(var value: single; min, max: single);
@@ -202,9 +215,9 @@ end;
 function vmClampMaxf(value, max: single): single;
 begin
    if(value <= max) then
-      result := value
+      Result := value
    else
-      result := max;
+      Result := max;
 end;
 
 procedure vmClampMax(var value: longint; max: longint);
@@ -216,9 +229,9 @@ end;
 function vmClampMaxf(value, max: longint): longint;
 begin
    if(value <= max) then
-      result := value
+      Result := value
    else
-      result := max;
+      Result := max;
 end;
 
 procedure vmIncClamp(var value: single; increment, max: single);
@@ -255,7 +268,7 @@ end;
 
 function vmIsPow2(value: int64): boolean;
 begin
-   result := value and (value - 1) = 0;
+   Result := value and (value - 1) = 0;
 end;
 
 function vmNextPow2(value: int64): int64;
