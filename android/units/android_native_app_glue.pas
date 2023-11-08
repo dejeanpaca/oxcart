@@ -17,6 +17,8 @@
 
 UNIT android_native_app_glue;
 
+{$packrecords c}
+
 INTERFACE
 
   USES

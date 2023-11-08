@@ -16,6 +16,8 @@
 
 unit configuration;
 
+{$packrecords c}
+
 interface
 
 uses ctypes, asset_manager;
