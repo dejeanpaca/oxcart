@@ -13,7 +13,7 @@ INTERFACE
    USES
       uLog, uStd, appuMouse,
       {ox}
-      oxuPlatform, oxuRenderer;
+      oxuPlatform, oxuRenderer, oxuRunRoutines;
 
 TYPE
    oxTPlatformInstancesList = specialize TPreallocatedArrayList<oxTPlatformClass>;
@@ -24,6 +24,8 @@ TYPE
    oxTPlatforms = record
       Instances: oxTPlatformInstancesList;
       List: oxTPlatformList;
+
+      OnComponent: oxTRunRoutines;
 
       procedure Register(platform: oxTPlatformClass);
 
@@ -72,6 +74,8 @@ begin
    end;
 
    log.i('Initialized platforms');
+
+   OnComponent.iCall();
 end;
 
 procedure oxTPlatforms.Deinitialize();
@@ -79,6 +83,8 @@ var
    i: loopint;
 
 begin
+   OnComponent.dCall();
+
    {deinitialize all platforms}
    for i := 0 to List.n - 1 do begin
       Deinitialize(List.List[i]);
