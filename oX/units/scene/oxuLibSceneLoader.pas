@@ -11,9 +11,9 @@ UNIT oxuLibSceneLoader;
 INTERFACE
 
    USES
-      uStd, uLog, uTiming,
+       uLog, uTiming,
       {ox}
-      uOX, oxuRunRoutines, oxuGlobalInstances, oxuSerialization,
+      uOX, oxuGlobalInstances, oxuSerialization,
       oxuEntity, oxuScene, oxuWorld, oxuSceneManagement, oxuSceneLoader, oxuSceneClone;
 
 IMPLEMENTATION
