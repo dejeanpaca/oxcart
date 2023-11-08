@@ -58,6 +58,9 @@ begin
    wdgLabel.Add('Build system: ' + build.Tools.Build);
    wdgLabel.Add('Build mode:   ' + build.BuildMode);
 
+   wdgLabel.Add('FPC Used:     ' + build.GetPlatform()^.Name);
+   wdgLabel.Add('Lazarus Used: ' + build.GetLazarus()^.Name);
+
    uiWidget.LastRect.GoBelow();
 
    for i := 0 to build.Platforms.n - 1 do begin
