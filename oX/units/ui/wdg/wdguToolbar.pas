@@ -136,6 +136,12 @@ TYPE
       function AddButton(glyph: oxTTexture; newAction: TEventID; callback: uiTWidgetObjectCallbackRoutine): wdgPToolbarItem;
       function AddCaption(const newCaption: StdString; newAction: TEventID = 0; callback: TProcedure = nil): wdgPToolbarItem;
 
+      function FindItemIndexByAction(actionId: TEventID): loopint;
+      function FindItemByAction(actionId: TEventID): wdgPToolbarItem;
+
+      procedure RemoveItem(item: wdgPToolbarItem);
+      procedure RemoveItem(index: loopint);
+
       procedure GetComputedDimensions(out d: oxTDimensions); override;
 
       procedure ParentSizeChange(); override;
@@ -451,6 +457,53 @@ begin
    result^.Callback.Use(callback);
 
    Recalculate();
+end;
+
+function wdgTToolbar.FindItemIndexByAction(actionId: TEventID): loopint;
+var
+   i: loopint;
+
+begin
+   if(actionId > 0) then begin
+      for i := 0 to Items.n - 1 do begin
+         if(Items.List[i].Action = actionId) then
+            exit(i);
+      end;
+   end;
+
+   Result := -1;
+end;
+
+function wdgTToolbar.FindItemByAction(actionId: TEventID): wdgPToolbarItem;
+var
+   index: loopint;
+
+begin
+   index := FindItemIndexByAction(actionId);
+
+   if(index > -1) then
+      Result := @Items.List[index]
+   else
+      result := nil;
+end;
+
+procedure wdgTToolbar.RemoveItem(item: wdgPToolbarItem);
+var
+   i: loopint;
+
+begin
+   for i := 0 to Items.n - 1 do begin
+      if(@Items.List[i] = item) then
+         RemoveItem(i);
+   end;
+end;
+
+procedure wdgTToolbar.RemoveItem(index: loopint);
+begin
+   if(index >= 0) and (index < Items.n) then begin
+      Items.Remove(index);
+      ItemChanged();
+   end;
 end;
 
 procedure wdgTToolbar.GetComputedDimensions(out d: oxTDimensions);
