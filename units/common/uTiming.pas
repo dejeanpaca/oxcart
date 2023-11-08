@@ -59,6 +59,8 @@ TYPE
       function Elapsed(): longint;
       {get elapsed time in seconds, as a floating point}
       function Elapsedf(): single;
+      {get elapsed time as a string}
+      function ElapsedfToString(decimals: longint = 2): string;
       {did we hit the goal}
       function Goal(): boolean;
       {increment iteration count}
@@ -249,6 +251,11 @@ end;
 function TTimer.Elapsedf(): single;
 begin
    Result := ElapsedTimef;
+end;
+
+function TTimer.ElapsedfToString(decimals: longint): string;
+begin
+   Result := sf(ElapsedTimef, decimals);
 end;
 
 function TTimer.Goal(): boolean;
