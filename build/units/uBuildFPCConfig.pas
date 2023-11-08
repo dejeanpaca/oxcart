@@ -34,6 +34,8 @@ TYPE
       procedure Add(var from: TSimpleStringList); inline;
       {construct a config from build configuration}
       procedure Construct();
+      {construct default include paths for the current platform}
+      procedure ConstructDefaultIncludes(const basePath: StdString);
 
       procedure FromList(const list: TStringArray; const prefix: StdString; count: loopint = -1);
       procedure IncludeUnits(const list: TStringArray; count: loopint = -1);
@@ -185,6 +187,15 @@ begin
    if(build.FPCOptions.AllowGotoAndLabel) then begin
       add('# allow goto and label');
       add('-Sg');
+   end;
+end;
+
+procedure TBuildFPCConfiguration.ConstructDefaultIncludes(const basePath: StdString);
+begin
+   if(basePath <> '') then begin
+      Add('-Fu' + basePath);
+      Add('-Fu' + basePath + DirSep + '*');
+      Add('-Fu' + basePath + DirSep + 'rtl');
    end;
 end;
 
