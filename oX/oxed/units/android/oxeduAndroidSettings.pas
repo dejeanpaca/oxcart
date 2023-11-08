@@ -14,10 +14,11 @@ INTERFACE
       uOXED, oxeduProjectManagement,
       oxeduAndroid;
 
+CONST
+   OXED_ANDROID_DEFAULT_TARGET_VERSION = 21;
+
 TYPE
-
-
-   { oxedTAndroidSettingss }
+   { oxedTAndroidSettings }
 
    oxedTAndroidSettings = record
       dvg: TDVarGroup;
@@ -39,6 +40,9 @@ TYPE
          ProjectFilesPath: StdString;
          {should you manage android files yourself}
          ManualFileManagement: boolean;
+
+         {target android version}
+         TargetVersion: loopint;
 
          CPUType: oxedTAndroidCPUType;
       end;
@@ -62,6 +66,7 @@ VAR
 IMPLEMENTATION
 
 VAR
+   dvTargetVersion,
    dvManualFileManagement,
    dvPackageName,
    dvEmulatorCPUType,
@@ -76,6 +81,7 @@ begin
    Project.PackageName := '';
    Project.ManualFileManagement := false;
    Project.ProjectFilesPath := '';
+   Project.TargetVersion := OXED_ANDROID_DEFAULT_TARGET_VERSION;
 end;
 
 procedure oxedTAndroidSettings.Validate();
@@ -162,6 +168,7 @@ INITIALIZATION
    oxedAndroidSettings.Project.dvg.Add(dvManualFileManagement, 'manual_file_management', dtcBOOL, @oxedAndroidSettings.Project.ManualFileManagement);
    oxedAndroidSettings.Project.dvg.Add(dvPackageName, 'package_name', dtcSTRING, @oxedAndroidSettings.Project.PackageName);
    oxedAndroidSettings.Project.dvg.Add(dvEmulatorCPUType, 'emulator_cpu_type', dtcENUM, @oxedAndroidSettings.Project.CPUType);
+   oxedAndroidSettings.Project.dvg.Add(dvTargetVersion, 'target_version', dtcLOOPINT, @oxedAndroidSettings.Project.TargetVersion);
 
    oxedAndroidSettings.dvg.Add(dvSDKPath, 'sdk_path', dtcSTRING, @oxedAndroidSettings.SDKPath);
    oxedAndroidSettings.dvg.Add(dvNDKPath, 'ndk_path', dtcSTRING, @oxedAndroidSettings.NDKPath);
