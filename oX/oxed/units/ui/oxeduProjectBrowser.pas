@@ -87,12 +87,12 @@ begin
 
    if(fileIndex > -1) then begin
       oxedProjectContextMenu.Parameters.Target := uiFILE_CONTEXT_MENU_TARGET_SPECIFIC;
-      oxedProjectContextMenu.Parameters.TargetPath := wdg.CurrentPath + wdg.Files.List[fileIndex].Name;
+      oxedProjectContextMenu.Parameters.TargetPath := oxedProject.Path + wdg.CurrentPath + wdg.Files.List[fileIndex].Name;
 
       oxedProjectContextMenu.OpenMenu(origin);
    end else begin
       oxedProjectContextMenu.Parameters.Target := uiFILE_CONTEXT_MENU_TARGET_HERE;
-      oxedProjectContextMenu.Parameters.TargetPath := wdg.CurrentPath;
+      oxedProjectContextMenu.Parameters.TargetPath := oxedProject.Path + wdg.CurrentPath;
 
       oxedProjectContextMenu.OpenMenu(origin);
    end;
