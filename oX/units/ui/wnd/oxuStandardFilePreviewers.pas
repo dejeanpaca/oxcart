@@ -48,13 +48,20 @@ INITIALIZATION
    oxTFilePreviewWindow.AddHandler('.pp', oxuiTTextFilePreviewWindow);
    oxTFilePreviewWindow.AddHandler('.h', oxuiTTextFilePreviewWindow);
    oxTFilePreviewWindow.AddHandler('.c', oxuiTTextFilePreviewWindow);
+   oxTFilePreviewWindow.AddHandler('.cs', oxuiTTextFilePreviewWindow);
    oxTFilePreviewWindow.AddHandler('.cpp', oxuiTTextFilePreviewWindow);
    oxTFilePreviewWindow.AddHandler('.html', oxuiTTextFilePreviewWindow);
    oxTFilePreviewWindow.AddHandler('.xml', oxuiTTextFilePreviewWindow);
+   oxTFilePreviewWindow.AddHandler('.yml', oxuiTTextFilePreviewWindow);
+   oxTFilePreviewWindow.AddHandler('.yaml', oxuiTTextFilePreviewWindow);
    oxTFilePreviewWindow.AddHandler('.json', oxuiTTextFilePreviewWindow);
    oxTFilePreviewWindow.AddHandler('.js', oxuiTTextFilePreviewWindow);
    oxTFilePreviewWindow.AddHandler('.java', oxuiTTextFilePreviewWindow);
    oxTFilePreviewWindow.AddHandler('.php', oxuiTTextFilePreviewWindow);
    oxTFilePreviewWindow.AddHandler('.gitignore', oxuiTTextFilePreviewWindow);
+   oxTFilePreviewWindow.AddHandler('.gitmodules', oxuiTTextFilePreviewWindow);
+   oxTFilePreviewWindow.AddHandler('.md', oxuiTTextFilePreviewWindow);
+   oxTFilePreviewWindow.AddHandler('.dvar', oxuiTTextFilePreviewWindow);
+   oxTFilePreviewWindow.AddHandler('.config', oxuiTTextFilePreviewWindow);
 
 END.
