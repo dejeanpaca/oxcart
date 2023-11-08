@@ -81,6 +81,8 @@ TYPE
       {symbols that should be defined when building for this platform}
       Symbols: TSimpleStringList;
 
+      pDvg: PDVarGroup;
+
       constructor Create(); virtual;
       destructor Destroy; override;
 
@@ -88,8 +90,6 @@ TYPE
 
       {reset when new project is created, opened or closed}
       procedure ProjectReset(); virtual;
-      {get settings group}
-      function GetDvarGroup(): PDVarGroup; virtual;
 
       {called when the project is loaded}
       procedure Load(); virtual;
@@ -209,11 +209,6 @@ end;
 procedure oxedTPlatform.ProjectReset();
 begin
 
-end;
-
-function oxedTPlatform.GetDvarGroup(): PDVarGroup;
-begin
-   Result := nil;
 end;
 
 procedure oxedTPlatform.Load();
