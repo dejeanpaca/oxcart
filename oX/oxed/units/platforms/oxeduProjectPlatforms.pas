@@ -33,8 +33,11 @@ var
    p: oxedTPlatform;
 
 begin
-   for i := 0 to oxedPlatforms.List.n - 1 do begin;
+   for i := 0 to oxedPlatforms.List.n - 1 do begin
       p := oxedPlatforms.List.List[i];
+
+      if(not p.Enabled) then
+         continue;
 
       log.v('Loaded platform > ' + p.Name);
       p.ProjectReset();
@@ -49,8 +52,11 @@ var
    p: oxedTPlatform;
 
 begin
-   for i := 0 to oxedPlatforms.List.n - 1 do begin;
+   for i := 0 to oxedPlatforms.List.n - 1 do begin
       p := oxedPlatforms.List.List[i];
+
+      if(not p.Enabled) then
+         continue;
 
       oxedPlatformSettingsFile.Save(p);
       p.Save();
