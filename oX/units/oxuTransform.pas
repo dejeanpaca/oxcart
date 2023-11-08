@@ -197,7 +197,7 @@ var
 begin
    GetRotationMatrix(w, x, y, z, m);
 
-   RotationMatrix := m * RotationMatrix;
+   Matrix := Matrix * m;
 end;
 
 procedure oxTTransform.GetRotationMatrix(w, x, y, z: single; out m: TMatrix4f);
