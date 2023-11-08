@@ -71,6 +71,7 @@ begin
    rc^.Window := wnd;
    rc^.Camera := nil;
    rc^.Name := wnd.Title;
+   rc^.RC := wnd.RenderingContext;
 end;
 
 {All window(s)}
