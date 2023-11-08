@@ -9,7 +9,7 @@ UNIT oxuProjection;
 INTERFACE
 
    USES
-      sysutils, uStd, uColors, vmVector, uLog,
+      sysutils, uStd, uColors, vmVector, uLog, StringUtils,
       {oX}
       oxuAspect, oxuProjectionType, oxuTypes,
       oxuViewportType, oxuViewport,
@@ -78,6 +78,9 @@ TYPE
       function Unproject(x, y, z: single; const view: TMatrix4f; out world: TVector3f): boolean;
       {get world position for given pointer coordinates for 2D (works only for straight ortho view, as Z is lost)}
       function Unproject(x, y: single; const view: TMatrix4f; out world: TVector2f): boolean;
+
+      {get description of the projection}
+      function GetDescription(): StdString;
    end;
 
 VAR
@@ -326,6 +329,19 @@ begin
       world[1] := world3[1];
    end else
       world := vmvZero2f;
+end;
+
+function oxTProjectionHelper.GetDescription(): StdString;
+begin
+   if(not p.IsOrthographic) then begin
+      Result := 'Projection > Aspect: ' + sf(p.Aspect, 3) + ', FovY: ' + sf(p.FovY, 2) + ', Z(' + sf(p.ZNear, 3) + ', ' + sf(p.ZFar, 3) + ')';
+   end else begin
+      if(p.Size > 0) then
+         Result := 'Ortho > Aspect: ' + sf(p.Aspect, 3) + ', Size: ' + sf(p.Size, 3) + ', Z(' + sf(p.ZNear, 3) + ', ' + sf(p.ZFar, 3) + ')'
+      else
+         Result := 'Ortho > Aspect: ' + sf(p.Aspect, 3) + ', Z(' + sf(p.ZNear, 3) + ', ' + sf(p.ZFar, 3) + '), ' +
+            'l: ' + sf(p.l, 3) + ', r: ' + sf(p.r, 3) + ', t: ' + sf(p.t, 3) + ', b: ' + sf(p.b, 3);
+   end;
 end;
 
 INITIALIZATION
