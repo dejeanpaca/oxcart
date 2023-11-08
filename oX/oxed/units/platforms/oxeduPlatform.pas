@@ -22,10 +22,12 @@ TYPE
 
    oxedTPlatformArchitecture = class
       Name,
-      Architecture: StdString;
+      Architecture,
+      {use an override for platform, if the platform string can't be formed via os-architecture,
+      e.g. when the OS differs per platform (win32, win64)}
+      Platform: StdString;
 
       PlatformObject: TObject;
-
 
       constructor Create(const newName, newArch: StdString); virtual;
 
@@ -137,7 +139,10 @@ end;
 
 function oxedTPlatformArchitecture.GetPlatformString(): TFPCPlatformString;
 begin
-   Result := Architecture + '-' + oxedTPlatform(PlatformObject).OS;
+   if(Platform = '') then
+      Result := Architecture + '-' + oxedTPlatform(PlatformObject).OS
+   else
+      Result := Platform;
 end;
 
 { oxedTPlatform }
