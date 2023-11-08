@@ -155,6 +155,9 @@ begin
 
    if(oxedLib.Settings <> nil) then
       oxedLib.Settings^.Focused := true;
+
+   if(oxedLib.oxWindows <> nil) then
+      oxedLib.oxWindows^.w[0].RegainedFocus();
 end;
 
 procedure oxedTGameViewWindow.OnDeactivate();
@@ -163,6 +166,9 @@ begin
 
    if(oxedLib.Settings <> nil) then
       oxedLib.Settings^.Focused := false;
+
+   if(oxedLib.oxWindows <> nil) then
+      oxedLib.oxWindows^.w[0].LostFocus();
 end;
 
 procedure oxedTGameViewWindow.RPositionChanged();
