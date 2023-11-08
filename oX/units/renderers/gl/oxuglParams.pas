@@ -17,7 +17,7 @@ IMPLEMENTATION
 VAR
    paramHandler: TParameterHandler;
 
-function processParam(const {%H-}paramKey: StdString; var params: array of StdString; n: longint): boolean;
+function processParam(const paramKey: StdString; var params: array of StdString; n: longint): boolean;
 var
    v: oglTVersion;
 
@@ -36,7 +36,7 @@ begin
       end else
          log.e('Invalid gl version specified: ' + params[0]);
    end else
-      log.e('Did not specify ' + paramHandler.ParamKey + ' parameter value');
+      log.e('Did not specify ' + paramKey + ' parameter value');
 end;
 
 INITIALIZATION
