@@ -26,7 +26,7 @@ BEGIN
    {$ENDIF}
 
    appInfo.SetName('OXED');
-   appInfo.SetVersion(0, 2);
+   appInfo.SetVersion(oxVersion);
 
    oxRun.Go();
 END.
