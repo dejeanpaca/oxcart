@@ -50,7 +50,7 @@ end;
 
 procedure rescanControllers();
 begin
-   appControllers.Reset();
+   appControllers.Rescan();
 end;
 
 procedure addTabs();
