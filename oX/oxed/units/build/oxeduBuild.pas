@@ -345,6 +345,7 @@ begin
    oxedBuild.Reset();
    oxedBuild.BuildArch := nil;
    oxedBuild.PreviousBuildArch := nil;
+   oxedBuild.BuildPlatform := nil;
    build.DeInitialize();
    lpi.DeInitialize();
    FreeObject(oxedBuild.Task);
