@@ -307,12 +307,17 @@ begin
 end;
 
 function wdgTDropDownList.GetMenuDimensions(): oxTDimensions;
+var
+   iCount: loopint;
+
 begin
+   iCount := GetItemCount();
+
    Result.w := Dimensions.w;
-   Result.h := (GetItemCount() * ItemHeight) + (2 + MENU_PADDING_SIZE * 2);
+   Result.h := (iCount * ItemHeight) + (2 + MENU_PADDING_SIZE * 2);
 
    if(GetItemCount() > 1) then
-      inc(Result.h, MENU_VERTICAL_SEPARATION * (GetItemCount() - 1));
+      inc(Result.h, MENU_VERTICAL_SEPARATION * (iCount - 1));
 end;
 
 procedure wdgTDropDownList.GetComputedDimensions(out d: oxTDimensions);
