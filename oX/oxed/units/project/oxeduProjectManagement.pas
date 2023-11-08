@@ -28,6 +28,8 @@ TYPE
       {called when a new project is created}
       OnNew,
       {called when the project is open}
+      OnPreOpen,
+      {called when the project is open}
       OnOpen,
       {called before the project is closed}
       OnClose,
@@ -152,6 +154,9 @@ begin
 
          SetCurrentDir(fn);
 
+         {call any methods for setting up the new project}
+         oxedProjectManagement.OnPreOpen.Call();
+
          {TODO: Check if project settings loaded properly}
          oxedTProjectSettings.Load();
          log.v('project > Loading project: ' + oxedProject.Name);
@@ -181,6 +186,7 @@ end;
 
 INITIALIZATION
    TProcedures.InitializeValues(oxedProjectManagement.OnNew);
+   TProcedures.InitializeValues(oxedProjectManagement.OnPreOpen);
    TProcedures.InitializeValues(oxedProjectManagement.OnOpen);
    TProcedures.InitializeValues(oxedProjectManagement.OnClose);
    TProcedures.InitializeValues(oxedProjectManagement.OnClosed);
