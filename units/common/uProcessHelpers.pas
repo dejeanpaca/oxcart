@@ -13,6 +13,20 @@ INTERFACE
       uStd, uLog, ConsoleUtils, StringUtils;
 
 TYPE
+   {holds a (redirected) process stream}
+
+   { TProcessStream }
+
+   TProcessStream = record
+      {is the stream opened}
+      Opened: boolean;
+      Stream: Text;
+
+      class procedure Initialize(out s: TProcessStream); static;
+      procedure Open(process: TStream);
+      procedure Close();
+   end;
+
    { TProcessUtils }
 
    TProcessUtils = record
@@ -28,6 +42,7 @@ TYPE
       function GetOutputStrings(maxLines: loopint): TSimpleStringList;
 
       procedure OpenOutputStream(out s: Text);
+      procedure OpenOutputStream(out s: TProcessStream);
    end;
 
    { TProcessHelpers }
@@ -52,6 +67,27 @@ VAR
    ProcessHelpers: TProcessHelpers;
 
 IMPLEMENTATION
+
+{ TProcessStream }
+
+class procedure TProcessStream.Initialize(out s: TProcessStream);
+begin
+   ZeroOut(s, SizeOf(s));
+end;
+
+procedure TProcessStream.Open(process: TStream);
+begin
+   TProcessHelpers.OpenStream(process, Stream);
+   Opened := true;
+end;
+
+procedure TProcessStream.Close();
+begin
+   if(Opened) then begin
+      Opened := false;
+      system.Close(Stream);
+   end;
+end;
 
 { TProcessHelpers }
 
@@ -175,6 +211,12 @@ end;
 procedure TProcessHelper.OpenOutputStream(out s: Text);
 begin
    TProcessHelpers.OpenStream(Self.Output, s);
+end;
+
+procedure TProcessHelper.OpenOutputStream(out s: TProcessStream);
+begin
+   TProcessStream.Initialize(s);
+   s.Open(Output);
 end;
 
 class function TProcessUtils.GetString(stream: TInputPipeStream; stripEndLine: boolean): StdString;
