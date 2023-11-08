@@ -81,6 +81,7 @@ TYPE
       function ToString(): string;
    end;
 
+   uiPWindow = ^uiTWindows;
    { uiTWindows }
    uiTWindows = type uiTControls;
 
@@ -136,7 +137,6 @@ TYPE
       ErrorCode: longint;
 
       constructor Create(); override;
-      destructor Destroy; override;
 
       procedure Action({%H-}action: uiTWindowEvents); virtual;
 
@@ -198,16 +198,10 @@ begin
    Opacity := 1.0;
    wnd := Self;
 
-   W := uiTWindows.Create();
+   W.Initialize();
+   Widgets.Initialize();
 
    uiTWindowListeners.InitializeValues(Listeners);
-end;
-
-destructor uiTWindow.Destroy;
-begin
-   inherited Destroy;
-
-   FreeObject(W);
 end;
 
 procedure uiTWindow.Action(action: uiTWindowEvents);

@@ -250,15 +250,13 @@ TYPE
       {find a widget in a window with the specified ID}
       function Find(wnd: uiTWindow; wdgID: loopint): uiTWidget;
       {returns the widgets position}
-      function Pos(s: uiTWidgets; wdg: uiTWidget): longint;
+      function Pos(const s: uiTWidgets; wdg: uiTWidget): longint;
 
       { DISPOSING }
       {dispose of a widget pointer and it's allocated data}
       procedure Dispose(var wdg: uiTWidget);
       {dispose of widgets}
-      procedure Dispose(wdgs: uiTWidgets);
-      {dispose all widgets in a window}
-      procedure DisposeObject(var wdgs: uiTWidgets);
+      procedure Dispose(const wdgs: uiTWidgets);
       {queues an event to dispose a widget}
       procedure DisposeQueue(wdg: uiTWidget);
 
@@ -489,19 +487,15 @@ end;
 
 function uiTWidgetGlobal.Add(wnd: uiTWindow; const wc: uiTWidgetClass; const Pos: oxTPoint;
                      const Dim: oxTDimensions): uiTWidget;
-var
-   wdgs: uiTWidgets;
-
 begin
-   wdgs := uiTWidgets(wnd.Widgets);
-   assert(wdgs.w.n <= Length(wdgs.w.List), 'Window widget count less than widget array size.');
+   assert(wnd.Widgets.w.n <= Length(wnd.Widgets.w.List), 'Window widget count less than widget array size.');
 
    Result := Make(wc, Pos, Dim, target.ControlProcedure);
    if(Result <> nil) then begin
-      wdgs.Insert(Result);
+      wnd.Widgets.Insert(Result);
 
-      if(wc.SelectOnAdd) and (wdgs.s < 0) then
-         wdgs.s := wdgs.w.n - 1;
+      if(wc.SelectOnAdd) and (wnd.Widgets.s < 0) then
+         wnd.Widgets.s := wnd.Widgets.w.n - 1;
 
       {setup widget information}
       Result.wnd     := wnd;
@@ -554,13 +548,14 @@ var
    pwdg: uiTWidget;
 
 begin
-   if((widgets <> nil) and (widgets.w.n > 0)) then
+   if(widgets.w.n > 0) then begin
       for i := 0 to (widgets.z.Entries.n - 1) do begin
          pwdg := uiTWidget(widgets.z.Entries[i]);
 
          if(pwdg <> nil) and ((wdgpNON_CLIENT in pwdg.Properties) = nonClient) then
             pwdg.RenderAll();
       end;
+   end;
 end;
 
 procedure uiTWidgetGlobal.RenderNonClient(const widgets: uiTWidgets);
@@ -622,14 +617,14 @@ end;
 procedure uiTWidgetHelper.Deselected();
 var
    pos: longint;
-   w: uiTWidgets;
+   w: uiPWidgets;
 
 begin
    w := GetWidgetsContainer();
 
-   pos := uiWidget.Pos(w, self);
-   if(pos = w.s) then
-      w.s := -1;
+   pos := uiWidget.Pos(w^, self);
+   if(pos = w^.s) then
+      w^.s := -1;
 
    {perform actions if we're not disposing of the widget}
    if(not (wdgpDESTROY_IN_PROGRESS in Properties)) then begin
@@ -647,14 +642,11 @@ end;
 procedure uiTWidgetGlobal.Deselect(wnd: uiTWindow);
 var
    pwdg: uiTWidget;
-   wdgs: uiTWidgets;
 
 begin
-   wdgs := uiTWidgets(wnd.Widgets);
-
    {set the previous widget properties to indicate not selected}
-   if(wdgs <> nil) and (wdgs.s < wdgs.w.n) and (wdgs.s > -1) then begin
-      pwdg := uiTWidget(wdgs.w[wdgs.s]);
+   if(wnd.Widgets.s < wnd.Widgets.w.n) and (wnd.Widgets.s > -1) then begin
+      pwdg := uiTWidget(wnd.Widgets.w[wnd.Widgets.s]);
 
       if(pwdg <> nil) then
          pwdg.Deselected();
@@ -665,16 +657,14 @@ function uiTWidgetGlobal.Select(wnd: uiTWindow; ID: loopint): boolean;
 var
    i: longint;
    wdg: uiTWidget = nil;
-   wdgs: uiTWidgets;
 
 begin
    Result := false;
-   wdgs := uiTWidgets(wnd.Widgets);
 
    {find the widget}
-   if(wdgs.w.n > 0) then
-      for i := 0 to (wdgs.w.n - 1) do begin
-         wdg := uiTWidget(wdgs.w[i]);
+   if(wnd.Widgets.w.n > 0) then
+      for i := 0 to (wnd.Widgets.w.n - 1) do begin
+         wdg := uiTWidget(wnd.Widgets.w[i]);
 
          if(wdg.ID.ID = ID) then begin
             {first deselect whatever previous widget was selected}
@@ -690,16 +680,10 @@ begin
 end;
 
 function uiTWidgetGlobal.SelectByPos(wnd: uiTWindow; Pos: longint): boolean;
-var
-   wdg: uiTWidget = nil;
-   wdgs: uiTWidgets;
-
 begin
-   wdgs := uiTWidgets(wnd.Widgets);
-   if(wdgs.w.n > Pos) and (Pos > -1) then begin
-      wdg  := uiTwidget(wdgs.w[Pos]);
+   if(wnd.Widgets.w.n > Pos) and (Pos > -1) then begin
+      uiTwidget(wnd.Widgets.w[Pos]).Select();
       Result := true;
-      wdg.Select();
    end else
       Result := false;
 end;
@@ -707,31 +691,30 @@ end;
 function uiTWidgetGlobal.SelectNext(wnd: uiTWindow): boolean;
 var
    s, i: longint;
-   wdgs: uiTWidgets;
+
 label
    redo;
 
 begin
    Result := false;
 
-   wdgs := uiTWidgets(wnd.Widgets);
-
-   if(wdgs.w.n > 0) then begin
-      if(wdgs.s < 0) or (wdgs.s >= wdgs.w.n) then begin
+   if(wnd.Widgets.w.n > 0) then begin
+      if(wnd.Widgets.s < 0) or (wnd.Widgets.s >= wnd.Widgets.w.n) then begin
          Result := true;
-         wdgs.s := 0;
+         wnd.Widgets.s := 0;
       end;
 
-      s := wdgs.s;
+      s := wnd.Widgets.s;
       i := s;
 
       repeat
       redo:
          inc(i);
-         if(i > wdgs.w.n - 1) then
+
+         if(i > wnd.Widgets.w.n - 1) then
             i := 0;
 
-         if(not (wdgpSELECTABLE in uiTWidget(wdgs.w[i]).Properties)) then begin
+         if(not (wdgpSELECTABLE in uiTWidget(wnd.Widgets.w[i]).Properties)) then begin
             if(i = s) then
                break;
 
@@ -749,31 +732,30 @@ end;
 function uiTWidgetGlobal.SelectPrevious(wnd: uiTWindow): boolean;
 var
    i, s: longint;
-   wdgs: uiTWidgets;
+
 label
    redo;
 
 begin
    Result := false;
 
-   wdgs := uiTWidgets(wnd.Widgets);
-
-   if(wdgs.w.n > 0) then begin
-      if(wdgs.s < 0) or (wdgs.s >= wdgs.w.n) then begin
+   if(wnd.Widgets.w.n > 0) then begin
+      if(wnd.Widgets.s < 0) or (wnd.Widgets.s >= wnd.Widgets.w.n) then begin
          Result := true;
-         wdgs.s  := 0;
+         wnd.Widgets.s  := 0;
       end;
 
-      s := wdgs.s;
+      s := wnd.Widgets.s;
       i := s;
 
       repeat
       redo:
          dec(i);
-         if(i < 0) then
-            i := (wdgs.w.n - 1);
 
-         if(not (wdgpSELECTABLE in uiTWidget(wdgs.w[i]).Properties)) then begin
+         if(i < 0) then
+            i := (wnd.Widgets.w.n - 1);
+
+         if(not (wdgpSELECTABLE in uiTWidget(wnd.Widgets.w[i]).Properties)) then begin
             if(i = s) then
                break;
 
@@ -820,22 +802,21 @@ var
    i: longint;
    pwdg: uiTWidget;
    rect: oxTRect;
-   wdgs: uiTWidgets;
 
 begin
    Result := nil;
-   wdgs := uiTWidgets(wnd.Widgets);
 
-   if(wdgs <> nil) and (wdgs.w.n > 0) then
-   for i := (wdgs.z.Entries.n - 1) downto 0 do begin
-      pwdg   := uiTWidget(wdgs.z.Entries[i]);
-      rect.x := pwdg.Position.x;
-      rect.y := pwdg.Position.y;
-      rect.w := pwdg.Dimensions.w;
-      rect.h := pwdg.Dimensions.h;
+   if(wnd.Widgets.w.n > 0) then begin
+      for i := (wnd.Widgets.z.Entries.n - 1) downto 0 do begin
+         pwdg   := uiTWidget(wnd.Widgets.z.Entries[i]);
+         rect.x := pwdg.Position.x;
+         rect.y := pwdg.Position.y;
+         rect.w := pwdg.Dimensions.w;
+         rect.h := pwdg.Dimensions.h;
 
-      if(rect.Inside(x, y)) then
-         exit(Find(pwdg, x - pwdg.Position.x, y + pwdg.Position.y));
+         if(rect.Inside(x, y)) then
+            exit(Find(pwdg, x - pwdg.Position.x, y + pwdg.Position.y));
+      end;
    end;
 end;
 
@@ -843,22 +824,21 @@ function uiTWidgetGlobal.Find(wnd: uiTWindow; wdgID: loopint): uiTWidget;
 var
    i: longint;
    wdg: uiTWidget;
-   wdgs: uiTWidgets;
 
 begin
    Result := nil;
-   wdgs := uiTWidgets(wnd.Widgets);
 
-   if(wdgs.w.n > 0) then
-   for i := 0 to (wdgs.w.n - 1) do begin
-      wdg := uiTWidget(wdgs.w[i]);
+   if(wnd.Widgets.w.n > 0) then begin
+      for i := 0 to (wnd.Widgets.w.n - 1) do begin
+         wdg := uiTWidget(wnd.Widgets.w[i]);
 
-      if(wdg <> nil) and (wdg.ID.ID = wdgID) then
-         exit(wdg);
+         if(wdg <> nil) and (wdg.ID.ID = wdgID) then
+            exit(wdg);
+      end;
    end;
 end;
 
-function uiTWidgetGlobal.Pos(s: uiTWidgets; wdg: uiTWidget): longint;
+function uiTWidgetGlobal.Pos(const s: uiTWidgets; wdg: uiTWidget): longint;
 var
    i: longint;
 
@@ -1036,10 +1016,10 @@ begin
    DeInitialize();
 
    {remove it from the parents Z order}
-   GetWidgetsContainer().z.Remove(self);
+   GetWidgetsContainer()^.z.Remove(self);
 
    {dispose sub-widgets, if any}
-   uiWidget.DisposeObject(Widgets);
+   uiWidget.Dispose(Widgets);
 
    {dispose widget data}
    Caption := '';
@@ -1055,26 +1035,17 @@ begin
 end;
 
 {dispose of widgets}
-procedure uiTWidgetGlobal.Dispose(wdgs: uiTWidgets);
+procedure uiTWidgetGlobal.Dispose(const wdgs: uiTWidgets);
 var
    i: longint;
 
 begin
-   if(wdgs <> nil) and (wdgs.w.n > 0) then begin
+   if(wdgs.w.n > 0) then begin
       for i := 0 to (wdgs.w.n - 1) do
          Dispose(uiTWidget(wdgs.w.List[i]));
 
       wdgs.w.Dispose();
       wdgs.z.Dispose();
-   end;
-end;
-
-procedure uiTWidgetGlobal.DisposeObject(var wdgs: uiTWidgets);
-begin
-   if(wdgs <> nil) then begin
-      Dispose(wdgs);
-
-      FreeObject(wdgs);
    end;
 end;
 
