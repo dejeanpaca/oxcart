@@ -71,6 +71,10 @@ TYPE
       function AddProcessor(): longint;
       {get processor name}
       function GetProcessorName(): string;
+      {get processor vendor}
+      function GetProcessorVendor(): string;
+      {get processor modeč}
+      function GetProcessorModel(): string;
       {get processor name}
       function GetMemorySize(units: longint = SI_BINARY_SIZE_GB; adjust: boolean = true): string;
    end;
@@ -93,15 +97,35 @@ begin
    try
       SetLength(Processors, n);
 
-      result := n;
+      Result := n;
    except
-      result := -1;
+      Result := -1;
    end;
 end;
 
 function appTSystemInformation.GetProcessorName(): string;
 begin
-   if(Length(Processors) > 0) then
+   if(Length(Processors) > 0) then begin
+      if(Processors[0].Name <> '') then
+         exit(Processors[0].Name)
+      else
+         exit(Processors[0].ModelName);
+   end;
+
+   Result := 'Unknown';
+end;
+
+function appTSystemInformation.GetProcessorVendor(): string;
+begin
+   if(Length(Processors) > 0) and (Processors[0].Vendor <> '') then
+      exit(Processors[0].Vendor);
+
+   Result := '';
+end;
+
+function appTSystemInformation.GetProcessorModel(): string;
+begin
+   if(Length(Processors) > 0) and (Processors[0].ModelName <> '') then
       exit(Processors[0].ModelName);
 
    Result := 'Unknown';
