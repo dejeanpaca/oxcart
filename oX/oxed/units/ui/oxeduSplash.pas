@@ -119,8 +119,8 @@ INITIALIZATION
 
    oxedMenubar.OnInit.Add(@initMenu);
 
-   oxedProjectManagement.OnProjectOpen.Add(@projectOpen);
-   oxedProjectManagement.OnNewProject.Add(@projectOpen);
+   oxedProjectManagement.OnOpen.Add(@projectOpen);
+   oxedProjectManagement.OnNew.Add(@projectOpen);
 
 END.
 

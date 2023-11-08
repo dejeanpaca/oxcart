@@ -134,8 +134,8 @@ INITIALIZATION
    TProcedures.Initialize(oxedSceneManagement.OnSceneClosed);
    TProcedures.Initialize(oxedSceneManagement.OnSceneSaved);
 
-   oxedProjectManagement.OnNewProject.Add(@onProjectCreated);
-   oxedProjectManagement.OnProjectOpen.Add(@onProjectOpened);
-   oxedProjectManagement.OnProjectClosed.Add(@onProjectClosed);
+   oxedProjectManagement.OnNew.Add(@onProjectCreated);
+   oxedProjectManagement.OnOpen.Add(@onProjectOpened);
+   oxedProjectManagement.OnClosed.Add(@onProjectClosed);
 
 END.

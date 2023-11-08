@@ -422,10 +422,10 @@ INITIALIZATION
    oxedMenubar.CLEAR_RECENTS_EVENT := appActionEvents.SetCallback(@clearRecents);
    oxedMenubar.UPDATE_RECENTS_EVENT := appActionEvents.SetCallback(@updateRecents);
 
-   oxedProjectManagement.OnProjectOpen.Add(@OnProjectChange);
-   oxedProjectManagement.OnProjectClosed.Add(@OnProjectChange);
-   oxedProjectManagement.OnProjectSaved.Add(@OnProjectChange);
-   oxedProjectManagement.OnNewProject.Add(@OnProjectChange);
+   oxedProjectManagement.OnOpen.Add(@OnProjectChange);
+   oxedProjectManagement.OnClosed.Add(@OnProjectChange);
+   oxedProjectManagement.OnSaved.Add(@OnProjectChange);
+   oxedProjectManagement.OnNew.Add(@OnProjectChange);
 
    oxedProjectRunner.OnStart.Add(@OnProjectChange);
    oxedProjectRunner.OnStop.Add(@OnProjectChange);

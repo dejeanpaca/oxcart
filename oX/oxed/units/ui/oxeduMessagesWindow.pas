@@ -223,7 +223,7 @@ INITIALIZATION
    oxedMenubar.OnInit.Add(@initMenubar);
 
    oxedProjectRunner.OnBeforeStart.Add(@onStart);
-   oxedProjectManagement.OnProjectClosed.Add(@onProjectClose);
+   oxedProjectManagement.OnClosed.Add(@onProjectClose);
 
 END.
 
