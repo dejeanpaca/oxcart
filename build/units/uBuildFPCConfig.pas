@@ -39,6 +39,7 @@ TYPE
       procedure IncludeUnits(const list: TStringArray; count: loopint = -1);
       procedure AddIncludes(const list: TStringArray; count: loopint = -1);
       procedure AddSymbols(const list: TStringArray; count: loopint = -1);
+      procedure AddLibraries(const list: TStringArray; count: loopint = -1);
 
       function WriteFile(const fn: StdString): boolean;
       class function WriteFile(what: TStringArray; const fn: StdString): boolean; static;
@@ -86,6 +87,10 @@ begin
 
    for i := 0 to build.Includes.n - 1 do begin
       AddArgument('-Fi' + build.Includes.List[i]);
+   end;
+
+   for i := 0 to build.Libraries.n - 1 do begin
+      AddArgument('-Fl' + build.Libraries.List[i]);
    end;
 
    for i := 0 to build.Symbols.n - 1 do begin
@@ -160,6 +165,7 @@ begin
    IncludeUnits(build.Units.List, build.Units.n);
    AddIncludes(build.Includes.List, build.Includes.n);
    AddSymbols(build.Symbols.List, build.Symbols.n);
+   AddLibraries(build.Libraries.List, build.Libraries.n);
 
    if(build.TargetOS <> '') then begin
       add('# target OS');
@@ -215,6 +221,14 @@ begin
    if(count > 0) then begin
       Config.Add('# symbols');
       FromList(list, '-d', count);
+   end;
+end;
+
+procedure TBuildFPCConfiguration.AddLibraries(const list: TStringArray; count: loopint);
+begin
+   if(count > 0) then begin
+      Config.Add('# libraries');
+      FromList(list, '-Fl', count);
    end;
 end;
 
