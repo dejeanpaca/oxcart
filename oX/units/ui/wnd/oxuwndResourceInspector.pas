@@ -157,7 +157,7 @@ begin
    ConsoleOpenCommand := 'wnd:resource_inspector';
    {$ENDIF}
 
-   inherited Create;
+   inherited;
 end;
 
 procedure oxTResourceInspectorWindow.CreateWindow();

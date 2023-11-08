@@ -127,26 +127,26 @@ begin
    Result := false;
 end;
 
-constructor oxTFilePreviewWindow.Create;
+constructor oxTFilePreviewWindow.Create();
 begin
    Width := 320;
    Height := 70;
    ID  := uiControl.GetID('file_preview');
 
-   inherited Create;
+   inherited;
 end;
 
-procedure oxTFilePreviewWindow.CreateWindow;
+procedure oxTFilePreviewWindow.CreateWindow();
 begin
    {create the window}
    uiWindow.Create.Frame := uiwFRAME_STYLE_NONE;
    Include(uiWindow.Create.Properties, uiwndpNO_ESCAPE_KEY);
    uiWindow.Create.Properties := uiWindow.Create.Properties - [uiwndpSELECTABLE, uiwndpMOVE_BY_SURFACE, uiwndpMOVABLE];
 
-   inherited CreateWindow;
+   inherited;
 end;
 
-procedure oxTFilePreviewWindow.AddWidgets;
+procedure oxTFilePreviewWindow.AddWidgets();
 begin
    inherited;
 end;
