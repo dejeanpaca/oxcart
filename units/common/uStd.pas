@@ -106,6 +106,8 @@ TYPE
       {dispose of the array}
       procedure Dispose();
 
+      {remoove all elements}
+      procedure RemoveAll();
       {remove an elements from the array, and stack the others down}
       procedure Remove(index: loopint);
       {remove a range of elements}
@@ -872,6 +874,11 @@ procedure TSimpleList.Dispose();
 begin
    SetLength(List, 0);
    a := 0;
+   n := 0;
+end;
+
+procedure TSimpleList.RemoveAll();
+begin
    n := 0;
 end;
 
