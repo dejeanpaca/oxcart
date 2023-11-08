@@ -1259,6 +1259,7 @@ procedure SetupFPCBuildOptions();
 var
    arch: oxedTPlatformArchitecture;
    fn: StdString;
+   externalSymbols: boolean;
 
 begin
    arch := oxedBuild.BuildArch;
@@ -1280,25 +1281,28 @@ begin
    if oxedBuild.IsLibrary() and oxedBuild.BuildPlatform.RequiresPIC then
       build.FPCOptions.PositionIndependentCode := true;
 
+   externalSymbols := false;
+
+   {platform}
+   build.ExecutableOptions.ExcludeDefaultLibraryPath := oxedBuild.BuildPlatform.ExcludeDefaultLibraryPath;
+
+   if(build.Debug.Include) then begin
+      if(oxedBuild.BuildPlatform.SupportsExternalDebugSymbols) then
+         externalSymbols := true;
+   end;
+
    {debug checks}
    build.Checks.IO := true;
    build.Checks.Range := true;
    build.Checks.Overflow := true;
    build.Checks.Stack := true;
    build.Checks.Assertions := true;
+   build.Debug.External := externalSymbols;
 
    {$IFOPT D+}
    build.Debug.Include := true;
    build.Debug.LineInfo := true;
    {$ENDIF}
-
-   {platforn}
-   build.ExecutableOptions.ExcludeDefaultLibraryPath := oxedBuild.BuildPlatform.ExcludeDefaultLibraryPath;
-
-   if(build.Debug.Include) then begin
-      if(oxedBuild.BuildPlatform.SupportsExternalDebugSymbols) then
-         build.Debug.External := true;
-   end;
 
    {optimization}
    build.Optimization.Level := 1;
