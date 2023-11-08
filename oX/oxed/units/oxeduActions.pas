@@ -27,6 +27,7 @@ VAR
 
       BUILD,
       RECODE,
+      RECREATE,
       CLEANUP,
       RESCAN,
       REBUILD_THIRD_PARTY,
