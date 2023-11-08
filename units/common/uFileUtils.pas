@@ -255,10 +255,10 @@ function copyOnDirectory(const f: TFileTraverseData): boolean;
 var
    data: PDirectoryCopier;
    cd: TDirectoryCopierData;
+   path: StdString;
 
 begin
    data := f.ExternalData;
-   Result := true;
 
    if(data^.OnFile <> nil) then begin
       cd.ExternalData := data^.ExternalData;
@@ -266,10 +266,16 @@ begin
       cd.TraverseData := @f;
 
       Result := data^.OnDirectory(cd);
+   end else
+      Result := true;
 
-      if(Result) then begin
-         {TODO: Create target directory}
-      end;
+   if(Result) then begin
+      path := data^.Destination + ExtractRelativepath(data^.Source, f.f.Name);
+
+      if(not CreateDir(path)) then
+         Result := false;
+
+      {TODO: Abandon running if failed to create directory}
    end;
 end;
 
@@ -277,10 +283,10 @@ function copyOnFile(const f: TFileTraverseData): boolean;
 var
    data: PDirectoryCopier;
    cd: TDirectoryCopierData;
+   path: string;
 
 begin
    data := f.ExternalData;
-   Result := true;
 
    if(data^.OnFile <> nil) then begin
       cd.ExternalData := data^.ExternalData;
@@ -288,10 +294,16 @@ begin
       cd.TraverseData := @f;
 
       Result := data^.OnFile(cd);
+   end else
+      Result := true;
 
-      if(Result) then begin
-         {TODO: Copy file}
-      end;
+   if(Result) then begin
+      path := ExtractRelativepath(data^.Source, f.f.Name);
+
+      if(FileUtils.Copy(data^.Source + path, data^.Destination + path) < 0) then
+         Result := false;
+
+      {TODO: Abandon running if failed to create directory}
    end;
 end;
 
@@ -301,12 +313,12 @@ function TDirectoryCopier.Copy(const sourceDir, destinationDir: StdString): loop
 begin
    Result := 0;
 
-   Source := sourceDir;
-   Destination := destinationDir;
-
-   if DirectoryExists(source) then begin
+   if DirectoryExists(sourceDir) then begin
       {create target directory}
-      if CreateDir(Destination) then begin
+      if CreateDir(destinationDir) then begin
+         Source := IncludeTrailingPathDelimiterNonEmpty(sourceDir);
+         Destination := IncludeTrailingPathDelimiterNonEmpty(destinationDir);
+
          Walker.ExternalData := @Self;
          Walker.OnFile := @copyOnFile;
          Walker.OnDirectory := @copyOnDirectory;
@@ -1391,7 +1403,7 @@ begin
             if(src.Attr and faDirectory > 0) then begin
                if(Recursive) then begin
                   if(OnDirectory = nil) then
-                     RunDirectory(UTF8Encode(src.Name));
+                     RunDirectory(UTF8Encode(src.Name))
                   else begin
                      TFileDescriptor.From(fd.f, src);
                      fd.f.Name := path + DirectorySeparator + UTF8Encode(src.Name);
