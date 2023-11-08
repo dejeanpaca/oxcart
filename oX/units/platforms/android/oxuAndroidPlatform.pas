@@ -12,7 +12,7 @@ INTERFACE
       ctypes, looper, input, android_native_app_glue, android_keycodes, android_log_helper,
       uStd,
       {app}
-      uApp, appuMouse, appuActionEvents,
+      uApp, appuKeys, appuKeyEvents, appuMouse, appuMouseEvents, appuActionEvents,
       {oX}
       uOX, oxuRun, oxuInit,
       oxuWindow, uiuWindow,
@@ -86,6 +86,61 @@ begin
    end;
 end;
 
+procedure getKeyEvent(kc, action, etype: cint32);
+var
+   k: appTKey;
+
+begin
+   if(kc = AKEYCODE_BACK) then begin
+      if(action = AKEY_STATE_UP) then
+         appActionEvents.QueueQuitEvent();
+   end;
+
+   k.Code := 0;
+   k.State := 0;
+
+   {translate key code}
+   if(kc <= 255) then
+      k.Code := appkRemapCodes[kc];
+
+   {set key state}
+   if(action <> AKEY_STATE_UP) then
+      k.State.Prop(kmDOWN);
+
+   appKeyEvents.Queue(k);
+end;
+
+procedure getMotionEvent(kc, action, etype: cint32; event: PAInputEvent);
+var
+   pointerCount: csize_t;
+   i: loopint;
+   x, y: single;
+
+   m: appTMouseEvent;
+
+begin
+   pointerCount := AMotionEvent_getPointerCount(event);
+
+   for i := 0 to pointerCount - 1 do begin
+      appm.Init(m);
+
+      x := AMotionEvent_getX(event, i);
+      y := AMotionEvent_getY(event, i);
+
+      m.x := x;
+      m.y := y;
+
+      m.Button := appmcLEFT;
+
+      if(action = AKEY_EVENT_ACTION_UP) then
+         m.Action := appmcPRESSED
+      else
+         m.Action := appmcRELEASED;
+
+      appMouseEvents.Queue(m);
+   end;
+end;
+
 function AndroidHandleInput(app: Pandroid_app; event: PAInputEvent): cint32;
 var
    kc,
@@ -99,10 +154,9 @@ begin
    action := AKeyEvent_getAction(event);
 
    if(etype = AINPUT_EVENT_TYPE_KEY) then begin
-      if(kc = AKEYCODE_BACK) then begin
-         if(action = AKEY_STATE_UP) then
-            appActionEvents.QueueQuitEvent();
-      end;
+      getKeyEvent(kc, action, etype);
+   end else if(etype = AINPUT_EVENT_TYPE_MOTION) then begin
+      getMotionEvent(kc, action, etype, event);
    end;
 
    Result := 0;
