@@ -15,14 +15,18 @@ INTERFACE
       {ox}
       uOX;
 
-CONST
-   {should never report time passed greater than this to be reported,
-   this is also affected by the time factor}
-   oxcMaxTimeFlow: single = 5.0;
+TYPE
+   oxTTime = record
+     {should never report time passed greater than this to be reported,
+     this is also affected by the time factor}
+     MaxTimeFlow: single;
+
+     Timer: TTimerData;
+     Flow: single;
+   end;
 
 VAR
-   oxMainTimer: TTimerData;
-   oxMainTimeFlow: single;
+   oxTime: oxTTime;
 
 IMPLEMENTATION
 
@@ -32,23 +36,25 @@ var
 
 begin
    {calculate time flow}
-   oxMainTimeFlow    := oxMainTimer.TimeFlow();
-   maxTime           := oxcMaxTimeFlow * oxMainTimer.Factor;
+   oxTime.Flow := oxTime.Timer.TimeFlow();
+   maxTime := oxTime.MaxTimeFlow * oxTime.Timer.Factor;
 
    {correct time flow}
    {the time flow must not exceed the maximum time flow,
     but only if oxcMaxTimeFlow is not 0.0}
-   if(oxcMaxTimeFlow <> 0.0) and (oxMainTimeFlow > maxTime)
-      then oxMainTimeFlow := maxTime;
+   if(oxTime.MaxTimeFlow <> 0.0) and (oxTime.Flow > maxTime) then
+      oxTime.Flow := maxTime;
 end;
 
 {initializes the main timer}
 procedure initTimer();
 begin
-   oxMainTimer.InitStart();
+   oxTime.Timer.InitStart();
    ox.OnRun.Add(@Tick);
 end;
 
 INITIALIZATION
+   oxTime.MaxTimeFlow := 5.0;
    initTimer();
+
 END.
