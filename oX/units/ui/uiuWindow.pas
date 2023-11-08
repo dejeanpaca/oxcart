@@ -153,6 +153,7 @@ TYPE
       { state management }
       function IsVisible(): boolean;
       function IsOpen(): boolean;
+      function IsMinimized(): boolean;
 
       { window listeners }
 
@@ -873,6 +874,7 @@ begin
 
       {this just disables and hides the window and deselects any widgets}
       Disable();
+
       if(uiwndpCLOSE_SELECT in Properties) then
          Hide(false)
       else
@@ -2206,6 +2208,11 @@ end;
 function uiTWindowHelper.IsOpen(): boolean;
 begin
    Result := not (uiwndpCLOSED in Properties);
+end;
+
+function uiTWindowHelper.IsMinimized(): boolean;
+begin
+   Result := uiwndpMINIMIZED in Properties;
 end;
 
 procedure uiTWindowHelper.SetHandler(listener: uiTWindowListenerMethod);
