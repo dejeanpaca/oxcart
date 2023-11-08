@@ -73,6 +73,9 @@ TYPE
       procedure Restore(wnd: oxTWindow); override;
 
       function TranslateKey(const k: appTKeyEvent): char; override;
+
+      procedure GetCenterPosition(wnd: oxTWindow; out p: oxTPoint); override;
+      function SetSystemIcon({%H-}wnd: oxTWindow; const {%H-}fn: string): loopint; override;
    end;
 
 IMPLEMENTATION
@@ -470,7 +473,6 @@ var
    w,
    h: longint;
 
-   dvmd: DEVMODE;
    wnd: winosTWindow;
 
 begin
@@ -518,13 +520,9 @@ begin
 
    {try to center the window on screen}
    if(uiwndpAUTO_CENTER in wnd.Properties) then begin
-      EnumDisplaySettings(nil, ENUM_CURRENT_SETTINGS, @dvmd);
-      r.Left   := dvmd.dmPelsWidth div 2  - w div 2;
-      r.Top    := dvmd.dmPelsHeight div 2 - h div 2;
-
-      {correct position}
-      wnd.Position.x := r.Left;
-      wnd.Position.y := r.Top;
+      wnd.GetPlatform().GetCenterPosition(wnd, wnd.Position);
+      r.Left := wnd.Position.x;
+      r.Top := wnd.Position.y;
    end;
 
    {create the window}
@@ -1009,6 +1007,38 @@ begin
       Result := char(lo(chars))
    else
       Result := #0;
+end;
+
+procedure oxTWindowsPlatform.GetCenterPosition(wnd: oxTWindow; out p: oxTPoint);
+var
+   dvmd: DEVMODE;
+
+begin
+   EnumDisplaySettings(nil, ENUM_CURRENT_SETTINGS, @dvmd);
+
+   p.x := dvmd.dmPelsWidth div 2  - wnd.Dimensions.w div 2;
+   p.y := dvmd.dmPelsHeight div 2 - wnd.Dimensions.h div 2;
+end;
+
+function oxTWindowsPlatform.SetSystemIcon(wnd: oxTWindow; const fn: string): loopint;
+var
+   icon,
+   smallIcon: HICON;
+
+begin
+   Result := 0;
+
+   icon := winos.LoadIcon(fn, 0, 0, LR_SHARED);
+   smallIcon := winos.LoadIcon(fn, 16, 16, LR_SHARED);
+
+   if(icon <> 0) then
+      SendMessage(winosTWindow(wnd).wd.h, WM_SETICON, ICON_BIG, icon);
+
+   if(smallIcon <> 0) then
+      SendMessage(winosTWindow(wnd).wd.h, WM_SETICON, ICON_SMALL, smallIcon);
+
+   if(icon = 0) then
+      Result := eFAIL;
 end;
 
 INITIALIZATION
