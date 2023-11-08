@@ -13,7 +13,8 @@ INTERFACE
       {ox}
       oxuTypes, oxuFont,
       {ui}
-      uiuControl, uiuTypes, uiWidgets, wdguWorkbar, wdguToolbar, wdguList,
+      uiuControl, uiuTypes, uiuSkin,
+      uiWidgets, wdguWorkbar, wdguToolbar, wdguList,
       {oxed}
       uOXED, oxeduSettings, oxeduWindow, oxeduMenubar, oxeduMessages, oxeduIcons,
       oxeduProjectRunner, oxeduProjectManagement;
@@ -180,6 +181,7 @@ begin
    {toolbar items}
    wdg.Clear := wdg.Toolbar.AddButton(oxedIcons.Create($f00d), 0, @clearMessages);
    wdg.Clear^.Hint := 'Clear all messages';
+   wdg.Clear^.Color := uiSkin.StandardSkin.Colors.Delete;
    wdg.Clear^.Color.Assign(255, 64, 64, 255);
 
    wdg.Copy := wdg.Toolbar.AddButton(oxedIcons.Create($f0c5), 0, @copyMessages);
