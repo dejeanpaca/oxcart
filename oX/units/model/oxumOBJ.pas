@@ -1,6 +1,8 @@
 {
    oxumOBJ, OBJ model loader
    Copyright (C) 2011. Dejan Boras
+
+   TODO: Maybe try to optimize the wasUseMtl := false redundancy
 }
 
 {$INCLUDE oxdefines.inc}
@@ -135,7 +137,8 @@ var
    facePointCount: loopint;
 
    hasVertex,
-   hasFaces: Boolean;
+   hasFaces,
+   wasUseMtl: Boolean;
 
    m: oxPMesh;
 
@@ -185,6 +188,8 @@ begin
             m := ld.Model.AddMesh();
             m^.Name := value;
             m^.Primitive := oxPRIMITIVE_TRIANGLES;
+
+            wasUseMtl := false;
          end else begin
             if(m <> nil) then begin
                if(key = 'v') then begin
@@ -193,11 +198,15 @@ begin
 
                   if(hasFaces) then
                      data.SetError(eINVALID, 'Invalid (v) order at line' + sf(lineCount));
+
+                  wasUseMtl := false;
                end else if(key = 'vn') then begin
                   inc(normalCount);
 
                   if(hasFaces) then
                      data.SetError(eINVALID, 'Invalid (vn) order at line ' + sf(lineCount));
+
+                  wasUseMtl := false;
                end else if(key = 'f') then begin
                   hasFaces := true;
 
@@ -221,8 +230,17 @@ begin
                      data.SetError(eUNSUPPORTED, 'Unsupported face point count ' + sf(facePointCount) + ' (not triangle or quad) at line ' + sf(lineCount));
                      ld.UnsupportedFaces := true;
                   end;
+
+                  wasUseMtl := false;
                end else if(key = 'usemtl') then begin
                   inc(m^.Materials.n);
+                  wasUseMtl := true;
+               end else if(key = 's') then begin
+                  if(not wasUseMtl) then begin
+                     inc(m^.Materials.n)
+                  end;
+
+                  wasUseMtl := false;
                end;
             end;
          end;
@@ -276,7 +294,8 @@ var
    index: loopint;
 
    hasN,
-   hasUV: boolean;
+   hasUV,
+   wasUseMtl: boolean;
 
    newV: array of TVector3f;
    newUV: array of TVector2f;
@@ -376,8 +395,27 @@ var
             pM^.StartIndice := 0;
          end;
       end;
+   end;
 
-      materialName := '';
+   procedure getMaterial();
+   begin
+      if(currentMaterial < m^.Materials.n) then begin
+         pM := @m^.Materials.List[currentMaterial];
+         pM^.Material := ld.Model.Materials.FindByName(materialName);
+
+         {get starting indice}
+         pM^.StartIndice := currentFace * vertsPerFace;
+
+         if(pM^.StartIndice > m^.Data.nIndices) then begin
+            log.w('Invalid indice starting position for material: ' + materialName);
+            pM^.StartIndice := 0;
+         end;
+
+         previousFace := currentFace;
+      end else
+         pM := nil;
+
+      inc(currentMaterial);
    end;
 
    procedure cleanup();
@@ -474,6 +512,7 @@ begin
             end;
 
             inc(meshIndex);
+            wasUseMtl := false;
          end else if(m <> nil) then begin
             if(key = 'v') then begin
                if(vertexIndex < m^.Data.nVertices) then begin
@@ -485,6 +524,7 @@ begin
                   log.e('Vertex count exceed scanned value: ' + sf(m^.Data.nVertices));
 
                inc(vertexIndex);
+               wasUseMtl := false;
             end else if(key = 'vn') then begin
                if(normalIndex < m^.Data.nNormals) then begin
                   if(not oxsSerialization.Deserialize(value, m^.Data.n[normalIndex])) then begin
@@ -495,6 +535,7 @@ begin
                   log.e('Normal count exceed scanned value: ' + sf(m^.Data.nNormals));
 
                inc(normalIndex);
+               wasUseMtl := false;
             end else if(key = 'f') then begin
                facePointCount := CharacterCount(value, ' ') + 1;
 
@@ -562,27 +603,21 @@ begin
                      inc(currentFace);
                   end;
                end;
+
+               wasUseMtl := false;
             end else if(key = 'usemtl') then begin
-               materialDone();
-
+               wasUseMtl := true;
                materialName := value;
-               if(currentMaterial < m^.Materials.n) then begin
-                  pM := @m^.Materials.List[currentMaterial];
-                  pM^.Material := ld.Model.Materials.FindByName(materialName);
 
-                  {get starting indice}
-                  pM^.StartIndice := currentFace * vertsPerFace;
+               materialDone();
+               getMaterial();
+            end else if(key = 's') then begin
+               if(not wasUseMtl) then begin
+                  materialDone();
+                  getMaterial();
+               end;
 
-                  if(pM^.StartIndice > m^.Data.nIndices) then begin
-                     log.w('Invalid indice starting position for material: ' + materialName);
-                     pM^.StartIndice := 0;
-                  end;
-
-                  previousFace := currentFace;
-               end else
-                  pM := nil;
-
-               inc(currentMaterial);
+               wasUseMtl := false;
             end;
          end;
       end;
