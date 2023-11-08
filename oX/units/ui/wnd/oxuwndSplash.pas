@@ -72,7 +72,7 @@ IMPLEMENTATION
 
 function controlShowOnStartCheckbox(wdg: TObject; {%H-}what: longword): longint;
 begin
-   result := -1;
+   Result := -1;
 
    oxwndSplash.ShowOnStart := wdgpTRUE in wdgTCheckbox(wdg).Properties;
 end;
@@ -139,14 +139,14 @@ var
    m: appTMouseEvent;
 
 begin
-   result := -1;
+   Result := -1;
 
    if(event.IsEvent(appMouseEvents.evh, appMOUSE_EVENT)) then begin
       m := appTMouseEvent(event.GetData()^);
 
       if(m.Action.IsSet(appmcRELEASED) and m.Button.IsSet(appmcLEFT)) then begin
          oxwndSplash.Close();
-         result := 0;
+         Result := 0;
       end;
    end;
 end;
