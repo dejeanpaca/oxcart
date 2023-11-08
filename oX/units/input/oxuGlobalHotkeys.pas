@@ -8,30 +8,56 @@ UNIT oxuGlobalHotkeys;
 INTERFACE
 
    USES
-      appuKeys,
+      uStd, appuKeys,
       {ox}
-      oxuWindowTypes, oxuGlobalKeys;
+      oxuWindowTypes, oxuGlobalKeys, oxuWindowHelper, oxuWindows;
+
+VAR
+   oxGlobalHotkeys: record
+      AllFullscreen: boolean;
+   end;
 
 IMPLEMENTATION
 
-procedure fullscreenHandler({%H-}wnd: oxTWindow);
+procedure toggleFullscreen(wnd: oxTWindow; goFull: boolean);
 begin
+   if(goFull) then
+      wnd.Fullscreen()
+   else
+      wnd.LeaveFullscreen();
+end;
 
+procedure fullscreenHandler(wnd: oxTWindow);
+var
+   i: loopint;
+   inFullscreen: boolean;
+
+begin
+   if(oxGlobalHotkeys.AllFullscreen) then begin
+      {base toggle on the first window}
+      inFullscreen := oxWindows.w[0].oxProperties.Fullscreen;
+
+      for i := 0 to oxWindows.n - 1 do begin
+         toggleFullscreen(oxWindows.w[0], not inFullscreen);
+      end;
+   end else
+      toggleFullscreen(wnd, not wnd.oxProperties.Fullscreen);
 end;
 
 CONST
    gkFullscreenHandler: oxTGlobalKeyHandler = (
       Key: (
-         Code: kcTILDE;
+         Code: kcF11;
          State: 0;
       );
       Pressed: nil;
       Released: @fullscreenHandler;
-      Name: 'oxConsole'
+
+      Name: 'fullscreen_toggle'
    );
 
 INITIALIZATION
+   oxGlobalHotkeys.AllFullscreen := true;
    oxGlobalKeys.Hook(gkFullscreenHandler);
-
 
 END.
