@@ -31,53 +31,17 @@ TYPE
       procedure ThreadDone(); override;
    end;
 
-   oxedTScannerFile = record
-      {complete file name (including package path)}
-      FileName,
-      {file name within the package}
-      PackageFileName,
-      {file name relative to the project path}
-      ProjectFileName,
-      {file extension}
-      Extension,
-      {path of the package}
-      PackagePath: StdString;
-
-      Package: oxedPPackage;
-
-      fd: TFileDescriptor;
-   end;
-
-   oxedTProjectScannerFileProcedure = procedure(var f: oxedTScannerFile);
-   oxedTProjectScannerFileProcedures = specialize TSimpleList<oxedTProjectScannerFileProcedure>;
-
-   { oxedTScannerOnFileProceduresHelper }
-
-   oxedTScannerOnFileProceduresHelper = record helper for oxedTProjectScannerFileProcedures
-      procedure Call(var f: oxedTScannerFile);
-   end;
-
-   { oxedTProjectScannerCurrent }
-
-   {holds information about the current state of the project scanner while a scan is done}
-   oxedTProjectScannerCurrent = record
-      Package: oxedPPackage;
-      Path: StdString;
-
-      procedure FormFile(out f: oxedTScannerFile; const fd: TFileDescriptor);
-   end;
-
    { oxedTProjectScannerGlobal }
 
    oxedTProjectScannerGlobal = record
       Walker: TFileTraverse;
       Task: oxedTProjectScannerTask;
 
-      Current: oxedTProjectScannerCurrent;
+      Current: oxedTProjectWalkerCurrent;
 
       OnStart,
       OnDone: TProcedures;
-      OnFile: oxedTProjectScannerFileProcedures;
+      OnFile: oxedTProjectWalkerFileProcedures;
 
       procedure Run();
       class procedure Initialize(); static;
@@ -96,13 +60,12 @@ IMPLEMENTATION
 
 function scanFile(const fd: TFileTraverseData): boolean;
 var
-   f: oxedTScannerFile;
+   f: oxedTProjectWalkerFile;
 
 begin
    Result := true;
 
    oxedProjectScanner.Current.FormFile(f, fd.f);
-
    oxedProjectScanner.OnFile.Call(f);
 
    if(oxedProjectScanner.Task.Terminated) then
@@ -127,34 +90,6 @@ begin
       end;
    end else
       Result := false;
-end;
-
-{ oxedTProjectScannerCurrent }
-
-procedure oxedTProjectScannerCurrent.FormFile(out f: oxedTScannerFile; const fd: TFileDescriptor);
-begin
-   ZeroOut(f, SizeOf(f));
-
-   f.FileName := fd.Name;
-   f.Extension := ExtractFileExt(fd.Name);
-   f.fd := fd;
-
-   f.Package := Package;
-   f.PackagePath := Path;
-   f.PackageFileName := ExtractRelativepath(f.PackagePath, f.FileName);
-   f.ProjectFileName := oxedProject.GetPackageRelativePath(f.Package^) + f.PackageFileName;
-end;
-
-{ oxedTScannerOnFileProceduresHelper }
-
-procedure oxedTScannerOnFileProceduresHelper.Call(var f: oxedTScannerFile);
-var
-   i: loopint;
-
-begin
-   for i := 0 to n - 1 do begin
-      List[i](f);
-   end;
 end;
 
 { oxedTProjectScannerGlobal }
@@ -315,7 +250,7 @@ INITIALIZATION
 
    TProcedures.InitializeValues(oxedProjectScanner.OnStart);
    TProcedures.InitializeValues(oxedProjectScanner.OnDone);
-   oxedTProjectScannerFileProcedures.InitializeValues(oxedProjectScanner.OnFile);
+   oxedTProjectWalkerFileProcedures.InitializeValues(oxedProjectScanner.OnFile);
 
    oxedProjectManagement.OnOpen.Add(@projectOpen);
    oxedProjectManagement.OnClosed.Add(@projectClosed);

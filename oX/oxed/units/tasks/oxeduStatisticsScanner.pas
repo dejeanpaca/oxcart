@@ -10,11 +10,12 @@ INTERFACE
 
    USES
       uStd, uFileUtils,
-      oxeduProject, oxeduProjectScanner, oxeduProjectStatistics;
+      {oxed}
+      oxeduProject, oxeduProjectScanner, oxeduProjectWalker, oxeduProjectStatistics;
 
 IMPLEMENTATION
 
-procedure onFile(var f: oxedTScannerFile);
+procedure onFile(var f: oxedTProjectWalkerFile);
 var
    i: loopint;
 
