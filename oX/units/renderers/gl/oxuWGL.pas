@@ -10,7 +10,7 @@ INTERFACE
 
    USES ustrList,
       {$INCLUDE usesglext.inc},
-      oxuWindowTypes, oxuglExtensions, oxuWindowsOS;
+      oxuglExtensions, oxuWindowsOS, oxuWindow;
 
 CONST
    cWGL_EXT_depth_float                       = 0;
@@ -101,13 +101,13 @@ begin
       wglExtensions[id].Present := true;
 end;
 
-procedure GetExtensions(wnd: oxTWindow);
+procedure GetExtensions();
 var
    exts: pChar;
 
 begin
    if(wglGetExtensionsStringARB <> nil) then begin
-      exts := wglGetExtensionsStringARB(winosTWindow(wnd).wd.dc);
+      exts := wglGetExtensionsStringARB(winosTWindow(oxWindow.Current).wd.dc);
       strList.ProcessSpaceSeparated(exts, @GetExts);
    end;
 end;

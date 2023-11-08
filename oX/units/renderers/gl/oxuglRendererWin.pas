@@ -11,7 +11,7 @@ INTERFACE
 	USES uStd, uLog, StringUtils,
      {$INCLUDE usesglext.inc},
      windows, oxuWindowsOS, oxuRenderer,
-     oxuOGL, oxuglExtensions, oxuglRendererPlatform, oxuglRenderer
+     oxuOGL, oxuglExtensions, oxuglRendererPlatform, oxuglRenderer, oxuglWindow
      {$IFNDEF GLES}
      ,oxuWGL
      {$ENDIF};
@@ -220,8 +220,8 @@ begin
          exit(0);
    end;
 
-   vals.Add(WGL_CONTEXT_MAJOR_VERSION_ARB,   wnd.gl.Version.Major);
-   vals.Add(WGL_CONTEXT_MINOR_VERSION_ARB,   wnd.gl.Version.Minor);
+   vals.Add(WGL_CONTEXT_MAJOR_VERSION_ARB,   oglDefaultVersion.Major);
+   vals.Add(WGL_CONTEXT_MINOR_VERSION_ARB,   oglDefaultVersion.Minor);
 
    contextFlags := 0;
    {$IFDEF OX_DEBUG}
@@ -233,13 +233,13 @@ begin
       vals.add(WGL_CONTEXT_FLAGS_ARB, contextFlags);
 
    if(extContextProfile) then begin
-      if(wnd.gl.Version.Profile = oglPROFILE_ANY) then begin
+      if(oglDefaultVersion.Profile = oglPROFILE_ANY) then begin
          log.v('gl > Using any profile');
          vals.Add(WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB or WGL_CONTEXT_CORE_PROFILE_BIT_ARB);
-      end else if(wnd.gl.Version.Profile = oglPROFILE_COMPATIBILITY) then begin
+      end else if(oglDefaultVersion.Profile = oglPROFILE_COMPATIBILITY) then begin
          log.v('gl > Using compatibility profile');
          vals.Add(WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB);
-      end else if(wnd.gl.Version.Profile = oglPROFILE_CORE) then begin
+      end else if(oglDefaultVersion.Profile = oglPROFILE_CORE) then begin
          log.v('gl > Using core profile');
          vals.Add(WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB);
       end;
@@ -258,7 +258,7 @@ begin
       else
          message := 'unknown';
 
-      log.e('wglCreateContextAttribs failed for version ' + wnd.gl.GetString() + ': ' + message);
+      log.e('wglCreateContextAttribs failed for version ' + oglDefaultVersion.GetString() + ': ' + message);
    end else
       log.v('gl > Created rendering context: ' + sf(Result));
 
@@ -357,7 +357,7 @@ begin
    extContext := oglExtensions.PlatformSupported(cWGL_ARB_create_context);
 
    {requires new context creation for opengl 3.0 and higher}
-   requiresContext := ogl.ContextRequired(oglTWindow(wnd).glDefault);
+   requiresContext := ogl.ContextRequired(oglDefaultVersion);
    {$ENDIF}
 
    if(extContext) and (requiresContext) then begin

@@ -16,7 +16,8 @@ INTERFACE
       {ui}
       uiuMessageBox, uiuTypes,
       {oxed}
-      uOXED, oxeduActions, oxuwndFileDialog, oxeduProject, oxeduProjectManagement, oxeduSceneManagement, oxeduConsole;
+      uOXED, oxeduActions, oxuwndFileDialog, oxeduProject, oxeduProjectManagement, oxeduProjectRunner,
+      oxeduSceneManagement, oxeduConsole;
 
 TYPE
 
@@ -74,6 +75,9 @@ end;
 
 class procedure oxedTProjectDialog.OpenDialog();
 begin
+   if(oxedProjectRunner.IsRunning()) then
+      exit;
+
    dlgOpen.Open();
 end;
 
@@ -166,6 +170,9 @@ end;
 
 class procedure oxedTProjectDialog.SaveDialog();
 begin
+   if(oxedProjectRunner.IsRunning()) then
+      exit;
+
    if(oxedProject <> nil) and (oxedProject.Path = '') then begin
       dlgSave.Open();
    end else
@@ -180,6 +187,9 @@ end;
 
 class procedure oxedTProjectDialog.NewSceneDialog();
 begin
+   if oxedProjectRunner.IsRunning() then
+      exit;
+
    if(oxedProject <> nil) then
       oxedSceneManagement.New();
 
@@ -188,7 +198,7 @@ end;
 
 class procedure oxedTProjectDialog.OpenSceneDialog();
 begin
-   if(not oxedProjectValid()) then
+   if(not oxedProjectValid()) or oxedProjectRunner.IsRunning() then
       exit;
 
    dlgSceneOpen.Open();
@@ -196,7 +206,7 @@ end;
 
 class procedure oxedTProjectDialog.SaveSceneDialog();
 begin
-   if(not oxedProjectValid()) then
+   if(not oxedProjectValid()) or oxedProjectRunner.IsRunning() then
       exit;
 
    if(oxedProject.ScenePath = '') then begin
@@ -207,6 +217,9 @@ end;
 
 procedure newProject();
 begin
+   if oxedProjectRunner.IsRunning() then
+      exit;
+
    oxedProjectManagement.New();
 end;
 
