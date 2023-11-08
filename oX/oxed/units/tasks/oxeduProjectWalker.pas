@@ -143,7 +143,6 @@ begin
 
    f.FileName := fd.Name;
    f.Extension := ExtractFileExt(fd.Name);
-   writeln(fd.Name, ' ', f.Extension);
    f.fd := fd;
 
    f.Package := Package;
