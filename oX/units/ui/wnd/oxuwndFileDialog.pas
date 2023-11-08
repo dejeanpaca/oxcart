@@ -473,11 +473,13 @@ begin
       {create the window}
       dialogWidth := oxFILE_DLG_WIDTH;
       dialogHeight := oxFILE_DLG_HEIGHT;
+
       if(ShowFilenameInput) then
-         dialogHeight := dialogHeight + 20 + wdgDEFAULT_SPACING * 2;
+         dialogHeight := dialogHeight + 20 + (uiWidget.GridSize.h * 2);
 
       if(StoredDimensions.w <> 0) then
          dialogWidth := StoredDimensions.w;
+
       if(StoredDimensions.h <> 0) then
          dialogHeight := StoredDimensions.h;
 
@@ -487,7 +489,7 @@ begin
       uiWindow.Create.Instance := oxuiTFileDialogWindow;
 
       wnd := uiWindow.MakeChild(parent,
-         Title, oxPoint(5, 5),
+         Title, oxNullPoint,
             oxDimensions(dialogWidth, dialogHeight)).
             SetID(wndID);
 
@@ -568,9 +570,8 @@ begin
          { save/open button }
          if(DialogType = oxFILE_DLG_OPEN) then
             caption := 'Open'
-         else if(DialogType = oxFILE_DLG_SAVE) or (DialogType = oxFILE_DLG_SAVE_AS) then begin
+         else if(DialogType = oxFILE_DLG_SAVE) or (DialogType = oxFILE_DLG_SAVE_AS) then
             caption := 'Save';
-         end;
 
          wdg.Ok := wdgTButton(wdgButton.Add(caption).
             SetID(uiWidget.IDs.OK));
@@ -682,50 +683,56 @@ var
    bottomHeight,
    top: loopint;
    filenameInput: boolean = false;
+   gw,
+   gh: loopint;
 
 begin
    if(wnd <> nil) then begin
-      leftWidth := 160;
+      leftWidth := 175;
       dialogHeight := wnd.Dimensions.h;
+
+      gw := uiWidget.GridSize.w;
+      gh := uiWidget.GridSize.h;
 
       if(DialogType <> oxFILE_DLG_OPEN) and (ShowFilenameInput) then
          filenameInput := true;
 
       if(not filenameInput) then
-         bottomHeight := 55
+         bottomHeight := 75
       else
-         bottomHeight := 85;
+         bottomHeight := 105;
 
       top := dialogHeight - wdgDEFAULT_SPACING;
 
       groupHeight := (dialogHeight - bottomHeight) div 2;
 
       {up button}
-      wdg.Up.Move(leftWidth + 10, top);
+      wdg.Up.Move(leftWidth + uiWidget.GridSize.h * 2, top);
       wdg.Up.Resize(20, 25);
 
       { path }
       wdg.Path.Move(wdg.Up.RightOf(), top);
-      wdg.Path.Resize(wdgDEFAULT_SPACING, 25).SetSize(wdgWIDTH_MAX_HORIZONTAL);
+      wdg.Path.Resize(5, 25).SetSize(wdgWIDTH_MAX_HORIZONTAL);
 
       { system locations list }
-      wdg.SystemGroup.Move(wdgDEFAULT_SPACING, top);
+      wdg.SystemGroup.Move(uiWidget.GridSize.w, top);
       wdg.SystemGroup.Resize(leftWidth, groupHeight);
 
-      wdg.System.Move(wdgDEFAULT_SPACING, wdg.SystemGroup.Dimensions.h - 10);
-      wdg.System.Resize(wdg.SystemGroup.Dimensions.w - 10, wdg.SystemGroup.Dimensions.h - 15);
+      wdg.System.Move(gw, wdg.SystemGroup.Dimensions.h - gw * 2);
+      wdg.System.Resize(wdg.SystemGroup.Dimensions.w - gw * 2, wdg.SystemGroup.Dimensions.h - gh * 3);
 
       { recent locations list }
 
-      wdg.RecentsGroup.Move(wdgDEFAULT_SPACING, wdg.SystemGroup.Position.y - wdg.SystemGroup.Dimensions.h - wdgDEFAULT_SPACING);
+      wdg.RecentsGroup.Move(gw, wdg.SystemGroup.Position.y - wdg.SystemGroup.Dimensions.h - gh);
       wdg.RecentsGroup.Resize(leftWidth, wnd.Dimensions.h - bottomHeight - wdg.SystemGroup.Dimensions.h);
 
-      wdg.Recents.Move(wdgDEFAULT_SPACING, wdg.RecentsGroup.Dimensions.h - 10);
-      wdg.Recents.Resize(wdg.RecentsGroup.Dimensions.w - 10, wdg.RecentsGroup.Dimensions.h - 15);
+      wdg.Recents.Move(gw, wdg.RecentsGroup.Dimensions.h - gh * 2);
+      wdg.Recents.Resize(wdg.RecentsGroup.Dimensions.w - gw * 2,
+         wdg.RecentsGroup.Dimensions.h - gh * 2);
 
       { files }
-      wdg.Files.Move(leftWidth + 10, dialogHeight - 35);
-      wdg.Files.Resize(5, wnd.Dimensions.h - bottomHeight - 25).SetSize(wdgWIDTH_MAX_HORIZONTAL);
+      wdg.Files.Move(leftWidth + gw * 2, dialogHeight - 40);
+      wdg.Files.Resize(5, wnd.Dimensions.h - bottomHeight - 20).SetSize(wdgWIDTH_MAX_HORIZONTAL);
 
       if(wdg.Filename <> nil) then begin
          wdg.Filename.Move(wdg.Files.Position.x, wdg.Files.BelowOf());
@@ -733,6 +740,7 @@ begin
       end;
 
       { divisor }
+      uiWidget.LastRect.GoZero();
       wdg.Separator.Move(uiWidget.LastRect.BelowOf());
 
       { cancel button }
@@ -746,7 +754,7 @@ begin
 
       {create directory}
       if(wdg.CreateDirectory <> nil) then begin
-         wdg.CreateDirectory.Move(leftWidth + 10, wdg.Cancel.Position.y);
+         wdg.CreateDirectory.Move(leftWidth + gw * 2, wdg.Cancel.Position.y);
          wdg.CreateDirectory.Resize(140, 25);
       end;
    end;
