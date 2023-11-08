@@ -13,8 +13,8 @@ INTERFACE
       {ox}
       oxuTypes, oxuFont,
       {ui}
-      uiuControl, uiuTypes, uiuSkin, uiuWindow,
-      uiWidgets, wdguWorkbar, wdguToolbar, wdguList,
+      uiuControl, uiuTypes, uiuSkin, uiuWindow, uiWidgets, uiuFiles,
+      wdguWorkbar, wdguToolbar, wdguList,
       {oxed}
       uOXED, oxeduSettings, oxeduWindow, oxeduMenubar, oxeduConsole, oxeduIcons,
       oxeduProjectRunner, oxeduProjectManagement, oxeduBuild;
@@ -180,15 +180,16 @@ begin
 
    {toolbar items}
    wdg.Clear := wdg.Toolbar.AddButton(oxedIcons.Create($f00d), 0, @clearConsole);
-   wdg.Clear^.Hint := 'Clear all';
+   wdg.Clear^.SetHint('Clear all');
    wdg.Clear^.Color := uiSkin.StandardSkin.Colors.Delete;
    wdg.Clear^.Color.Assign(255, 64, 64, 255);
 
    wdg.Copy := wdg.Toolbar.AddButton(oxedIcons.Create($f0c5), 0, @copyConsole);
-   wdg.Copy^.Hint := 'Copy selected logs to clipboard';
+   wdg.Copy^.SetHint('Copy selected logs to clipboard');
 
    wdg.Logs := wdg.Toolbar.AddButton(oxedIcons.Create($f03a), 0, @oxed.OpenLogs);
-   wdg.Logs^.Hint := 'Open logs';
+   wdg.Logs^.SetHint('Open logs');
+   wdg.Logs^.Color := uiFiles.DirectoryColor;
 
    SizeChanged;
 end;

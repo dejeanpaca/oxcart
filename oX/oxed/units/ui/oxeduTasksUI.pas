@@ -80,11 +80,11 @@ begin
 
       tasksString := sf(tasksRunning) + ' tasks are running'#13#13 + tasksString;
 
-      oxedTasksUI.Wdg.Tasks^.Hint := tasksString;
+      oxedTasksUI.Wdg.Tasks^.SetHint(tasksString);
    end else begin
       oxedTasksUI.Wdg.Tasks^.Glyph := oxedTasksUI.Icons.Tasks;
       oxedTasksUI.Wdg.Tasks^.SetSpin(false);
-      oxedTasksUI.Wdg.Tasks^.Hint := 'No tasks are running';
+      oxedTasksUI.Wdg.Tasks^.SetHint('No tasks are running');
    end;
 
    oxedMenuToolbar.Toolbar.UpdateHint();

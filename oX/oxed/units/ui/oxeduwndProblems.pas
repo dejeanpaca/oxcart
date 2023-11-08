@@ -179,12 +179,12 @@ begin
 
    {toolbar items}
    wdg.Clear := wdg.Toolbar.AddButton(oxedIcons.Create($f00d), 0, @clearProblems);
-   wdg.Clear^.Hint := 'Clear all Problems';
+   wdg.Clear^.SetHint('Clear all Problems');
    wdg.Clear^.Color := uiSkin.StandardSkin.Colors.Delete;
    wdg.Clear^.Color.Assign(255, 64, 64, 255);
 
    wdg.Copy := wdg.Toolbar.AddButton(oxedIcons.Create($f0c5), 0, @copyProblems);
-   wdg.Copy^.Hint := 'Copy selected Problems to clipboard';
+   wdg.Copy^.SetHint('Copy selected Problems to clipboard');
 
    SizeChanged;
 end;
