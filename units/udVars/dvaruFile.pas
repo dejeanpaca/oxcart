@@ -117,8 +117,6 @@ var
    context: TDVarNotificationContext;
 
 begin
-   TDVarNotificationContext.Initialize(context);
-
    context.DVar := @pdvar;
    context.f := f;
    context.What := what;
@@ -157,7 +155,7 @@ end;
 
 procedure dvarTFileData.GetContext(out context: TDVarNotificationContext; group: PDVarGroup; parent: string);
 begin
-   TDVarNotificationContext.Initialize(context);
+   context := Default(TDVarNotificationContext);
 
    context.f := @Self;
    context.Group := group;
