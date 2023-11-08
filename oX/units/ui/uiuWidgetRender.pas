@@ -68,60 +68,42 @@ begin
    if(uiCONTROL_GRID_MIDDLE_HORIZONTAL in pos) or ((uiCONTROL_GRID_MIDDLE in pos)) then
       Result.Clear(wdgRENDER_CORNERS_ALL);
 
-   {top | left}
-   if(pos = [uiCONTROL_GRID_TOP, uiCONTROL_GRID_LEFT]) then begin
-      Result.Clear(wdgRENDER_LINE_BOTTOM);
-      Result.Clear(wdgRENDER_CORNER_BL or wdgRENDER_CORNER_BR or wdgRENDER_CORNER_TR);
-      exit;
+   if(uiCONTROL_GRID_RIGHT in pos) then begin
+      Result.Clear(wdgRENDER_LINE_LEFT);
+      Result.Clear(wdgRENDER_CORNER_TL or wdgRENDER_CORNER_BL);
    end;
 
-   {top | middle horizontal}
-   if(pos = [uiCONTROL_GRID_TOP, uiCONTROL_GRID_MIDDLE_HORIZONTAL]) then begin
-      Result.Clear(wdgRENDER_LINE_BOTTOM or wdgRENDER_LINE_LEFT);
+   if(uiCONTROL_GRID_LEFT in pos) then begin
+      Result.Clear(wdgRENDER_CORNER_TR or wdgRENDER_CORNER_BR);
+   end;
+
+   if(uiCONTROL_GRID_MIDDLE in pos) or (uiCONTROL_GRID_TOP in pos) then
+      Result.Clear(wdgRENDER_LINE_BOTTOM);
+
+   if(uiCONTROL_GRID_MIDDLE_HORIZONTAL in pos) then
+      Result.Clear(wdgRENDER_LINE_LEFT);
+
+   {top | left}
+   if(pos = [uiCONTROL_GRID_TOP, uiCONTROL_GRID_LEFT]) then begin
+      Result.Clear(wdgRENDER_CORNER_BL);
       exit;
    end;
 
    {top | right}
    if(pos = [uiCONTROL_GRID_TOP, uiCONTROL_GRID_RIGHT]) then begin
-      Result.Clear(wdgRENDER_LINE_BOTTOM or wdgRENDER_LINE_LEFT);
-      Result.Clear(wdgRENDER_CORNER_BL or wdgRENDER_CORNER_BR or wdgRENDER_CORNER_TL);
-      exit;
-   end;
-
-   {middle | left}
-   if(pos = [uiCONTROL_GRID_MIDDLE, uiCONTROL_GRID_LEFT]) then begin
-      Result.Clear(wdgRENDER_LINE_BOTTOM);
-      exit;
-   end;
-
-   {middle | middle horizontal}
-   if(pos = [uiCONTROL_GRID_MIDDLE, uiCONTROL_GRID_MIDDLE_HORIZONTAL]) then begin
-      Result.Clear(wdgRENDER_LINE_BOTTOM or wdgRENDER_LINE_LEFT);
-      exit;
-   end;
-
-   {middle | right}
-   if(pos = [uiCONTROL_GRID_MIDDLE, uiCONTROL_GRID_RIGHT]) then begin
-      Result.Clear(wdgRENDER_LINE_BOTTOM or wdgRENDER_LINE_LEFT);
+      Result.Clear(wdgRENDER_CORNER_BR);
       exit;
    end;
 
    {bottom | left }
    if(pos = [uiCONTROL_GRID_BOTTOM, uiCONTROL_GRID_LEFT]) then begin
-      Result.Clear(wdgRENDER_CORNER_BR or wdgRENDER_CORNER_TL or wdgRENDER_CORNER_TR);
-      exit;
-   end;
-
-   {bottom | middle horizontal}
-   if(pos = [uiCONTROL_GRID_BOTTOM, uiCONTROL_GRID_MIDDLE_HORIZONTAL]) then begin
-      Result.Clear(wdgRENDER_LINE_LEFT);
+      Result.Clear(wdgRENDER_CORNER_TL);
       exit;
    end;
 
    {bottom | right}
    if(pos = [uiCONTROL_GRID_BOTTOM, uiCONTROL_GRID_RIGHT]) then begin
-      Result.Clear(wdgRENDER_LINE_LEFT);
-      Result.Clear(wdgRENDER_CORNER_TR or wdgRENDER_CORNER_TL or wdgRENDER_CORNER_BL);
+      Result.Clear(wdgRENDER_CORNER_TR);
       exit;
    end;
 end;
