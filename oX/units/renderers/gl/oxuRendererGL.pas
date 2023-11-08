@@ -20,7 +20,6 @@ INTERFACE
       oxuglTextureGenerate,
       oxuglTransform,
       oxuglRender,
-      oxuglFeatures,
       {$IFNDEF GLES}
       oxuglShader,
       oxuglShaderLoader,
