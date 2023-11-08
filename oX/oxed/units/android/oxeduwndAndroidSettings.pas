@@ -55,17 +55,15 @@ var
 begin
    path := '';
 
-   if(wdg.ManualFileManagement.Checked()) then begin
+   if(wdg.ManualFileManagement.Checked()) then
       path := wdg.ProjectFilesPath.GetText();
-   end;
 
    if(path = '') then begin
-      path := oxedProject.Path + 'android';
-      wdg.ProjectFilesPath.SetText('android');
+      path := oxedProject.Path + OXED_DEFAULT_ANDROID_PROJECT_PATH;
+      wdg.ProjectFilesPath.SetText(OXED_DEFAULT_ANDROID_PROJECT_PATH);
    end;
 
    oxedAndroidProjectFiles.Deploy(path);
-   oxedAndroidProjectFiles.UpdateValues(path);
 end;
 
 procedure saveCallback();
