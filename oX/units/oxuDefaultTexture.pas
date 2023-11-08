@@ -68,6 +68,7 @@ begin
          if(oxDefaultTexture.Texture <> nil) then begin
             oxDefaultTexture.Texture.MarkPermanent();
             oxDefaultTexture.Texture.Path := ':default_texture';
+            oxDefaultTexture.Texture.Name := ':default_texture';
          end;
       end else
          errorCode := eIO;

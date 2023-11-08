@@ -72,8 +72,8 @@ begin
          errorCode := oxFont.Load(oxDefaultFont.Font, tfd, tfd.TextureName, f);
 
          if(errorCode = 0) then begin
-            oxDefaultFont.Font.Texture.Path := 'default';
-            oxDefaultFont.Font.Texture.Name := 'default';
+            oxDefaultFont.Font.Texture.Path := ':default_font';
+            oxDefaultFont.Font.Texture.Name := ':default_font';
             oxDefaultFont.Font.Texture.MarkPermanent();
          end;
 
