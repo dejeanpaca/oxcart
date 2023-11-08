@@ -486,14 +486,15 @@ end;
 function RecreateFPCConfig(): boolean;
 var
    fn: StdString;
-   config: TSimpleStringList;
+   config: TBuildFPCConfiguration;
 
 begin
-   TSimpleStringList.Initialize(config, 1024);
+   TBuildFPCConfiguration.Initialize(config);
+   config.Construct();
 
    fn := oxedBuild.WorkArea + oxedBuild.Props.ConfigFile;
 
-   Result := BuildFPCConfiguration.WriteFile(config, fn);
+   Result := BuildFPCConfiguration.WriteFile(fn);
 
    if(not Result) then
       log.e('Failed to write fpc config file for project: ' + fn)
@@ -684,7 +685,6 @@ end;
 
 procedure BuildFPC();
 begin
-   {TODO: Create an pas build mechanism with provided fpc config file}
 end;
 
 procedure FailBuild(const reason: StdString);
