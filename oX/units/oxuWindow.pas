@@ -181,10 +181,12 @@ begin
 
       {create a thread rendering context}
       {$IFNDEF NO_THREADS}
-      wnd.ThreadRenderingContext := oxTRenderer(wnd.Renderer).GetContext(wnd, wnd.RenderingContext);
+      if(oxTRenderer(wnd.Renderer).Properties.SupportsThreading) then begin
+         wnd.ThreadRenderingContext := oxTRenderer(wnd.Renderer).GetContext(wnd, wnd.RenderingContext);
 
-      if(wnd.ErrorCode = 0) then
-         log.v('gl > Created thread render context');
+        if(wnd.ErrorCode = 0) then
+           log.v('Created thread render context');
+      end;
       {$ENDIF}
 
       {success}

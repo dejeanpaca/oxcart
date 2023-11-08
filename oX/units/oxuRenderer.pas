@@ -17,6 +17,9 @@ TYPE
    { oxTRendererProperites }
 
    oxTRendererProperties = record
+      {does this renderer support threading}
+      SupportsThreading: boolean;
+
       Textures: record
          {does the renderer support power of 2 textures}
          Npot,
@@ -182,6 +185,10 @@ begin
    WindowSettings := oxrDefaultWindowSettings;
    ContextWindowSettings := oxrContextWindowSettings;
    PlatformInstance := oxTPlatform;
+
+   {$IFNDEF NO_THREADS}
+   Properties.SupportsThreading := true;
+   {$ENDIF}
 
    ComponentProvider.Initialize(Components);
    UseRoutines.Initialize(UseRoutines);
