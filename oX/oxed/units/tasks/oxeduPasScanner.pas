@@ -25,7 +25,7 @@ TYPE
 
    oxedTPasScanner = record
       {$IF FPC_FULLVERSION >= 030200}
-      FpcCommandLine: TStringArray;
+      FpcCommandLine: TSimpleStringList;
       {$ELSE}
       FpcCommandLineString: StdString;
       {$ENDIF}
@@ -92,9 +92,8 @@ begin
    try
       log.v('Parsing: ' + fn);
 
-
       {$IF FPC_FULLVERSION >= 030200}
-      commandLine := GetAnsiStrings(FpcCommandLine);
+      commandLine := FpcCommandLine.GetAnsiStrings();
       commandLine[0] := fn;
       M := ParseSource(E, commandLine, {$I %FPCTARGETOS%}, {$I %FPCTargetCPU}, []);
       {$ELSE}
