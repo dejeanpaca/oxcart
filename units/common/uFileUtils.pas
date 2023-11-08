@@ -1291,6 +1291,7 @@ begin
                   {call OnFile to perform operations on the file}
                   if(OnFileDescriptor <> nil) then begin
                      TFileDescriptor.From(fd, src);
+                     fd.Name := fname;
 
                      if(not OnFileDescriptor(fd)) then
                         stopTraverse := true;
