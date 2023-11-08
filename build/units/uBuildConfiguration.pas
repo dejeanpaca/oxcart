@@ -102,39 +102,22 @@ end;
 
 procedure TBuildConfiguration.LoadConfiguration();
 var
-   tempConfigPath,
    fn,
    platform,
    mode: StdString;
 
 begin
    build.AutoDeterminedConfigPath := false;
-   tempConfigPath := appPath.HomeConfigurationDir('.' + SYSTEM_NAME);
 
-   fn := tempConfigPath + 'location.config';
+   fn := appPath.HomeConfigurationDir('.' + SYSTEM_NAME) + 'location.config';
 
    if(FileUtils.Exists(fn) > 0) then begin
       {load config_path configuration if one exists}
       dvarf.ReadText(dvgLocation, fn);
-
-      {if can't find the specified location, restore default}
-      if (build.ConfigPath <> 'default') then begin
-         FileUtils.NormalizePathEx(build.ConfigPath);
-         build.ConfigPath := IncludeTrailingPathDelimiter(build.ConfigPath);
-
-         if not(FileUtils.DirectoryExists(build.ConfigPath)) then begin
-            log.w('build > Could not find configuration directory: ' + build.ConfigPath);
-            log.i('build > Will revert location configuration to default');
-
-            build.ConfigPath := 'default';
-         end;
-      end;
    end;
 
-   if(build.ConfigPath = 'default') then begin
-      log.w('build > Configuration location is not set (location config at: ' + fn + ')');
+   if(build.ConfigPath = 'default') then
       AutoDetermineConfigPath();
-   end;
 
    {$IFDEF WINDOWS}
    platform := 'win';
@@ -239,7 +222,7 @@ begin
    if(not tryDetermineConfigPath(GetParentDirectory(appPath.GetExecutablePath()))) then
       tryDetermineConfigPath(GetCurrentDir());
 
-   log.w('build > Auto determined config path: ' + build.ConfigPath);
+   log.i('build > Auto determined config path: ' + build.ConfigPath);
    build.AutoDeterminedConfigPath := true;
 end;
 
