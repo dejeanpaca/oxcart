@@ -298,6 +298,8 @@ begin
 
    oxedBuild.Task := oxedTBuildTask.Create();
    oxedBuild.Task.EmitAllEvents();
+
+   oxedBuild.Reset();
 end;
 
 class procedure oxedTBuildGlobal.Deinitialize();
@@ -1238,16 +1240,16 @@ end;
 
 procedure oxedTBuildGlobal.RunTask();
 begin
-   if(not oxedBuild.Buildable(true)) or (not oxedProject.Valid()) then begin
-      Reset();
+   if(not oxedBuild.Buildable(true)) or (not oxedProject.Valid()) then
       exit;
-   end;
 
    {start off empty}
    oxedBuildLog.Log.Reset();
 
-   if(not SetupFPCPlatform()) then
+   if(not SetupFPCPlatform()) then begin
+      Reset();
       exit;
+   end;
 
    {we start off assuming things are fine}
    BuildOk := true;
@@ -1320,10 +1322,8 @@ end;
 
 procedure oxedTBuildGlobal.StartTask(taskType: oxedTBuildTaskType);
 begin
-   if(not oxedBuild.Buildable(true)) or (not oxedProject.Valid()) then begin
-      Reset();
+   if(not oxedBuild.Buildable(true)) or (not oxedProject.Valid()) then
       exit;
-   end;
 
    if(taskType = OXED_BUILD_TASK_STANDALONE) then
       BuildTarget := OXED_BUILD_STANDALONE;
@@ -1475,7 +1475,7 @@ begin
    Parameters.ExportSymbols.Dispose();
    Parameters.PreIncludeUses.Dispose();
    Parameters.IncludeUses.Dispose();
-   SetupFPCPlatform();
+   BuildInstalls.SetDefaultPlatform();
 end;
 
 procedure CreateSourceFile(const fn: string);
