@@ -538,14 +538,17 @@ begin
       nil
    );
 
-   error := GetLastError();
-   if (error <> 0) then begin
-      wnd.errorDescription.Add('win-gdi > Error(' + sf(error) + '): Cannot create window.');
+   if(wnd.wd.h = 0) then begin
+      error := GetLastError();
 
-      if(error = ERROR_CANNOT_FIND_WND_CLASS) then
-         wnd.errorDescription.Add('Cannot find class: ' + windowClassName);
+      if (error <> 0) then begin
+         wnd.CreateFail('win-gdi > Error(' + sf(error) + '): Cannot create window.');
 
-      wnd.CreateFail('');
+         if(error = ERROR_CANNOT_FIND_WND_CLASS) then
+            wnd.ErrorDescription.Add('Cannot find class: ' + windowClassName);
+
+         wnd.CreateFail('');
+      end;
    end;
 
    wndCreate := nil;
@@ -683,7 +686,7 @@ begin
    Result := false;
 
    {register window class}
-   if(ClassRegister() = False) then begin
+   if(not ClassRegister()) then begin
       quit('Failed to register the window class.');
       exit;
   end;
@@ -695,15 +698,20 @@ begin
    end;
 
    {initialize OpenGL for window}
-   if(oxTRenderer(wnd.Renderer).PreInitWindow(wnd) = false) then begin
+   if(not oxTRenderer(wnd.Renderer).PreInitWindow(wnd)) then begin
       quit('Renderer window pixel format failed.');
       exit;
    end;
 
    {initialize renderer for window}
-   if(oxTRenderer(wnd.Renderer).InitWindow(wnd) = false) then begin
+   if(not oxTRenderer(wnd.Renderer).InitWindow(wnd)) then begin
       quit('Renderer window create failed.');
       exit;
+   end;
+
+   if(winosTWindow(wnd).wd.LastError <> 0) then begin
+      if(wnd.ErrorCode = 0) then
+         wnd.CreateFail('Failed to create window due to error: ' + winos.FormatMessage(winosTWindow(wnd).wd.LastError));
    end;
 
    {done}

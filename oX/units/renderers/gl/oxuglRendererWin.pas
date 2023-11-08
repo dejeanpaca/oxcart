@@ -111,15 +111,14 @@ begin
 
    {find a suitable pixel format}
    pFormat  := ChoosePixelFormat(wnd.wd.dc, @pfd);
-   wnd.wd.LastError := winos.GetLastError();
 
-   {Ignore any windows error if we got a pixel format.
-   Because this is a standard behavior with some driver/windows combinations.}
-   if(pFormat <> 0) and (wnd.wd.LastError <> 0) then begin
-      log.w('Pixel format chosen(' + sf(pFormat) + '), but ChoosePixelFormat still returned an error: ' +
-         winos.FormatMessage(wnd.wd.LastError));
+   if(pFormat = 0) then begin
+      wnd.wd.LastError := winos.GetLastError();
 
-      wnd.wd.LastError := 0;
+      {Ignore any windows error if we got a pixel format.
+      Because this is a standard behavior with some driver/windows combinations.}
+      if(wnd.wd.LastError <> 0) then
+         log.w('Error choosing pixel format: ' + winos.FormatMessage(wnd.wd.LastError));
    end;
 
    Result := pFormat;
@@ -266,6 +265,21 @@ begin
 end;
 {$ENDIF}
 
+function winLegacyContext(wnd: oglTWindow; shareContext: HGLRC = 0): HGLRC;
+begin
+   {create the OpenGL rendering context}
+   Result := wglCreateContext(wnd.wd.dc);
+
+   if(Result <> 0) then begin
+      if(not wnd.oxProperties.Context) and (shareContext <> 0) then begin
+         if(not wglShareLists(Result, shareContext)) then begin
+            wnd.wd.LastError := winos.LogError('gl > (wglCreateContext) Failed to share lists with context ' + sf(shareContext));
+         end;
+      end;
+   end else
+      wnd.wd.LastError := winos.GetLastError();
+end;
+
 function oxwglTGlobal.PreInitWIndow(wnd: oglTWindow): boolean;
 var
    pFormat: longint;
@@ -346,22 +360,7 @@ begin
       { ye olde way }
       method := 'wglCreateContext';
 
-      {create the OpenGL rendering context}
-      Result := wglCreateContext(wnd.wd.dc);
-
-      wnd.wd.LastError := 0;
-
-      if(Result <> 0) then begin
-         wnd.wd.LastError := winos.GetLastError();
-
-         if(wnd.wd.LastError = 0) and (not wnd.oxProperties.Context) and (shareContext <> 0) then begin
-            wglShareLists(Result, shareContext);
-            wnd.wd.LastError := winos.GetLastError();
-
-            if(wnd.wd.LastError <> 0) then
-               log.w('gl > (' + method + ') Failed to share lists with context ' + sf(shareContext));
-         end;
-      end;
+      Result := winLegacyContext(wnd, shareContext);
    end;
 
    if(wnd.wd.LastError <> 0) then

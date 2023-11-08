@@ -51,6 +51,7 @@ TYPE
       procedure SwapBuffers(wnd: oxTWindow); override;
 
       function GetContext(wnd: oxTWindow; shareContext: loopint=0): loopint; override;
+      function GetContextString(index: loopint=0): StdString; override;
       procedure ContextCurrent(context: loopint); override;
       procedure ClearContext(context: loopint); override;
       function DestroyContext(context: loopint): boolean; override;
@@ -118,7 +119,9 @@ begin
 
    if(wnd.RenderingContext = -1) or (wnd.ErrorCode <> 0) then begin
       if(wnd.ErrorCode = 0) then
-         wnd.CreateFail('gl > Failed to get a rendering context');
+         wnd.CreateFail('gl > Failed to get a rendering context')
+      else
+         wnd.CreateFail('gl > No rendering context');
 
       exit(False);
    end;
@@ -205,15 +208,13 @@ begin
    if(not ox.LibraryMode) then begin
       {check if versions match}
       if(oglVersionCheck(oglTWindow(wnd)) = ogleVERSION_UNSUPPORTED) then begin
-         wnd.errorDescription := 'Got OpenGL version ' +
+         wnd.RaiseError(eUNSUPPORTED, 'Got OpenGL version ' +
             oglTWindow(wnd).gl.GetString() + ' which is unsupported, minimum required ' +
-            oglTWindow(wnd).glRequired.GetString();
-
-         errorCode := eUNSUPPORTED;
+            oglTWindow(wnd).glRequired.GetString());
       end;
    end;
 
-   Result := errorCode = 0;
+   Result := Errorcode = 0;
 end;
 
 function oxglTRenderer.PreInitWindow(wnd: oxTWindow): boolean;
@@ -284,9 +285,14 @@ begin
       Result := AddRenderingContext(wnd);
       glRenderingContexts[Result] := rc;
    end else begin
-      wnd.ErrorCode := eFAIL;
+      wnd.RaiseError(eFAIL, 'Not a valid rendering context');
       Result := -1;
    end;
+end;
+
+function oxglTRenderer.GetContextString(index: loopint): StdString;
+begin
+   Result := sf(glRenderingContexts[index]);
 end;
 
 procedure oxglTRenderer.ContextCurrent(context: loopint);
@@ -299,8 +305,8 @@ begin
       log.v('gl > Set render context ' + sf(context) +  ' current');
 
       {$IFDEF WINDOWS}
-      wglMakeCurrent(wnd.wd.dc, glRenderingContexts[context]);
-      wnd.wd.LastError := winos.LogError('wglMakeCurrent');
+      if(not wglMakeCurrent(wnd.wd.dc, glRenderingContexts[context])) then
+         wnd.wd.LastError := winos.LogError('wglMakeCurrent');
       {$ENDIF}
       {$IFDEF X11}
       glXMakeCurrent(x11.DPY, wnd.wd.h, glRenderingContexts[context]);
