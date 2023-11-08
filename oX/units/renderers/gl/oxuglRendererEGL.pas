@@ -9,7 +9,7 @@ UNIT oxuglRendererEGL;
 INTERFACE
 
    USES
-      uStd, uLog, StringUtils,
+      uStd, uLog,
       egl,
       {ox.gl}
       oxuOGL, oxuglWindow,
@@ -26,7 +26,7 @@ TYPE
 
       constructor Create();
 
-      function RaiseError(): loopint;
+      function RaiseError(): loopint; virtual;
 
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
       function OnDeInitWindow(wnd: oglTWindow): boolean; virtual;
