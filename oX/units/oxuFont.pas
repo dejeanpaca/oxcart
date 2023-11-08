@@ -957,23 +957,25 @@ begin
    Result := Selected;
 end;
 
+procedure init();
+begin
+   oxFont.NilFont := oxTFont.Create();
+end;
+
 procedure deinit();
 begin
+   FreeObject(oxFont.NilFont);
    oxf.Default := nil;
 end;
 
 INITIALIZATION
-   ox.Init.dAdd('ox.font', @deinit);
+   ox.Init.Add('ox.font', @init, @deinit);
 
    {this indicates whether vertically flipped texture coordinates should be generated}
    oxFont.FlippedGen := false;
    oxFont.WriteUpsideDown := false;
-   oxFont.NilFont := oxTFont.Create();
 
    oxFont.Filter := oxTEXTURE_FILTER_NONE;
-
-FINALIZATION;
-   oxFont.NilFont.Free();
 
 END.
 
