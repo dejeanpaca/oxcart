@@ -83,6 +83,21 @@ begin
       AddArgument('-d' + build.Symbols.List[i]);
    end;
 
+   if(build.TargetOS <> '') then
+      AddArgument('-T' + build.TargetOS);
+
+   if(build.TargetCPU <> '') then
+      AddArgument('-p' + build.TargetCPU);
+
+   if(build.IncludeDebugInfo) then
+      AddArgument('-g');
+
+   if(build.FPCOptions.UseConfig <> '') then
+      AddArgument('@' + build.FPCOptions.UseConfig);
+
+   if(build.FPCOptions.UseConfig <> '') then
+      AddArgument('-n');
+
    Result := arguments;
 end;
 

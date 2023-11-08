@@ -49,15 +49,24 @@ TYPE
       {base oX path}
       RootPath,
       {build configuration path}
-      ConfigPath,
-      {build mode}
-      BuildMode: StdString;
+      ConfigPath: StdString;
+
+      TargetOS,
+      TargetCPU: StdString;
+
+      {include debug information}
+      IncludeDebugInfo: Boolean;
 
       {selected optimization level}
       OptimizationLevel: loopint;
 
       FPCOptions: record
-         UnitOutputDirectory: StdString;
+         {where to output units}
+         UnitOutputDirectory,
+         {what fpc config to use for building}
+         UseConfig: StdString;
+         {don't use default fpc config file}
+         DontUseDefaultConfig: Boolean;
       end;
 
       Options: record
@@ -102,6 +111,9 @@ TYPE
 
       {set default values if these were not set through config}
       procedure SetupDefaults();
+
+      {reset all options}
+      procedure ResetOptions();
 
       {get the target name with which the current build was made}
       class function GetBuiltWithTarget(): StdString; static;
@@ -333,6 +345,21 @@ begin
    RootPath := '';
    if(ConfigPath <> 'default') then
       RootPath := IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(ConfigPath));
+end;
+
+procedure TBuildSystem.ResetOptions();
+begin
+   TargetOS := '';
+   TargetCPU := '';
+   IncludeDebugInfo := false;
+   OptimizationLevel := 0;
+
+   FPCOptions.UnitOutputDirectory := '';
+   FPCOptions.UseConfig := '';
+   FPCOptions.DontUseDefaultConfig := false;
+
+   Options.IsLibrary := false;
+   Options.Rebuild := false;
 end;
 
 class function TBuildSystem.GetBuiltWithTarget(): StdString;

@@ -101,8 +101,7 @@ end;
 procedure TBuildConfiguration.LoadConfiguration();
 var
    fn,
-   platform,
-   mode: StdString;
+   platform: StdString;
 
 begin
    build.AutoDeterminedConfigPath := false;
@@ -133,15 +132,12 @@ begin
 
    {read general configuration}
    fn := build.ConfigPath + 'build.config';
+
    if(FileUtils.Exists(fn) > 0) then
       dvarf.ReadText(dvgConfig, fn);
 
-   {read per platform mode configuration}
-   mode := '';
-   if(build.BuildMode <> '') then
-      mode := '.' + build.BuildMode;
+   fn := build.ConfigPath + 'build.' + platform + '.config';
 
-   fn := build.ConfigPath + 'build.' + platform + mode + '.config';
    if(FileUtils.Exists(fn) > 0) then
       dvarf.ReadText(dvgConfig, fn);
 

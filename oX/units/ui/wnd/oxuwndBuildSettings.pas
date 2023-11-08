@@ -72,7 +72,6 @@ begin
    wdgDivisor.Add('Configuration');
    wdgLabel.Add('Tools path:   ' + build.Tools.Path);
    wdgLabel.Add('Build system: ' + build.Tools.Build);
-   wdgLabel.Add('Build mode:   ' + build.BuildMode);
 
    wdgLabel.Add('FPC Used:     ' + BuildInstalls.GetPlatform()^.Name);
    wdgLabel.Add('Lazarus Used: ' + BuildInstalls.GetLazarus()^.Name);
