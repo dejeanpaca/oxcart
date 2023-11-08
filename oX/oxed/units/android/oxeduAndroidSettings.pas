@@ -11,9 +11,12 @@ INTERFACE
    USES
       sysutils, uStd, udvars, uFile, StringUtils, uLog, uFileUtils,
       {oxed}
-      uOXED, oxeduProjectManagement;
+      uOXED, oxeduProjectManagement,
+      oxeduAndroid;
 
 TYPE
+
+
    { oxedTAndroidSettingss }
 
    oxedTAndroidSettings = record
@@ -36,6 +39,8 @@ TYPE
          ProjectFilesPath: StdString;
          {should you manage android files yourself}
          ManualFileManagement: boolean;
+
+         CPUType: oxedTAndroidCPUType;
       end;
 
       procedure ProjectReset();
@@ -59,6 +64,7 @@ IMPLEMENTATION
 VAR
    dvManualFileManagement,
    dvPackageName,
+   dvEmulatorCPUType,
    dvSDKPath,
    dvNDKPath,
    dvUsedNDK: TDVar;
@@ -155,6 +161,7 @@ INITIALIZATION
 
    oxedAndroidSettings.Project.dvg.Add(dvManualFileManagement, 'manual_file_management', dtcBOOL, @oxedAndroidSettings.Project.ManualFileManagement);
    oxedAndroidSettings.Project.dvg.Add(dvPackageName, 'package_name', dtcSTRING, @oxedAndroidSettings.Project.PackageName);
+   oxedAndroidSettings.Project.dvg.Add(dvEmulatorCPUType, 'emulator_cpu_type', dtcENUM, @oxedAndroidSettings.Project.CPUType);
 
    oxedAndroidSettings.dvg.Add(dvSDKPath, 'sdk_path', dtcSTRING, @oxedAndroidSettings.SDKPath);
    oxedAndroidSettings.dvg.Add(dvNDKPath, 'ndk_path', dtcSTRING, @oxedAndroidSettings.NDKPath);

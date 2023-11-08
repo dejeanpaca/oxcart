@@ -11,19 +11,19 @@ INTERFACE
    USES
       uStd,
       {ox}
-      oxuRunRoutines,
+      oxuTypes, oxuRunRoutines,
       {widgets}
       uiWidgets, uiuWidget,
-      wdguCheckbox, wdguDivisor, wdguInputBox, wdguLabel, wdguButton,
+      wdguCheckbox, wdguDivisor, wdguInputBox, wdguLabel, wdguButton, wdguDropDownList,
       {oxed}
-      uOXED, oxeduPlatform, oxeduProject,
-      oxeduAndroidPlatform,  oxeduAndroidSettings, oxeduAndroidProjectFiles,
-      oxeduwndProjectSettings;
+      uOXED, oxeduPlatform, oxeduProject, oxeduwndProjectSettings,
+      oxeduAndroidPlatform,  oxeduAndroidSettings, oxeduAndroidProjectFiles, oxeduAndroid;
 
 IMPLEMENTATION
 
 VAR
    wdg: record
+      EmulatorCPUType: wdgTDropDownList;
       PackageName,
       ProjectFilesPath: wdgTInputBox;
       Enabled,
@@ -33,6 +33,7 @@ VAR
 
 procedure enableAndroidDeployWidgets(enabled: boolean);
 begin
+   wdg.EmulatorCPUType.Enable(enabled);
    wdg.ProjectFilesPath.Enable(enabled);
    wdg.DeployTemplate.Enable(enabled);
 end;
@@ -99,6 +100,9 @@ begin
 end;
 
 procedure addTabs();
+var
+   i: loopint;
+
 begin
    oxedwndProjectSettings.Tabs.AddTab('Android', 'android');
 
@@ -110,7 +114,20 @@ begin
    wdgLabel.Add('Package name');
    wdg.PackageName := wdgInputBox.Add('');
 
+   wdgDivisor.Add('Editor build settings');
+
+   wdgLabel.Add('Emulator CPU Type');
+   wdg.EmulatorCPUType := wdgDropDownList.Add(uiWidget.LastRect.RightOf(), oxNullDimensions);
+
+   for i := 0 to high(oxedAndroidCPUTypes) do
+      wdg.EmulatorCPUType.Add(oxedAndroidCPUTypes[i]);
+
+   wdg.EmulatorCPUType.AutoSetDimensions(true);
+
    uiWidget.LastRect.GoBelow();
+   uiWidget.LastRect.GoLeft();
+
+   wdgDivisor.Add('File management');
 
    wdg.ManualFileManagement := wdgCheckbox.Add('Manual file management (aka do it yourself)').
       Check(oxedAndroidSettings.Project.ManualFileManagement);
