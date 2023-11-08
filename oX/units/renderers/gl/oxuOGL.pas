@@ -3,7 +3,7 @@
    Copyright (c) 2011. Dejan Boras
 }
 
-{$INCLUDE oxheader.inc}
+{$INCLUDE oxdefines.inc}
 UNIT oxuOGL;
 
 INTERFACE
@@ -12,7 +12,7 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uStd, uError, uLog, StringUtils,
       {ox}
-      oxuTexture
+      oxuTexture,
       {$IFNDEF ANDROID},{$ENDIF}
       {$IFDEF X11}GLX, oxuX11Platform{$ENDIF}
       {$IFDEF WINDOWS}windows, oxuWindowsOS{$ENDIF}
