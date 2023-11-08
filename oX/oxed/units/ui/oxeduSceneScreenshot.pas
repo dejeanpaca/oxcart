@@ -45,8 +45,7 @@ begin
       if(oxedProjectValid()) then begin
          path := oxedProject.Path + 'screenshots' + DirectorySeparator;
 
-         if(not FileUtils.DirectoryExists(path)) then
-            CreateDir(path);
+         FileUtils.CreateDirectory(path);
       end;
 
       name := DateTimeToStr(Now);

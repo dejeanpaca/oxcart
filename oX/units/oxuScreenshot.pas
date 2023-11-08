@@ -12,7 +12,9 @@ INTERFACE
 
    USES
       sysutils,
-      uStd, uLog, StringUtils, appuKeys, appuPaths,
+      uStd, uLog, StringUtils, uFileUtils,
+      {app}
+      appuKeys, appuPaths,
       {oX}
       uOX, oxuRunRoutines, oxuRenderer, oxuWindowTypes, oxuWindow, oxuGlobalKeys,
       {dImage}
@@ -122,14 +124,14 @@ end;
 function oxTScreenshot.Get(const fn: string; wnd: oxTWindow = nil): longint;
 var
    image: imgTImage = nil;
-   errcode: longint;
+   errCode: longint;
 
 begin
-   errcode := Make(image, wnd);
-   if(errcode <> 0) then begin
-      log.e('Failed to create a screenshot: ' + sf(errcode));
+   errCode := Make(image, wnd);
+   if(errCode <> 0) then begin
+      log.e('Failed to create a screenshot: ' + sf(errCode));
       img.Dispose(image);
-      exit(errcode);
+      exit(errCode);
    end;
 
    Result := Save(fn, image);
@@ -169,7 +171,7 @@ procedure initialize();
 begin
    oxScreenshot.Path := appPath.Configuration.Path + 'screenshots';
    {create a screenshot directory}
-   CreateDir(oxScreenshot.Path);
+   FileUtils.CreateDirectory(oxScreenshot.Path);
 
    gkHandlerKey.Key := oxScreenshot.CaptureKey;
    oxGlobalKeys.Hook(gkHandlerKey);
