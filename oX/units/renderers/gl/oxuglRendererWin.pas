@@ -353,6 +353,8 @@ begin
       {$IFNDEF GLES}
       {do it the modern gl way}
       Result := winGetContext(wnd, shareContext);
+      {$ELSE}
+      Result := 0;
       {$ENDIF}
    end else begin
       { ye olde way }
