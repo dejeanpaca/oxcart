@@ -30,8 +30,10 @@ TYPE
       Camera: pointer;
       {window associated with this rendering context, if any}
       Window: oxTWindow;
+      Initialized: boolean;
 
       procedure UseWindow(wnd: oxTWindow);
+      procedure Initialize();
    end;
 
 THREADVAR
@@ -47,5 +49,16 @@ begin
    Window := Window;
    CanRender := true;
 end;
+
+procedure oxTRenderingContext.Initialize();
+begin
+   if(not Initialized) then begin
+      RC := -1;
+      Initialized := true;
+   end;
+end;
+
+INITIALIZATION
+   oxRenderingContext.Initialize();
 
 END.
