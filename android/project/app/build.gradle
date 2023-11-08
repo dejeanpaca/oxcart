@@ -5,9 +5,9 @@ android {
     buildToolsVersion "29.0.2"
 
     defaultConfig {
-        applicationId "com.example.nativetest"
+        applicationId "$PACKAGE_ID"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion $TARGET_SDK_VERSION
         versionCode 1
         versionName "1.0"
     }
