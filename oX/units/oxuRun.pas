@@ -33,7 +33,7 @@ TYPE
      {run the engine}
      procedure Go();
      {run a single cycle}
-     function GoCycle(dosleep: boolean = true): boolean;
+     procedure GoCycle(dosleep: boolean = true);
      {app cycle}
      procedure Sleep(time: longint = -1);
      {run a restart}
@@ -132,8 +132,7 @@ begin
 
          {main loop}
          repeat
-            if(not GoCycle(true)) then
-               break;
+            GoCycle(true);
          until (not app.Active); {repeat until the application is no longer active}
 
          Done();
@@ -144,10 +143,8 @@ begin
    until (not initialized) or (not HandleRestart());
 end;
 
-function oxTRunGlobal.GoCycle(dosleep: boolean): boolean;
+procedure oxTRunGlobal.GoCycle(dosleep: boolean);
 begin
-   Result := true;
-
    ox.OnPreEvents.Call();
 
    oxPlatform.ProcessEvents();
