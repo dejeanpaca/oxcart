@@ -42,21 +42,6 @@ CONST
       )
    );
 
-   wdgToolbarSkinDescriptor: uiTWidgetSkinDescriptor = (
-      Name: 'toolbar';
-
-      nColors: Length(wdgToolbarSkinColorDescriptor);
-      nImages: 0;
-      nBools: 0;
-      nStrings: 0;
-
-      Colors: @wdgToolbarSkinColorDescriptor;
-      Images: nil;
-      Bools: nil;
-      Strings: nil;
-      Setup: nil
-  );
-
    WDG_TOOLBAR_ITEM_BUTTON_RATIO = 0.9;
 
 TYPE
@@ -171,6 +156,8 @@ TYPE
 
    wdgTToolbarGlobal = class(specialize wdgTBase<wdgTToolbar>)
       Internal: uiTWidgetClass; static;
+      SkinDescriptor: uiTWidgetSkinDescriptor; static;
+
       {default height}
       Height: longint; static;
 
@@ -682,7 +669,7 @@ end;
 
 procedure init();
 begin
-   wdgToolbar.Internal.SkinDescriptor := @wdgToolbarSkinDescriptor;
+   wdgToolbar.Internal.SkinDescriptor := @wdgToolbar.SkinDescriptor;
    wdgToolbar.Internal.Done(wdgTToolbar);
 
    wdgToolbar := wdgTToolbarGlobal.Create(wdgToolbar.Internal);
@@ -696,5 +683,9 @@ end;
 INITIALIZATION
    wdgToolbar.Internal.Register('widget.Toolbar', @init, @deinit);
    wdgToolbar.Height := wdgWORKBAR_HEIGHT;
+
+   uiTWidgetSkinDescriptor.Initialize(wdgToolbar.SkinDescriptor, 'toolbar');
+   wdgToolbar.SkinDescriptor.UseColors(wdgToolbarSkinColorDescriptor);
+
 
 END.

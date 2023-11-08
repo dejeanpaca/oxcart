@@ -37,21 +37,6 @@ CONST
       )
    );
 
-   wdgProgressBarSkinDescriptor: uiTWidgetSkinDescriptor = (
-      Name: 'progressbar';
-
-      nColors: Length(wdgProgressBarSkinColorDescriptor);
-      nImages: 0;
-      nBools: 0;
-      nStrings: 0;
-
-      Colors: @wdgProgressBarSkinColorDescriptor;
-      Images: nil;
-      Bools: nil;
-      Strings: nil;
-      Setup: nil
-   );
-
 TYPE
 
    { wdgTProgressBar }
@@ -88,6 +73,7 @@ TYPE
    wdgTProgressBarStatics = class(wdgTProgressBarBase)
       public
       Internal: uiTWidgetClass; static;
+      SkinDescriptor: uiTWidgetSkinDescriptor; static;
 
       {adds a ProgressBar to a window}
       function Add(const Pos: oxTPoint; const Dim: oxTDimensions;
@@ -300,5 +286,8 @@ end;
 
 INITIALIZATION
    wdgProgressBar.Internal.Register('widget.progressbar', @init, @deinit);
+
+   uiTWidgetSkinDescriptor.Initialize(wdgProgressBar.SkinDescriptor, 'progressbar');
+   wdgProgressBar.SkinDescriptor.UseColors(wdgProgressBarSkinColorDescriptor);
 
 END.

@@ -79,10 +79,16 @@ TYPE
    uiPWidgetSkinColorDescriptors = ^uiTWidgetSkinColorDescriptors;
 
    { widget skin image descriptor }
-   uiTWidgetSkinImageDescriptor = record
+   uiTWidgetSkinDescriptorString = record
       Name: StdString;
       Default: StdString;
    end;
+
+   { widget skin image descriptor }
+   uiTWidgetSkinImageDescriptor = uiTWidgetSkinDescriptorString;
+
+   { widget skin image descriptor }
+   uiTWidgetSkinGlyphDescriptor = uiTWidgetSkinDescriptorString;
 
    { widget skin bool descriptor }
    uiTWidgetSkinBoolDescriptor = record
@@ -90,20 +96,17 @@ TYPE
       Default: Boolean;
    end;
 
-   { widget skin string descriptor }
-   uiTWidgetSkinStringDescriptor = record
-      Name: StdString;
-      Default: StdString;
-   end;
-
    uiPWidgetSkinImageDescriptors = ^uiTWidgetSkinImageDescriptors;
    uiTWidgetSkinImageDescriptors = array[0..1023] of uiTWidgetSkinImageDescriptor;
+
+   uiPWidgetSkinGlyphDescriptors = ^uiTWidgetSkinGlyphDescriptors;
+   uiTWidgetSkinGlyphDescriptors = array[0..1023] of uiTWidgetSkinGlyphDescriptor;
 
    uiPWidgetSkinBoolDescriptors = ^uiTWidgetSkinBoolDescriptors;
    uiTWidgetSkinBoolDescriptors = array[0..1023] of uiTWidgetSkinBoolDescriptor;
 
    uiPWidgetSkinStringDescriptors = ^uiTWidgetSkinStringDescriptors;
-   uiTWidgetSkinStringDescriptors = array[0..1023] of uiTWidgetSkinStringDescriptor;
+   uiTWidgetSkinStringDescriptors = array[0..1023] of uiTWidgetSkinDescriptorString;
 
    { widget skin descriptor }
    uiPWidgetSkinDescriptor = ^uiTWidgetSkinDescriptor;
@@ -122,11 +125,16 @@ TYPE
 
       Colors: uiPWidgetSkinColorDescriptors;
       Images: uiPWidgetSkinImageDescriptors;
+      Glyphs: uiPWidgetSkinGlyphDescriptors;
       Bools: uiPWidgetSkinBoolDescriptors;
       Strings: uiPWidgetSkinStringDescriptors;
       Setup: uiTWidgetSkinSetupRoutine;
 
       function GetColor(colorIndex: loopint): TColor4ub;
+
+      procedure UseColors(var colorDescriptor: array of uiTWidgetSkinColorDescriptor);
+
+      class procedure Initialize(out descriptor: uiTWidgetSkinDescriptor; const setName: StdString = ''); static;
    end;
 
    { widget skin color }
@@ -200,6 +208,18 @@ begin
       exit(Colors^[colorIndex].Color);
 
    Result := cWhite4ub;
+end;
+
+procedure uiTWidgetSkinDescriptor.UseColors(var colorDescriptor: array of uiTWidgetSkinColorDescriptor);
+begin
+   nColors := Length(colorDescriptor);
+   Colors := @colorDescriptor[0];
+end;
+
+class procedure uiTWidgetSkinDescriptor.Initialize(out descriptor: uiTWidgetSkinDescriptor; const setName: StdString);
+begin
+   ZeroOut(descriptor, SizeOf(descriptor));
+   descriptor.Name := setName;
 end;
 
 { uiTSkin }
