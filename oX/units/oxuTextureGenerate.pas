@@ -248,11 +248,10 @@ end;
 function oxTTextureGenerate.Generate(const filename: string; out Tex: oxTTextureID): longint;
 begin
    Result := Load(filename);
-   if(Result <> 0) then
-      exit();
 
-   {call the texture generation routine}
-   Result := Generate(Tex);
+   if(Result = 0) then
+      {call the texture generation routine}
+      Result := Generate(Tex);
 end;
 
 function oxTTextureGenerate.Generate(const filename: string; out Tex: oxTTexture): longint;
@@ -271,6 +270,7 @@ end;
 function oxTTextureGenerate.Generate(const extension: string; var f: TFile; out tex: oxTTextureID): longint;
 begin
    Result := Load(extension, f);
+
    if(Result <> 0) then
       exit();
 
@@ -311,7 +311,9 @@ function oxTTextureGenerate.Generate(const fn: string; var f: TFile; out tex: ox
 begin
    tex := nil;
 
-   if(Load(fn, f) <> eNONE) then
+   Result := Load(fn, f);
+
+   if(Result <> eNONE) then
       exit;
 
    Result := Generate(tex);
