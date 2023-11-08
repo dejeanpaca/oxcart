@@ -1089,8 +1089,10 @@ begin
    {$ENDIf}
 
    if(BuildArch <> nil) then begin
-      BuildArch.Platform.Separate(build.TargetCPU, build.TargetOS);
-      build.FPCOptions.UnitOutputDirectory := oxedBuild.WorkArea  + 'lib-' + BuildArch.Platform
+      build.TargetCPU := BuildArch.Architecture;
+      build.TargetOS := oxedTPlatform(BuildArch.PlatformObject).OS;
+
+      build.FPCOptions.UnitOutputDirectory := oxedBuild.WorkArea  + 'lib-' + BuildArch.GetPlatformString();
    end else begin
       build.GetBuiltWithTarget().Separate(build.TargetCPU, build.TargetOS);
       build.FPCOptions.UnitOutputDirectory := oxedBuild.WorkArea  + 'lib';
@@ -1188,7 +1190,7 @@ begin
    if(BuildTarget <> OXED_BUILD_STANDALONE) then
       Result := oxedProject.TempPath
    else
-      Result := IncludeTrailingPathDelimiterNonEmpty(base) + oxedBuild.BuildArch.Platform + DirectorySeparator;
+      Result := IncludeTrailingPathDelimiterNonEmpty(base) + oxedBuild.BuildArch.GetPlatformString() + DirectorySeparator;
 end;
 
 function oxedTBuildGlobal.GetTargetExecutableFileName(): StdString;

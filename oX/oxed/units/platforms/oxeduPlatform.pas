@@ -23,14 +23,14 @@ TYPE
    oxedTPlatformArchitecture = class
       Name,
       Architecture: StdString;
-      {matches fpc platform}
-      Platform: TFPCPlatformString;
 
       PlatformObject: TObject;
 
-      constructor Create(); virtual;
+
+      constructor Create(const newName, newArch: StdString); virtual;
 
       procedure Build(); virtual;
+      function GetPlatformString(): TFPCPlatformString;
    end;
 
    oxedTPlatformArchitectureList = specialize TSimpleList<oxedTPlatformArchitecture>;
@@ -43,11 +43,12 @@ TYPE
       {platform name}
       Name,
       {platform id, should match the fpc compiler define for the platform (windows, linux, android, darwin)}
-      Id: string;
+      Id: StdString;
 
+      OS: StdString;
       Architectures: oxedTPlatformArchitectureList;
 
-      GlyphName: string;
+      GlyphName: StdString;
       GlyphCode: longword;
 
       Configuration: oxedTPlatformConfiguration;
@@ -92,7 +93,7 @@ TYPE
       procedure DeInitialize();
 
       procedure Add(platform: oxedTPlatform);
-      function FindById(const id: string): oxedTPlatform;
+      function FindById(const id: StdString): oxedTPlatform;
       procedure Dispose();
 
       procedure Enable(platform: oxedTPlatform);
@@ -123,16 +124,20 @@ end;
 
 { oxedTPlatformArchitecture }
 
-constructor oxedTPlatformArchitecture.Create();
+constructor oxedTPlatformArchitecture.Create(const newName, newArch: StdString);
 begin
-   Name := 'unknown';
-   Platform := 'unknown';
-   Architecture := 'unknown';
+   Name := newName;
+   Architecture := newArch;
 end;
 
 procedure oxedTPlatformArchitecture.Build();
 begin
 
+end;
+
+function oxedTPlatformArchitecture.GetPlatformString(): TFPCPlatformString;
+begin
+   Result := Architecture + '-' + oxedTPlatform(PlatformObject).OS;
 end;
 
 { oxedTPlatform }
@@ -222,7 +227,7 @@ begin
    List.Add(platform);
 end;
 
-function oxedTPlatforms.FindById(const id: string): oxedTPlatform;
+function oxedTPlatforms.FindById(const id: StdString): oxedTPlatform;
 var
    i: loopint;
 
