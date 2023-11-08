@@ -58,6 +58,7 @@ end;
 procedure TFileOperationsHelper.Open(var h: TFileStdHandler; const fName: StdString);
 begin
    Assert(@h <> nil, 'Fatal: An nil standard file handler was specified');
+   Assert(h.Handler <> nil, 'Fatal: No handler object assigned for standard file');
 
    {$IFNDEF FILE_NOFS}
    if(fFile.fsExists(fName) > -1) then begin

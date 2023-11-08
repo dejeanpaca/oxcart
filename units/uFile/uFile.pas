@@ -494,6 +494,7 @@ procedure TFile.AssignHandler(var handler);
 begin
    HandlerDispose();
 
+   assert(@handler <> nil, 'Assigned handler cannot be nil');
    pHandler := @handler;
    TFileHandler(handler).Make(Self);
 end;
