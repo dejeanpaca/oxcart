@@ -24,6 +24,7 @@ TYPE
       Name: string;
       GlobalInstances: oxTGlobalInstances;
       LibraryInstances: oxTGlobalInstances;
+      {is the library in error state}
       ErrorState: boolean;
 
       constructor Create; virtual;
