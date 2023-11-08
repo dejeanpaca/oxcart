@@ -80,13 +80,19 @@ begin
 end;
 
 procedure oxTTextComponent.SetFont(const newFont: oxTFont);
+var
+   given: oxTFont;
+
 begin
    if(Font <> nil) then
-      Font := newFont
+      given := newFont
    else
-      Font := oxFont.GetDefault();
+      given := oxFont.GetDefault();
 
-   RebuildCache();
+   if(Font <> given) then begin
+      Font := given;
+      RebuildCache();
+   end;
 end;
 
 procedure oxTTextComponent.RebuildCache();
