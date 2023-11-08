@@ -24,7 +24,8 @@ VAR
 IMPLEMENTATION
 
 VAR
-   dvGroup: TDVarGroup;
+   dvGroup,
+   dvAssetsGroup: TDVarGroup;
 
    dvName,
    dvShortName,
@@ -36,7 +37,9 @@ VAR
    dvFeature,
    dvLineEndings,
    dvPlatformEnabled,
-   dvNilProject: TDVar;
+   dvNilProject,
+   {assets}
+   dvPackAssets: TDVar;
 
    stringValue: StdString;
 
@@ -50,6 +53,7 @@ begin
    dvMainUnit.Update(oxedProject.MainUnit);
    dvLineEndings.Update(oxedProject.LineEndings);
    dvNilProject.Update(oxedProject.NilProject);
+   dvPackAssets.Update(oxedProject.Assets.Pack);
 end;
 
 procedure validateLoad();
@@ -131,8 +135,8 @@ begin
 end;
 
 INITIALIZATION
-   dvar.Init(dvGroup);
-   dvGroup.Name := 'project';
+   dvar.Init(dvGroup, 'project');
+   dvGroup.Add('assets', dvAssetsGroup);
 
    dvGroup.Add(dvName, 'name', dtcSTRING, @oxedProject.Name);
    dvGroup.Add(dvShortName, 'short_name', dtcSTRING, @oxedProject.ShortName);
@@ -155,6 +159,10 @@ INITIALIZATION
 
    dvGroup.Add(dvNilProject, 'nil_project', dtcBOOL, nil);
 
+   {assets}
+   dvAssetsGroup.Add(dvPackAssets, 'pack', dtcBOOL, @oxedProject.Assets.Pack);
+
+   {base}
    oxedProjectSettingsFile.Create(dvGroup);
    oxedProjectSettingsFile.FileName := OXED_PROJECT_SETTINGS_FILE;
 

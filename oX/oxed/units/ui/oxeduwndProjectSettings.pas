@@ -64,6 +64,10 @@ VAR
          NilProject: wdgTCheckbox;
       end;
 
+      Assets: record
+         Pack: wdgTCheckbox;
+      end;
+
       Build: record
          MainUnit: wdgTInputBox;
          Symbols: wdgTStringList;
@@ -116,6 +120,8 @@ begin
 
    widgets.Build.MainUnit.SetText(oxedProject.MainUnit);
    widgets.Build.DebugResources.Check(oxedProject.Session.DebugResources);
+
+   widgets.Assets.Pack.Check(oxedProject.Assets.Pack);
 end;
 
 procedure saveCallback();
@@ -138,6 +144,9 @@ begin
 
    { build }
    oxedwndProjectSettings.StoreBuildModeSettings();
+
+   {assets}
+   oxedProject.Assets.Pack := widgets.Assets.Pack.Checked();
 
    {done}
    oxedProject.MarkModified();
@@ -290,6 +299,7 @@ begin
    wdgDivisor.Add('Basics');
    wdgLabel.Add('Main unit (if specified, will be the only unit listed in soruce), when you want to manage the order of things yourself');
    widgets.Build.MainUnit := wdgInputBox.Add(oxedProject.MainUnit);
+   widgets.Assets.Pack := wdgCheckbox.Add('Pack assets into a bundle file (ypk)', oxedProject.Assets.Pack);
    uiWidget.LastRect.VerticalSpacing();
 
    widgets.Build.DebugResources := wdgCheckbox.Add('Debug Resources', oxedProject.Session.DebugResources);

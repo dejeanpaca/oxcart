@@ -75,6 +75,12 @@ TYPE
       {this project does not use engine facilities (manually managed project)}
       NilProject: boolean;
 
+      {asset settings}
+      Assets: record
+         {pack all assets into bundle files}
+         Pack: boolean;
+      end;
+
       {called when the project is modified}
       OnProjectModified: TProcedures; static;
 
