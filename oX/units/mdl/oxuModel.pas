@@ -163,10 +163,7 @@ var
 begin
    GetBoundingBox(bbox);
 
-   offset :=  (bbox[1] + bbox[0]) / 2;
-   offset[0] := 0 - offset[0];
-   offset[1] := 0 - offset[1];
-   offset[2] := 0 - offset[2];
+   offset := vmvZero3f - ((bbox[1] + bbox[0]) / 2);
 
    Translate(offset[0], offset[1], offset[2]);
 end;
