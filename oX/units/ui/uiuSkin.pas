@@ -239,7 +239,7 @@ begin
       Focal.Assign(96, 96, 112, 255);
       Shadow := cBlack4ub;
       Surface.Assign(32, 32, 32, 255);
-      LightSurface.Assign(42, 42, 42, 255);
+      LightSurface.Assign(38, 38, 38, 255);
       SelectedBorder.Assign(63, 127, 255, 255);
       Border.Assign(16, 16, 16, 255);
 
