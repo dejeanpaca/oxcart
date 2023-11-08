@@ -150,6 +150,8 @@ TYPE
       procedure Initialize();
       {reinitialize the build system (e.g. after config path change)}
       procedure ReInitialize();
+      {deinitialize build}
+      procedure DeInitialize();
 
       {get the semicolon separated includes path from a list of strings relative the base path}
       function GetIncludesPath(const basePath: StdString; const paths: TSimpleStringList): StdString;
@@ -199,6 +201,14 @@ end;
 
 procedure TBuildSystem.ReInitialize();
 begin
+   DeInitialize();
+
+   OnReinitialize.Call();
+   Initialize();
+end;
+
+procedure TBuildSystem.DeInitialize();
+begin
    Units.Dispose();
    Includes.Dispose();
    Symbols.Dispose();
@@ -207,9 +217,6 @@ begin
    Tools.Path := '';
 
    Initialized := false;
-
-   OnReinitialize.Call();
-   Initialize();
 end;
 
 procedure TBuildSystem.Initialize();
