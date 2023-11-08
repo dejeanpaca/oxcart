@@ -145,11 +145,13 @@ TYPE
       DeadZone: single;
       DeadZoneStretch: boolean;
 
+      {has the device state been updated}
+      Updated,
       {is the device valid (present)}
       Valid: boolean;
 
       State: record
-         {state of all buttons, max 64 supported}
+         {pressed state of all buttons, max 64 supported}
          KeyState: TBitSet64;
          {more detailed key state}
          Keys: appiTKeyStates;
@@ -175,6 +177,11 @@ TYPE
       procedure Disconnected();
 
       function GetName(): string;
+
+      {get button pressure (how pressed it is)}
+      function GetButtonPressure(index: loopint): single;
+      {is a button pressed}
+      function IsButtonPressed(index: loopint): boolean;
 
       {get normalized value for axis or trigger}
       function GetNormalizedValue(rawValue: loopint): appiTAxisState;
@@ -348,6 +355,7 @@ begin
    DeviceIndex := -1;
    DeadZone := 0.1;
    DeadZoneStretch := true;
+
    State.Keys.SetupKeys(appMAX_CONTROLLER_BUTTONS, @State.KeyProperties);
 end;
 
@@ -381,6 +389,26 @@ begin
       Result := Name
    else
       Result := 'Unknown';
+end;
+
+function appTControllerDevice.GetButtonPressure(index: loopint): single;
+begin
+   Result := 0;
+
+   if(index > 0) and (index < ButtonCount) then begin
+      if(State.KeyState.GetBit(index)) then
+         Result := 1.0;
+   end;
+end;
+
+function appTControllerDevice.IsButtonPressed(index: loopint): boolean;
+begin
+   Result := false;
+
+   if(index > 0) and (index < ButtonCount) then begin
+      if(State.KeyState.GetBit(index)) then
+         Result := true;
+   end;
 end;
 
 function appTControllerDevice.GetNormalizedValue(rawValue: loopint): appiTAxisState;
