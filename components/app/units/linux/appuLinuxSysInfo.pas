@@ -9,7 +9,9 @@ UNIT appuLinuxSysInfo;
 
 INTERFACE
 
-	USES StringUtils, appuSysInfoBase, uFileUtils, ustrList;
+	USES
+      uStd, StringUtils, uFileUtils, ustrList,
+      appuSysInfoBase;
 
 procedure appLinuxSysInfoGetInformation();
 
@@ -204,7 +206,7 @@ CONST
 
 procedure appLinuxSysInfoGetInformation();
 var
-   release: string = '';
+   release: StdString = '';
    ok: longint;
    i: longint;
 

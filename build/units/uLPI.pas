@@ -38,7 +38,7 @@ TYPE
 
    TLPITemplate = record
       Path,
-      Name: string;
+      Name: StdString;
 
       procedure Setup();
    end;
@@ -52,7 +52,7 @@ TYPE
 
       {source file from which the lpi is created, or the main unit when an lpi is loaded}
       Source,
-      Path: string;
+      Path: StdString;
       xmlDoc: TXMLDocument;
       Error: longint;
 
@@ -127,8 +127,8 @@ TYPE
       procedure Update();
       procedure ApplyValues();
 
-      procedure Load(const newPath: string);
-      procedure Save(const newPath: string = '');
+      procedure Load(const newPath: StdString);
+      procedure Save(const newPath: StdString = '');
       {extract information from source (like required packages)}
       procedure ParseSource();
 
@@ -352,7 +352,7 @@ begin
    end;
 end;
 
-procedure TLPIFile.Load(const newPath: string);
+procedure TLPIFile.Load(const newPath: StdString);
 begin
    Path := newPath;
 
@@ -370,9 +370,9 @@ begin
    end;
 end;
 
-procedure TLPIFile.Save(const newPath: string);
+procedure TLPIFile.Save(const newPath: StdString);
 var
-   p: string;
+   p: StdString;
 
 begin
    ApplyValues();

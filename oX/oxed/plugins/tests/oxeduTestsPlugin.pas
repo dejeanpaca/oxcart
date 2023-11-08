@@ -49,7 +49,7 @@ TYPE
       {include oX engine tests}
       IncludeOx: boolean;
 
-      procedure AddPath(const path: string);
+      procedure AddPath(const path: StdString);
 
       {run a specific task}
       procedure RunTask(typeOfTask: oxedTTestTaskType);
@@ -67,7 +67,7 @@ TYPE
       procedure RunTests();
 
       {get path for oX tests}
-      function GetOXPAth(): string;
+      function GetOXPAth(): StdString;
    end;
 
 VAR
@@ -111,9 +111,9 @@ end;
 
 { oxedTTests }
 
-procedure oxedTTests.AddPath(const path: string);
+procedure oxedTTests.AddPath(const path: StdString);
 var
-   properPath: string;
+   properPath: StdString;
 
 begin
    if(path <> '') then begin
@@ -128,7 +128,7 @@ end;
 procedure oxedTTests.RunTask(typeOfTask: oxedTTestTaskType);
 var
    i: loopint;
-   dir: string;
+   dir: StdString;
 
 begin
    if(not CanTest(typeOfTask)) then
@@ -212,7 +212,7 @@ begin
    StartTask(OXED_TEST_TASK_RUN);
 end;
 
-function oxedTTests.GetOXPAth(): string;
+function oxedTTests.GetOXPAth(): StdString;
 begin
    Result := GetParentDirectory(build.Tools.Build);
 end;
