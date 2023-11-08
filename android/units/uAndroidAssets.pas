@@ -10,7 +10,7 @@ INTERFACE
 
    USES
       ctypes, jni, native_activity, asset_manager, android_log_helper,
-      uStd, uFile, uAndroid, uAndroidAssetFile;
+      uStd, StringUtils, uFile, uAndroid, uAndroidAssetFile;
 
 TYPE
 
@@ -41,12 +41,31 @@ var
    asset_manager: jobject;
    getAssetsId: jmethodID;
 
+   mainDir: PAAssetDir;
+   assetPath: PChar;
+
 begin
    if(activity^.assetManager <> nil) then begin
       Manager := activity^.assetManager;
       GlobalRef := nil;
-      exit;
    end;
+
+   mainDir := AAssetManager_openDir(Manager, '');
+
+   if(mainDir <> nil) then begin
+      repeat
+         assetPath := AAssetDir_getNextFileName(mainDir);
+
+         if(assetPath <> nil) then
+            logi('Asset: ' + assetPath);
+      until assetPath = nil;
+   end else
+      logi('No asset files found');
+
+   AAssetDir_close(mainDir);
+
+   if(Manager <> nil) then
+      exit;
 
    env := mainThreadEnv;
 
@@ -92,7 +111,7 @@ begin
       {get a file handle for the asset}
       handle := AAsset_openFileDescriptor64(asset, @start, @length);
 
-      if(f.Handle > 0) then begin
+      if(handle > 0) then begin
          {set defaults}
          f.SetDefaults(fcfREAD, path);
 
@@ -104,7 +123,7 @@ begin
 
          exit(True);
       end else
-         loge('Failed to open asset file descriptor: ' + path);
+         loge('Failed to open asset file descriptor: ' + path + ' (returned: ' + sf(handle) + ')');
    end;
 
    f.CloseAndDestroy();
