@@ -95,10 +95,10 @@ TYPE
 
    TFileTraverse = record
    public
-      {extensions which are only to be included in processing (whitelist)}
+      {extensions which are only to be included in processing (allowlist)}
       Extensions: array of StdString;
-      {extensions which are to be excluded from being processed (blacklist)}
-      ExtensionsBlacklist: array of StdString;
+      {extensions which are to be excluded from being processed (blocklist)}
+      ExtensionBlocklist: array of StdString;
 
       Running: boolean;
       Recursive: boolean;
@@ -117,9 +117,9 @@ TYPE
       {processes current path}
       procedure Run();
 
-      {add an extension to the extension whitelist}
+      {add an extension to the extension allowlist}
       procedure AddExtension(const ext: StdString);
-      {add an extension to the extension blacklist}
+      {add an extension to the extension blocklist}
       procedure ExcludeExtension(const ext: StdString);
 
       {reset extensions}
@@ -1460,13 +1460,13 @@ end;
 
 procedure TFileTraverse.ExcludeExtension(const ext: StdString);
 begin
-   SetLength(ExtensionsBlacklist, Length(ExtensionsBlacklist) + 1);
-   ExtensionsBlacklist[Length(ExtensionsBlacklist) - 1] := ext;
+   SetLength(ExtensionBlocklist, Length(ExtensionBlocklist) + 1);
+   ExtensionBlocklist[Length(ExtensionBlocklist) - 1] := ext;
 end;
 
 procedure TFileTraverse.ResetExtensions();
 begin
-   SetLength(ExtensionsBlacklist, 0);
+   SetLength(ExtensionBlocklist, 0);
    SetLength(Extensions, 0);
 end;
 
@@ -1520,10 +1520,10 @@ begin
                ok    := true;
                ext   := UTF8Lower(ExtractFileExt(utf8string(UTF8Encode(src.Name))));
 
-               {check if extension matches any on the blacklist (if there is a blacklist)}
-               if(ExtensionsBlacklist <> nil) then begin
-                  for i := 0 to Length(ExtensionsBlacklist) - 1 do begin
-                     if(ext = ExtensionsBlacklist[i]) then
+               {check if extension matches any on the blocklist (if there is a blocklist)}
+               if(ExtensionBlocklist <> nil) then begin
+                  for i := 0 to Length(ExtensionBlocklist) - 1 do begin
+                     if(ext = ExtensionBlocklist[i]) then
                         ok := false;
                   end;
                end;
