@@ -64,7 +64,7 @@ TYPE
    uiTWidgetTitleButtonsGlobal = record
       {title button size ratio, button size:title height,
       used for both button height and width [square]}
-      buttonSizeRatio: single;
+      ButtonSizeRatio: single;
    end;
 
 VAR
@@ -230,7 +230,7 @@ var
    i,
    n,
    x,
-   totalwidth: longint;
+   totalWidth: longint;
    th: longint; {title height}
 
 begin
@@ -244,8 +244,8 @@ begin
       th := pwnd.GetTitleHeight();
 
       {get the dimensions of individual buttons}
-      if(wdgTitleButtons.buttonSizeRatio > 0) then
-         buttons.h := round(th * wdgTitleButtons.buttonSizeRatio)
+      if(wdgTitleButtons.ButtonSizeRatio > 0) then
+         buttons.h := round(th * wdgTitleButtons.ButtonSizeRatio)
       else
          buttons.h := CachedFont.GetHeight();
 
@@ -256,7 +256,7 @@ begin
       {figure out how many buttons there are and their properties}
       n := 0;
       x := 0;
-      totalwidth := 0;
+      totalWidth := 0;
 
       for i := uiwcBUTTON_MAX downto 0 do begin
          if(pwnd.Buttons and (1 shl i) > 0) then begin
@@ -267,24 +267,26 @@ begin
             buttons.b[n].btmask      := 1 shl i;
 
             inc(x, buttons.b[n].w + buttons.spc); {move the offset}
-            inc(totalwidth, buttons.b[n].w + buttons.spc);
+            inc(totalWidth, buttons.b[n].w + buttons.spc);
             inc(n);
          end;
       end;
 
       {there is no spacing after the last button needed}
-      if(totalwidth > 0) then
-         dec(totalwidth, buttons.spc);
+      if(totalWidth > 0) then
+         dec(totalWidth, buttons.spc);
 
       buttons.n := n; {set the number of buttons}
 
       {calculate the total dimensions of the widget}
       Dimensions.h := buttons.h;
-      Dimensions.w := totalwidth;
+      Dimensions.w := totalWidth;
 
-      {need to determine the pinternalosition of the widget}
+      {need to determine the position of the widget}
       Position.y := pwnd.Dimensions.h + (th + buttons.h) div 2;
-      Position.x := pwnd.Dimensions.w - totalwidth - uiTWindow(wnd).GetFrameWidth();
+      Position.x := pwnd.Dimensions.w - totalWidth - uiTWindow(wnd).GetFrameWidth() -
+         {move away from the b}
+         (round((buttons.h)) div 4);
 
       {update widgets relative position}
       PositionUpdate();
@@ -339,7 +341,7 @@ begin
 end;
 
 INITIALIZATION
-   wdgTitleButtons.buttonSizeRatio := 0;
+   wdgTitleButtons.ButtonSizeRatio := 0;
    internal.Register('widget.titlebuttons', @InitWidget);
 
 END.
