@@ -36,8 +36,8 @@ CONST
 
 CONST
    wdgscINPUT_SURFACE          = 0;
-   wdgscINPUT_TEXT             = 1;
-   wdgscINPUT_SURFACE_DISABLED = 2;
+   wdgscINPUT_SURFACE_DISABLED = 1;
+   wdgscINPUT_TEXT             = 2;
    wdgscINPUT_TEXT_DISABLED    = 3;
    wdgscINPUT_CURSOR           = 4;
    wdgscINPUT_PLACEHOLDER      = 5;
@@ -674,8 +674,8 @@ begin
    skin := uiTSkin(s);
 
    wdgSkin^.SetColor(wdgscINPUT_SURFACE, skin.Colors.InputSurface);
-   wdgSkin^.SetColor(wdgscINPUT_TEXT, skin.Colors.InputText);
    wdgSkin^.SetColor(wdgscINPUT_SURFACE_DISABLED, skin.DisabledColors.InputSurface);
+   wdgSkin^.SetColor(wdgscINPUT_TEXT, skin.Colors.InputText);
    wdgSkin^.SetColor(wdgscINPUT_TEXT_DISABLED, skin.DisabledColors.InputText);
    wdgSkin^.SetColor(wdgscINPUT_CURSOR, skin.Colors.InputText);
    wdgSkin^.SetColor(wdgscINPUT_PLACEHOLDER, skin.Colors.InputPlaceholder);

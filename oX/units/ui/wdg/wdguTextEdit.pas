@@ -602,5 +602,6 @@ end;
 
 INITIALIZATION
    wdgTextEdit.Create('text_edit');
+   wdgTextEdit.Internal.SkinDescriptor := wdgInputBox.Internal.SkinDescriptor;
 
 END.
