@@ -9,7 +9,8 @@ UNIT oxeduBuild;
 INTERFACE
 
    USES
-      sysutils, uStd, uLog, uLPI, uFileUtils, StringUtils, uTiming, uFile, uFiles,
+      sysutils, uStd, uLog, uLPI, StringUtils, uTiming,
+      uFileUtils, uFile, ufUtils,
       {build}
       uFPCHelpers, uBuild, uBuildConfiguration, uBuildLibraries, uPasSourceHelper,
       {app}
@@ -153,53 +154,20 @@ VAR
 
 IMPLEMENTATION
 
-VAR
-   fBuf1,
-   fBuf2: array[0..16383] of byte;
-
-{Compares two files. It'll replace the second one with the first one if they mismatch.
-Otherwise it discards the first file. This is helpful to minimize file change warnings when content was not changed.}
-function CompareAndReplace(fn1, fn2: string): boolean;
-var
-   f1, f2: TFile;
-   mismatch: fileint;
-
+function CompareAndReplace(const source, target: StdString): boolean;
 begin
-   Result := false;
+   Result := fUtils.CompareAndReplace(source, target);
 
-   if(FileUtils.Exists(fn2) >= 0) then begin
-      fFile.Init(f1);
-      fFile.Init(f2);
-
-      f1.Open(fn1);
-      f2.Open(fn2);
-
-      {speed things up}
-      f1.ExternalBuffer(@fBuf1[0], Length(fBuf1));
-      f2.ExternalBuffer(@fBuf2[0], Length(fBuf2));
-
-      mismatch := fFile.Compare(f1, f2);
-
-      f1.Close();
-      f2.Close();
-
-      if(mismatch = 0) then begin
-         FileUtils.Erase(fn1);
-         log.v('No change for ' + fn2 + ', from: ' + fn1);
-      end else begin
-         FileUtils.Erase(fn2);
-         RenameFile(fn1, fn2);
-         log.v('Updated ' + fn2 + ', from: ' + fn1);
-
-         Result := true;
-      end;
-   end else begin
-      RenameFile(fn1, fn2);
-      log.v('Created ' + fn2 + ', from: ' + fn1);
-
-      Result := true;
-   end;
+   if(fUtils.ReplaceResult = fCOMPARE_AND_REPLACE_NO_CHANGE) then
+      log.v('No change for ' + target + ', from: ' + source)
+   else if(fUtils.ReplaceResult = fCOMPARE_AND_REPLACE_UPDATE) then
+      log.v('Updated ' + target + ', from: ' + source)
+   else if(fUtils.ReplaceResult = fCOMPARE_AND_REPLACE_CREATE) then
+      log.v('Created ' + target + ', from: ' + source)
+   else if(fUtils.ReplaceResult = fCOMPARE_AND_REPLACE_NO_SOURCE) then
+      log.e('Update from file not found: ' + source);
 end;
+
 
 { TBuildTask }
 
