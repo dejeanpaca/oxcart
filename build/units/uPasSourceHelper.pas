@@ -29,6 +29,8 @@ TYPE
       function BuildUnit(): TAppendableString;
       function BuildProgram(): TAppendableString;
       function BuildLibrary(): TAppendableString;
+
+      class procedure Initialize(out s: TPascalSourceBuilder); static;
    end;
 
 IMPLEMENTATION
@@ -82,7 +84,7 @@ begin
    Result.Add('END.');
 end;
 
-function TPascalSourceBuilder.BuildProgram: TAppendableString;
+function TPascalSourceBuilder.BuildProgram(): TAppendableString;
 begin
    Result := '';
 
@@ -106,7 +108,7 @@ begin
    Result.Add('END.');
 end;
 
-function TPascalSourceBuilder.BuildLibrary: TAppendableString;
+function TPascalSourceBuilder.BuildLibrary(): TAppendableString;
 begin
    Result := '';
 
@@ -137,6 +139,11 @@ begin
    end;
 
    Result.Add('END.');
+end;
+
+class procedure TPascalSourceBuilder.Initialize(out s: TPascalSourceBuilder);
+begin
+   ZeroOut(s, SizeOf(s));
 end;
 
 END.
