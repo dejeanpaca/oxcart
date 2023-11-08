@@ -21,6 +21,8 @@ TYPE
    oxTRunGlobal = record
      {restart instead of quitting}
      RestartFlag: boolean;
+     {how much time has passed in last sleep}
+     LastSleepElapsed: single;
 
      {perform initialization before running}
      function Initialize(): boolean;
@@ -162,12 +164,18 @@ begin
 end;
 
 procedure oxTRunGlobal.Sleep(time: longint);
+var
+   elapsed: TDateTime;
+
 begin
    if(time = -1) then
       time := app.IdleTime;
 
-   if(time > 0) then
+   if(time > 0) then begin
+      elapsed := Now;
       SysUtils.Sleep(time);
+      LastSleepElapsed := elapsed.Elapsedf();
+   end;
 end;
 
 procedure oxTRunGlobal.Restart();
