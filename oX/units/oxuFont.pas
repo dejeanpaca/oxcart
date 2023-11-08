@@ -735,10 +735,12 @@ begin
       inc(totalHeight, GetHeight());
    until (i >= l) or (totalHeight > r.h);
 
-   y := r.y - GetHeight();
-
    if(centerVertical) then
-      y := r.y - ((r.h div 2) - totalHeight div 2);
+      y := r.y - ((r.h div 2) - totalHeight div 2)
+   else
+      y := r.y;
+
+   y := y - GetHeight();
 
    for i := 0 to stringCount - 1 do begin;
       s := strings[i];
