@@ -12,7 +12,7 @@ INTERFACE
       uStd,
       {oX}
       oxuTypes, oxuWindowTypes,
-      oxuProjection,
+      oxuProjection, oxuCamera,
       oxuSceneRender, oxuScene,
       {ui}
       uiuWindowRender, uiuDraw,
@@ -25,11 +25,17 @@ TYPE
    wdgTSceneRender = class(wdgTViewport)
       {a renderer for the scene}
       SceneRenderer: oxTSceneRenderer;
+      {render a specific camera}
+      Camera: oxTCamera;
+
+      RenderSceneCameras: boolean;
 
       constructor Create(); override;
       destructor Destroy(); override;
 
       procedure Render(); override;
+
+      procedure OnSceneRenderEnd(); virtual;
 
       procedure CleanupRender();
    end;
@@ -63,6 +69,7 @@ begin
    inherited;
 
    SceneRenderer := oxSceneRender.Default;
+   RenderSceneCameras := true;
 end;
 
 destructor wdgTSceneRender.Destroy();
@@ -74,13 +81,27 @@ begin
 end;
 
 procedure wdgTSceneRender.Render();
+var
+   params: oxTSceneRenderParameters;
+
 begin
    if(oxScene = nil) then
       exit;
 
-   SceneRenderer.Render(Projection);
+   if(not RenderSceneCameras) then begin
+      oxTSceneRenderParameters.Init(params, @Projection, @Camera);
+      SceneRenderer.RenderCamera(params);
+   end else
+      SceneRenderer.Render(Projection);
+
+   OnSceneRenderEnd();
 
    CleanupRender();
+end;
+
+procedure wdgTSceneRender.OnSceneRenderEnd();
+begin
+
 end;
 
 procedure wdgTSceneRender.CleanupRender();
