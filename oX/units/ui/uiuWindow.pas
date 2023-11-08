@@ -17,7 +17,7 @@ INTERFACE
       {oX}
       oxuRunRoutines, oxuTypes, oxuWindows, oxuFont, oxuResourcePool, oxuWindow,
       oxuPrimitives, oxuWindowTypes, oxuRender, oxuTransform,
-      oxuTexture, oxuTextureGenerate, oxuRenderer,
+      oxuTexture, oxuTextureGenerate, oxuRenderer, oxuRenderUtilities,
       {ui}
       oxuUI, uiuSkin, uiuZOrder, uiuTypes, uiuControl, uiuSkinTypes,
       uiuWindowTypes, uiuWidget, uiuDraw, uiWidgets;
@@ -170,6 +170,9 @@ TYPE
       {gets a rectangle for the specified window}
       procedure GetRect(out r: oxTRect);
 
+      {get the window icon dimensions}
+      function GetIconDimensions(): oxTDimensions;
+
       {get total dimensions, both client and non-client area}
       function GetTotalDimensions(): oxTDimensions;
       {compute dimensions required to fit all content (widgets)}
@@ -215,6 +218,13 @@ TYPE
 
       {dispose of the background}
       procedure DisposeBackground();
+
+      {set window texture}
+      procedure SetIcon(tex: oxTTexture);
+      {set window texture from file}
+      function SetIcon(const fn: string): loopint;
+      {dispose of the icon}
+      procedure DisposeIcon();
 
       { finding windows }
 
@@ -833,6 +843,7 @@ begin
    Destroyed(wnd);
 
    wnd.DisposeBackground();
+   wnd.DisposeIcon();
 
    {destroy any listeners on this window}
    wnd.RemoveListeners();
@@ -1390,6 +1401,33 @@ begin
    end;
 end;
 
+procedure uiTWindowHelper.SetIcon(tex: oxTTexture);
+begin
+   DisposeIcon();
+
+   Icon := tex;
+end;
+
+function uiTWindowHelper.SetIcon(const fn: string): loopint;
+var
+   tex: oxTTexture;
+
+begin
+   Result := oxTextureGenerate.Generate(fn, tex);
+   SetIcon(tex);
+
+   {TODO: Set system icon}
+end;
+
+procedure uiTWindowHelper.DisposeIcon();
+begin
+   if(Icon <> nil) then begin
+      oxResource.Destroy(Icon);
+   end;
+
+   {TODO: Dispose system icon}
+end;
+
 procedure uiTWindowHelper.Hide(notify: boolean);
 begin
    if(uiwndpVISIBLE in Properties) then begin
@@ -1893,9 +1931,58 @@ begin
    uiDraw.Box(Aposition.x, RPosition.y - Dimensions.h - fh + 1, Aposition.x + width - 1, RPosition.y - Dimensions.h);
 end;
 
+procedure renderIcon();
+var
+   tex: oxTTexture;
+   d: oxTDimensions;
+   x,
+   y: single;
+
+begin
+   if(Icon <> nil) then begin
+      tex := oxTTexture(Icon);
+      d := GetIconDimensions();
+
+      x := APosition.x + fw;
+      y := APosition.y - ((GetTitleHeight() - d.h) div 2);
+
+      oxRenderingUtilities.TexturedQuad(APosition.x, APosition.y, d.w / 2, d.h / 2, tex);
+   end;
+end;
+
+function getTitleOffset(): loopint;
+var
+   d: oxTDimensions;
+
+begin
+   d := GetIconDimensions();
+
+   Result := fw + d.w + (d.w div 4) + f.GetWidth() div 2;
+end;
+
+procedure renderTitleString();
+begin
+   {write title}
+   if(f <> nil) then begin
+      f.Start();
+      SetColorBlended(colors^.cTitleText);
+
+      r.x := APosition.x + getTitleOffset();
+      r.y := APosition.y;
+      r.w := width - GetNonClientWidth();
+      r.h := GetTitleHeight();
+
+      f.WriteCentered(Title, r, [oxfpCenterVertical]);
+      oxf.Stop();
+   end;
+end;
+
 begin
    {render background}
    renderBackground();
+
+   if(uiwndpSYSTEM in Properties) then
+      exit;
 
    {render frame}
    if(Frame <> uiwFRAME_STYLE_NONE) then begin
@@ -1904,19 +1991,7 @@ begin
       end else
          renderSimpleFrame();
 
-      {write title}
-      if(f <> nil) then begin
-         f.Start();
-         SetColorBlended(colors^.cTitleText);
-
-         r.x := APosition.x + fw + (f.GetWidth() div 2);
-         r.y := APosition.y;
-         r.w := width - GetNonClientWidth();
-         r.h := GetTitleHeight();
-
-         f.WriteCentered(Title, r, [oxfpCenterVertical]);
-         oxf.Stop();
-      end;
+      renderTitleString();
    end;
 end;
 
@@ -2388,6 +2463,17 @@ begin
    r.y := Position.y;
    r.w := Dimensions.w + GetNonClientWidth();
    r.h := Dimensions.h + GetNonClientHeight();
+end;
+
+function uiTWindowHelper.GetIconDimensions(): oxTDimensions;
+begin
+   if(Icon <> nil) then begin
+      Result.w := round(GetTitleHeight() * 0.8);
+      Result.h := Result.w;
+   end else begin
+      Result.w := 0;
+      Result.h := 0;
+   end;
 end;
 
 function uiTWindowHelper.GetTotalDimensions(): oxTDimensions;
