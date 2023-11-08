@@ -88,7 +88,9 @@ begin
       glEnable(GL_BLEND);
       {$IFNDEF GLES}
       glBlendFunc(oglBlendRemaps[longint(blendFunc)][1], oglBlendRemaps[longint(blendFunc)][2]);
-      glBlendEquation(oglBlendRemaps[longint(blendFunc)][0]);
+
+      if(glBlendEquation <> nil) then
+         glBlendEquation(oglBlendRemaps[longint(blendFunc)][0]);
       {$ELSE}
       glBlendFunc(oglBlendRemaps[longint(blendFunc)][0], oglBlendRemaps[longint(blendFunc)][1]);
       {$ENDIF}

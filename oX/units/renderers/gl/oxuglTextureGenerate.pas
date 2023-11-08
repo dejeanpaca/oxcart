@@ -63,6 +63,7 @@ end;
 
 begin
    glErr := ogl.eRaise();
+
    if(glErr <> 0) then
       Log.e('gl > error at start of generating texture: ' + ogl.ErrorString(glErr));
 
@@ -75,6 +76,7 @@ begin
       glGenTextures(1, @tex);
 
    glErr := glGetError();
+
    if(glErr <> 0) then begin
       log.e('gl > error ' + ogl.ErrorString(glErr) + ' while generating texture.');
       exit(oxeRENDERER);
@@ -83,6 +85,7 @@ begin
    {determine storage type and pixel format}
 
    storageType := GL_UNSIGNED_BYTE;
+
    if(gen.Image.PixF = PIXF_RGB) then
       typ := GL_RGB
    else if (gen.Image.PixF = PIXF_RGBA) then
@@ -109,7 +112,7 @@ begin
    {$IFNDEF GLES}
    mips := (gen.MipCount = -1) or (gen.MipCount > 0);
 
-   if(mips) then begin
+   if mips and (glGenerateMipmap <> nil) then begin
       glGenerateMipmap(texDim);
 
       if(ogl.eRaise(-1) <> 0) then
@@ -118,6 +121,7 @@ begin
    {$ENDIF}
 
    glErr := glGetError();
+
    if(glErr <> 0) then begin
       Result := oxeRENDERER;
 
