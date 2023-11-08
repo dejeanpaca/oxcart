@@ -726,6 +726,11 @@ begin
    if(FileUtils.Exists(fn) > 0) then
       dvarf.ReadText(dvgConfig, fn);
 
+   {read user configuration}
+   fn := ConfigPath + 'user.config';
+   if(FileUtils.Exists(fn) > 0) then
+      dvarf.ReadText(dvgConfig, fn);
+
    FileUtils.NormalizePathEx(tools.build);
    FileUtils.NormalizePathEx(tools.path);
 end;
@@ -1519,19 +1524,24 @@ begin
 
       {$IF DEFINED(LINUX)}
       log.v('build > auto fpc defaults for linux');
+
       DefaultPlatform^.Path := '/usr/bin/';
-      Tools.Path := '~/bin/';
+
+      if(Tools.Path = '') then
+         Tools.Path := '~/bin/';
       {$ELSEIF DEFINED(DARWIN)}
       log.v('build > auto fpc defaults for darwin');
+
       DefaultPlatform^.Path := '/usr/local/bin/'
-      Tools.Path := '~/bin/';
+
+      if(Tools.Path = '') then
+         Tools.Path := '~/bin/';
       {$ELSEIF DEFINED(WINDOWS)}
       {TODO: Determine default fpc path for windows}
       log.v('build > auto fpc defaults for windows');
-      if(ConfigPath <> 'default') then begin
-         Tools.Path :=  ExpandFileName(IncludeTrailingPathDelimiterNonEmpty(ConfigPath) + '\..\tools');
-         Tools.Build := ConfigPath;
-      end;
+
+      if(Tools.Path = '') then
+         Tools.Path :=  ExpandFileName(IncludeTrailingPathDelimiterNonEmpty(ConfigPath) + '..\tools');
       {$ENDIF}
 
       if(ConfigPath <> 'default') then
