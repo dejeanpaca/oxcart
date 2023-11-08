@@ -56,6 +56,8 @@ TYPE
       function GetUp(): TVector3f; virtual;
       function GetRight(): TVector3f; virtual;
 
+      procedure GetEuler(var x, y, z: single);
+
       {get a perspective frustum matrix}
       class function PerspectiveFrustum(l, r, b, t, n, f: single): TMatrix4f; static;
       class function PerspectiveFrustum(fovY, aspect, zNear, zFar: single): TMatrix4f; static;
@@ -101,8 +103,8 @@ begin
 
    Translate(vPosition);
 
-   Rotate(vRotation[2], 0, 0, 1);
    Rotate(vRotation[1], 0, 1, 0);
+   Rotate(vRotation[2], 0, 0, 1);
    Rotate(vRotation[0], 1, 0, 0);
 
    Scale(vScale);
@@ -134,8 +136,8 @@ end;
 
 procedure oxTTransform.Rotate(x, y, z: single);
 begin
-   Rotate(z, 0, 0, 1);
    Rotate(y, 0, 1, 0);
+   Rotate(z, 0, 0, 1);
    Rotate(x, 1, 0, 0);
 end;
 
@@ -261,6 +263,27 @@ begin
    Result[0] := Matrix[0][0];
    Result[1] := Matrix[1][0];
    Result[2] := Matrix[2][0];
+end;
+
+procedure oxTTransform.GetEuler(var x, y, z: single);
+begin
+   x := 0;
+   y := 0;
+   z := 0;
+
+   if(Matrix[0][0] = 1.0) then begin
+      y := arctan2(Matrix[0][2], Matrix[2][3]);
+      x := 0;
+      z := 0;
+   end else if(Matrix[0][0] = -1.0) then begin
+      y := arctan2(Matrix[0][2], Matrix[2][3]);
+      x := 0;
+      z := 0;
+   end else begin
+      x := arctan2(-Matrix[2][0], Matrix[0][0]);
+      y := arcsin(Matrix[1][0]);
+      z := arctan2(-Matrix[1][2], Matrix[1][1]);
+   end;
 end;
 
 class function oxTTransform.PerspectiveFrustum(l, r, b, t, n, f: single): TMatrix4f;
