@@ -13,8 +13,8 @@ UNIT uBuild;
 INTERFACE
 
    USES
-      process, sysutils, classes, strutils,
-      uStd, uLog, uFileUtils, StringUtils, ConsoleUtils, uSimpleParser, ParamUtils,
+      process, sysutils, strutils,
+      uStd, uLog, uFileUtils, StringUtils, ConsoleUtils, uSimpleParser, ParamUtils, uTiming,
       udvars, dvaruFile,
       appuPaths
       {$IFDEF UNIX}, BaseUnix{$ENDIF};
@@ -99,7 +99,9 @@ TYPE
    TBuildSystem = record
       public
       WriteLog,
-      Initialized: boolean;
+      Initialized,
+      {have we automagically determined where our config is located at}
+      AutoDeterminedConfigPath: boolean;
 
       Tools: TBuildSystemTools;
       {dvar configuration root}
@@ -167,6 +169,9 @@ TYPE
       procedure SaveLocationConfiguration();
       {load configured units}
       procedure LoadUnits();
+
+      {automatically determine config path}
+      procedure AutoDetermineConfigPath();
 
       {get lazarus project filename for the given path (which may already include project filename)}
       function GetLPIFilename(const path: string): string;
@@ -563,9 +568,14 @@ end;
 { TBuildSystem }
 
 procedure TBuildSystem.Initialize();
+var
+   start: TDateTime;
+
 begin
    if(Initialized) then
       exit;
+
+   start := Now;
 
    CreateDefaultPlatform();
    CreateDefaultLazarus();
@@ -587,6 +597,8 @@ begin
 
    TestPlatforms();
 
+   log.v('build > Initialized (Elapsed: ' + now.ElapsedfToString() + 's)');
+
    Initialized := true;
 end;
 
@@ -596,9 +608,9 @@ var
    fn,
    platform,
    mode: string;
-   writeConfig: boolean = false;
 
 begin
+   AutoDeterminedConfigPath := false;
    tempConfigPath := appPath.HomeConfigurationDir('.' + SYSTEM_NAME);
 
    fn := tempConfigPath + 'location.config';
@@ -615,21 +627,15 @@ begin
          if not(FileUtils.DirectoryExists(build.ConfigPath)) then begin
             log.w('build > Could not find configuration directory: ' + build.ConfigPath);
             log.i('build > Will revert location configuration to default');
+
             build.ConfigPath := 'default';
-            writeConfig := true;
          end;
       end;
-   end else
-      {could not find config_path configuration, so will create default}
-      writeConfig := true;
-
-   {need to recreate default configuration file}
-   if(writeConfig) then
-      SaveLocationConfiguration();
+   end;
 
    if(ConfigPath = 'default') then begin
-      log.e('build > Configuration location is not set (location config at: ' + fn + ')');
-      exit;
+      log.w('build > Configuration location is not set (location config at: ' + fn + ')');
+      AutoDetermineConfigPath();
    end;
 
    {$IFDEF WINDOWS}
@@ -686,6 +692,37 @@ begin
       {read units from unit configuration}
       dvarf.ReadText(dvgUnits, fn);
    end;
+end;
+
+procedure TBuildSystem.AutoDetermineConfigPath();
+var
+   path,
+   tryPath: String;
+
+begin
+   build.ConfigPath := IncludeTrailingPathDelimiter(GetParentDirectory(appPath.GetExecutablePath()));
+   path := build.ConfigPath;
+
+   {TODO: Make this more robust}
+   repeat
+      tryPath := path + 'build' + DirectorySeparator + 'here.build';
+
+      if(FileUtils.Exists(tryPath) > 0) then begin
+         build.ConfigPath := path + 'build' + DirectorySeparator;
+         break;
+      end else begin
+         if(path = IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(path))) or (path = '') then
+            break;
+
+         path := IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(path));
+      end;
+
+   until (path = '');
+
+   path := build.ConfigPath;
+   AutoDeterminedConfigPath := true;
+
+   log.w('build > Auto determined config path: ' + build.ConfigPath);
 end;
 
 
@@ -1670,7 +1707,6 @@ begin
    optimizationLevels := strExplode(currentValue, ',');
 
    if(currentPlatform <> nil) and (Length(optimizationLevels) > 0) then begin
-      writeln(currentPlatform^.OptimizationLevels.Increment, ' ', currentPlatform^.OptimizationLevels.n, ' ', currentPlatform^.OptimizationLevels.a);
       for i := 0 to High(optimizationLevels) do begin
          currentPlatform^.OptimizationLevels.Add(optimizationLevels[i]);
       end;
