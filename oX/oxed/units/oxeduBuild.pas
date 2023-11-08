@@ -93,6 +93,8 @@ TYPE
 
       {recreate project files}
       class function Recreate(): boolean; static;
+      {recreate project files}
+      procedure RunBuild();
       {rebuild the entire project}
       class procedure Rebuild(); static;
       {build the part of project that changed}
@@ -676,63 +678,63 @@ begin
    oxedMessages.e('Failed build: ' + reason);
 end;
 
-procedure DoBuild();
+procedure oxedTBuildGlobal.RunBuild();
 var
    modeString,
    targetString: string;
 
 begin
-   if(not oxedBuild.Buildable(true)) then
+   if(not Buildable(true)) then
       exit;
 
-   oxedBuild.BuildStart := Now;
+   BuildStart := Now;
 
    if(not oxedProject.Valid()) then
       exit;
 
-   oxedBuild.TargetPath := oxedBuild.GetTargetPath();
+   TargetPath := GetTargetPath();
 
-   log.v('Building into: ' + oxedBuild.TargetPath);
-   assert(oxedBuild.TargetPath <> '', 'Failed to set target path for build');
+   log.v('Building into: ' + TargetPath);
+   assert(TargetPath <> '', 'Failed to set target path for build');
 
-   if(oxedBuild.BuildType <> OXED_BUILD_TASK_STANDALONE) then begin
+   if(BuildType <> OXED_BUILD_TASK_STANDALONE) then begin
       {if we're missing target path, rebuild}
-      if(not FileUtils.DirectoryExists(oxedBuild.TargetPath)) then
-         oxedBuild.BuildType := OXED_BUILD_TASK_REBUILD;
+      if(not FileUtils.DirectoryExists(TargetPath)) then
+         BuildType := OXED_BUILD_TASK_REBUILD;
    end else begin
       {remove previous build for standalone path}
-      FileUtils.RmDir(oxedBuild.TargetPath);
+      FileUtils.RmDir(TargetPath);
 
-      if(ForceDirectories(oxedBuild.TargetPath)) then
-         log.v('Created directory: ' + oxedBuild.TargetPath)
+      if(ForceDirectories(TargetPath)) then
+         log.v('Created directory: ' + TargetPath)
       else begin
-         FailBuild('Failed to create output directory: ' + oxedBuild.TargetPath);
+         FailBuild('Failed to create output directory: ' + TargetPath);
          exit;
       end;
    end;
 
-   if(oxedBuild.BuildType = OXED_BUILD_TASK_REBUILD) then
+   if(BuildType = OXED_BUILD_TASK_REBUILD) then
       modeString := 'rebuild'
-   else if(oxedBuild.BuildType = OXED_BUILD_TASK_RECODE) then
+   else if(BuildType = OXED_BUILD_TASK_RECODE) then
       modeString := 'recode'
-   else if(oxedBuild.BuildType = OXED_BUILD_TASK_REBUILD_THIRD_PARTY) then
+   else if(BuildType = OXED_BUILD_TASK_REBUILD_THIRD_PARTY) then
       modeString := 'rebuild third party'
-   else if(oxedBuild.BuildType = OXED_BUILD_TASK_STANDALONE) then
+   else if(BuildType = OXED_BUILD_TASK_STANDALONE) then
       modeString := 'build';
 
-   if(oxedBuild.BuildTarget = OXED_BUILD_LIB) then
+   if(BuildTarget = OXED_BUILD_LIB) then
       targetString := 'lib'
    else
       targetString := 'standalone';
 
    oxedMessages.i(modeString + ' started (' + targetString + ')');
 
-   if(not oxedBuild.Recreate()) then begin
+   if(not Recreate()) then begin
       FailBuild('Failed to recreate project files');
       exit;
    end;
 
-   uBuild.build.Options.IsLibrary := oxedBuild.BuildTarget = OXED_BUILD_LIB;
+   uBuild.build.Options.IsLibrary := BuildTarget = OXED_BUILD_LIB;
 
    if(uBuild.build.Options.IsLibrary) then begin
       {check if used fpc version matches us}
@@ -746,9 +748,9 @@ begin
       BuildLPI(oxPROJECT_MAIN_LPI);
 
    if(build.Output.Success) then begin
-      oxedMessages.k(modestring + ' success (elapsed: ' + oxedBuild.BuildStart.ElapsedfToString() + 's)');
+      oxedMessages.k(modestring + ' success (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
    end else
-      oxedMessages.e(modestring + ' failed (elapsed: ' + oxedBuild.BuildStart.ElapsedfToString() + 's)');
+      oxedMessages.e(modestring + ' failed (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
 
    {if successful rebuild, we've made an initial build}
    oxedProject.Session.InitialBuildDone := true;
@@ -824,7 +826,7 @@ begin
    previousThirdParty := oxedBuild.IncludeThirdParty;
    oxedBuild.IncludeThirdParty := true;
    build.Options.Rebuild := true;
-   DoBuild();
+   oxedBuild.RunBuild();
    oxedProject.Session.ThirdPartyBuilt := true;
    oxedBuild.IncludeThirdParty := previousThirdParty;
 end;
@@ -853,10 +855,10 @@ begin
 
    if(BuildType = OXED_BUILD_TASK_RECODE) then begin
       build.Options.Rebuild := false;
-      DoBuild()
+      RunBuild();
    end else if(BuildType = OXED_BUILD_TASK_REBUILD) then begin
       build.Options.Rebuild := true;
-      DoBuild();
+      RunBuild();
    end else if(BuildType = OXED_BUILD_TASK_CLEANUP) then
       DoCleanup()
    else if(BuildType = OXED_BUILD_TASK_RECREATE) then
@@ -865,7 +867,7 @@ begin
       RebuildThirdParty();
    end else if(BuildType = OXED_BUILD_TASK_STANDALONE) then begin
       build.Options.Rebuild := true;
-      DoBuild();
+      RunBuild();
    end;
 
    log.v('oxed > Build done');
