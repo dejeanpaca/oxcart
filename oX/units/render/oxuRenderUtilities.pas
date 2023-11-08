@@ -15,8 +15,9 @@ INTERFACE
    
 TYPE
 
-   { oxTRenderingUtilitiesGlobal }
-   oxTRenderingUtilitiesGlobal = record
+   { oxTRenderUtilitiesGlobal }
+
+   oxTRenderUtilitiesGlobal = record
       {render a cube primitive}
       procedure Cube();
 
@@ -26,10 +27,9 @@ TYPE
       class procedure Rect(x, y, x2, y2: single); static;
 
       class procedure Line(const p1, p2: TVector3f); static;
-      class procedure Line(const p1, p2: TVector3f; const color: TColor4f); static;
 
       class procedure Triangle(const p1, p2, p3: TVector3f); static;
-      class procedure Triangle(const p1, p2, p3: TVector3f; const color: TColor4f); static;
+      class procedure Triangle(v: PVector3f); static;
 
       class procedure TexturedQuad(x, y, w, h: single; tex: oxTTexture); static;
       class procedure QuadVertex(var v: TQuadVertices); static;
@@ -38,14 +38,15 @@ TYPE
       class procedure QuadTexture(id: oxTTexture); static;
       class procedure QuadVertex(); static;
       class procedure Quad(); static;
+      class procedure Quad(tex: oxTTexture); static;
 	end;
 
 VAR
-	oxRenderingUtilities: oxTRenderingUtilitiesGlobal;
+	oxRenderUtilities: oxTRenderUtilitiesGlobal;
 
 IMPLEMENTATION
 
-procedure oxTRenderingUtilitiesGlobal.Cube();
+procedure oxTRenderUtilitiesGlobal.Cube();
 begin
    oxRender.Vertex(CubeVertices[0]);
 
@@ -53,7 +54,7 @@ begin
 end;
 
 {renders lines for a bounding box}
-class procedure oxTRenderingUtilitiesGlobal.BBox(var bb: TBoundingBox);
+class procedure oxTRenderUtilitiesGlobal.BBox(var bb: TBoundingBox);
 var
    vx: array[0..23] of TVector3f;
 
@@ -104,7 +105,7 @@ begin
    oxRender.DrawArrays(oxPRIMITIVE_LINES, length(vx));
 end;
 
-class procedure oxTRenderingUtilitiesGlobal.BBox(const p: TVector3f; var bb: TBoundingBox);
+class procedure oxTRenderUtilitiesGlobal.BBox(const p: TVector3f; var bb: TBoundingBox);
 var
    b: TBoundingBox;
 
@@ -116,7 +117,7 @@ begin
    BBox(b);
 end;
 
-class procedure oxTRenderingUtilitiesGlobal.Rect(x, y, x2, y2: single);
+class procedure oxTRenderUtilitiesGlobal.Rect(x, y, x2, y2: single);
 var
    vx: array[0..3] of TVector2f;
 
@@ -139,7 +140,7 @@ begin
    oxRender.DrawArrays(oxPRIMITIVE_LINE_LOOP, length(vx));
 end;
 
-class procedure oxTRenderingUtilitiesGlobal.Line(const p1, p2: TVector3f);
+class procedure oxTRenderUtilitiesGlobal.Line(const p1, p2: TVector3f);
 var
    v: array[0..1] of TVector3f;
 
@@ -150,20 +151,7 @@ begin
    oxRender.Lines(v);
 end;
 
-class procedure oxTRenderingUtilitiesGlobal.Line(const p1, p2: TVector3f; const color: TColor4f);
-var
-   v: array[0..1] of TVector3f;
-
-begin
-   oxCurrentMaterial.ApplyColor('color', color);
-
-   v[0] := p1;
-   v[1] := p2;
-
-   oxRender.Lines(v);
-end;
-
-class procedure oxTRenderingUtilitiesGlobal.Triangle(const p1, p2, p3: TVector3f);
+class procedure oxTRenderUtilitiesGlobal.Triangle(const p1, p2, p3: TVector3f);
 var
    v: array[0..2] of TVector3f;
 
@@ -173,25 +161,16 @@ begin
    v[2] := p3;
 
    oxRender.Vertex(v[0]);
-   oxRender.DrawArrays(oxPRIMITIVE_TRIANGLES, Length(v));
+   oxRender.DrawArrays(oxPRIMITIVE_TRIANGLES, 3);
 end;
 
-class procedure oxTRenderingUtilitiesGlobal.Triangle(const p1, p2, p3: TVector3f; const color: TColor4f);
-var
-   v: array[0..2] of TVector3f;
-
+class procedure oxTRenderUtilitiesGlobal.Triangle(v: PVector3f);
 begin
-   oxCurrentMaterial.ApplyColor('color', color);
-
-   v[0] := p1;
-   v[1] := p2;
-   v[2] := p3;
-
    oxRender.Vertex(v[0]);
-   oxRender.DrawArrays(oxPRIMITIVE_TRIANGLES, Length(v));
+   oxRender.DrawArrays(oxPRIMITIVE_TRIANGLES, 3);
 end;
 
-class procedure oxTRenderingUtilitiesGlobal.TexturedQuad(x, y, w, h: single; tex: oxTTexture);
+class procedure oxTRenderUtilitiesGlobal.TexturedQuad(x, y, w, h: single; tex: oxTTexture);
 var
    vertex: TQuadVertices;
 
@@ -216,34 +195,39 @@ begin
    oxRender.Primitives(oxPRIMITIVE_TRIANGLES, 6, pword(@QuadIndicesus[0]));
 end;
 
-class procedure oxTRenderingUtilitiesGlobal.QuadVertex(var v: TQuadVertices);
+class procedure oxTRenderUtilitiesGlobal.QuadVertex(var v: TQuadVertices);
 begin
    oxRender.Vertex(v[0]);
    oxRender.Primitives(oxPRIMITIVE_TRIANGLES, 6, pword(@QuadIndicesus[0]));
 end;
 
-class procedure oxTRenderingUtilitiesGlobal.StartQuad(id: oxTTexture);
+class procedure oxTRenderUtilitiesGlobal.StartQuad(id: oxTTexture);
 begin
    QuadTexture(id);
    QuadVertex();
 end;
 
-class procedure oxTRenderingUtilitiesGlobal.QuadTexture(id: oxTTexture);
+class procedure oxTRenderUtilitiesGlobal.QuadTexture(id: oxTTexture);
 begin
    oxCurrentMaterial.ApplyTexture('texture', id);
    oxRender.TextureCoords(QuadTexCoords[0]);
 end;
 
-class procedure oxTRenderingUtilitiesGlobal.QuadVertex();
+class procedure oxTRenderUtilitiesGlobal.QuadVertex();
 begin
    oxRender.Vertex(QuadVertices[0]);
 end;
 
-class procedure oxTRenderingUtilitiesGlobal.Quad();
+class procedure oxTRenderUtilitiesGlobal.Quad();
 begin
    oxRender.Primitives(oxPRIMITIVE_TRIANGLES, 6, pword(@QuadIndicesus[0]));
 end;
 
+class procedure oxTRenderUtilitiesGlobal.Quad(tex: oxTTexture);
+begin
+   QuadTexture(tex);
+   QuadVertex(QuadVertices);
+   Quad();
+end;
 
 END.
-

@@ -78,7 +78,7 @@ begin
 
       oxCurrentMaterial.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
 
-      oxRenderingUtilities.Cube();
+      oxRenderUtilities.Cube();
    end;
 
    inherited RenderContent;

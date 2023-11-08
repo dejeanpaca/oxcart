@@ -164,9 +164,12 @@ begin
    { render XYZ axis lines }
 
    oxRender.DepthTest(oxTEST_FUNCTION_NONE);
-   oxRenderingUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(OXED_LINE_GRID_LENGTH, 0.0, 0.0), cRed4f);
-   oxRenderingUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(0.0, OXED_LINE_GRID_LENGTH, 0.0), cGreen4f);
-   oxRenderingUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(0.0, 0.0, OXED_LINE_GRID_LENGTH), cBlue4f);
+   Material.ApplyColor('color', cRed4f);
+   oxRenderUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(OXED_LINE_GRID_LENGTH, 0.0, 0.0));
+   Material.ApplyColor('color', cGreen4f);
+   oxRenderUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(0.0, OXED_LINE_GRID_LENGTH, 0.0));
+   Material.ApplyColor('color', cBlue4f);
+   oxRenderUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(0.0, 0.0, OXED_LINE_GRID_LENGTH));
    oxRender.DepthTest(oxTEST_FUNCTION_DEFAULT);
 end;
 
@@ -302,9 +305,12 @@ begin
    oxRender.DepthTest(oxTEST_FUNCTION_NONE);
    oxRender.DepthWrite(false);
 
-   oxRenderingUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(1.0, 0.0, 0.0), cRed4f);
-   oxRenderingUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(0.0, 1.0, 0.0), cGreen4f);
-   oxRenderingUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(0.0, 0.0, 1.0), cBlue4f);
+   Material.ApplyColor('color', cRed4f);
+   oxRenderUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(1.0, 0.0, 0.0));
+   Material.ApplyColor('color', cGreen4f);
+   oxRenderUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(0.0, 1.0, 0.0));
+   Material.ApplyColor('color', cBlue4f);
+   oxRenderUtilities.Line(vmCreate(0.0, 0.0, 0.0), vmCreate(0.0, 0.0, 1.0));
 
    oxRender.LineWidth(1.0);
 
@@ -317,15 +323,15 @@ begin
 
       Material.ApplyColor('color', AxisColors[0]);
       p.Assign(1.0 - CONE_LENGTH / 2, 0, 0);
-      oxRenderingUtilities.BBox(p, BBox);
+      oxRenderUtilities.BBox(p, BBox);
 
       Material.ApplyColor('color', AxisColors[1]);
       p.Assign(0, 1.0 - CONE_LENGTH / 2, 0);
-      oxRenderingUtilities.BBox(p, BBox);
+      oxRenderUtilities.BBox(p, BBox);
 
       Material.ApplyColor('color', AxisColors[2]);
       p.Assign(0, 0, 1.0 - CONE_LENGTH / 2);
-      oxRenderingUtilities.BBox(p, BBox);
+      oxRenderUtilities.BBox(p, BBox);
    end;
 
    RenderCone(0, {pos} 1.0 - CONE_LENGTH, 0.0, 0.0, {rot} 0.0, 0.0, -90);
@@ -400,20 +406,18 @@ begin
 
    camera^.Transform.Apply();
 
-   oxRenderingUtilities.StartQuad(component^.Glyph.Texture);
-
    {shadow}
    camera^.Transform.Scale(1.15, 1.15, 1);
    camera^.Transform.Apply();
 
    Material.ApplyColor('color', 0.0, 0.0, 0.0, 0.75);
-   oxRenderingUtilities.Quad();
+   oxRenderUtilities.Quad(component^.Glyph.Texture);
 
    {glyph}
    camera^.Transform.Apply(pMatrix);
 
    Material.ApplyColor('color', 1.0, 1.0, 1.0, 1.0);
-   oxRenderingUtilities.Quad();
+   oxRenderUtilities.Quad();
 
    camera^.Transform.Matrix := camMatrix;
 end;

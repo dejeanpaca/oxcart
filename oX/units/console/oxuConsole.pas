@@ -412,7 +412,7 @@ begin
          t[1].Assign(x + w, y + w, 0);
          t[0].Assign(x, y, 0);
 
-         oxRenderingUtilities.Triangle(t[0], t[1], t[2]);
+         oxRenderUtilities.Triangle(t[0], t[1], t[2]);
       end;
 
       {text}
