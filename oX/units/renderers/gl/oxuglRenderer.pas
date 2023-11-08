@@ -197,19 +197,25 @@ begin
 end;
 
 procedure oxglTRenderer.SwapBuffers(wnd: oxTWindow);
+{$IFDEF OX_DEBUG}
 var
    error: loopint;
+{$ENDIF}
 
 begin
    glPlatform^.SwapBuffers(oglTWindow(wnd));
+
    {$IFDEF OX_DEBUG}
-   if(glPlatform^.RaiseError() <> 0) then
+   error := glPlatform^.RaiseError();
+
+   if(error <> 0) then
       log.e('Failed to swap buffers (' + GetPlatformErrorDescription(error) + ')');
    {$ENDIF}
 end;
 
 function oxglTRenderer.GetContext(wnd: oxTWindow; shareContext: loopint): loopint;
 var
+   error: loopint;
    rc,
    shareRC: oglTRenderingContext;
 
@@ -223,12 +229,13 @@ begin
       shareRC := glRenderingContexts[shareContext];
 
    rc := glPlatform^.GetContext(oglTWindow(wnd), shareRC);
+   error := glPlatform^.RaiseError();
 
    if(ogl.ValidRC(rc)) then begin
       Result := AddRenderingContext(wnd);
       glRenderingContexts[Result] := rc;
    end else begin
-      wnd.RaiseError(eFAIL, 'Not a valid rendering context');
+      wnd.RaiseError(eFAIL, 'Not a valid rendering context ' + GetPlatformErrorDescription(error));
       Result := -1;
    end;
 end;
@@ -240,6 +247,7 @@ end;
 
 procedure oxglTRenderer.ContextCurrent(context: loopint);
 var
+   error: loopint;
    wnd: oglTWindow;
 
 begin
@@ -248,6 +256,10 @@ begin
       log.v('gl > Set render context ' + sf(context) +  ' current');
 
       glPlatform^.ContextCurrent(wnd, glRenderingContexts[context]);
+      error := glPlatform^.RaiseError();
+
+      if(error <> 0) then
+         log.w('gl > Failed to set context ' + sf(context) + ' current: ' + GetPlatformErrorDescription(error));
 
       RenderingContexts[context].Used := true;
    end;
@@ -255,6 +267,7 @@ end;
 
 procedure oxglTRenderer.ClearContext(context: loopint);
 var
+   error: loopint;
    wnd: oglTWindow;
 
 begin
@@ -262,6 +275,10 @@ begin
       wnd := oglTWindow(RenderingContexts[context].Window);
 
       glPlatform^.ClearContext(wnd);
+      error := glPlatform^.RaiseError();
+
+      if(error <> 0) then
+         log.w('gl > Failed to clear context ' + sf(context) + ': ' + GetPlatformErrorDescription(error));
 
       RenderingContexts[context].Used := false;
    end;
@@ -269,6 +286,7 @@ end;
 
 function oxglTRenderer.DestroyContext(context: loopint): boolean;
 var
+   error: loopint;
    rc: oglTRenderingContext;
    wnd: oglTWindow;
 
@@ -285,6 +303,11 @@ begin
 
    if(ogl.ValidRC(rc)) then begin
       Result := glPlatform^.DestroyContext(wnd, rc);
+
+      error := glPlatform^.RaiseError();
+
+      if(error <> 0) then
+         log.w('gl > Failed to destroy context ' + sf(context) + '  current: ' + GetPlatformErrorDescription(error));
 
       glRenderingContexts[context] := oglRenderingContextNull;
    end;
@@ -339,6 +362,10 @@ begin
    {$ENDIF}
 
    glClear(glClearBits);
+
+   {$IFDEF OX_DEBUG}
+   ogl.eRaise();
+   {$ENDIF}
 end;
 
 procedure oxglTRenderer.ClearColor(c: TColor4f);
