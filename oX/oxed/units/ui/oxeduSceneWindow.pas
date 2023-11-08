@@ -26,9 +26,9 @@ INTERFACE
 
 TYPE
 
-   { wdgTOXEDSceneWindowRenderer }
+   { wdgTOXEDSceneWindowRender }
 
-   wdgTOXEDSceneWindowRenderer = class(wdgTSceneRender)
+   wdgTOXEDSceneWindowRender = class(wdgTSceneRender)
       procedure OnSceneRenderEnd(); override;
       procedure DeInitialize(); override;
    end;
@@ -92,15 +92,15 @@ VAR
 
 IMPLEMENTATION
 
-{ wdgTOXEDSceneWindowRenderer }
+{ wdgTOXEDSceneWindowRender }
 
-procedure wdgTOXEDSceneWindowRenderer.OnSceneRenderEnd();
+procedure wdgTOXEDSceneWindowRender.OnSceneRenderEnd();
 begin
    {call inherited scene render end}
    oxedTSceneWindow(wnd).SceneRenderEnd();
 end;
 
-procedure wdgTOXEDSceneWindowRenderer.DeInitialize();
+procedure wdgTOXEDSceneWindowRender.DeInitialize();
 begin
    inherited DeInitialize();
 
@@ -133,6 +133,7 @@ begin
    Background.Typ := uiwBACKGROUND_NONE;
    oxedSceneWindows.List.Add(Self);
 
+   uiWidget.Create.Instance := wdgTOXEDSceneWindowRender;
    wdg.SceneRender := wdgSceneRender.Add();
    wdg.SceneRender.Scene := oxScene;
    {we want pointer and key events to propagate to the game}
