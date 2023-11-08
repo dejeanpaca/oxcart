@@ -64,7 +64,7 @@ TYPE
       procedure Initialize(); override;
       procedure DeInitialize; override;
 
-      procedure Render; override;
+      procedure Render(); override;
       procedure CleanupRender();
       function Key(var k: appTKeyEvent): boolean; override;
       procedure Point(var e: appTMouseEvent; {%H-}x, {%H-}y: longint); override;
@@ -78,7 +78,7 @@ TYPE
       procedure UpdateStateWidget();
       procedure PositionStateWidget();
 
-      procedure OnActivate; override;
+      procedure OnActivate(); override;
 
       protected
       procedure SizeChanged(); override;
@@ -152,11 +152,12 @@ begin
    inherited DeInitialize;
 
    index := oxedSceneWindows.List.Find(Self);
+
    if(index > -1) then
       oxedSceneWindows.List.Remove(index);
 end;
 
-procedure oxedTSceneWindow.Render;
+procedure oxedTSceneWindow.Render();
 var
    params: oxTSceneRenderParameters;
 
@@ -188,7 +189,6 @@ end;
 function oxedTSceneWindow.Key(var k: appTKeyEvent): boolean;
 begin
    Result := false;
-
 
    if(ControlCamera) and (not k.Key.HasModifiers()) then begin
       Result := true;
@@ -343,7 +343,7 @@ begin
    end;
 end;
 
-procedure oxedTSceneWindow.OnActivate;
+procedure oxedTSceneWindow.OnActivate();
 begin
    inherited OnActivate;
 
