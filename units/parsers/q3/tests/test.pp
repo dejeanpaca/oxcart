@@ -21,7 +21,8 @@ VAR
       nLines: 0;
       Lines: nil
    );
-   timer: TTimerData;
+
+   timer: TTimer;
    FileName: string;
    stage: longint = 0;
 

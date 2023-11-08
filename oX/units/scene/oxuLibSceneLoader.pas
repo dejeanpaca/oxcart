@@ -19,7 +19,7 @@ IMPLEMENTATION
 
 procedure start();
 var
-   timer: TTimerData;
+   timer: TTimer;
    original: oxTScene;
    ok: boolean = false;
    scene: oxTScene = nil;
@@ -31,7 +31,7 @@ begin
    end;
 
    if(oxExternalGlobalInstances <> nil) then begin
-      TTimerData.Init(timer);
+      TTimer.Init(timer);
       timer.InitStart();
 
       log.i('Loading scene (lib)');
