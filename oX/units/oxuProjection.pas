@@ -142,6 +142,8 @@ begin
          Clear();
 
       Projection();
+
+      oxProjection := @Self;
    end;
 end;
 
