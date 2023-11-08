@@ -134,6 +134,6 @@ begin
 end;
 
 INITIALIZATION
-   appControllerHandler := appTXInputControllerHandler.Create();
+   appControllers.AddHandler(appTXInputControllerHandler.Create());
 
 END.

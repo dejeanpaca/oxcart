@@ -113,6 +113,9 @@ CONST
       (Name: 'r2'; MappedFunction: appCONTROLLER_RIGHT_TRIGGER)
    );
 
+   {maximum number of controller handlers}
+   appMAX_CONTROLLER_HANDLERS = 4;
+
    {maximum number of buttons supported}
    appMAX_CONTROLLER_BUTTONS = 32;
    {maximum number of axes supported}
@@ -158,6 +161,8 @@ TYPE
          {state of all axes}
          Axes: array[0..appMAX_CONTROLLER_AXES - 1] of appiTAxisState;
       end;
+
+      Handler: TObject;
 
       constructor Create(); virtual;
 
@@ -226,6 +231,8 @@ TYPE
 
    { appTControllers }
    appTControllers = record
+      nHandlers: loopint;
+      Handlers: array[0..appMAX_CONTROLLER_HANDLERS - 1] of appTControllerHandler;
       List: appTControllerDeviceList;
 
       OnEvent: appTOnControllerEventRoutines;
@@ -236,6 +243,8 @@ TYPE
 
       procedure Queue(var ev: appTControllerEvent; controller: appTControllerDevice);
 
+      procedure AddHandler(handler: appTControllerHandler);
+
       procedure Add(device: appTControllerDevice);
       procedure Reset();
 
@@ -245,7 +254,6 @@ TYPE
 
 VAR
    appControllers: appTControllers;
-   appControllerHandler: appTControllerHandler;
 
 IMPLEMENTATION
 
@@ -277,18 +285,31 @@ begin
       appEvents.Queue(event, ev, SizeOf(ev));
 end;
 
+procedure appTControllers.AddHandler(handler: appTControllerHandler);
+begin
+   assert(nHandlers < appMAX_CONTROLLER_HANDLERS, 'Too many input controller handlers');
+
+   Handlers[nHandlers] := handler;
+   Inc(nHandlers);
+end;
+
 procedure appTControllers.Add(device: appTControllerDevice);
 begin
    List.Add(device);
    device.DeviceIndex := List.n - 1;
 end;
 
-procedure appTControllers.Reset;
+procedure appTControllers.Reset();
+var
+   i: loopint;
+
 begin
    List.Dispose();
 
-   if(appControllerHandler <> nil) then
-      appControllerHandler.Reset();
+   for i := 0 to nHandlers - 1 do begin
+      if(Handlers[i] <> nil) then
+         Handlers[i].Reset();
+   end;
 end;
 
 function appTControllers.GetMappedFunction(const name: string): longint;
@@ -409,7 +430,9 @@ begin
    for i := 0 to appControllers.List.n - 1 do begin
       if(not appControllers.List.List[i].Valid) then begin
          FreeObject(appControllers.List.List[i]);
+
          appControllers.List.Remove(i);
+
          {check recursively until all disconnected devices are removed}
          checkForDisconnected();
          break;
@@ -418,20 +441,30 @@ begin
 end;
 
 procedure run();
+var
+   i: loopint;
+
 begin
-   if(appControllerHandler <> nil) then
-      appControllerHandler.Run();
+   for i := 0 to appControllers.nHandlers - 1 do begin
+      if(appControllers.Handlers[i] <> nil) then
+         appControllers.Handlers[i].Run();
+   end;
 
    checkForDisconnected();
 end;
 
 procedure initialize();
+var
+   i: loopint;
+
 begin
    appControllers.List.Initialize(appControllers.List, 8);
    appControllers.OnEvent.Initialize(appControllers.OnEvent);
 
-   if(appControllerHandler <> nil) then
-      appControllerHandler.Initialize();
+   for i := 0 to appControllers.nHandlers - 1 do begin
+      if(appControllers.Handlers[i] <> nil) then
+         appControllers.Handlers[i].Initialize();
+   end;
 end;
 
 procedure deinitialize();
@@ -443,8 +476,12 @@ begin
       FreeObject(appControllers.List.List[i]);
    end;
 
-   if(appControllerHandler <> nil) then
-      appControllerHandler.DeInitialize();
+   for i := 0 to appControllers.nHandlers - 1 do begin
+      if(appControllers.Handlers[i] <> nil) then
+         appControllers.Handlers[i].DeInitialize();
+
+      FreeObject(appControllers.Handlers[i]);
+   end;
 end;
 
 VAR

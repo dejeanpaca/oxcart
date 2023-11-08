@@ -79,6 +79,6 @@ begin
 end;
 
 INITIALIZATION
-   appControllerHandler := appTDirectInputControllerHandler.Create();
+   appControllers.AddHandler(appTDirectInputControllerHandler.Create());
 
 END.
