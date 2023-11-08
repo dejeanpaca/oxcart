@@ -37,15 +37,16 @@ TYPE
 
 VAR
    stdfUnixHandler: TUnixFileHandler;
-   stdfUnixHandlerBuffered: TUnixFileHandler;
+   stdfUnixHandlerBuffered: TUnixBufferedFileHandler;
 
    unixStdFileHandler: TFileStdHandler;
 
+function unxfIoErr(var f: TFile): longint;
 procedure fOpenUnix(var f: TFile; d: cint; offs, size: fileint); {normal file via descriptor}
 
 IMPLEMENTATION
 
-function fIoErr(var f: TFile): longint;
+function unxfIoErr(var f: TFile): longint;
 begin
    f.IoError := fpgeterrno();
 
@@ -110,13 +111,13 @@ begin
       end;
 
       {figure out what is left}
-      rLeft := (count-bLeft);
+      rLeft := (count - bLeft);
 
       {fill the buffer first and then read from buffer}
       if(rLeft <= f.bSize) then begin
          bRead := unxFpread(f.Handle, pchar(f.bData), f.bSize);
 
-         if(fIoErr(f) = 0) then begin
+         if(unxfIoErr(f) = 0) then begin
             move(f.bData^, (@buf + bLeft)^, rLeft);
             f.bPosition    := rLeft;
             f.bLimit       := bRead;
@@ -127,7 +128,7 @@ begin
       end else begin
          bRead := unxFpread(f.Handle, pchar(@buf + bLeft), rLeft);
 
-         if(fIoErr(f) = 0) then
+         if(unxfIoErr(f) = 0) then
             Result := bLeft + bRead
          else
             Result := -(bLeft + bRead);
@@ -164,7 +165,7 @@ begin
       end else begin
          bWrite := unxFpread(f.Handle, pchar(@buf), count);
 
-         if(fIoErr(f) = 0) then
+         if(unxfIoErr(f) = 0) then
             Result := bWrite
          else
             exit(-1);
@@ -188,13 +189,13 @@ begin
    fpseterrno(0);
    f.Handle := FpOpen(f.fn, O_RdOnly);
 
-   if(fIoErr(f) = 0) then begin
+   if(unxfIoErr(f) = 0) then begin
       pos := FpLseek(f.Handle, 0, SEEK_END);
 
-      if(fIoErr(f) = 0) then begin
+      if(unxfIoErr(f) = 0) then begin
          FpLSeek(f.Handle, 0, SEEK_SET);
 
-         if(fIoErr(f) = 0) then begin
+         if(unxfIoErr(f) = 0) then begin
             f.fSize := pos;
             f.fSizeLimit := 0;
 
@@ -213,7 +214,7 @@ begin
 
    f.Handle := FpOpen(f.fn, O_WrOnly or O_Creat or O_Trunc);
 
-   if(fIoErr(f) <> 0) then begin
+   if(unxfIoErr(f) <> 0) then begin
       f.RaiseError(feNEW);
       f.AutoSetBuffer();
    end;
@@ -227,7 +228,7 @@ begin
    {$PUSH}{$HINTS OFF} // buf does not need to be initialized, since we're moving data into it
    bRead := unxFpRead(f.Handle, pchar(@buf), count);{$POP}
 
-   if(fIoErr(f) = 0) then
+   if(unxfIoErr(f) = 0) then
       Result := bRead
    else
 		exit(-1);
@@ -240,7 +241,7 @@ var
 begin
    bWrite := unxFpWrite(f.Handle, pchar(@buf), count);
 
-   if(fIoErr(f) = 0) then
+   if(unxfIoErr(f) = 0) then
       Result := bWrite
    else
       Result := -1;
@@ -249,13 +250,13 @@ end;
 procedure TUnixFileHandler.Close(var f: TFile);
 begin
    FpClose(f.Handle);
-   fIoErr(f);
+   unxfIoErr(f);
 end;
 
 procedure TUnixFileHandler.Flush(var f: TFile);
 begin
    unxFpWrite(f.Handle, pchar(f.bData), f.bPosition);
-   fIoErr(f);
+   unxfIoErr(f);
 end;
 
 function TUnixFileHandler.Seek(var f: TFile; pos: fileint): fileint;
@@ -265,7 +266,7 @@ var
 begin
    res := FpLSeek(f.Handle, f.fOffset + pos, Seek_Set);
 
-   if(fIoErr(f) = 0) then
+   if(unxfIoErr(f) = 0) then
       Result := res
    else
       Result := -1;
