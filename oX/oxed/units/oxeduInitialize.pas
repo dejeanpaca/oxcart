@@ -33,7 +33,9 @@ INTERFACE
       oxeduEditorPlatform,
       oxeduWindowsPlatform,
       oxeduLinuxPlatform,
+      {android}
       oxeduAndroidPlatform,
+      oxeduAndroidSettingsFile,
       {$IFNDEF NO_UI}
       {base ui}
       oxeduRecents, oxeduSplash, oxeduSplashScreen, oxeduIcons,
@@ -54,8 +56,8 @@ INTERFACE
       oxuStandardFilePreviewers, oxeduSceneScreenshot, oxeduPreviewGenerator,
       oxeduiBuildOutput,
       oxeduPluginsUI,
+      oxeduProjectTerminal,
       {platforms}
-      oxeduAndroidSettingsFile,
       oxeduwndAndroidSettings, oxeduwndAndroidGeneralSettings,
       {$ENDIF}
       {plugins}
