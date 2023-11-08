@@ -148,6 +148,9 @@ TYPE
 
       {get process for running an executable}
       function GetProcess(): TProcess;
+
+      {find an fpc executable path from a set of default locations}
+      function FindFPCPathFromDefaults(const executable: StdString): StdString;
    end;
 
 VAR
@@ -566,41 +569,19 @@ begin
 end;
 
 procedure TBuildSystemInstalls.SetupDefaults();
-{$IFDEF WINDOWS}
 var
    fn: StdString;
-{$ENDIF}
 
 begin
    if(DefaultPlatform^.Path = '') then begin
-      {$IF DEFINED(LINUX)}
-      if(build.VerboseLog) then
-         log.v('build > auto fpc defaults for linux');
+      fn := FindFPCPathFromDefaults('fpc');
 
-      DefaultPlatform^.Path := '/usr/bin/';
-      {$ELSEIF DEFINED(DARWIN)}
-      if(build.VerboseLog) then
-         log.v('build > auto fpc defaults for darwin');
+      if(fn <> '') then begin
+         if(build.VerboseLog) then
+            log.v('build > auto fpc default path: ' + DefaultPlatform^.Path);
 
-      DefaultPlatform^.Path := '/usr/local/bin/';
-      {$ELSEIF DEFINED(WINDOWS)}
-      fn := 'C:\lazarus\fpc\' + FPC_VERSION + '\bin\' + build.BuiltWithTarget + DirectorySeparator;
-
-      if FileUtils.Exists(fn + build.GetExecutableName('fpc')) <= 0 then begin
-         fn := 'C:\fpc\' + FPC_VERSION + '\bin\' + build.BuiltWithTarget + DirectorySeparator;
-
-         if FileUtils.Exists(fn + build.GetExecutableName('fpc')) > 0 then begin
-            DefaultPlatform^.Path := fn;
-         end;
-      end else
          DefaultPlatform^.Path := fn;
-
-      if(build.VerboseLog) then
-         log.v('build > auto fpc defaults for windows');
-      {$ENDIF}
-
-      if(build.VerboseLog) then
-         log.v('build > using auto defaults for fpc platform');
+      end;
    end;
 
    if(DefaultLazarus^.Path = '') then begin
@@ -654,6 +635,30 @@ begin
    Result := TProcess.Create(nil);
 
    Result.Options := Result.Options + [poWaitOnExit];
+end;
+
+function TBuildSystemInstalls.FindFPCPathFromDefaults(const executable: StdString): StdString;
+var
+   fn: StdString;
+
+begin
+   Result := '';
+
+   {$IF DEFINED(LINUX)}
+   fn := '/usr/bin/';
+   {$ELSEIF DEFINED(DARWIN)}
+   fn := '/usr/local/bin/';
+   {$ELSEIF DEFINED(WINDOWS)}
+   fn := 'C:\lazarus\fpc\' + FPC_VERSION + '\bin\' + build.BuiltWithTarget + DirectorySeparator;
+
+   if FileUtils.Exists(fn + build.GetExecutableName(executable)) <= 0 then begin
+      fn := 'C:\fpc\' + FPC_VERSION + '\bin\' + build.BuiltWithTarget + DirectorySeparator;
+
+      if FileUtils.Exists(fn + build.GetExecutableName(executable)) > 0 then
+         Result := fn;
+   end else
+      Result := fn;
+   {$ENDIF}
 end;
 
 procedure initializeStart();
