@@ -324,7 +324,7 @@ begin
                continue;
 
             {skip if the feature cannot work in library mode}
-            if(not feature^.IsEnabled('library')) then
+            if(not feature^.Platforms.IsEnabled('library')) then
                continue;
 
             {console needs to be enabled}
