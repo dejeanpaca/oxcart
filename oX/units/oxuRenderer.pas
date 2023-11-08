@@ -222,6 +222,8 @@ begin
    Properties.SupportsRenderScaling := true;
 
    ComponentProvider.Initialize(Components);
+   Init.Initialize(Init);
+   AfterInit.Initialize(AfterInit);
    UseRoutines.Initialize(UseRoutines);
    StartRoutines.Initialize(StartRoutines);
    OnWindowInit.Initialize(OnWindowInit);

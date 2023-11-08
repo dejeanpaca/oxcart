@@ -160,6 +160,7 @@ begin
 end;
 
 INITIALIZATION
+   oxTRunRoutines.Initialize(oxPlatforms.OnComponent, 'ox.platforms.OnComponent');
    oxTPlatformInstancesList.Initialize(oxPlatforms.Instances);
    oxTPlatformList.Initialize(oxPlatforms.List);
 
