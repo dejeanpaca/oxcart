@@ -81,6 +81,8 @@ TYPE
       {what task type to run after scan}
       RunAfterScanTaskType: oxedTBuildTaskType;
 
+      TargetPath: string;
+
       class procedure Initialize(); static;
       class procedure Deinitialize(); static;
 
@@ -125,6 +127,8 @@ TYPE
 
       {setup the required build platform}
       function SetupPlatform(): boolean;
+      {get target path for current target}
+      function GetTargetPath(): StdString;
    end;
 
 VAR
@@ -461,8 +465,8 @@ begin
 
    context.Target := ExtractAllNoExt(source);
 
-   fnTemp := oxedProject.TempPath + '-Temp-' + source;
-   fn := oxedProject.TempPath + lpifn;
+   fnTemp := oxedBuild.TargetPath + '-Temp-' + source;
+   fn := oxedBuild.TargetPath + lpifn;
 
    lpi.Create(fnTemp, @context);
 
@@ -509,7 +513,7 @@ begin
 
    p.Add('appInfo.SetVersion(1, 0);' + LineEnding);
 
-   FileUtils.WriteString(oxedProject.TempPath + oxPROJECT_APP_INFO_INCLUDE, p);
+   FileUtils.WriteString(oxedBuild.TargetPath + oxPROJECT_APP_INFO_INCLUDE, p);
 end;
 
 function GetComponentUses(): TAppendableString;
@@ -571,7 +575,7 @@ begin
 
    p := u.BuildProgram();
 
-   FileUtils.WriteString(oxedProject.TempPath + oxPROJECT_MAIN_SOURCE, p);
+   FileUtils.WriteString(oxedBuild.TargetPath + oxPROJECT_MAIN_SOURCE, p);
 end;
 
 procedure RecreateLib();
@@ -593,11 +597,11 @@ begin
 
    p := u.BuildLibrary();
 
-   fn := oxedProject.TempPath + oxPROJECT_LIB_SOURCE + '.tmp';
+   fn := oxedBuild.TargetPath + oxPROJECT_LIB_SOURCE + '.tmp';
 
    FileUtils.WriteString(fn, p);
 
-   target := oxedProject.TempPath + oxPROJECT_LIB_SOURCE;
+   target := oxedBuild.TargetPath + oxPROJECT_LIB_SOURCE;
 
    if(CompareAndReplace(fn, target)) then
       log.v('Recreated ' + target);
@@ -605,7 +609,7 @@ end;
 
 function ShouldRecreate(const fn: string): boolean;
 begin
-   Result := (FileUtils.Exists(oxedProject.TempPath + fn) <= 0) or (oxedBuild.BuildType = OXED_BUILD_TASK_REBUILD);
+   Result := (FileUtils.Exists(oxedBuild.TargetPath + fn) <= 0) or (oxedBuild.BuildType = OXED_BUILD_TASK_REBUILD);
 end;
 
 class function oxedTBuildGlobal.Recreate(): boolean;
@@ -662,9 +666,14 @@ begin
 
    build.Output.Redirect := true;
 
-   uBuild.build.Laz(oxedProject.TempPath + whichLpi);
+   uBuild.build.Laz(oxedBuild.TargetPath + whichLpi);
 
    build.Output.Redirect := previousRedirect;
+end;
+
+procedure FailBuild(const reason: StdString);
+begin
+   oxedMessages.e('Failed build: ' + reason);
 end;
 
 procedure DoBuild();
@@ -681,14 +690,33 @@ begin
    if(not oxedProject.Valid()) then
       exit;
 
-   {if we're missing everything, rebuild}
-   if(not FileUtils.DirectoryExists(oxedProject.TempPath)) then
-      oxedBuild.BuildType := OXED_BUILD_TASK_REBUILD;
+   oxedBuild.TargetPath := oxedBuild.GetTargetPath();
+
+   log.v('Building into: ' + oxedBuild.TargetPath);
+   assert(oxedBuild.TargetPath <> '', 'Failed to set target path for build');
+
+   if(oxedBuild.BuildType <> OXED_BUILD_TASK_STANDALONE) then begin
+      {if we're missing target path, rebuild}
+      if(not FileUtils.DirectoryExists(oxedBuild.TargetPath)) then
+         oxedBuild.BuildType := OXED_BUILD_TASK_REBUILD;
+   end else begin
+      {remove previous build for standalone path}
+      FileUtils.RmDir(oxedBuild.TargetPath);
+
+      if(ForceDirectories(oxedBuild.TargetPath)) then
+         log.v('Created directory: ' + oxedBuild.TargetPath)
+      else begin
+         FailBuild('Failed to create output directory: ' + oxedBuild.TargetPath);
+         exit;
+      end;
+   end;
 
    if(oxedBuild.BuildType = OXED_BUILD_TASK_REBUILD) then
       modeString := 'rebuild'
-   else
-      modeString := 'recode';
+   else if(oxedBuild.BuildType = OXED_BUILD_TASK_REBUILD) then
+      modeString := 'recode'
+   else if(oxedBuild.BuildType = OXED_BUILD_TASK_STANDALONE) then
+      modeString := 'build';
 
    if(oxedBuild.BuildTarget = OXED_BUILD_LIB) then
       targetString := 'lib'
@@ -698,7 +726,7 @@ begin
    oxedMessages.i(modeString + ' started (' + targetString + ')');
 
    if(not oxedBuild.Recreate()) then begin
-      oxedMessages.e('Failed to recreate project files');
+      FailBuild('Failed to recreate project files');
       exit;
    end;
 
@@ -724,6 +752,7 @@ begin
    oxedProject.Session.InitialBuildDone := true;
 end;
 
+{TODO: This might be cleaned up further}
 procedure RebuildThirdParty();
 var
    modeString,
@@ -736,7 +765,7 @@ begin
    oxedBuild.BuildStart := Now;
 
    {if we're missing everything, rebuild}
-   if(not FileUtils.DirectoryExists(oxedProject.TempPath)) then
+   if(not FileUtils.DirectoryExists(oxedBuild.TargetPath)) then
       oxedBuild.BuildType := OXED_BUILD_TASK_REBUILD;
 
    if(oxedBuild.BuildType = OXED_BUILD_TASK_REBUILD) then
@@ -771,8 +800,8 @@ end;
 
 procedure DoCleanup();
 begin
-   if(FileUtils.DirectoryExists(oxedProject.TempPath)) then begin
-      if(FileUtils.RmDir(oxedProject.TempPath)) then
+   if(FileUtils.DirectoryExists(oxedBuild.TargetPath)) then begin
+      if(FileUtils.RmDir(oxedBuild.TargetPath)) then
          oxedMessages.i('Cleanup finished')
       else
          oxedMessages.w('Failed to remove temporary files');
@@ -836,6 +865,11 @@ begin
    if(not oxedBuild.Buildable(true)) then
       exit;
 
+   if(taskType <> OXED_BUILD_TASK_STANDALONE) then
+      oxedBuild.BuildTarget := OXED_BUILD_LIB
+   else
+      oxedBuild.BuildTarget := OXED_BUILD_STANDALONE;
+
    BuildType := taskType;
 
    {determine if we need third party units}
@@ -863,6 +897,9 @@ begin
       build.Options.Rebuild := true;
       RebuildThirdParty();
       oxedProject.Session.ThirdPartyBuilt := true;
+   end else if(BuildType = OXED_BUILD_TASK_STANDALONE) then begin
+      build.Options.Rebuild := true;
+      DoBuild();
    end;
 
    log.v('oxed > Build done');
@@ -933,6 +970,15 @@ begin
 
       exit(true);
    end;
+end;
+
+function oxedTBuildGlobal.GetTargetPath(): StdString;
+begin
+   if(BuildTarget <> OXED_BUILD_STANDALONE) then
+      Result := oxedProject.TempPath
+   else
+      Result := IncludeTrailingPathDelimiterNonEmpty(oxedProject.TempPath) + 'build' +
+         DirectorySeparator + oxedBuild.BuildArch.Platform + DirectorySeparator;
 end;
 
 procedure CreateSourceFile(const fn: string);
