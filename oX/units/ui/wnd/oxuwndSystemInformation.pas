@@ -72,6 +72,7 @@ begin
    btnClose := wdgButton.Add('Close', uiWidget.LastRect.BelowOf(), oxDimensions(80, 20), @Close);
 
    Window.ContentAutoSize();
+   Window.AutoCenter();
 
    btnClose.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT);
 end;

@@ -71,6 +71,7 @@ begin
    btnMI := wdgButton.Add('More Information', uiWidget.LastRect.RightOf(), oxDimensions(200, 20), @showInformation);
 
    Window.ContentAutoSize();
+   Window.AutoCenter();
 
    btnOk.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT);
    btnMI.SetPosition(wdgPOSITION_HORIZONTAL_LEFT);
