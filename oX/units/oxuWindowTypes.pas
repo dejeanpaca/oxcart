@@ -16,22 +16,6 @@ INTERFACE
       uiuTypes, uiuWindowTypes;
 
 TYPE
-   {a window}
-   oxTWindowRenderSettings = record
-     DoubleBuffer,
-     Software,
-     Stereo,
-     VSync: boolean;
-
-     ColorBits,
-     DepthBits,
-     StencilBits,
-     AccumBits,
-     AuxBuffers: longword;
-
-     Layer: longint;
-   end;
-
    { oxTWindow }
 
    oxTWindow = class (uiTWindow)
@@ -69,9 +53,6 @@ TYPE
       {external ox parent window}
       oxwExternal: oxTWindow;
 
-      {rendering settings}
-      RenderSettings: oxTWindowRenderSettings;
-
       {rendering contexts}
       RenderingContext,
       ThreadRenderingContext: loopint;
@@ -101,36 +82,6 @@ TYPE
    oxTWindowRoutinesHelper = record helper for oxTWindowRoutines
       procedure Call(wnd: oxTWindow);
    end;
-
-
-CONST
-   oxrDefaultWindowSettings: oxTWindowRenderSettings = (
-      DoubleBuffer: true;
-      Software: false;
-      Stereo: false;
-      VSync: false;
-
-      ColorBits:     32;
-      DepthBits:     24;
-      StencilBits:   0;
-      AccumBits:     0;
-      AuxBuffers:    0;
-      Layer:         0
-   );
-
-   oxrContextWindowSettings: oxTWindowRenderSettings = (
-      DoubleBuffer: true;
-      Software: false;
-      Stereo: false;
-      VSync: false;
-
-      ColorBits:        32;
-      DepthBits:        24;
-      StencilBits:      0;
-      AccumBits:        0;
-      AuxBuffers:       0;
-      Layer:            0
-   );
 
 
 IMPLEMENTATION

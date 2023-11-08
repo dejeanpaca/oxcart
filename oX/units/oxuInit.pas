@@ -169,15 +169,15 @@ begin
    elapsedTime := Time();
 
    {$IFNDEF OX_LIBRARY}
-   {determine if context window is required}
-   oxContextWindow.Required();
-
-   {create a test window and gather information}
-   if(oxContextWindow.Require) then begin
+   {create a context window and gather information if required}
+   if(oxContextWindow.Required()) then begin
+      log.v('Will create a context window');
       if(not oxContextWindow.Create()) then
          exit(RaiseError('Failed to create context window'));
    end;
    {$ENDIF}
+
+   oxRenderers.PostContext();
 
    {create windows}
    if(not oxWindows.Initialize()) then begin
