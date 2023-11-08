@@ -125,8 +125,12 @@ TYPE
       {dispose of the array}
       procedure Dispose();
 
-      {remoove all elements}
+      {remove all elements}
       procedure RemoveAll();
+      {remove last element}
+      procedure RemoveFirst();
+      {remove last element}
+      procedure RemoveLast();
       {remove an elements from the array, and stack the others down}
       procedure Remove(index: loopint);
       {remove a range of elements}
@@ -841,6 +845,18 @@ end;
 procedure TSimpleList.RemoveAll();
 begin
    n := 0;
+end;
+
+procedure TSimpleList.RemoveFirst();
+begin
+   if(n > 0) then
+      Remove(0);
+end;
+
+procedure TSimpleList.RemoveLast();
+begin
+   if(n > 0) then
+      Remove(n - 1);
 end;
 
 procedure TSimpleList.Remove(index: loopint);
