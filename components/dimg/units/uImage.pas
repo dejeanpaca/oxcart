@@ -512,7 +512,7 @@ TYPE
       e,
       f,
       io: longint;
-      description: StdString;
+      Description: StdString;
    end;
 
    { imgTGlobal }
@@ -611,12 +611,9 @@ end;
 
 procedure imgTImage.Dispose();
 begin
-   FileName    := '';
-   Name        := '';
-
    DisposeData();
 
-   Size        := 0;
+   Size := 0;
 end;
 
 destructor imgTImage.Destroy();
