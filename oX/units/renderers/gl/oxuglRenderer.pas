@@ -180,8 +180,6 @@ end;
 
 function oxglTRenderer.SetupWindow(wnd: oxTWindow): boolean;
 begin
-   errorCode := 0;
-
    {$IFDEF OX_LIBRARY_SUPPORT}
    oglExtensions.pExternal := pExtensions;
    {$ENDIF}
@@ -214,7 +212,7 @@ begin
       end;
    end;
 
-   Result := Errorcode = 0;
+   Result := wnd.Errorcode = 0;
 end;
 
 function oxglTRenderer.PreInitWindow(wnd: oxTWindow): boolean;
