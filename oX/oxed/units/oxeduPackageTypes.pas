@@ -33,6 +33,7 @@ TYPE
 
       class procedure Initialize(out p: oxedTPackagePath); static;
 
+      {check if this package path is supported on provided platform}
       function IsSupported(const platform: StdString; isLibrary: boolean = false): boolean;
 
       {loads path properties from .package file if any is present}
@@ -42,6 +43,7 @@ TYPE
    { oxedTPackagePathHelper }
 
    oxedTPackagePathHelper = record helper for oxedTPackagePath
+      {does this package path contain a unit/include with the given name}
       function Contains(const name: StdString): Boolean;
    end;
 
@@ -62,6 +64,7 @@ TYPE
       {find an existing path (if any)}
       function FindPackagePath(const p: StdString): oxedPPackagePath;
 
+      {dispose of all the paths}
       procedure Destroy();
    end;
 
