@@ -65,6 +65,7 @@ begin
    GlyphName := 'brands:61819';
 
    Symbols.Add('GLES');
+   Symbols.Add('MOBILE');
 
    RequireCMEM := true;
    SupportsExternalDebugSymbols := false;
