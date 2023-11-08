@@ -14,7 +14,7 @@ INTERFACE
       uStd, uLog, StringUtils, uAppInfo,
       {oX}
       uOX, oxuTypes, oxuProjection, oxuGlobalInstances,
-      oxuWindowTypes, oxuPlatform, oxuUIHooks, oxuRenderer,
+      oxuWindowTypes, oxuPlatform, oxuUIHooks, oxuRenderer, oxuRender,
       {ui}
       uiuWindowTypes, uiuTypes;
 
@@ -232,8 +232,12 @@ begin
    if(wnd.ErrorDescription <> '') then
       log.e('Failed to create window: ' + wnd.Title);
 
-   if(not Result) then
+   if(Result) then begin
+      oxRenderer.Clear(oxrBUFFER_CLEAR_DEFAULT);
+      oxRenderer.SwapBuffers(wnd);
+   end else begin
       oxWindow.Dispose(wnd);
+   end;
 end;
 
 procedure oxTWindowGlobal.Dispose(wnd: oxTWindow);
