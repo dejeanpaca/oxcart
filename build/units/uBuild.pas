@@ -11,7 +11,7 @@ UNIT uBuild;
 INTERFACE
 
    USES
-      process, sysutils, strutils, pipes, uProcessHelpers, ParamUtils,
+      process, sysutils, strutils, pipes, uProcessHelpers, ParamUtils, Classes, StreamIO,
       uStd, uLog, uFileUtils, StringUtils, ConsoleUtils, uSimpleParser, uTiming,
       udvars, dvaruFile,
       appuPaths
@@ -127,11 +127,14 @@ TYPE
 
       {result of build output}
       Output: record
+         Redirect,
          Success: boolean;
          ExitCode,
          ExitStatus: longint;
          ExecutableName,
-         ErrorDecription: StdString;
+         ErrorDecription,
+         LastLine: StdString;
+         OnLine: TProcedures;
       end;
 
       FPCOptions: record
@@ -819,7 +822,11 @@ end;
 function TBuildSystem.GetToolProcess(): TProcess;
 begin
    Result := TProcess.Create(nil);
-   Result.Options := Result.Options + [poWaitOnExit];
+
+   if(not Output.Redirect) then
+      Result.Options := Result.Options + [poWaitOnExit]
+   else
+      Result.Options := Result.Options + [poUsePipes];
 end;
 
 procedure TBuildSystem.Laz(const originalPath: StdString);
@@ -1207,8 +1214,10 @@ begin
    Output.ExitCode := p.ExitCode;
 
    if(poUsePipes in p.Options) then begin
-      if(p.Stderr.NumBytesAvailable > 0) then
-         Output.ErrorDecription := p.Stderr.ReadAnsiString();
+      if(not (poStderrToOutPut in p.Options)) then begin
+         if(p.Stderr.NumBytesAvailable > 0) then
+            Output.ErrorDecription := p.Stderr.ReadAnsiString();
+      end;
    end;
 end;
 
@@ -1220,10 +1229,37 @@ begin
 end;
 
 procedure TBuildSystem.Wait(p: TProcess);
+var
+   s: StdString;
+   f: TextFile;
+
 begin
+   ZeroOut(f, SizeOf(f));
+
+   if(Output.Redirect) then begin
+      AssignStream(f, p.Output);
+      Reset(f);
+   end;
+
    repeat
+      if(Output.Redirect) then begin
+         while(not eof(f)) do begin
+            ReadLn(f, s);
+            Output.LastLine := s;
+            Output.OnLine.Call();
+
+            Sleep(1);
+         end;
+
+         break;
+      end;
+
       Sleep(1);
    until (not p.Running);
+
+   if(Output.Redirect) then begin
+      Close(f);
+   end;
 end;
 
 function TBuildSystem.CopyLibrary(const name: StdString; const newName: StdString = ''): boolean;
@@ -1837,6 +1873,7 @@ end;
 
 INITIALIZATION
    TFileTraverse.Initialize(Walker);
+   TProcedures.Initialize(build.Output.OnLine);
 
    build.ConfigPath := 'default';
 
