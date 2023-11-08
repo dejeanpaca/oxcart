@@ -13,9 +13,12 @@ INTERFACE
    USES
       uStd, uColors, vmVector, uLog,
       {oX}
-      oxuAspect, oxuProjectionType, oxuTypes, oxuRenderer, oxuRender, oxuTransform;
+      oxuAspect, oxuProjectionType, oxuTypes, oxuRenderer, oxuRender, oxuTransform, oxuWindowTypes;
 
 TYPE
+
+   { oxTProjectionHelper }
+
    oxTProjectionHelper = record helper for oxTProjection
       procedure Initialize();
       procedure Initialize(x, y, w, h: longint);
@@ -68,6 +71,8 @@ TYPE
       procedure SetViewport(const pt: oxTPoint; const d: oxTDimensions);
       {get settings from another projection}
       procedure From(const source: oxTProjection);
+      {set viewport from window}
+      procedure UpdateFromWindow(wnd: oxTWindow);
 
       {get normalized pointer coordinates}
       procedure GetNormalizedPointerCoordinates(x, y: single; out n: TVector2f);
@@ -82,8 +87,9 @@ IMPLEMENTATION
 
 procedure oxTProjectionHelper.Initialize();
 begin
-   Enabled        := true;
-   ScissorOnClear := true;
+   Enabled           := true;
+   UpdateFromSource  := true;
+   ScissorOnClear    := true;
 
    ClearBits      := oxrBUFFER_CLEAR_DEFAULT;
    p              := oxDefaultProjection;
@@ -307,23 +313,15 @@ end;
 
 procedure oxTProjectionHelper.From(const source: oxTProjection);
 begin
-   Enabled := source.Enabled;
-   Name := source.Name;
+   Self := source;
+end;
 
-   Position := source.Position;
-   Offset := source.Offset;
-   Dimensions := source.Dimensions;
-   Relative := source.Relative;
-   ScissorOnClear := source.ScissorOnClear;
-   Positionf := source.Positionf;
-   Dimensionsf := source.Dimensionsf;
-
-   ClearBits := source.ClearBits;
-   ClearColor := source.ClearColor;
-
-   p := source.p;
-   a := source.a;
-   ProjectionMatrix := source.ProjectionMatrix;
+procedure oxTProjectionHelper.UpdateFromWindow(wnd: oxTWindow);
+begin
+   if(UpdateFromSource) then begin
+      SetViewport(0, 0, wnd.Dimensions.w, wnd.Dimensions.h);
+      SetViewportf(Positionf.x, Positionf.y, Dimensionsf.w, Dimensionsf.h);
+   end;
 end;
 
 procedure oxTProjectionHelper.GetNormalizedPointerCoordinates(x, y: single; out n: TVector2f);

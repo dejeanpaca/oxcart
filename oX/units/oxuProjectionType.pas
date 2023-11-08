@@ -34,8 +34,12 @@ TYPE
    { oxTProjection }
 
    oxTProjection = record
-      Enabled: boolean;
       Name: string;
+
+      {is the projection enabled}
+      Enabled,
+      {update from source (window) when source is resized}
+      UpdateFromSource: boolean;
 
       Position,
       {offset the position}
