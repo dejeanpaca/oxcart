@@ -15,6 +15,12 @@ INTERFACE
 
 TYPE
 
+    { oxTOnViewportChangeCallbacksHelper }
+
+    oxTOnViewportChangeCallbacksHelper = record helper for oxTOnViewportChangeCallbacks
+       procedure Call(viewport: oxPViewport);
+    end;
+
     { oxTViewportHelper }
 
     oxTViewportHelper = record helper for oxTViewport
@@ -27,6 +33,8 @@ TYPE
 
        {apply this viewport}
        procedure Apply(doClear: boolean = true);
+       {call when this viewport is done rendering}
+       procedure Done();
 
        {set viewport properties}
        procedure SetViewport(newW, newH: longint);
@@ -58,6 +66,18 @@ VAR
 
 IMPLEMENTATION
 
+{ oxTOnViewportChangeCallbacksHelper }
+
+procedure oxTOnViewportChangeCallbacksHelper.Call(viewport: oxPViewport);
+var
+   i: loopint;
+
+begin
+   for i := 0 to n - 1 do begin
+      List[i](viewport);
+   end;
+end;
+
 class procedure oxTViewportHelper.Create(out viewport: oxTViewport);
 begin
    ZeroPtr(@viewport, SizeOf(viewport));
@@ -74,6 +94,7 @@ begin
    ClearBits := oxrBUFFER_CLEAR_DEFAULT;
 
    SetViewport(0, 0, 640, 480);
+   OnChange.InitializeValues(OnChange);
 end;
 
 procedure oxTViewportHelper.Initialize(x, y, w, h: longint);
@@ -91,6 +112,9 @@ end;
 procedure oxTViewportHelper.Apply(doClear: boolean);
 begin
    if(Enabled) then begin
+      if(Changed) then
+         OnChange.Call(@Self);
+
       Viewport();
 
       if(doClear) then
@@ -98,6 +122,11 @@ begin
 
       oxViewport := @Self;
    end;
+end;
+
+procedure oxTViewportHelper.Done();
+begin
+   Changed := false;
 end;
 
 procedure oxTViewportHelper.SetViewport(newW, newH: longint);

@@ -42,8 +42,6 @@ TYPE
 
       {called when window should be rendered}
       OnRender,
-      {called when viewport changes for a window}
-      OnViewportChanged,
       {called when overriden rendering should be done}
       OnOverrideRender: oxTWindowRoutines;
 
@@ -164,13 +162,12 @@ begin
    MaxWindowAllocate := 1;
    AllowScreenSaver := false;
 
-   Internal.OnPostRender.Initialize(Internal.OnPostRender);
+   Internal.OnPostRender.InitializeValues(Internal.OnPostRender);
 
-   ExternalWindows.Initialize(ExternalWindows);
+   ExternalWindows.InitializeValues(ExternalWindows);
 
-   OnRender.Initialize(OnRender);
-   OnViewportChanged.Initialize(OnViewportChanged);
-   OnOverrideRender.Initialize(OnOverrideRender);
+   OnRender.InitializeValues(OnRender);
+   OnOverrideRender.InitializeValues(OnOverrideRender);
 end;
 
 procedure oxTWindows.Setup(var wnd: oxTWindow; const settings: oxTWindowSettings; contextWindow: boolean = false);
