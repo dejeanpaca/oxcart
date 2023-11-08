@@ -13,10 +13,13 @@ USES
    android_window, android_layout_params,
    ctypes, looper, jni, uAndroid,
    uLog, uUnix, StringUtils,
+   {assets}
+   oxuAndroidAssets, uAndroidAssets,
    {app}
    uApp,
    {ox}
-   uOX, oxuRun, oxuInitialize, oxuPlatform, oxuAndroidPlatform;
+   uOX, oxuRun, oxuInitialize, oxuPlatform,
+   oxuAndroidPlatform;
 
 procedure android_main(app: Pandroid_app); cdecl;
 
@@ -111,6 +114,9 @@ begin
    finished := false;
    uApp.app.Active := true;
 
+   androidAssetManager.Get(app^.activity);
+   oxAndroidAssets.Initialize();
+
    oxAndroidPlatform.Startup();
    State := STATE_INITIALIZE;
 
@@ -186,6 +192,8 @@ begin
       if(AndroidApp^.destroyRequested) then
          break;
    until false;
+
+   oxAndroidAssets.DeInitialize();
 end;
 
 procedure androidAppCreate(var app: android_app);
