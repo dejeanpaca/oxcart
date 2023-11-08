@@ -44,7 +44,7 @@ INTERFACE
       {windows}
       oxuwndBuildSettings, oxuwndAbout,
       oxeduMenubar, oxeduMenubarBuild,
-      oxeduToolbar, oxeduWorkbar, oxeduStatusbar, oxeduDockableArea, oxeduMenuToolbar,
+      oxeduWorkbar, oxeduStatusbar, oxeduDockableArea, oxeduMenuToolbar,
       oxeduTasksUI, oxeduProjectContextMenu,
       oxeduwndProjectSettings, oxeduwndPackagesSettings,
       oxeduViewScene, oxeduSceneView, oxeduProjectDialog, oxeduSceneEditTools,
@@ -83,7 +83,6 @@ begin
    oxedMenubar.Initialize();
    oxedWorkbar.Initialize();
    oxedStatusbar.Initialize();
-   oxedToolbar.Initialize();
    oxedDockableArea.Initialize();
 end;
 {$ENDIF}
