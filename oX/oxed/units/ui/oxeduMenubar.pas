@@ -64,7 +64,6 @@ TYPE
       procedure Deinitialize();
       procedure UpdateRecents();
       procedure SetupWindowsMenu();
-      procedure SetupBuildOptions();
    end;
 
 VAR
@@ -102,14 +101,6 @@ begin
    oxedIcons.Create(oxedMenubar.Items.Recents, $f0c5);
 
    oxedMenubar.UpdateRecents();
-end;
-
-procedure thirdPartyChange({%H-}wdg: uiTWidget; {%H-}menu: TObject; item: uiPContextMenuItem);
-begin
-   if(oxedProject <> nil) then begin
-      oxedProject.Session.IncludeThirdPartyUnits := item^.IsChecked();
-      oxedProject.MarkModified();
-   end;
 end;
 
 procedure oxedTMenubarGlobal.Initialize();
@@ -220,7 +211,6 @@ begin
    Project.AddItem('Run Settings', oxedwndRunSettings.OpenWindowAction);
    Project.AddSeparator();
    Items.IncludeThirdPartyUnits := Project.AddCheckbox('Include third party units', false);
-   Items.IncludeThirdPartyUnits^.Callback := @thirdPartyChange;
    Project.AddItem('Rebuild third party units', oxedActions.REBUILD_THIRD_PARTY);
    Project.AddSeparator();
    item := Project.AddItem('Settings', oxedwndProjectSettings.OpenWindowAction);
@@ -245,8 +235,6 @@ begin
    Help := menu;
 
    Bar.SetTarget();
-
-   SetupBuildOptions();
 
    OnInit.Call();
 end;
@@ -318,54 +306,18 @@ begin
    Windows.AddItem('Reset Layout', oxedActions.RESET_WINDOW_LAYOUT);
 end;
 
-procedure SetupRunItems(running: boolean);
-var
-   enable: boolean;
-   item: uiPContextMenuItem;
-
-begin
-   enable := oxedBuild.Buildable() and (oxedTasks.Running(nil) = 0);
-
-   oxedMenubar.Project.FindByAction(oxedActions.RUN_PLAY)^.Enable(enable and (not running));
-   oxedMenubar.Project.FindByAction(oxedActions.RUN_STOP)^.Enable(running);
-
-   item := oxedMenubar.Project.FindByAction(oxedActions.RUN_PAUSE);
-   item^.Enable(running);
-
-   if(oxedProject <> nil) and (oxedProject.Paused) then
-      item^.Caption := 'Resume'
-   else
-      item^.Caption := 'Pause';
-end;
-
 procedure OnProjectChange();
 var
-   enable,
    running,
    enableRun: boolean;
 
 begin
-   enable := oxedBuild.Buildable();
    running := oxedProjectRunner.IsRunning();
-
-   oxedMenubar.Project.FindByAction(oxedActions.BUILD)^.Enable(enable);
-   oxedMenubar.Project.FindByAction(oxedActions.RECODE)^.Enable(enable);
-   oxedMenubar.Project.FindByAction(oxedActions.CLEANUP)^.Enable(enable);
-   oxedMenubar.Project.FindByAction(oxedActions.RESCAN)^.Enable(enable);
-   oxedMenubar.Project.FindByAction(oxedActions.REBUILD_THIRD_PARTY)^.Enable(enable);
-
-   oxedMenubar.Build.Enable(enable);
 
    enableRun := (oxedProject <> nil) and (not running);
 
    oxedMenubar.FileMenu.FindByAction(oxedActions.CLOSE_PROJECT)^.Enable(enableRun);
    oxedMenubar.FileMenu.FindByAction(oxedActions.SAVE_PROJECT)^.Enable(enableRun);
-
-   enable := oxedProject <>  nil;
-   if(enable) then begin
-      if(oxedProject.Path = '') then
-         enable := false;
-   end;
 
    oxedMenubar.FileMenu.FindByAction(oxedActions.NEW_PROJECT)^.Enable(not running);
    oxedMenubar.FileMenu.FindByAction(oxedActions.OPEN_PROJECT)^.Enable(not running);
@@ -383,55 +335,8 @@ begin
    oxedMenubar.Entities.Enable(oxedProject <> nil);
    oxedMenubar.Project.Enable(oxedProject <> nil);
    oxedMenubar.ObjectMenu.Enable(oxedProject <> nil);
-
-   if(oxedProject <> nil) then
-      oxedMenubar.Items.IncludeThirdPartyUnits^.SetChecked(oxedProject.Session.IncludeThirdPartyUnits);
-
-   SetupRunItems(running);
 end;
 
-procedure buildStandalone({%H-}wdg: uiTWidget; {%H-}menu: TObject; item: uiPContextMenuItem);
-begin
-   oxedBuild.BuildStandaloneTask(oxedTPlatformArchitecture(item^.ExternalData));
-end;
-
-procedure oxedTMenubarGlobal.SetupBuildOptions();
-var
-   i,
-   archIndex: loopint;
-   platform: oxedTPlatform;
-   arch: oxedTPlatformArchitecture;
-   item: uiPContextMenuItem;
-
-begin
-   build.RemoveAll();
-
-   for i := 1 to (oxedPlatforms.List.n - 1) do begin
-      platform := oxedPlatforms.List.list[i];
-
-      for archIndex := 0 to platform.Architectures.n - 1 do begin
-         arch := platform.Architectures.List[archIndex];
-
-         if(arch.Architecture <> '') then
-            item := build.AddItem(platform.Name + ' (' + arch.Name + ')')
-         else
-            item := build.AddItem(platform.Name);
-
-         item^.Callback := @buildStandalone;
-         item^.ExternalData := arch;
-
-         if(platform.GlyphCode <> 0) then
-            oxedIcons.Create(item, oxedPlatform.GlyphCode, oxedPlatform.GlyphName);
-      end;
-   end;
-
-   if(oxedPlatforms.List.n > 0) then
-      build.AddSeparator();
-
-   build.AddItem('Custom')^.Disable();
-
-   OnProjectChange();
-end;
 
 INITIALIZATION
    TProcedures.InitializeValues(oxedMenubar.OnInit);
