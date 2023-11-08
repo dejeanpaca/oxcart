@@ -146,7 +146,7 @@ begin
 
    { set renderer to be used }
    {$IFNDEF OX_LIBRARY}
-   oxRenderers.SetRenderer();
+   oxRenderers.SetInitial();
    {$ELSE}
    oxLibRenderer.Setup();
    {$ENDIF}

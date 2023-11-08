@@ -39,8 +39,10 @@ TYPE
       {routines called on ox start}
       StartRoutines: TProcedures;
 
-      procedure LogRenderers();
-      procedure SetRenderer();
+      {log the list of renderers}
+      procedure LogList();
+      {set the configured renderer, or if none, use a default one}
+      procedure SetInitial();
 
       procedure Initialize();
       procedure DeInitialize();
@@ -49,7 +51,7 @@ TYPE
       procedure PostContext();
 
       procedure Register(renderer: oxTRenderer);
-      procedure SelectRenderer(renderer: oxTRenderer);
+      procedure Select(renderer: oxTRenderer);
       procedure Use(renderer: oxTRenderer);
 
       {find the renderer by name}
@@ -69,7 +71,7 @@ VAR
 
 { oxTRenderers }
 
-procedure oxTRenderers.LogRenderers();
+procedure oxTRenderers.LogList();
 var
    i: longint;
 
@@ -80,14 +82,14 @@ begin
       log.Enter('Renderers (' + sf(n - 1) + ')');
 
       for i := 1 to (n - 1) do
-         Log.i(List[i].Name);
+         log.i(List[i].Name);
 
       log.Leave();
    end else
       log.w('There are no renderers.');
 end;
 
-procedure oxTRenderers.SetRenderer();
+procedure oxTRenderers.SetInitial();
 var
    r: oxTRenderer;
 
@@ -99,13 +101,13 @@ begin
 
    {automatically select an appropriate renderer if one is selected from settings}
    if(r <> nil) then
-      SelectRenderer(r)
+      Select(r)
    else begin
       {should not use nil as the default renderer if there is anything else}
       if(oxRenderer = oxNilRenderer) and (n > 1) then
-         SelectRenderer(list[1])
+         Select(list[1])
       else
-         SelectRenderer(list[0]);
+         Select(list[0]);
    end;
 end;
 
@@ -115,21 +117,21 @@ var
 
 begin
    StartedInitialization := true;
-   LogRenderers();
-   Log.Enter('Initializing renderers');
+   LogList();
+   log.Enter('Initializing renderers');
    Init.iCall();
 
    for i := 0 to (n - 1) do begin
       if(List[i].Id <> 'nil') then begin
          log.Collapsed(List[i].Name);
             List[i].Initialize();
-            Log.i('Initialized');
+            log.i('Initialized');
          log.Leave();
       end else
          List[i].Initialize();
    end;
 
-   Log.Leave();
+   log.Leave();
 end;
 
 procedure oxTRenderers.DeInitialize();
@@ -180,7 +182,7 @@ begin
    end;
 end;
 
-procedure oxTRenderers.SelectRenderer(renderer: oxTRenderer);
+procedure oxTRenderers.Select(renderer: oxTRenderer);
 begin
    if(renderer <> nil) then
       oxRenderer := renderer
