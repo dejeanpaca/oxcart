@@ -100,6 +100,8 @@ TYPE
       class function Recreate(): boolean; static;
       {run the build process}
       procedure RunBuild();
+      {copy the built executable to target path}
+      procedure CopyExecutable();
       {copy required run-time libraries for this build}
       procedure CopyLibraries();
       {rebuild the entire project}
@@ -412,7 +414,7 @@ begin
    end;
 
    recreateSymbols(f, IsLibrary);
-   f.SetValue(f.compiler.targetFilename, oxedBuild.GetTargetExecutableFileName());
+   f.SetValue(f.compiler.targetFilename, ExtractFileName(oxedBuild.GetTargetExecutableFileName()));
 end;
 
 procedure lpiLoaded(var f: TLPIFile);
@@ -781,12 +783,29 @@ begin
    if(build.Output.Success) then begin
       oxedMessages.k(modestring + ' success (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
 
+      CopyExecutable();
       CopyLibraries();
    end else
       oxedMessages.e(modestring + ' failed (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
 
    {if successful rebuild, we've made an initial build}
    oxedProject.Session.InitialBuildDone := true;
+end;
+
+procedure oxedTBuildGlobal.CopyExecutable();
+var
+   source,
+   destination: StdString;
+
+begin
+   if(BuildTarget <> OXED_BUILD_STANDALONE) then
+      exit;
+
+   source := build.Output.ExecutableName;
+   destination := TargetPath + ExtractFileName(build.Output.ExecutableName);
+
+   log.v('Copying: ' + source + ' to ' + destination);
+   FileUtils.Copy(source, destination);
 end;
 
 procedure oxedTBuildGlobal.CopyLibraries();
