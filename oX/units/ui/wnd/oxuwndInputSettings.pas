@@ -37,7 +37,7 @@ end;
 
 procedure testController();
 begin
-
+   oxwndControllerInfo.Open();
 end;
 
 procedure rescanControllers();
