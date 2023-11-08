@@ -71,9 +71,7 @@ TYPE
          {generate debug code for valgrind (-gv)}
          Valgrind,
          {stabs}
-         Stabs,
-         {use dwarf line info}
-         DwarfLineInfo: boolean;
+         Stabs: boolean;
 
          {debug information options}
          Information: record
@@ -406,6 +404,9 @@ begin
    Debug.Include := false;
    Debug.LineInfo := false;
    Debug.External := false;
+   Debug.DwarfLevel := 0;
+   Debug.Stabs := false;
+   Debug.Valgrind := false;
 
    OptimizationLevel := 0;
 

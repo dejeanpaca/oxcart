@@ -649,7 +649,9 @@ begin
          if(IsConsole) then
             writeln('Failed to initialize stdlog(' + stdlog.FileName + '). Error: ', stdlog.Error, ',', stdlog.IoError);
          {$ELSE}
+         {$IFNDEF NOLOG}
          loge('Failed to initialize stdlog(' + stdlog.FileName + '). Error: ' + sf(stdlog.Error) + ',' + sf(stdlog.IoError));
+         {$ENDIF}
          {$ENDIF}
       end;
    end;
@@ -776,7 +778,7 @@ begin
       end;
    end;
    {$ELSE}
-   h := @log.Handler.Dummy;
+   Handler := @log.Handler.Dummy;
    FileName   := fn;
    LogHeader  := logh;
    FileMode   := mode;
@@ -1147,10 +1149,10 @@ end;
 procedure TLog.Enter(const title: StdString; collapsed: boolean);
 begin
    {$IFNDEF NOLOG}
-   if(Flags.Initialized and Flags.Ok) then begin
+   if(Flags.Ok) then begin
       Handler^.EnterSection(@self, title, collapsed);
       inc(SectionLevel);
-      assert(SectionLevel < logcMAX_SECTIONS, 'Too many log sections, increase logcMAX_SECTIONS.');
+      assert(SectionLevel < logcMAX_SECTIONS, 'Too many log sections, increase logcMAX_SECTIONS. At section: ' + title);
    end;
 
    if(ChainLog <> nil) then
@@ -1171,15 +1173,14 @@ end;
 procedure TLog.Leave();
 begin
    {$IFNDEF NOLOG}
-   if(SectionLevel > 0) then begin
-      if(Flags.Ok) then
-         Handler^.LeaveSection(@self);
+   if Flags.Ok and (SectionLevel > 0) then begin
+      Handler^.LeaveSection(@self);
 
       dec(SectionLevel);
-
-      if(ChainLog <> nil) then
-         ChainLog^.Leave();
    end;
+
+   if(ChainLog <> nil) then
+      ChainLog^.Leave();
    {$ENDIF}
 end;
 
@@ -1285,6 +1286,7 @@ INITIALIZATION
 
    {setup console log}
    log.Init(consoleLog);
+   {$IFNDEF ANDROID}
    consoleLog.QuickOpen('console', '', logcREWRITE, log.Handler.Console);
    consoleLog.LogEndTimeDate := false;
    stdlog.ChainLog := @consoleLog;
@@ -1293,6 +1295,7 @@ INITIALIZATION
    {store the old exit proc and set the new one}
    oldExitProc := ExitProc;
    ExitProc := @RunTimeError;
+   {$ENDIF}
 
 FINALIZATION
    {$IFNDEF NOLOG}

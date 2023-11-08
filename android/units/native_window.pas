@@ -16,6 +16,8 @@
 
 unit native_window;
 
+{$packrecords c}
+
 interface
 
 uses ctypes,rect;

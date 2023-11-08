@@ -16,6 +16,8 @@
 
 unit native_activity;
 
+{$packrecords c}
+
 interface
 
 uses asset_manager,input,native_window,rect,jni,ctypes;

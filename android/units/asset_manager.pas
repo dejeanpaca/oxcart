@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *}
+
 unit asset_manager;
+
+{$packrecords c}
 
 interface
 
