@@ -392,7 +392,7 @@ begin
 
    if(state.mods and ShiftMask = 0) then begin
       appk.Properties[kcLSHIFT].Clear(kpPRESSED);
-      appk.Properties[kcLSHIFT].Clear(kpPRESSED);
+      appk.Properties[kcRSHIFT].Clear(kpPRESSED);
 
       appk.Modifiers.Clear(kmSHIFT);
    end else
