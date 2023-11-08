@@ -28,7 +28,7 @@ TYPE
       procedure Bind(var rID: oxTTextureID); override;
       procedure Delete(var rID: oxTTextureID); override;
       procedure SetRepeat(var {%H-}rID: oxTTextureID; repeatType: oxTTextureRepeat); override;
-      procedure SetBorderColor(var {%H-}rID: oxTTextureID; const color: TColor4f); override;
+      procedure SetBorderColor(var {%H-}rID: oxTTextureID; const {%H-}color: TColor4f); override;
       procedure SetFilter(var {%H-}rID: oxTTextureID; filterType: oxTTextureFilter); override;
    end;
 

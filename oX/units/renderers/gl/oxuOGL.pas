@@ -126,7 +126,7 @@ TYPE
       class procedure InitializePre(); static;
       class procedure ActivateRenderingContext(); static;
 
-      class function ContextRequired(const settings: oglTSettings): boolean; static;
+      class function ContextRequired(const {%H-}settings: oglTSettings): boolean; static;
 
       { INFORMATION }
       {get a string from OpenGL}
@@ -141,7 +141,10 @@ TYPE
       class function CompareVersions(sMajor, sMinor, tMajor, tMinor: longword): longint; static;
       class function CompareVersions(const s, t: oglTVersion): longint; static;
 
+      {$IFNDEF GLES}
       class function GetShaderTypeString(shaderType: GLenum): string; static;
+      {$ENDIF}
+
       function ValidRC(rc: oglTRenderingContext): boolean;
 
       { INITIALIZATION }
@@ -384,9 +387,9 @@ end;
 class function oglTGlobal.ContextRequired(const settings: oglTSettings): boolean;
 begin
    {$IFDEF GLES}
-   result := false;
+   Result := false;
    {$ELSE}
-   result := ((settings.version.Major >= 3) and (settings.Version.Profile <> oglPROFILE_COMPATIBILITY))
+   Result := ((settings.version.Major >= 3) and (settings.Version.Profile <> oglPROFILE_COMPATIBILITY))
       or ((settings.version.Major > 3) and (settings.Version.Profile = oglPROFILE_COMPATIBILITY))
       or ((settings.version.Major >= 3) and (settings.version.Minor >= 2) and (settings.Version.Profile = oglPROFILE_COMPATIBILITY));
    {$ENDIF}
@@ -532,9 +535,9 @@ begin
    result := ogl.CompareVersions(s.Major, s.Minor, t.Major, t.Minor);
 end;
 
+{$IFNDEF GLES}
 class function oglTGlobal.GetShaderTypeString(shaderType: GLenum): string;
 begin
-   {$IFNDEF GLES}
    if(shaderType = GL_VERTEX_SHADER) then
       Result := 'vertex'
    else if(shaderType = GL_FRAGMENT_SHADER) then
@@ -548,11 +551,9 @@ begin
    else if (shaderType = GL_COMPUTE_SHADER) then
       Result := 'compute'
    else
-      Result := '';
-   {$ELSE}
-   Result := 'unsupported';
-   {$ENDIF}
+      Result := 'unknown';
 end;
+{$ENDIF}
 
 function oglTGlobal.ValidRC(rc: oglTRenderingContext): boolean;
 begin
