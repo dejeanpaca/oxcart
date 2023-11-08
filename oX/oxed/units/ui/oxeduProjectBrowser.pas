@@ -290,6 +290,7 @@ begin
       wdg.Files.LoadCurrentEmpty();
    end;
 
+   wdg.Workbar.AddButton(oxedIcons.Create($f07c), oxedActions.OPEN_PROJECT_DIRECTORY);
    wdg.Workbar.AddButton(oxedIcons.Create($f4fe), oxedActions.OPEN_PROJECT_CONFIGURATION);
 
    wdg.Workbar.SetTarget();
