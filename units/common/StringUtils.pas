@@ -85,13 +85,11 @@ function sf(value: double): string; inline;
 {$IFNDEF EXCLUDE_EXTENDED}
 function sf(value: extended; dec: longint): string; inline;
 function sf(value: extended): string; inline;
-{$ENDIF}
-function sf(value: currency; dec: longint): string; inline;
-function sf(value: currency): string; inline;
-{$IFNDEF EXCLUDE_EXTENDED}
 function sf(value: comp; dec: longint): string; inline;
 function sf(value: comp): string; inline;
 {$ENDIF}
+function sf(value: currency; dec: longint): string; inline;
+function sf(value: currency): string; inline;
 function sf(value: boolean): string; inline;
 function sf(value: pointer): string; inline;
 
@@ -310,20 +308,6 @@ begin
    str(value, Result);
 end;
 
-{$ENDIF}
-
-function sf(value: currency; dec: longint): string;
-begin
-   str(value : 0 : dec, Result);
-end;
-
-function sf(value: currency): string;
-begin
-   str(value, Result);
-end;
-
-{$IFNDEF EXCLUDE_EXTENDED}
-
 function sf(value: comp; dec: longint): string;
 begin
    str(value : 0 : dec, Result);
@@ -335,6 +319,16 @@ begin
 end;
 
 {$ENDIF}
+
+function sf(value: currency; dec: longint): string;
+begin
+   str(value : 0 : dec, Result);
+end;
+
+function sf(value: currency): string;
+begin
+   str(value, Result);
+end;
 
 function sf(value: boolean): string; inline;
 begin
