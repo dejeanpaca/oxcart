@@ -53,6 +53,7 @@ TYPE
       function HasItems(index: loopint): boolean;
 
       protected
+         function GetMenuItemWidth(which: loopint): loopint;
          function OnWhere(x, y: loopint): loopint;
          procedure ShowMenu(idx: loopint);
    end;
@@ -340,6 +341,17 @@ begin
    Result := (Menus.Items.List[index].Sub <> nil) and (uiTContextMenu(Menus.Items.List[index].Sub).Items.n > 0);
 end;
 
+function wdgTMenubar.GetMenuItemWidth(which: loopint): loopint;
+begin
+   Result := CachedFont.GetLength(Menus.Items.List[which].Caption);
+
+   {first and last don't have gaps on left or right side}
+   if(which = 0) or (which = Menus.Items.n - 1) then
+      inc(Result, Separation div 2)
+   else
+      inc(Result, Separation);
+end;
+
 function wdgTMenubar.OnWhere(x, y: loopint): loopint;
 var
    f: oxTFont;
@@ -360,17 +372,12 @@ begin
       f := CachedFont;
 
       for i := 0 to (Menus.Items.n - 1) do begin
-         len := f.GetLength(Menus.Items.List[i].Caption);
+         len := GetMenuItemWidth(i);
 
          startX := rx;
 
          if(i > 0) then
             dec(startX, Separation div 2);
-
-         if(i = 0) or (i = Menus.Items.n - 1) then
-            inc(len, Separation div 2)
-         else
-            inc(len, Separation);
 
          if(x >= startX) and (x < startX + len) then
             exit(i);
