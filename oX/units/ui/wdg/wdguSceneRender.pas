@@ -29,6 +29,8 @@ TYPE
       Camera: oxTCamera;
 
       RenderSceneCameras: boolean;
+      {render specified scene, but if set to nil render default scene}
+      Scene: oxTScene;
 
       constructor Create(); override;
       destructor Destroy(); override;
@@ -70,11 +72,15 @@ begin
 
    SceneRenderer := oxSceneRender.Default;
    RenderSceneCameras := true;
+   Projection.Initialize();
+   Camera.Initialize();
 end;
 
 destructor wdgTSceneRender.Destroy();
 begin
    inherited Destroy;
+
+   Camera.Dispose();
 
    if(SceneRenderer <> oxSceneRender.Default) then
       FreeObject(SceneRenderer);
@@ -85,8 +91,7 @@ var
    params: oxTSceneRenderParameters;
 
 begin
-   if(oxScene = nil) then
-      exit;
+   SceneRenderer.Scene := Scene;
 
    if(not RenderSceneCameras) then begin
       oxTSceneRenderParameters.Init(params, @Projection, @Camera);
