@@ -15,7 +15,7 @@ INTERFACE
       {ox}
       uOX,
       {oxed}
-      uOXED, oxeduSettings, oxeduProject, oxeduProjectSettings, oxeduProjectSession, oxeduMessages, oxeduActions;
+      uOXED, oxeduSettings, oxeduProject, oxeduProjectSettings, oxeduProjectSession, oxeduConsole, oxeduActions;
 
 TYPE
    { oxedTProjectManagement }
@@ -83,7 +83,7 @@ begin
    oxedProjectManagement.OnNew.Call();
 
    if(ox.Started) then
-      oxedMessages.i('project > New');
+      oxedConsole.i('project > New');
 end;
 
 class procedure oxedTProjectManagement.Save();
@@ -93,7 +93,7 @@ begin
 
    if(not FileUtils.DirectoryExists(oxedProject.ConfigPath)) then begin
       if(not CreateDir(oxedProject.ConfigPath)) then begin
-         oxedMessages.e('Failed to create directory: ' + oxedProject.ConfigPath);
+         oxedConsole.e('Failed to create directory: ' + oxedProject.ConfigPath);
          exit;
       end;
    end;
@@ -117,7 +117,7 @@ begin
    oxedProject.MarkModified(false);
    log.v('project > On modified(false) called');
 
-   oxedMessages.i('project > Saved: ' + oxedProject.Path);
+   oxedConsole.i('project > Saved: ' + oxedProject.Path);
 end;
 
 function oxedTProjectManagement.Open(const path: string): boolean;
@@ -138,7 +138,7 @@ begin
 
       {prevent opening the same project}
       if(oxedProject <> nil) and (fn = oxedProject.Path) then begin
-         oxedMessages.i('Project already open');
+         oxedConsole.i('Project already open');
          exit;
       end;
 
@@ -147,7 +147,7 @@ begin
          New();
          oxedProject.MarkModified(false);
 
-         oxedMessages.Clear();
+         oxedConsole.Clear();
          oxedProject.SetPath(fn);
 
          SetCurrentDir(fn);
@@ -168,7 +168,7 @@ begin
          log.v('project > Loaded');
 
          OnOpen.Call();
-         oxedMessages.i('project > Opened ' + oxedProject.Name + ' (' + oxedProject.Identifier + ')');
+         oxedConsole.i('project > Opened ' + oxedProject.Name + ' (' + oxedProject.Identifier + ')');
 
          if(oxedSettings.BuildOnProjectOpen) then
             appActionEvents.Queue(oxedActions.BUILD);

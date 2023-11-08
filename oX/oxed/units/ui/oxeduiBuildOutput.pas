@@ -11,7 +11,7 @@ INTERFACE
    USES
       sysutils,
       uBuild,
-      oxeduSettings, oxeduMessages;
+      oxeduSettings, oxeduConsole;
 
 IMPLEMENTATION
 
@@ -20,9 +20,9 @@ begin
    if(oxedSettings.ShowBuildOutput) then begin
 
       if (Pos('Error:',  build.Output.LastLine) > 0) or (Pos('Fatal:',  build.Output.LastLine) > 0) then
-         oxedMessages.e(build.Output.LastLine)
+         oxedConsole.e(build.Output.LastLine)
       else
-         oxedMessages.v(build.Output.LastLine);
+         oxedConsole.v(build.Output.LastLine);
    end;
 end;
 

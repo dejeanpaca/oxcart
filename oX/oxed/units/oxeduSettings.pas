@@ -25,8 +25,8 @@ TYPE
       CameraScrollSpeed: single;
       {enable centering the pointer when moving the pointer}
       PointerCenterEnable,
-      {clear messages on project start}
-      ClearMessagesOnStart,
+      {clear console on project start}
+      ClearConsoleOnStart,
       {focus game view on start}
       FocusGameViewOnStart,
       {run a build on project open}
@@ -37,7 +37,7 @@ TYPE
       HandleLibraryErrors,
       {start OXED with last open project}
       StartWithLastProject,
-      {show build output in the messages windows}
+      {show build output in the console window}
       ShowBuildOutput,
       {show various toast notifications}
       ShowNotifications: boolean;
@@ -62,7 +62,7 @@ VAR
    dvCameraAngleSpeed,
    dvCameraScrollSpeed,
    dvPointerCenterEnable,
-   dvClearMessagesOnStart,
+   dvClearConsoleOnStart,
    dvFocusGameViewOnStart,
    dvLineEndings,
    dvBuildOnProjectOpen,
@@ -93,7 +93,7 @@ INITIALIZATION
    oxedSettings.CameraScrollSpeed := 0.5;
    oxedSettings.StartWithLastProject := true;
    oxedSettings.PointerCenterEnable := true;
-   oxedSettings.ClearMessagesOnStart := true;
+   oxedSettings.ClearConsoleOnStart := true;
    oxedSettings.FocusGameViewOnStart := true;
    oxedSettings.RequireRebuildOnOpen := true;
    oxedSettings.HandleLibraryErrors := true;
@@ -105,7 +105,7 @@ INITIALIZATION
    dvgOXED.Add(dvCameraAngleSpeed, 'camera_angle_speed', dtcSINGLE, @oxedSettings.CameraAngleSpeed);
    dvgOXED.Add(dvCameraScrollSpeed, 'camera_scroll_speed', dtcSINGLE, @oxedSettings.CameraScrollSpeed);
    dvgOXED.Add(dvPointerCenterEnable, 'pointer_center_enable', dtcBOOL, @oxedSettings.PointerCenterEnable);
-   dvgOXED.Add(dvClearMessagesOnStart, 'clear_messages_on_start', dtcBOOL, @oxedSettings.ClearMessagesOnStart);
+   dvgOXED.Add(dvClearConsoleOnStart, 'clear_console_on_start', dtcBOOL, @oxedSettings.ClearConsoleOnStart);
    dvgOXED.Add(dvFocusGameViewOnStart, 'focus_game_view_on_start', dtcBOOL, @oxedSettings.FocusGameViewOnStart);
    dvgOXED.Add(dvLineEndings, 'line_endings', dtcSTRING, @oxedSettings.LineEndings);
    dvgOXED.Add(dvBuildOnProjectOpen, 'build_on_project_open', dtcBOOL, @oxedSettings.BuildOnProjectOpen);

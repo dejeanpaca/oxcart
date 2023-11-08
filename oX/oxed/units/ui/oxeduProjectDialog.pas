@@ -16,7 +16,7 @@ INTERFACE
       {ui}
       uiuMessageBox, uiuTypes,
       {oxed}
-      uOXED, oxeduActions, oxuwndFileDialog, oxeduProject, oxeduProjectManagement, oxeduSceneManagement, oxeduMessages;
+      uOXED, oxeduActions, oxuwndFileDialog, oxeduProject, oxeduProjectManagement, oxeduSceneManagement, oxeduConsole;
 
 TYPE
 
@@ -175,7 +175,7 @@ end;
 class procedure oxedTProjectDialog.Close();
 begin
    oxedProjectManagement.Destroy();
-   oxedMessages.i('Closed project');
+   oxedConsole.i('Closed project');
 end;
 
 class procedure oxedTProjectDialog.NewSceneDialog();

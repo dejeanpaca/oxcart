@@ -18,7 +18,7 @@ INTERFACE
       {ox}
       oxuThreadTask, oxuFeatures, oxuRenderer,
       {oxed}
-      uOXED, oxeduMessages, oxeduPackageTypes, oxeduPackage, oxeduProject,
+      uOXED, oxeduConsole, oxeduPackageTypes, oxeduPackage, oxeduProject,
       oxeduPlatform, oxeduTasks, oxeduActions, oxeduSettings,
       oxeduAppInfo,oxeduProjectScanner;
 
@@ -206,7 +206,7 @@ var
 
 procedure fail(const what: StdString);
 begin
-   oxedMessages.e(what);
+   oxedConsole.e(what);
    ok := false;
 end;
 
@@ -365,12 +365,12 @@ begin
       f.AddCustomOption('-dOX_RESOURCE_DEBUG');
 
    {$IFOPT D+}
-   oxedMessages.w('Including debug info');
+   oxedConsole.w('Including debug info');
    f.AddCustomOption('-g');
    {$ENDIF}
 
    if(oxed.UseHeapTrace) then
-      oxedMessages.w('OXED built with heaptrc included, running library may be unstable');
+      oxedConsole.w('OXED built with heaptrc included, running library may be unstable');
 
    f.SetTitle(oxedProject.Name);
    f.compiler.applyConventions := false;
@@ -596,7 +596,7 @@ begin
    {check if main unit exists}
    if(oxedProject.MainUnit <> '') then begin
       if(oxedProject.MainPackage.Units.Find(oxedProject.MainUnit) = nil) then begin
-         oxedMessages.e('Specified main unit ' + oxedProject.MainUnit + ' not found.');
+         oxedConsole.e('Specified main unit ' + oxedProject.MainUnit + ' not found.');
          exit(false);
       end;
    end;
@@ -608,7 +608,7 @@ begin
 
       if(ShouldRecreate(oxPROJECT_LIB_LPI)) then begin
          if(not RecreateLPI(true)) then begin
-            oxedMessages.e('Failed to create project library lpi file. lpi error: ' + sf(lpi.Error));
+            oxedConsole.e('Failed to create project library lpi file. lpi error: ' + sf(lpi.Error));
             exit(false);
          end;
       end;
@@ -619,7 +619,7 @@ begin
 
       if(ShouldRecreate(oxPROJECT_MAIN_LPI)) then begin
          if(not RecreateLPI(false)) then begin
-            oxedMessages.e('Failed to create project lpi file. lpi error: ' + sf(lpi.Error));
+            oxedConsole.e('Failed to create project lpi file. lpi error: ' + sf(lpi.Error));
             exit(false);
          end;
       end;
@@ -648,7 +648,7 @@ end;
 procedure FailBuild(const reason: StdString);
 begin
    oxedBuild.DoneBuild();
-   oxedMessages.e('Failed build: ' + reason);
+   oxedConsole.e('Failed build: ' + reason);
 end;
 
 procedure oxedTBuildGlobal.RunBuild();
@@ -720,7 +720,7 @@ begin
    else
       targetString := 'standalone';
 
-   oxedMessages.i(modeString + ' started (' + targetString + ')');
+   oxedConsole.i(modeString + ' started (' + targetString + ')');
 
    if(not Recreate()) then begin
       FailBuild('Failed to recreate project files');
@@ -730,7 +730,7 @@ begin
    if(BuildTarget = OXED_BUILD_LIB) then begin
       {check if used fpc version matches us}
       if(pos(FPC_VERSION, build.CurrentPlatform^.Version) <> 1) then begin
-         oxedMessages.e('Library fpc version mismatch. Got ' + build.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
+         oxedConsole.e('Library fpc version mismatch. Got ' + build.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
          exit;
       end;
 
@@ -739,12 +739,12 @@ begin
       BuildLPI(oxPROJECT_MAIN_LPI);
 
    if(build.Output.Success) then begin
-      oxedMessages.k(modestring + ' success (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
+      oxedConsole.k(modestring + ' success (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
 
       MoveExecutable();
       CopyLibraries();
    end else
-      oxedMessages.e(modestring + ' failed (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
+      oxedConsole.e(modestring + ' failed (elapsed: ' + BuildStart.ElapsedfToString() + 's)');
 
    {if successful rebuild, we've made an initial build}
    oxedProject.Session.InitialBuildDone := true;
@@ -799,11 +799,11 @@ procedure DoCleanup();
 begin
    if(FileUtils.DirectoryExists(oxedBuild.WorkArea)) then begin
       if(FileUtils.RmDir(oxedBuild.WorkArea)) then
-         oxedMessages.i('Cleanup finished')
+         oxedConsole.i('Cleanup finished')
       else
-         oxedMessages.w('Failed to remove temporary files');
+         oxedConsole.w('Failed to remove temporary files');
    end else
-      oxedMessages.i('Seems to be already clean');
+      oxedConsole.i('Seems to be already clean');
 end;
 
 class procedure oxedTBuildGlobal.Rebuild();
@@ -889,7 +889,7 @@ begin
 
    {rebuild instead of recode if initial build not done}
    if(BuildType = OXED_BUILD_TASK_RECODE) and (not oxedProject.Session.InitialBuildDone) and (oxedSettings.RequireRebuildOnOpen) then begin
-      oxedMessages.i('Rebuild instead of recode on initial build');
+      oxedConsole.i('Rebuild instead of recode on initial build');
       BuildType := OXED_BUILD_TASK_REBUILD;
    end;
 
@@ -951,7 +951,7 @@ begin
       platform := build.FindPlatform(build.BuiltWithTarget, build.BuiltWithVersion);
 
       if(platform = nil) then begin
-         oxedMessages.e('Failed to find suitable compiler for ' + build.BuiltWithTarget + ' and FPC ' + FPC_VERSION);
+         oxedConsole.e('Failed to find suitable compiler for ' + build.BuiltWithTarget + ' and FPC ' + FPC_VERSION);
          exit(false);
       end;
 

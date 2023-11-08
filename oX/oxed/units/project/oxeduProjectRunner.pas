@@ -15,7 +15,7 @@ INTERFACE
       {ox}
       oxuRun, oxuRunRoutines, oxuWindows, oxuThreadTask,
       {oxed}
-      oxeduProject, oxeduMessages, oxeduLib, oxeduActions, oxeduBuild, oxeduSettings;
+      oxeduProject, oxeduConsole, oxeduLib, oxeduActions, oxeduBuild, oxeduSettings;
 
 TYPE
    { oxedTProjectRunner }
@@ -67,7 +67,7 @@ var
       initialized := oxedLib.oxLib.Initialize();
 
       if(not initialized) then
-         oxedMessages.e('Library engine failed to initialize');
+         oxedConsole.e('Library engine failed to initialize');
    end;
 
    procedure runStart();
@@ -77,7 +77,7 @@ var
       initialized := oxedLib.oxLib.Start();
 
       if(not initialized) then
-         oxedMessages.e('Library project failed to initialize');
+         oxedConsole.e('Library project failed to initialize');
 
       log.v('runStart() elapsed: ' + timing.ElapsedfToString(3) + 's');
    end;
@@ -98,7 +98,7 @@ begin
    start := Now();
 
    if(not oxedLib.Load()) then begin
-      oxedMessages.e('Project dynamic library failed to load');
+      oxedConsole.e('Project dynamic library failed to load');
       exit;
    end;
 
@@ -112,8 +112,8 @@ begin
          runInitialize();
       except
          on e: Exception do begin
-            oxedMessages.e('Exception while initializing library engine');
-            oxedMessages.e(DumpExceptionCallStack(e));
+            oxedConsole.e('Exception while initializing library engine');
+            oxedConsole.e(DumpExceptionCallStack(e));
 
             initialized := false;
          end;
@@ -131,8 +131,8 @@ begin
             runStart();
          except
             on e: Exception do begin
-               oxedMessages.e('Exception while initializing library project');
-               oxedMessages.e(DumpExceptionCallStack(e));
+               oxedConsole.e('Exception while initializing library project');
+               oxedConsole.e(DumpExceptionCallStack(e));
 
                initialized := false;
             end;
@@ -147,7 +147,7 @@ begin
       exit;
    end;
 
-   oxedMessages.i('Start (elapsed: ' + start.ElapsedfToString(2) + 's)');
+   oxedConsole.i('Start (elapsed: ' + start.ElapsedfToString(2) + 's)');
    oxedProject.Running := true;
 
    oxedProjectRunner.OnStart.Call();
@@ -181,7 +181,7 @@ begin
    oxedProjectRunner.OnPauseToggle.Call();
    oxedProjectRunner.OnStop.Call();
 
-   oxedMessages.i('Stopped (elapsed: ' + start.ElapsedfToString(2) + 's)');
+   oxedConsole.i('Stopped (elapsed: ' + start.ElapsedfToString(2) + 's)');
 end;
 
 class function oxedTProjectRunner.Loaded(): boolean;
@@ -222,8 +222,8 @@ begin
             if(oxedSettings.HandleLibraryErrors) then begin
                oxedLib.oxLib.ErrorState := true;
 
-               oxedMessages.e('Exception while running ox library');
-               oxedMessages.e(DumpExceptionCallStack(e));
+               oxedConsole.e('Exception while running ox library');
+               oxedConsole.e(DumpExceptionCallStack(e));
             end else
                raise e;
          end;
