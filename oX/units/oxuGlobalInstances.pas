@@ -27,10 +27,10 @@ TYPE
       External: boolean;
    end;
 
-   oxTGlobalInstancesList = specialize TPreallocatedArrayList<oxTGlobalInstance>;
+   oxTGlobalInstancesList = specialize TSimpleList<oxTGlobalInstance>;
 
    oxTGlobalInstancesReferenceChangeCallback = procedure(const instanceType: string; newReference: Pointer);
-   oxTGlobalInstancesReferenceChangeCallbacks = specialize TPreallocatedArrayList<oxTGlobalInstancesReferenceChangeCallback>;
+   oxTGlobalInstancesReferenceChangeCallbacks = specialize TSimpleList<oxTGlobalInstancesReferenceChangeCallback>;
 
    { oxTGlobalInstancesReferenceChangeCallbacksHelper }
 

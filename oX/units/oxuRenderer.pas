@@ -28,7 +28,7 @@ TYPE
    end;
 
    oxTRendererInitRoutine = procedure(wnd: oxTWindow);
-   oxTRendererInitRoutines = specialize TPreallocatedArrayList<oxTRendererInitRoutine>;
+   oxTRendererInitRoutines = specialize TSimpleList<oxTRendererInitRoutine>;
 
    { oxTRendererInitRoutinesHelper }
 

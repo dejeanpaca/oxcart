@@ -15,7 +15,7 @@ INTERFACE
 
 TYPE
    oxPFeatureDescriptor = ^oxTFeatureDescriptor;
-   oxTFeaturePDescriptorList = specialize TPreallocatedArrayList<oxPFeatureDescriptor>;
+   oxTFeaturePDescriptorList = specialize TSimpleList<oxPFeatureDescriptor>;
 
    { oxTFeatureDescriptor }
 
@@ -40,7 +40,7 @@ TYPE
       function IsEnabled(const platform: string): boolean;
    end;
 
-   oxTFeatureList = specialize TPreallocatedArrayList<oxTFeatureDescriptor>;
+   oxTFeatureList = specialize TSimpleList<oxTFeatureDescriptor>;
 
    { oxTFeaturesGlobal }
 

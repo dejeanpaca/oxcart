@@ -39,7 +39,7 @@ TYPE
 
    { oxTSkinList }
 
-   oxTSkinList = specialize TPreallocatedArrayList<oxTSkin>;
+   oxTSkinList = specialize TSimpleList<oxTSkin>;
 
    { oxTSkinListHelper }
 

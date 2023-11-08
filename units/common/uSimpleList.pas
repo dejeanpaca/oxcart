@@ -1,12 +1,12 @@
 {
-   uPreallocatedArray, preallocated array list class
+   uSimpleList, simple list class
    Copyright (C) Dejan Boras 2017.
 
    Started on:    15.05.2017.
 }
 
 {$MODE OBJFPC}{$H+}{$MODESWITCH ADVANCEDRECORDS}{$MODESWITCH TYPEHELPERS}
-UNIT uPreallocatedArray;
+UNIT uSimpleList;
 
 INTERFACE
 
@@ -14,13 +14,11 @@ INTERFACE
       sysutils, uStd;
 
 TYPE
-   { TPrimitiveList }
-
    {helps to maintain a list of elements in an array}
 
-   { TPreallocatedArrayListClass }
+   { TSimpleListClass }
 
-   generic TPreallocatedArrayListClass<T> = class
+   generic TSimpleListClass<T> = class
       {step to increment the list size by}
       Increment: loopint;
 
@@ -67,18 +65,18 @@ TYPE
       function GetLast(): pointer;
    end;
 
-   TPreallocatedObjectsArrayListObject = specialize TPreallocatedArrayListClass<TObject>;
+   TPreallocatedObjectsArrayListObject = specialize TSimpleListClass<TObject>;
 
 IMPLEMENTATION
 
 { TPreallocatedArrayListClass }
 
-constructor TPreallocatedArrayListClass.Create();
+constructor TSimpleListClass.Create();
 begin
    Increment := 32;
 end;
 
-procedure TPreallocatedArrayListClass.Allocate(count: loopint);
+procedure TSimpleListClass.Allocate(count: loopint);
 begin
    assert(Increment <> 0, 'Increment is zero for preallocated list');
    assert(count <> 0, 'Tried to allocate 0 elements');
@@ -91,7 +89,7 @@ begin
    SetLength(List, a);
 end;
 
-procedure TPreallocatedArrayListClass.AllocateInc(count: loopint);
+procedure TSimpleListClass.AllocateInc(count: loopint);
 var
    remainder: loopint;
 
@@ -113,13 +111,13 @@ begin
    assert((a = Length(List)) and (a <> 0), 'Preallocated list has invalid length');
 end;
 
-procedure TPreallocatedArrayListClass.RequireAllocate(count: loopint);
+procedure TSimpleListClass.RequireAllocate(count: loopint);
 begin
    if(count > a) then
       Allocate(count);
 end;
 
-procedure TPreallocatedArrayListClass.InsertRange(index, count: loopint);
+procedure TSimpleListClass.InsertRange(index, count: loopint);
 var
    pn,
    i: loopint;
@@ -141,7 +139,7 @@ begin
 
 end;
 
-function TPreallocatedArrayListClass.AddTo(var p: T): boolean;
+function TSimpleListClass.AddTo(var p: T): boolean;
 begin
    assert(Increment <> 0, 'Increment is zero for preallocated list');
 
@@ -154,7 +152,7 @@ begin
    Result := true;
 end;
 
-function TPreallocatedArrayListClass.Add(p: T): boolean;
+function TSimpleListClass.Add(p: T): boolean;
 begin
    assert(Increment <> 0, 'Increment is zero for preallocated list');
 
@@ -167,7 +165,7 @@ begin
    Result := true;
 end;
 
-function TPreallocatedArrayListClass.AddTo(var p, z: T): boolean;
+function TSimpleListClass.AddTo(var p, z: T): boolean;
 begin
    Result := AddTo(p);
 
@@ -175,7 +173,7 @@ begin
       Result := AddTo(z);
 end;
 
-function TPreallocatedArrayListClass.Add(p, z: T): boolean;
+function TSimpleListClass.Add(p, z: T): boolean;
 begin
    Result := Add(p);
 
@@ -183,14 +181,14 @@ begin
       Result := Add(z);
 end;
 
-procedure TPreallocatedArrayListClass.Dispose();
+procedure TSimpleListClass.Dispose();
 begin
    SetLength(list, 0);
    a := 0;
    n := 0;
 end;
 
-procedure TPreallocatedArrayListClass.Remove(index: loopint);
+procedure TSimpleListClass.Remove(index: loopint);
 var
    i: loopint;
 
@@ -206,7 +204,7 @@ begin
    end;
 end;
 
-procedure TPreallocatedArrayListClass.RemoveRange(index, count: loopint);
+procedure TSimpleListClass.RemoveRange(index, count: loopint);
 var
    i: loopint;
 
@@ -224,7 +222,7 @@ begin
    end;
 end;
 
-function TPreallocatedArrayListClass.Find(const what: T): loopint;
+function TSimpleListClass.Find(const what: T): loopint;
 var
    i: loopint;
 
@@ -237,12 +235,12 @@ begin
    Result := -1;
 end;
 
-function TPreallocatedArrayListClass.Exists(const what: T): boolean;
+function TSimpleListClass.Exists(const what: T): boolean;
 begin
    Result := Find(what) > -1;
 end;
 
-procedure TPreallocatedArrayListClass.SetSize(size: longint);
+procedure TSimpleListClass.SetSize(size: longint);
 begin
    assert(size >= 0, 'Allocation cannot be set to negative value');
 
@@ -252,7 +250,7 @@ begin
    SetLength(list, n);
 end;
 
-function TPreallocatedArrayListClass.GetLast(): pointer;
+function TSimpleListClass.GetLast(): pointer;
 begin
    if(n > 0) then
       Result := @List[n - 1]

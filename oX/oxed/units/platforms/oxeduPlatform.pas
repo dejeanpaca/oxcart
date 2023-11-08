@@ -23,7 +23,7 @@ TYPE
       Architecture: string;
    end;
 
-   oxedTPlatformArchitectureList = specialize TPreallocatedArrayList<oxedTPlatformArchitecture>;
+   oxedTPlatformArchitectureList = specialize TSimpleList<oxedTPlatformArchitecture>;
 
    { oxedTPlatform }
    oxedTPlatform = class
@@ -48,7 +48,7 @@ TYPE
       procedure AddArchitecture(archName, arch: string);
    end;
 
-   oxedTPlatformsList = specialize TPreallocatedArrayList<oxedTPlatform>;
+   oxedTPlatformsList = specialize TSimpleList<oxedTPlatform>;
 
    { oxedTPlatforms }
 

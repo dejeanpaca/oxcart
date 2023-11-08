@@ -41,7 +41,7 @@ TYPE
       Extension: String;
    end;
 
-   oxTFilePreviewHandlers = specialize TPreallocatedArrayList<oxTFilePreviewHandler>;
+   oxTFilePreviewHandlers = specialize TSimpleList<oxTFilePreviewHandler>;
 
    { oxTFilePreviewWindow }
 

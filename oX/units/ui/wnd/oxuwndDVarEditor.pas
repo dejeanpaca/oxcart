@@ -31,7 +31,7 @@ TYPE
       Variable: PDVar;
    end;
 
-   oxTDVarEditorPointers = specialize TPreallocatedArrayList<oxTDVarEditorPointer>;
+   oxTDVarEditorPointers = specialize TSimpleList<oxTDVarEditorPointer>;
 
    { oxwdgTDVarEditorGrid }
 

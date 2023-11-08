@@ -38,7 +38,7 @@ TYPE
    end;
 
    oxedTProjectScannerFileProcedure = procedure(var f: oxedTScannerFile);
-   oxedTProjectScannerFileProcedures = specialize TPreallocatedArrayList<oxedTProjectScannerFileProcedure>;
+   oxedTProjectScannerFileProcedures = specialize TSimpleList<oxedTProjectScannerFileProcedure>;
 
    { oxedTScannerOnFileProceduresHelper }
 

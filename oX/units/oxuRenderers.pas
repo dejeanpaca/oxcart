@@ -20,7 +20,7 @@ CONST
    oxcMAX_RENDERER   = oxcMAX_RENDERERS - 1;
 
 TYPE
-   oxTRendererList = specialize TPreallocatedArrayList<oxTRenderer>;
+   oxTRendererList = specialize TSimpleList<oxTRenderer>;
 
    { oxTRenderers }
 

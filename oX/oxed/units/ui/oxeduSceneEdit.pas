@@ -11,7 +11,7 @@ UNIT oxeduSceneEdit;
 INTERFACE
 
    USES
-      uStd, uInit, vmVector, vmCollision, uColors,
+      uStd, vmVector, vmCollision, uColors,
       {app}
       appuMouse, appuActionEvents, appuKeys,
       {ox}

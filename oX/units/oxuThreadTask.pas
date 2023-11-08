@@ -38,7 +38,7 @@ TYPE
    oxTThreadTaskRunnerClass = class of oxTThreadTaskRunner;
 
    oxTThreadMethod = procedure(thread: TObject);
-   oxTThreadMethods = specialize TPreallocatedArrayList<oxTThreadMethod>;
+   oxTThreadMethods = specialize TSimpleList<oxTThreadMethod>;
 
    { oxTThreadMethodsHelper }
 
@@ -143,7 +143,7 @@ TYPE
       procedure Finish();
    end;
 
-   oxTThreadTasksList = specialize TPreallocatedArrayList<oxTThreadTask>;
+   oxTThreadTasksList = specialize TSimpleList<oxTThreadTask>;
 
    { oxTThreadEvents }
 

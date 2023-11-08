@@ -20,7 +20,7 @@ TYPE
       Method: TThreadInitializerMethod;
    end;
 
-   TThreadInitializers = specialize TPreallocatedArrayList<TThreadInitializer>;
+   TThreadInitializers = specialize TSimpleList<TThreadInitializer>;
 
    { TThreadsGlobal }
 

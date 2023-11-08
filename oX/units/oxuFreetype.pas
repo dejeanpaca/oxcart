@@ -39,7 +39,7 @@ TYPE
       Data: pbyte;
    end;
 
-   oxTFreetypeBitmaps = specialize TPreallocatedArrayList<oxTFreetypeBitmap>;
+   oxTFreetypeBitmaps = specialize TSimpleList<oxTFreetypeBitmap>;
 
    { oxTFreetypeFontGlyphData }
    oxTFreetypeFontGlyphData = record
@@ -95,7 +95,7 @@ TYPE
       function CreateGlyphTexture(const name: string; out tex: oxTTexture; size: longint = 12): oxTFreetypeFontGlyphData;
    end;
 
-   oxTFreetypeFonts = specialize TPreallocatedArrayList<oxTFreetypeFont>;
+   oxTFreetypeFonts = specialize TSimpleList<oxTFreetypeFont>;
 
 {$IFDEF OX_FEATURE_FREETYPE}
 function FT_Get_Name_Index(face: PFT_Face; glyph_name: PChar): FT_UInt; cdecl; external freetypedll Name 'FT_Get_Name_Index';

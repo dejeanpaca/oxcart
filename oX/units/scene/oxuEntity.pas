@@ -17,7 +17,7 @@ INTERFACE
 
 TYPE
    { oxTEntities }
-   oxTEntities = specialize TPreallocatedArrayList<oxTTransform>;
+   oxTEntities = specialize TSimpleList<oxTTransform>;
 
    { oxTEntity }
 
@@ -151,7 +151,7 @@ TYPE
    end;
 
    oxTEntityCallback = procedure(entity: oxTEntity);
-   oxTEntityCallbacks = specialize TPreallocatedArrayList<oxTEntityCallback>;
+   oxTEntityCallbacks = specialize TSimpleList<oxTEntityCallback>;
 
    { oxTEntityCallbacksHelper }
 
@@ -160,7 +160,7 @@ TYPE
    end;
 
    oxTComponentCallback = procedure(entity: oxTEntity; component: oxTComponent);
-   oxTComponentCallbacks = specialize TPreallocatedArrayList<oxTComponentCallback>;
+   oxTComponentCallbacks = specialize TSimpleList<oxTComponentCallback>;
 
    { oxTComponentCallbacksHelper }
 

@@ -60,7 +60,7 @@ TYPE
       ComponentObject: oxTComponent;
    end;
 
-   oxedTEditRendererComponentPairs = specialize TPreallocatedArrayList<oxedTEditRenderComponentPair>;
+   oxedTEditRendererComponentPairs = specialize TSimpleList<oxedTEditRenderComponentPair>;
 
    { oxedTEditRendererComponentPairsHelper }
 

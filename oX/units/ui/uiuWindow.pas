@@ -309,7 +309,7 @@ TYPE
    uiTWindowOnRoutine = procedure(wnd: uiTWindow);
 
    {handles window oncreate callbacks}
-   uiTWindowGlobalOn = specialize TPreallocatedArrayList<uiTWindowOnRoutine>;
+   uiTWindowGlobalOn = specialize TSimpleList<uiTWindowOnRoutine>;
 
    uiTWindowGlobalOnHelper = record helper for uiTWindowGlobalOn
       {call all oncreate callbacks from the list}

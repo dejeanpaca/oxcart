@@ -16,8 +16,8 @@ INTERFACE
       oxuPlatform, oxuRenderer, oxuRunRoutines;
 
 TYPE
-   oxTPlatformInstancesList = specialize TPreallocatedArrayList<oxTPlatformClass>;
-   oxTPlatformList = specialize TPreallocatedArrayList<oxTPlatform>;
+   oxTPlatformInstancesList = specialize TSimpleList<oxTPlatformClass>;
+   oxTPlatformList = specialize TSimpleList<oxTPlatform>;
 
    { oxTPlatforms }
 

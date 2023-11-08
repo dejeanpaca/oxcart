@@ -124,7 +124,7 @@ TYPE
 
    {list of file descriptors}
    PFileDescriptorList = ^TFileDescriptorList;
-   TFileDescriptorList = specialize TPreallocatedArrayList<TFileDescriptor>;
+   TFileDescriptorList = specialize TSimpleList<TFileDescriptor>;
 
    { TFileUtilsGlobal }
 

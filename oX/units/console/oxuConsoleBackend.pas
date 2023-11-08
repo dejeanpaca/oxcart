@@ -35,7 +35,7 @@ TYPE
       Color: TColor4ub;
    end;
 
-   conTLines = specialize TPreallocatedArrayList<conTLine>;
+   conTLines = specialize TSimpleList<conTLine>;
 
    conPConsole = ^conTConsole;
 
@@ -96,14 +96,14 @@ TYPE
       Next: conPHandler;
    end;
 
-   conTEntryHandlerFuncs = specialize TPreallocatedArrayList<conTEntryHandlerFunc>;
+   conTEntryHandlerFuncs = specialize TSimpleList<conTEntryHandlerFunc>;
 
    {LOGGING}
    conTConsoleHandlerActionFunc = function(a: longint): longint;
 
    {CONSOLE RECORD}
 
-   conTSimpleCommands = specialize TPreallocatedArrayList<conTSimpleComand>;
+   conTSimpleCommands = specialize TSimpleList<conTSimpleComand>;
 
    { conTConsole }
 

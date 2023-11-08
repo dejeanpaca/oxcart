@@ -30,7 +30,7 @@ TYPE
    end;
 
    {list of materials in a mesh}
-   oxTMeshMaterials = specialize TPreallocatedArrayList<oxTMeshMaterial>;
+   oxTMeshMaterials = specialize TSimpleList<oxTMeshMaterial>;
 
    oxPMesh = ^oxTMesh;
 
@@ -122,7 +122,7 @@ TYPE
       procedure Validate();
    end;
 
-   oxTMeshes = specialize TPreallocatedArrayList<oxTMesh>;
+   oxTMeshes = specialize TSimpleList<oxTMesh>;
 
 IMPLEMENTATION
 

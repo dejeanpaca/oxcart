@@ -106,7 +106,7 @@ TYPE
       class function ValidId(t: oxTTexture): boolean; static;
    end;
 
-   oxTPreallocatedTextureArrayList = specialize TPreallocatedArrayList<oxTTexture>;
+   oxTPreallocatedTextureArrayList = specialize TSimpleList<oxTTexture>;
 
 VAR
    oxTex: oxTTextureGlobal;

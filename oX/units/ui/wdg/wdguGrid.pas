@@ -45,7 +45,7 @@ TYPE
       VerticalJustify: uiTVerticalJustify;
    end;
 
-   wdgTGridColumnList = specialize TPreallocatedArrayList<wdgTGridColumn>;
+   wdgTGridColumnList = specialize TSimpleList<wdgTGridColumn>;
 
    wdgTGrid = class(wdgTList)
       TitlePadding,

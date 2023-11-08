@@ -160,7 +160,7 @@ TYPE
       {$ENDIF}
    end;
 
-   oxTMaterials = specialize TPreallocatedArrayList<oxTMaterial>;
+   oxTMaterials = specialize TSimpleList<oxTMaterial>;
 
    { oxTMaterialHelper }
 

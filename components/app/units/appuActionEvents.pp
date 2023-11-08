@@ -39,7 +39,7 @@ TYPE
       procedure Call();
    end;
 
-   appTActionCallbacks = specialize TPreallocatedArrayList<appTActionCallback>;
+   appTActionCallbacks = specialize TSimpleList<appTActionCallback>;
 
    { appTActionEvents }
 

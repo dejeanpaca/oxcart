@@ -45,7 +45,7 @@ TYPE
       procedure GetValues(out xValue, yValue, zValue: single);
    end;
 
-   oxedTInspectorWindowGroupWidgets = specialize TPreallocatedArrayList<wdgTGroup>;
+   oxedTInspectorWindowGroupWidgets = specialize TSimpleList<wdgTGroup>;
 
    { oxedTInspectEntity }
 

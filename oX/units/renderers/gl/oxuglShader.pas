@@ -23,7 +23,7 @@ TYPE
       glSHADER_TYPE_FRAGMENT
    );
 
-   oxglTUniformLocations = specialize TPreallocatedArrayList<GLint>;
+   oxglTUniformLocations = specialize TSimpleList<GLint>;
 
    { oxglTShaderObject }
 

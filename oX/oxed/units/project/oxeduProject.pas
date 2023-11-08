@@ -26,7 +26,7 @@ TYPE
       Path: StdString;
    end;
 
-   oxedTProjectUnitList = specialize TPreallocatedArrayList<oxedTProjectUnit>;
+   oxedTProjectUnitList = specialize TSimpleList<oxedTProjectUnit>;
 
    { oxedTProjectUnitListHelper }
 
@@ -42,7 +42,7 @@ TYPE
       Symbols: oxedTProjectSymbols;
    end;
 
-   oxedTProjectBuildModes = specialize TPreallocatedArrayList<oxedTProjectBuildMode>;
+   oxedTProjectBuildModes = specialize TSimpleList<oxedTProjectBuildMode>;
 
    { oxedTProject }
 

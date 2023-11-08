@@ -16,7 +16,7 @@ INTERFACE
       uOX, oxuRunRoutines, oxuGlobalInstances;
 
 TYPE
-   TPreallocatedTypeKyndArrayList = specialize TPreallocatedArrayList<TTypeKind>;
+   TPreallocatedTypeKyndArrayList = specialize TSimpleList<TTypeKind>;
 
    { oxTSerializable }
 
@@ -100,7 +100,7 @@ TYPE
       procedure SetValue(TypeOf: TClass; ofWhat: TObject; value: string);
    end;
 
-   oxTSerializationProperties = specialize TPreallocatedArrayList<oxTSerializationProperty>;
+   oxTSerializationProperties = specialize TSimpleList<oxTSerializationProperty>;
 
    oxTSerializationInstanceFunction = function(): TObject;
 
@@ -200,7 +200,7 @@ TYPE
       procedure SetProp(ofWhat: TObject; const prop, value: string);
    end;
 
-   oxTSerializers = specialize TPreallocatedArrayList<oxTSerialization>;
+   oxTSerializers = specialize TSimpleList<oxTSerialization>;
 
    { oxTSerializationManager }
 

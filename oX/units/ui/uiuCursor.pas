@@ -22,8 +22,8 @@ INTERFACE
       oxuUI, uiuTypes, uiuControl, uiuWindow, uiuWindowTypes;
 
 TYPE
-   uiTLoadedCursors = specialize TPreallocatedArrayList<uiTCursorType>;
-   uiTCustomCursors = specialize TPreallocatedArrayList<oxTTexture>;
+   uiTLoadedCursors = specialize TSimpleList<uiTCursorType>;
+   uiTCustomCursors = specialize TSimpleList<oxTTexture>;
 
    { uiTCursorGlobal }
 
