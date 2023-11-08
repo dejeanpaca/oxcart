@@ -43,7 +43,7 @@ begin
    if(oxedStatusbar.Status.Items.n > 0) then
       oxedStatusbar.Status.AddSeparator();
 
-   oxedStatusInfo.Wdg.Info := oxedStatusbar.Status.AddCaption('0');
+   oxedStatusInfo.Wdg.Info := oxedStatusbar.Status.AddButton(oxedIcons.Create($f538));
 
    SetupInfo();
 end;
@@ -60,14 +60,13 @@ begin
    if(oxedStatusInfo.Wdg.Info <> nil) and (interval.Elapsed())  then begin
       heapStatus := GetHeapStatus;
 
-      status := getiecByteSizeHumanReadableSI(heapStatus.TotalFree) + '/' +
-         getiecByteSizeHumanReadableSI(heapStatus.TotalAllocated) + '/' +
-         getiecByteSizeHumanReadableSI(heapStatus.Unused) + '/' +
+      status := getiecByteSizeHumanReadableSI(heapStatus.TotalFree) + ' / ' +
+         getiecByteSizeHumanReadableSI(heapStatus.TotalAllocated) + ' / ' +
+         getiecByteSizeHumanReadableSI(heapStatus.Unused) + ' / ' +
          getiecByteSizeHumanReadableSI(heapStatus.TotalAddrSpace);
 
       if(oxedStatusInfo.Wdg.Info^.Caption <> status) then begin
-         oxedStatusInfo.Wdg.Info^.Caption := status;
-         oxedStatusbar.Status.ItemChanged();
+         oxedStatusInfo.Wdg.Info^.Hint := status;
       end;
    end;
 end;
