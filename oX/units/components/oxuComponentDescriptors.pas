@@ -72,7 +72,7 @@ begin
    Component := nil;
 
    {$IFDEF OX_LIBRARY}
-   FromLibrary := true;
+   InLibrary := true;
    {$ENDIF}
 
    {add ourselves immediately to the list}
