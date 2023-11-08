@@ -157,10 +157,13 @@ begin
    oxedIcons.Create(item, $f03a);
    Editor.AddItem('DVar Editor', oxwndDVarEditor.OpenWindowAction);
    Editor.AddSeparator();
+
    Items.ClearMessagesOnStart := Editor.AddCheckbox('Clear messages on start', oxedSettings.ClearMessagesOnStart);
    Items.ClearMessagesOnStart^.Callbacks.Use(@clearMessagesOnStartToggle);
+
    Items.FocusGameViewOnStart := Editor.AddCheckbox('Focus game view on start', oxedSettings.FocusGameViewOnStart);
    Items.FocusGameViewOnStart^.Callbacks.Use(@focusGameViewOnStartToggle);
+
    Editor.AddSeparator();
    item := Editor.AddItem('Settings', oxwndSettings.OpenWindowAction);
    oxedIcons.Create(item, $f013);
