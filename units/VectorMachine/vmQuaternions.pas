@@ -221,12 +221,12 @@ begin
       end;
 
       {calculate the quaternion by using a form of linear interpolation for quaternions}
-      {x}result[0] := (scale1 * q1[0]) + (scale2 * q2[0]);
-      {y}result[1] := (scale1 * q1[1]) + (scale2 * q2[1]);
-      {z}result[2] := (scale1 * q1[2]) + (scale2 * q2[2]);
-      {w}result[3] := (scale1 * q1[3]) + (scale2 * q2[3]);
+      {x}Result[0] := (scale1 * q1[0]) + (scale2 * q2[0]);
+      {y}Result[1] := (scale1 * q1[1]) + (scale2 * q2[1]);
+      {z}Result[2] := (scale1 * q1[2]) + (scale2 * q2[2]);
+      {w}Result[3] := (scale1 * q1[3]) + (scale2 * q2[3]);
    end else
-      result := q1;
+      Result := q1;
 end;
 
 procedure vmqFromEuler(roll, pitch, yaw: single; var q: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
@@ -307,6 +307,7 @@ begin
    r33 := q00 - q11 - q22 + q33;
 
    tmp := abs(r31);
+
    if(tmp > 0.999999) then begin
       r12 := 2 * (q[0] * q[1] - q[3] * q[2]);
       r13 := 2 * (q[0] * q[2] + q[3] * q[1]);
@@ -392,10 +393,10 @@ end;
 
 function vmqConjugate(const q: TQuaternion): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 begin
-   result[0] := -q[0];
-   result[1] := -q[1];
-   result[2] := -q[2];
-   result[3] :=  q[3];
+   Result[0] := -q[0];
+   Result[1] := -q[1];
+   Result[2] := -q[2];
+   Result[3] :=  q[3];
 end;
 
 procedure vmqConjugatev(var q: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
@@ -407,7 +408,7 @@ end;
 
 function vmqGetAngle(const q: TQuaternion): single; {$IFDEF VM_INLINE}inline;{$ENDIF}
 begin
-   result := 2 * arccos(q[3]);
+   Result := 2 * arccos(q[3]);
 end;
 
 function vmqGetAxis(const q: TQuaternion): TVector3; {$IFDEF VM_INLINE}inline;{$ENDIF}
@@ -418,14 +419,14 @@ var
 begin
    mag := sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 
-   result[0] := v[0] / mag;
-   result[1] := v[1] / mag;
-   result[2] := v[2] / mag;
+   Result[0] := v[0] / mag;
+   Result[1] := v[1] / mag;
+   Result[2] := v[2] / mag;
 end;
 
 function vmqRotate(const q1, q2: TQuaternion): TQuaternion;
 begin
-   result   := q1 * q2 * vmqConjugate(q1);
+   Result   := q1 * q2 * vmqConjugate(q1);
 end;
 
 function vmqRotate(const q: TQuaternion; const v: TVector3): TVector3;
@@ -436,7 +437,7 @@ var
 begin
    {TODO: Need to check this code, it might be incorrect}
    t        := q * v * vmqConjugate(q);
-   result   := e;
+   Result   := e;
 end;
 
 {OPERATOR OVERLOAD}
@@ -480,50 +481,50 @@ end;
 
 operator * (const q: TQuaternion; s: single): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 begin
-   result[0] := q[0] * s;
-   result[1] := q[1] * s;
-   result[2] := q[2] * s;
-   result[3] := q[3] * s;
+   Result[0] := q[0] * s;
+   Result[1] := q[1] * s;
+   Result[2] := q[2] * s;
+   Result[3] := q[3] * s;
 end;
 
 operator / (const q: TQuaternion; s: single): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 begin
-   result[0] := q[0] / s;
-   result[1] := q[1] / s;
-   result[2] := q[2] / s;
-   result[3] := q[3] / s;
+   Result[0] := q[0] / s;
+   Result[1] := q[1] / s;
+   Result[2] := q[2] / s;
+   Result[3] := q[3] / s;
 end;
 
 operator + (const q1, q2: TQuaternion): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 begin
-   result[0] := q1[0] + q2[0];
-   result[1] := q1[1] + q2[1];
-   result[2] := q1[2] + q2[2];
-   result[3] := q1[3] + q2[3];
+   Result[0] := q1[0] + q2[0];
+   Result[1] := q1[1] + q2[1];
+   Result[2] := q1[2] + q2[2];
+   Result[3] := q1[3] + q2[3];
 end;
 
 operator - (const q1, q2: TQuaternion): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 begin
-   result[0] := q1[0] - q2[0];
-   result[1] := q1[1] - q2[1];
-   result[2] := q1[2] - q2[2];
-   result[3] := q1[3] - q2[3];
+   Result[0] := q1[0] - q2[0];
+   Result[1] := q1[1] - q2[1];
+   Result[2] := q1[2] - q2[2];
+   Result[3] := q1[3] - q2[3];
 end;
 
 operator * (const q: TQuaternion; const v: TVector3): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 begin
-   result[0] :=   q[3]*v[0] + q[1]*v[2] - q[2]*v[1];
-   result[1] :=   q[3]*v[1] + q[2]*v[0] - q[0]*v[2];
-   result[2] :=   q[3]*v[2] + q[0]*v[1] - q[1]+v[0];
-   result[3] := -(q[0]*v[0] + q[1]*v[1] + q[2]*v[2]);
+   Result[0] :=   q[3]*v[0] + q[1]*v[2] - q[2]*v[1];
+   Result[1] :=   q[3]*v[1] + q[2]*v[0] - q[0]*v[2];
+   Result[2] :=   q[3]*v[2] + q[0]*v[1] - q[1]+v[0];
+   Result[3] := -(q[0]*v[0] + q[1]*v[1] + q[2]*v[2]);
 end;
 
 operator * (const v: TVector3; const q: TQuaternion): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 begin
-   result[0] :=   q[3]*v[0] + q[2]*v[1] - q[1]*v[2];
-   result[1] :=   q[3]*v[1] + q[0]*v[2] - q[2]*v[0];
-   result[2] :=   q[3]*v[2] + q[1]*v[0] - q[0]*v[1];
-   result[3] := -(q[0]*v[0] + q[1]*v[1] + q[2]*v[2]);
+   Result[0] :=   q[3]*v[0] + q[2]*v[1] - q[1]*v[2];
+   Result[1] :=   q[3]*v[1] + q[0]*v[2] - q[2]*v[0];
+   Result[2] :=   q[3]*v[2] + q[1]*v[0] - q[0]*v[1];
+   Result[3] := -(q[0]*v[0] + q[1]*v[1] + q[2]*v[2]);
 end;
 
 END.
