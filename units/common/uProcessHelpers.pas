@@ -12,7 +12,7 @@ INTERFACE
 
    USES
       process, pipes,
-      uStd;
+      uStd, StringUtils;
 
 TYPE
    { TProcessUtils }
@@ -48,28 +48,12 @@ begin
 
    if(stream.NumBytesAvailable > 0) then begin
       length := stream.NumBytesAvailable;
-      SetLength(Result, length);
+      SetLength(Result, stream.NumBytesAvailable);
 
       stream.ReadBuffer(Result[1], length);
 
-      if(stripEndLine) then begin
-         {check if we need to strip any characters off the end}
-         if(Result[length] = #13) then
-            length := length - 1
-         else if(Result[length] = #10) then begin
-            if(length > 1) then begin
-               if(Result[length - 1] = #13) then
-                  length := length - 2
-               else
-                  length := length - 1;
-            end else
-               length := length - 1;
-         end;
-
-         {correct to new length}
-         if(length <> stream.NumBytesAvailable) then
-            SetLength(Result, length);
-      end;
+      if(stripEndLine) then
+         StringUtils.stripEndLine(Result);
 
       exit;
    end;
