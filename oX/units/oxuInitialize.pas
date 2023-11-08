@@ -13,7 +13,7 @@ INTERFACE
      {app}
      uAppInfo, uApp, appuLog, appudvarConfiguration,
      {oX}
-     uOX, oxuWindow, oxuWindows, oxuInitTask,
+     uOX, oxuWindow, oxuWindows, oxuInitTask, oxuProgramInitTask,
      oxuPlatform, oxuUIHooks, oxuGlobalInstances, oxuPlatforms,
      oxuRenderer, oxuRenderers,
      {$IF NOT DEFINED(OX_LIBRARY) AND NOT DEFINED(MOBILE)}
@@ -340,6 +340,7 @@ begin
 
    ox.Initialized := false;
    ox.DeInitializing := false;
+   oxProgramInitTask.Initialized := false;
 end;
 
 INITIALIZATION
