@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uLog, StringUtils,
       {ox}
-      uOX, oxuResourcePool, oxuTexture, oxuTexturePool, oxuFreetype, oxuDefaultTexture;
+      uOX, oxuResourcePool, oxuTexture, oxuTexturePool, oxuDefaultTexture, oxuFreetype, oxuFreetypeFonts;
 
 TYPE
    oxPGlyphs = ^oxTGlyphs;
@@ -115,6 +115,9 @@ begin
          Result.MarkUsed();
       end;
    end;
+
+   if(AlwaysReturnTexture) and (Result = nil) then
+      Result := oxDefaultTexture.Texture;
 end;
 
 { oxTGlyphs }
