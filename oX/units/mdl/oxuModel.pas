@@ -16,10 +16,6 @@ INTERFACE
       oxuMaterial, oxuSkins, oxuTypes, oxuMesh, oxuTexture, oxuTexturePool;
 
 TYPE
-   oxTModelRenderData = record
-      skin: loopint;
-   end;
-
    { oxTModel }
 
    oxTModel = class(oxTResource)
@@ -42,8 +38,6 @@ TYPE
       function GetLastMesh(): oxPMesh;
       function GetLastSkin(): oxPSkin;
       function GetLastMaterial(): oxTMaterial;
-
-      procedure Render(var rd: oxTModelRenderData);
 
       procedure GetBoundingBox(out bbox: TBoundingBox);
 
@@ -145,29 +139,6 @@ begin
       Result := Materials.List[Materials.n - 1]
    else
       Result := nil;
-end;
-
-procedure oxTModel.Render(var rd: oxTModelRenderData);
-var
-   i: loopint;
-   pSkin: oxPSkin;
-   mat: oxTMaterial;
-
-begin
-   assert((rd.skin >= 0) and (rd.skin < Skins.n), 'rendering skin out of bounds');
-
-   pSkin := @Skins.List[rd.skin];
-
-   for i := 0 to Meshes.n - 1 do begin
-      if(i < pSkin^.Materials.n) then
-         mat := pSkin^.Materials.List[i]
-      else
-         mat := oxMaterial.Default;
-
-      mat.Apply();
-
-      {TODO: Render mesh}
-   end;
 end;
 
 procedure oxTModel.GetBoundingBox(out bbox: TBoundingBox);

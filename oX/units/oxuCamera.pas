@@ -8,8 +8,6 @@
 {$INCLUDE oxdefines.inc}
 UNIT oxuCamera;
 
-{TODO: The oxcCamStyleLimit camera style needs to be implemented.}
-
 INTERFACE
 
    USES
