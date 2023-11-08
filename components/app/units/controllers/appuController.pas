@@ -166,6 +166,7 @@ CONST
 TYPE
    appTControllerEventType = (
       appCONTROLLER_EVENT_BUTTON,
+      appCONTROLLER_EVENT_DPAD,
       appCONTROLLER_EVENT_AXIS,
       appCONTROLLER_EVENT_TRIGGER
    );
@@ -274,6 +275,7 @@ TYPE
       {mapping for this device (if no mapping this should point to generic map)}
       Mapping: appPControllerDeviceMapping;
 
+      {holds the state of the device (somewhat raw data)}
       State: record
          {pressed state of all buttons, max 64 supported}
          KeyState: TBitSet64;
@@ -292,12 +294,14 @@ TYPE
          Axes: array[0..appMAX_CONTROLLER_AXES - 1] of appiTAxisState;
       end;
 
+      {handler associated with this device}
       Handler: POObject;
 
       constructor Create(); virtual;
 
       {log device properties}
       procedure LogDevice(); virtual;
+      {deinitialize this device}
       procedure DeInitialize(); virtual;
 
       {prepare state to update this device}
@@ -394,11 +398,9 @@ TYPE
       procedure Call(var ev: appTControllerEvent);
    end;
 
-
 VAR
    {generic device mapping }
    appControllerDeviceGenericMapping: appTControllerDeviceMapping;
-
 
 IMPLEMENTATION
 
@@ -421,7 +423,6 @@ begin
       List[i](ev);
    end;
 end;
-
 
 { appTControllerDevice }
 
