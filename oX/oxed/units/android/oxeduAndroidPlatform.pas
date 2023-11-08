@@ -62,7 +62,7 @@ end;
 
 procedure oxedTAndroidPlatform.ProjectReset();
 begin
-   oxedAndroidSettings.Reset();
+   oxedAndroidSettings.ProjectReset();
 end;
 
 function oxedTAndroidPlatform.GetDvarGroup(): PDVarGroup;

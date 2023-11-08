@@ -23,6 +23,7 @@ IMPLEMENTATION
 procedure init();
 begin
    oxedAndroidSettingsFile.Load();
+   oxedAndroidSettings.Validate();
 end;
 
 procedure deinit();
