@@ -367,29 +367,29 @@ var
 begin
    TSimpleStringList.Initialize(Result);
 
-   Result.Add('-dOXED');
-   Result.Add('-dOX_NO_DEFAULT_FEATURES');
+   Result.Add('OXED');
+   Result.Add('OX_NO_DEFAULT_FEATURES');
 
    {$IFDEF OX_DEBUG}
-   Result.Add('-dOX_DEBUG');
-   Result.Add('-dDEBUG');
+   Result.Add('OX_DEBUG');
+   Result.Add('DEBUG');
    {$ENDIF}
 
    if(oxedProject.Session.DebugResources) then
-      Result.Add('-dOX_RESOURCE_DEBUG');
+      Result.Add('OX_RESOURCE_DEBUG');
 
    {$IFDEF NO_THREADS}
    if(oxedBuild.IsLibrary()) then
-      Result.Add('-dNO_THREADS');
+      Result.Add('NO_THREADS');
    {$ENDIF}
 
    for i := 0 to oxedBuild.Features.n - 1 do begin
-      Result.Add('-d' + oxedBuild.Features.List[i]^.Symbol);
+      Result.Add(oxedBuild.Features.List[i]^.Symbol);
    end;
 
    if(oxedBuild.InEditor) then begin
-      Result.Add('-dLIBRARY');
-      Result.Add('-dOX_LIBRARY');
+      Result.Add('LIBRARY');
+      Result.Add('OX_LIBRARY');
    end;
 end;
 
@@ -438,7 +438,7 @@ begin
    symbols := getSymbols();
 
    for i := 0 to symbols.n - 1 do begin
-      f.AddCustomOption(symbols.List[i]);
+      f.AddSymbol(symbols.List[i]);
    end;
 
    f.SetValue(f.compiler.targetFilename, ExtractFileName(oxedBuild.GetTargetExecutableFileName()));
@@ -555,7 +555,7 @@ begin
    config.Add('');
 
    symbols := getSymbols();
-   config.Add(symbols);
+   config.AddSymbols(symbols.List, symbols.n);
 
    fn := oxedBuild.WorkArea + oxedBuild.Props.ConfigFile;
 
