@@ -58,7 +58,8 @@ TYPE
    TBuildLazarusInstall = record
       Name,
       Path,
-      ConfigPath: StdString;
+      ConfigPath,
+      Version: StdString;
 
       FPC: PBuildPlatform;
 
@@ -241,6 +242,8 @@ TYPE
 
       {test all platforms}
       procedure TestPlatforms();
+      {test all lazarus installations}
+      procedure TestLazarusInstallations();
       {sets the platform based on what is available}
       procedure SetupAvailablePlatform();
       {sets the lazarus install based on what is available}
@@ -460,6 +463,7 @@ begin
    SetupAvailableLazarus();
 
    TestPlatforms();
+   TestLazarusInstallations();
 
    log.v('build > Initialized (Elapsed: ' + start.ElapsedfToString() + 's)');
 
@@ -1073,6 +1077,44 @@ begin
       except
          on e: Exception do begin
             log.w('Could not execute fpc for platform ' + p^.Name + ' at path ' + process.Executable);
+         end;
+      end;
+
+      FreeObject(process);
+   end;
+end;
+
+procedure TBuildSystem.TestLazarusInstallations();
+var
+   i,
+   lineIndex: loopint;
+   p: PBuildLazarusInstall;
+   process: TProcess;
+   strings: TSimpleStringList;
+
+begin
+   for i := 0 to LazarusInstalls.n - 1 do begin
+      p := @LazarusInstalls.List[i];
+
+      process := GetToolProcess();
+      process.Executable := GetExecutableName(p^.Path + 'lazbuild');
+      process.Parameters.Add('-v');
+      process.Options := process.Options + [poUsePipes];
+
+      try
+         process.Execute();
+
+         strings := process.GetOutputStrings(2);
+
+         for lineIndex := 0 to strings.n - 1 do begin
+            if(pos('using', strings.List[lineIndex]) = 0) then
+               p^.Version := strings.List[lineIndex];
+         end;
+
+         log.v('Found lazbuild(' + p^.Version + ') executable for platform ' + p^.Name + ' at path ' + process.Executable);
+      except
+         on e: Exception do begin
+            log.w('Could not execute lazbuild for ' + p^.Name + ' at path ' + process.Executable);
          end;
       end;
 
