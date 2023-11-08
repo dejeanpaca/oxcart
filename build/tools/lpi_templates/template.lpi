@@ -52,12 +52,6 @@
         <OverflowChecks Value="True"/>
       </Checks>
     </CodeGeneration>
-    <Other>
-      <Verbosity>
-        <ShowSummary Value="True"/>
-      </Verbosity>
-      <CustomOptions Value=""/>
-    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

@@ -112,7 +112,8 @@ TYPE
       {adds a parameter handler to the parameterHandlers list}
       procedure AddHandler(var handler: TParameterHandler);
       {adds a parameter handler to the parameterHandlers list}
-      procedure AddHandler(out handler: TParameterHandler; const name, key: string; process: TParameterHandlerRoutine = nil; nArguments: loopint = 1);
+      procedure AddHandler(out handler: TParameterHandler; const name, key: string;
+         process: TParameterHandlerRoutine = nil; nArguments: loopint = 1);
 
       { PROCESSING }
       {uses a callback routine to handle parameters}
@@ -350,7 +351,8 @@ begin
    handlers.e := @handler;
 end;
 
-procedure TParameterGlobal.AddHandler(out handler: TParameterHandler; const name, key: string; process: TParameterHandlerRoutine; nArguments: loopint);
+procedure TParameterGlobal.AddHandler(out handler: TParameterHandler; const name, key: string;
+   process: TParameterHandlerRoutine; nArguments: loopint);
 begin
    ZeroOut(handler, SizeOf(handler));
 
