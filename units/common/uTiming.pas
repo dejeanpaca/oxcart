@@ -289,9 +289,8 @@ var
 
 begin
    c := Cur();
-   Result := (current - ElapsedTime + Add) > GoalTime;
+   Result := (c - ElapsedTime + Add) > GoalTime;
 end;
-
 
 procedure TTimer.Inc();
 begin
