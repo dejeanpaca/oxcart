@@ -15,7 +15,7 @@ PROGRAM primitives;
       {oX}
       oxuProjection, oxuKeyboardControl,
       oxuWindowTypes, oxuWindows, oxuFont, oxuTypes,
-      oxumPrimitive, oxuTexture, oxuTransform, oxuRender, oxuRenderer,
+      oxumPrimitive, oxuTexture, oxuTransform, oxuRender, oxuRenderer, oxuViewport,
       uiuUI,
       {test}
       uTestTools;
@@ -108,7 +108,7 @@ begin
    primitive.Mesh.CullFace := oxCULL_FACE_NONE;
    primitive.Render();
 
-   m := oxTransform.OrthoFrustum(0, oxProjection^.Dimensions.w, 0, oxProjection^.Dimensions.h, -1.0, 1.0);
+   m := oxTransform.OrthoFrustum(0, oxViewport^.Dimensions.w, 0, oxViewport^.Dimensions.h, -1.0, 1.0);
    oxRenderer.SetProjectionMatrix(m);
 
    if(not primitiveNormals) then
@@ -155,7 +155,7 @@ begin
    oxKey.UpRoutine := @Keyz;
 
    oxWindows.OnRender.Add(@Render);
-   oxProjection^.ClearColor.Assign(0.1, 0.1, 0.25, 1.0);
+   oxViewport^.ClearColor.Assign(0.1, 0.1, 0.25, 1.0);
 
    {load texture}
    tt.LoadTexture('textures' + DirectorySeparator + 'primitive.tga', texture);
