@@ -73,7 +73,7 @@ end;
 
 { oxedTToolbarGlobal }
 
-procedure oxedTToolbarGlobal.Initialize;
+procedure oxedTToolbarGlobal.Initialize();
 var
    btn: wdgPToolbarItem;
 
