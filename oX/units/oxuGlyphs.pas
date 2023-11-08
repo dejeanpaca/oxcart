@@ -1,10 +1,10 @@
 {
-   oxuGlyph, glyph loading from textures/fonts
+   oxuGlyphs, glyph loading from textures/fonts
    Copyright (c) 2018. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}
-UNIT oxuGlyph;
+UNIT oxuGlyphs;
 
 INTERFACE
 

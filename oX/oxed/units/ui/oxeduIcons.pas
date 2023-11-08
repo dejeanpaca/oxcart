@@ -12,7 +12,7 @@ INTERFACE
       uStd,
       {ox}
       uOX, oxuRunRoutines, oxuPaths,
-      oxuTexture, oxuTexturePool, uiuContextMenu, oxuDefaultTexture, oxuGlyph,
+      oxuTexture, oxuTexturePool, uiuContextMenu, oxuDefaultTexture, oxuGlyphs,
       {oxed}
       uOXED, oxuFileIcons;
 
