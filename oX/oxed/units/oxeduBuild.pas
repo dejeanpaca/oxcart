@@ -13,7 +13,7 @@ INTERFACE
       {build}
       uFPCHelpers, uBuild, uBuildConfiguration, uBuildLibraries, uPasSourceHelper,
       {app}
-      uApp, appuActionEvents, uAppInfo, appuPaths,
+      uApp, appuActionEvents,
       {ox}
       oxuThreadTask, oxuFeatures, oxuRenderer,
       {oxed}
@@ -135,10 +135,6 @@ TYPE
 
       {run a task of the specified type}
       procedure StartTask(taskType: oxedTBuildTaskType);
-      {open project directory}
-      class procedure OpenProjectDirectory(); static;
-      {open project configuration directory}
-      class procedure OpenProjectConfiguration(); static;
 
       {setup the required build platform}
       function SetupPlatform(): boolean;
@@ -974,26 +970,6 @@ begin
    Task.Start();
 end;
 
-class procedure oxedTBuildGlobal.OpenProjectDirectory();
-begin
-   app.OpenFileManager(oxedProject.Path);
-end;
-
-class procedure oxedTBuildGlobal.OpenProjectConfiguration();
-var
-   info: appTInfo;
-   path: StdString;
-
-begin
-   oxedAppInfo.GetAppInfo(info);
-   info.SetOrganization(oxedPROJECT_ORGANIZATION);
-
-   path := appPath.GetConfigurationPath(info);
-
-   if(path <> '') then
-      app.OpenFileManager(path);
-end;
-
 function oxedTBuildGlobal.SetupPlatform(): boolean;
 var
    platform: PBuildPlatform;
@@ -1092,9 +1068,6 @@ INITIALIZATION
    oxedActions.RECODE := appActionEvents.SetCallback(@oxedBuild.RecodeTask);
    oxedActions.CLEANUP := appActionEvents.SetCallback(@oxedBuild.CleanupTask);
    oxedActions.REBUILD_THIRD_PARTY := appActionEvents.SetCallback(@oxedBuild.RebuildThirdPartyTask);
-
-   oxedActions.OPEN_PROJECT_DIRECTORY := appActionEvents.SetCallback(@oxedBuild.OpenProjectDirectory);
-   oxedActions.OPEN_PROJECT_CONFIGURATION := appActionEvents.SetCallback(@oxedBuild.OpenProjectConfiguration);
 
    oxedProjectScanner.OnDone.Add(@onScanDone);
 
