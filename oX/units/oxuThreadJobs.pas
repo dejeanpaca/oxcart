@@ -9,33 +9,36 @@ UNIT oxuThreadJobs;
 INTERFACE
 
    USES
-      sysutils, oxuThreadTask;
+      sysutils, uStd,
+      {oX}
+      oxuThreadTask;
 
 TYPE
-
    { oxTThreadJob }
 
    oxTThreadJob = class(oxTThreadTask)
       public
       Queue: oxTThreadTasksList;
 
-      constructor Create; override;
+      constructor Create(); override;
 
       procedure QueueAdd(task: oxTThreadTask);
       procedure QueueRemove(task: oxTThreadTask);
       function JobIndex(task: oxTThreadTask): loopint;
 
       procedure Run(); override;
+      {watches jobs, updates queue, and returns true if any is running}
+      function Watch(): boolean;
 
       private
-         Locker: TCriticalSection;
+         Locker: TRTLCriticalSection;
    end;
 
 IMPLEMENTATION
 
 { oxTThreadJob }
 
-constructor oxTThreadJob.Create;
+constructor oxTThreadJob.Create();
 begin
    inherited Create;
 
@@ -44,43 +47,62 @@ end;
 
 procedure oxTThreadJob.QueueAdd(task: oxTThreadTask);
 begin
-   EnterCriticalsection(Locker);
-
-   LeaveCriticalsection(Locker);
+   EnterCriticalSection(Locker);
+   Queue.Add(task);
+   LeaveCriticalSection(Locker);
 end;
 
 procedure oxTThreadJob.QueueRemove(task: oxTThreadTask);
+var
+   index: loopint;
+
 begin
-   EnterCriticalsection(Locker);
-   LeaveCriticalsection(Locker);
+   EnterCriticalSection(Locker);
+
+   index := Queue.Find(task);
+   if(index > -1) then
+     Queue.Remove(index);
+
+   LeaveCriticalSection(Locker);
 end;
 
 function oxTThreadJob.JobIndex(task: oxTThreadTask): loopint;
 begin
-   {TODO: Find job index}
-   Result := -1;
+   Result := Queue.Find(task);
 end;
 
 procedure oxTThreadJob.Run();
 var
    current: oxTThreadTask;
+   index: loopint;
 
 begin
+   if(Queue.n = 0) then
+      exit;
+
+   index := 0;
+
    repeat
-      current := nil;
-
-      EnterCriticalsection(Locker);
-
-      if(Queue.n > 0) then begin
-         current := Queue.List[0];
-         Queue.Remove(0);
-      end;
-
-      LeaveCriticalsection(Locker);
+      EnterCriticalSection(Locker);
+      current := Queue.List[index];
+      LeaveCriticalSection(Locker);
 
       if(current <> nil) then
         current.RunHere();
-   until Terminated;
+
+      inc(index);
+   until Terminated or (index = 0);
+
+   EnterCriticalSection(Locker);
+   Queue.RemoveAll();
+   LeaveCriticalSection(Locker);
+end;
+
+function oxTThreadJob.Watch(): boolean;
+begin
+   EnterCriticalSection(Locker);
+   Result := Queue.n > 0;
+   LeaveCriticalSection(Locker);
 end;
 
 END.
