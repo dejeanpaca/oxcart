@@ -9,8 +9,7 @@ UNIT appuAndroidSysInfo;
 INTERFACE
 
 	USES
-      appuSysInfoBase,
-      appuLinuxSysInfo;
+      appuSysInfoBase, appuLinuxSysInfo, appuLinuxSysInfoBase;
 
 procedure appAndroidSysInfoGetInformation();
 
