@@ -18,7 +18,7 @@ INTERFACE
       uOXED,
       oxeduPackage, oxeduPackageTypes,
       oxeduProject, oxeduProjectManagement, oxeduTasks, oxeduActions,
-      oxeduAssets;
+      oxeduAssets, oxeduProjectWalker;
 
 TYPE
    { oxedTProjectScannerTask }
