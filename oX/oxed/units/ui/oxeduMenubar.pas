@@ -390,6 +390,11 @@ begin
    SetupRunItems(running);
 end;
 
+procedure buildStandalone({%H-}wdg: uiTWidget; {%H-}menu: TObject; item: uiPContextMenuItem);
+begin
+   oxedBuild.BuildStandaloneTask(oxedTPlatformArchitecture(item^.ExternalData));
+end;
+
 procedure oxedTMenubarGlobal.SetupBuildOptions();
 var
    i,
@@ -408,9 +413,12 @@ begin
          arch := platform.Architectures.List[archIndex];
 
          if(arch.Architecture <> '') then
-            item := build.AddItem(platform.Name + ' (' + arch.Name + ')', @arch.Build)
+            item := build.AddItem(platform.Name + ' (' + arch.Name + ')')
          else
-            item := build.AddItem(platform.Name, @arch.Build);
+            item := build.AddItem(platform.Name);
+
+         item^.Callback := @buildStandalone;
+         item^.ExternalData := arch;
 
          if(platform.GlyphCode <> 0) then
             oxedIcons.Create(item, oxedPlatform.GlyphCode, oxedPlatform.GlyphName);
