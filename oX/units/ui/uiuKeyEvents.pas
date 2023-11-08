@@ -202,9 +202,8 @@ begin
          if(oxui.Select.l > -1) and (oxui.Select.s[0] = oxwnd) then begin
             event.wnd   := oxui.Select.GetSelectedWnd();
             d.wnd       := uiTWindow(event.wnd);
-         end else begin
+         end else
             exit;
-         end;
 
          {... send the key event to the widget, and if no widget selected to the window}
 
@@ -213,14 +212,11 @@ begin
          d.wdg := wdg;
 
          {if there is a widget selected}
-         if(wdg <> nil) then begin
+         if(wdg <> nil) then
             {send the key to the widget}
             Result := wdg.Key(d.KeyEvent);
 
-            if(not Result) then
-               Result := callFurther();
-         {window}
-         end else
+         if(not Result) then
             Result := callFurther();
       end;
    end;
