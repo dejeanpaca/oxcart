@@ -829,6 +829,7 @@ operator * (const m1: TMatrix2f; const m2: TMatrix2f): TMatrix2f;
 operator * (const m1: TMatrix3f; const m2: TMatrix3f): TMatrix3f;
 operator * (const m1: TMatrix4f; const m2: TMatrix4f): TMatrix4f;
 
+operator * (const m1: TMatrix4f; const v: TVector3f): TVector3f;
 operator * (const m1: TMatrix4f; const v: TVector4f): TVector4f;
 
 IMPLEMENTATION
@@ -1923,6 +1924,9 @@ operator * (const m1: TMatrix3f; const m2: TMatrix3f): TMatrix3f;
 {$INCLUDE operators/opmulmatrix3.inc}
 operator * (const m1: TMatrix4f; const m2: TMatrix4f): TMatrix4f;
 {$INCLUDE operators/opmulmatrix4.inc}
+
+operator * (const m1: TMatrix4f; const v: TVector3f): TVector3f;
+{$INCLUDE operators/opmulmatrix4v3.inc}
 
 operator * (const m1: TMatrix4f; const v: TVector4f): TVector4f;
 {$INCLUDE operators/opmulmatrix4v4.inc}
