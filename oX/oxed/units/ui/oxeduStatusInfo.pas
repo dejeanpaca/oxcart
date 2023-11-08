@@ -51,7 +51,7 @@ begin
 end;
 
 VAR
-   timer: TTimer;
+   interval: TTimerInterval;
 
 procedure updateInfo();
 var
@@ -59,10 +59,7 @@ var
    heapStatus: THeapStatus;
 
 begin
-   timer.Update();
-
-   if(oxedStatusInfo.Wdg.Info <> nil) and (timer.Elapsed() >= 1000)  then begin
-      timer.Start();
+   if(oxedStatusInfo.Wdg.Info <> nil) and (interval.Elapsed())  then begin
       heapStatus := GetHeapStatus;
 
       status := getiecByteSizeHumanReadableSI(heapStatus.TotalFree) + '/' +
@@ -82,8 +79,7 @@ VAR
    oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   TTimer.Init(timer);
-   timer.Start();
+   TTimerInterval.Initialize(interval);
 
    oxed.PostInit.iAdd(oxedInitRoutines, 'status_info', @initialize);
 
