@@ -90,7 +90,9 @@ begin
 
    inherited AfterInitialize();
 
+   {$IFNDEF OX_LIBRARY}
    oglLogInformation(oglTWindow(oxWindows.w[0]));
+   {$ENDIF}
 
    log.Leave();
 end;
