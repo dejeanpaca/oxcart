@@ -688,6 +688,9 @@ begin
       strings[stringCount] := s;
       inc(stringCount);
 
+      if(stringCount > High(strings)) then
+         break;
+
       i := lastBreak + 1;
 
       {skip crlf completely}
