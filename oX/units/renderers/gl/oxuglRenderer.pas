@@ -175,7 +175,7 @@ begin
    {if window was already created just reset gl state}
    if wnd.oxProperties.Created then begin
       ogl.InitState();
-      exit;
+      exit(true);
    end;
 
    {$IFDEF OX_LIBRARY_SUPPORT}
