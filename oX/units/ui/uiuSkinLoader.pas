@@ -11,6 +11,10 @@ UNIT uiuSkinLoader;
 INTERFACE
 
    USES
+      uLog,
+      {ox}
+      oxuPaths,
+      {ui}
       uiuSkin, uiuSkinTypes;
 
 TYPE
@@ -26,7 +30,9 @@ IMPLEMENTATION
 
 class procedure uiTSkinLoader.Load(skin: uiTSkin);
 begin
+   skin.ResourcePath := oxAssetPaths.FindDirectory(oxPaths.UI + skin.Name);
 
+   log.v('Skin(' + skin.Name + ') resource path set to: ' + skin.ResourcePath);
 end;
 
 INITIALIZATION
