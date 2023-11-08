@@ -40,7 +40,7 @@ CONST
 
    appbCONTROLLER_DPAD_UP     = 0;
    appbCONTROLLER_DPAD_RIGHT  = 1;
-   appbCONTROLLER_DPAD_BOTTOM = 2;
+   appbCONTROLLER_DPAD_DOWN   = 2;
    appbCONTROLLER_DPAD_LEFT   = 3;
 
    {directional buttons}
@@ -200,6 +200,7 @@ TYPE
       procedure LogDevice(); virtual;
       procedure DeInitialize(); virtual;
 
+      {prepare state to update this device}
       procedure UpdateStart();
       {run individual devices (input collection, connection detection, ...)}
       procedure Update(); virtual;
@@ -456,6 +457,7 @@ end;
 
 procedure appTControllerDevice.Update();
 begin
+
 end;
 
 procedure appTControllerDevice.Disconnected();
@@ -605,7 +607,7 @@ begin
             Result := appCONTROLLER_DIRECTION_UP_LEFT
          else if(IsDPadPressed(appbCONTROLLER_DPAD_RIGHT)) then
             Result := appCONTROLLER_DIRECTION_UP_RIGHT;
-      end else if(IsDPadPressed(appbCONTROLLER_DPAD_BOTTOM)) then begin
+      end else if(IsDPadPressed(appbCONTROLLER_DPAD_DOWN)) then begin
          Result := appCONTROLLER_DIRECTION_DOWN;
 
          if(IsDPadPressed(appbCONTROLLER_DPAD_LEFT)) then
