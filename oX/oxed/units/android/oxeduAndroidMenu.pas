@@ -24,7 +24,7 @@ var
    item: wdgPToolbarItem;
 
 begin
-   if(platform.Id = 'android') then begin
+   if(platform = oxedAndroidPlatform ) then begin
       item := oxedWorkbar.Workbar.FindItemByAction(oxedAndroidBuild.BUILD_TO_PROJECT_ACTION);
 
       if(item = nil) then begin
@@ -40,7 +40,7 @@ var
    item: wdgPToolbarItem;
 
 begin
-   if(platform.Id = 'android') then begin
+   if(platform = oxedAndroidPlatform) then begin
       item := oxedWorkbar.Workbar.FindItemByAction(oxedAndroidBuild.BUILD_TO_PROJECT_ACTION);
 
       if(item <> nil) then begin

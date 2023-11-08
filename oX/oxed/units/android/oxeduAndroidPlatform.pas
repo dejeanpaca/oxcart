@@ -31,6 +31,8 @@ TYPE
       constructor Create(); override;
    end;
 
+VAR
+   oxedAndroidPlatform: oxedTAndroidPlatform;
 
 IMPLEMENTATION
 
@@ -70,7 +72,8 @@ end;
 
 procedure init();
 begin
-   oxedPlatforms.Add(oxedTAndroidPlatform.Create());
+   oxedAndroidPlatform := oxedTAndroidPlatform.Create();
+   oxedPlatforms.Add(oxedAndroidPlatform);
 end;
 
 INITIALIZATION
