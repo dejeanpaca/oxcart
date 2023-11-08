@@ -69,24 +69,24 @@ procedure appTXInputControllerDevice.Initialize(index: loopint; var capabilities
 
 procedure setGamepad();
 begin
-   AxisCount := 4;
-   TriggerCount := 2;
-   DPadPresent := true;
-   ButtonCount := 16;
-   AxisGroupCount := 2;
+   Settings.AxisCount := 4;
+   Settings.TriggerCount := 2;
+   Settings.DPadPresent := true;
+   Settings.ButtonCount := 16;
+   Settings.AxisGroupCount := 2;
 
    {left thumbstick}
-   AxisGroups[0][0] := 0;
-   AxisGroups[0][1] := 1;
+   Settings.AxisGroups[0][0] := 0;
+   Settings.AxisGroups[0][1] := 1;
 
    {right thumbstick}
-   AxisGroups[1][0] := 2;
-   AxisGroups[1][1] := 3;
+   Settings.AxisGroups[1][0] := 2;
+   Settings.AxisGroups[1][1] := 3;
 end;
 
 begin
    XInputIndex := index;
-   ButtonCount := PopCnt(capabilities.Gamepad.wButtons);
+   Settings.ButtonCount := PopCnt(capabilities.Gamepad.wButtons);
 
    if(capabilities.SubType = XINPUT_DEVSUBTYPE_GAMEPAD) then
       Name := 'XInput Gamepad ' + sf(index)
@@ -131,19 +131,19 @@ begin
    end;
 
    {setup hat state from buttons}
-   if(DPadPresent) then begin
+   if(Settings.DPadPresent) then begin
       State.DPad[appbCONTROLLER_DPAD_UP]     := State.KeyProperties[15];
       State.DPad[appbCONTROLLER_DPAD_DOWN]   := State.KeyProperties[14];
       State.DPad[appbCONTROLLER_DPAD_LEFT]   := State.KeyProperties[13];
       State.DPad[appbCONTROLLER_DPAD_RIGHT]  := State.KeyProperties[12];
    end;
 
-   if(TriggerCount > 0) then begin
+   if(Settings.TriggerCount > 0) then begin
       SetTriggerState(0, gamepad.bLeftTrigger);
       SetTriggerState(1, gamepad.bRightTrigger);
    end;
 
-   if(AxisCount > 0) then begin
+   if(Settings.AxisCount > 0) then begin
       SetAxisState(0, gamepad.sThumbLX);
       SetAxisState(1, gamepad.sThumbLY);
       SetAxisState(2, gamepad.sThumbRX);
