@@ -49,6 +49,7 @@ TYPE
       function DestroyWindow(wnd: oxTWindow): boolean; override;
       procedure ProcessEvents(); override;
 
+      function Initialize(): boolean; override;
       function DeInitialize(): boolean; override;
 
       function TitleHeight(wnd: oxTWindow): longint; override;
@@ -77,9 +78,6 @@ TYPE
       procedure LoadCursor(cursorType: uiTCursorType); override;
       procedure SetCursor(cursorType: uiTCursorType); override;
    end;
-
-VAR
-   cocoaPointerDriver: TCocoaPointerDriver;
 
 IMPLEMENTATION
 
@@ -162,6 +160,14 @@ end;
 
 procedure TCocoaPlatform.ProcessEvents();
 begin
+end;
+
+function TCocoaPlatform.Initialize(): boolean;
+begin
+   Result := inherited;
+
+      { pointer driver }
+   PointerDriver := TX11PointerDriver.Create();
 end;
 
 function TCocoaPlatform.DeInitialize(): boolean;
@@ -248,9 +254,6 @@ end;
 INITIALIZATION
    { platform }
    oxPlatforms.Register(TCocoaPlatform);
-
-   { pointer driver }
-   cocoaPointerDriver := TCocoaPointerDriver.Create();
 
    appm.SetDriver(appTPointerDriver(cocoaPointerDriver));
 
