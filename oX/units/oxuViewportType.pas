@@ -23,7 +23,9 @@ TYPE
        Name: StdString;
 
        {is the viewport enabled}
-       Enabled: boolean;
+       Enabled,
+       {the viewport has changed (size and/or position)}
+       Changed: boolean;
 
        Position,
        {offset the position}

@@ -65,10 +65,11 @@ end;
 
 procedure oxTViewportHelper.Initialize();
 begin
-   Enabled           := true;
-   ScissorOnClear    := true;
+   Enabled := true;
+   ScissorOnClear := true;
+   Changed := true;
 
-   ClearBits      := oxrBUFFER_CLEAR_DEFAULT;
+   ClearBits := oxrBUFFER_CLEAR_DEFAULT;
 
    SetViewport(0, 0, 640, 480);
 end;
