@@ -9,7 +9,9 @@ UNIT oxuRendererSettings;
 INTERFACE
 
    USES
-      uStd;
+      uStd, udvars,
+      {ox}
+      uOX;
 
 TYPE
    {settings for a renderer}
@@ -57,6 +59,20 @@ CONST
       Layer:            0
    );
 
+TYPE
+   oxTRenderSettings = record
+      dvg: TDVarGroup;
+      TargetFramerate: loopint;
+   end;
+
+VAR
+   oxRenderSettings: oxTRenderSettings;
+
 IMPLEMENTATION
+
+INITIALIZATION
+   ox.dvar.Add('render', oxRenderSettings.dvg);
+
+   oxRenderSettings.TargetFramerate := 60;
 
 END.
