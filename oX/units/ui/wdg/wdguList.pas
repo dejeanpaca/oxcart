@@ -993,9 +993,10 @@ begin
             SelectedItem := SelectPointer();
             SelectedItemOffset := HighlightedItemOffset;
 
-            if(SelectedItem > -1) then
-               ClickItem()
-            else
+            if(SelectedItem > -1) then begin
+               ClickItem();
+               ItemNavigated(SelectedItem);
+            end else
                ItemCleared();
          end else begin
             index := SelectPointer();
