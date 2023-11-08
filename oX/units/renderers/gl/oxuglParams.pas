@@ -26,7 +26,7 @@ begin
    v := oglDefaultVersion;
 
    if(n = 1) then begin
-      ogl.GetVersion(params[0], v.major, v.minor, v.revision, v.profile);
+      ogl.GetVersion(params[0], v.Major, v.Minor, v.Revision, v.Profile);
 
       if(v.Major <> 0) then begin;
          oglDefaultVersion := v;
