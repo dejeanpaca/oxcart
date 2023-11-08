@@ -35,7 +35,7 @@ IMPLEMENTATION
 
 function appTCrashDetect.GetFileName(): string;
 begin
-   result := appPath.Configuration.Path + 'crashdetect';
+   Result := appPath.Configuration.GetLocal() + 'crashdetect';
 end;
 
 function appTCrashDetect.Run(): boolean;
@@ -57,7 +57,7 @@ begin
       checkedCrash := true;
    end;
 
-   result := previousInstanceCrashed;
+   Result := previousInstanceCrashed;
 end;
 
 procedure DeInitialize();
