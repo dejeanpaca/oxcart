@@ -60,7 +60,8 @@ IMPLEMENTATION
 
 class procedure oxedTProjectRunner.Run();
 var
-   start: TDateTime;
+   start,
+   timing: TDateTime;
    initialized: Boolean;
 
    procedure runInitialize();
@@ -73,11 +74,14 @@ var
 
    procedure runStart();
    begin
+      timing := Now();
+
       initialized := oxedLib.oxLib.Start();
 
       if(not initialized) then
          oxedMessages.e('Library project failed to initialize');
 
+      log.v('runStart() elapsed: ' + timing.ElapsedfToString(3) + 's');
    end;
 
 begin
@@ -100,7 +104,9 @@ begin
       exit;
    end;
 
+   timing := Now();
    oxedProjectRunner.OnBeforeStart.Call();
+   log.v('OnBeforeStart() elapsed: ' + timing.ElapsedfToString(3) + 's');
 
    initialized := false;
    if(oxedSettings.HandleLibraryErrors) then begin
@@ -117,7 +123,9 @@ begin
    end else
       runInitialize();
 
+   timing := Now();
    oxedProjectRunner.OnAfterInitialize.Call();
+   log.v('OnAfterInitialize() elapsed: ' + timing.ElapsedfToString(3) + 's');
 
    if(initialized) then begin
       if(oxedSettings.HandleLibraryErrors) then begin
