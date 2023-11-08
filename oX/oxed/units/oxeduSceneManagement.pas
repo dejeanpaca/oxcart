@@ -11,7 +11,7 @@ UNIT oxeduSceneManagement;
 INTERFACE
 
    USES
-      sysutils, uStd, uLog, udvars, dvaruFile, uFileUtils, appuPaths,
+      sysutils, uStd, uLog, udvars, uFileUtils, appuPaths,
       {ox}
       uOX, oxuScene, oxuPaths,
       {oxed}

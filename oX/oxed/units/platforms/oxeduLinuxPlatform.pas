@@ -33,7 +33,7 @@ begin
    inherited;
 
    Name := 'Linux';
-   id := 'linux';
+   Id := 'linux';
    GlyphName := 'brands:61820';
 
    AddArchitecture('x86', 'x86');
