@@ -26,6 +26,9 @@ TYPE
       class function MakeCenterPoint(w, h, w2, h2: longint): oxTPoint; static;
       class function Null(): oxTPoint; static;
 
+      {distance between another point}
+      function Distance(p2: oxTPoint): loopint;
+
       function ToString(): string;
    end;
 
@@ -39,6 +42,11 @@ TYPE
       class function Make(nx, ny: single): oxTPointf; static;
       class function MakeCenterPoint(w, h, w2, h2: single): oxTPointf; static;
       class function Null(): oxTPointf; static;
+
+      {distance between another point}
+      function Distance(p2: oxTPointf): single;
+
+      function ToString(decimals: loopint = 0): string;
    end;
 
    { oxTDimensions }
@@ -69,6 +77,8 @@ TYPE
 
       {tells if both dimensions have a positive value}
       function IsPositive(): boolean;
+
+      function ToString(decimals: loopint = 0): string;
    end;
 
    { oxTRect }
@@ -519,9 +529,14 @@ begin
    result.h := 0;
 end;
 
-function oxTDimensionsf.IsPositive: boolean;
+function oxTDimensionsf.IsPositive(): boolean;
 begin
    result := (w > 0) and (h > 0);
+end;
+
+function oxTDimensionsf.ToString(decimals: loopint): string;
+begin
+   Result := sf(w, decimals) + 'x' + sf(h, decimals);
 end;
 
 { oxTPointf }
@@ -550,10 +565,20 @@ begin
    result.y := ch + (h / 2);
 end;
 
-class function oxTPointf.Null: oxTPointf;
+class function oxTPointf.Null(): oxTPointf;
 begin
    result.x := 0;
    result.y := 0;
+end;
+
+function oxTPointf.Distance(p2: oxTPointf): single;
+begin
+   Result := abs(p2.x - x) + abs(p2.y - y);
+end;
+
+function oxTPointf.ToString(decimals: loopint): string;
+begin
+   Result := sf(x, decimals) + ', ' + sf(y, decimals);
 end;
 
 { oxTPoint }
@@ -588,7 +613,12 @@ begin
    result.y := 0;
 end;
 
-function oxTPoint.ToString: string;
+function oxTPoint.Distance(p2: oxTPoint): loopint;
+begin
+   Result := abs(p2.x - x) + abs(p2.y - y);
+end;
+
+function oxTPoint.ToString(): string;
 begin
    WriteStr(result, x, 'x', y);
 end;
@@ -712,7 +742,7 @@ end;
 
 function oxTDimensions.ToString: string;
 begin
-   WriteStr(result, w, 'x', h);
+   WriteStr(Result, w, 'x', h);
 end;
 
 INITIALIZATION
