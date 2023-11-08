@@ -25,9 +25,8 @@ TYPE
       Major,
       Minor: longint;
 
-      procedure OnInitialize(); virtual;
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
-      procedure OnDeInitWindow(wnd: oglTWindow); virtual;
+      function OnDeInitWindow(wnd: oglTWindow): boolean; virtual;
       function GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext; virtual;
       function ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
       function DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
@@ -40,11 +39,6 @@ VAR
 IMPLEMENTATION
 
 { oxglTEGL }
-
-procedure oxglTEGL.OnInitialize();
-begin
-
-end;
 
 function oxglTEGL.PreInitWindow(wnd: oglTWindow): boolean;
 var
@@ -141,12 +135,13 @@ begin
    Result := true;
 end;
 
-procedure oxglTEGL.OnDeInitWindow(wnd: oglTWindow);
+function oxglTEGL.OnDeInitWindow(wnd: oglTWindow): boolean;
 begin
    if(wnd.wd.Surface <> nil) then
       eglDestroySurface(wnd.wd.display, wnd.wd.Surface);
 
    wnd.wd.Surface := nil;
+   Result := true;
 end;
 
 function oxglTEGL.GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext;
