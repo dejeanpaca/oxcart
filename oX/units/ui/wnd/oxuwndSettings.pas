@@ -65,8 +65,15 @@ begin
    list := wdgDropDownList.Add(uiWidget.LastRect.RightOf(0, 4), oxDimensions(90, 20));
    index := oxRenderers.CurrentIndex();
 
-   for i := 0 to (oxRenderers.n - 1) do
+   {add renderers except the dummy renderer}
+   list.Add('Default');
+
+   for i := 1 to (oxRenderers.n - 1) do
       list.Add(oxRenderers.list[i].Name);
+
+   {dont't allow to choose if there is not a choice}
+   if(oxRenderers.n <= 2) then
+      list.Enable(false);
 
    list.SelectItem(index);
 
@@ -115,7 +122,6 @@ begin
    list := wdgDropDownList.Add(uiWidget.LastRect.RightOf(0, 4), oxDimensions(90, 20));
 
    list.Add('Default');
-   list.Add('nil');
 
    wdgDivisor.Add('');
 end;
