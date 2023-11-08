@@ -59,8 +59,9 @@ TYPE
       procedure ShowMenu();
       procedure CloseMenu();
       function GetMenuDimensions(): oxTDimensions;
+      procedure GetComputedDimensions(out d: oxTDimensions); override;
 
-      procedure DeInitialize; override;
+      procedure DeInitialize(); override;
 
       protected
          MenuWindow: uiTWidgetWindow;
@@ -101,7 +102,7 @@ IMPLEMENTATION
 
 CONST
    MENU_VERTICAL_SEPARATION   = 0;
-   MENU_PADDING_SIZE          = 0;
+   MENU_PADDING_SIZE          = 2;
    MENU_BORDER_SIZE           = 1;
    MENU_ITEM_HEIGHT           = 18;
    MENU_ITEM_PADDING          = 3;
@@ -122,7 +123,7 @@ begin
    ItemPadding := MENU_ITEM_PADDING;
 end;
 
-procedure wdgTDropDownListMenu.Initialize;
+procedure wdgTDropDownListMenu.Initialize();
 begin
    inherited Initialize;
 
@@ -134,7 +135,7 @@ begin
    ItemPadding := List.ItemPadding;
 end;
 
-function wdgTDropDownListMenu.GetItemCount: loopint;
+function wdgTDropDownListMenu.GetItemCount(): loopint;
 begin
    if(List <> nil) then
       result := List.GetItemCount()
@@ -177,7 +178,7 @@ begin
    DropAreaWidth := wdgDropDownList.DropAreaWidth;
    ItemHeight := MENU_ITEM_HEIGHT;
    ItemPadding := MENU_ITEM_PADDING;
-   CurrentITem := -1;
+   CurrentItem := -1;
    SetPadding(2);
 
    Items.InitializeValues(Items);
@@ -240,7 +241,7 @@ begin
    uiDraw.Rect(RPosition, Dimensions);
 
    {draw drop area, if possible}
-   if(DropAreaWidth > 0) and (DropAreaWidth <= Dimensions.w div 2) then begin
+   if(DropAreaWidth > 0) and (DropAreaWidth < Dimensions.w) then begin
       dropWidth := DropAreaWidth;
 
       GetRelativeRect(r);
@@ -314,7 +315,24 @@ begin
       inc(Result.h, MENU_VERTICAL_SEPARATION * (GetItemCount() - 1));
 end;
 
-procedure wdgTDropDownList.DeInitialize;
+procedure wdgTDropDownList.GetComputedDimensions(out d: oxTDimensions);
+var
+   i,
+   w: loopint;
+
+begin
+   d.h := CachedFont.GetHeight() + PaddingBottom + PaddingTop + Border;
+   d.w := 0;
+
+   for i := 0 to Items.n - 1 do begin
+      w := CachedFont.GetLength(Items.List[i]) + CachedFont.GetWidth() + DropAreaWidth;
+
+      if(w > d.w) then
+         d.w := w;
+   end;
+end;
+
+procedure wdgTDropDownList.DeInitialize();
 begin
    inherited DeInitialize;
 
