@@ -1,6 +1,10 @@
 {
    OXED, oX Editor
 
+   @define OXED
+   @define OX_PROJECT_DEFINES
+   @define OX_LIBRARY_SUPPORT
+
    Started On:    22.03.2015.
 }
 
