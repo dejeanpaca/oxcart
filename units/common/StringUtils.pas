@@ -98,9 +98,9 @@ TYPE
       function IsMultiLine(): boolean;
    end;
 
-   { TStdStringStringHelper }
+   { TStdStringHelper }
 
-   TStdStringStringHelper = type helper for StdString
+   TStdStringHelper = type helper for StdString
       {check if the string has line ending characters in it}
       function IsMultiLine(): boolean;
    end;
@@ -1830,9 +1830,9 @@ begin
    Result := -1;
 end;
 
-{ TStdStringStringHelper }
+{ TStdStringHelper }
 
-function TStdStringStringHelper.IsMultiLine(): boolean;
+function TStdStringHelper.IsMultiLine(): boolean;
 begin
    Result := Pos(LineEnding, Self) > 0;
 end;
