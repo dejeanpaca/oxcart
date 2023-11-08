@@ -77,7 +77,7 @@ VAR
 
 IMPLEMENTATION
 
-function scanFile(const fd: TFileDescriptor): boolean;
+function scanFile(const fd: TFileTraverseData): boolean;
 var
    ext: StdString;
    f: oxedTScannerFile;
@@ -86,13 +86,13 @@ begin
    Result := true;
 
    {ignore stuff in the temp directory}
-   if(Pos(oxPROJECT_TEMP_DIRECTORY, fd.Name) = 1) then
+   if(Pos(oxPROJECT_TEMP_DIRECTORY, fd.f.Name) = 1) then
       exit;
 
-   ext := ExtractFileExt(fd.Name);
-   f.FileName := fd.Name;
+   ext := ExtractFileExt(fd.f.Name);
+   f.FileName := fd.f.Name;
    f.Extension := ext;
-   f.fd := fd;
+   f.fd := fd.f;
 
    f.Package := oxedProjectScanner.CurrentPackage;
    f.PackagePath := oxedProjectScanner.CurrentPath;
@@ -108,14 +108,14 @@ begin
       exit(false);
 end;
 
-function onDirectory(const fd: TFileDescriptor): boolean;
+function onDirectory(const fd: TFileTraverseData): boolean;
 begin
    Result := true;
 
-   if(fd.Name = oxPROJECT_TEMP_DIRECTORY) then
+   if(fd.f.Name = oxPROJECT_TEMP_DIRECTORY) then
       exit(false);
 
-   if(fd.Name = oxPROJECT_DIRECTORY) then
+   if(fd.f.Name = oxPROJECT_DIRECTORY) then
       exit(false);
 end;
 
