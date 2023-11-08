@@ -13,9 +13,6 @@ INTERFACE
       {ox}
       uOX, oxuTimer, oxuRendererSettings;
 
-VAR
-   oxRenderSettings: oxTRenderSettings;
-
 IMPLEMENTATION
 
 VAR
@@ -28,8 +25,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.dvar.Add('render', oxRenderSettings.dvg);
-   oxRenderSettings.TargetFramerate := 60;
    oxRenderSettings.dvg.Add(dvTargetFramerate, 'framerate', dtcLOOPINT, @oxRenderSettings.TargetFramerate, [dvarNOTIFY_READ]);
    dvTargetFramerate.pNotify := @framerateNotify;
 
