@@ -15,7 +15,10 @@ USES
    uStd, appuKeys,
    {oX}
    uOX, oxuTypes, oxuRunRoutines,
-   oxuRenderers, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
+   oxuRenderers,
+   {$IFDEF OX_FEATURE_CONSOLE}
+   oxuConsoleBackend,
+   {$ENDIF}
    oxuAudioBase,
    {ui}
    uiuWindow, uiWidgets, uiuKeyMappings,
@@ -153,12 +156,13 @@ begin
    uiWidget.ClearTarget();
 end;
 
+{$IFDEF OX_FEATURE_CONSOLE}
 procedure consoleCallback({%H-}con: conPConsole);
 begin
    if(oxwndSettings <> nil) then
       oxwndSettings.Open();
 end;
-
+{$ENDIF}
 
 constructor oxTSettingsWindow.Create;
 begin
@@ -167,7 +171,10 @@ begin
 
    UseSurface := true;
 
-   console.Selected^.AddCommand('wnd:settings', @consoleCallback);
+   {$IFDEF OX_FEATURE_CONSOLE}
+   if(console.Selected <> nil) then
+      console.Selected^.AddCommand('wnd:settings', @consoleCallback);
+   {$ENDIF}
 
    inherited Create;
 

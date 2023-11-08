@@ -6,6 +6,11 @@
 }
 
 {$INCLUDE oxdefines.inc}
+
+{$IFNDEF OX_FEATURE_CONSOLE}
+   {$FATAL oX Console included with no OX_FEATURE_CONSOLE defined}
+{$ENDIF}
+
 UNIT oxuConsole;
 
 INTERFACE

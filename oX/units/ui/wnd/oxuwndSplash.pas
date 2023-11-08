@@ -15,7 +15,10 @@ USES
    {app}
    uAppInfo, appuEvents, appuMouse, appuMouseEvents,
    {oX}
-   uOX, oxuTypes, oxuRenderer, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
+   uOX, oxuTypes, oxuRenderer,
+   {$IFDEF OX_FEATURE_CONSOLE}
+   oxuConsoleBackend,
+   {$ENDIF}
    oxuwndBase, oxuPaths, oxuRunRoutines,
    {ui}
    uiuWindowTypes, uiuWindow, uiWidgets, uiuWidget, uiuControl, uiuTypes,
@@ -179,14 +182,19 @@ begin
       OnInit.Call();
 end;
 
+{$IFDEF OX_FEATURE_CONSOLE}
 procedure consoleCallback({%H-}con: conPConsole);
 begin
    oxwndSplash.Open();
 end;
+{$ENDIF}
 
 procedure initialize();
 begin
-   console.Selected^.AddCommand('wnd:splash', @consoleCallback);
+   {$IFDEF OX_FEATURE_CONSOLE}
+   if(console.Selected <> nil) then
+      console.Selected^.AddCommand('wnd:splash', @consoleCallback);
+   {$ENDIF}
 
    oxwndSplash := oxTSplashWindow.Create();
 end;

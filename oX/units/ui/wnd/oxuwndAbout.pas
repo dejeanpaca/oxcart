@@ -16,7 +16,10 @@ USES
    uAppInfo, appuSysInfoBase, appuActionEvents,
    {oX}
    uOX, oxuTypes, oxuRunRoutines,
-   {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF} oxuRenderer,
+   {$IFDEF OX_FEATURE_CONSOLE}
+   oxuConsoleBackend,
+   {$ENDIF}
+   oxuRenderer,
    oxuWindowTypes, oxuwndBase,
    {ui}
    uiuControl, uiuWindow, uiWidgets, uiuWidget,
@@ -87,15 +90,21 @@ begin
    inherited;
 end;
 
+{$IFDEF OX_FEATURE_CONSOLE}
 procedure consoleCallback({%H-}con: conPConsole);
 begin
    oxwndAbout.Open();
 end;
+{$ENDIF}
 
 procedure Initialize();
 begin
    oxwndAbout := oxTAboutWindow.Create();
-   console.Selected^.AddCommand('wnd:about', @consoleCallback);
+
+   {$IFDEF OX_FEATURE_CONSOLE}
+   if(console.Selected <> nil) then
+      console.Selected^.AddCommand('wnd:about', @consoleCallback);
+   {$ENDIF}
 end;
 
 procedure deinitialize();
