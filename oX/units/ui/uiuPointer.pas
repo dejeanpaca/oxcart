@@ -27,15 +27,16 @@ TYPE
    { uiTPointerGlobal }
 
    uiTPointerGlobal = record
+      {minimum distance for UI actions to register (double click, drag)}
+      ActionMinimumDistance: loopint;
+
       {last pointer events}
       nEvents: loopint;
       Events: array[0..5] of uiTPointerEvent;
 
       DoubleClick: record
          {time to consider click events a double click}
-         Time,
-         {distance to consider click events a double click}
-         Distance: loopint;
+         Time: loopint;
       end;
 
       procedure AddEvent(t: uiTControl; m: appTMouseEvent);
@@ -103,7 +104,7 @@ begin
                   p2.y := round(Events[i].m.y);
 
                   {distance must not exceed allowed distance}
-                  if(p2.Distance(p1) > DoubleClick.Distance) then
+                  if(p2.Distance(p1) > ActionMinimumDistance) then
                      exit(False);
 
                   {seems like a double click}
@@ -118,8 +119,8 @@ begin
 end;
 
 INITIALIZATION
-   uiPointer.DoubleClick.Distance := 5;
    uiPointer.DoubleClick.Time := 400;
+   uiPointer.ActionMinimumDistance := 5;
 
    oxGlobalInstances.Add('uiTPointerGlobal', @uiPointer);
 
