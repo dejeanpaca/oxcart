@@ -138,6 +138,8 @@ TYPE
       function ToColor3f(): TColor3f;
       function ToColor4f(): TColor4f;
       function ToColor3ub(): TColor3ub;
+      {is the color transaprent (alpha < 255)}
+      function Transparent(): boolean;
       {ignore the alpha value}
       function ToHex3(): string;
    end;
@@ -448,6 +450,11 @@ begin
    Result[0] := Self[0];
    Result[1] := Self[1];
    Result[2] := Self[2];
+end;
+
+function TColor4ubHelper.Transparent(): boolean;
+begin
+   Result := Self[3] < 255;
 end;
 
 function TColor4ubHelper.ToHex3(): string;
