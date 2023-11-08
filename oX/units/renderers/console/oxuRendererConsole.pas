@@ -8,8 +8,8 @@
 {$INCLUDE oxdefines.inc}
 {$INCLUDE oxfeaturedefines.inc}
 
-{$IFDEF OX_NO_CONSOLE_RENDERER}
-   {$FATAL Included console renderer, with OX_NO_CONSOLE_RENDERER defined}
+{$IFNDEF OX_RENDERER_CONSOLE}
+   {$FATAL Included console renderer, with no OX_RENDERER_CONSOLE defined}
 {$ENDIF}
 
 UNIT oxuRendererConsole;

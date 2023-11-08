@@ -7,8 +7,8 @@
 {$INCLUDE oxdefines.inc}
 {$INCLUDE oxfeaturedefines.inc}
 
-{$IFDEF OX_NO_GL_RENDERER}
-   {$FATAL Included gl renderer, with OX_NO_GL_RENDERER defined}
+{$IFNDEF OX_RENDERER_GL}
+   {$FATAL Included gl renderer, with no OX_RENDERER_GL defined}
 {$ENDIF}
 
 UNIT oxuglRenderer;
