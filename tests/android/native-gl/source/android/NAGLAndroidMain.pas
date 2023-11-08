@@ -32,13 +32,14 @@ TYPE
       height: int32;
 
       state: record
+         first_run: boolean;
          x,
          y,
          angle: single;
       end;
    end;
 
-function engine_init_display(engine: PEngine): boolean;
+function engine_init_display(var engine: TEngine): boolean;
 var
    attribs: array[0..8] of EGLint = (
       EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
@@ -99,7 +100,9 @@ begin
    end;
 
    eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, @format);
-   surface := eglCreateWindowSurface(display, config, engine^.app^.window, nil);
+   ANativeWindow_setBuffersGeometry(engine.app^.window, 0, 0, @format);
+
+   surface := eglCreateWindowSurface(display, config, engine.app^.window, nil);
    context := eglCreateContext(display, config, nil, nil);
 
    if (eglMakeCurrent(display, surface, surface, context) = EGL_FALSE) then begin
@@ -110,56 +113,60 @@ begin
    eglQuerySurface(display, surface, EGL_WIDTH, @w);
    eglQuerySurface(display, surface, EGL_HEIGHT, @h);
 
-   engine^.display := display;
-   engine^.context := context;
-   engine^.surface := surface;
-   engine^.width  := w;
-   engine^.height := h;
+   engine.display := display;
+   engine.context := context;
+   engine.surface := surface;
+   engine.width  := w;
+   engine.height := h;
 
-   logi('VENDOR: ' + pChar(glGetString(GL_VENDOR)));
-   logi('RENDERER: ' + pChar(glGetString(GL_RENDERER)));
-   logi('VERSION: ' + pChar(glGetString(GL_VERSION)));
-   logi('EXTENSIONS: ' + pChar(glGetString(GL_EXTENSIONS)));
+   if(engine.state.first_run) then begin
+      logi('VENDOR: ' + pChar(glGetString(GL_VENDOR)));
+      logi('RENDERER: ' + pChar(glGetString(GL_RENDERER)));
+      logi('VERSION: ' + pChar(glGetString(GL_VERSION)));
+      logi('EXTENSIONS: ' + pChar(glGetString(GL_EXTENSIONS)));
+   end;
 
    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
    glEnable(GL_CULL_FACE);
    glShadeModel(GL_SMOOTH);
    glDisable(GL_DEPTH_TEST);
 
+   engine.state.first_run := false;
+
    Result := true;
 end;
 
 { Just the current frame in the display. }
-procedure engine_draw_frame(engine: PEngine);
+procedure engine_draw_frame(var engine: TEngine);
 begin
-   if engine^.display = nil then
+   if engine.display = nil then
        exit;
 
-   glClearColor(engine^.state.x / engine^.width, engine^.state.angle, engine^.state.y / engine^.height, 1);
+   glClearColor(engine.state.x / engine.width, engine.state.angle, engine.state.y / engine.height, 1);
    glClear(GL_COLOR_BUFFER_BIT);
 
-   eglSwapBuffers(engine^.display, engine^.surface);
+   eglSwapBuffers(engine.display, engine.surface);
 end;
 
 { Tear down the EGL context currently associated with the display. }
-procedure engine_term_display(engine: PEngine);
+procedure engine_term_display(var engine: tEngine);
 begin
-   if engine^.display <> EGL_NO_DISPLAY then begin
-      eglMakeCurrent(engine^.display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+   if engine.display <> EGL_NO_DISPLAY then begin
+      eglMakeCurrent(engine.display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
-      if engine^.context <> EGL_NO_CONTEXT then
-         eglDestroyContext(engine^.display, engine^.context);
+      if engine.context <> EGL_NO_CONTEXT then
+         eglDestroyContext(engine.display, engine.context);
 
-      if engine^.surface <> EGL_NO_SURFACE then
-         eglDestroySurface(engine^.display, engine^.surface);
+      if engine.surface <> EGL_NO_SURFACE then
+         eglDestroySurface(engine.display, engine.surface);
 
-      eglTerminate(engine^.display);
+      eglTerminate(engine.display);
    end;
 
-   engine^.animating := false;
-   engine^.display := EGL_NO_DISPLAY;
-   engine^.context := EGL_NO_CONTEXT;
-   engine^.surface := EGL_NO_SURFACE;
+   engine.animating := false;
+   engine.display := EGL_NO_DISPLAY;
+   engine.context := EGL_NO_CONTEXT;
+   engine.surface := EGL_NO_SURFACE;
 end;
 
 procedure engine_handle_cmd(app: Pandroid_app; cmd: cint32);
@@ -172,12 +179,12 @@ begin
     case cmd of
       APP_CMD_INIT_WINDOW: begin
          if (engine^.app^.window <> nil) then begin
-            if(engine_init_display(engine)) then
+            if(engine_init_display(engine^)) then
                 engine^.animating := true;
          end;
       end;
       APP_CMD_TERM_WINDOW: begin
-         engine_term_display(engine);
+         engine_term_display(engine^);
       end;
       APP_CMD_LOST_FOCUS: begin
          engine^.animating := false;
@@ -193,7 +200,7 @@ begin
       if engine.state.angle > 1 then
          engine.state.angle := 0;
 
-      engine_draw_frame(@engine);
+      engine_draw_frame(engine);
    end;
 end;
 
@@ -207,6 +214,7 @@ var
 
 begin
    ZeroOut(engine, SizeOf(engine));
+   engine.state.first_run := true;
    app^.userData := @engine;
 
    app^.onAppCmd := @engine_handle_cmd;
@@ -224,7 +232,7 @@ begin
       end;
 
       if app^.destroyRequested then begin
-         engine_term_display(@engine);
+         engine_term_display(engine);
          exit;
       end;
 
