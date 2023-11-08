@@ -110,10 +110,7 @@ begin
    unitFile.Path := f.FileName;
 
    if(f.Extension = '.pas') then begin
-      pasResult := oxedPasScanner.Scan(f.FileName);
-
-      if(pasResult.IsUnit) then
-         oxedProject.Units.Add(unitFile);
+      oxedProject.Units.Add(unitFile);
    end else if(f.Extension = '.inc') then
       oxedProject.IncludeFiles.Add(unitFile);
 end;
