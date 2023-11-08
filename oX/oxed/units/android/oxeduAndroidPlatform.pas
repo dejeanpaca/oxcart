@@ -67,7 +67,7 @@ end;
 
 function oxedTAndroidPlatform.GetDvarGroup(): PDVarGroup;
 begin
-   Result := @oxedAndroidSettings.dvg;
+   Result := @oxedAndroidSettings.Project.dvg;
 end;
 
 procedure init();
