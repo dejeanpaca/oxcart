@@ -112,8 +112,8 @@ TYPE
       {are we building a library}
       function IsLibrary(): boolean;
 
-      {recreate project files}
-      class function Recreate(): boolean; static;
+      {recreate project files (force if you want to force an update)}
+      class function Recreate(force: boolean = false): boolean; static;
       {run the build process}
       procedure RunBuild();
       {clean up resources at the end of a build}
@@ -695,11 +695,11 @@ begin
    Result := (FileUtils.Exists(oxedBuild.WorkArea + fn) <= 0) or (oxedBuild.BuildType = OXED_BUILD_TASK_REBUILD);
 end;
 
-class function oxedTBuildGlobal.Recreate(): boolean;
+class function oxedTBuildGlobal.Recreate(force: boolean): boolean;
 begin
    oxedProject.RecreateTempDirectory();
 
-   if(ShouldRecreate(oxPROJECT_APP_INFO_INCLUDE)) then
+   if force or (ShouldRecreate(oxPROJECT_APP_INFO_INCLUDE)) then
       oxedAppInfo.Recreate(oxedBuild.WorkArea + oxPROJECT_APP_INFO_INCLUDE);
 
    {check if main unit exists}
@@ -710,16 +710,15 @@ begin
       end;
    end;
 
-
    {recreate library}
-   if(ShouldRecreate(oxedBuild.Props.Source)) then begin
+   if(force or ShouldRecreate(oxedBuild.Props.Source)) then begin
       if(oxedBuild.BuildTarget = OXED_BUILD_LIB) then
          RecreateLib()
       else
          RecreateProgram();
    end;
 
-   if(ShouldRecreate(oxedBuild.Props.ConfigFile)) then begin
+   if(force or ShouldRecreate(oxedBuild.Props.ConfigFile)) then begin
       if(oxedBuild.BuildMechanism = OXED_BUILD_VIA_FPC) then begin
          if(not RecreateFPCConfig()) then begin
             oxedConsole.e('Failed to create project fpc config file.');
@@ -1015,11 +1014,11 @@ begin
 
    {recreate fpc files}
    oxedBuild.BuildMechanism := OXED_BUILD_VIA_FPC;
-   oxedBuild.Recreate();
+   oxedBuild.Recreate(true);
 
    {recreate laz files}
    oxedBuild.BuildMechanism := OXED_BUILD_VIA_LAZ;
-   oxedBuild.Recreate();
+   oxedBuild.Recreate(true);
 end;
 
 procedure oxedTBuildGlobal.RunTask(taskType: oxedTBuildTaskType);
