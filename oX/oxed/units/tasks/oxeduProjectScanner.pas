@@ -35,6 +35,8 @@ TYPE
       FileName,
       {file name within the package}
       PackageFileName,
+      {file name relative to the project path}
+      ProjectFileName,
       {file extension}
       Extension,
       {path of the package}
@@ -97,6 +99,7 @@ begin
    f.Package := oxedProjectScanner.CurrentPackage;
    f.PackagePath := oxedProjectScanner.CurrentPath;
    f.PackageFileName := ExtractRelativepath(f.PackagePath, f.FileName);
+   f.ProjectFileName := oxedProject.GetPackageRelativePath(f.Package^) + f.PackageFileName;
 
    oxedProjectScanner.OnFile.Call(f);
 
