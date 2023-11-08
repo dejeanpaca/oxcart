@@ -100,7 +100,6 @@ begin
    uiWindow.Create.Buttons:= uiWindow.RootDefaultButtons;
 
    uiWindow.SetupCreatedWindow(wnd, uiWindow.Create);
-   uiWindow.RestoreCreateDefaults();
 
    wnd.oxwParent := wnd;
 
