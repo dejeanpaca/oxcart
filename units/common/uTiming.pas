@@ -22,7 +22,8 @@ TYPE
       StartTime,
       CurrentTime,
       ElapsedTime: longint;
-      ElapsedTimef: single;
+      ElapsedTimef,
+      PreviousElapsedTimef: single;
 
       GoalTime,
       Add: longint; {added time}
@@ -125,6 +126,7 @@ CONST
       CurrentTime:      0;
       ElapsedTime:      0;
       ElapsedTimef:     0;
+      PreviousElapsedTimef: 0;
       GoalTime:         0;
       Add:              0;
       Iterations:       0;
@@ -301,7 +303,8 @@ end;
 function TTimer.TimeFlow(): single;
 begin
    Update();
-   Result := ElapsedTimef * Factor;
+   Result := (ElapsedTimef - PreviousElapsedTimef) * Factor;
+   PreviousElapsedTimef := ElapsedTimef;
 end;
 
 
