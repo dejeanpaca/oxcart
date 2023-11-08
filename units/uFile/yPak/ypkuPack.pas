@@ -153,7 +153,7 @@ begin
          end;
          result := FindNext(src);
       until (result <> 0);
-   end;;
+   end;
 
    path := ExcludeTrailingPathDelimiter(ExtractFilePath(path));
 

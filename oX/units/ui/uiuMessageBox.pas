@@ -486,7 +486,7 @@ begin
    f := CachedFont;
    scale := (ICON_HEIGHT div 2) / f.GetHeight();
 
-   scolor := cWhite4ub;;
+   scolor := cWhite4ub;
 
    symbol := 'o';
    if (Style = uimbsNOTIFICATION) then

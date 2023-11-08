@@ -63,7 +63,7 @@ begin
 
    if(jnih.ok) then begin
       jnih.getConstructor();
-      jvidmLoad         := jnih.findMethod('load', '(IJJ)Z');;
+      jvidmLoad         := jnih.findMethod('load', '(IJJ)Z');
       jvidmUnload       := jnih.findMethod('unload', '()V');
       jvidmPlay         := jnih.findMethod('play', '()V');
       jvidmPause        := jnih.findMethod('pause', '()V');

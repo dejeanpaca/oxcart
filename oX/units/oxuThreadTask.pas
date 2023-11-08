@@ -174,7 +174,7 @@ begin
       Callback.Routine();
 
    if(Callback.ObjectRoutine <> nil) then
-      Callback.ObjectRoutine();;
+      Callback.ObjectRoutine();
 end;
 
 procedure oxTRoutineThreadTask.SetRoutine(routine: TProcedure);
