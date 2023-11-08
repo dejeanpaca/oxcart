@@ -144,6 +144,8 @@ TYPE
       procedure ClearContext(context: loopint); virtual;
       function DestroyContext({%H-}context: loopint): boolean; virtual;
 
+      function RenderingContextCount(): loopint;
+
       {destroy every rendering context}
       procedure DestroyAllRenderingContexts(wnd: oxTWindow);
 
@@ -419,6 +421,19 @@ function oxTRenderer.DestroyContext(context: loopint): boolean;
 begin
    RemoveContext(context);
    Result := true;
+end;
+
+function oxTRenderer.RenderingContextCount(): loopint;
+var
+   i: loopint;
+
+begin
+   Result := 0;
+
+   for i := 0 to oxMAXIMUM_RENDER_CONTEXT do begin
+      if(RenderingContexts[i].Created) then
+         inc(Result);
+   end;
 end;
 
 procedure oxTRenderer.DestroyAllRenderingContexts(wnd: oxTWindow);
