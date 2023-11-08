@@ -106,13 +106,13 @@ TYPE
       function GetAnsiString(): ansistring;
       function GetWideString(): widestring;
 
-      function GetString(): string;
+      function GetString(): StdString;
 
       {gets the variable in a string representation}
-      function GetAsString(): string;
+      function GetAsString(): StdString;
 
       {initialize dvar}
-      procedure Init(dt: longint; v: pointer; const newName: string = '');
+      procedure Init(dt: longint; v: pointer; const newName: StdString = '');
 
       procedure Update(var newVariable);
    end;
@@ -122,7 +122,7 @@ TYPE
    { TDVarQuick }
 
    TDVarQuick = record
-      Name: string;
+      Name: StdString;
       DataType: longint;
       Variable: pointer;
 
@@ -143,7 +143,7 @@ TYPE
    { TDVarGroup }
 
    TDVarGroup = record
-      Name: string;
+      Name: StdString;
 
       vs,
       ve: PDVar;
@@ -155,18 +155,18 @@ TYPE
 
       {adds a group as a subgroup to the specified parent group}
       procedure Add(var g: TDVarGroup);
-      procedure Add(const newName: string; out g: TDVarGroup);
+      procedure Add(const newName: StdString; out g: TDVarGroup);
       {adds the specified dvar to dvar group}
       procedure Add(var a: TDVar);
       {quickly initialize and add a dvar}
-      procedure Add(out a: TDVar; const newName: string; dt: longint; v: pointer);
+      procedure Add(out a: TDVar; const newName: StdString; dt: longint; v: pointer);
       {adds the specified quick dvar to a group, using r as the actual dvar (assigned from a)}
       procedure Add(var a: TDVarQuick; var r: TDVar);
 
       {find a dvar in a this group}
-      function Get(const findName: string): PDVar;
+      function Get(const findName: StdString): PDVar;
       {find a subgroup in this group}
-      function GetGroup(const findName: string): PDVarGroup;
+      function GetGroup(const findName: StdString): PDVarGroup;
 
       function GetGroupCount(): longint;
       function GetGroupCountRecursive(): longint;
@@ -188,20 +188,20 @@ TYPE
 
       { initialize various variables }
       procedure Init(out a: TDVar);
-      procedure Init(out dv: TDVar; const n: string; dt: longint; v: pointer);
+      procedure Init(out dv: TDVar; const n: StdString; dt: longint; v: pointer);
 
       procedure Init(out g: TDVarGroup);
-      procedure Init(out g: TDVarGroup; const name: string);
+      procedure Init(out g: TDVarGroup; const name: StdString);
 
       {find a dvar}
-      function Get(const name: string): PDVar;
+      function Get(const name: StdString): PDVar;
       {find a dvar group}
-      function GetGroup(const name: string): PDVarGroup;
+      function GetGroup(const name: StdString): PDVarGroup;
 
       {add a group}
       procedure Add(var g: TDVarGroup);
       {initialize and add a group}
-      procedure Add(const newName: string; out g: TDVarGroup);
+      procedure Add(const newName: StdString; out g: TDVarGroup);
 
       {get dvar count in the root group}
       function GetVariableCount(): loopint;
@@ -235,7 +235,7 @@ begin
    sub.Add(@g);
 end;
 
-procedure TDVarGroup.Add(const newName: string; out g: TDVarGroup);
+procedure TDVarGroup.Add(const newName: StdString; out g: TDVarGroup);
 begin
    g := dvar.DefaultGroup;
    g.Name := newName;
@@ -247,7 +247,7 @@ begin
    a := dvar.Default;
 end;
 
-procedure TDVarGlobal.Init(out dv: TDVar; const n: string; dt: longint; v: pointer);
+procedure TDVarGlobal.Init(out dv: TDVar; const n: StdString; dt: longint; v: pointer);
 begin
    dvar.Init(dv);
    dv.Name := n;
@@ -260,21 +260,21 @@ begin
    g := dvar.DefaultGroup;
 end;
 
-procedure TDVarGlobal.Init(out g: TDVarGroup; const name: string);
+procedure TDVarGlobal.Init(out g: TDVarGroup; const name: StdString);
 begin
    g := dvar.DefaultGroup;
    g.Name := name;
 end;
 
-function TDVarGlobal.Get(const name: string): PDVar;
+function TDVarGlobal.Get(const name: StdString): PDVar;
 begin
-   result := dvars.Get(name);
+   Result := dvars.Get(name);
 end;
 
-function TDVarGroup.Get(const findName: string): PDVar;
+function TDVarGroup.Get(const findName: StdString): PDVar;
 var
    leftOver,
-   section: string;
+   section: StdString;
    subGroup: PDVarGroup;
    cur: PDVar;
 
@@ -307,18 +307,18 @@ begin
       until (cur = nil);
    end;
 
-   result := nil;
+   Result := nil;
 end;
 
-function TDVarGlobal.GetGroup(const name: string): PDVarGroup;
+function TDVarGlobal.GetGroup(const name: StdString): PDVarGroup;
 begin
-   result := dvars.GetGroup(name);
+   Result := dvars.GetGroup(name);
 end;
 
-function TDVarGroup.GetGroup(const findName: string): PDVarGroup;
+function TDVarGroup.GetGroup(const findName: StdString): PDVarGroup;
 var
    leftOver,
-   section: string;
+   section: StdString;
    cur: PDVarGroup;
 
 begin
@@ -352,7 +352,7 @@ begin
       until (cur = nil);
    end;
 
-   result := nil;
+   Result := nil;
 end;
 
 procedure TDVarGroup.Add(var a: TDVar);
@@ -369,7 +369,7 @@ begin
    ve := @a;
 end;
 
-procedure TDVarGroup.Add(out a: TDVar; const newName: string; dt: longint; v: pointer);
+procedure TDVarGroup.Add(out a: TDVar; const newName: StdString; dt: longint; v: pointer);
 begin
    a.Init(dt, v, newName);
    Add(a);
@@ -399,7 +399,7 @@ begin
    dvars.sub.Add(@g);
 end;
 
-procedure TDVarGlobal.Add(const newName: string; out g: TDVarGroup);
+procedure TDVarGlobal.Add(const newName: StdString; out g: TDVarGroup);
 begin
    dvar.Init(g);
    g.Name := newName;
@@ -438,7 +438,7 @@ begin
       cur := cur^.Next;
    until (cur = nil);
 
-   result := n;
+   Result := n;
 end;
 
 function TDVarGroup.GetGroupCountRecursive(): longint;
@@ -469,7 +469,7 @@ begin
       cur := cur^.Next;
    until (cur = nil);
 
-   result := n;
+   Result := n;
 end;
 
 function TDVarGroup.GetVariableCountRecursive(): longint;
@@ -489,11 +489,11 @@ end;
 
 operator := (a: TDVarQuick): TDVar;
 begin
-   dvar.Init(result);
+   dvar.Init(Result);
 
-   result.Name       := a.Name;
-   result.DataType   := a.DataType;
-   result.variable   := a.variable;
+   Result.Name       := a.Name;
+   Result.DataType   := a.DataType;
+   Result.variable   := a.variable;
 end;
 
 { SET VARIABLE }
@@ -624,15 +624,15 @@ TYPE
    stringcast = widestring;
 {$INCLUDE dvargetstring.inc}
 
-function TDVar.GetString(): string;
+function TDVar.GetString(): StdString;
 TYPE
-   stringcast = string;
+   stringcast =  StdString;
 {$INCLUDE dvargetstring.inc}
 
 {will try to convert a string to a suitable data type for }
 function TDVar.AssignFromString(const s: StdString): boolean;
 var
-   ls: string = '';
+   ls: StdString = '';
    code: longint;
    signed: int64;
    unsigned: uint64;
@@ -643,7 +643,7 @@ var
 begin
    case DataType of
       dtcBOOL: begin
-         ls := lowercase(s);
+         ls := UTF8Lower(s);
          if(ls = '0') or (ls = 'false') then begin
             Assign(false);
             exit(true);
@@ -687,50 +687,52 @@ begin
             exit(true);
          end;
       end;
-      dtcSHORTSTRING, dtcANSISTRING, dtcWIDESTRING: begin
+      dtcSHORTSTRING, dtcANSISTRING, dtcWIDESTRING, dtcUTF8STRING: begin
          Assign(s);
          exit(true);
       end;
       else
-         result := false;
+         Result := false;
    end;
 
-   result := false;
+   Result := false;
 end;
 
-function TDVar.GetAsString(): string;
+function TDVar.GetAsString(): StdString;
 begin
    if(variable <> nil) then begin
       case DataType of
-         dtcBOOL: result         := sf(boolean(variable^));
+         dtcBOOL: Result         := sf(boolean(variable^));
 
-         dtcINT8: result         := sf(shortint(variable^));
-         dtcINT16: result        := sf(smallint(variable^));
-         dtcINT32: result        := sf(longint(variable^));
-         dtcINT64: result        := sf(int64(variable^));
+         dtcINT8: Result         := sf(shortint(variable^));
+         dtcINT16: Result        := sf(smallint(variable^));
+         dtcINT32: Result        := sf(longint(variable^));
+         dtcINT64: Result        := sf(int64(variable^));
 
-         dtcUINT8: result        := sf(byte(variable^));
-         dtcUINT16: result       := sf(word(variable^));
-         dtcUINT32: result       := sf(dword(variable^));
-         dtcUINT64: result       := sf(qword(variable^));
+         dtcUINT8: Result        := sf(byte(variable^));
+         dtcUINT16: Result       := sf(word(variable^));
+         dtcUINT32: Result       := sf(dword(variable^));
+         dtcUINT64: Result       := sf(qword(variable^));
 
-         dtcSINGLE: result       := sf(single(variable^));
-         dtcDOUBLE: result       := sf(double(variable^));
+         dtcSINGLE: Result       := sf(single(variable^));
+         dtcDOUBLE: Result       := sf(double(variable^));
 
-         dtcSHORTSTRING: result  := string(shortstring(variable^));
-         dtcANSISTRING: result   := string(ansistring(variable^));
-         dtcWIDESTRING: result   := string(widestring(variable^));
+         dtcSHORTSTRING: Result  := StdString(shortstring(variable^));
+         dtcANSISTRING: Result   := StdString(ansistring(variable^));
+         dtcWIDESTRING: Result   := StdString(UTF8Encode(widestring(variable^)));
+         dtcUTF8STRING: Result := StdString(variable^);
          else
-            result := '';
+            Result := '';
       end;
    end else
-      result := '';
+      Result := '';
 end;
 
-procedure TDVar.Init(dt: longint; v: pointer; const newName: string = '');
+procedure TDVar.Init(dt: longint; v: pointer; const newName: StdString = '');
 begin
    Self.DataType := dt;
    Self.Variable := v;
+
    if(newName <> '') then
       Self.Name := newName;
 end;

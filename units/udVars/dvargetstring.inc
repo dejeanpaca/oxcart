@@ -1,13 +1,13 @@
-//function TDVar.GetShortString(): shortstring;
+//function TDVar.GetShortString(): string;
 begin
    if(variable <> nil) then
       case DataType of
-         dtcSHORTSTRING:   result := {%H-}stringcast(shortstring(variable^));
-         dtcANSISTRING:    result := {%H-}stringcast(ansistring(variable^));
-         dtcWIDESTRING:    result {%H-}:= {%H-}stringcast(widestring(variable^));
+         dtcSHORTSTRING:   Result := {%H-}stringcast(shortstring(variable^));
+         dtcANSISTRING:    Result := {%H-}stringcast(ansistring(variable^));
+         dtcWIDESTRING:    Result {%H-}:= {%H-}stringcast(widestring(variable^));
          else
-            result := '';
+            Result := '';
       end
    else
-      result := '';
+      Result := '';
 end;
