@@ -54,7 +54,8 @@ var
    valCode: loopint;
 
    monospaced,
-   exactSize: boolean;
+   exactSize,
+   maxPixelValues: boolean;
    alphaType: oxTFreetypeAlphaType;
 
 begin
@@ -95,10 +96,12 @@ begin
       monospaced := font.Square;
       exactSize := font.ExactSize;
       alphaType := font.AlphaType;
+      maxPixelValues := font.MaxPixelValues;
 
       font.Square := true;
       font.ExactSize := true;
       font.AlphaType := oxFREETYPE_ALPHA_AVERAGE;
+      font.MaxPixelValues := true;
 
       if(code <> 0) then
          font.CreateGlyphTexture(code, Result, Size)
@@ -108,6 +111,7 @@ begin
       font.Square := monospaced;
       font.ExactSize := exactSize;
       font.AlphaType := alphaType;
+      font.MaxPixelValues := maxPixelValues;
 
       if(Result <> nil) then begin
          Result.Path := path;
