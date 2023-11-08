@@ -12,8 +12,9 @@ INTERFACE
       uStd, uAppInfo, udvars, oxuRunRoutines, uError;
 
 CONST
-   oxEngineName               = 'oX';
-   oxsVersion                 = '0.4';
+   oxEngineName = 'oX';
+   oxVersion: array[0..2] of loopint = (0, 4, 0);
+   oxsVersion = '0.4';
 
 
    { ERROR CODES }
