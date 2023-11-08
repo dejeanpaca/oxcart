@@ -1,5 +1,8 @@
 {$IFDEF OXED_PLUGIN_TESTS}
    {tests plugin}
-   , oxeduTestsPlugin, oxeduTestsPluginUI
+   , oxeduTestsPlugin,
+   {$IFNDEF NO_UI}
+   oxeduTestsPluginUI
+   {$ENDIF}
 {$ENDIF}
 
