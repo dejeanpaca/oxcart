@@ -9,7 +9,7 @@ UNIT oxeduSplashScreen;
 INTERFACE
 
    USES
-      uOX, oxuSplashScreen, oxuDefaultSplashScreen, oxuPaths;
+      uOX, oxuSplashScreen, oxuDefaultSplashScreen, oxuSplashScreenRun, oxuPaths;
 
 TYPE
 

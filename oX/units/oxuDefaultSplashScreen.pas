@@ -13,7 +13,7 @@ INTERFACE
       {ox}
       oxuTransform, oxuRenderer, oxuRender, oxuRenderUtilities, oxuRenderingContext,
       oxuMaterial, oxuTypes,
-      oxuSplashScreen;
+      oxuSplashScreen, oxuSplashScreenRun;
 
 TYPE
    { oxTDefaultSplashScreen }

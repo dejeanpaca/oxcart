@@ -9,15 +9,13 @@ UNIT oxuSplashScreen;
 INTERFACE
 
    USES
-      uTiming, uStd, uLog, uColors, vmVector, StringUtils,
-      {oX}
-      uOX, oxuTypes, oxuWindowTypes,
-      oxuRenderer, oxuRender, oxuSurfaceRender, oxuRenderingContext, oxuRenderTask,
-      oxuTexture, oxuTextureGenerate, oxuPaths, oxuThreadTask,
-      oxuMaterial, oxuFont, oxumPrimitive, oxuWindow, oxuTransform, oxuResourcePool, oxuPrimitives,
-      oxuRunRoutines, oxuTimer,
-      {ui}
-      oxuUI, uiuWindow, uiuWindowRender, uiuDraw;
+     uStd, uTiming, uLog, uColors, vmVector, StringUtils,
+     {ox}
+     uOX, oxuTypes, oxuWindowTypes, oxuTimer, oxuPaths, oxuFont, oxuTransform, oxuPrimitives,
+     oxuTexture, oxumPrimitive, oxuMaterial, oxuTextureGenerate, oxuResourcePool,
+     oxuRenderer, oxuRenderTask, oxuRenderingContext, oxuSurfaceRender, oxuRender,
+     {ui}
+     uiuWindowRender, uiuDraw, oxuUI;
 
 CONST
    oxSPLASH_SCREEN_DEFAULT_DISPLAY_TIME = 2000;
@@ -26,6 +24,9 @@ TYPE
    { oxTSplashScreen }
 
    oxTSplashScreen = class(oxTRenderTask)
+      {default minimum splash display time, in miliseconds (0 means no display time)}
+      DefaultDisplayTime: longword; static;
+
       ClearColor: TColor4f;
       ClearBits: TBitSet;
 
@@ -74,21 +75,6 @@ TYPE
 
    oxTSplashScreenClass = class of oxTSplashScreen;
 
-   oxTSplashScreenGlobal = record
-      {default minimum splash display time, in miliseconds (0 means no display time)}
-      DefaultDisplayTime: longword;
-      {should the splash screen run on the main thread}
-      RunOnMainThread: boolean;
-
-      Startup: oxTSplashScreen;
-      {run in a thread}
-      StartupThreaded: boolean;
-      StartupInstance: oxTSplashScreenClass;
-   end;
-
-VAR
-   oxSplashScreen: oxTSplashScreenGlobal;
-
 IMPLEMENTATION
 
 { oxTSplashScreen }
@@ -99,7 +85,7 @@ begin
 
    ClearColor := cBlack4f;
    ClearBits := oxrBUFFER_CLEAR_NOTHING;
-   DisplayTime := oxSplashScreen.DefaultDisplayTime;
+   DisplayTime := DefaultDisplayTime;
 end;
 
 procedure oxTSplashScreen.StartSplash(wnd: oxTWindow);
@@ -241,48 +227,5 @@ function oxTBasicSplashScreen.GetVersionString(): string;
 begin
    Result := ox.GetVersionString();
 end;
-
-{ INITIALIZATION }
-
-procedure splashInitialize();
-begin
-   if(oxSplashScreen.Startup = nil) then begin
-      if(oxSplashScreen.StartupInstance <> nil) then
-         oxSplashScreen.Startup := oxSplashScreen.StartupInstance.Create();
-   end;
-
-   if(oxSplashScreen.Startup <> nil) then begin
-      oxSplashScreen.Startup.StartSplash(oxWindow.Current);
-      oxSplashScreen.Startup.Render();
-
-      {start in thread if indicated to do so}
-      if(oxSplashScreen.StartupThreaded) and (not oxSplashScreen.RunOnMainThread) then
-         oxSplashScreen.Startup.Start();
-   end;
-end;
-
-procedure splashDone();
-begin
-   if(oxSplashScreen.Startup <> nil) then begin
-      oxSplashScreen.Startup.WaitForDisplayTime();
-      oxSplashScreen.Startup.StopWait();
-      oxSplashScreen.Startup.RestoreRender();
-
-      oxThreadEvents.Destroy(oxTThreadTask(oxSplashScreen.Startup));
-   end;
-end;
-
-INITIALIZATION
-   oxSplashScreen.StartupInstance := oxTBasicSplashScreen;
-   oxSplashScreen.DefaultDisplayTime := oxSPLASH_SCREEN_DEFAULT_DISPLAY_TIME;
-
-   {$IFNDEF NO_THREADS}
-   oxSplashScreen.StartupThreaded := true;
-   oxSplashScreen.RunOnMainThread := true;
-   {$ENDIF}
-
-   ox.OnPreInitialize.Add('ox.splash_initialize', @splashInitialize);
-   ox.OnStart.Add('ox.splash_start', @splashDone);
-   ox.OnInitialize.dAdd('ox.splash_deinitialize', @splashDone);
 
 END.
