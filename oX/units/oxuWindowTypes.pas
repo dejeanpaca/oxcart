@@ -72,6 +72,8 @@ TYPE
       procedure RaiseError(const description: StdString);
       procedure CreateFail(const description: StdString);
       procedure DestroyFail(const description: StdString);
+
+      procedure FromWindow(out rtc: oxTRenderTargetContext);
    end;
 
    oxTWindowClass = class of oxTWindow;
@@ -143,6 +145,15 @@ end;
 procedure oxTWindow.DestroyFail(const description: StdString);
 begin
    RaiseError(eFAIL, description);
+end;
+
+procedure oxTWindow.FromWindow(out rtc: oxTRenderTargetContext);
+begin
+   oxTRenderTargetContext.Initialize(rtc);
+
+   rtc.ContextType := oxRENDER_TARGET_CONTEXT_RENDER;
+   rtc.Target := @RenderTarget;
+   rtc.RenderContext := RenderingContext;
 end;
 
 END.

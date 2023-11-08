@@ -285,7 +285,7 @@ TYPE
    end;
 
    {render target context type, indicates what the render context is used for this render target}
-   oxTRenderTargetContext = (
+   oxTRenderTargetContextType = (
       {we'll use this context (generate textures, shaders, ..., but no rendering)}
       oxRENDER_TARGET_CONTEXT_USE,
       {we'll use this context for rendering}
@@ -293,12 +293,17 @@ TYPE
    );
 
    {render target context, to be used for render context setup with a render target}
+
+   { oxTRenderTargetContext }
+
    oxTRenderTargetContext = record
       Target: oxPRenderTarget;
       {what will the context be used for}
-      ContextType: oxTRenderTargetContext;
+      ContextType: oxTRenderTargetContextType;
       {render context used with this render target}
       RenderContext: loopint;
+
+      class procedure Initialize(out rtc: oxTRenderTargetContext); static;
    end;
 
 CONST
@@ -363,6 +368,13 @@ end;
 operator = (const a: oxTDimensions; const b: oxTDimensions): boolean;
 begin
    Result := (a.w = b.w) and (a.h = b.h);
+end;
+
+{ oxTRenderTargetContext }
+
+class procedure oxTRenderTargetContext.Initialize(out rtc: oxTRenderTargetContext);
+begin
+   ZeroOut(rtc, SizeOf(rtc));
 end;
 
 { oxTProgressIndicatorData }
