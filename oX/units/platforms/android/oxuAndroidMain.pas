@@ -10,7 +10,7 @@ INTERFACE
 
 USES
    android_native_app_glue, android_log_helper, native_activity, android_native_activity_helper,
-   android_window,
+   android_window, android_layout_params,
    ctypes, looper, jni, uAndroid,
    uLog, uUnix, StringUtils,
    {app}
@@ -22,17 +22,21 @@ procedure android_main(app: Pandroid_app); cdecl;
 
 IMPLEMENTATION
 
+TYPE
+   TState = (
+      STATE_INITIALIZE,
+      STATE_WAIT_FOR_WINDOW,
+      WINDOW_READY
+   );
+
 VAR
    mainThreadLooper: PALooper;
    mainThreadMessagePipe: unxTPipe;
+   State: TState;
 
 procedure hideNavbar();
 begin
    androidAutoHideNavBar(AndroidApp^.activity);
-
-{   if(AndroidApp^.Window <> nil) then
-      androidLayoutParams.SetLayoutInDisplayCutoutMode(AndroidApp^.window, LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES);}
-
    oxAndroidPlatform.fHideNavbar := false;
 end;
 
@@ -54,6 +58,13 @@ begin
    {hide navbar if requested}
    if(oxAndroidPlatform.fHideNavbar) then
       hideNavbar();
+
+   if(State = STATE_WAIT_FOR_WINDOW) then begin
+      if(AndroidApp^.activity <> nil) then
+         androidWindow.SetLayoutInDisplayCutoutMode(AndroidApp^.activity, LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES);
+
+      State := STATE_INITIALIZE;
+   end;
 end;
 
 procedure signalMainThread();
@@ -96,6 +107,7 @@ begin
    uApp.app.Active := true;
 
    oxAndroidPlatform.Startup();
+   State := STATE_INITIALIZE;
 
    repeat
       cycledEvents := false;
@@ -107,11 +119,16 @@ begin
 
       if(not ox.Initialized) and (not ox.InitializationFailed) then begin
          if(not ox.Started) and (oxAndroidPlatform.fInitWindow) then begin
-            if(oxAndroidPlatform.AutoHideNavBar) then
+            if(oxAndroidPlatform.AutoHideNavBar) and (State = STATE_INITIALIZE) then begin
+               State := STATE_WAIT_FOR_WINDOW;
                oxAndroidPlatform.HideNavBar();
+            end else
+               State := WINDOW_READY;
 
-            oxRun.Initialize();
-            oxAndroidPlatform.fInitWindow := false;
+            if(State = WINDOW_READY) then begin
+               oxRun.Initialize();
+               oxAndroidPlatform.fInitWindow := false;
+            end;
          end;
       end;
 
