@@ -15,6 +15,8 @@ INTERFACE
       uLog, uBuild,
       {app}
       appuActionEvents,
+      {oX}
+      oxuwndToast,
       {oxed}
       uOXED, oxeduActions, oxeduBuild, oxeduMessages, oxeduProject;
 
@@ -39,6 +41,8 @@ VAR
 procedure runLazarus();
 begin
    try
+      oxToast.Show('Lazaurs', 'Starting lazarus ... ');
+
       laz.Options := laz.Options - [poWaitOnExit];
       laz.Execute();
    except
@@ -81,6 +85,7 @@ begin
          laz.Parameters.Add('--force-new-instance');
          laz.Parameters.Add(oxedProject.TempPath + oxPROJECT_LIB_LPI);
       end else begin
+         oxToast.Show('Lazaurs', 'Already running');
          log.v('Lazarus already running');
          exit;
       end;
