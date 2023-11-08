@@ -25,7 +25,7 @@ VAR
      f: TFile;
      filterMode: longint;
      included, excluded: string;
-     entries: ypkTEntries;
+     entries: ypkfTEntries;
   end;
 
 procedure ypkfSetBuffer();
