@@ -36,6 +36,8 @@ function vmCopySign(x, y: single): single; inline;
 function vmMax(x, y: single): single; inline;
 
 { CLAMPING }
+procedure vmClamp(var value: single; min, max: single); inline;
+
 procedure vmClampMax(var value: single; max: single); inline;
 function vmClampMaxf(value, max: single): single; inline;
 procedure vmClampMax(var value: longint; max: longint); inline;
@@ -182,6 +184,15 @@ begin
       result := y
    else
       result := x;
+end;
+
+procedure vmClamp(var value: single; min, max: single);
+begin
+   if(value > max) then
+      value := max;
+
+   if(value < min) then
+      value := min;
 end;
 
 procedure vmClampMax(var value: single; max: single);
