@@ -25,15 +25,15 @@ TYPE
       {platforms on which this feature is disabled by default (but can be enabled)}
       Disabled: TStringArray;
 
-      function SetExcluded(const newExcluded: array of string): oxPFeatureDescriptor;
-      function SetIncluded(const newIncluded: array of string): oxPFeatureDescriptor;
+      procedure SetExcluded(const newExcluded: array of StdString);
+      procedure SetIncluded(const newIncluded: array of StdString);
       {sets platforms for which this feature is disabled by default (but can be enabled)}
-      function SetDisabled(const newDisabled: array of string): oxPFeatureDescriptor;
-      function IsExcluded(const platform: string): boolean;
-      function IsIncluded(const platform: string): boolean;
-      function IsEnabled(const platform: string): boolean;
+      procedure SetDisabled(const newDisabled: array of StdString);
+      function IsExcluded(const platform: StdString): boolean;
+      function IsIncluded(const platform: StdString): boolean;
+      function IsEnabled(const platform: StdString): boolean;
 
-      function IsSupported(const platform: string; isLibrary: boolean = false): boolean;
+      function IsSupported(const platform: StdString; isLibrary: boolean = false): boolean;
    end;
 
    { oxTFeatureDescriptor }
@@ -48,6 +48,11 @@ TYPE
       Platforms: oxTFeaturePlatforms;
 
       class procedure Initialize(out f: oxTFeatureDescriptor); static;
+
+      function SetExcluded(const newExcluded: array of StdString): oxPFeatureDescriptor;
+      function SetIncluded(const newIncluded: array of StdString): oxPFeatureDescriptor;
+      {sets platforms for which this feature is disabled by default (but can be enabled)}
+      function SetDisabled(const newDisabled: array of StdString): oxPFeatureDescriptor;
    end;
 
    oxTFeatureList = specialize TSimpleList<oxTFeatureDescriptor>;
@@ -71,14 +76,14 @@ TYPE
    oxTFeaturesGlobal = record
       List: oxTFeatureList;
 
-      function Add(const name, description, symbol: string): oxPFeatureDescriptor;
-      function BuildFeatureSymbols(platform: string; isLibrary: boolean = false): TStringArray;
-      function GetSupported(platform: string; isLibrary: boolean = false): oxTFeaturePDescriptorList;
+      function Add(const name, description, symbol: StdString): oxPFeatureDescriptor;
+      function BuildFeatureSymbols(const platform: StdString; isLibrary: boolean = false): TStringArray;
+      function GetSupported(const platform: StdString; isLibrary: boolean = false): oxTFeaturePDescriptorList;
       function IsSupported(const feature: oxTFeatureDescriptor;
-         const platform: string; isLibrary: boolean = false): boolean;
+         const platform: StdString; isLibrary: boolean = false): boolean;
 
       {find a feature by its name}
-      function FindByName(const name: string): oxPFeatureDescriptor;
+      function FindByName(const name: StdString): oxPFeatureDescriptor;
    end;
 
 VAR
@@ -119,7 +124,7 @@ end;
 
 { oxTFeaturePlatforms }
 
-function oxTFeaturePlatforms.SetExcluded(const newExcluded: array of string): oxPFeatureDescriptor;
+procedure  oxTFeaturePlatforms.SetExcluded(const newExcluded: array of StdString);
 var
    i: loopint;
 
@@ -129,11 +134,9 @@ begin
    for i := 0 to High(excluded) do begin
       Excluded[i] := newExcluded[i];
    end;
-
-   Result := @Self;
 end;
 
-function oxTFeaturePlatforms.SetIncluded(const newIncluded: array of string): oxPFeatureDescriptor;
+procedure  oxTFeaturePlatforms.SetIncluded(const newIncluded: array of StdString);
 var
    i: loopint;
 
@@ -143,11 +146,9 @@ begin
    for i := 0 to High(included) do begin
       Included[i] := newIncluded[i];
    end;
-
-   Result := @Self;
 end;
 
-function oxTFeaturePlatforms.SetDisabled(const newDisabled: array of string): oxPFeatureDescriptor;
+procedure oxTFeaturePlatforms.SetDisabled(const newDisabled: array of StdString);
 var
    i: loopint;
 
@@ -157,11 +158,9 @@ begin
    for i := 0 to High(disabled) do begin
       Disabled[i] := newDisabled[i];
    end;
-
-   Result := @Self;
 end;
 
-function oxTFeaturePlatforms.IsExcluded(const platform: string): boolean;
+function oxTFeaturePlatforms.IsExcluded(const platform: StdString): boolean;
 var
    i: loopint;
 
@@ -174,7 +173,7 @@ begin
    Result := false;
 end;
 
-function oxTFeaturePlatforms.IsIncluded(const platform: string): boolean;
+function oxTFeaturePlatforms.IsIncluded(const platform: StdString): boolean;
 var
    i: loopint;
 
@@ -196,7 +195,7 @@ begin
    Result := true;
 end;
 
-function oxTFeaturePlatforms.IsEnabled(const platform: string): boolean;
+function oxTFeaturePlatforms.IsEnabled(const platform: StdString): boolean;
 var
    i: loopint;
 
@@ -211,7 +210,7 @@ begin
    Result := true;
 end;
 
-function oxTFeaturePlatforms.IsSupported(const platform: string; isLibrary: boolean): boolean;
+function oxTFeaturePlatforms.IsSupported(const platform: StdString; isLibrary: boolean): boolean;
 var
    p: StdString;
 
@@ -236,9 +235,27 @@ begin
    f.IncludeByDefault := true;
 end;
 
+function oxTFeatureDescriptor.SetExcluded(const newExcluded: array of StdString): oxPFeatureDescriptor;
+begin
+   Platforms.SetExcluded(newExcluded);
+   Result := @Self;
+end;
+
+function oxTFeatureDescriptor.SetIncluded(const newIncluded: array of StdString): oxPFeatureDescriptor;
+begin
+   Platforms.SetIncluded(newIncluded);
+   Result := @Self;
+end;
+
+function oxTFeatureDescriptor.SetDisabled(const newDisabled: array of StdString): oxPFeatureDescriptor;
+begin
+   Platforms.SetDisabled(newDisabled);
+   Result := @Self;
+end;
+
 { oxTFeaturesGlobal }
 
-function oxTFeaturesGlobal.Add(const name, description, symbol: string): oxPFeatureDescriptor;
+function oxTFeaturesGlobal.Add(const name, description, symbol: StdString): oxPFeatureDescriptor;
 var
    descriptor: oxTFeatureDescriptor;
 
@@ -253,7 +270,7 @@ begin
    Result := List.GetLast();
 end;
 
-function oxTFeaturesGlobal.BuildFeatureSymbols(platform: string; isLibrary: boolean): TStringArray;
+function oxTFeaturesGlobal.BuildFeatureSymbols(const platform: StdString; isLibrary: boolean): TStringArray;
 var
    i: loopint;
    plist: oxTFeaturePDescriptorList;
@@ -271,7 +288,7 @@ begin
    end;
 end;
 
-function oxTFeaturesGlobal.GetSupported(platform: string; isLibrary: boolean): oxTFeaturePDescriptorList;
+function oxTFeaturesGlobal.GetSupported(const platform: StdString; isLibrary: boolean): oxTFeaturePDescriptorList;
 var
    i: loopint;
 
@@ -285,13 +302,13 @@ begin
 end;
 
 function oxTFeaturesGlobal.IsSupported(const feature: oxTFeatureDescriptor;
-   const platform: string; isLibrary: boolean): boolean;
+   const platform: StdString; isLibrary: boolean): boolean;
 
 begin
    Result := feature.Platforms.IsSupported(platform, isLibrary);
 end;
 
-function oxTFeaturesGlobal.FindByName(const name: string): oxPFeatureDescriptor;
+function oxTFeaturesGlobal.FindByName(const name: StdString): oxPFeatureDescriptor;
 begin
    Result := List.FindByName(name);
 end;
@@ -302,10 +319,10 @@ INITIALIZATION
    oxFeatures.Add('renderer.gl', 'OpenGL renderer', 'OX_RENDERER_GL');
 
    oxFeatures.Add('renderer.dx11', 'DirectX 11 renderer', 'OX_RENDERER_DX11')^.
-      Platforms.SetIncluded(['windows'])^.IncludeByDefault := false;
+      SetIncluded(['windows'])^.IncludeByDefault := false;
 
    oxFeatures.Add('renderer.console', 'Console renderer', 'OX_RENDERER_CONSOLE')^.
-      Platforms.SetExcluded(['android'])^.IncludeByDefault := false;
+      SetExcluded(['android'])^.IncludeByDefault := false;
 
    oxFeatures.Add('renderer.vulkan', 'Vulkan renderer', 'OX_RENDERER_VULKAN')^.IncludeByDefault := false;
 
