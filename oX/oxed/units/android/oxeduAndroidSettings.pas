@@ -40,7 +40,9 @@ TYPE
          {project files path when manual file management is enabled}
          ProjectFilesPath: StdString;
          {should you manage android files yourself}
-         ManualFileManagement: boolean;
+         ManualFileManagement,
+         {exclude default android_main symbol}
+         ExcludeDefaultMain: boolean;
 
          {target android version}
          TargetVersion: loopint;
@@ -80,6 +82,7 @@ VAR
    dvPackageName,
    dvEmulatorCPUType,
    dvProjectFilesPath,
+   dvExcludeDefaultMain,
 
    { general settings }
 
@@ -95,6 +98,7 @@ begin
    Project.ManualFileManagement := false;
    Project.ProjectFilesPath := '';
    Project.TargetVersion := OXED_ANDROID_DEFAULT_TARGET_VERSION;
+   Project.ExcludeDefaultMain := false;
 end;
 
 procedure oxedTAndroidSettings.Validate();
@@ -201,6 +205,7 @@ INITIALIZATION
    oxedAndroidSettings.Project.dvg.Add(dvEmulatorCPUType, 'emulator_cpu_type', dtcENUM, @oxedAndroidSettings.Project.EmulatorCPUType);
    oxedAndroidSettings.Project.dvg.Add(dvTargetVersion, 'target_version', dtcLOOPINT, @oxedAndroidSettings.Project.TargetVersion);
    oxedAndroidSettings.Project.dvg.Add(dvProjectFilesPath, 'project_files_path', dtcSTRING, @oxedAndroidSettings.Project.ProjectFilesPath);
+   oxedAndroidSettings.Project.dvg.Add(dvExcludeDefaultMain, 'exclude_default_main', dtcBOOL, @oxedAndroidSettings.Project.ExcludeDefaultMain);
 
    oxedAndroidSettings.dvg.Add(dvSDKPath, 'sdk_path', dtcSTRING, @oxedAndroidSettings.SDKPath);
    oxedAndroidSettings.dvg.Add(dvNDKPath, 'ndk_path', dtcSTRING, @oxedAndroidSettings.NDKPath);
