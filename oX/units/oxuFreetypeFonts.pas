@@ -208,6 +208,8 @@ begin
    font.Characters[n].BearingX := Characters[n].BearingX;
    font.Characters[n].BearingY := Characters[n].BearingY;
    font.Characters[n].Advance := Characters[n].Advance;
+   font.Characters[n].Height := Characters[n].Width;
+   font.Characters[n].Width := Characters[n].Height;
 
    if(image <> nil) then begin
       font.Characters[n].Width := image.Width;
@@ -221,9 +223,6 @@ begin
       image.CopyArea(fontImage, 0, 0, cX, currentLine * size, image.Width, image.Height);
 
       inc(cX, image.Width);
-   end else begin
-      font.Characters[n].Width := 0;
-      font.Characters[n].Height := 0;
    end;
 end;
 

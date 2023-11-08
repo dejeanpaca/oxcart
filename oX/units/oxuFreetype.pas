@@ -41,9 +41,11 @@ TYPE
 
    { oxTFreetypeFontGlyphData }
    oxTFreetypeFontGlyphData = record
+      Width,
+      Height,
       BearingX,
       BearingY,
-      Advance: longint;
+      Advance: loopint;
    end;
 
    {$IFNDEF OX_FEATURE_FREETYPE}
@@ -244,16 +246,18 @@ begin
    bmp := GetGlyphGray(c, size, index);
 
    if(bmp.Data <> nil) then begin
+      Result.Width := bmp.Width;
+      Result.Height := bmp.Height;
       Result.BearingX := bmp.BearingX;
       Result.BearingY := bmp.BearingY;
       Result.Advance := bmp.Advance;
 
       if(bmp.Size > 0) then begin
          {create a blank image to store the glyph in imgTImage format}
-         image := img.MakeBlank(bmp.width, bmp.height, PIXF_GREYSCALE_8);
+         image := img.MakeBlank(bmp.Width, bmp.Height, PIXF_GREYSCALE_8);
 
          {copy over data from the glyph}
-         Move(bmp.data^, image.Image^, image.Size);
+         Move(bmp.Data^, image.Image^, image.Size);
 
          {convert glyph image to wanted format}
          if(imgOperations.Transform(image, PIXF_RGBA) <> 0) then
@@ -262,7 +266,7 @@ begin
          {copy image to destination}
          if(not Square) then begin
             if(not ExactSize) then
-               glyphImage := img.MakeBlank(bmp.width, bmp.height, PIXF_RGBA)
+               glyphImage := img.MakeBlank(bmp.Width, bmp.Height, PIXF_RGBA)
             else
                glyphImage := img.MakeBlank(bmp.Width, size, PIXF_RGBA)
          end else begin
@@ -360,6 +364,8 @@ begin
    bmp := GetGlyphGray(c, size, index);
 
    if(bmp.Data <> nil) then begin
+      Result.Width := bmp.Width;
+      Result.Height := bmp.Height;
       Result.BearingX := bmp.BearingX;
       Result.BearingY := bmp.BearingY;
       Result.Advance := bmp.Advance;
