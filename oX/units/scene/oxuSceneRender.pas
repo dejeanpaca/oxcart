@@ -144,6 +144,7 @@ begin
       entity := Scene;
 
    params.Viewport^.ClearColor := Scene.World.ClearColor;
+   params.Viewport^.Apply();
 
    params.Projection^.Apply();
    params.Camera^.LookAt();
