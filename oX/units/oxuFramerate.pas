@@ -11,7 +11,7 @@ INTERFACE
    USES
      StringUtils, uTiming,
      {ox}
-     uOX, oxuRunRoutines;
+     uOX, oxuRunRoutines, oxuWindowRender;
 
 CONST
    oxcFramerateUpdateInterval: longint = 1000;
@@ -19,13 +19,13 @@ CONST
 TYPE
    oxTFramerate = record
       f,
-      favg: single;
+      fAverage: single;
 
       fTimer,
-      favgTimer: TTimer;
+      fAverageTimer: TTimer;
 
       fCount,
-      favgCount: longint;
+      fAverageCount: longint;
 
       procedure Update();
       procedure Increment();
@@ -51,20 +51,20 @@ IMPLEMENTATION
 { FRAMERATE }
 procedure oxFramerateInit(var f: oxTFramerate);
 begin
-   f.fCount       := 0;
-   f.favgCount    := 0;
+   f.fCount := 0;
+   f.fAverageCount := 0;
 
    f.fTimer.Init();
-   f.favgTimer.Init();
+   f.fAverageTimer.Init();
    f.fTimer.Init();
-   f.favgTimer.Init();
+   f.fAverageTimer.Init();
 end;
 
 procedure oxTFramerate.Update();
 begin
    {update timers}
    fTimer.Update();
-   favgTimer.Update();
+   fAverageTimer.Update();
 
    {calculate framerate}
    if(not fTimer.Paused) then begin
@@ -76,9 +76,9 @@ begin
    end;
 
    {calculate average framerate}
-   if(not favgTimer.Paused) then begin
-      if(favgTimer.ElapsedTime > 0) then begin
-         favg := favgCount / (favgTimer.ElapsedTime / 1000);
+   if(not fAverageTimer.Paused) then begin
+      if(fAverageTimer.ElapsedTime > 0) then begin
+         fAverage := fAverageCount / (fAverageTimer.ElapsedTime / 1000);
       end;
    end;
 end;
@@ -88,8 +88,8 @@ begin
    if(not fTimer.Paused) then
       inc(fCount);
 
-   if(not favgTimer.Paused) then
-      inc(favgCount);
+   if(not fAverageTimer.Paused) then
+      inc(fAverageCount);
 
    Update();
 end;
@@ -97,13 +97,13 @@ end;
 procedure oxTFramerate.Pause();
 begin
    fTimer.Pause();
-   favgTimer.Pause();
+   fAverageTimer.Pause();
 end;
 
 procedure oxTFramerate.Resume();
 begin
    fTimer.Resume();
-   favgTimer.Resume();
+   fAverageTimer.Resume();
 end;
 
 function oxTFramerate.Get(): string;
@@ -113,7 +113,7 @@ end;
 
 function oxTFramerate.GetAverage(): string;
 begin
-   Result := sf(favg, 2);
+   Result := sf(fAverage, 2);
 end;
 
 function oxFramerateGet(fps: single; nDecimals: longint): string;
