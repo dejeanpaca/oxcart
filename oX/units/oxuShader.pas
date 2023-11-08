@@ -92,9 +92,11 @@ TYPE
       Uniforms: oxTShaderUniforms;
 
       constructor Create(); override;
+      destructor Destroy(); override;
 
       function Compile(): boolean; virtual;
       function SetupUniforms(): boolean; virtual;
+      procedure Dispose();
       function GetIndex(const uniformName: string): loopint;
 
       procedure SetUniform(const uniformName: string; value: pointer);
@@ -260,6 +262,13 @@ begin
    Uniforms.InitializeValues(Uniforms);
 end;
 
+destructor oxTShader.Destroy();
+begin
+   inherited;
+
+   Dispose();
+end;
+
 function oxTShader.Compile(): boolean;
 begin
    Include(Properties, oxpSHADER_COMPILED);
@@ -269,6 +278,11 @@ end;
 function oxTShader.SetupUniforms(): boolean;
 begin
    Result := true;
+end;
+
+procedure oxTShader.Dispose();
+begin
+   Uniforms.Dispose();
 end;
 
 function oxTShader.GetIndex(const uniformName: string): loopint;
@@ -504,7 +518,7 @@ end;
 procedure deinit();
 begin
    if(oxShader.Default <> nil) and (oxShader.Default.ClassName <> 'oxTShader') then
-      oxResource.Free(oxShader.Default);
+         oxResource.Free(oxShader.Default);
 end;
 
 procedure InitializeUniformSizes();

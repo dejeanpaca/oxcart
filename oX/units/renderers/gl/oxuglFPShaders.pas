@@ -108,6 +108,8 @@ end;
 
 procedure onUse();
 begin
+   oxResource.Free(oxglFPShader);
+
    oxglFPShader := oxglTFPShader.Create();
    oxglFPShader.MarkPermanent();
 
