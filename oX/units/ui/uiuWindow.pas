@@ -1946,7 +1946,7 @@ begin
       x := APosition.x + fw;
       y := APosition.y - ((GetTitleHeight() - d.h) div 2);
 
-      oxRenderingUtilities.TexturedQuad(APosition.x, APosition.y, d.w / 2, d.h / 2, tex);
+      oxRenderingUtilities.TexturedQuad(x, y, d.w / 2, d.h / 2, tex);
    end;
 end;
 
