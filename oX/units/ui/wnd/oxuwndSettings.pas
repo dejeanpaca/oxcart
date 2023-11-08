@@ -29,12 +29,12 @@ USES
 TYPE
    { oxTSettingsWindow }
 
-   oxTSettingsWindow = class(oxTSettingsWindowBase)
-      constructor Create(); override;
+   oxTSettingsWindow = object(oxTSettingsWindowBase)
+      constructor Create();
 
       protected
       {adds widgets to the connect window}
-      procedure AddWidgets(); override;
+      procedure AddWidgets(); virtual;
    end;
 
 VAR
@@ -65,8 +65,7 @@ end;
 {$IFDEF OX_FEATURE_CONSOLE}
 procedure consoleCallback({%H-}con: conPConsole);
 begin
-   if(oxwndSettings <> nil) then
-      oxwndSettings.Open();
+   oxwndSettings.Open();
 end;
 {$ENDIF}
 
@@ -93,12 +92,12 @@ end;
 
 procedure init();
 begin
-   oxwndSettings := oxTSettingsWindow.Create();
+   oxwndSettings.Create();
 end;
 
 procedure deinit();
 begin
-   FreeObject(oxwndSettings);
+   oxwndSettings.Destroy();
 end;
 
 INITIALIZATION

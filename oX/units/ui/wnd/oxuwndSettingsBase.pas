@@ -27,7 +27,7 @@ TYPE
 
    { oxTSettingsWindowBase }
 
-   oxTSettingsWindowBase = class(oxTWindowBase)
+   oxTSettingsWindowBase = object(oxTWindowBase)
       Tabs: wdgTTabs;
 
       {list of procedures called when splash window is initialized}
@@ -50,7 +50,7 @@ TYPE
       OnCancel: TProcedures;
       OnValidate: oxTSettingsWindowStringFunctions;
 
-      constructor Create(); override;
+      constructor Create();
 
       protected
       procedure CreateTabsWidget();
@@ -59,7 +59,7 @@ TYPE
       procedure AddRestoreDefaultsButton();
       procedure AddRevertButton();
 
-      procedure CreateWindow(); override;
+      procedure CreateWindow(); virtual;
 
       procedure Save(); virtual;
       procedure Revert(); virtual;

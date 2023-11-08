@@ -33,7 +33,7 @@ TYPE
 
    { oxedTRunSettingsWindow }
 
-   oxedTRunSettingsWindow = class(oxTSettingsWindowBase)
+   oxedTRunSettingsWindow = object(oxTSettingsWindowBase)
       widgets: record
          RunParameters: wdgTStringList;
          AddParameter,
@@ -41,17 +41,17 @@ TYPE
          Separator: wdgTDivisor;
       end;
 
-      constructor Create(); override;
-      procedure Open; override;
+      constructor Create();
+      procedure Open(); virtual;
 
       protected
-      procedure AddWidgets(); override;
+      procedure AddWidgets(); virtual;
 
       procedure AddParameter();
       procedure RemoveParameter();
 
-      procedure Revert(); override;
-      procedure Save(); override;
+      procedure Revert(); virtual;
+      procedure Save(); virtual;
    end;
 
 VAR
@@ -139,8 +139,7 @@ end;
 {$IFDEF OX_FEATURE_CONSOLE}
 procedure consoleCallback({%H-}con: conPConsole);
 begin
-   if(oxedwndRunSettings <> nil) then
-      oxedwndRunSettings.Open();
+   oxedwndRunSettings.Open();
 end;
 {$ENDIF}
 
@@ -162,19 +161,19 @@ begin
       Action := OpenWindowAction;
 end;
 
-procedure oxedTRunSettingsWindow.Open;
+procedure oxedTRunSettingsWindow.Open();
 begin
    inherited Open;
 end;
 
 procedure init();
 begin
-   oxedwndRunSettings := oxedTRunSettingsWindow.Create();
+   oxedwndRunSettings.Create();
 end;
 
 procedure deinit();
 begin
-   FreeObject(oxedwndRunSettings);
+   oxedwndRunSettings.Destroy();
 end;
 
 INITIALIZATION

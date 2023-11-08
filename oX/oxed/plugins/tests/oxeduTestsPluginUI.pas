@@ -38,9 +38,11 @@ TYPE
       procedure SizeChanged(); override;
    end;
 
+   oxedPTestsWindow = ^oxedTTestsWindow;
+
    { oxedTTestsWindow }
 
-   oxedTTestsWindow = class(oxTWindowBase)
+   oxedTTestsWindow = object(oxTWindowBase)
       wdg: record
          IncludeOx: wdgTCheckbox;
          Divisor: wdgTDivisor;
@@ -54,9 +56,9 @@ TYPE
          Run: uiPContextMenuItem;
       end; static;
 
-      constructor Create(); override;
+      constructor Create();
 
-      procedure AddWidgets(); override;
+      procedure AddWidgets(); virtual;
 
       {run tests scan operation}
       procedure Scan();
@@ -131,26 +133,26 @@ end;
 
 procedure oxeduiTTestsWindow.SizeChanged();
 var
-   handler: oxedTTestsWindow;
+   handler: oxedPTestsWindow;
 
 begin
    inherited SizeChanged();
 
-   handler := oxedTTestsWindow(BaseHandler);
+   handler := BaseHandler;
 
-   if(handler <> nil) and (handler.wdg.Ok <> nil) then begin
-      handler.wdg.IncludeOx.SetPosition(wdgPOSITION_HORIZONTAL_LEFT or wdgPOSITION_VERTICAL_TOP);
-      handler.wdg.IncludeOx.SetControlMethod(@controlIncludeOxCheckbox);
+   if(handler <> nil) and (handler^.wdg.Ok <> nil) then begin
+      handler^.wdg.IncludeOx.SetPosition(wdgPOSITION_HORIZONTAL_LEFT or wdgPOSITION_VERTICAL_TOP);
+      handler^.wdg.IncludeOx.SetControlMethod(@controlIncludeOxCheckbox);
 
-      handler.wdg.Ok.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT or wdgPOSITION_VERTICAL_BOTTOM);
-      handler.wdg.Scan.Move(handler.wdg.Ok.LeftOf(0) - handler.wdg.Scan.GetComputedWidth() + 1, handler.wdg.Ok.Position.y);
+      handler^.wdg.Ok.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT or wdgPOSITION_VERTICAL_BOTTOM);
+      handler^.wdg.Scan.Move(handler^.wdg.Ok.LeftOf(0) - handler^.wdg.Scan.GetComputedWidth() + 1, handler^.wdg.Ok.Position.y);
 
-      handler.wdg.Divisor.Move(0, handler.wdg.Ok.AboveOf() + wdgDEFAULT_SPACING);
-      handler.wdg.Divisor.AutoSize();
+      handler^.wdg.Divisor.Move(0, handler^.wdg.Ok.AboveOf() + wdgDEFAULT_SPACING);
+      handler^.wdg.Divisor.AutoSize();
 
-      handler.wdg.List.SetPosition(wdgPOSITION_HORIZONTAL_LEFT);
-      handler.wdg.List.Move(handler.wdg.List.Position.x, handler.wdg.IncludeOx.BelowOf());
-      handler.wdg.List.Resize(Dimensions.w - wdgDEFAULT_SPACING * 2, handler.wdg.IncludeOx.BelowOf() - handler.wdg.Divisor.AboveOf() - wdgDEFAULT_SPACING);
+      handler^.wdg.List.SetPosition(wdgPOSITION_HORIZONTAL_LEFT);
+      handler^.wdg.List.Move(handler^.wdg.List.Position.x, handler^.wdg.IncludeOx.BelowOf());
+      handler^.wdg.List.Resize(Dimensions.w - wdgDEFAULT_SPACING * 2, handler^.wdg.IncludeOx.BelowOf() - handler^.wdg.Divisor.AboveOf() - wdgDEFAULT_SPACING);
    end;
 end;
 
@@ -217,8 +219,7 @@ var
 begin
    enabled := canEnable();
 
-   if(oxedwndTests <> nil) then
-      oxedwndTests.UpdateWidgets(enabled);
+   oxedwndTests.UpdateWidgets(enabled);
 
    if(oxedTTestsWindow.menu.Run <> nil) then
       oxedTTestsWindow.menu.Run^.Enable(enabled);
@@ -226,7 +227,7 @@ end;
 
 procedure scanDone();
 begin
-   if(oxedTests.TaskType = OXED_TEST_TASK_SCAN) and (oxedwndTests <> nil) then begin
+   if(oxedTests.TaskType = OXED_TEST_TASK_SCAN) then begin
       oxedwndTests.Update();
       update();
    end;
@@ -241,7 +242,7 @@ end;
 
 procedure init();
 begin
-   oxedwndTests := oxedTTestsWindow.Create();
+   oxedwndTests.Create();
 end;
 
 procedure deinit();

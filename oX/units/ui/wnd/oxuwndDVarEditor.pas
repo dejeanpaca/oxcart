@@ -56,9 +56,11 @@ TYPE
       procedure SizeChanged(); override;
    end;
 
+   oxPDVarEditorWindow = ^oxTDVarEditorWindow;
+
    { oxTDVarEditorWindow }
 
-   oxTDVarEditorWindow = class(oxTWindowBase)
+   oxTDVarEditorWindow = object(oxTWindowBase)
       wdg: record
          Divisor: wdgTDivisor;
          Close: wdgTButton;
@@ -66,15 +68,15 @@ TYPE
          Vars: oxwdgTDVarEditorGrid;
       end;
 
-      constructor Create(); override;
+      constructor Create();
 
       protected
-      procedure CreateWindow(); override;
-      procedure AddWidgets(); override;
+      procedure CreateWindow(); virtual;
+      procedure AddWidgets(); virtual;
 
       protected
       procedure Resized();
-      procedure WindowDestroyed({%H-}wnd: oxuiTWindowBase); override;
+      procedure WindowDestroyed({%H-}wnd: oxuiTWindowBase); virtual;
    end;
 
 VAR
@@ -99,15 +101,15 @@ end;
 
 procedure oxwdgTChangeValue.OnInvisible();
 var
-   bwnd: oxTDVarEditorWindow;
+   bwnd: oxPDVarEditorWindow;
 
 begin
    inherited;
 
-   bwnd := oxTDVarEditorWindow(oxuiTDVarEditorWindow(wnd).BaseHandler);
+   bwnd := oxuiTDVarEditorWindow(wnd).BaseHandler;
 
-   if(bwnd <> nil) and (bwnd.wdg.Vars <> nil) then
-      oxTDVarEditorWindow(oxuiTDVarEditorWindow(wnd).BaseHandler).wdg.Vars.SelectQueue();
+   if(bwnd <> nil) and (bwnd^.wdg.Vars <> nil) then
+      oxTDVarEditorWindow(oxuiTDVarEditorWindow(wnd).BaseHandler^).wdg.Vars.SelectQueue();
 end;
 
 
@@ -245,7 +247,7 @@ begin
    inherited SizeChanged();
 
    if(BaseHandler <> nil) then
-      oxTDVarEditorWindow(BaseHandler).Resized();
+      oxTDVarEditorWindow(BaseHandler^).Resized();
 end;
 
 procedure oxTDVarEditorWindow.AddWidgets();
@@ -311,7 +313,7 @@ end;
 
 procedure Initialize();
 begin
-   oxwndDVarEditor := oxTDVarEditorWindow.Create();
+   oxwndDVarEditor.Create();
 
    {$IFDEF OX_FEATURE_CONSOLE}
    if(console.Selected <> nil) then
@@ -321,7 +323,7 @@ end;
 
 procedure deinitialize();
 begin
-   FreeObject(oxwndDVarEditor);
+   oxwndDVarEditor.Destroy();
 end;
 
 INITIALIZATION

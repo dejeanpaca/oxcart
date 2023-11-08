@@ -721,7 +721,7 @@ end;
 procedure SetOddColor();
 begin
    if(odd(i)) then
-      window.SetColor(pSkin.Colors.LightSurface.Darken(0.1))
+      window.SetColor(pSkin.Colors.LightSurface.Darken(0.06))
    else
       window.SetColor(pSkin.Colors.LightSurface);
 end;

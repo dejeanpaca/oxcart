@@ -47,7 +47,7 @@ TYPE
 
    { oxTToastWindow }
 
-   oxTToastWindow = class(oxTWindowBase)
+   oxTToastWindow = object(oxTWindowBase)
       EdgeDistance,
       TitleSeparation: longint;
 
@@ -61,9 +61,9 @@ TYPE
 
       Status: string;
 
-      constructor Create(); override;
-      procedure CreateWindow(); override;
-      procedure AddWidgets(); override;
+      constructor Create();
+      procedure CreateWindow(); virtual;
+      procedure AddWidgets(); virtual;
 
       {opens a toast message box window}
       procedure Show(const setTitle, setStatus: string; duration: longint);
@@ -240,17 +240,15 @@ end;
 {load toast window resources}
 procedure initToast();
 begin
-   oxToast := oxTToastWindow.Create();
+   oxToast.Create();
 
    oxTextureGenerate.Generate(oxPaths.UI + 'textures' + DirectorySeparator + 'toast.png', oxToast.BackgroundTexture);
 end;
 
 procedure deInitToast();
 begin
-   if(oxToast <> nil) then
-      oxResource.Free(oxToast.BackgroundTexture);
-
-   FreeObject(oxToast);
+   oxResource.Free(oxToast.BackgroundTexture);
+   oxToast.Destroy();
 end;
 
 INITIALIZATION

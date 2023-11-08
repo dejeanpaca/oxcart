@@ -35,7 +35,7 @@ TYPE
 
    { oxTSplashWindow }
 
-   oxTSplashWindow = class(oxTWindowBase)
+   oxTSplashWindow = object(oxTWindowBase)
      {optional link}
      LinkCaption,
      Link,
@@ -61,15 +61,15 @@ TYPE
      {list of procedures called when splash window is initialized}
      OnInit: TProcedures; static;
 
-     constructor Create(); override;
+     constructor Create();
 
      protected
-     procedure CreateWindow(); override;
-     procedure AddWidgets(); override;
+     procedure CreateWindow(); virtual;
+     procedure AddWidgets(); virtual;
    end;
 
 VAR
-   oxwndSplash: oxTSplashWindow = nil;
+   oxwndSplash: oxTSplashWindow;
 
 IMPLEMENTATION
 
@@ -196,12 +196,12 @@ begin
       console.Selected^.AddCommand('wnd:splash', @consoleCallback);
    {$ENDIF}
 
-   oxwndSplash := oxTSplashWindow.Create();
+   oxwndSplash.Create();
 end;
 
 procedure deinitialize();
 begin
-   FreeObject(oxwndSplash);
+   oxwndSplash.Destroy();
 end;
 
 procedure splashStart();

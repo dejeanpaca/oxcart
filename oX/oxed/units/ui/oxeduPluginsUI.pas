@@ -33,17 +33,19 @@ TYPE
       function GetValue(index, column: loopint): StdString; override;
    end;
 
+   oxedPPluginsWindow = ^oxedTPluginsWindow;
+
    { oxedTPluginsWindow }
 
-   oxedTPluginsWindow = class(oxTWindowBase)
+   oxedTPluginsWindow = object(oxTWindowBase)
       wdg: record
          Divisor: wdgTDivisor;
          List: oxedwdgTPluginsGrid;
          Ok: wdgTButton;
       end;
 
-      constructor Create(); override;
-      procedure AddWidgets(); override;
+      constructor Create();
+      procedure AddWidgets(); virtual;
    end;
 
 VAR
@@ -55,20 +57,20 @@ IMPLEMENTATION
 
 procedure oxeduiTPluginsWindow.SizeChanged();
 var
-   handler: oxedTPluginsWindow;
+   handler: oxedPPluginsWindow;
 
 begin
    inherited SizeChanged();
 
-   handler := oxedTPluginsWindow(BaseHandler);
+   handler := BaseHandler;
 
-   if(handler <> nil) and (handler.wdg.Ok <> nil) then begin
-      handler.wdg.Ok.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT or wdgPOSITION_VERTICAL_BOTTOM);
-      handler.wdg.Divisor.Move(0, handler.wdg.Ok.AboveOf() + wdgDEFAULT_SPACING);
-      handler.wdg.Divisor.AutoSize();
+   if(handler <> nil) and (handler^.wdg.Ok <> nil) then begin
+      handler^.wdg.Ok.SetPosition(wdgPOSITION_HORIZONTAL_RIGHT or wdgPOSITION_VERTICAL_BOTTOM);
+      handler^.wdg.Divisor.Move(0, handler^.wdg.Ok.AboveOf() + wdgDEFAULT_SPACING);
+      handler^.wdg.Divisor.AutoSize();
 
-      handler.wdg.List.SetPosition(wdgPOSITION_HORIZONTAL_LEFT or wdgPOSITION_VERTICAL_TOP);
-      handler.wdg.List.Resize(Dimensions.w - wdgDEFAULT_SPACING * 2, Dimensions.h - handler.wdg.Divisor.AboveOf() - wdgDEFAULT_SPACING);
+      handler^.wdg.List.SetPosition(wdgPOSITION_HORIZONTAL_LEFT or wdgPOSITION_VERTICAL_TOP);
+      handler^.wdg.List.Resize(Dimensions.w - wdgDEFAULT_SPACING * 2, Dimensions.h - handler^.wdg.Divisor.AboveOf() - wdgDEFAULT_SPACING);
    end;
 end;
 
@@ -129,12 +131,12 @@ end;
 
 procedure init();
 begin
-   oxedPluginsWindow := oxedTPluginsWindow.Create();
+   oxedPluginsWindow.Create();
 end;
 
 procedure deinit();
 begin
-   FreeObject(oxedPluginsWindow);
+   oxedPluginsWindow.Destroy();
 end;
 
 

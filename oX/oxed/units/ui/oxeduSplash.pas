@@ -104,8 +104,7 @@ end;
 
 procedure projectOpen();
 begin
-   if(oxwndSplash <> nil) then
-      oxwndSplash.Close();
+   oxwndSplash.Close();
 end;
 
 INITIALIZATION

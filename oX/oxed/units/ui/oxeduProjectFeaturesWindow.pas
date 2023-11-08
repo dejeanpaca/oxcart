@@ -31,7 +31,7 @@ TYPE
 
    { oxedTProjectFeaturesWindow }
 
-   oxedTProjectFeaturesWindow = class(oxTSettingsWindowBase)
+   oxedTProjectFeaturesWindow = object(oxTSettingsWindowBase)
       widgets: record
          Features: wdgTStringList;
          AddParameter,
@@ -39,17 +39,17 @@ TYPE
          Separator: wdgTDivisor;
       end;
 
-      constructor Create(); override;
-      procedure Open; override;
+      constructor Create();
+      procedure Open(); virtual;
 
       protected
-      procedure AddWidgets(); override;
+      procedure AddWidgets(); virtual;
 
       procedure AddParameter();
       procedure RemoveParameter();
 
-      procedure Revert(); override;
-      procedure Save(); override;
+      procedure Revert(); virtual;
+      procedure Save(); virtual;
    end;
 
 VAR
@@ -137,8 +137,7 @@ end;
 {$IFDEF OX_FEATURE_CONSOLE}
 procedure consoleCallback({%H-}con: conPConsole);
 begin
-   if(oxedwndProjectFeatures <> nil) then
-      oxedwndProjectFeatures.Open();
+   oxedwndProjectFeatures.Open();
 end;
 {$ENDIF}
 
@@ -157,19 +156,19 @@ begin
    inherited Create;
 end;
 
-procedure oxedTProjectFeaturesWindow.Open;
+procedure oxedTProjectFeaturesWindow.Open();
 begin
    inherited Open;
 end;
 
 procedure init();
 begin
-   oxedwndProjectFeatures := oxedTProjectFeaturesWindow.Create();
+   oxedwndProjectFeatures.Create();
 end;
 
 procedure deinit();
 begin
-   FreeObject(oxedwndProjectFeatures);
+   oxedwndProjectFeatures.Destroy();
 end;
 
 INITIALIZATION

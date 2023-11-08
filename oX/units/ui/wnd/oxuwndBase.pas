@@ -24,16 +24,16 @@ TYPE
 
    oxuiTWindowBase = class(uiTWindow)
       {the associated oxTWindowBase}
-      BaseHandler: TObject;
+      BaseHandler: pointer;
 
       procedure DeInitialize(); override;
    end;
 
    oxuiTWindowBaseClass = class of oxuiTWindowBase;
 
+   oxPWindowBase = ^oxTWindowBase;
    { oxTWindowBase }
-
-   oxTWindowBase = class
+   oxTWindowBase = object
       Name,
       Title: string;
 
@@ -50,8 +50,8 @@ TYPE
       ID: uiTControlID;
       OpenWindowAction: TEventID;
 
-      constructor Create(); virtual;
-      destructor Destroy(); override;
+      constructor Create();
+      destructor Destroy();
 
       {opens/creates the window}
       procedure Open(); virtual;
@@ -77,8 +77,8 @@ begin
    inherited DeInitialize();
 
    if(BaseHandler <> nil) then begin
-      oxTWindowBase(BaseHandler).WindowDestroyed(Self);
-      oxTWindowBase(BaseHandler).Window := nil;
+      oxPWindowBase(BaseHandler)^.WindowDestroyed(Self);
+      oxPWindowBase(BaseHandler)^.Window := nil;
    end;
 end;
 
@@ -100,8 +100,6 @@ end;
 
 destructor oxTWindowBase.Destroy();
 begin
-   inherited Destroy;
-
    if(Window <> nil) then begin
       Window.BaseHandler := nil;
       uiWindow.DisposeQueue(uiTWindow(Window));
@@ -136,7 +134,7 @@ begin
    Window.SetID(ID);
 
    if(Window <> nil) then begin
-      Window.BaseHandler := Self;
+      Window.BaseHandler := @Self;
 
       {add widgets}
       AddWidgets();

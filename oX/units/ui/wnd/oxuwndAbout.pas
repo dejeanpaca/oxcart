@@ -31,15 +31,15 @@ TYPE
 
    { oxTAboutWindow }
 
-   oxTAboutWindow = class(oxTWindowBase)
+   oxTAboutWindow = object(oxTWindowBase)
       Copyright: string;
       ShowBuiltWith: boolean;
       Links: array[0..3] of uiTLink;
 
-      constructor Create(); override;
+      constructor Create();
 
       protected
-      procedure AddWidgets(); override;
+      procedure AddWidgets(); virtual;
    end;
 
 VAR
@@ -124,7 +124,7 @@ end;
 
 procedure Initialize();
 begin
-   oxwndAbout := oxTAboutWindow.Create();
+   oxwndAbout.Create();
 
    {$IFDEF OX_FEATURE_CONSOLE}
    if(console.Selected <> nil) then
@@ -134,7 +134,7 @@ end;
 
 procedure deinitialize();
 begin
-   FreeObject(oxwndAbout);
+   oxwndAbout.Destroy();
 end;
 
 INITIALIZATION

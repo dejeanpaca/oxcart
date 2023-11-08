@@ -25,11 +25,11 @@ TYPE
 
    { oxTControllerInfoWindow }
 
-   oxTControllerInfoWindow = class(oxTWindowBase)
-      constructor Create(); override;
+   oxTControllerInfoWindow = object(oxTWindowBase)
+      constructor Create();
 
       protected
-      procedure AddWidgets(); override;
+      procedure AddWidgets(); virtual;
    end;
 
 VAR
@@ -70,7 +70,7 @@ end;
 
 procedure Initialize();
 begin
-   oxwndControllerInfo := oxTControllerInfoWindow.Create();
+   oxwndControllerInfo.Create();
 
    {$IFDEF OX_FEATURE_CONSOLE}
    if(console.Selected <> nil) then
@@ -80,7 +80,7 @@ end;
 
 procedure deinitialize();
 begin
-   FreeObject(oxwndControllerInfo);
+   oxwndControllerInfo.Destroy();
 end;
 
 INITIALIZATION

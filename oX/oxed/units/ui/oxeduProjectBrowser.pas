@@ -103,7 +103,7 @@ end;
 function wdgTOXEDProjectBrowserFiles.Key(var k: appTKeyEvent): boolean;
 begin
    if(k.Key.Equal(kcSPACE, 0)) then begin
-      if(LastGridItemUnderPointer > -1) and (k.Key.Released()) and (oxFilePreviewWindow <> nil) then
+      if(LastGridItemUnderPointer > -1) and (k.Key.Released()) then
          oxFilePreviewWindow.Show(GetFilePath(LastGridItemUnderPointer));
 
       Result := true;
