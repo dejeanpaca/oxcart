@@ -146,6 +146,12 @@ end;
 
 function oxglTRenderer.SetupWindow(wnd: oxTWindow): boolean;
 begin
+   {if window was already created just reset gl state}
+   if wnd.oxProperties.Created then begin
+      ogl.InitState();
+      exit;
+   end;
+
    {$IFDEF OX_LIBRARY_SUPPORT}
    oglExtensions.pExternal := pExtensions;
    pInfo := @oxglRendererInfo;
