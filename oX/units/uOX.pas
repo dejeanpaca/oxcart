@@ -210,4 +210,16 @@ INITIALIZATION
    ox.Mobile := true;
    {$ENDIF}
 
+   oxTRunRoutines.Initialize(ox.OnPreInitialize, 'ox.OnPreInitialize');
+   oxTRunRoutines.Initialize(ox.OnInitialize, 'ox.OnInitialize');
+   oxTRunRoutines.Initialize(ox.OnStart, 'ox.OnStart');
+   oxTRunRoutines.Initialize(ox.OnLoad, 'ox.OnLoad');
+   oxTRunRoutines.Initialize(ox.OnPreEvents, 'ox.OnPreEvents');
+   oxTRunRoutines.Initialize(ox.OnRun, 'ox.OnRun');
+   oxTRunRoutines.Initialize(ox.OnRunAfter, 'ox.OnRunAfter');
+
+   oxTRunRoutines.Initialize(ox.PreInit, 'ox.PreInit');
+   oxTRunRoutines.Initialize(ox.BaseInit, 'ox.BaseInit');
+   oxTRunRoutines.Initialize(ox.Init, 'ox.Init');
+
 END.

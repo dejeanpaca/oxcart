@@ -77,4 +77,10 @@ begin
    end;
 end;
 
+INITIALIZATION
+   {initialization procedures}
+   oxTRunRoutines.Initialize(ui.BaseInitializationProcs, 'ui.Base');
+   oxTRunRoutines.Initialize(ui.WidgetInitializationProcs, 'ui.Widget');
+   oxTRunRoutines.Initialize(ui.InitializationProcs, 'ui.Initialization');
+
 END.
