@@ -49,6 +49,7 @@ TYPE
 
          Default,
          DefaultBackground,
+         Verbose,
          Error,
          Warning: longint;
       end;
@@ -61,7 +62,7 @@ TYPE
       {$IFDEF WINDOWS}
       hwnd: HWND;
       {are we running in a bash environment under windows}
-      inBash: boolean;
+      ansiSupported: boolean;
       {$ENDIF}
 
       {method prefixed with an n do not write a prefix string}
@@ -70,6 +71,8 @@ TYPE
       procedure e(const say: string); inline;
       {write a warning string}
       procedure w(const say: string); inline;
+      {write a verbose string}
+      procedure v(const say: string); inline;
       {outputs text to the console}
       procedure i(const say: string);
       procedure i();
@@ -78,7 +81,10 @@ TYPE
 
       procedure TextColor(color: longint);
       procedure BackgroundColor(bkgColor: longint);
-      procedure ResetColor();
+      procedure Bold();
+      procedure Italic();
+      procedure Underline();
+      procedure ResetDefault();
 
       {$IFDEF TTY_SUPPORTED}
       procedure SetUnixColor();
@@ -126,14 +132,14 @@ VAR
       '35', {Magenta}
       '33', {Brown}
       '37', {LightGray}
-      '1;30', {DarkGray}
-      '1;34', {LightBlue}
-      '1;32', {LightGreen}
-      '1;36', {LightCyan}
-      '1;31', {LightRed}
-      '1;35', {LightMagenta}
-      '1;33', {Yellow}
-      '1;37' {White}
+      '90', {DarkGray}
+      '94', {LightBlue}
+      '92', {LightGreen}
+      '96', {LightCyan}
+      '91', {LightRed}
+      '95', {LightMagenta}
+      '93', {Yellow}
+      '97;' {White}
    );
 
    bguColorEscapeSequences: array[0..15] of string = (
@@ -145,14 +151,14 @@ VAR
       '45', {Magenta}
       '43', {Brown}
       '47', {LightGray}
-      '40', {DarkGray}
-      '44', {LightBlue}
-      '42', {LightGreen}
-      '46', {LightCyan}
-      '41', {LightRed}
-      '45', {LightMagenta}
-      '43', {Yellow}
-      '47' {White}
+      '100', {DarkGray}
+      '104', {LightBlue}
+      '102', {LightGreen}
+      '106', {LightCyan}
+      '101', {LightRed}
+      '105', {LightMagenta}
+      '103', {Yellow}
+      '107'  {White}
    );
 {$ENDIF}
 
@@ -203,7 +209,7 @@ begin
    begin
       TextColor(Colors.Error);
       writeln(say);
-      TextColor(Colors.Default);
+      ResetDefault();
    end;
 end;
 
@@ -213,7 +219,17 @@ begin
    begin
       TextColor(Colors.Warning);
       writeln(say);
-      TextColor(Colors.Default);
+      ResetDefault();
+   end;
+end;
+
+procedure TConsoleGlobal.v(const say: string);
+begin
+   {$IFDEF WINDOWS}if(isConsole = true) then{$ENDIF}
+   begin
+      TextColor(Colors.Verbose);
+      writeln(say);
+      ResetDefault();
    end;
 end;
 
@@ -257,7 +273,7 @@ begin
       {$ENDIF}
 
       {$IFDEF WINDOWS}
-      if(not inBash) then
+      if(not ansiSupported) then
          SetWindowsColor()
       else
          SetUnixColor();
@@ -274,7 +290,7 @@ begin
       SetUnixColor();
       {$ENDIF}
       {$IFDEF WINDOWS}
-      if(not inBash) then
+      if(not ansiSupported) then
          SetWindowsColor()
       else
          SetUnixColor();
@@ -282,13 +298,56 @@ begin
    end;
 end;
 
-procedure TConsoleGlobal.ResetColor;
+procedure TConsoleGlobal.Bold();
+begin
+   {$IFDEF UNIX}
+   Write(#27'[1m');
+   {$ENDIF}
+
+   {$IFDEF WINDOWS}
+   if(ansiSupported) then
+      write(#27'[1m');
+   {$ENDIF}
+end;
+
+procedure TConsoleGlobal.Italic();
+begin
+   {$IFDEF UNIX}
+   Write(#27'[3m');
+   {$ENDIF}
+
+   {$IFDEF WINDOWS}
+   if(ansiSupported) then
+      write(#27'[3m');
+   {$ENDIF}
+end;
+
+procedure TConsoleGlobal.Underline();
+begin
+   {$IFDEF UNIX}
+   Write(#27'[4m');
+   {$ENDIF}
+
+   {$IFDEF WINDOWS}
+   if(ansiSupported) then
+      write(#27'[4m');
+   {$ENDIF}
+end;
+
+procedure TConsoleGlobal.ResetDefault();
 begin
    LastTextColor := console.Colors.Default;
    LastBackgroundColor := console.Colors.DefaultBackground;
 
+   {$IFDEF UNIX}
+   Write(#27'[0m');
+   {$ENDIF}
+   {$IFDEF WINDOWS}
    TextColor(console.Colors.Default);
    BackgroundColor(console.Colors.DefaultBackground);
+
+   // TODO: Use SetConsoleTextAttribute with the original attributes
+   {$ENDIF}
 end;
 
 {$IFDEF WINDOWS}
@@ -309,7 +368,7 @@ end;
 {$ENDIF}
 
 {$IFDEF TTY_SUPPORTED}
-procedure TConsoleGlobal.SetUnixColor;
+procedure TConsoleGlobal.SetUnixColor();
 begin
    if(LastBackgroundColor < Transparent) then
       Write(#27'[' + fguColorEscapeSequences[LastTextColor] + ';' + bguColorEscapeSequences[LastBackgroundColor] + 'm')
@@ -325,7 +384,7 @@ begin
    {$ENDIF}
 
    {$IFDEF WINDOWS}
-   if(inBash) then
+   if(ansiSupported) then
       write(#27'[2J');
    {$ENDIF}
 end;
@@ -339,7 +398,7 @@ var
 
 begin
    if(pos('bash', sysutils.GetEnvironmentVariable('SHELL')) > 0) then begin
-      console.inBash := true;
+      console.ansiSupported := true;
       exit;
    end;
 
@@ -389,6 +448,7 @@ end;
 {$ENDIF}
 
 INITIALIZATION
+   console.Colors.Verbose := console.DarkGray;
    console.Colors.Error := console.LightRed;
    console.Colors.Warning := console.Yellow;
    console.Colors.Default := console.LightGray;
@@ -406,10 +466,11 @@ INITIALIZATION
 
    if(console.InitialTextColor <> console.Transparent) then
       console.Colors.Default := console.InitialTextColor;
+
    if(console.InitialBackgroundColor <> console.Transparent) then
       console.Colors.DefaultBackground := console.InitialBackgroundColor;
 
-   console.ResetColor();
+   console.ResetDefault();
 
 FINALIZATION
    if(console.InitialTextColor <> console.Transparent) then
