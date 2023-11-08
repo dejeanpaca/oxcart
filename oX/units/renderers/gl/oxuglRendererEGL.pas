@@ -31,6 +31,7 @@ TYPE
       function GetErrorDescription(error: loopint): StdString; virtual;
 
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
+      procedure OnInitWindow(wnd: oglTWindow); virtual;
       function OnDeInitWindow(wnd: oglTWindow): boolean; virtual;
       function GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext; virtual;
       function ContextCurrent(const context: oxTRenderTargetContext): boolean; virtual;
@@ -78,9 +79,6 @@ var
    );
 
    i: longint;
-   w,
-   h,
-   format: EGLint;
    numConfigs: EGLint;
    cfg,
    config: EGLConfig;
@@ -148,21 +146,25 @@ begin
          exit(false);
       end;
 
-      if eglGetConfigAttrib(wnd.wd.Display, config, EGL_NATIVE_VISUAL_ID, @format) = EGL_FALSE then begin
-         wnd.RaiseError('Failed to get EGL_NATIVE_VISUAL_ID');
-         exit(false);
-      end;
-
       wnd.wd.Config := config;
       oxRenderer.logtv('egl > Found a config');
    end;
 
+   Result := true;
+end;
+
+procedure oxglTEGL.OnInitWindow(wnd: oglTWindow);
+var
+   w,
+   h: EGLint;
+
+begin
    if(wnd.wd.Surface = nil) then begin
-      wnd.wd.Surface := eglCreateWindowSurface(wnd.wd.Display, config, AndroidApp^.window, nil);
+      wnd.wd.Surface := eglCreateWindowSurface(wnd.wd.Display, wnd.wd.Config, AndroidApp^.window, nil);
 
       if(wnd.wd.Surface = nil) then begin
          wnd.RaiseError('Failed to create window surface, egl error: ' + HexStr(RaiseError(), 4));
-         exit(false);
+         exit();
       end;
 
       oxRenderer.logtv('egl > Created window surface');
@@ -174,8 +176,6 @@ begin
    oxRenderer.logtv('egl > Surface dimensions: ' + sf(w) + 'x' + sf(h));
 
    wnd.Dimensions.Assign(w, h);
-
-   Result := true;
 end;
 
 function oxglTEGL.OnDeInitWindow(wnd: oglTWindow): boolean;
