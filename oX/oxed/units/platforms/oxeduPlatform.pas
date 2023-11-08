@@ -15,7 +15,7 @@ INTERFACE
       {ox}
       oxuRunRoutines,
       {oxed}
-      uOXED;
+      uOXED, oxeduPlatformConfiguration;
 
 TYPE
    oxedTPlatformArchitecture = record
@@ -40,8 +40,7 @@ TYPE
       GlyphName: string;
       GlyphCode: longword;
 
-      {compiler symbols to use when building}
-      CompilerSymbols: TSimpleStringList;
+      Configuration: oxedTPlatformConfiguration;
 
       constructor Create(); virtual;
 
@@ -66,6 +65,7 @@ TYPE
 
 VAR
    oxedPlatforms: oxedTPlatforms;
+
    {current platform on which the editor is running}
    oxedPlatform: oxedTPlatform;
 
@@ -112,6 +112,7 @@ begin
    {$ENDIF}
 
    oxedPlatform := FindById(CurrentId);
+
    if(oxedPlatform = nil) then
       oxedPlatform := oxedTPlatform.Create();
 end;
