@@ -954,13 +954,8 @@ end;
 
 procedure uiTDockableWindow.Undock();
 var
-   ratio: double;
-   offset: loopint;
-
    cur: uiTWindow;
-
-   d,
-   curD: oxTDimensions;
+   d: oxTDimensions;
 
 function ProcessHorizontal(all: boolean = false): boolean;
 var
@@ -968,60 +963,38 @@ var
    left,
    right: uiTSimpleWindowList;
 
-   i,
-   leftMost,
-   totalWidth,
-   totalWidthLeft,
-   totalWidthRight,
-   width: loopint;
+   i: loopint;
 
 begin
    horizontal := uiWindowList.FindHorizontalLineup(Self, all);
 
    if(horizontal.n > 0) then begin
-      left := horizontal.FindLeftOf(Position.x);
-      right := horizontal.FindRightOf(Position.x);
+      left := horizontal.FindContactsLeft(Self);
+      right := horizontal.FindContactsRight(Self);
 
       Result := (left.n > 0) or (right.n > 0);
 
-      if(not Result) then
-         exit;
-
-      totalWidthLeft := left.GetLeftWidthFrom(Position.x);
-      totalWidthRight := right.GetRightWidthFrom(Position.x + GetTotalWidth());
-
-      totalWidth := d.w + totalWidthLeft + totalWidthRight;
-
-      ratio := getRatio(totalWidth, totalWidthLeft + totalWidthRight);
-      leftMost := left.GetLeftmostCoordinate();
-
-      for i := 0 to (left.n - 1) do begin
-         cur := left.List[i];
-         curD := cur.GetTotalDimensions();
-
-         offset := leftMost + round((cur.Position.x - leftMost) * ratio);
-
-         cur.Move(offset, cur.Position.y);
-         cur.ResizeAdjusted(round(curD.w * ratio), curD.h);
+      if(Result) then begin
+         if(left.n > 0) then begin
+            for i := 0 to left.n - 1 do begin
+               cur := left.List[i];
+               cur.Resize(cur.Dimensions.w + d.w, cur.Dimensions.h);
+            end;
+         end else if(right.n > 0) then begin
+            for i := 0 to right.n - 1 do begin
+               cur := right.List[i];
+               cur.Move(Position.x, cur.Position.y);
+               cur.Resize(cur.Dimensions.w + d.w, cur.Dimensions.h);
+            end;
+         end;
       end;
 
-      for i := 0 to (right.n - 1) do begin
-         cur := right.List[i];
-         curD := cur.GetTotalDimensions();
-
-         width := round(curD.w * ratio);
-         offset := cur.Position.x - d.w;
-         offset := round(offset * ratio);
-
-         cur.Move(offset, cur.Position.y);
-         cur.ResizeAdjusted(width, curD.h);
-      end;
-
-      horizontal.Dispose();
       left.Dispose();
       right.Dispose();
    end else
       Result := false;
+
+   horizontal.Dispose();
 end;
 
 function ProcessVertical(all: boolean = false): boolean;
@@ -1030,56 +1003,38 @@ var
    above,
    below: uiTSimpleWindowList;
 
-   i,
-   totalHeight,
-   totalHeightAbove,
-   totalHeightBelow,
-   height: loopint;
+   i: loopint;
 
 begin
    vertical := uiWindowList.FindVerticalLineup(Self, all);
+
    if(vertical.n > 0) then begin
-      above := vertical.FindAbove(Position.y);
-      below := vertical.FindBelow(Position.y);
+      above := vertical.FindContactsAbove(Self);
+      below := vertical.FindContactsBelow(Self);
 
       Result := (above.n > 0) or (below.n > 0);
-      if(not Result) then
-         exit;
 
-      totalHeightAbove := above.GetAboveHeightFrom(Position.y);
-      totalHeightBelow := below.GetBelowHeightFrom(Position.y - GetTotalHeight());
-
-      totalHeight := d.h + totalHeightAbove + totalHeightBelow;
-
-      ratio := getRatio(totalHeight, totalHeightAbove + totalHeightBelow);
-
-      for i := 0 to (above.n - 1) do begin
-         cur := above.List[i];
-         curD := cur.GetTotalDimensions();
-
-         height := round(curD.h * ratio);
-         writeln(round((totalHeight - 1 - cur.Position.y) * ratio));
-         offset := cur.Position.y - round((totalHeight - 1 - cur.Position.y) * ratio);
-
-         cur.Move(cur.Position.x, offset);
-         cur.ResizeAdjusted(curD.w, height);
+      if(Result) then begin
+         if(above.n > 0) then begin
+            for i := 0 to above.n - 1 do begin
+               cur := above.List[i];
+               cur.Resize(cur.Dimensions.w, cur.Dimensions.h + d.h);
+            end;
+         end else if(below.n > 0) then begin
+            for i := 0 to below.n - 1 do begin
+               cur := below.List[i];
+               cur.Move(cur.Position.x, Position.y);
+               cur.Resize(cur.Dimensions.w, cur.Dimensions.h + d.h);
+            end;
+         end;
       end;
 
-      for i := 0 to (below.n - 1) do begin
-         cur := below.List[i];
-         curD := cur.GetTotalDimensions();
-
-         height := round(curD.h * ratio);
-
-         cur.Move(cur.Position.x, cur.Position.y + (height - curD.h));
-         cur.ResizeAdjusted(curD.w, height);
-      end;
-
-      vertical.Dispose();
       above.Dispose();
       below.Dispose();
    end else
       Result := false;
+
+   vertical.Dispose();
 end;
 
 begin
