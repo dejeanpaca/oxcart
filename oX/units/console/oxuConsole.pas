@@ -79,15 +79,13 @@ IMPLEMENTATION
 CONST
    cidCON            = 00;
    cidQUIT           = 01;
-   cidABOUT          = 02;
-   cidCLEAR_CONSOLE  = 03;
-   cidRESTART        = 04;
-   cidHELP           = 05;
+   cidCLEAR_CONSOLE  = 02;
+   cidRESTART        = 03;
+   cidHELP           = 04;
 
-   conCommands: array[0..5] of conTCommand = (
+   conCommands: array[0..4] of conTCommand = (
       (sID: 'con'; sHelp: 'console setup'; nID: cidCON),
       (sID: 'quit'; sHelp: 'quit the program'; nID: cidQUIT),
-      (sID: 'about'; sHelp: 'show the about text'; nID: cidABOUT),
       (sID: 'clear_console'; sHelp: 'clears the attached console (terminal) output'; nID: cidCLEAR_CONSOLE),
       (sID: 'restart'; sHelp: 'Restarts the program'; nID: cidRESTART),
       (sID: 'help'; sHelp: 'show help'; nID: cidHELP)
@@ -257,41 +255,6 @@ end;
 
 { CONSOLE COMMAND HANDLER }
 
-VAR
-   firstAboutWrite: boolean = true;
-
-procedure oxconWriteAbout();
-var
-   color: TColor4ub;
-   previousLog: PLog;
-   s: StdString;
-
-begin
-   previousLog := oxConsole.Console.LogOutput;
-
-   if(firstAboutWrite) then begin
-      oxConsole.Console.LogOutput := nil;
-      firstAboutWrite := false;
-   end;
-
-   color := oxConsole.Console.Colors.Current;
-
-   console.Color4ub(192, 192, 255, 255);
-
-   oxConsole.Console.i();
-
-   s := appInfo.GetVersionString();
-   oxConsole.Console.i(s);
-
-   oxConsole.Console.i(oxEngineName + ' Engine v' + oxsVersion);
-   oxConsole.Console.i();
-   oxConsole.Console.i('Copyright (c) 2007. Dejan Boras');
-   oxConsole.Console.i();
-
-   oxConsole.Console.Colors.Current := color;
-   oxConsole.Console.LogOutput := previousLog;
-end;
-
 procedure consoleWriteSettings();
 begin
    oxConsole.Console.i('   Alpha enabled : ' + sf(oxConsole.Alpha) + '.');
@@ -369,8 +332,6 @@ begin
          consoleCommand(con);
       cidQUIT:
          appActionEvents.QueueQuitEvent();
-      cidABOUT:
-         oxconWriteAbout();
       cidRESTART:
          oxRun.Restart();
       cidCLEAR_CONSOLE:
@@ -638,7 +599,6 @@ begin
       {prepare console for input and display}
       oxConsole.Console.Select();
       consoleReconfigure();
-      oxconWriteAbout();
 
       { done }
       if(oxConsole.DoLog) then
