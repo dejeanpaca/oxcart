@@ -284,7 +284,7 @@ begin
       {$ENDIF}
 
       {save configuration before objects are destroyed}
-      appDVarTextConfiguration.DvarFile.Save();
+      appdvarConfiguration.DvarFile.Save();
    end;
 
    {do not destroy}
@@ -345,6 +345,6 @@ begin
 end;
 
 INITIALIZATION
-   appDVarTextConfiguration.AutoSave := false;
+   appdvarConfiguration.AutoSave := false;
 
 END.

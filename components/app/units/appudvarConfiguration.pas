@@ -27,28 +27,28 @@ TYPE
    end;
 
 VAR
-   appDVarTextConfiguration: appTDVarTextConfiguration;
+   appdvarConfiguration: appTDVarTextConfiguration;
 
 IMPLEMENTATION
 
 procedure Load();
 begin
-   if(appDVarTextConfiguration.AutoLoad) then
-      appDVarTextConfiguration.DvarFile.Load();
+   if(appdvarConfiguration.AutoLoad) then
+      appdvarConfiguration.DvarFile.Load();
 end;
 
 procedure Save();
 begin
-   if(appDVarTextConfiguration.AutoSave) then
-      appDVarTextConfiguration.DvarFile.Save();
+   if(appdvarConfiguration.AutoSave) then
+      appdvarConfiguration.DvarFile.Save();
 end;
 
 INITIALIZATION
-   appDVarTextConfiguration.DvarFile.Create();
-   appDVarTextConfiguration.DvarFile.FileName := 'config.dvar';
-   appDVarTextConfiguration.DvarFile.dvg := @dvar.dvars;
-   appDVarTextConfiguration.AutoLoad := true;
-   appDVarTextConfiguration.AutoSave := true;
+   appdvarConfiguration.DvarFile.Create();
+   appdvarConfiguration.DvarFile.FileName := 'config.dvar';
+   appdvarConfiguration.DvarFile.dvg := @dvar.dvars;
+   appdvarConfiguration.AutoLoad := true;
+   appdvarConfiguration.AutoSave := true;
 
    app.InitializationProcs.Add('dvar.textload', @load, @save);
 
