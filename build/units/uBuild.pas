@@ -73,6 +73,7 @@ TYPE
 
       OptimizationLevels: TSimpleStringList;
 
+      OnInitializeStart,
       OnInitialize,
       OnReinitialize,
       OnLoadConfiguration,
@@ -158,6 +159,7 @@ begin
 
    start := Now;
 
+   OnInitializeStart.Call();
    OnLoadConfiguration.Call();
 
    {setup default values if defaults were not overriden}
@@ -441,6 +443,7 @@ begin
 end;
 
 INITIALIZATION
+   TProcedures.Initialize(build.OnInitializeStart);
    TProcedures.Initialize(build.OnInitialize);
    TProcedures.Initialize(build.OnReinitialize);
    TProcedures.Initialize(build.OnLoadConfiguration);

@@ -88,6 +88,8 @@ TYPE
       DefaultPlatform: PBuildPlatform;
       DefaultLazarus: PBuildLazarusInstall;
 
+      {initialization start}
+      procedure InitializeStart();
       {initialize the build system}
       procedure Initialize();
       {reinitialize the build system (e.g. after config path change)}
@@ -138,6 +140,7 @@ TYPE
       {get a human readable optimization level name}
       function GetOptimizationLevelNameHuman(level: loopint): StdString;
 
+      {get process for running an executable}
       function GetProcess(): TProcess;
    end;
 
@@ -288,11 +291,14 @@ begin
    Lazarus.Dispose();
 end;
 
-procedure TBuildSystemInstalls.Initialize();
+procedure TBuildSystemInstalls.InitializeStart();
 begin
    CreateDefaultPlatform();
    CreateDefaultLazarus();
+end;
 
+procedure TBuildSystemInstalls.Initialize();
+begin
    {setup default values if defaults were not overriden}
    SetupDefaults();
 
@@ -612,9 +618,13 @@ function TBuildSystemInstalls.GetProcess(): TProcess;
 begin
    Result := TProcess.Create(nil);
 
-   Result.Options := Result.Options + [poUsePipes];
+   Result.Options := Result.Options + [poWaitOnExit];
 end;
 
+procedure initializeStart();
+begin
+   BuildInstalls.InitializeStart();
+end;
 
 procedure initialize();
 begin
@@ -631,5 +641,6 @@ INITIALIZATION
    BuildInstalls.Lazarus.Initialize(BuildInstalls.Lazarus);
 
    build.OnReinitialize.Add(@reinitialize);
+   build.OnInitializeStart.Add(@initializeStart);
    build.OnInitialize.Add(@initialize);
 END.
