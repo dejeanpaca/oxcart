@@ -1,17 +1,15 @@
 UNIT android_native_activity_helper;
 
-{$packrecords c}{$modeswitch advancedrecords}
-
 INTERFACE
 
    USES
-      ctypes, jni, android_native_app_glue;
+      ctypes, jni, android_native_app_glue, android_env;
 
-procedure androidAutoHideNavBar(app: Pandroid_app);
+procedure androidAutoHideNavBar(var app: android_app);
 
 IMPLEMENTATION
 
-procedure androidAutoHideNavBar(app: Pandroid_app);
+procedure androidAutoHideNavBar(var app: android_app);
 var
    env: PJNIEnv;
 
@@ -35,7 +33,7 @@ var
    flag: cint;
 
 begin
-   app^.activity^.vm^^.AttachCurrentThread(app^.activity^.vm, @env, nil);
+   env := mainThreadEnv;
 
    activityClass := env^^.FindClass(env, 'android/app/NativeActivity');
    getWindow := env^^.GetMethodID(env, activityClass, 'getWindow', '()Landroid/view/Window;');
@@ -46,7 +44,7 @@ begin
    viewClass := env^^.FindClass(env, 'android/view/View');
    setSystemUiVisibility := env^^.GetMethodID(env, viewClass, 'setSystemUiVisibility', '(I)V');
 
-   window := env^^.CallObjectMethod(env, app^.activity^.clazz, getWindow);
+   window := env^^.CallObjectMethod(env, app.activity^.clazz, getWindow);
    decorView := env^^.CallObjectMethod(env, window, getDecorView);
 
    flagFullscreenID := env^^.GetStaticFieldID(env, viewClass, 'SYSTEM_UI_FLAG_FULLSCREEN', 'I');
@@ -60,7 +58,6 @@ begin
    flag := flagFullscreen or flagHideNavigation or flagImmersiveSticky;
 
    env^^.CallVoidMethodA(env, decorView, setSystemUiVisibility, @flag);
-   app^.activity^.vm^^.DetachCurrentThread(app^.activity^.vm);
 end;
 
 END.
