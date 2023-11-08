@@ -12,7 +12,7 @@ INTERFACE
 
    USES
       {$INCLUDE usesgl.inc},
-      uLog, StringUtils,
+      uLog, {$IFNDEF OX_LIBRARY}StringUtils,{$ENDIF}
       {ox}
       oxuOGL, oxuglExtensions;
 
