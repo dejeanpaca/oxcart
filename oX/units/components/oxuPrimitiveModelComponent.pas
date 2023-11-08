@@ -39,7 +39,7 @@ TYPE
       procedure Torus();
       procedure Cone();
 
-      procedure Deserialized; override;
+      procedure Deserialized(); override;
 
       function GetDescriptor(): oxPComponentDescriptor; override;
    end;
@@ -122,7 +122,7 @@ begin
    Model.Cone();
 end;
 
-procedure oxTPrimitiveModelComponent.Deserialized;
+procedure oxTPrimitiveModelComponent.Deserialized();
 begin
    inherited Deserialized;
 

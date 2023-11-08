@@ -1,8 +1,8 @@
 {
    oxuLightEntity, common light entities
-   Copyright (c) 2017. Dejan Boras
+   Copyright (c) 2018. Dejan Boras
 
-   Started On:    18.01.2017.
+   Started On:    26.11.2018.
 }
 
 {$INCLUDE oxdefines.inc}
