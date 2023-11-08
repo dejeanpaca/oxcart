@@ -211,9 +211,9 @@ var
 
 begin
    {$IFNDEF ANDROID}
-   appSI.SystemName := 'Linux';
+   appSI.System.Name := 'Linux';
    {$ELSE}
-   appSI.SystemName := 'Android';
+   appSI.System.Name := 'Android';
    {$ENDIF}
 
    {get platform names}
@@ -223,7 +223,7 @@ begin
 
       if(ok > 0) then begin
          StringUtils.StripEndLine(release);
-         appSI.SystemName := release;
+         appSI.System.Name := release;
          break;
       end;
    end;
@@ -234,7 +234,7 @@ begin
 
    if(ok > 0) then begin
       StringUtils.StripEndLine(release);
-      appSI.KernelVersion := release;
+      appSI.System.KernelVersion := release;
    end;
 
    {get memory information}
