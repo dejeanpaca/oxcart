@@ -37,6 +37,9 @@ TYPE
    end;
 
 VAR
+   {base timer used for most oX functionality}
+   oxBaseTime,
+   {game timer used for the game}
    oxTime: oxTTime;
 
 IMPLEMENTATION
@@ -97,6 +100,7 @@ end;
 
 procedure tick();
 begin
+   oxBaseTime.Tick();
    oxTime.Tick();
 end;
 
@@ -105,6 +109,7 @@ VAR
 
 INITIALIZATION
    oxTTime.Initialize(oxTime);
+   oxTTime.Initialize(oxBaseTime);
 
    ox.OnRun.Add(tickRoutine, 'ox.tick', @tick);
 
