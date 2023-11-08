@@ -248,7 +248,7 @@ end;
 
 procedure oxedTPlatforms.Enable(platform: oxedTPlatform);
 begin
-   if(not platform.Enabled) then begin
+   if(platform <> nil) and (not platform.Enabled) then begin
       platform.Enabled := true;
       OnEnable.Call(platform);
    end;
@@ -256,7 +256,7 @@ end;
 
 procedure oxedTPlatforms.Disable(platform: oxedTPlatform);
 begin
-   if(platform.Enabled) then begin
+   if(platform <> nil) and (platform.Enabled) then begin
       platform.Enabled := false;
       OnDisable.Call(platform);
    end;
