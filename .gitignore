@@ -35,3 +35,4 @@ android_project/
 .vs/
 .DS_Store
 .vscode
+build/build.config
