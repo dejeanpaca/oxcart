@@ -107,6 +107,7 @@ TYPE
       Flags: record
          Initialized,
          Opened,
+         Closing,
          AppendFailed,
          Error,
          Ok: boolean;
@@ -453,6 +454,7 @@ begin
    Error := logeNONE;
 
    if(log.Settings.HandleLogs) then begin
+      Flags.Closing := false;
       if(not self.h^.needOpen) then begin
          Flags.Opened := true;
          Flags.Ok := true;
@@ -498,6 +500,8 @@ begin
    Error := logeNONE;
 
    if(log.Settings.HandleLogs) and (Flags.Opened) then begin
+      Flags.Closing := true;
+
       {exit any existing sections}
       if(SectionLevel > 0) then
          repeat
@@ -517,6 +521,7 @@ begin
 
       Flags.Opened := false;
       Flags.Ok := false;
+      Flags.Closing := false;
    end;
 
    {close chained log file}
