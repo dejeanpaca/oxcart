@@ -2,7 +2,7 @@
    oxuInitTask, oX initialization task
    Copyright (c) 2021. Dejan Boras
 
-   After base initialization, runs an initialization task to load the rest
+   Generic initialization task
 }
 
 {$INCLUDE oxheader.inc}
@@ -11,9 +11,7 @@ UNIT oxuInitTask;
 INTERFACE
 
 USES
-   sysutils, uStd, uLog, uTiming,
    {ox}
-   uOX, uiuBase, oxuWindow,
    oxuThreadTask, oxuRenderTask;
 
 TYPE
@@ -26,17 +24,7 @@ TYPE
       procedure Run(); override;
    end;
 
-   { oxTInitTaskGlobal }
-
-   oxTInitTaskGlobal = record
-      Task: oxTInitTask;
-
-      procedure Go();
-      function IsFinished(): boolean;
-   end;
-
-VAR
-   oxInitTask: oxTInitTaskGlobal;
+   oxTInitTaskClass = class of oxTInitTask;
 
 IMPLEMENTATION
 
@@ -52,55 +40,12 @@ end;
 
 procedure oxTInitTask.Render();
 begin
-    {render nothing for the initialization task}
+   {render nothing for the initialization task}
 end;
 
 procedure oxTInitTask.Run();
-var
-   elapsedTime: TDateTime;
-
 begin
-   elapsedTime := Now();
-
-   {call initialization routines}
-   ox.Init.iCall();
-
-   if(ox.Error <> 0) then begin
-      if(ox.ErrorDescription = '') then
-         ox.RaiseError('Initialization failed', ox.Error);
-
-      exit;
-   end;
-
-   log.i('Called all initialization routines (elapsed: ' + elapsedTime.ElapsedfToString() + 's)');
-
-   {call UI initialization routines}
-   ui.Initialize();
-
-   {success}
-   log.i('Initialization done. Elapsed: ' + GlobalStartTime.ElapsedfToString() + 's');
-   log.Leave();
-
-   ox.Initialized := true;
-end;
-
-{ oxTInitTaskGlobal }
-
-procedure oxTInitTaskGlobal.Go();
-begin
-   Task := oxTInitTask.Create();
-   Task.RunThreaded(oxWindow.Current);
-end;
-
-function oxTInitTaskGlobal.IsFinished(): boolean;
-begin
-   Result := false;
-
-   if(ox.Initialized) then
-      Result := true;
-
-   if(Task <> nil) then
-      Result := Task.IsFinished();
+   {don't do the usual render task flow}
 end;
 
 END.
