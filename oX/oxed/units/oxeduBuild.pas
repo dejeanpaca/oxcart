@@ -296,7 +296,7 @@ var
 
 begin
    if(not ignoreRunning) then
-      count := oxedTasks.Running(Nil)
+      count := oxedTasks.Running(nil)
    else
       count := oxedTasks.Running(nil, oxedTBuildTask);
 
