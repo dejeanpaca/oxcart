@@ -329,6 +329,8 @@ begin
    if(OpenWindows <> nil) then
       Windows.AddSub('Open', OpenWindows);
 
+   Windows.AddItem('Close All', oxedActions.CLOSE_WINDOWS);
+   Windows.AddSeparator();
    Windows.AddItem('Reset Layout', oxedActions.RESET_WINDOW_LAYOUT);
 end;
 
