@@ -125,6 +125,9 @@ begin
    if(build.Debug.External) then
       AddArgument('-Xg');
 
+   if(build.Debug.Valgrind) then
+      AddArgument('-gv');
+
    for i := 0 to emptyAfter - 1 do begin
       AddArgument('');
    end;
@@ -257,6 +260,9 @@ begin
 
    if(build.Debug.External) then
       add('-Xg');
+
+   if(build.Debug.LineInfo) then
+      add('-gv');
 
    { optimization }
    add();
