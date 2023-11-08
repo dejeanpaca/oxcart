@@ -301,17 +301,23 @@ end;
 
 procedure TConsoleGlobal.Bold();
 begin
+   {$IFDEF UNIX}
    Write(#27'[1m');
+   {$ENDIF}
 end;
 
 procedure TConsoleGlobal.Italic();
 begin
+   {$IFDEF UNIX}
    Write(#27'[3m');
+   {$ENDIF}
 end;
 
 procedure TConsoleGlobal.Underline();
 begin
+   {$IFDEF UNIX}
    Write(#27'[4m');
+   {$ENDIF}
 end;
 
 procedure TConsoleGlobal.ResetColor();
@@ -325,7 +331,12 @@ end;
 
 procedure TConsoleGlobal.ResetDefault();
 begin
+   {$IFDEF UNIX}
    Write(#27'[0m');
+   {$ENDIF}
+   {$IFDEF WINDOWS}
+   // TODO: Use SetConsoleTextAttribute with the original attributes
+   {$ENDIF}
 end;
 
 {$IFDEF WINDOWS}
