@@ -104,6 +104,11 @@ TYPE
       {have we automagically determined where our config is located at}
       AutoDeterminedConfigPath: boolean;
 
+      {for which target are we built}
+      BuiltWithTarget: StdString;
+      {with which fpc version are we built}
+      BuiltWithVersion: StdString;
+
       Tools: TBuildSystemTools;
       {dvar configuration root}
       dvgLocation: TDVarGroup;
@@ -240,6 +245,8 @@ TYPE
 
       {get current platform}
       function GetPlatform(): PBuildPlatform;
+      {find platform for specified target and fpc version}
+      function FindPlatform(const target: string; const version: string = ''): PBuildPlatform;
       {get current lazarus install}
       function GetLazarus(): PBuildLazarusInstall;
       {set current platform by its name}
@@ -271,6 +278,9 @@ TYPE
 
       {set default values if these were not set through config}
       procedure SetupDefaults();
+
+      {get the target name with which the current build was made}
+      class function GetBuiltWithTarget(): StdString; static;
    end;
 
    { TPascalSourceBuilder }
@@ -1377,6 +1387,24 @@ begin
       Result := @Platforms.List[0];
 end;
 
+function TBuildSystem.FindPlatform(const target: string; const version: string): PBuildPlatform;
+var
+   i: loopint;
+
+begin
+   for i := 0 to Platforms.n - 1 do begin
+      if(Platforms.List[i].Platform = target) then begin
+         if(version <> '') then begin
+            if(Pos(version, Platforms.List[i].Version) = 1) then
+               exit(@Platforms.List[i]);
+         end else
+            exit(@Platforms.List[i]);
+      end;
+   end;
+
+   Result := nil;
+end;
+
 function TBuildSystem.GetLazarus(): PBuildLazarusInstall;
 begin
    Result := CurrentLazarus;
@@ -1691,6 +1719,11 @@ begin
          log.v('build > using auto defaults for lazarus install');
    end;
 
+end;
+
+class function TBuildSystem.GetBuiltWithTarget(): StdString;
+begin
+   Result := LowerCase(FPC_TARGETCPU + '-' + FPC_TARGETOS);
 end;
 
 function getBasePath(): StdString;
@@ -2020,4 +2053,13 @@ INITIALIZATION
    CreateDefaultPlatform();
 
    parameters.AddHandler(paramHandler, 'build', '--build-verbose', @processParam);
+
+   { determine our built with target and version }
+
+   build.BuiltWithTarget := TBuildSystem.GetBuiltWithTarget();
+
+   if(Pos('-', FPC_VERSION) > 0) then
+      build.BuiltWithVersion := copy(FPC_VERSION, 1, Pos('-', FPC_VERSION))
+   else
+      build.BuiltWithVersion := FPC_VERSION;
 END.
