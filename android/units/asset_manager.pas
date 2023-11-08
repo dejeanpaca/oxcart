@@ -20,7 +20,7 @@ unit asset_manager;
 
 interface
 
-uses ctypes;
+   uses ctypes, jni;
 
 type
   PAAssetManager = ^AAssetManager;
@@ -96,6 +96,14 @@ function AAsset_read(asset: PAAsset; buf: Pointer; count: csize_t): cint; cdecl;
 function AAsset_seek(asset: PAAsset; offset: coff_t; whence: cint): coff_t; cdecl; external;
 
 (**
+ * Seek to the specified offset within the asset data.
+ * 'whence' uses the same constants as lseek()/fseek().
+ * Uses 64-bit data type for large files as opposed to the 32-bit type used by AAsset_seek.
+ * Returns the new position on success, or (off64_t) -1 on error.
+*)
+function AAsset_seek64(asset: PAAsset; offset: cint64; whence: cint): cint64; cdecl; external;
+
+(**
  * Close the asset, freeing all associated resources.
   *)
 procedure AAsset_close(asset: PAAsset); cdecl; external;
@@ -130,6 +138,15 @@ function AAsset_openFileDescriptor(asset: PAAsset; outStart, outLength: Poff_t):
  * mmapped).
   *)
 function AAsset_isAllocated(asset: PAAsset): cint; cdecl; external;
+
+(**
+ * Given a Dalvik AssetManager object, obtain the corresponding native AAssetManager object.
+ *
+ * Note that the caller is responsible for obtaining and holding a VM reference to the jobject to prevent its being
+ * garbage collected while the native object is in use.
+ *)
+function AAssetManager_fromJava(env: PJNIEnv; assetManager: jobject): PAAssetManager; cdecl; external;
+
 
 implementation
 
