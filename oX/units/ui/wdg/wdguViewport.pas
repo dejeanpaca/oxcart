@@ -40,6 +40,7 @@ TYPE
       procedure CleanupRender(); virtual;
 
       procedure UpdateViewport();
+      procedure OnViewportUpdated(); virtual;
 
       procedure CaptionChanged(); override;
       procedure SizeChanged(); override;
@@ -119,6 +120,12 @@ end;
 procedure wdgTViewport.UpdateViewport();
 begin
    Viewport.SetViewport(RPosition.x, RPosition.y - Dimensions.h + 1, Dimensions.w, Dimensions.h);
+   OnViewportUpdated();
+end;
+
+procedure wdgTViewport.OnViewportUpdated();
+begin
+
 end;
 
 procedure wdgTViewport.CaptionChanged();
