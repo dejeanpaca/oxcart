@@ -99,6 +99,7 @@ TYPE
       {called when a file is found with matching extension (if any), if returns false traversal is stopped}
       OnFile: function(const fn: StdString): boolean;
       OnFileDescriptor: function(const f: TFileDescriptor): boolean;
+      OnDirectory: function(const f: TFileDescriptor): boolean;
 
       procedure Initialize();
       class procedure Initialize(out traverse: TFileTraverse); static;
@@ -1254,8 +1255,17 @@ begin
          if(src.Name <> '.') and (src.Name <> '..') then begin
             {found directory, recurse into it}
             if(src.Attr and faDirectory > 0) then begin
-               if(Recursive) then
-                  RunDirectory(UTF8Encode(src.Name));
+               if(Recursive) then begin
+                  if(OnDirectory = nil) then
+                     RunDirectory(UTF8Encode(src.Name))
+                  else begin
+                     TFileDescriptor.From(fd, src);
+                     fd.Name := UTF8Encode(src.Name);
+
+                     if(OnDirectory(fd)) then
+                        RunDirectory(fd.Name);
+                  end;
+               end;
             end else begin
                ok    := true;
                ext   := UTF8Lower(ExtractFileExt(utf8string(UTF8Encode(src.Name))));
