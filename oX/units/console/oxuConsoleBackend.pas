@@ -355,11 +355,10 @@ CONST
       (sid: 'clear'; sHelp: 'clear console'; nID: cidCLEAR)
    );
 
-procedure defaultCommandNotify(var con: conTConsole; nID: longint);
+procedure defaultCommandNotify(var con: conTConsole);
 begin
-   case nID of
-      cidCLEAR:
-         con.Clear();
+   case con.CommandID of
+      cidCLEAR: con.Clear();
    end;
 end;
 
@@ -1017,6 +1016,7 @@ begin
    c := nil;
 
    cur := CommandHandlers.s;
+
    {there must be at least 1 handler and 1 argument}
    if (cur <> nil) and (Arguments.n > 0) then begin
       cmd := LowerCase(Arguments.List[0]);
