@@ -65,7 +65,7 @@ begin
    result := eNONE;
 
    {free the previous image}
-   img.dispose(image);
+   img.Dispose(image);
 
    {prepare the image}
    image := imgTImage.Create();
@@ -102,16 +102,16 @@ end;
 
 function oxTScreenshot.Save(const fn: string; var img: imgTImage): longint;
 var
-   imgerror: longint;
+   imgError: longint;
 
 begin
    Result := eNONE;
 
-   if(fn <> '') then begin
-      imgerror := imgFile.Write(img, fn);
+   if(fn <> '') and (img <> nil) then begin
+      imgError := imgFile.Write(img, fn);
 
-      if(imgerror <> 0) then begin
-         log.e('Failed to save screenshot (uImage: ' + sf(imgerror) + ')');
+      if(imgError <> 0) then begin
+         log.e('Failed to save screenshot (uImage: ' + sf(imgError) + ')');
 
          Result := oxeIMAGE;
       end else
