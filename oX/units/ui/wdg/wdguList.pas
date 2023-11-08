@@ -145,9 +145,6 @@ TYPE
       procedure Point(var e: appTMouseEvent; x, y: longint); override;
       procedure Hover(x, y: longint; what: uiTHoverEvent); override;
 
-      {set text color}
-      procedure SetTextColor();
-
       {select the next navigable item from the specified (does nothing if there isn't any)}
       procedure SelectNavigableItemFrom(start: loopint);
       {select the next navigable item down from the specified (does nothing if there isn't any)}
@@ -171,7 +168,10 @@ TYPE
       {select item with the specified index}
       procedure NavigateToItem(index: loopint);
 
-      procedure SetFontColor(index: longint);
+      {set font color}
+      procedure SetFontColor(index: longint); virtual;
+      {get font color}
+      function GetFontColor(index: longint): TColor4ub; virtual;
 
       protected
          {current offset position}
@@ -216,9 +216,9 @@ TYPE
          {called when the item height should be updated}
          procedure UpdateItemHeight(); virtual;
 
-         procedure PositionChanged; override;
+         procedure PositionChanged(); override;
          procedure SizeChanged(); override;
-         procedure RPositionChanged; override;
+         procedure RPositionChanged(); override;
          procedure Recalculate();
 
          {called when an item is clicked upon (but not in selection mode)}
@@ -1009,14 +1009,6 @@ begin
    OnHover(index);
 end;
 
-procedure wdgTList.SetTextColor();
-begin
-   if(Transparent) then
-      SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.Text)
-   else
-      SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.Text);
-end;
-
 procedure wdgTList.SelectNavigableItemFrom(start: loopint);
 var
    item: loopint;
@@ -1136,19 +1128,39 @@ end;
 
 procedure wdgTList.SetFontColor(index: longint);
 begin
-   if(HighlightHovered) then begin
-      if(Transparent) then begin
-         if(index = HighlightedItem) then
-            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.Text)
-         else
-            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight);
+   SetColorBlended(GetFontColor(index));
+end;
+
+function wdgTList.GetFontColor(index: longint): TColor4ub;
+begin
+   if(wdgpENABLED in Properties) then begin
+      if(HighlightHovered) then begin
+         if(not Transparent) then begin
+            if(index <> HighlightedItem) then
+               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.Text
+            else
+               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight;
+         end else begin
+            if(index <> HighlightedItem) then
+               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.InputText
+            else
+               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight;
+         end;
       end else begin
-         if(index <> HighlightedItem) then
-            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.InputText)
-         else
-            SetColorBlended(uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight)
+         if(not Transparent) then begin
+            if(index <> HighlightedItem) then
+               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.Text
+            else
+               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight;
+         end else begin
+            if(index <> HighlightedItem) then
+               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.InputText
+            else
+               Result := uiTSkin(uiTWindow(wnd).Skin).Colors.TextInHighlight;
+         end;
       end;
-   end;
+   end else
+      Result := uiTSkin(uiTWindow(wnd).Skin).DisabledColors.Text;
 end;
 
 procedure wdgTList.AdjustOffset();
@@ -1363,7 +1375,7 @@ procedure wdgTList.UpdateItemHeight();
 begin
 end;
 
-procedure wdgTList.PositionChanged;
+procedure wdgTList.PositionChanged();
 begin
    inherited PositionChanged;
 
@@ -1378,7 +1390,7 @@ begin
    UpdateScrollbar();
 end;
 
-procedure wdgTList.RPositionChanged;
+procedure wdgTList.RPositionChanged();
 begin
    inherited ParentSizeChange;
 

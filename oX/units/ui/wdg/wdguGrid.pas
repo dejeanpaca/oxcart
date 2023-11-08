@@ -207,7 +207,7 @@ end;
 procedure wdgTStringGrid.RenderStart();
 begin
    CachedFont.Start();
-   SetTextColor();
+   SetFontColor(-1);
 
    uiDraw.Scissor(RPosition, Dimensions);
 end;
@@ -394,7 +394,7 @@ begin
             end;
          end;
 
-         SetTextColor();
+         SetFontColor(-1);
 
          r := br;
 

@@ -17,7 +17,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont, oxuTexture, oxuRender, oxuRenderUtilities,
       {ui}
-      oxuUI, uiuTypes, uiuWindowTypes, uiuSkinTypes,
+      oxuUI, uiuTypes,
       uiuWidget, uiWidgets, uiuWindow, uiuDraw,
       wdguBase, wdguList;
 
@@ -44,7 +44,7 @@ TYPE
       {the widget should manage the data (data is not external)}
       ManageData: Boolean;
 
-      constructor Create; override;
+      constructor Create(); override;
 
       {render the item}
       procedure RenderItem(index: loopint; r: oxTRect); override;
@@ -84,9 +84,9 @@ TYPE
       {add a new single item }
       procedure RemoveItem(index: loopint);
 
-      procedure RemoveAll; override;
+      procedure RemoveAll(); override;
 
-      procedure FontChanged; override;
+      procedure FontChanged(); override;
 
       protected
          {visible items}
@@ -120,7 +120,7 @@ end;
 
 { wdgTHierarchyList }
 
-constructor wdgTHierarchyList.Create;
+constructor wdgTHierarchyList.Create();
 begin
    inherited;
 
@@ -209,10 +209,10 @@ begin
       end;
 
       inc(r.x, (height * 2) + (padding * 2));
-   end;
 
-   SetColorBlendedEnabled(uiTSkin(uiTWindow(wnd).Skin).Colors.Text,
-      uiTSkin(uiTWindow(wnd).Skin).DisabledColors.Text);
+      {restore color}
+      SetFontColor(index);
+   end;
 
    f.WriteCentered(s, r, [oxfpCenterVertical]);
 end;
@@ -462,14 +462,14 @@ begin
    end;
 end;
 
-procedure wdgTHierarchyList.RemoveAll;
+procedure wdgTHierarchyList.RemoveAll();
 begin
    Visible.Dispose();
 
    inherited RemoveAll;
 end;
 
-procedure wdgTHierarchyList.FontChanged;
+procedure wdgTHierarchyList.FontChanged();
 begin
    inherited FontChanged;
 end;
