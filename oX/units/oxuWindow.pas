@@ -350,11 +350,15 @@ begin
    Position.y := y;
 
    if(not oxProperties.Context) then begin
+      system := system;
+
       if(system) and (oxProperties.Created) then
          oxPlatform.Move(self, x, y);
 
       if(oxProperties.Created) then
          oxUIHooks.SetPosition(self, oxPoint(x, y));
+
+      SetupProjection();
    end;
 end;
 
@@ -364,6 +368,8 @@ begin
    Dimensions.h := h;
 
    if(not oxProperties.Context) then begin
+      system := system;
+
       if(system) and (oxProperties.Created) then
          oxPlatform.Resize(self, w, h);
 
