@@ -431,7 +431,7 @@ end;
 
 procedure oxTWindowHelper.SetTitle(const newTitle: string);
 begin
-   log.i('oX > Set window title to: ' + newTitle + ' from ' + Title);
+   log.v('oX > Set window title to: ' + newTitle + ' from ' + Title);
 
    Title := newTitle;
 
