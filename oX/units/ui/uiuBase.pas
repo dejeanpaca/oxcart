@@ -77,6 +77,4 @@ begin
    end;
 end;
 
-INITIALIZATION
-
 END.
