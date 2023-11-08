@@ -172,7 +172,7 @@ begin
    if(Texture.Has()) then begin
       Quad.Quad();
       Quad.Scale(round(Dimensions.w / 2), round(Dimensions.h / 2), 0);
-      Quad.Offset(round(Dimensions.w / 2), -round(Dimensions.h / 2), 0);
+      Quad.Translate(round(Dimensions.w / 2), -round(Dimensions.h / 2), 0);
    end;
 end;
 
