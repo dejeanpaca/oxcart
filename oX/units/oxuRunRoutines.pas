@@ -31,6 +31,8 @@ TYPE
       s,
       e:  oxPRunRoutine;
 
+      class procedure Initialize(out r: oxTRunRoutines); static;
+
       procedure Call();
       procedure iCall();
       procedure dCall();
@@ -50,6 +52,11 @@ TYPE
 IMPLEMENTATION
 
 { oxTRunRoutines }
+
+class procedure oxTRunRoutines.Initialize(out r: oxTRunRoutines);
+begin
+   ZeroPtr(@r, SizeOf(r));
+end;
 
 procedure oxTRunRoutines.Call();
 begin
