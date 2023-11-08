@@ -234,6 +234,7 @@ end;
 
 procedure wdgTTabs.DeInitialize;
 var
+   previousWidgets: uiTWidgets;
    i: loopint;
 
 begin
@@ -243,9 +244,16 @@ begin
 
    {destroy all tab widgets, except the first one as that's used by container widgets}
    if(Tabs.t.n > 1) then begin
+      previousWidgets := Container.Widgets;
+
       {destroy the rest}
-      for i := 1 to (Tabs.t.n - 1) do
-         uiWidget.Dispose(Tabs.t.List[i].Widgets);
+      for i := 1 to (Tabs.t.n - 1) do begin
+         Container.Widgets := Tabs.t.List[i].Widgets;
+
+         uiWidget.Dispose(Self.Widgets);
+      end;
+
+      Container.Widgets := previousWidgets;
    end;
 
    Tabs.t.Dispose();
