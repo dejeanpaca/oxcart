@@ -11,11 +11,11 @@ UNIT oxuUI;
 INTERFACE
 
    USES
-      uStd, uInit, uLog, uTiming,
+      uStd, uInit, uLog, uTiming, udvars,
       {app}
       appuRun, appuMouse,
       {oX}
-      oxuWindow, oxuWindows, oxuRenderer, oxuRenderers, oxuTypes, oxuResourcePool,
+      uOX, oxuWindow, oxuWindows, oxuRenderer, oxuRenderers, oxuTypes, oxuResourcePool,
       oxuShader, oxuMaterial,
       {ui}
       uiuTypes, uiuControl, uiuWindowTypes, uiuWidget;
@@ -124,6 +124,9 @@ TYPE
 
       {material used for the UI}
       Material: oxTMaterial;
+
+      {group for ui settings}
+      dvg: TDVarGroup; static;
 
       constructor Create();
 
@@ -349,6 +352,8 @@ INITIALIZATION
    oxRenderers.PostUseRoutines.Add(@onUse);
 
    appRun.AddRoutine(updateControlsRoutine, 'ui.update', @updateControls);
+
+   ox.dvar.Add('ui', oxTUI.dvg);
 
 FINALIZATION
    FreeObject(oxui);
