@@ -9,13 +9,11 @@ UNIT oxeduInspectEntity;
 INTERFACE
 
    USES
-      uStd, uColors, vmVector, sysutils,
-      {app}
-      appuMouse,
+      uStd, vmVector, sysutils,
       {ox}
-      oxuRunRoutines, oxuTypes, oxuEntity, oxuComponent, oxuComponentDescriptors,
+      oxuEntity, oxuComponent, oxuComponentDescriptors,
       {ui}
-      uiuTypes, uiWidgets, uiuWidget,
+      uiWidgets, uiuWidget,
       wdguLabel, wdguWorkbar, wdguCheckbox, wdguInputBox, wdguGroup, wdguButton,
       {oxed}
       uOXED, oxeduProjectRunner, oxeduEntities,
