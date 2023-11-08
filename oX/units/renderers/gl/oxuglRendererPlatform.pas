@@ -34,7 +34,7 @@ TYPE
       function OnDeInitWindow({%H-}wnd: oglTWindow): boolean; virtual;
       procedure SwapBuffers({%H-}wnd: oglTWindow); virtual;
       function GetContext({%H-}wnd: oglTWindow; {%H-}shareContext: oglTRenderingContext): oglTRenderingContext; virtual;
-      function ContextCurrent({%H-}var target: oxTRenderTarget; {%H-}context: oglTRenderingContext): boolean; virtual;
+      function ContextCurrent(var {%H-}target: oxTRenderTarget; {%H-}context: oglTRenderingContext): boolean; virtual;
       function ClearContext({%H-}wnd: oglTWindow): boolean; virtual;
       function DestroyContext({%H-}wnd: oglTWindow; {%H-}context: oglTRenderingContext): boolean; virtual;
    end;
