@@ -105,6 +105,9 @@ begin
    wnd.oxwParent := wnd;
 
    uiCursor.SetCursorTypeForced(wnd.CursorType);
+   {$IFNDEF OX_LIBRARY}
+   Include(wnd.Properties, uiwndpSYSTEM);
+   {$ENDIF}
 end;
 
 procedure uiTOXHooks.DestroyWindow(wnd: oxTWindow);
