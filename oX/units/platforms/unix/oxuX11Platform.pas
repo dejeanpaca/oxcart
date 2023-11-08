@@ -251,7 +251,7 @@ procedure MouseButtonHandle();
 begin
    appm.Init(m);
 
-   {check if this is a wheel event}
+   {check if this is a scroll event}
    if(event.xbutton.state and Button4Mask > 0) then begin
       m.Action := appmcWHEEL;
       m.Value  := 1;
@@ -262,14 +262,15 @@ begin
       m.Value  := -1;
    end;
 
-   {set event action, if not determined it's a wheel action already}
+   {set event action, if not determined it's a scroll action already}
    if(m.Action <> appmcWHEEL) then begin
       if(event._type = x.ButtonPress) then
          m.Action := appmcPRESSED
       else if(event._type = x.ButtonRelease) then
          m.Action  := appmcRELEASED;
    end else begin
-      {ignore release wheel events so we don't have two scroll events}
+      {ignore one scroll event so we don't have two scroll events,
+      since X gives both press and release events for single scroll}
       if event._type = x.ButtonPress then
          exit;
    end;
