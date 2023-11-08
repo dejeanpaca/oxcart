@@ -119,6 +119,7 @@ INTERFACE
 
       {$IFDEF OX_FEATURE_SCENE}
          oxuSceneRender,
+         oxuSceneRunner,
          {$IFDEF OX_LIBRARY}
          oxulibInputUpdater,
          oxuLibSceneLoader,
