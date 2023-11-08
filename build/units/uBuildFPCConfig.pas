@@ -94,7 +94,7 @@ end;
 class function TBuildFPCConfiguration.WriteFile(config: TSimpleStringList;
    const fn: StdString): boolean;
 begin
-   Result := WriteFile(config.List, fn);
+   Result := FileUtils.WriteStrings(fn, config.List, config.n) >= 0;
 end;
 
 END.
