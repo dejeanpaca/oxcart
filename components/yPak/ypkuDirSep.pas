@@ -25,8 +25,8 @@ begin
 
    {open}
    pak.f.Open(pak.fn);
-   if(pak.f.error = 0) then begin
-      ypkfSetBuffer();
+   if(pak.f.Error = 0) then begin
+      pak.SetBuffer();
 
       {read header}
       ypkf.ReadHeader(hdr);
@@ -36,7 +36,7 @@ begin
          ypkf.ReadEntries(pak.Entries, hdr.Files);
 
          {read entries}
-         if(pak.f.error = 0)then begin
+         if(pak.f.Error = 0)then begin
             if(hdr.Files > 0) then begin
                writeln('Done reading entries.');
 
@@ -47,6 +47,7 @@ begin
             console.e('Cannot read the YPAK file.');
       end else begin
          console.e(pak.f.GetErrorString() + ' - Header invalid or file unsupported.');
+
          writeln('ID:         ', hdr.ID);
          writeln('Endian:     ', hexstr(hdr.Endian, 4));
          writeln('Version:    ', hexstr(hdr.Version, 4));

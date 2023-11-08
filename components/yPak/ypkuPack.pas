@@ -222,7 +222,7 @@ begin
    pak.f.New(pak.fn);
 
    if(pak.f.Error = 0) then begin
-      ypkfSetBuffer();
+      pak.SetBuffer();
 
       ypkTFile.InitializeHeader(hdr);
       // TODO: Build header

@@ -71,16 +71,15 @@ var
 
 begin
    for i := 0 to (pak.Entries.n - 1) do begin
-      // TODO: fname := pak.Entries.list[i].fn;
-      fname := '';
+      fname := pak.data.GetFn(i)^;
 
       ReplaceDirSeparators(fname);
       writeln('creating file: ', fname);
 
       fCopy(pak.f, fname, pak.Entries.list[i].size);
 
-      if(pak.f.error <> 0) or (ioE <> 0) then begin
-         writeln('Error(', pak.f.error, ioE ,'): Cannot create file.');
+      if(pak.f.Error <> 0) or (ioE <> 0) then begin
+         writeln('Error(', pak.f.GetErrorString(), ' ', ioE ,'): Cannot create file.');
          break;
       end;
    end;
@@ -95,8 +94,9 @@ begin
 
    {open}
    pak.f.Open(pak.fn);
-   if(pak.f.error = 0) then begin
-      ypkfSetBuffer();
+
+   if(pak.f.Error = 0) then begin
+      pak.SetBuffer();
 
       {read header}
       ypkf.ReadHeader(hdr);

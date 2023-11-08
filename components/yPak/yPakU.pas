@@ -19,25 +19,33 @@ CONST
    FLTR_MODE_INCLUDE    = $0001;
    FLTR_MODE_EXCLUDE    = $0002;
 
-VAR
-  pak: record
+TYPE
+
+  { TPak }
+
+  TPak = record
      fn: string;
      f: TFile;
+     data: ypkTData;
      FilterMode: longint;
      Included,
      Excluded: string;
      Entries: ypkfTEntries;
+
+     procedure SetBuffer();
   end;
 
+VAR
+  pak: TPak;
   ypkf: ypkTFile;
-
-procedure ypkfSetBuffer();
 
 IMPLEMENTATION
 
-procedure ypkfSetBuffer();
+{ TPak }
+
+procedure TPak.SetBuffer();
 begin
-   pak.f.Buffer(128 * 1024);
+  pak.f.Buffer(128 * 1024);
 end;
 
 INITIALIZATION

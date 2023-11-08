@@ -8,7 +8,7 @@ PROGRAM yPakTool;
 
    USES
       uStd, ConsoleUtils, ParamUtils, StringUtils, uSimpleParser,
-      yPakU, ypkuPack, ypkuUnpack, ypkuList, ypkuDirSep, uyPakFile;
+      yPakU, ypkuPack, ypkuUnpack, ypkuList, ypkuDirSep, uyPakFile, ypkuFS;
 
 CONST
    { modes of operation }
