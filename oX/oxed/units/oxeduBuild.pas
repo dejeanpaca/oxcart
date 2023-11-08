@@ -506,6 +506,10 @@ begin
    if(isCMEM()) then
       Result.Add('cmem,');
 
+   {$IF DEFINED(UNIX) OR DEFINED(LINUX)}
+   Result.Add('cwstring,');
+   {$ENDIF}
+
    Result.Add('{$INCLUDE oxappuses.inc},');
    Result.Add(GetComponentUses());
 
