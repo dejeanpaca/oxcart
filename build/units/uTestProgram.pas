@@ -190,7 +190,7 @@ begin
    if(laz) then
       fn := ExtractAllNoExt(fn) + '.lpr';
 
-   TParseData.Init(p);
+   p.Create();
    p.ExternalData := Self;
    p.Read(fn, TParseMethod(@analyzeFile));
 end;

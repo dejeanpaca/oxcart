@@ -405,7 +405,7 @@ begin
       if(Mode = lpiMODE_TEST) then
          log.i('lpi > Parsing: ' + Source);
 
-      TParseData.Init(parse);
+      parse.Create();
       parse.ExternalData := @Self;
 
       parse.Read(Source, TParseMethod(@parseRead));

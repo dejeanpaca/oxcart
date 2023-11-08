@@ -214,7 +214,7 @@ begin
    executableName := '';
    executableNameNext := true;
 
-   TParseData.Init(p);
+   p.Create();
    p.StripWhitespace := true;
    p.Read(GetLPIFilename(path), TParseMethod(@readf));
 
