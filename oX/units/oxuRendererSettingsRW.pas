@@ -16,7 +16,8 @@ INTERFACE
 IMPLEMENTATION
 
 VAR
-   dvTargetFramerate: TDVar;
+   dvTargetFramerate,
+   dvSyncMethod: TDVar;
 
 procedure framerateNotify(var context: TDVarNotificationContext);
 begin
@@ -26,6 +27,7 @@ end;
 
 INITIALIZATION
    oxRenderSettings.dvg.Add(dvTargetFramerate, 'framerate', dtcLOOPINT, @oxRenderSettings.TargetFramerate, [dvarNOTIFY_READ]);
+   oxRenderSettings.dvg.Add(dvSyncMethod, 'sync', dtcENUM, @oxRenderSettings.Sync);
    dvTargetFramerate.pNotify := @framerateNotify;
 
 

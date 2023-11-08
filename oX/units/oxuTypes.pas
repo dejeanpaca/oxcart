@@ -316,6 +316,12 @@ TYPE
       class procedure Initialize(out rtc: oxTRenderTargetContext); static;
    end;
 
+   oxTRenderSyncMethod = (
+      oxRENDER_SYNC_NONE,
+      oxRENDER_SYNC_VSYNC,
+      oxRENDER_SYNC_FREESYNC
+   );
+
 CONST
    oxBLEND_MAX = oxBLEND_FILTER;
 

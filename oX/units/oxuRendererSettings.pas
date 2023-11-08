@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, udvars,
       {ox}
-      uOX;
+      uOX, oxuTypes;
 
 TYPE
    {settings for a renderer}
@@ -63,6 +63,7 @@ TYPE
    oxTRenderSettings = record
       dvg: TDVarGroup;
       TargetFramerate: loopint;
+      Sync: oxTRenderSyncMethod;
    end;
 
 VAR
