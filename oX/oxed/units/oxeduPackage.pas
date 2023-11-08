@@ -32,12 +32,20 @@ TYPE
       Units,
       IncludeFiles: oxedTPackageUnitList;
 
+      {unique paths for units in this package}
+      UnitPaths: TSimpleStringList;
+      {unique paths for includes in this package}
+      IncludePaths: TSimpleStringList;
+
       function GetPath(): StdString;
       function GetIdentifier(): StdString;
       function GetDisplayName(): StdString;
 
       {do we have any source in package}
       function IsEmpty(): boolean;
+
+      procedure AddUnit(var unitFile: oxedTPackageUnit);
+      procedure AddInclude(var unitFile: oxedTPackageUnit);
 
       procedure DisposeList();
 
@@ -88,20 +96,52 @@ end;
 
 function oxedTPackage.IsEmpty(): boolean;
 begin
-   Result := (Units.n = 0) and (IncludeFiles.n = 0);
+   Result := (Units.n = 0) and (IncludeFiles.n = 0) and (UnitPaths.n = 0) and (IncludePaths.n = 0);
+end;
+
+procedure oxedTPackage.AddUnit(var unitFile: oxedTPackageUnit);
+var
+   unitPath: StdString;
+
+begin
+   Units.Add(unitFile);
+
+   unitPath := ExtractFilePath(unitFile.Path);
+
+   if(UnitPaths.Find(unitPath) < 0) then
+      UnitPaths.Add(unitPath);
+end;
+
+procedure oxedTPackage.AddInclude(var unitFile: oxedTPackageUnit);
+var
+   includePath: StdString;
+
+begin
+   IncludeFiles.Add(unitFile);
+
+   includePath := ExtractFilePath(unitFile.Path);
+
+   if(IncludePaths.Find(includePath) < 0) then
+      IncludePaths.Add(includePath);
 end;
 
 procedure oxedTPackage.DisposeList();
 begin
    Units.Dispose();
+   UnitPaths.Dispose();
+
    IncludeFiles.Dispose();
+   IncludePaths.Dispose();
 end;
 
 class procedure oxedTPackage.Init(out p: oxedTPackage);
 begin
    ZeroOut(p, SizeOf(p));
 
+   TSimpleStringList.Initialize(p.UnitPaths);
    oxedTPackageUnitList.Initialize(p.Units);
+
+   TSimpleStringList.Initialize(p.IncludePaths);
    oxedTPackageUnitList.Initialize(p.IncludeFiles);
 end;
 
