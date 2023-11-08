@@ -684,23 +684,6 @@ begin
    end;
 end;
 
-procedure RecreateProgram();
-var
-   p: TAppendableString;
-   u: TPascalSourceBuilder;
-
-begin
-   u.Header := getSourceHeader();
-   u.Name := oxedProject.Identifier;
-   u.sUses := GetUsesString();
-   u.sMain := '   {$INCLUDE ./appinfo.inc}';
-   u.sMain.Add('   oxRun.Go()');
-
-   p := u.BuildProgram();
-
-   FileUtils.WriteString(oxedBuild.WorkArea + oxPROJECT_MAIN_SOURCE, p);
-end;
-
 procedure CreateIncludesList(const list: TSimpleStringList; var s: TAppendableString);
 var
    i: loopint;
@@ -720,6 +703,37 @@ begin
    end;
 end;
 
+function CreateUsesString(): TAppendableString;
+begin
+   Result := GetUsesString();
+
+   if oxedBuild.Parameters.IncludeUses.n > 0 then begin
+      Result := Result + ',';
+
+      CreateIncludesList(oxedBuild.Parameters.IncludeUses, Result);
+   end;
+end;
+
+procedure RecreateProgram();
+var
+   p: TAppendableString;
+   u: TPascalSourceBuilder;
+
+begin
+   u.Header := getSourceHeader();
+   u.Name := oxedProject.Identifier;
+
+   u.sUses := CreateUsesString();
+   CreateIncludesList(oxedBuild.Parameters.ExportSymbols, u.sExports);
+
+   u.sMain := '   {$INCLUDE ./appinfo.inc}';
+   u.sMain.Add('   oxRun.Go()');
+
+   p := u.BuildProgram();
+
+   FileUtils.WriteString(oxedBuild.WorkArea + oxPROJECT_MAIN_SOURCE, p);
+end;
+
 procedure RecreateLib();
 var
    p: TAppendableString;
@@ -731,14 +745,7 @@ begin
    u.Name := oxedProject.Identifier;
    u.Header := getSourceHeader();
 
-   u.sUses := GetUsesString();
-
-   if oxedBuild.Parameters.IncludeUses.n > 0 then begin
-      u.sUses := u.sUses + ',';
-
-      CreateIncludesList(oxedBuild.Parameters.IncludeUses, u.sUses);
-   end;
-
+   u.sUses := CreateUsesString();
    CreateIncludesList(oxedBuild.Parameters.ExportSymbols, u.sExports);
 
    u.sInitialization.Add('{$INCLUDE ./appinfo.inc}');
