@@ -187,7 +187,6 @@ begin
          params.Projection := @projection;
          RenderLayer(oxTRenderLayerComponent(layers.List[i]), params, cameras);
       end;
-      writeln('Can haz layers');
    end;
 
    for i := 0 to (cameras.n - 1) do begin
@@ -277,6 +276,7 @@ begin
       renderer := oxSceneRender.Default;
 
    if(sceneWindow.Scene <> nil) then begin
+//      wnd.oxProperties.ApplyDefaultProjection := false;
       renderer.Scene := sceneWindow.Scene;
       renderer.Render(wnd.Projection);
    end;
