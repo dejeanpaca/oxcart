@@ -62,14 +62,12 @@ begin
 
    {setup windows again}
    oxedSceneEdit.CreateWindow().Dock();
-   oxedSceneHierarchy.CreateWindow().DockLeft(oxed.DockableArea, 0.2);
-   oxedMessagesWindow.CreateWindow().DockDown(oxed.DockableArea, 0.2);
 
-   oxedProblemsWindow.CreateWindow().TabTo(oxedMessagesWindow.Instance);
-   oxedMessagesWindow.Instance.Select();
+   oxedMessagesWindow.CreateWindow().DockDown(oxed.DockableArea, 0.3);
+   oxedProjectBrowser.CreateWindow().TabTo(oxedMessagesWindow.Instance);
 
-   oxedInspector.CreateWindow().DockUp(
-      oxedProjectBrowser.CreateWindow().DockRight(oxed.DockableArea, 0.2));
+   oxedSceneHierarchy.CreateWindow().DockUp(
+      oxedInspector.CreateWindow().DockRight(oxed.DockableArea, 0.2), 0.3);
 
    oxedGameView.CreateWindow().TabTo(oxedSceneEdit.Instance);
 
