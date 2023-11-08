@@ -11,7 +11,8 @@ INTERFACE
    USES
       uStd, uColors, vmVector,
       {oX}
-      oxuTypes, oxuRender, oxuPrimitives, oxuTransform, oxuUI, oxuTexture, oxuWindow,
+      oxuTypes, oxuRender, oxuRenderUtilities,
+      oxuPrimitives, oxuTransform, oxuUI, oxuTexture, oxuWindow,
       oxuProjectionType;
 
 CONST
@@ -397,9 +398,8 @@ end;
 
 procedure uiTDraw.Quad(tex: oxTTexture);
 begin
-   oxRender.TextureCoords(QuadTexCoords[0]);
-   Texture(tex);
-   oxRender.Primitives(oxPRIMITIVE_TRIANGLES, 6, pword(@QuadIndicesus[0]));
+   oxRenderingUtilities.QuadTexture(tex);
+   oxRenderingUtilities.QuadVertex(QuadVertices);
 end;
 
 END.
