@@ -84,7 +84,6 @@ INTERFACE
       {$IFDEF OX_FEATURE_HTML_LOG}
       oxuLogHTML,
       {$ENDIF}
-      {%H-}oxuclParameters,
 
       oxuKeyboardControl,
       oxuPointerControl,
@@ -96,11 +95,11 @@ INTERFACE
       {ui}
       {$IFDEF OX_FEATURE_UI}
       uiuOXHooks,
+      uiuDefaultFont,
       wdguTitleButtons,
       uiuHints,
       uiuCursor,
       uiuDockableWindowContextMenu,
-      uiuDefaultFont,
       uiuWindowContextMenu,
       uiuSkinLoader,
       {$ENDIF}
@@ -116,11 +115,6 @@ INTERFACE
       {$ENDIF}
       {$IFDEF OX_FEATURE_AL_AUDIO}
       oxuALAudio,
-      {$ENDIF}
-
-      {$IFDEF OX_FEATURE_WND_ABOUT}
-      { ui windows }
-      oxuwndAbout,
       {$ENDIF}
 
       {$IF DEFINED(OX_FEATURE_UI) AND DEFINED(OX_FEATURE_CONSOLE)}
@@ -162,6 +156,10 @@ INTERFACE
       oxuwndSettingsAudio,
       oxuwndSettingsInput,
       oxuwndSettingsOther,
+        {$IFDEF OX_FEATURE_WND_ABOUT}
+        { ui windows }
+        oxuwndAbout,
+        {$ENDIF}
       {$ENDIF}
 
       {loaders}
