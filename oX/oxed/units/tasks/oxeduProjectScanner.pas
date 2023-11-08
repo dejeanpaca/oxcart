@@ -229,6 +229,7 @@ begin
 
    try
       scanPackage(oxedAssets.oxPackage);
+      scanPackage(oxedAssets.oxDataPackage);
       scanPackage(oxedProject.MainPackage);
 
       for i := 0 to oxedProject.Packages.n - 1 do begin
