@@ -2,7 +2,7 @@
    oxuLight, light management
    Copyright (C) 2018. Dejan Boras
 
-   Started On:    26.11.2018..
+   Started On:    26.11.2018.
 }
 
 {$INCLUDE oxdefines.inc}
@@ -11,7 +11,7 @@ UNIT oxuLight;
 INTERFACE
 
    USES
-      uStd, vmMath,
+      uStd, vmMath, vmVector,
       {app}
       appuMouse,
       {ox}
@@ -20,14 +20,22 @@ INTERFACE
 TYPE
    {light type}
    oxTLightType = (
-      oxLIGHT_TYPE_NONE
+      oxLIGHT_TYPE_NONE,
+      oxLIGHT_TYPE_DIRECTIONAL,
+      oxLIGHT_TYPE_POINT
    );
 
    { oxTLight }
 
-   oxTLight = class(oxTSerializable)
-      public
+   oxTLight = record
       LightType: oxTLightType;
+
+      Position,
+      Direction: TVector3f;
+
+      Radius: single;
+
+      class procedure Initialize(out l: oxTLight); static;
    end;
 
 VAR
@@ -41,14 +49,21 @@ VAR
 
 { oxTLight }
 
-function instance(): TObject;
+class procedure oxTLight.Initialize(out l: oxTLight);
 begin
-   Result := oxTLight.Create();
+   ZeroPtr(@l, SizeOf(l));
+
+   l.LightType := oxLIGHT_TYPE_DIRECTIONAL;
+   l.Direction := vmvRight;
 end;
 
 INITIALIZATION
-   serialization := oxTSerialization.Create(oxTLight, @instance);
-   serialization.AddProperty('LightType', @oxTLight(nil).LightType, oxSerialization.Types.Enum);
+   serialization := oxTSerialization.CreateRecord('oxTLight');
+
+   serialization.AddProperty('LightType', @oxTLight(nil^).LightType, oxSerialization.Types.Enum);
+   serialization.AddProperty('Position', @oxTLight(nil^).Position, oxSerialization.Types.Vector3f);
+   serialization.AddProperty('Direction', @oxTLight(nil^).Direction, oxSerialization.Types.Vector3f);
+   serialization.AddProperty('Radius', @oxTLight(nil^).Radius, oxSerialization.Types.Single);
 
 FINALIZATION
    FreeObject(serialization);
