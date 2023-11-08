@@ -192,7 +192,7 @@ end;
 procedure oxTRenderer.Initialize();
 begin
    {$IFDEF OX_LIBRARY}
-   ExternalRenderer := oxTRenderer(oxExternalGlobalInstances.FindInstance('oxTRenderer'));
+   ExternalRenderer := oxTRenderer(oxExternalGlobalInstances^.FindInstance('oxTRenderer'));
    {$ENDIF}
 
    OnInitialize();

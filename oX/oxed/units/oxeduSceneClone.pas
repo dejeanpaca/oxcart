@@ -28,7 +28,7 @@ var
    entitiesGlobal: oxTEntityGlobal = nil;
 
 begin
-   entitiesGlobal := oxTEntityGlobal(oxLibReferences.FindInstance('oxTEntityGlobal'));
+   entitiesGlobal := oxTEntityGlobal(oxLibReferences^.FindInstance('oxTEntityGlobal'));
    if(entitiesGlobal <> nil) then begin
       oxedEntities.SetupHooks(entitiesGlobal);
    end else
@@ -43,7 +43,7 @@ var
    externalSceneManagement: oxPSceneManagement;
 
 begin
-   externalSceneManagement := oxPSceneManagement(oxLibReferences.FindInstancePtr('oxTSceneManagement'));
+   externalSceneManagement := oxPSceneManagement(oxLibReferences^.FindInstancePtr('oxTSceneManagement'));
 
    if(externalSceneManagement = nil) then begin
       oxedMessages.e('Could not find oxTSceneManagement instance in the library');
@@ -51,11 +51,11 @@ begin
    end;
 
    if(externalSceneManagement^.Enabled) then begin
-      scene := oxTScene(oxLibReferences.FindInstance('oxTScene'));
+      scene := oxTScene(oxLibReferences^.FindInstance('oxTScene'));
       oxWorld := scene.World;
       oxSceneManagement.SetScene(scene);
 
-      sceneRender := oxTSceneRender(oxLibReferences.FindInstance('oxTSceneRender'));
+      sceneRender := oxTSceneRender(oxLibReferences^.FindInstance('oxTSceneRender'));
 
       if(sceneRender <> nil) then begin
          sceneRender.Scenes[0].Scene := oxScene;

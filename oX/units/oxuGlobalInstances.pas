@@ -36,13 +36,16 @@ TYPE
       procedure Call(const instanceType: StdString; newReference: pointer);
    end;
 
+
+   oxPGlobalInstances = ^oxTGlobalInstances;
+
    { oxTGlobalInstances }
 
-   oxTGlobalInstances = class
+   oxTGlobalInstances = object
       List: oxTGlobalInstancesList;
       OnReferenceChange: oxTGlobalInstancesReferenceChangeCallbacks;
 
-      constructor Create; virtual;
+      constructor Create();
 
       {add class based instance}
       function Add(instanceType: TClass; location: pointer; method: oxTGlobalInstanceMethod = nil): oxPGlobalInstance;
@@ -64,9 +67,8 @@ TYPE
    end;
 
 VAR
-   oxGlobalInstances,
-
-   oxExternalGlobalInstances: oxTGlobalInstances;
+   oxGlobalInstances: oxTGlobalInstances;
+   oxExternalGlobalInstances: oxPGlobalInstances;
 
 IMPLEMENTATION
 
@@ -226,17 +228,9 @@ begin
    end;
 end;
 
-function instanceGlobal(): TObject;
-begin
-   Result := oxTGlobalInstances.Create();
-end;
-
 INITIALIZATION
-   oxGlobalInstances := oxTGlobalInstances.Create();
+   oxGlobalInstances.Create();
 
-   oxGlobalInstances.Add(oxTGlobalInstances, @oxGlobalInstances, @instanceGlobal)^.Allocate := False;
-
-FINALIZATION
-   FreeObject(oxGlobalInstances);
+   oxGlobalInstances.Add('oxTGlobalInstances', @oxGlobalInstances)^.Allocate := False;
 
 END.

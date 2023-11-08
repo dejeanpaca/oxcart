@@ -13,8 +13,9 @@ INTERFACE
       appuSysInfo
       {$IFDEF OX_LIBRARY_SUPPORT}, appuSysInfoBase, oxuGlobalInstances{$ENDIF}
       {$ELSE}
-      uApp, appuSysInfoBase, oxuGlobalInstances,
-      uOX, oxuRunRoutines
+      uLog,
+      uApp, appuSysInfoBase,
+      uOX, oxuRunRoutines, oxuGlobalInstances
       {$ENDIF};
 
 IMPLEMENTATION
@@ -25,10 +26,12 @@ var
    instance: appPSystemInformation;
 
 begin
-   instance := oxExternalGlobalInstances.FindInstancePtr('appTSystemInformation');
+   instance := oxExternalGlobalInstances^.FindInstancePtr('appTSystemInformation');
 
    if(instance <> nil) then
-      appSI := instance^;
+      appSI := instance^
+   else
+      log.w('Could not find external system information instance');
 end;
 {$ENDIF}
 

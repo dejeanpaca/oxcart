@@ -20,7 +20,7 @@ var
 
 procedure init();
 begin
-   appkExt := oxExternalGlobalInstances.FindInstancePtr('appTKeyGlobal');
+   appkExt := oxExternalGlobalInstances^.FindInstancePtr('appTKeyGlobal');
 
    if(appkExt = nil) then
       log.w('Failed to obtain external appk');

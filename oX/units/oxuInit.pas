@@ -331,8 +331,7 @@ begin
    end;
 
    {$IFNDEF OX_LIBRARY}
-   if(oxGlobalInstances <> nil) then
-      oxGlobalInstances.Deinitialize();
+   oxGlobalInstances.Deinitialize();
    {$ENDIF}
 
    {done}

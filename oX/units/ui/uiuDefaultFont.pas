@@ -78,7 +78,7 @@ var
    instance: uiPDefaultFontManager;
 
 begin
-   instance := oxExternalGlobalInstances.FindInstancePtr('uiTDefaultFontManager');
+   instance := oxExternalGlobalInstances^.FindInstancePtr('uiTDefaultFontManager');
 
    if(instance <> nil) then begin
       uiDefaultFont.Path := instance^.Path;

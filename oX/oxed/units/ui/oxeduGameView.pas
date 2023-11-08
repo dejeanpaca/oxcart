@@ -198,11 +198,11 @@ end;
 
 procedure onStart();
 begin
-   projectKey := oxTKeyGlobal(oxLibReferences.FindInstance('oxTKeyGlobal'));
+   projectKey := oxTKeyGlobal(oxLibReferences^.FindInstance('oxTKeyGlobal'));
    if(projectKey = nil) then
       log.e('Failed to get project global keys reference');
 
-   projectPointer := oxTPointerGlobal(oxLibReferences.FindInstance('oxTPointerGlobal'));
+   projectPointer := oxTPointerGlobal(oxLibReferences^.FindInstance('oxTPointerGlobal'));
    if(projectPointer = nil) then
       log.e('Failed to get project global pointer reference');
 
