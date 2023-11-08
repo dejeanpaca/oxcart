@@ -351,7 +351,7 @@ begin
    end;
 end;
 
-procedure splashStart();
+procedure splashDone();
 begin
    if(oxSplashScreen.Startup <> nil) then begin
       oxSplashScreen.Startup.WaitForDisplayTime();
@@ -371,6 +371,7 @@ INITIALIZATION
    {$ENDIF}
 
    ox.OnPreInitialize.Add('ox.splash_initialize', @splashInitialize);
-   ox.OnStart.Add('ox.splash_start', @splashStart);
+   ox.OnStart.Add('ox.splash_start', @splashDone);
+   ox.OnInitialize.dAdd('ox.splash_deinitialize', @splashDone);
 
 END.
