@@ -77,8 +77,11 @@ TYPE
    oxTSplashScreenGlobal = record
       {default minimum splash display time, in miliseconds (0 means no display time)}
       DefaultDisplayTime: longword;
+      {should the splash screen run on the main thread}
+      RunOnMainThread: boolean;
 
       Startup: oxTSplashScreen;
+      {run in a thread}
       StartupThreaded: boolean;
       StartupInstance: oxTSplashScreenClass;
    end;
@@ -252,7 +255,8 @@ begin
       oxSplashScreen.Startup.StartSplash(oxWindow.Current);
       oxSplashScreen.Startup.Render();
 
-      if(oxSplashScreen.StartupThreaded) then
+      {start in thread if indicated to do so}
+      if(oxSplashScreen.StartupThreaded) and (not oxSplashScreen.RunOnMainThread) then
          oxSplashScreen.Startup.Start();
    end;
 end;
@@ -274,6 +278,7 @@ INITIALIZATION
 
    {$IFNDEF NO_THREADS}
    oxSplashScreen.StartupThreaded := true;
+   oxSplashScreen.RunOnMainThread := true;
    {$ENDIF}
 
    ox.OnPreInitialize.Add('ox.splash_initialize', @splashInitialize);
