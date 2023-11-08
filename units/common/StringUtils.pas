@@ -280,6 +280,8 @@ function ExtractFilePath(const st: StdString): StdString;
 function ExtractFileDrive(const st: StdString): StdString;
 {replace directory separators with the one used on the current platform}
 procedure ReplaceDirSeparators(var st: StdString);
+{replace directory separators with the one used on the current platform}
+function ReplaceDirSeparatorsf(const st: StdString): StdString;
 {get parent directory in a given path}
 function GetParentDirectory(const st: StdString): StdString;
 {include a trailing path delimiter only if specified path is non empty}
@@ -1134,7 +1136,27 @@ begin
    for i := 1 to Length(st) do begin
       if(st[i] = rds) then
          st[i] := DirectorySeparator;
-   end
+   end;
+end;
+
+{replace directory separators with the one used on the current platform}
+function ReplaceDirSeparatorsf(const st: StdString): StdString;
+var
+   rds: char; {the directory separator which must be replaced}
+   i: longint;
+
+begin
+   Result := st;
+
+   {decide which separator to replace}
+   {$IFDEF WINDOWS}rds := '/';{$ENDIF}
+   {$IFDEF LINUX}rds := '\';{$ENDIF}
+   {$IFDEF DARWIN}rds := '\';{$ENDIF}
+
+   for i := 1 to Length(Result) do begin
+      if(Result[i] = rds) then
+         Result[i] := DirectorySeparator;
+   end;
 end;
 
 function GetParentDirectory(const st: string): string;
