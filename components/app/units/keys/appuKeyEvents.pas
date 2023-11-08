@@ -43,10 +43,6 @@ begin
    appEvents.Init(event, evID, @appKeyEvents.evh);
    appk.Init(kEvent);
 
-   kEvent.Key := k;
-
-   Result := appEvents.Queue(event, kEvent, SizeOf(kEvent));
-
    if(process) then begin
       {determine if key was pressed in this cycle}
       if((not appk.Pressed[k.Code]) and k.IsPressed()) then
@@ -57,7 +53,14 @@ begin
 
       if(appk.CurrentCyclePressed[k.Code] and (not appk.Pressed[k.Code])) then
          appk.ReleasePressed[k.Code] := true;
+
+      {set modifiers and only modifiers to the existing state}
+      k.State := k.State or (appk.Modifiers and kmMODIFIERS_MASK);
    end;
+
+   kEvent.Key := k;
+
+   Result := appEvents.Queue(event, kEvent, SizeOf(kEvent));
 end;
 
 procedure keyAction(var event: appTEvent);
