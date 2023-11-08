@@ -74,7 +74,8 @@ TYPE
 
       {title button size ratio, button size:title height,
       used for both button height and width [square]}
-      ButtonSizeRatio: single; static;
+      ButtonSizeRatio,
+      ButtonSpacingRatio: single; static;
    end;
 
 VAR
@@ -185,7 +186,7 @@ begin
    SetColor(cWhite4ub);
 
    {we have button glyphs}
-   if(pSkin.Window.TitleButtonGlyphs[0] <> nil) then begin
+   if(pSkin.Window.TitleButtonGlyphs[0].Texture <> nil) then begin
       for i := 0 to (Buttons.n - 1) do begin
          getRect();
 
@@ -288,6 +289,7 @@ begin
       exit;
 
    pSkin := uiTSkin(pWnd.Skin);
+
    if(pWnd.Frame <> uiwFRAME_STYLE_NONE) and (pSkin <> nil) then begin
       SetVisibility(true);
       titleHeight := pWnd.GetTitleHeight();
@@ -299,8 +301,7 @@ begin
          Buttons.h := CachedFont.GetHeight();
 
       Buttons.w := Buttons.h;
-
-      Buttons.Spacing := 1; {set the spacing}
+      Buttons.Spacing := round(Buttons.w * wdgTitleButtons.ButtonSpacingRatio); {set the spacing}
 
       {figure out how many Buttons there are and their properties}
       n := 0;
@@ -333,9 +334,7 @@ begin
 
       {need to determine the position of the widget}
       y := pWnd.Dimensions.h + (titleHeight + Buttons.h) div 2;
-      x := pWnd.Dimensions.w - totalWidth - uiTWindow(wnd).GetFrameWidth() -
-         {move away from the b}
-         loopint((round((Buttons.h)) div 4));
+      x := pWnd.Dimensions.w - totalWidth;
 
       Move(x, y);
    end else
@@ -396,7 +395,9 @@ begin
 end;
 
 INITIALIZATION
-   wdgTitleButtons.ButtonSizeRatio := 0.9;
+   wdgTitleButtons.ButtonSizeRatio := 0.85;
+   wdgTitleButtons.ButtonSpacingRatio := 0.15;
+
    wdgTitleButtons.Internal.Register('title_buttons', @init, @deinit);
 
 END.
