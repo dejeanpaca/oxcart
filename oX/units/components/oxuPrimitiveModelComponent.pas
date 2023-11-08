@@ -32,6 +32,11 @@ TYPE
       procedure Cube();
       procedure Sphere();
       procedure Plane();
+      procedure Circle();
+      procedure Disk();
+      procedure Cylinder();
+      procedure Torus();
+      procedure Cone();
 
       procedure Deserialized; override;
 
@@ -79,6 +84,36 @@ procedure oxTPrimitiveModelComponent.Plane();
 begin
    Model.Dispose();
    Model.Quad();
+end;
+
+procedure oxTPrimitiveModelComponent.Circle();
+begin
+   Model.Dispose();
+   Model.Circle();
+end;
+
+procedure oxTPrimitiveModelComponent.Disk();
+begin
+   Model.Dispose();
+   Model.Disk();
+end;
+
+procedure oxTPrimitiveModelComponent.Cylinder();
+begin
+   Model.Dispose();
+   Model.Cylinder();
+end;
+
+procedure oxTPrimitiveModelComponent.Torus();
+begin
+   Model.Dispose();
+   Model.Torus();
+end;
+
+procedure oxTPrimitiveModelComponent.Cone();
+begin
+   Model.Dispose();
+   Model.Cone();
 end;
 
 procedure oxTPrimitiveModelComponent.Deserialized;
