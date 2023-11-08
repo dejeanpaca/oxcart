@@ -9,12 +9,13 @@ UNIT oxeduAndroidBuild;
 INTERFACE
 
    USES
+      StringUtils,
       {app}
       appuEvents, appuActionEvents,
       {build}
-      uBuildInstalls,
+      uBuildInstalls, uBuild,
       {oxed}
-      uOXED, oxeduBuild, oxeduAndroidPlatform;
+      uOXED, oxeduBuild, oxeduAndroidPlatform, oxeduAndroidSettings;
 
 TYPE
 
@@ -60,6 +61,20 @@ begin
    oxedAndroidBuild.BuildToProject();
 end;
 
+procedure buildStartRun();
+var
+   arch: oxedTAndroidPlatformArchitecture;
+
+begin
+   if(oxedBuild.BuildArch.PlatformObject <> oxedAndroidPlatform) then
+      exit;
+
+   arch := oxedTAndroidPlatformArchitecture(oxedBuild.BuildArch);
+
+   build.FPCOptions.CompilerUtilitiesPath := IncludeTrailingPathDelimiterNonEmpty(oxedAndroidSettings.GetNDKPath()) +
+      'toolchains' +  DirectorySeparator + arch.ToolChainPath + DirectorySeparator;
+end;
+
 procedure init();
 begin
    oxedAndroidBuild.Initialize();
@@ -67,6 +82,7 @@ end;
 
 INITIALIZATION
    oxedAndroidBuild.BUILD_TO_PROJECT_ACTION := appActionEvents.SetCallback(@buildToProject);
+   oxedBuild.OnStartRun.Add(@buildStartRun);
    oxed.Init.Add('platform.android.build', @init);
 
 END.
