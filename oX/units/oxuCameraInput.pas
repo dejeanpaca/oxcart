@@ -73,7 +73,7 @@ begin
 
       appm.GetPosition(nil, nx, ny);
       if(center) then begin
-         mx := nx - ox;
+         mx := ox - nx;
          my := ny - oy;
       end else begin
          mx := ox - nx;
