@@ -41,7 +41,7 @@ IMPLEMENTATION
 constructor oxedTAndroidPlatformArchitecture.Create();
 begin
    Name := 'Android';
-   Architecture := '';
+   Architecture := 'android';
    Platform := 'arm-android';
 end;
 
@@ -57,7 +57,10 @@ begin
 
    Configuration := oxedTPlatformConfiguration.Create();
 
-   AddArchitecture(oxedTAndroidPlatformArchitecture.Create());
+   AddArchitecture(oxedTAndroidPlatformArchitecture.Create()).Architecture := 'arm';
+   AddArchitecture(oxedTAndroidPlatformArchitecture.Create()).Architecture := 'aarch64';
+   AddArchitecture(oxedTAndroidPlatformArchitecture.Create()).Architecture := 'i386';
+   AddArchitecture(oxedTAndroidPlatformArchitecture.Create()).Architecture := 'x86_64';
 end;
 
 procedure oxedTAndroidPlatform.ProjectReset();
