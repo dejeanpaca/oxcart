@@ -59,6 +59,7 @@ INTERFACE
       oxeduiBuildOutput,
       oxeduPluginsUI,
       oxeduProjectTerminal,
+      oxeduwndCompilerSettings,
       {platforms}
       oxeduwndAndroidSettings, oxeduwndAndroidGeneralSettings,
       oxeduAndroidMenu,
