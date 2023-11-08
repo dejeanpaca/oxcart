@@ -35,6 +35,9 @@ TYPE
       function GetFn(index: loopint): PShortString;
       {finds a file with the specified name in the entries}
       function Find(var e: ypkfTEntries; const fn: string): longint;
+
+      {list all files}
+      procedure ListFiles();
    end;
 
    { ypkTFileSystemGlobal }
@@ -109,6 +112,7 @@ begin
    fFile.Init(fs.f);
 
    fs.ypkf.Initialize(fs.ypkf);
+   fs.Entries.InitializeValues(fs.Entries);
    fs.ypkf.f := @fs.f;
 end;
 
@@ -147,6 +151,8 @@ begin
       exit(nil);
    end;
 
+   fs.BlobSize := hdr.BlobSize;
+
    fs.ypkf.ReadBlob(fs.Blob, fs.BlobSize);
    fs.ypkf.ReadEntries(fs.Entries, hdr.Files);
 
@@ -154,7 +160,7 @@ begin
       Result := @fs;
 
       log.i(tag + 'Loaded file successfully: ' + fs.f.fn +
-         ', files: ' + sf(hdr.Files) + ', offs: ' + sf(fs.f.fOffset) + ', size: ' + sf(fs.f.fSize) + ')');
+         ', files: ' + sf(hdr.Files) + ', offs: ' + sf(fs.f.fOffset) + ', blob: ' + sf(fs.BlobSize) + ', size: ' + sf(fs.f.fSize) + ')');
    end else
       writeLog(fs, 'Cannot read blob or entries.')
 end;
@@ -395,7 +401,7 @@ begin
    Result := @EmptyShortString;
 
    if(index >= 0) and (index < Entries.n) then begin
-      Result := PShortString(Blob + ptrint(Entries.List[index].FileNameOffset));
+      Result := PShortString(Blob + PtrInt(Entries.List[index].FileNameOffset));
    end;
 end;
 
@@ -404,13 +410,28 @@ var
    i: longint;
 
 begin
-   if(e.n > 0) then
-      for i := 0 to (e.n-1) do begin
+   if(e.n > 0) and (Blob <> nil) and (BlobSize > 0) then begin
+      for i := 0 to e.n - 1 do begin
          if(GetFN(i)^ = fn) then
             exit(i);
       end;
+   end;
 
    Result := -1;
+end;
+
+procedure ypkTFSFile.ListFiles();
+var
+   i: loopint;
+
+begin
+   log.i('ypkfs > ' + f.fn);
+
+   for i := 0 to Entries.n - 1 do begin
+      log.i('ypkfs > ' + GetFn(i)^);
+   end;
+
+   log.i('ypkfs > done');
 end;
 
 INITIALIZATION

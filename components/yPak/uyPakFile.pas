@@ -173,14 +173,10 @@ end;
 
 function ypkTFile.ReadEntries(var e: ypkfTEntries; count: longint): fileint;
 begin
+   e.Allocate(count);
+
    if(count > 0) then begin
       e.n := count;
-
-      try
-         SetLength(e.List, e.n);
-      except
-         exit(eNO_MEMORY);
-      end;
 
       f^.Read(e.List[0], int64(count) * ypkENTRY_SIZE);
    end;
