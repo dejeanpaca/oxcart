@@ -178,11 +178,11 @@ var
    glrc: oglTRenderingContext;
 
 begin
-   if(wnd.wd.Display = <> EGL_NO_DISPLAY) then
-      exit;
-
-   if(context.Target^.Typ = oxRENDER_TARGET_WINDOW) and then begin
+   if(context.Target^.Typ = oxRENDER_TARGET_WINDOW) then begin
       wnd := oglTWindow(context.Target^.Target);
+
+      if(wnd.wd.Display = EGL_NO_DISPLAY) then
+         exit;
 
       glrc := oxglRenderer.glRenderingContexts[context.RenderContext];
 
