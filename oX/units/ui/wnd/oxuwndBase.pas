@@ -89,6 +89,7 @@ begin
 
    if(Width = 0) then
       Width := 480;
+
    if(Height = 0) then
       Height:= 320;
 
@@ -132,6 +133,7 @@ begin
 
    if(Window <> nil) then begin
       Window.BaseHandler := Self;
+
       {add widgets}
       AddWidgets();
    end;
