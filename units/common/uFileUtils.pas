@@ -372,7 +372,7 @@ var
 begin
    Result := true;
 
-   dirPath := ExcludeTrailingPathDelimiter(dir);
+   dirPath := IncludeTrailingPathDelimiterNonEmpty(dir);
 
    {find first}
    if(dirPath = '') then
@@ -403,8 +403,8 @@ begin
    end;
 
    {remove directory}
-   if(dir <> '') then begin
-      if(not RemoveDir(dir)) then
+   if(dirPath <> '') then begin
+      if(not RemoveDir(dirPath)) then
          Result := false;
    end;
 
@@ -414,7 +414,7 @@ end;
 
 class function TFileUtilsGlobal.RmDir(const dir: StdString): boolean;
 begin
-   Result := RmDirChildren(ExcludeTrailingPathDelimiter(dir));
+   Result := RmDirChildren(dir);
 end;
 
 class function TFileUtilsGlobal.PathType(const path: StdString): TFilePathType;
