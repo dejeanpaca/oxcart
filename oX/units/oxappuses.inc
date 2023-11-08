@@ -1,8 +1,8 @@
 {NOTE: Ignore warnings for oxuDefaults because it is used, even though fpc may complain it is not}
 
-{$IFNDEF NO_THREADS}
-   {$IFDEF UNIX}
-      cthreads,
+{$IFDEF UNIX}
+   {$IFNDEF NO_THREADS}
+   cthreads,
    {$ENDIF}
 {$ENDIF}
 
