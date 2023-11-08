@@ -132,8 +132,6 @@ destructor oxedTSceneWindow.Destroy();
 begin
    inherited;
 
-   FreeObject(Camera);
-
    if(SceneRenderer <> oxSceneRender.Default) then
       FreeObject(SceneRenderer);
 end;
