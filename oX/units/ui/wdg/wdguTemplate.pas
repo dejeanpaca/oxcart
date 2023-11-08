@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       oxuTypes,
       {ui}
-      uiuWidget, uiWidgets, wdguBase;
+      uiuWidget, uiWidgets, uiuRegisteredWidgets, wdguBase;
 
 TYPE
    wdgTTemplate = class(uiTWidget)
@@ -52,8 +52,7 @@ end;
 
 procedure init();
 begin
-   wdgTemplate.internal.Instance := wdgTTemplate;
-   wdgTemplate.internal.Done();
+   wdgTemplate.internal.Done(wdgTTemplate);
 
    wdgTemplate := wdgTTemplateGlobal.Create(wdgTemplate.Internal);
 end;
