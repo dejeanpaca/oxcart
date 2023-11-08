@@ -29,7 +29,8 @@ INTERFACE
       oxeduBuildEvents, oxeduLazarus,
       {windows}
       oxeduMenubar, oxeduProjectManagement, oxeduMessages,
-      oxuwndBuildSettings, oxeduToolbar, oxeduWorkbar, oxeduStatusbar, oxeduDockableArea, oxeduMenuToolbar,
+      oxuwndBuildSettings,
+      oxeduToolbar, oxeduWorkbar, oxeduStatusbar, oxeduDockableArea, oxeduMenuToolbar,
       oxeduTasksUI, oxeduProjectContextMenu, oxeduProjectSettingsWindow,
       oxeduViewScene, oxeduSceneView, oxeduProjectDialog, oxeduSceneEditTools,
       oxeduRunButtons, oxeduStatusInfo,
