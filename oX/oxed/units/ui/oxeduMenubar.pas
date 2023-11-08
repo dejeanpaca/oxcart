@@ -146,7 +146,7 @@ begin
    CreateRecents(FileMenu);
    FileMenu.AddSeparator();
    item := FileMenu.AddItem('Quit', appACTION_QUIT);
-   oxedIcons.Create(item, $f057);
+   oxedIcons.Create(item, $f011);
 
    { EDITOR }
 
