@@ -215,7 +215,7 @@ begin
    if(not CustomDrawnContainer) then begin
       surfaceColor := GetColor(wdgscINPUT_SURFACE);
 
-      if(not IsSelected()) then
+      if (not IsSelected()) and (not Hovering()) then
          borderColor := GetColor(wdgscINPUT_BORDER)
       else
          borderColor := GetColor(wdgscINPUT_BORDER_SELECTED);

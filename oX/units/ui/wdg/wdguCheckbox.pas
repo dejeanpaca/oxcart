@@ -107,7 +107,7 @@ begin
    pwnd := uiTWindow(wnd);
 
    r.Assign(RPosition.x, RPosition.y, Width, Height);
-   RenderCheckbox(self, Checked(), wdgpENABLED in Properties, IsSelected() or (wdgpHOVERING in Properties), r);
+   RenderCheckbox(self, Checked(), wdgpENABLED in Properties, IsSelected() or Hovering(), r);
 
    x1 := RPosition.x;
    y1 := RPosition.y;

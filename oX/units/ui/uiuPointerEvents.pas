@@ -198,7 +198,7 @@ begin
       cur := oxui.mSelect.s[i];
 
       if(cur.ControlType = uiCONTROL_WIDGET) then
-         if(not (wdgpHOVERING in uiTWidget(cur).Properties)) then begin
+         if(not uiTWidget(cur).Hovering()) then begin
             Include(uiTWidget(cur).Properties, wdgpHOVERING);
             HoverEvent(uiTWidget(cur), uiHOVER_START);
          end else
