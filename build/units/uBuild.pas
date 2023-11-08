@@ -234,6 +234,8 @@ TYPE
       {wait for a build process to finish (fpc/lazbuild)}
       procedure Wait(p: TProcess);
 
+      {get an optimization level by name}
+      function GetOptimizationLevelByName(const name: StdString): loopint;
       {get an optimization level name}
       function GetOptimizationLevelName(level: loopint): StdString;
       {get a human readable optimization level name}
@@ -1146,6 +1148,19 @@ begin
    end;
 end;
 
+function TBuildSystem.GetOptimizationLevelByName(const name: StdString): loopint;
+var
+   i: loopint;
+
+begin
+   for i := 0 to OptimizationLevels.n - 1 do begin
+      if(OptimizationLevels[i] = name) then
+         exit(i);
+   end;
+
+   Result := -1;
+end;
+
 function TBuildSystem.GetOptimizationLevelName(level: loopint): StdString;
 begin
    if(level > 0) and (level <= CurrentPlatform^.OptimizationLevels.n) then
@@ -1490,6 +1505,8 @@ begin
    end;
 
    if(DefaultPlatform^.OptimizationLevels.n = 0) then begin
+      DefaultPlatform^.OptimizationLevels.Add('none');
+
       {$IF DEFINED(CPUX86_64) OR DEFINEDCPUX86_32)}
       DefaultPlatform^.OptimizationLevels.Add('sse');
       DefaultPlatform^.OptimizationLevels.Add('sse2');
