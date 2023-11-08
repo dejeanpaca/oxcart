@@ -25,7 +25,6 @@ TYPE
       Light: oxTLight;
 
       constructor Create(); override;
-      destructor Destroy(); override;
 
       procedure GetBoundingBox(out bbox: TBoundingBox); override;
 
@@ -52,13 +51,6 @@ begin
    inherited Create;
 
    oxTLight.Initialize(Light);
-end;
-
-destructor oxTLightComponent.Destroy();
-begin
-   inherited Destroy;
-
-   FreeObject(Light);
 end;
 
 procedure oxTLightComponent.GetBoundingBox(out bbox: TBoundingBox);
