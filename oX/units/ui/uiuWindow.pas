@@ -912,6 +912,11 @@ begin
    if(not (uiwndpMINIMIZED in Properties)) then begin
       Include(Properties, uiwndpMINIMIZED);
 
+      if(Parent = nil) then begin
+         if IsOxwReady() and (not fromSystem) then
+            GetPlatform().Minimize(oxTWindow(Self));
+      end;
+
       Notification(uiWINDOW_MINIMIZE);
       OnMinimize();
    end;
