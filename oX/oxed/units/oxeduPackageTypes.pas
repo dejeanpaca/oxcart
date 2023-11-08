@@ -46,7 +46,7 @@ TYPE
       function IsOptional(): boolean;
 
       {loads path properties from .package file if any is present}
-      procedure LoadPathProperties();
+      procedure LoadPathProperties(const basePath: StdString);
    end;
 
    { oxedTPackagePathHelper }
@@ -123,7 +123,7 @@ begin
    end;
 end;
 
-procedure oxedTPackagePath.LoadPathProperties();
+procedure oxedTPackagePath.LoadPathProperties(const basePath: StdString);
 var
    fn: StdString;
    kv: TStringPairs;
@@ -139,7 +139,7 @@ begin
 
    LoadedProperties := true;
 
-   fn := IncludeTrailingPathDelimiterNonEmpty(Path) + OX_PACKAGE_PROPS_FILE_NAME;
+   fn := basePath + Path + OX_PACKAGE_PROPS_FILE_NAME;
    TStringPairs.Initialize(kv);
 
    if(FileUtils.Exists(fn) > 0) then begin

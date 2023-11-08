@@ -124,7 +124,7 @@ begin
    if(FileExists(fd.f.Name + DirectorySeparator + OX_PACKAGE_PROPS_FILE_NAME)) then begin
       packagePath := ExtractRelativepath(oxedProjectScanner.CurrentPath, fd.f.Name);
       path := oxedProjectScanner.CurrentPackage^.Paths.Get(packagePath);
-      path^.LoadPathProperties();
+      path^.LoadPathProperties(oxedProjectScanner.CurrentPath);
    end;
 end;
 
