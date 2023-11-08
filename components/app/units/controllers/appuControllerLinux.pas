@@ -8,8 +8,9 @@ UNIT appuControllerLinux;
 
 INTERFACE
 
-   USES baseunix, sysutils, uStd, uLog, StringUtils, uLinux,
-      appuInputTypes, appuController;
+   USES
+      baseunix, sysutils, uStd, uLog, StringUtils, uLinux,
+      appuController;
 
 TYPE
 
@@ -28,6 +29,8 @@ TYPE
 
    appTLinuxControllerDevice = class(appTControllerDevice)
       FileName: string;
+
+      constructor Create(); override;
 
       procedure Initialize(const fn: string);
       procedure Update(); override;
@@ -89,6 +92,15 @@ end;
 
 { appTLinuxControllerDevice }
 
+constructor appTLinuxControllerDevice.Create();
+begin
+   inherited Create();
+
+   TriggerValueRange := 32767;
+   AxisValueRange := 32767;
+   Handler := @appLinuxControllerHandler;
+end;
+
 procedure appTLinuxControllerDevice.Initialize(const fn: string);
 var
    pname: array[0..129] of char;
@@ -131,9 +143,21 @@ begin
 
       error := fpIOCtl(fileHandle, linux._ior('j', JSIOCGAXES, sizeof(nAxes)), @nAxes);
 
-      if(error = 0) then
-         AxisCount := nAxes
-      else
+      if(error = 0) then begin
+         AxisCount := nAxes;
+
+         if(AxisCount >= 2) then begin
+            AxisGroupCount := 1;
+            AxisGroups[0][0] := 0;
+            AxisGroups[0][1] := 1;
+         end;
+
+         if(AxisCount >= 4) then begin
+            AxisGroupCount := 2;
+            AxisGroups[1][0] := 2;
+            AxisGroups[1][1] := 3;
+         end;
+      end else
          log.w('Failed to get number of axes: ' + linux.GetErrorString(fpgeterrno()));
 
       error := fpIOCtl(fileHandle, linux._ior('j', JSIOCGBUTTONS, sizeof(nButtons)), @nButtons);
@@ -171,18 +195,12 @@ begin
 
          if(jsevent.typ and JS_EVENT_BUTTON > 0) then begin
             event.Typ := appCONTROLLER_EVENT_BUTTON;
-            State.KeyState := State.KeyState or (1 shr jsevent.number);
 
-            if(jsevent.value = 0) then
-               event.Value := 0
-            else
-               event.Value := 1.0;
-
-            State.Keys.Process(jsevent.number, event.Value > 0);
+            SetButtonPressedState(jsevent.number, jsevent.value > 0);
          end else  if(jsevent.typ and JS_EVENT_AXIS > 0) then begin
             event.Typ := appCONTROLLER_EVENT_AXIS;
-            State.Axes[jsevent.number] := jsevent.value;
-            event.Value := State.Axes[jsevent.number];
+
+            SetAxisState(jsevent.number, jsevent.value);
          end;
 
          event.KeyState := State.KeyState;
@@ -190,6 +208,8 @@ begin
 
          if(jsevent.typ and JS_EVENT_INIT = 0) then
             appControllers.Queue(event, Self);
+
+         Updated := true;
       end else begin
          error := fpgeterrno;
 
