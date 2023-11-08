@@ -11,7 +11,7 @@ UNIT uLPI;
 INTERFACE
 
    USES
-      sysutils, uStd, uLog, uBuild, uFileUtils, StringUtils,
+      sysutils, uStd, uLog, uBuild, uFileUtils, StringUtils, uSimpleParser,
       {LazUtils}
       uLazXMLUtils, Laz2_DOM, laz2_XMLRead, laz2_XMLWrite;
 
@@ -23,6 +23,13 @@ CONST
    eLPI_FAILED_TO_WRITE             = 4;
 
 TYPE
+   TLPIMode = (
+      lpiMODE_NONE,
+      lpiMODE_CREATE,
+      lpiMODE_UPDATE,
+      lpiMODE_TEST
+   );
+
    PLPITemplate = ^TLPITemplate;
    PLPIFile = ^TLPIFile;
    PLPIContext = ^TLPIContext;
@@ -41,7 +48,10 @@ TYPE
    TLPIFile = record
       MinimumVersion,
       LPIVersion: loopint;
+      Mode: TLPIMode;
 
+      {source file from which the lpi is created, or the main unit when an lpi is loaded}
+      Source,
       Path: string;
       xmlDoc: TXMLDocument;
       Error: longint;
@@ -108,6 +118,10 @@ TYPE
          end;
       end;
 
+      SourceData: record
+         PackageList: TPreallocatedStringArrayList;
+      end;
+
       procedure Initialize();
 
       procedure Update();
@@ -115,6 +129,8 @@ TYPE
 
       procedure Load(const newPath: string);
       procedure Save(const newPath: string = '');
+      {extract information from source (like required packages)}
+      procedure ParseSource();
 
       procedure AddCustomOption(const option: string);
       procedure AddUnitPath(const newPath: string);
@@ -157,9 +173,10 @@ TYPE
       procedure Initialize();
       function IsInitialized(): boolean;
 
-      procedure Create(const source: string; context: PLPIContext = nil);
+      procedure Create(const source: string; context: PLPIContext = nil; testMode: boolean = false);
       procedure Update(const lpiFile: string; context: PLPIContext = nil);
-      function Test(const lpiFile: string; context: PLPIContext = nil): boolean;
+      {runs Create() in test mode}
+      procedure Test(const source: string; context: PLPIContext = nil);
 
       procedure Initialize(out f: TLPIFile);
       procedure Initialize(out context: TLPIContext);
@@ -226,6 +243,7 @@ procedure TLPIFile.Initialize();
 begin
    compiler.applyConventions := true;
    MinimumVersion := 11;
+   SourceData.PackageList.InitializeValues(SourceData.PackageList, 128);
 end;
 
 procedure TLPIFile.Update();
@@ -318,11 +336,20 @@ begin
 end;
 
 procedure TLPIFile.ApplyValues();
+var
+   i: loopint;
+
 begin
    if(compiler.applyConventions) then
       compiler.target.RemoveAttribute('applyConventions')
    else
       compiler.target.SetAttributeValue('applyConventions', false);
+
+   if(SourceData.PackageList.n > 0) then begin
+      for i := 0 to SourceData.PackageList.n - 1 do begin
+         AddRequiredPackage(SourceData.PackageList.List[i]);
+      end;
+   end;
 end;
 
 procedure TLPIFile.Load(const newPath: string);
@@ -366,6 +393,56 @@ begin
       end
    end;
 end;
+
+function parseRead(var p: TParseData): boolean;
+const
+   requireString = '@lazpackage';
+
+var
+   f: PLPIFile;
+   requirePos: loopint;
+   packageName: string;
+   currentLine: String;
+
+begin
+   Result := true;
+   f := p.ExternalData;
+
+   currentLine := p.CurrentLine.ToLower();
+   requirePos := pos(requireString, currentLine);
+
+   if(requirePos > 0) then begin
+      packageName := Copy(p.CurrentLine, requirePos + Length(requireString));
+      StripWhitespace(packageName);
+
+      if(f^.Mode = lpiMODE_TEST) then
+         log.i('Found lazarus package dependency: ' + packageName);
+
+      f^.SourceData.PackageList.Add(packageName);
+   end;
+end;
+
+procedure TLPIFile.ParseSource();
+var
+   parse: TParseData;
+
+begin
+   if(Path <> '') and (Error = 0) then begin
+      if(Mode = lpiMODE_TEST) then
+         log.i('lpi > Parsing: ' + Source);
+
+      TParseData.Init(parse);
+      parse.ExternalData := @Self;
+
+      parse.Read(Source, TParseMethod(@parseRead));
+
+      if(parse.ErrorCode <> 0) then begin
+         log.e('lpi > ' + parse.GetErrorString());
+         Error := eREAD;
+      end;
+   end;
+end;
+
 
 procedure TLPIFile.AddCustomOption(const option: string);
 var
@@ -447,6 +524,8 @@ begin
       {increase count}
       inc(count);
 
+      project.requiredPackages.root.SetAttributeValue('Count', sf(count));
+
       {add new item}
       item := project.requiredPackages.root.CreateChild('Item' + sf(count));
 
@@ -518,7 +597,7 @@ begin
    Result := Initialized;
 end;
 
-procedure TLPIGlobal.Create(const source: string; context: PLPIContext);
+procedure TLPIGlobal.Create(const source: string; context: PLPIContext; testMode: boolean);
 var
    target,
    targetPath,
@@ -559,11 +638,19 @@ begin
    {get template name}
    templateFilename := Template.Path + Template.Name;
 
+   if(not testMode) then
+      f.Mode := lpiMODE_CREATE
+   else
+      f.Mode := lpiMODE_TEST;
+
    f.Load(templateFilename);
+   f.Source := source;
    Error := f.Error;
 
    {load a template as a string}
    if(f.Error = 0) then begin
+      f.ParseSource();
+
       units := build.GetIncludesPath(absoluteDestination, build.Units);
       includes := build.GetIncludesPath(absoluteDestination, build.Includes);
 
@@ -576,8 +663,10 @@ begin
       if(context <> nil) and (context^.Loaded <> nil) then
          context^.Loaded(f);
 
-      f.Save(destination);
-      Error := f.Error;
+      if(not testMode) then begin
+         f.Save(destination);
+         Error := f.Error;
+      end;
 
       if(f.Error = 0) then
          log.i('Created lpi file as ' + destination)
@@ -615,6 +704,8 @@ begin
    {load a template as a string}
    if(FileExists(lpiFile)) then begin
       Initialize(f);
+
+      f.Mode := lpiMODE_UPDATE;
       f.Load(lpiFile);
 
       if(f.Error <> 0) then begin
@@ -667,46 +758,9 @@ begin
    end;
 end;
 
-function TLPIGlobal.Test(const lpiFile: string; context: PLPIContext): boolean;
-var
-   f: TLPIFile;
-
+procedure TLPIGlobal.Test(const source: string; context: PLPIContext);
 begin
-   Result := False;
-
-   if(not IsInitialized()) then begin
-      Error := eLPI_NOT_INITIALIZED;
-      exit(False);
-   end;
-
-   Error := 0;
-   Initialize(f);
-
-   {load a template as a string}
-   if(FileExists(lpiFile)) then begin
-      Initialize(f);
-
-      f.Load(lpiFile);
-
-      if(f.Error <> 0) then begin
-         Error := f.Error;
-         exit(False);
-      end;
-
-      log.i('Loaded ' + f.Path);
-
-      if(context <> nil) and (context^.Loaded <> nil) then
-         context^.Loaded(f);
-
-      log.i('Version ' + sf(f.LPIVersion));
-
-      f.Destroy();
-      exit(True);
-   end else begin
-      log.e('Failure finding lpi file at ' + lpiFile + ': ' + getRunTimeErrorDescription(ioE));
-
-      Error := eLPI_FAILED_TO_LOAD;
-   end;
+   Create(source, context, true);
 end;
 
 procedure TLPIGlobal.Initialize(out f: TLPIFile);
