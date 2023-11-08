@@ -3,6 +3,8 @@
    Copyright (C) 2013. Dejan Boras
 
    Started On:    10.12.2013.
+
+   NOTE: Rotation order is YZX
 }
 
 {$INCLUDE oxdefines.inc}
@@ -24,7 +26,8 @@ TYPE
       vScale,
       vRotation: TVector3f;
 
-      Matrix: TMatrix4f;
+      Matrix,
+      RotationMatrix: TMatrix4f;
 
       constructor Create(); override;
 
@@ -43,6 +46,7 @@ TYPE
       procedure Rotate(const angles: TVector3f);
       procedure Rotate(x, y, z: single);
       procedure Rotate(w, x, y, z: single); virtual;
+      procedure Rotate(w, x, y, z: single; out m: TMatrix4f); virtual;
       procedure RotateX(w: single); virtual;
       procedure RotateY(w: single); virtual;
       procedure RotateZ(w: single); virtual;
@@ -57,7 +61,9 @@ TYPE
       function GetUp(): TVector3f; virtual;
       function GetRight(): TVector3f; virtual;
 
+      procedure GetEuler(out v: TVector3f);
       procedure GetEuler(var x, y, z: single);
+      procedure GetEuler();
 
       {get a perspective frustum matrix}
       class function PerspectiveFrustum(l, r, b, t, n, f: single): TMatrix4f; static;
@@ -88,7 +94,8 @@ end;
 procedure oxTTransform.Identity();
 begin
    {setup the identity transform}
-   Matrix       := vmmUnit4;
+   Matrix := vmmUnit4;
+   RotationMatrix := vmmUnit4;
 end;
 
 procedure oxTTransform.IdentityVectors();
@@ -100,13 +107,19 @@ end;
 
 procedure oxTTransform.SetupMatrix();
 begin
-   Matrix := vmmUnit4;
-
-   Translate(vPosition);
+   RotationMatrix := vmmUnit4;
 
    Rotate(vRotation[1], 0, 1, 0);
    Rotate(vRotation[2], 0, 0, 1);
    Rotate(vRotation[0], 1, 0, 0);
+
+   RotationMatrix := Matrix;
+
+   Matrix := vmmUnit4;
+
+   Translate(vPosition);
+
+   Matrix := Matrix * RotationMatrix;
 
    Scale(vScale);
 end;
@@ -145,10 +158,15 @@ begin
 end;
 
 procedure oxTTransform.Rotate(x, y, z: single);
+var
+   xm, ym, zm: TMatrix4f;
+
 begin
-   Rotate(y, 0, 1, 0);
-   Rotate(z, 0, 0, 1);
-   Rotate(x, 1, 0, 0);
+   Rotate(y, 0, 1, 0, ym);
+   Rotate(z, 0, 0, 1, zm);
+   Rotate(x, 1, 0, 0, xm);
+
+   RotationMatrix := ym * zm * xm * RotationMatrix;
 end;
 
 procedure oxTTransform.Rotate(w, x, y, z: single);
@@ -184,7 +202,40 @@ begin
    m[2][1] := (z * cy) + x * s;
    m[2][2] := (z * cz) + c;
 
-   Matrix := Matrix * m;
+   RotationMatrix := m * RotationMatrix;
+end;
+
+procedure oxTTransform.Rotate(w, x, y, z: single; out m: TMatrix4f);
+var
+   c,
+   s,
+   cx,
+   cy,
+   cz: single;
+
+begin
+   w := w * vmcToRad;
+
+   c := cos(w);
+   s := sin(w);
+
+   cx := x * (1 - c);
+   cy := y * (1 - c);
+   cz := z * (1 - c);
+
+   m := vmmUnit4;
+
+   m[0][0] := (x * cx) + c;
+   m[0][1] := (x * cy) - z * s;
+   m[0][2] := (x * cz) + y * s;
+
+   m[1][0] := (y * cx) + z * s;
+   m[1][1] := (y * cy) + c;
+   m[1][2] := (y * cz) - x * s;
+
+   m[2][0] := (z * cx) - y * s;
+   m[2][1] := (z * cy) + x * s;
+   m[2][2] := (z * cz) + c;
 end;
 
 procedure oxTTransform.RotateX(w: single);
@@ -275,25 +326,47 @@ begin
    Result[2] := Matrix[2][0];
 end;
 
-procedure oxTTransform.GetEuler(var x, y, z: single);
-begin
-   x := 0;
-   y := 0;
-   z := 0;
+procedure oxTTransform.GetEuler(out v: TVector3f);
+var
+   sy: single;
+   singular: Boolean;
 
+
+begin
    if(Matrix[0][0] = 1.0) then begin
-      y := arctan2(Matrix[0][2], Matrix[2][3]);
-      x := 0;
-      z := 0;
+      v[1] := arctan2(Matrix[0][2], Matrix[2][3]);
+      v[0] := 0;
+      v[2] := 0;
    end else if(Matrix[0][0] = -1.0) then begin
-      y := arctan2(Matrix[0][2], Matrix[2][3]);
-      x := 0;
-      z := 0;
+      v[1] := arctan2(Matrix[0][2], Matrix[2][3]);
+      v[0] := 0;
+      v[2] := 0;
    end else begin
-      x := arctan2(Matrix[2][0], Matrix[0][0]);
-      y := arcsin(Matrix[1][0]);
-      z := arctan2(Matrix[1][2], Matrix[1][1]);
+      v[0] := arctan2(Matrix[2][0], Matrix[0][0]);
+      v[1] := arcsin(Matrix[1][0]);
+      v[2] := arctan2(Matrix[1][2], Matrix[1][1]);
    end;
+
+   v[0] := v[0] * vmcToDeg;
+   v[1] := v[1] * vmcToDeg;
+   v[2] := v[2] * vmcToDeg;
+end;
+
+procedure oxTTransform.GetEuler(var x, y, z: single);
+var
+   v: TVector3f;
+
+begin
+   GetEuler(v);
+
+   x := v[0];
+   y := v[1];
+   z := v[2];
+end;
+
+procedure oxTTransform.GetEuler();
+begin
+   GetEuler(vRotation);
 end;
 
 class function oxTTransform.PerspectiveFrustum(l, r, b, t, n, f: single): TMatrix4f;
