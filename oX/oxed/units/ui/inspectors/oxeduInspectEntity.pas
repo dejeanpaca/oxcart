@@ -9,7 +9,7 @@ UNIT oxeduInspectEntity;
 INTERFACE
 
    USES
-      uStd, vmVector, sysutils,
+      uStd, vmVector, sysutils, uColors,
       {ox}
       oxuEntity, oxuComponent, oxuComponentDescriptors,
       {ui}
@@ -292,8 +292,11 @@ begin
    v.Lbl := wdgLabel.Add(caption);
 
    v.XLabel := wdgLabel.Add('X');
+   V.XLabel.Color.Assign(255, 127, 127, 255);
    v.YLabel := wdgLabel.Add('Y');
+   V.YLabel.Color.Assign(127, 255, 127, 255);
    v.ZLabel := wdgLabel.Add('Z');
+   V.ZLabel.Color.Assign(127, 127, 255, 255);
 
    V.Reset := wdgButton.Add('R');
 
