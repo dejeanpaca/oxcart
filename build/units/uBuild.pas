@@ -100,9 +100,6 @@ TYPE
       {get an optimization level by name}
       function GetOptimizationLevelByName(const name: StdString): loopint;
 
-      {get the platform we're compiled with}
-      function GetCurrentPlatform(): StdString;
-
       {get all commmand line defined symbol parameters}
       procedure GetSymbolParameters();
       {set default symbols for current platform}
@@ -266,11 +263,6 @@ begin
    end;
 
    Result := -1;
-end;
-
-function TBuildSystem.GetCurrentPlatform(): StdString;
-begin
-   Result := LowerCase({$I %FPCTARGETOS%});
 end;
 
 procedure TBuildSystem.GetSymbolParameters();
