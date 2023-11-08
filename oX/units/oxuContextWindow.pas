@@ -55,7 +55,7 @@ begin
    oxWindows.Setup(wnd, oxWindowSettings.w[-1], true);
    wnd.ID := ID;
    wnd.Title   := 'oX Context';
-   wnd.gl := oxRenderer.ContextWindowSettings;
+   wnd.RenderSettings := oxRenderer.ContextWindowSettings;
    wnd.Properties := wnd.Properties - [uiwndpVISIBLE];
    wnd.oxProperties.Context := true;
 

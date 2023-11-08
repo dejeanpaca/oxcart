@@ -59,24 +59,24 @@ begin
    else
       dwFlags     := dwFlags or PFD_DRAW_TO_WINDOW;
 
-   if(wnd.gl.DoubleBuffer) then
+   if(wnd.RenderSettings.DoubleBuffer) then
       dwFlags     := dwFlags or PFD_DOUBLEBUFFER;
-   if(wnd.gl.Software) then
+   if(wnd.RenderSettings.Software) then
       dwFlags     := dwFlags or PFD_SUPPORT_GDI;
-   if(wnd.gl.Stereo) then
+   if(wnd.RenderSettings.Stereo) then
       dwFlags     := dwFlags or PFD_STEREO;
 
    pfd.dwFlags       := dwFlags;
    pfd.iPixelType    := PFD_TYPE_RGBA;
-   pfd.cColorBits    := wnd.gl.ColorBits;
-   pfd.cDepthBits    := wnd.gl.DepthBits;
+   pfd.cColorBits    := wnd.RenderSettings.ColorBits;
+   pfd.cDepthBits    := wnd.RenderSettings.DepthBits;
    pfd.iLayerType    := PFD_MAIN_PLANE;
-   pfd.cStencilBits  := wnd.gl.StencilBits;
+   pfd.cStencilBits  := wnd.RenderSettings.StencilBits;
 
-   if(wnd.gl.Layer = 0) then
+   if(wnd.RenderSettings.Layer = 0) then
       pfd.iLayerType := PFD_MAIN_PLANE
    else begin
-      if(wnd.gl.Layer > 0) then
+      if(wnd.RenderSettings.Layer > 0) then
          pfd.iLayerType := PFD_OVERLAY_PLANE
       else
          pfd.iLayerType := Byte(PFD_UNDERLAY_PLANE);
@@ -135,27 +135,27 @@ begin
    vals.Add(WGL_SUPPORT_OPENGL_ARB, 1);
    vals.Add(WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB);
 
-   if(wnd.gl.DoubleBuffer) then
+   if(wnd.RenderSettings.DoubleBuffer) then
       vals.Add(WGL_DOUBLE_BUFFER_ARB, 1);
 
    vals.Add(WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB);
 
-   vals.Add(WGL_COLOR_BITS_ARB, wnd.gl.ColorBits);
-   vals.Add(WGL_DEPTH_BITS_ARB, wnd.gl.DepthBits);
+   vals.Add(WGL_COLOR_BITS_ARB, wnd.RenderSettings.ColorBits);
+   vals.Add(WGL_DEPTH_BITS_ARB, wnd.RenderSettings.DepthBits);
 
-   vals.Add(WGL_STENCIL_BITS_ARB, wnd.gl.StencilBits);
-   vals.Add(WGL_ACCUM_BITS_ARB, wnd.gl.AccumBits);
+   vals.Add(WGL_STENCIL_BITS_ARB, wnd.RenderSettings.StencilBits);
+   vals.Add(WGL_ACCUM_BITS_ARB, wnd.RenderSettings.AccumBits);
 
-   if(wnd.gl.ColorBits = 32) or (wnd.gl.ColorBits = 24) then begin
+   if(wnd.RenderSettings.ColorBits = 32) or (wnd.RenderSettings.ColorBits = 24) then begin
       vals.Add(WGL_RED_BITS_ARB, 8);
       vals.Add(WGL_GREEN_BITS_ARB, 8);
       vals.Add(WGL_BLUE_BITS_ARB, 8);
 
-      if(wnd.gl.ColorBits = 32) then
+      if(wnd.RenderSettings.ColorBits = 32) then
          vals.Add(WGL_ALPHA_BITS_ARB, 8)
       else
          vals.Add(WGL_ALPHA_BITS_ARB, 0);
-   end else if(wnd.gl.ColorBits = 16) then begin
+   end else if(wnd.RenderSettings.ColorBits = 16) then begin
       vals.Add(WGL_RED_BITS_ARB, 5);
       vals.Add(WGL_GREEN_BITS_ARB, 6);
       vals.Add(WGL_BLUE_BITS_ARB, 5);
@@ -216,8 +216,8 @@ begin
          exit(0);
    end;
 
-   vals.Add(WGL_CONTEXT_MAJOR_VERSION_ARB,   wnd.glSettings.Version.Major);
-   vals.Add(WGL_CONTEXT_MINOR_VERSION_ARB,   wnd.glSettings.Version.Minor);
+   vals.Add(WGL_CONTEXT_MAJOR_VERSION_ARB,   wnd.gl.Version.Major);
+   vals.Add(WGL_CONTEXT_MINOR_VERSION_ARB,   wnd.gl.Version.Minor);
 
    contextFlags := 0;
    {$IFDEF OX_DEBUG}
@@ -229,13 +229,13 @@ begin
       vals.add(WGL_CONTEXT_FLAGS_ARB, contextFlags);
 
    if(extContextProfile) then begin
-      if(wnd.glSettings.Version.Profile = oglPROFILE_ANY) then begin
+      if(wnd.gl.Version.Profile = oglPROFILE_ANY) then begin
          log.v('gl > Using any profile');
          vals.Add(WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB or WGL_CONTEXT_CORE_PROFILE_BIT_ARB);
-      end else if(wnd.glSettings.Version.Profile = oglPROFILE_COMPATIBILITY) then begin
+      end else if(wnd.gl.Version.Profile = oglPROFILE_COMPATIBILITY) then begin
          log.v('gl > Using compatibility profile');
          vals.Add(WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB);
-      end else if(wnd.glSettings.Version.Profile = oglPROFILE_CORE) then begin
+      end else if(wnd.gl.Version.Profile = oglPROFILE_CORE) then begin
          log.v('gl > Using core profile');
          vals.Add(WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB);
       end;
@@ -254,7 +254,7 @@ begin
       else
          message := 'unknown';
 
-      log.e('wglCreateContextAttribs failed for version ' + wnd.glSettings.GetString() + ': ' + message);
+      log.e('wglCreateContextAttribs failed for version ' + wnd.gl.GetString() + ': ' + message);
    end else
       log.v('gl > Created rendering context: ' + sf(Result));
 
@@ -329,7 +329,7 @@ begin
    extContext := oglExtensions.PlatformSupported(cWGL_ARB_create_context);
 
    {requires new context creation for opengl 3.0 and higher}
-   requiresContext := ogl.ContextRequired(oglTWindow(wnd).DefaultSettings);
+   requiresContext := ogl.ContextRequired(oglTWindow(wnd).glDefault);
    {$ENDIF}
 
    if(extContext) and (requiresContext) then begin

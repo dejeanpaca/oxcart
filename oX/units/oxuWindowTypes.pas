@@ -69,7 +69,7 @@ TYPE
       oxwExternal: oxTWindow;
 
       {rendering settings}
-      gl: oxTWindowRenderSettings;
+      RenderSettings: oxTWindowRenderSettings;
 
       {rendering contexts}
       RenderingContext,

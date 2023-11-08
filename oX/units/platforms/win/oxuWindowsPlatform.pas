@@ -868,7 +868,7 @@ begin
       exit(false);
 
    if(not wnd.oxProperties.WindowedFullscreen) then begin
-      Result := Fullscreen(wnd.Dimensions.w, wnd.Dimensions.h, wnd.gl.ColorBits);
+      Result := Fullscreen(wnd.Dimensions.w, wnd.Dimensions.h, wnd.RenderSettings.ColorBits);
 
       if(not Result) then
          LeaveFullscreen(wnd);

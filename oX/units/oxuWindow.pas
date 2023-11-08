@@ -86,7 +86,7 @@ begin
    wnd.Platform := oxPlatform;
 
    wnd.Title := title;
-   wnd.gl := oxRenderer.WindowSettings;
+   wnd.RenderSettings := oxRenderer.WindowSettings;
 
    if(not contextWindow) then
       oxUIHooks.InitializeWindow(wnd);
@@ -132,7 +132,7 @@ begin
    wnd.oxwExternal := oxw;
 
    renderer := oxTRenderer(wnd.Renderer);
-   wnd.gl := oxw.gl;
+   wnd.RenderSettings := oxw.RenderSettings;
 
    renderer.SetupData(wnd);
 
@@ -167,31 +167,31 @@ begin
    log.Enter('Window: ' + wnd.Title(* + ' (' + uiwGetIDString(wnd.w.wID) + ')'*));
       log.i('Size: ' + sf(wnd.Dimensions.w) + 'x' + sf(wnd.Dimensions.h));
 
-      if(wnd.gl.DoubleBuffer) then
+      if(wnd.RenderSettings.DoubleBuffer) then
          s := 'double buffer'
       else
          s := 'single buffer';
 
-      if(wnd.gl.Software) then
+      if(wnd.RenderSettings.Software) then
          s := s + ', software rendered';
 
-      if(wnd.gl.Stereo) then
+      if(wnd.RenderSettings.Stereo) then
          s := s + ', stereo';
 
-      if(wnd.gl.VSync) then
+      if(wnd.RenderSettings.VSync) then
          s := s + ', vsync';
 
       log.Enter('Properties >');
-         log.i('Color: '    + sf(wnd.gl.ColorBits));
+         log.i('Color: '    + sf(wnd.RenderSettings.ColorBits));
 
-         if(wnd.gl.DepthBits > 0) then
-            log.i('Depth: '    + sf(wnd.gl.DepthBits));
+         if(wnd.RenderSettings.DepthBits > 0) then
+            log.i('Depth: '    + sf(wnd.RenderSettings.DepthBits));
 
-         if(wnd.gl.StencilBits > 0) then
-            log.i('Stencil: '  + sf(wnd.gl.StencilBits));
+         if(wnd.RenderSettings.StencilBits > 0) then
+            log.i('Stencil: '  + sf(wnd.RenderSettings.StencilBits));
 
-         if(wnd.gl.AccumBits > 0) then
-            log.i('Accum: '    + sf(wnd.gl.AccumBits));
+         if(wnd.RenderSettings.AccumBits > 0) then
+            log.i('Accum: '    + sf(wnd.RenderSettings.AccumBits));
 
          log.i('Flags: ' + s);
       log.Leave();
