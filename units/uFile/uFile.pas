@@ -111,6 +111,10 @@ TYPE
 
       {get file descriptor (handle)}
       function GetFD(): int64;
+      {can we read the file}
+      function CanRead(): boolean;
+      {can we write the file}
+      function CanWrite(): boolean;
 
       {FILE HANDLER}
       {assign a file handler to a file}
@@ -286,6 +290,12 @@ TYPE
       function fsExists(const fn: StdString): fileint;
       function fsOpen(var f: TFile; const fn: StdString): boolean;
       {$ENDIF}
+
+      {Copy contents of one file into another. It is expected that source is already opened for writing,
+      and will write at the current set position}
+      function Copy(var source, target: TFile): fileint;
+      {get a buffer}
+      function GetBuffer(out buf: PByte): fileint;
    end;
 
 VAR
@@ -464,10 +474,19 @@ begin
    HandlerDispose();
 end;
 
-
 function TFile.GetFD(): int64;
 begin
    Result := handle;
+end;
+
+function TFile.CanRead(): boolean;
+begin
+   Result := (Error = 0) and ((fMode = fmOpenRead) or (fMode = fmOpenReadWrite));
+end;
+
+function TFile.CanWrite(): boolean;
+begin
+   Result := (Error = 0) and ((fMode = fmOpenWrite) or (fMode = fmOpenReadWrite));
 end;
 
 {assign a file handler to a file}
@@ -1017,6 +1036,62 @@ begin
    until (cur = nil);
 
    Result := false;
+end;
+
+function TFileGlobal.Copy(var source, target: TFile): fileint;
+var
+   buf: pbyte;
+   bufferSize,
+   bread,
+   total: fileint;
+
+   procedure cleanup();
+   begin
+      XFreeMem(buf);
+   end;
+
+begin
+   bread    := 0;
+   total    := 0;
+   Result   := eNONE;
+
+   Result := feERROR_STATE;
+
+   if(not source.CanWrite() or target.CanWrite()) then
+      exit;
+
+   bufferSize := fFile.GetBuffer(buf);
+
+   if(buf <> nil) then begin
+      {copy}
+      repeat
+         bread := source.Read(buf^, bufferSize);
+         total := total + bread;
+
+         if(source.Error = 0) then begin
+            if(bread > 0) then begin
+               target.Write(buf^, bread);
+
+               if(target.Error <> 0) then begin
+                  cleanup();
+                  exit;
+               end;
+            end else
+               break;
+         end else begin
+            cleanup();
+            exit(eIO);
+         end;
+      until source.EOF();
+   end;
+
+   cleanup();
+end;
+
+function TFileGlobal.GetBuffer(out buf: PByte): fileint;
+begin
+   GetMem(buf, fFile.CopyBufferSize);
+   Result := fFile.CopyBufferSize;
 end;
 
 { DUMMY FS }
