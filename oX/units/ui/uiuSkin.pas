@@ -27,7 +27,13 @@ CONST
    uicsrBACKGROUND                  = $06;
 
 TYPE
+   uiTSkinProcedure = procedure(skin: uiTSkin);
+
+   { uiTSkinGlobal }
+
    uiTSkinGlobal = record
+     Loader: uiTSkinProcedure;
+
      { GENERAL }
 
      { SKINS }
@@ -51,6 +57,9 @@ TYPE
 
      {disposes all skins from a renderer}
      procedure Dispose();
+
+     {load a skin via the hooked loader}
+     procedure Load(skin: uiTSkin);
    end;
 
 VAR
@@ -112,6 +121,12 @@ begin
    end;
 end;
 
+procedure uiTSkinGlobal.Load(skin: uiTSkin);
+begin
+   if(skin <> nil) and (Loader <> nil) then
+      Loader(skin);
+end;
+
 procedure uiTSkinGlobal.Process(skin: uiTSkin);
 var
    none: loopint;
@@ -125,7 +140,7 @@ begin
    skin.Window.Frames[none].FrameHeight   := 0;
 end;
 
-procedure uiTSkinGlobal.SetDefault(Skin: uiTSkin);
+procedure uiTSkinGlobal.SetDefault(skin: uiTSkin);
 begin
    oxui.DefaultSkin := Skin;
 end;
@@ -192,7 +207,7 @@ var
 
 begin
    oxui.StandardSkin := uiTSkin.Create();
-   oxui.StandardSkin.Name := 'default';
+   oxui.StandardSkin.Name := 'standard';
 
    {set up title and frame sizes}
    normal := ord(uiwFRAME_STYLE_NORMAL);
@@ -306,11 +321,18 @@ begin
    uiSkin.Dispose();
 end;
 
+procedure skinLoad();
+begin
+   uiSkin.Load(oxui.StandardSkin);
+end;
+
 VAR
-   initRoutines: oxTRunRoutine;
+   initRoutines,
+   loadRoutines: oxTRunRoutine;
 
 INITIALIZATION
    oxui.BaseInitializationProcs.Add(initRoutines, 'skin', @Initialize, @DeInitialize);
+   oxui.InitializationProcs.iAdd(loadRoutines, 'skin.load', @skinLoad);
 
 END.
 

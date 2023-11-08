@@ -1,5 +1,5 @@
 {
-   uiuTypes, UI types
+   uiuSkinTypes, UI skin types
    Copyright (C) 2013. Dejan Boras
 
    Started On:    07.01.2013.
@@ -43,13 +43,12 @@ TYPE
       {dimensions and offsets}
       Frames: array[0..ord(uiwFRAME_STYLE_MAX)] of uiTWindowSkinFrame;
 
-      FrameForm: longint;
-
-      TitleButtonSpacing: longint;
-      TitleTextOffset: array[0..2] of longint;
+      FrameForm,
+      TitleButtonSpacing: loopint;
+      TitleTextOffset: array[0..2] of loopint;
 
       {title icon}
-      TitleIconOffset: array[0..1] of longint;
+      TitleIconOffset: array[0..1] of loopint;
 
       {look and feel settings}
       TitleTextAlignment,
@@ -66,7 +65,9 @@ TYPE
 
       cTitleBtSymbols: array[0..uiwcbNMAX - 1] of Char;
 
-      BackgroundTexture: oxTTexture;
+      Textures: record
+         Background: oxTTexture;
+      end;
    end;
 
    { WIDGET SKIN }
