@@ -114,8 +114,14 @@ begin
    if(build.TargetCPU <> '') then
       AddArgument('-P' + build.TargetCPU);
 
-   if(build.IncludeDebugInfo) then
+   if(build.Debug.Include) then
       AddArgument('-g');
+
+   if(build.Debug.LineInfo) then
+      AddArgument('-gl');
+
+   if(build.Debug.External) then
+      AddArgument('-Xg');
 
    for i := 0 to emptyAfter - 1 do begin
       AddArgument('');
@@ -215,9 +221,19 @@ begin
       add('-P' + build.TargetCPU);
    end;
 
-   if(build.IncludeDebugInfo) then begin
+   if(build.Debug.Include) then begin
       add('# include debug info');
       add('-g');
+   end;
+
+   if(build.Debug.LineInfo) then begin
+      add('# include line info');
+      add('-gl');
+   end;
+
+   if(build.Debug.External) then begin
+      add('# debug info from external file');
+      add('-Xg');
    end;
 
    if(build.FPCOptions.AllowGotoAndLabel) then begin
