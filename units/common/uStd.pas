@@ -1254,9 +1254,9 @@ end;
 
 function GetLineEndingTypeFromName(const name: string): TLineEndingType;
 begin
-   if(name = 'crlf') then
+   if(name = 'crlf') or (name = 'windows') then
       Result := WINDOWS_LINE_ENDINGS
-   else if(name = 'lf') then
+   else if(name = 'lf') or (name = 'unix') then
       Result := UNIX_LINE_ENDINGS
    else
       Result := PLATFORM_LINE_ENDINGS;
