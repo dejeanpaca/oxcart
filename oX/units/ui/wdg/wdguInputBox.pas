@@ -659,7 +659,7 @@ begin
    wdgSkin^.SetColor(wdgscINPUT_CURSOR, skin.Colors.InputText);
    wdgSkin^.SetColor(wdgscINPUT_PLACEHOLDER, skin.Colors.InputPlaceholder);
    wdgSkin^.SetColor(wdgscINPUT_BORDER, skin.Colors.Border);
-   wdgSkin^.Setcolor(wdgscINPUT_BORDER_SELECTED, skin.Colors.SelectedBorder);
+   wdgSkin^.SetColor(wdgscINPUT_BORDER_SELECTED, skin.Colors.SelectedBorder);
 end;
 
 INITIALIZATION
