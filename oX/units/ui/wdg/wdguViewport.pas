@@ -82,10 +82,7 @@ end;
 
 procedure wdgTViewport.Initialize();
 begin
-   inherited;
-
-   if(oxTWindow(oxwParent).ExternalWindow <> nil) then
-     Viewport.SetOffset(oxTWindow(oxwParent).Viewport.Offset);
+   UpdateViewport();
 end;
 
 procedure wdgTViewport.Render();
@@ -119,6 +116,9 @@ end;
 
 procedure wdgTViewport.UpdateViewport();
 begin
+   if(oxTWindow(oxwParent).ExternalWindow <> nil) then
+      Viewport.SetOffset(oxTWindow(oxwParent).Viewport.Offset);
+
    Viewport.SetViewport(RPosition.x, RPosition.y - Dimensions.h + 1, Dimensions.w, Dimensions.h);
    OnViewportUpdated();
 end;
