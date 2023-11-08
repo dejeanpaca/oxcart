@@ -13,7 +13,7 @@ INTERFACE
       {ox}
       uOX,
       oxuProjectionType, oxuProjection, oxuViewportType, oxuViewport,
-      oxuWindowTypes, oxuCamera, oxuRender, oxuTransform, oxuWindows, oxuSerialization,
+      oxuWindowTypes, oxuCamera, oxuRender, oxuRenderingContext, oxuTransform, oxuWindows, oxuSerialization,
       oxuMaterial, oxuGlobalInstances,
       oxuScene, oxuEntity, oxuSceneManagement, oxuRenderLayerComponent,
       oxuComponent, oxuCameraComponent, oxuRenderComponent;
@@ -145,7 +145,7 @@ begin
       p.Viewport := setProjection^.Viewport;
 
    if(p.Viewport = nil) then
-      p.Viewport := oxViewport;
+      p.Viewport := oxRenderingContext.Viewport;
 
    p.Projection := setProjection;
    p.Camera := setCamera;

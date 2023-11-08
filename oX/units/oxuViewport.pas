@@ -11,7 +11,8 @@ INTERFACE
    USES
       uStd, uColors, vmVector, uLog,
       {oX}
-      oxuTypes, oxuAspect, oxuWindowTypes, oxuViewportType, oxuRenderer, oxuRender;
+      oxuTypes, oxuAspect, oxuWindowTypes, oxuViewportType,
+      oxuRenderer, oxuRender, oxuRenderingContext;
 
 TYPE
 
@@ -60,9 +61,6 @@ TYPE
        {get a viewport from a relative one}
        procedure FromRelative(const relative: oxTViewport; out v: oxTViewport);
     end;
-
-VAR
-   oxViewport: oxPViewport;
 
 IMPLEMENTATION
 
@@ -120,7 +118,7 @@ begin
       if(doClear) then
          Clear();
 
-      oxViewport := @Self;
+      oxRenderingContext.Viewport := @Self;
    end;
 end;
 

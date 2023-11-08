@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd,
       {oX}
-      oxuViewportType, oxuProjectionType, oxuCamera;
+      oxuViewportType, oxuProjectionType;
 
 TYPE
    oxTRenderingContext = record
@@ -19,7 +19,7 @@ TYPE
 
       Viewport: oxPViewport;
       Projection: oxPProjection;
-      Camera: oxPCamera;
+      Camera: pointer;
    end;
 
 THREADVAR
