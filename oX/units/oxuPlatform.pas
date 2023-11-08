@@ -28,6 +28,9 @@ TYPE
          {platforms have components}
          Components: TComponentProvider;
 
+         {does this platform support multiple windows}
+         MultipleWindows: boolean;
+
       constructor Create(); virtual;
 
       function MakeWindow({%H-}wnd: oxTWindow): boolean;  virtual;
@@ -106,6 +109,7 @@ constructor oxTPlatform.Create();
 begin
    Name := 'default';
    ComponentProvider.InitializeValues(Components);
+   MultipleWindows := true;
 end;
 
 function oxTPlatform.MakeWindow(wnd: oxTWindow): boolean;
