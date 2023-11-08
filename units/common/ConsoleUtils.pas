@@ -470,8 +470,6 @@ INITIALIZATION
    if(console.InitialBackgroundColor <> console.Transparent) then
       console.Colors.DefaultBackground := console.InitialBackgroundColor;
 
-   console.ResetDefault();
-
 FINALIZATION
    if(console.InitialTextColor <> console.Transparent) then
       console.TextColor(console.LastTextColor);
