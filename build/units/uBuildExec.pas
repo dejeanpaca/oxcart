@@ -49,6 +49,9 @@ TYPE
       {stream from the executed process}
       ProcessStream: TProcessStream;
 
+      {initialize}
+      class procedure Initialize(out exec: TBuildSystemExec); static;
+
       {get lazarus project filename for the given path (which may already include project filename)}
       function GetLPIFilename(const path: StdString): StdString;
       {get tool process}
@@ -89,6 +92,16 @@ VAR
 IMPLEMENTATION
 
 { TBuildSystemExec }
+
+class procedure TBuildSystemExec.Initialize(out exec: TBuildSystemExec);
+begin
+   ZeroOut(exec, SizeOf(exec));
+
+   TProcedures.Initialize(exec.Output.OnLine);
+   TProcessStream.Initialize(exec.ProcessStream);
+
+   exec.Log := @stdlog;
+end;
 
 function TBuildSystemExec.GetLPIFilename(const path: StdString): StdString;
 begin
@@ -410,16 +423,13 @@ begin
          if(Process <> nil) then
             Process.Terminate(0);
 
-         ProcessStream.Close();
-
          break;
       end;
 
       Sleep(5);
    until (not Process.Running);
 
-   if(Output.Redirect) then
-      ProcessStream.Close();
+   ProcessStream.Close();
 end;
 
 procedure TBuildSystemExec.Abort();
@@ -435,7 +445,6 @@ begin
 end;
 
 INITIALIZATION
-   TProcedures.Initialize(BuildExec.Output.OnLine);
-   BuildExec.Log := @stdlog;
+   TBuildSystemExec.Initialize(BuildExec);
 
 END.
