@@ -82,7 +82,7 @@ begin
    dlgOpen.SetTitle('Open Project');
    dlgOpen.Callback := @openCallback;
    dlgOpen.OnPathChange := @openOnPathChange;
-   dlgSave.ShowDirectoriesOnly := true;
+   dlgOpen.ShowDirectoriesOnly := true;
    dlgOpen.Open();
 end;
 
