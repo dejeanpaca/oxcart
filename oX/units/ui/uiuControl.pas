@@ -174,6 +174,9 @@ TYPE
       {called when started destroying this control}
       procedure OnDestroy(); virtual;
 
+      {set a new parent and call the ParentChanged event}
+      procedure SetParent(newParent: uiTControl);
+
    protected
       {unusable width and height}
       UnusableHeight,
@@ -185,6 +188,8 @@ TYPE
       procedure RPositionChanged(); virtual;
       procedure SizeChanged(); virtual;
       procedure ParentSizeChange(); virtual;
+      {called when the parent of this control is changed}
+      procedure ParentChanged(); virtual;
       {when padding or border height changes, update the unusable size (dimensions) numbers}
       procedure SetupUnusableSize(); virtual;
    end;
@@ -507,6 +512,12 @@ begin
 
 end;
 
+procedure uiTControl.SetParent(newParent: uiTControl);
+begin
+   Parent := newParent;
+   ParentChanged();
+end;
+
 procedure uiTControl.PaddingChanged();
 begin
    SetupUnusableSize();
@@ -532,6 +543,11 @@ begin
 end;
 
 procedure uiTControl.ParentSizeChange();
+begin
+
+end;
+
+procedure uiTControl.ParentChanged();
 begin
 
 end;
