@@ -17,7 +17,7 @@ INTERFACE
       {oX}
       oxuWindows, oxuTexture, oxuScene, oxuThreadTask, oxuFont, oxuFreetypeFonts,
       {ui}
-      uiuContextMenu, oxuwndAbout, oxuwndSettings,
+      uiuContextMenu, oxuwndAbout, oxuwndSettings, oxuwndResourceInspector,
       {widgets}
       uiWidgets, wdguMenubar, uiuWidget,
       {oxed}
@@ -156,6 +156,7 @@ begin
    item := Editor.AddItem('Open logs', @oxed.OpenLogs);
    oxedIcons.Create(item, $f03a);
    Editor.AddItem('DVar Editor', oxwndDVarEditor.OpenWindowAction);
+   Editor.AddItem('Resource Inspector', oxwndResourceInspector.OpenWindowAction);
    Editor.AddSeparator();
 
    Items.ClearMessagesOnStart := Editor.AddCheckbox('Clear messages on start', oxedSettings.ClearMessagesOnStart);
