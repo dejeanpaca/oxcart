@@ -83,6 +83,9 @@ var
 
    r, g, b, d: EGLint;
 
+   eglMajor,
+   eglMinor: EGLint;
+
 begin
    Result := false;
 
@@ -90,11 +93,12 @@ begin
       wnd.wd.Display := eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
       if(wnd.wd.Display <> nil) then begin
-         eglInitialize(wnd.wd.Display, nil, nil);
+         eglInitialize(wnd.wd.Display, @eglMajor, @eglMinor);
+         log.v('egl > Initialized display');
 
          if(not wnd.oxProperties.Created) then begin
             log.v('EGL Vendor: ' + eglQueryString(wnd.wd.Display, EGL_VENDOR));
-            log.v('EGL Version: ' + eglQueryString(wnd.wd.Display, EGL_VERSION));
+            log.v('EGL Version: ' + sf(eglMajor) + '.' + sf(eglMinor) + ' / ' + eglQueryString(wnd.wd.Display, EGL_VERSION));
          end;
       end;
    end;
@@ -143,21 +147,24 @@ begin
       end;
 
       wnd.wd.Config := config;
+      log.v('egl > Found a config');
    end;
 
    if(wnd.wd.Surface = nil) then begin
       wnd.wd.Surface := eglCreateWindowSurface(wnd.wd.Display, config, AndroidApp^.window, nil);
 
       if(wnd.wd.Surface = nil) then begin
-         wnd.RaiseError('Failed to create window surface');
+         wnd.RaiseError('Failed to create window surface, egl error: ' + HexStr(RaiseError(), 4));
          exit(false);
       end;
 
+      log.v('egl > Created window surface');
       wnd.wd.ValidSurface := true;
    end;
 
    eglQuerySurface(wnd.wd.Display, wnd.wd.Surface, EGL_WIDTH, @w);
    eglQuerySurface(wnd.wd.Display, wnd.wd.Surface, EGL_HEIGHT, @h);
+   log.v('egl > Surface dimensions: ' + sf(w) + 'x' + sf(h));
 
    wnd.Dimensions.Assign(w, h);
 
@@ -169,20 +176,29 @@ begin
    if(wnd.wd.Surface <> EGL_NO_SURFACE) then begin
       eglDestroySurface(wnd.wd.Display, wnd.wd.Surface);
       wnd.wd.Surface := EGL_NO_SURFACE;
+      log.v('egl > Destroyed surface');
    end;
 
-   if(wnd.wd.Display <> EGL_NO_DISPLAY) then begin
-      eglTerminate(wnd.wd.Display);
-      wnd.wd.Display := EGL_NO_DISPLAY;
+   if(not oxglRenderer.PreserveRCs) then begin
+      if(wnd.wd.Display <> EGL_NO_DISPLAY) then begin
+         eglTerminate(wnd.wd.Display);
+         wnd.wd.Display := EGL_NO_DISPLAY;
+      end;
    end;
 
    Result := true;
 end;
 
 function oxglTEGL.GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext;
+var
+   attribs: array[0..2] of EGLenum = (
+      EGL_CONTEXT_CLIENT_VERSION, 1,
+      EGL_NONE
+   );
+
 begin
    if(wnd.wd.Display <> nil) and (wnd.wd.Config <> nil) then
-      Result := eglCreateContext(wnd.wd.Display, wnd.wd.Config, shareContext, nil)
+      Result := eglCreateContext(wnd.wd.Display, wnd.wd.Config, shareContext, @attribs)
    else
       Result := nil;
 end;

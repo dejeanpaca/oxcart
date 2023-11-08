@@ -134,7 +134,7 @@ end;
 
 procedure deinit();
 begin
-   oglTextureGenerate.Free();
+   FreeObject(oglTextureGenerate);
 end;
 
 INITIALIZATION

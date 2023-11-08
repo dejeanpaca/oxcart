@@ -158,6 +158,8 @@ TYPE
       {are we building a library}
       function IsLibrary(): boolean;
 
+      {recreate the work area (temp )directory if missing}
+      procedure RecreateWorkArea();
       {recreate project files (force if you want to force an update)}
       class function Recreate(force: boolean = false): boolean; static;
       {recreate project config file (lpi or fpc config)}
@@ -232,6 +234,19 @@ begin
       oxedBuildLog.e('Update from file not found: ' + source);
 end;
 
+function createPath(const name, path: StdString): boolean;
+begin
+   if(not FileUtils.DirectoryExists(path)) then begin
+      if(ForceDirectories(path)) then begin
+         oxedBuildLog.v('Created ' + name + ' path: ' + path)
+      end else begin
+         oxedBuild.Fail('Failed to create ' + name + ' path: ' + path);
+         exit(false);
+      end;
+   end;
+
+   Result := true;
+end;
 
 { TBuildTask }
 
@@ -385,6 +400,12 @@ end;
 function oxedTBuildGlobal.IsLibrary(): boolean;
 begin
    Result := BuildTarget <> OXED_BUILD_EXECUTABLE;
+end;
+
+procedure oxedTBuildGlobal.RecreateWorkArea();
+begin
+   oxedProject.RecreateTempDirectory();
+   createPath('work area', WorkArea);
 end;
 
 function getRelativePath(const basePath: StdString; const unitPath: StdString): StdString;
@@ -940,20 +961,6 @@ begin
    BuildExec.Output.Redirect := previousRedirect;
 end;
 
-function createPath(const name, path: StdString): boolean;
-begin
-   if(not FileUtils.DirectoryExists(path)) then begin
-      if(ForceDirectories(path)) then begin
-         oxedBuildLog.v('Created ' + name + ' path: ' + path)
-      end else begin
-         oxedBuild.Fail('Failed to create ' + name + ' path: ' + path);
-         exit(false);
-      end;
-   end;
-
-   Result := true;
-end;
-
 procedure oxedTBuildGlobal.RunBuild();
 var
    modeString,
@@ -992,9 +999,7 @@ begin
       end;
    end;
 
-   oxedProject.RecreateTempDirectory();
-
-   createPath('work area', WorkArea);
+   RecreateWorkArea();
    createPath('target', TargetPath);
 
    modeString := 'unknown';
@@ -1187,6 +1192,8 @@ end;
 procedure RecreateAll();
 begin
    oxedBuildLog.i('Recreating project files');
+
+   oxedBuild.RecreateWorkArea();
 
    {recreate general files}
    oxedBuild.Recreate(true);

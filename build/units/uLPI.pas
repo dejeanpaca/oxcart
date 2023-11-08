@@ -552,8 +552,7 @@ end;
 
 procedure TLPIFile.Destroy();
 begin
-   if(xmlDoc <> nil) then
-      xmlDoc.Free();
+   FreeObject(xmlDoc);
 end;
 
 procedure TLPIFile.QuitOnError(errorCode: longint);
