@@ -11,14 +11,14 @@ UNIT oxeduwndPackagesSettings;
 INTERFACE
 
    USES
-      {app}
-      uStd,
+      sysutils,
+      uStd, StringUtils,
       {oX}
       oxuRunRoutines, oxuTypes,
       {ui}
       uiuWindow, uiWidgets, uiuControl, uiuWidget,
       {widgets}
-      wdguLabel, wdguButton, wdguTabs, wdguCheckboxHierarchy,
+      wdguLabel, wdguButton, wdguTabs, wdguCheckboxHierarchy, oxuwndFileDialog,
       {oxed}
       uOXED, oxeduProject, oxeduProjectPackages,
       oxeduProjectSettingsWindow;
@@ -41,6 +41,8 @@ VAR
       List: oxedwdgTPackagesList;
    end;
 
+   dlgAddPath: oxTFileDialog;
+
 function validateCallback(): TAppendableString;
 begin
    Result := '';
@@ -55,14 +57,50 @@ procedure saveCallback();
 begin
 end;
 
+procedure addPathCallback(dialog: oxTFileDialog);
+var
+   path: StdString;
+
+begin
+   if(not dialog.Canceled) then begin
+      path := IncludeTrailingPathDelimiterNonEmpty(dialog.SelectedFile);
+
+      {must not be equal to project path or a sub directory}
+      if(Pos(oxedProject.Path, path) > 0) then
+         exit;
+
+      {add path as relative}
+      path := ExtractRelativepath(oxedProject.Path, path);
+
+      oxedProject.AddPackagePath(path);
+
+      wdg.List.Load();
+   end;
+end;
+
+
 procedure addPath();
 begin
+   if(dlgAddPath = nil) then
+      dlgAddPath := oxFileDialog.Open();
 
+   dlgAddPath.SetTitle('Add Path');
+   dlgAddPath.Callback := @addPathCallback;
+   dlgAddPath.ShowDirectoriesOnly := true;
+   dlgAddPath.Open();
 end;
 
 procedure removePackage();
-begin
+var
+   index: loopint;
 
+begin
+   index := wdg.List.SelectedItem;
+
+   if(index >= 0) then begin
+      wdg.List.RemoveItem(index);
+      oxedProject.Packages.Remove(index);
+   end;
 end;
 
 procedure removeAll();
@@ -109,6 +147,11 @@ begin
    oxedwndProjectSettings.OnValidate.Add(@validateCallback);
 end;
 
+procedure deinit();
+begin
+   FreeObject(dlgAddPath);
+end;
+
 { oxedwdgTPackagesList }
 
 function oxedwdgTPackagesList.GetValue(index: loopint): StdString;
@@ -149,6 +192,6 @@ begin
 end;
 
 INITIALIZATION
-   oxed.Init.Add('oxed.packages_settings_window', @init);
+   oxed.Init.Add('oxed.packages_settings_window', @init, @deinit);
 
 END.
