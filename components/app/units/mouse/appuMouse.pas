@@ -323,12 +323,13 @@ procedure appTMouseGlobal.SetDriver(drv: appTPointerDriver);
 begin
    ZeroOut(appm.Pointer, SizeOf(appm.Pointer));
 
-   if(drv <> nil) then
-      appm.PointerDriver := drv
-   else
+   if(drv <> nil) then begin
+      appm.PointerDriver := drv;
+      log.v('Set ' + appm.PointerDriver.ClassName + ' pointer driver');
+   end else begin
       appm.PointerDriver := appm.DummyPointerDriver;
-
-   log.v('Set ' + appm.PointerDriver.ClassName + ' pointer driver');
+      log.v('Cleared pointer driver');
+   end;
 end;
 
 constructor appTPointerDriver.Create();
