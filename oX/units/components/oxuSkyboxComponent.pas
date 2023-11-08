@@ -12,7 +12,7 @@ INTERFACE
       uStd,
       {ox}
       oxuComponent, oxuComponentDescriptors, oxuRenderComponent, oxuEntity,
-      oxuSerialization;
+      oxuSerialization, oxuSkybox;
 
 TYPE
 
