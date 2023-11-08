@@ -13,7 +13,7 @@ INTERFACE
       {app}
       appuActionEvents,
       {ox}
-      oxuRunRoutines, oxuThreadTask, oxuRun,
+      oxuRunRoutines, oxuThreadTask, oxuTimer,
       {oxed}
       uOXED, oxeduPackage, oxeduProject, oxeduProjectManagement, oxeduTasks, oxeduActions,
       oxeduAssets;
@@ -241,9 +241,9 @@ procedure projectClosed();
 begin
    oxedProjectScanner.Walker.Stop();
 
-   // wait to stop running
+   {wait to stop running}
    while(oxedProjectScanner.Walker.Running) do begin
-      oxRun.Sleep(1);
+      oxTimer.SloppySleep(1);
    end;
 end;
 
