@@ -11,7 +11,7 @@ UNIT oxeduProjectSession;
 INTERFACE
 
    USES
-      sysutils, uStd, udvars, dvaruFile,
+      sysutils, uStd, udvars,
       {oxed}
       oxeduProject, oxeduProjectConfigurationFileHelper;
 
