@@ -27,7 +27,7 @@ TYPE
    x11TWindow = class(oxTWindow)
       wd: record
          LastError: longint;
-         visinfo: PXVisualInfo;
+         VisInfo: PXVisualInfo;
          wAttr: TXSetWindowAttributes;
 
          h: x.TWindow;
@@ -37,10 +37,10 @@ TYPE
    TX11PointerDriver = class(appTPointerDriver)
       constructor Create();
 
-      procedure getXY({%H-}devID: longint; wnd: pointer; out x, y: single); override;
-      procedure setXY({%H-}devID: longint; wnd: pointer; x, y: single); override;
-      procedure hide(devID: longint; {%H-}wnd: pointer); override;
-      procedure show(devID: longint; {%H-}wnd: pointer); override;
+      procedure GetXY({%H-}devID: longint; wnd: pointer; out x, y: single); override;
+      procedure SetXY({%H-}devID: longint; wnd: pointer; x, y: single); override;
+      procedure Hide(devID: longint; {%H-}wnd: pointer); override;
+      procedure Show(devID: longint; {%H-}wnd: pointer); override;
    end;
 
    { oxTX11Platform }
@@ -543,10 +543,10 @@ begin
       end;
 
       {if successful then continue creating the window}
-      if(wnd.wd.visinfo <> nil) then begin
-         screenIndex := wnd.wd.visinfo^.screen;
-         depth := wnd.wd.visinfo^.depth;
-         visual := wnd.wd.visinfo^.visual;
+      if(wnd.wd.VisInfo <> nil) then begin
+         screenIndex := wnd.wd.VisInfo^.screen;
+         depth := wnd.wd.VisInfo^.depth;
+         visual := wnd.wd.VisInfo^.visual;
 
          {create a colormap and assign it}
          cm := XCreateColormap(DPY, RootWindow(DPY, screenIndex), visual, AllocNone);
@@ -641,9 +641,9 @@ begin
    if(oxTRenderer(wnd.Renderer).DeInitWindow(wnd) = false) then
       Log.e('Renderer window de-init failed.');
 
-   if(xwnd.wd.visinfo <> nil) then begin
-      XFree(xwnd.wd.visinfo);
-      xwnd.wd.visinfo := nil;
+   if(xwnd.wd.VisInfo <> nil) then begin
+      XFree(xwnd.wd.VisInfo);
+      xwnd.wd.VisInfo := nil;
    end;
 
    {destroy color map}
