@@ -55,5 +55,6 @@ INITIALIZATION
    oxTFilePreviewWindow.AddHandler('.js', oxuiTTextFilePreviewWindow);
    oxTFilePreviewWindow.AddHandler('.java', oxuiTTextFilePreviewWindow);
    oxTFilePreviewWindow.AddHandler('.php', oxuiTTextFilePreviewWindow);
+   oxTFilePreviewWindow.AddHandler('.gitignore', oxuiTTextFilePreviewWindow);
 
 END.
