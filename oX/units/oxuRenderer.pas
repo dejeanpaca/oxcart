@@ -162,11 +162,6 @@ TYPE
       function GetSummary(): TStringArray; virtual;
       {selects this renderer for use}
       procedure Use(); virtual;
-
-      {TODO: Separate screenshot functionality into a renderer component}
-
-      {capture a screenshot of the given window}
-      procedure Screenshot({%H-}wnd: oxTWindow; {%H-}image: imgTImage; {%H-}x, {%H-}y, {%H-}w, {%H-}h: loopint); virtual;
    end;
 
    oxTRendererClass = class of oxTRenderer;
@@ -448,11 +443,6 @@ end;
 
 procedure oxTRenderer.Use();
 begin
-end;
-
-procedure oxTRenderer.Screenshot(wnd: oxTWindow; image: imgTImage; x, y, w, h: loopint);
-begin
-
 end;
 
 function instanceGlobal(): TObject;

@@ -67,8 +67,6 @@ TYPE
       constructor Create(); override;
 
       function GetSummary(): TStringArray; override;
-
-      procedure Screenshot({%H-}wnd: oxTWindow; {%H-}image: imgTImage; x, y: loopint; w, h: loopint); override;
   end;
 
 VAR
@@ -360,14 +358,6 @@ begin
    list[3] := 'GLSL Version: ' + oxglRendererInfo.GLSL.Version;
 
    Result := list;
-end;
-
-procedure oxglTRenderer.Screenshot(wnd: oxTWindow; image: imgTImage; x, y: loopint; w, h: loopint);
-begin
-   {get the image data}
-   glPixelStorei(GL_PACK_ALIGNMENT, 1);
-   glReadPixels(x, y, w, h, GL_RGB, GL_UNSIGNED_BYTE, image.Image);
-   ogl.eRaise();
 end;
 
 procedure init();
