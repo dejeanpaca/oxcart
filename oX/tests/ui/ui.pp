@@ -149,8 +149,7 @@ begin
          else if(j = 3) then
             pos := pos + [uiCONTROL_GRID_RIGHT]
          else
-            pos := pos + [uiCONTROL_GRID_MIDDLE];
-
+            pos := pos + [uiCONTROL_GRID_MIDDLE_HORIZONTAL];
 
          wdg.SetButtonPosition(pos);
       end;
@@ -215,7 +214,7 @@ BEGIN
    appInfo.SetName('UI Test');
    appInfo.SetVersion(1, 0, 0);
 
-   oxwndSplash.Link := 'https://www.google.hr';
+   oxwndSplash.Link := 'https://duckduckgo.com/';
 
    ox.OnInitialize.Add('ui', @onInitialize, @onDeinitialize);
    InitWindow();
