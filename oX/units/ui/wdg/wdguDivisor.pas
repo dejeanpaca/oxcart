@@ -39,7 +39,7 @@ TYPE
       procedure ParentSizeChange(); override;
    end;
 
-   { wdgTLinkGlobal }
+   { wdgTDivisorGlobal }
 
    wdgTDivisorGlobal = class(specialize wdgTBase<wdgTDivisor>)
       Internal: uiTWidgetClass; static;
@@ -47,6 +47,7 @@ TYPE
 
       function Add(const Caption: StdString;
                  const Pos: oxTPoint; Vertical: boolean = false): wdgTDivisor;
+      function Add(const Caption: StdString): wdgTDivisor;
    end;
 
 VAR
@@ -204,6 +205,11 @@ begin
 
       uiWidget.LastRect.r.x := lastRectX;
    end;
+end;
+
+function wdgTDivisorGlobal.Add(const Caption: StdString): wdgTDivisor;
+begin
+   Result := Add(Caption, uiWidget.LastRect.BelowOf());
 end;
 
 INITIALIZATION
