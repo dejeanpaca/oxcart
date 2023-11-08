@@ -455,6 +455,7 @@ end;
 procedure oxglTRenderer.Screenshot(wnd: oxTWindow; image: imgTImage; x, y: loopint; w, h: loopint);
 begin
    {get the image data}
+   glPixelStorei(GL_PACK_ALIGNMENT, 1);
    glReadPixels(x, y, w, h, GL_RGB, GL_UNSIGNED_BYTE, image.Image);
    ogl.eRaise();
 end;
