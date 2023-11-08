@@ -25,6 +25,11 @@ TYPE
       {file name of the dvar file (can also include a relative path to Path)}
       FileName: StdString;
 
+      BeforeLoad,
+      AfterLoad,
+      BeforeSave,
+      AfterSave: TProcedure;
+
       constructor Create();
 
       function GetFn(): StdString; virtual;
@@ -55,9 +60,15 @@ var
 
 begin
    if Enabled and (dvg <> nil) then begin
+      if(BeforeLoad <> nil) then
+         BeforeLoad();
+
       fn := GetFn();
       dvarf.ReadText(dvg^, fn);
       log.v('Loaded: ' + fn);
+
+      if(AfterLoad <> nil) then
+         AfterLoad();
    end;
 end;
 
@@ -67,9 +78,15 @@ var
 
 begin
    if Enabled and (dvg <> nil) then begin
+      if(BeforeSave <> nil) then
+         BeforeSave();
+
       fn := GetFn();
       dvarf.WriteText(dvg^, fn);
       log.v('Saved: ' + fn);
+
+      if(AfterSave <> nil) then
+         AfterSave();
    end;
 end;
 
