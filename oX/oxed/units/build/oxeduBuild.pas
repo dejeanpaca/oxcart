@@ -618,6 +618,10 @@ end;
 function isCMEM(): boolean;
 begin
    Result := oxed.UseCMEM;
+
+   if(not Result) then
+      Result := oxedTPlatform(oxedBuild.BuildArch.PlatformObject).RequireCMEM;
+
    oxedBuildLog.v('Using cmem: ' + sf(Result));
 end;
 

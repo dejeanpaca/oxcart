@@ -64,6 +64,8 @@ TYPE
       OS: StdString;
       Architectures: oxedTPlatformArchitectureList;
 
+      RequireCMEM: boolean;
+
       GlyphName: StdString;
       GlyphCode: longword;
 
