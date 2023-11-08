@@ -86,7 +86,7 @@ begin
    oxedProjectManagement.Destroy();
 
    oxedPlatforms.DeInitialize();
-   oxed.PostInit.iCall();
+   oxed.PostInit.dCall();
    oxed.Init.dCall();
 end;
 
