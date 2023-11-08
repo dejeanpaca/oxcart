@@ -1,6 +1,8 @@
 {
    oxeduBuild, oxed build system
    Copyright (C) 2017. Dejan Boras
+
+   TODO: Unify how symbols are added to configs (laz and fpc)
 }
 
 {$INCLUDE oxdefines.inc}
@@ -566,6 +568,11 @@ begin
       config.Add('-dNO_THREADS');
    {$ENDIF}
 
+   if(oxedBuild.IsLibrary()) then begin
+      config.Add('-dLIBRARY');
+      config.Add('-dOX_LIBRARY');
+   end;
+
    fn := oxedBuild.WorkArea + oxedBuild.Props.ConfigFile;
 
    Result := config.WriteFile(fn);
@@ -778,8 +785,16 @@ begin
    build.FPCOptions.UseConfig := oxedBuild.WorkArea + oxedBuild.Props.ConfigFile;
 
    parameters := TBuildFPCConfiguration.GetFPCCommandLineForConfig();
+   parameters.Add('-O1');
    parameters.Add('-vewnhi');
    parameters.Add('-l');
+
+   if(build.IncludeDebugInfo) then
+      parameters.Add('-gl');
+
+   if(oxedBuild.IsLibrary()) then begin
+      parameters.Add('-Cg');
+   end;
 
    if(parameters.n > 0) then begin
       log.Collapsed('FPC parameters for build');
@@ -1097,10 +1112,13 @@ begin
    build.IncludeDebugInfo := false;
    {$ENDIf}
 
-   if(BuildArch <> nil) then
+   if(BuildArch <> nil) then begin
+      BuildArch.Platform.Separate(build.TargetCPU, build.TargetOS);
       build.FPCOptions.UnitOutputDirectory := oxedBuild.WorkArea  + 'lib-' + BuildArch.Platform
-   else
+   end else begin
+      build.GetBuiltWithTarget().Separate(build.TargetCPU, build.TargetOS);
       build.FPCOptions.UnitOutputDirectory := oxedBuild.WorkArea  + 'lib';
+   end;
 
    if(BuildType = OXED_BUILD_TASK_RECODE) then begin
       build.Options.Rebuild := false;
