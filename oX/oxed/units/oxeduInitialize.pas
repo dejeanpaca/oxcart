@@ -68,6 +68,8 @@ INTERFACE
       {platforms}
       oxeduwndAndroidSettings, oxeduwndAndroidGeneralSettings,
       oxeduAndroidMenu,
+      {vcs}
+      oxeduGit,
       {ypk}
       oxeduYPK,
       {initialize keys last}
