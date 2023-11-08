@@ -31,6 +31,7 @@ TYPE
       function GetContext(wnd: oglTWindow; shareContext: oglTRenderingContext): oglTRenderingContext; virtual;
       function ContextCurrent(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
       function DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean; virtual;
+      procedure SwapBuffers(wnd: oglTWindow); virtual;
    end;
 
 VAR
@@ -160,6 +161,11 @@ end;
 function oxglTEGL.DestroyContext(wnd: oglTWindow; context: oglTRenderingContext): boolean;
 begin
    Result := eglDestroyContext(wnd.wd.display, context) <> EGL_FALSE;
+end;
+
+procedure oxglTEGL.SwapBuffers(wnd: oglTWindow);
+begin
+   eglSwapBuffers(wnd.wd.display, wnd.wd.surface);
 end;
 
 INITIALIZATION
