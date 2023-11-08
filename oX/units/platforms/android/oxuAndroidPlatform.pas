@@ -13,6 +13,7 @@ INTERFACE
       uStd,
       {app}
       uApp, appuKeys, appuKeyEvents, appuMouse, appuMouseEvents, appuActionEvents,
+      uiuTypes, uiuWindowTypes,
       {oX}
       uOX, oxuRun, oxuInit,
       oxuWindow, oxuWindowHelper, uiuWindow,
@@ -128,7 +129,7 @@ begin
       y := AMotionEvent_getY(event, i);
 
       m.x := x;
-      m.y := y;
+      m.y := oxWindow.Current.Dimensions.h - 1 - y;
 
       m.Button := appmcLEFT;
 
@@ -229,6 +230,8 @@ begin
 
    {don't render when window has no focus}
    wnd.oxProperties.RenderUnfocused := false;
+   wnd.Properties := wnd.Properties - [uiwndpRESIZABLE, uiwndpMOVABLE];
+   Include(wnd.Properties, uiwndpMAXIMIZED);
 
    {initialize gl for window}
    if(not oxTRenderer(wnd.Renderer).PreInitWindow(wnd)) then begin
@@ -242,7 +245,7 @@ begin
       exit;
    end;
 
-   wnd.SetPosition(0, 0, false);
+   wnd.SetPosition(0, wnd.Dimensions.h - 1, false);
    wnd.SetDimensions(wnd.Dimensions.w, wnd.Dimensions.h, false);
 
    Result := true;
