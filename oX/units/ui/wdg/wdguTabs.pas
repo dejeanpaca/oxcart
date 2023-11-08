@@ -42,9 +42,9 @@ TYPE
       {relative vertical position}
       y,
       {width of the title}
-      tWidth,
+      TotalWidth,
       {title height}
-      tHeight: longint;
+      TotalHeight: longint;
 
       {control associated with this tab}
       AssociatedSelectedControl: uiTControl;
@@ -190,11 +190,11 @@ begin
          exit(ON_TAB_SURFACE)
       {otherwise we'll check if the point is over any tab headers}
       else begin
-         for i := 0 to (tabs.t.n - 1) do begin
-            current := @tabs.t.List[i];
+         for i := 0 to (Tabs.t.n - 1) do begin
+            current := @Tabs.t.List[i];
 
             {check each tab}
-            if(x >= current^.x) and (x < current^.x + current^.tWidth) then begin
+            if(x >= current^.x) and (x < current^.x + current^.TotalWidth) then begin
                tabIndex := i;
                exit(ON_TAB_HEADER);
             end;
@@ -206,11 +206,11 @@ begin
          exit(ON_TAB_SURFACE)
       {otherwise we'll check if the point is over any tab headers}
       else begin
-         for i := 0 to (tabs.t.n - 1) do begin
-            current := @tabs.t.List[i];
+         for i := 0 to (Tabs.t.n - 1) do begin
+            current := @Tabs.t.List[i];
 
             {check each tab}
-            if(y < Dimensions.h - current^.y) and (y > Dimensions.h - current^.y - current^.tHeight) then begin
+            if(y < Dimensions.h - current^.y) and (y > Dimensions.h - current^.y - current^.TotalHeight) then begin
                tabIndex := i;
                exit(ON_TAB_HEADER);
             end;
@@ -348,53 +348,54 @@ begin
          RPosition.x + Dimensions.w - 2, RPosition.y - Dimensions.h + 2);
    end;
 
-   if(tabs.t.n < 1) then
+   if(Tabs.t.n < 1) then
       exit;
 
    {render tab titles}
-   for i := 0 to (tabs.t.n - 1) do begin
-      current :=  @tabs.t.List[i];
+   for i := 0 to (Tabs.t.n - 1) do begin
+      current :=  @Tabs.t.List[i];
       x := RPosition.x + current^.x;
       y := RPosition.y;
 
       {draw the tab title border}
       SetColor(uiTWindow(wnd).Skin.Colors.Border);
-      if(tabs.Selected <> i) then begin
+
+      if(Tabs.Selected <> i) then begin
          uiDraw.Rect(x, y - wdgTabs.HeaderNonSelectedDecrease,
-            x + current^.tWidth - 1, y - HeaderHeight + 1)
+            x + current^.TotalWidth - 1, y - HeaderHeight + 1)
       end else
-         uiDraw.Rect(x, y, x + current^.tWidth - 1, y - HeaderHeight + 1);
+         uiDraw.Rect(x, y, x + current^.TotalWidth - 1, y - HeaderHeight + 1);
 
       {fill the tab title surface}
-      if(tabs.Selected <> i) then begin
+      if(Tabs.Selected <> i) then begin
          SetColor(uiTWindow(wnd).Skin.Colors.Surface.Darken(0.3));
 
          uiDraw.Box(x + 1, y - wdgTabs.HeaderNonSelectedDecrease - 1,
-            x + current^.tWidth - 2, y - HeaderHeight + 1)
+            x + current^.TotalWidth - 2, y - HeaderHeight + 1)
       end else begin
          SetSelectedColor(current^.AssociatedSelectedControl);
 
-         uiDraw.Box(x + 1, y - 1, x + current^.tWidth - 2, y - HeaderHeight + 1);
+         uiDraw.Box(x + 1, y - 1, x + current^.TotalWidth - 2, y - HeaderHeight + 1);
       end;
    end;
 
    {now render tab title text}
    f := CachedFont;
 
-   for i := 0 to (tabs.t.n - 1) do begin
-      current := @tabs.t.List[i];
+   for i := 0 to (Tabs.t.n - 1) do begin
+      current := @Tabs.t.List[i];
       r.x := RPosition.x + current^.x;
       r.y := RPosition.y;
-      r.w := current^.tWidth;
+      r.w := current^.TotalWidth;
 
       r.h := HeaderHeight;
-      if(tabs.Selected <> i) then begin
+      if(Tabs.Selected <> i) then begin
          dec(r.y, wdgTabs.HeaderNonSelectedDecrease);
          dec(r.h, wdgTabs.HeaderNonSelectedDecrease);
       end;
 
       f.Start();
-         if(tabs.Selected <> i) then
+         if(Tabs.Selected <> i) then
             SetColorBlended(uiTWindow(wnd).Skin.Colors.Text)
          else
             SetColorBlended(uiTWindow(wnd).Skin.Colors.TextInHighlight);
@@ -427,52 +428,53 @@ begin
          RPosition.x + Dimensions.w - 2, RPosition.y - Dimensions.h + 2);
    end;
 
-   if(tabs.t.n < 1) then
+   if(Tabs.t.n < 1) then
       exit;
 
    {render tab titles}
-   for i := 0 to (tabs.t.n - 1) do begin
-      current :=  @tabs.t.List[i];
+   for i := 0 to (Tabs.t.n - 1) do begin
+      current :=  @Tabs.t.List[i];
       x := RPosition.x + current^.x;
       y := RPosition.y - current^.y;
 
       {draw the tab title border}
       SetColor(uiTWindow(wnd).Skin.Colors.Border);
-      if(tabs.Selected <> i) then begin
+
+         if(Tabs.Selected <> i) then begin
          uiDraw.Rect(x + wdgTabs.HeaderNonSelectedDecrease, y,
-            x + current^.tWidth - 1, y - current^.tHeight + 1)
+            x + current^.TotalWidth - 1, y - current^.TotalHeight + 1)
       end else
-         uiDraw.Rect(x, y, x + current^.tWidth - 1, y - current^.tHeight + 1);
+         uiDraw.Rect(x, y, x + current^.TotalWidth - 1, y - current^.TotalHeight + 1);
 
       {fill the tab title surface}
-      if(tabs.Selected <> i) then begin
+      if(Tabs.Selected <> i) then begin
          SetColor(uiTWindow(wnd).Skin.Colors.Surface.Darken(0.3));
 
          uiDraw.Box(x + 1 + wdgTabs.HeaderNonSelectedDecrease, y - 1,
-            x + current^.tWidth - 2, y - current^.tHeight + 1)
+            x + current^.TotalWidth - 2, y - current^.TotalHeight + 1)
       end else begin
          SetSelectedColor(current^.AssociatedSelectedControl);
 
-         uiDraw.Box(x + 1, y - 1, x + current^.tWidth - 2, y - current^.tHeight + 1);
+         uiDraw.Box(x + 1, y - 1, x + current^.TotalWidth - 2, y - current^.TotalHeight + 1);
       end;
    end;
 
    {now render tab title text}
    f := CachedFont;
 
-   for i := 0 to (tabs.t.n - 1) do begin
-      current := @tabs.t.List[i];
+   for i := 0 to (Tabs.t.n - 1) do begin
+      current := @Tabs.t.List[i];
       r.x := RPosition.x + current^.x;
       r.y := RPosition.y - current^.y;
 
       r.h := HeaderHeight;
-      if(tabs.Selected <> i) then
+      if(Tabs.Selected <> i) then
          dec(r.h, wdgTabs.HeaderNonSelectedDecrease);
 
-      r.w := current^.tWidth;
+      r.w := current^.TotalWidth;
 
       f.Start();
-         if(tabs.Selected <> i) then
+         if(Tabs.Selected <> i) then
             SetColorBlended(uiTWindow(wnd).Skin.Colors.Text)
          else
             SetColorBlended(uiTWindow(wnd).Skin.Colors.TextInHighlight);
@@ -502,51 +504,54 @@ begin
    f := CachedFont;
 
    {get the size of the spacer (space before and after a tab title)}
-   tabs.Spacer := f.GetWidth() div 2;
-   tabs.TotalWidth := 0;
-   tabs.TotalHeight := 0;
+   Tabs.Spacer := f.GetWidth() div 2;
+   Tabs.TotalWidth := 0;
+   Tabs.TotalHeight := 0;
    x := 0;
    y := 0;
 
    {calculate sizes}
-   for i := 0 to (tabs.t.n - 1) do begin
+   for i := 0 to (Tabs.t.n - 1) do begin
       {calculate the width of the current tab}
-      current := @tabs.t.List[i];
-      current^.tWidth := HeaderWidth;
-      current^.tHeight := HeaderHeight;
+      current := @Tabs.t.List[i];
+      current^.TotalWidth := HeaderWidth;
+      current^.TotalHeight := HeaderHeight;
       current^.x := 0;
       current^.y := 0;
 
       if(not Vertical) then begin
-         current^.tWidth := f.GetLength(current^.Title) + 2 + tabs.Spacer * 2;
+         current^.TotalWidth := f.GetLength(current^.Title) + 2 + Tabs.Spacer * 2;
          current^.x := x;
-         inc(current^.tWidth, Length(current^.Title) * 1);
+         inc(current^.TotalWidth, Length(current^.Title) * 1);
 
          {move to the next}
-         inc(x, current^.tWidth);
-         if(i < tabs.t.n - 1) then
+         inc(x, current^.TotalWidth);
+
+         if(i < Tabs.t.n - 1) then
             inc(x, 1);
 
          {calculate the total width}
-         tabs.TotalWidth := current^.tWidth;
-         if(i < tabs.t.n - 1) then
-            inc(tabs.TotalWidth); {we need 1 pixel of space between tabs}
+         Tabs.TotalWidth := current^.TotalWidth;
+
+         if(i < Tabs.t.n - 1) then
+            inc(Tabs.TotalWidth); {we need 1 pixel of space between tabs}
       end else begin
          current^.y := y;
 
          {move to next}
-         inc(y, current^.tHeight);
-         if(i < tabs.t.n - 1) then
+         inc(y, current^.TotalHeight);
+
+         if(i < Tabs.t.n - 1) then
             inc(y, 1);
 
-         tabs.TotalHeight := current^.tHeight;
+         Tabs.TotalHeight := current^.TotalHeight;
       end;
    end;
 
    if(not Vertical) then
-      tabs.TotalHeight := HeaderHeight
+      Tabs.TotalHeight := HeaderHeight
    else
-      tabs.TotalWidth := HeaderWidth;
+      Tabs.TotalWidth := HeaderWidth;
 
    SetupContainer();
 end;
@@ -599,7 +604,7 @@ begin
 
    t.Title := Title;
    t.ID := tabID;
-   t.Widgets.Initialize();
+   uiTControls.Initialize(uiTControls(t.Widgets));
 
    Tabs.t.Add(t);
 
@@ -622,6 +627,9 @@ end;
 procedure wdgTTabs.Done();
 begin
    uiWidget.SetTarget(uiTWindow(wnd));
+
+   if(Tabs.t.n > 1) then
+      Tabs.t.List[Tabs.t.n - 1].Widgets := uiTWidgets(Container.Widgets);
 
    if(Tabs.t.n > 0) then
       SelectByNum(0);
