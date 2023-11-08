@@ -1,10 +1,10 @@
 {
-   oxeduInspectorWindow, oxed inspector window
+   oxeduwndInspector, oxed inspector window
    Copyright (C) 2017. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}
-UNIT oxeduInspectorWindow;
+UNIT oxeduwndInspector;
 
 INTERFACE
 

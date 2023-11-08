@@ -1,10 +1,10 @@
 {
-   oxeduSettingsWindow, oxed settings window
+   oxeduwndSettings, oxed settings window
    Copyright (C) 2016. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}
-UNIT oxeduSettingsWindow;
+UNIT oxeduwndSettings;
 
 INTERFACE
 

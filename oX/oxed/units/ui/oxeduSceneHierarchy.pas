@@ -21,7 +21,7 @@ INTERFACE
       uOXED, oxeduWindow, oxeduMenubar, oxeduEntityMenu, oxeduProjectManagement, oxeduProject, oxeduProjectRunner,
       oxeduEntities, oxeduSceneManagement, oxeduScene,
       {ui}
-      oxeduInspectorWindow, oxeduInspectEntity;
+      oxeduwndInspector, oxeduInspectEntity;
 
 TYPE
 

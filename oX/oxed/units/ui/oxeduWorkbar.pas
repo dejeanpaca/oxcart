@@ -15,7 +15,8 @@ INTERFACE
       {oxed}
       oxeduUI,
       oxeduProject, oxeduProjectManagement,
-      oxeduIcons, oxeduActions, oxeduProjectSettingsWindow;
+      oxeduIcons, oxeduActions,
+      oxeduwndProjectSettings;
 
 TYPE
    { oxedTWorkbarGlobal }

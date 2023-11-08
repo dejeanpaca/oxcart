@@ -1,10 +1,10 @@
 {
-   oxeduProjectFeaturesWindow, project features configuration window
+   oxeduwndProjectFeatures, project features configuration window
    Copyright (C) 2019. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}
-UNIT oxeduProjectFeaturesWindow;
+UNIT oxeduwndProjectFeatures;
 
 INTERFACE
 

@@ -1,10 +1,10 @@
 {
-   oxeduProblemsWindow, problems window
+   oxeduwndProblems, problems window
    Copyright (C) 2018. Dejan Boras
 }
 
 {$INCLUDE oxdefines.inc}
-UNIT oxeduProblemsWindow;
+UNIT oxeduwndProblems;
 
 INTERFACE
 

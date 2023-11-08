@@ -38,16 +38,16 @@ INTERFACE
       oxeduAndroidSettingsFile,
       {$IFNDEF NO_UI}
       {base ui}
-      oxeduRecents, oxeduSplash, oxeduSplashScreen, oxeduIcons,
+      oxeduRecents, oxeduwndSplash, oxeduSplashScreen, oxeduIcons,
       {windows}
       oxuwndBuildSettings, oxuwndAbout,
       oxeduMenubar, oxeduMenubarBuild,
       oxeduToolbar, oxeduWorkbar, oxeduStatusbar, oxeduDockableArea, oxeduMenuToolbar,
       oxeduTasksUI, oxeduProjectContextMenu,
-      oxeduProjectSettingsWindow, oxeduwndPackagesSettings,
+      oxeduwndProjectSettings, oxeduwndPackagesSettings,
       oxeduViewScene, oxeduSceneView, oxeduProjectDialog, oxeduSceneEditTools,
-      oxeduRunButtons, oxeduStatusInfo, oxeduSettingsWindow,
-      oxeduProjectFeaturesWindow, oxeduProjectStatisticsWindow,
+      oxeduRunButtons, oxeduStatusInfo, oxeduwndSettings,
+      oxeduwndProjectFeatures, oxeduwndProjectStatistics,
       oxeduProjectActions, oxeduEntityMenubar,
       {initialize keys last}
       oxeduKeys,

@@ -19,11 +19,10 @@ INTERFACE
       {widgets}
       uiWidgets, wdguMenubar, uiuWidget, uiuFiles, uiuSkin,
       {oxed}
-      uOXED, oxeduUI,
+      uOXED, oxeduSettings, oxeduUI,
       oxeduActions, oxeduRecents, oxeduIcons, oxeduBuild, oxeduPlatform, oxuwndDVarEditor, oxeduTasks,
-      oxeduProject, oxeduProjectManagement, oxeduProjectSettingsWindow, oxeduRunSettingsWindow, oxeduProjectRunner,
-      oxeduProjectStatisticsWindow,
-      oxeduSettings;
+      oxeduProject, oxeduProjectManagement, oxeduProjectRunner,
+      oxeduwndProjectStatistics, oxeduwndProjectSettings, oxeduwndRunSettings;
 
 TYPE
 
