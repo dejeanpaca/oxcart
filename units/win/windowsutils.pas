@@ -131,8 +131,10 @@ begin
    if(key <> 0) then begin
       contents := 0;
 
-      if(RegQueryValueEx(key, pchar(name), nil, nil, @contents, @bufSize) = ERROR_SUCCESS) then
+      if(RegQueryValueEx(key, pchar(name), nil, nil, @contents, @bufSize) = ERROR_SUCCESS) then begin
          value := contents;
+         Result := true;
+      end;
    end;
 
    windows.RegCloseKey(key);
