@@ -106,6 +106,7 @@ begin
       btnWidget := wdgControllerButtonState.Add(uiWidget.LastRect.RightOf());
       btnWidget.ButtonName := sf(i);
       btnWidget.ButtonIndex := i;
+      btnWidget.SetPressure(Controller.GetButtonPressure(i));
 
       wdg.Buttons[i] := btnWidget;
    end;
@@ -120,6 +121,7 @@ begin
       axisWidget := wdgProgressBar.Add(uiWidget.LastRect.RightOf(), oxDimensions(60, 25));
       axisWidget.SetCaption(sf(i));
       axisWidget.Progress.PercentageInText := false;
+      axisWidget.SetRatio(Controller.GetUnitAxisValue(i));
 
       wdg.Axes[i] := axisWidget;
    end;
@@ -134,6 +136,7 @@ begin
       triggerWidget := wdgProgressBar.Add(uiWidget.LastRect.RightOf(), oxDimensions(60, 25));
       triggerWidget.SetCaption(sf(i));
       triggerWidget.Progress.PercentageInText := false;
+      triggerWidget.SetRatio(Controller.GetNormalizedTriggerValue(i));
 
       wdg.Triggers[i] := triggerWidget;
    end;
