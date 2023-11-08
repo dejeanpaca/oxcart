@@ -37,6 +37,10 @@ TYPE
 
       {setup matrix from vPosition, vScale and vRotation properties}
       procedure SetupMatrix();
+      {assemble matrix without reconstructing the rotation matrix}
+      procedure AssembleMatrix();
+      {apply the rotation matrix to the main matrix}
+      procedure ApplyRotation();
       {create a final matrix using matrix and rotation matrix}
       procedure FinalizeMatrix();
       {apply the matrix}
@@ -46,6 +50,7 @@ TYPE
 
       procedure Translate(x, y, z: single); virtual;
       procedure GetTranslateMatrix(x, y, z: single; out m: TMatrix4f); virtual;
+
       procedure Rotate(const angles: TVector3f);
       procedure Rotate(x, y, z: single);
       procedure Rotate(w, x, y, z: single); virtual;
@@ -56,6 +61,7 @@ TYPE
       procedure GetRotateMatrixX(w: single; out m: TMatrix4f); virtual;
       procedure GetRotateMatrixY(w: single; out m: TMatrix4f); virtual;
       procedure GetRotateMatrixZ(w: single; out m: TMatrix4f); virtual;
+
       procedure Scale(x, y, z: single); virtual;
       procedure GetScaleMatrix(x, y, z: single; out m: TMatrix4f); virtual;
       procedure Scale(s: single);
@@ -69,7 +75,8 @@ TYPE
       function GetRight(): TVector3f; virtual;
 
       procedure GetEuler(out v: TVector3f);
-      procedure GetEulerXYZ(out v: TVector3f);
+      procedure GetEulerYZX(out v: TVector3f; var m: TMatrix4f);
+      procedure GetEulerXYZ(out v: TVector3f; var m: TMatrix4f);
       procedure GetEuler(var x, y, z: single);
       procedure GetEuler();
 
@@ -104,6 +111,10 @@ begin
    {setup the identity transform}
    Matrix := vmmUnit4;
    RotationMatrix := vmmUnit4;
+
+   vRotation := vmvZero3f;
+   vPosition := vmvZero3f;
+   vScale := vmvOne3f;
 end;
 
 procedure oxTTransform.IdentityVectors();
@@ -117,9 +128,9 @@ procedure oxTTransform.SetupMatrix();
 begin
    RotationMatrix := vmmUnit4;
 
-   Rotate(vRotation[1], 0, 1, 0);
-   Rotate(vRotation[2], 0, 0, 1);
-   Rotate(vRotation[0], 1, 0, 0);
+   RotateY(vRotation[1]);
+   RotateZ(vRotation[2]);
+   RotateX(vRotation[0]);
 
    Matrix := vmmUnit4;
 
@@ -128,6 +139,22 @@ begin
    Matrix := Matrix * RotationMatrix;
 
    Scale(vScale);
+end;
+
+procedure oxTTransform.AssembleMatrix();
+begin
+   Matrix := vmmUnit4;
+
+   Translate(vPosition);
+
+   Matrix := Matrix * RotationMatrix;
+
+   Scale(vScale);
+end;
+
+procedure oxTTransform.ApplyRotation();
+begin
+   Matrix := Matrix * RotationMatrix;
 end;
 
 procedure oxTTransform.FinalizeMatrix();
@@ -185,8 +212,13 @@ procedure oxTTransform.Rotate(x, y, z: single);
 begin
    RotationMatrix := vmmUnit4;
 
+   vRotation[1] := y;
    RotateY(y);
+
+   vRotation[2] := z;
    RotateZ(z);
+
+   vRotation[0] := x;
    RotateX(x);
 end;
 
@@ -463,19 +495,24 @@ end;
 
 procedure oxTTransform.GetEuler(out v: TVector3f);
 begin
-   if (RotationMatrix[1, 0] < 0.999999) then begin
-       if(RotationMatrix[1, 0] > -0.99999) then begin
-           v[2] := arcsin(RotationMatrix[1, 0]);
-           v[1] := arctan2(-RotationMatrix[2, 0], RotationMatrix[0, 0]);
-           v[0] := arctan2(-RotationMatrix[1, 2], RotationMatrix[1, 1]);
+   GetEulerYZX(v, RotationMatrix);
+end;
+
+procedure oxTTransform.GetEulerYZX(out v: TVector3f; var m: TMatrix4f);
+begin
+   if(m[1, 0] < 0.999999) then begin
+       if(m[1, 0] > -0.99999) then begin
+           v[2] := arcsin(m[1, 0]);
+           v[1] := arctan2(-m[2, 0], m[0, 0]);
+           v[0] := arctan2(-m[1, 2], m[1, 1]);
        end else begin
            v[2] := - (vmcPI / 2);
-           v[1] := - arctan2(RotationMatrix[2, 1], RotationMatrix[2, 2]);
+           v[1] := - arctan2(m[2, 1], m[2, 2]);
            v[0] := 0;
        end;
    end else begin
       v[2] := vmcPI / 2;
-      v[1] := arctan2(RotationMatrix[2, 1], RotationMatrix[2, 2]);
+      v[1] := arctan2(m[2, 1], m[2, 2]);
       v[0] := 0;
    end;
 
@@ -484,23 +521,23 @@ begin
    v[2] := v[2] * vmcToDeg;
 end;
 
-procedure oxTTransform.GetEulerXYZ(out v: TVector3f);
+procedure oxTTransform.GetEulerXYZ(out v: TVector3f; var m: TMatrix4f);
 begin
    v := vmvZero3f;
 
-   if (RotationMatrix[0, 2] < 0.999999) then begin
-       if(RotationMatrix[0, 2] > -0.99999) then begin
-           v[1] := arcsin(RotationMatrix[0, 2]);
-           v[0] := arctan2(-RotationMatrix[1, 2], RotationMatrix[2, 2]);
-           v[2] := arctan2(-RotationMatrix[0, 1], RotationMatrix[0, 0]);
+   if(m[0, 2] < 0.999999) then begin
+       if(m[0, 2] > -0.99999) then begin
+           v[1] := arcsin(m[0, 2]);
+           v[0] := arctan2(-m[1, 2], m[2, 2]);
+           v[2] := arctan2(-m[0, 1], m[0, 0]);
        end else begin
            v[1] := - (vmcPI / 2);
-           v[0] := - arctan2(RotationMatrix[1, 0], RotationMatrix[1, 1]);
+           v[0] := - arctan2(m[1, 0], m[1, 1]);
            v[2] := 0;
        end;
    end else begin
       v[1] := vmcPI / 2;
-      v[0] := arctan2(RotationMatrix[1, 0], RotationMatrix[1, 1]);
+      v[0] := arctan2(m[1, 0], m[1, 1]);
       v[2] := 0;
    end;
 
