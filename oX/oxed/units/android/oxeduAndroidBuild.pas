@@ -180,13 +180,29 @@ begin
    if(arch = nil) then
       exit;
 
+   appPath := oxedAndroidSettings.GetAppPath();
+
+   {copy built data file to the target folder (if any)}
+   if(oxedBuild.BuildAssets) then begin
+      source := oxedYPKAssetsDeployer.Builder.OutputFN;
+      targetPath := appPath + '/src/main/res/assets/data.ypk';
+
+      {erase data file first}
+      if(FileUtils.Exists(targetPath) > 0) then
+         FileUtils.Erase(targetPath);
+
+      {move data file}
+      if(RenameFile(source, targetPath)) then
+         oxedBuildLog.k('Copied data file from "' + source + '" to "' + targetPath + '"')
+      else
+         oxedBuild.Fail('Failed to copy data file from "' + source + '" to "' + targetPath + '"');
+   end;
+
    if(not oxedBuild.BuildBinary) then
       exit;
 
    {copy built library to the target folder}
    source := oxedBuild.GetTargetExecutableFileName();
-   appPath := oxedAndroidSettings.GetAppPath();
-
    targetPath := appPath + DirSep + 'libs' + DirSep + arch.LibTarget;
 
    if(ForceDirectories(targetPath)) then begin
