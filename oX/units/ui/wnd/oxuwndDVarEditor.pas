@@ -38,7 +38,7 @@ TYPE
    oxwdgTDVarEditorGrid = class(wdgTStringGrid)
       Vars: oxTDVarEditorPointers;
 
-      constructor Create; override;
+      constructor Create(); override;
 
       function GetValue(index, column: loopint): StdString; override;
       function GetItemCount(): loopint; override;
@@ -113,7 +113,7 @@ end;
 
 { oxwdgTDVarEditorGrid }
 
-constructor oxwdgTDVarEditorGrid.Create;
+constructor oxwdgTDVarEditorGrid.Create();
 begin
    inherited Create;
 
