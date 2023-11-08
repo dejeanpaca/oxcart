@@ -167,7 +167,7 @@ TYPE
          end;
 
       procedure ibUpdate();
-      procedure SizeChanged; override;
+      procedure SizeChanged(); override;
    end;
 
    wdgTInputBoxOnChangeMethod = procedure(wdg: wdgTInputBox);
@@ -185,8 +185,6 @@ TYPE
 
       {checks if a char is allowed for floating point numbers}
       class function IsFloat(c: char): boolean; static;
-
-      procedure OnAdd(wdg: wdgTInputBox); override;
    end;
 
 VAR
@@ -525,7 +523,7 @@ begin
    GoToEnd();
 end;
 
-procedure wdgTInputBox.SizeChanged;
+procedure wdgTInputBox.SizeChanged();
 begin
    ibUpdate();
 end;
@@ -591,11 +589,6 @@ end;
 class function wdgTInputBoxGlobal.IsFloat(c: char): boolean;
 begin
    Result := (FormatSettings.DecimalSeparator = c) or (c in appFLOAT_CHARS);
-end;
-
-procedure wdgTInputBoxGlobal.OnAdd(wdg: wdgTInputBox);
-begin
-   wdg.ibUpdate();
 end;
 
 procedure wdgTInputBox.SetText(const txt: StdString; setProperties: longword);
