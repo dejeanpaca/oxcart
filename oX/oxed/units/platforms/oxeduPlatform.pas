@@ -70,11 +70,23 @@ TYPE
 
    oxedTPlatformsList = specialize TSimpleList<oxedTPlatform>;
 
+   oxedTPlatformRoutine = procedure(platform: oxedTPlatform);
+   oxedTPlatformRoutineList = specialize TSimpleList<oxedTPlatformRoutine>;
+
+   { oxedTPlatformRoutineListHelper }
+
+   oxedTPlatformRoutineListHelper = record helper for oxedTPlatformRoutineList
+      procedure Call(platform: oxedTPlatform);
+   end;
+
    { oxedTPlatforms }
 
    oxedTPlatforms = record
       List: oxedTPlatformsList;
       CurrentId: string;
+
+      OnEnable,
+      OnDisable: oxedTPlatformRoutineList;
 
       procedure Initialize();
       procedure DeInitialize();
@@ -82,6 +94,10 @@ TYPE
       procedure Add(platform: oxedTPlatform);
       function FindById(const id: string): oxedTPlatform;
       procedure Dispose();
+
+      procedure Enable(platform: oxedTPlatform);
+      procedure Disable(platform: oxedTPlatform);
+      procedure Enable(platform: oxedTPlatform; isEnabled: boolean);
    end;
 
 VAR
@@ -91,6 +107,19 @@ VAR
    oxedPlatform: oxedTPlatform;
 
 IMPLEMENTATION
+
+{ oxedTPlatformRoutineListHelper }
+
+procedure oxedTPlatformRoutineListHelper.Call(platform: oxedTPlatform);
+var
+   i: loopint;
+
+begin
+   for i := 0 to n - 1 do begin
+      if(List[i] <> nil) then
+         List[i](platform);
+   end;
+end;
 
 { oxedTPlatformArchitecture }
 
@@ -158,7 +187,7 @@ end;
 
 { oxedTPlatforms }
 
-procedure oxedTPlatforms.Initialize;
+procedure oxedTPlatforms.Initialize();
 begin
    CurrentId := 'none';
 
@@ -181,7 +210,7 @@ begin
       oxedPlatform := oxedTPlatform.Create();
 end;
 
-procedure oxedTPlatforms.DeInitialize;
+procedure oxedTPlatforms.DeInitialize();
 begin
    if(oxedPlatform <> nil) and (oxedPlatform.Id = 'unknown') then
       FreeObject(oxedPlatform);
@@ -217,6 +246,32 @@ begin
    List.Dispose();
 end;
 
+procedure oxedTPlatforms.Enable(platform: oxedTPlatform);
+begin
+   if(not platform.Enabled) then begin
+      platform.Enabled := true;
+      OnEnable.Call(platform);
+   end;
+end;
+
+procedure oxedTPlatforms.Disable(platform: oxedTPlatform);
+begin
+   if(platform.Enabled) then begin
+      platform.Enabled := false;
+      OnDisable.Call(platform);
+   end;
+end;
+
+procedure oxedTPlatforms.Enable(platform: oxedTPlatform; isEnabled: boolean);
+begin
+   if(platform <> nil) then begin
+      if(isEnabled) then
+         Enable(platform)
+      else
+         Disable(platform);
+   end;
+end;
+
 procedure deinit();
 begin
    oxedPlatforms.Dispose();
@@ -226,5 +281,8 @@ INITIALIZATION
    oxed.Init.dAdd('platforms', @deinit);
 
    oxedPlatforms.List.InitializeValues(oxedPlatforms.List);
+
+   oxedTPlatformRoutineList.Initialize(oxedPlatforms.OnEnable);
+   oxedTPlatformRoutineList.Initialize(oxedPlatforms.OnDisable);
 
 END.
