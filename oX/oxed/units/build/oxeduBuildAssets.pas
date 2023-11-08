@@ -128,7 +128,7 @@ procedure oxedTBuildAssets.Initialize();
 begin
    TFileTraverse.Initialize(Walker);
 
-   Walker.OnFile:= @scanFile;
+   Walker.OnFile := @scanFile;
    Walker.OnDirectory := @onDirectory;
 
    OnFile.Initialize(OnFile);

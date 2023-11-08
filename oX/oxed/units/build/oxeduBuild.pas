@@ -448,17 +448,15 @@ var
    idx: loopint;
 
 begin
-   for idx := 0 to p.Units.n - 1 do begin
-      if(p.Units.List[idx].IsSupported(oxedBuild.BuildOS, oxedBuild.IsLibrary())) then begin
-         relativePath := getRelativePath(path, p.Units.List[idx].Path);
-         f.AddUnitPath(relativePath);
-      end;
-   end;
+   for idx := 0 to p.Paths.n - 1 do begin
+      if(p.Paths.List[idx].IsSupported(oxedBuild.BuildOS, oxedBuild.IsLibrary())) then begin
+         relativePath := getRelativePath(path, p.Paths.List[idx].Path);
 
-   for idx := 0 to p.IncludeFiles.n - 1 do begin
-      if(p.Units.List[idx].IsSupported(oxedBuild.BuildOS, oxedBuild.IsLibrary())) then begin
-         relativePath := getRelativePath(path, p.IncludeFiles.List[idx].Path);
-         f.AddIncludePath(relativePath);
+         if(p.Paths.List[idx].Units.n > 0) then
+            f.AddUnitPath(relativePath);
+
+         if(p.Paths.List[idx].IncludeFiles.n > 0) then
+            f.AddIncludePath(relativePath);
       end;
    end;
 end;
@@ -563,12 +561,14 @@ begin
    config.Add('# Path: ' + path);
    config.Add('');
 
-   for i := 0 to package.Units.n - 1 do begin;
-      config.Add('-Fu' + getAbsolutePath(path, package.Units.List[i].Path));
+   for i := 0 to package.Paths.n - 1 do begin;
+      if(package.Paths.List[i].Units.n > 0) then
+         config.Add('-Fu' + getAbsolutePath(path, package.Paths.List[i].Path));
    end;
 
-   for i := 0 to package.IncludeFiles.n - 1 do begin;
-      config.Add('-Fi' + getAbsolutePath(path, package.IncludeFiles.List[i].Path));
+   for i := 0 to package.Paths.n - 1 do begin;
+      if(package.Paths.List[i].IncludeFiles.n > 0) then
+         config.Add('-Fi' + getAbsolutePath(path, package.Paths.List[i].Path));
    end;
 end;
 
@@ -685,8 +685,8 @@ var
 
    begin
       {include all supported units}
-      for i := 0 to p.Units.n - 1 do begin
-         ppath := @p.Units.List[i];
+      for i := 0 to p.Paths.n - 1 do begin
+         ppath := @p.Paths.List[i];
 
          if(ppath^.IsSupported(oxedBuild.BuildOS, oxedBuild.IsLibrary())) then begin
             for j := 0 to ppath^.Units.n - 1 do begin
@@ -709,7 +709,7 @@ begin
       units.Add('{main unit}');
       units.Add(oxedProject.MainUnit);
    end else begin
-      if(oxedProject.MainPackage.Units.n > 0) then begin
+      if(oxedProject.MainPackage.Paths.n > 0) then begin
          units.Add('{project units}');
          processPackage(oxedProject.MainPackage);
       end;
@@ -822,7 +822,7 @@ begin
 
    {check if main unit exists}
    if(oxedProject.MainUnit <> '') then begin
-      if(oxedProject.MainPackage.Units.FindPackageUnit(oxedProject.MainUnit) = nil) then begin
+      if(oxedProject.MainPackage.Paths.FindPackageUnit(oxedProject.MainUnit) = nil) then begin
          oxedBuildLog.e('Specified main unit ' + oxedProject.MainUnit + ' not found.');
          exit(false);
       end;

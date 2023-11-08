@@ -110,9 +110,9 @@ begin
    unitFile.Path := f.PackageFileName;
 
    if(f.Extension = '.pas') then begin
-      f.Package^.Units.AddUnit(unitFile)
+      f.Package^.Paths.AddUnit(unitFile)
    end else if(f.Extension = '.inc') then
-      f.Package^.IncludeFiles.AddUnit(unitFile);
+      f.Package^.Paths.AddInclude(unitFile);
 end;
 
 procedure onStart();
