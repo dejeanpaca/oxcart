@@ -539,6 +539,9 @@ begin
       exit;
    end;
 
+   if(not DC.ChangeMode) then
+      exit;
+
    if(not SetVideoMode(tvm)) then begin
       log.e('tv > Failed to set mode: ' + tvm.ToString());
       eRaise(tveMODE_SET_FAIL);
@@ -587,6 +590,7 @@ begin
 
    {get space for the modes and check for errors}
    tvGlobal.ModeCount := GetVideoModeCount;
+
    if(tvGlobal.ModeCount = 1) then
       tvSettings.ChangeModes := false;
 
@@ -600,9 +604,8 @@ begin
 
    {now get the modes data}
    for count := 0 to tvGlobal.ModeCount - 1 do begin
-      if(not GetVideoModeData(count, tvGlobal.Modes[count])) then begin
+      if(not GetVideoModeData(count, tvGlobal.Modes[count])) then
          eRaise(tveMODE_RETR_FAIL);
-      end;
    end;
 end;
 
@@ -742,39 +745,39 @@ end;
 
 function TVideoColorHelper.High(): TVideoColor;
 begin
-   if (self < 8) then
-      Result := self + 8
+   if Self < 8 then
+      Result := Self + 8
    else
-      Result := self;
+      Result := Self;
 end;
 
 function TVideoColorHelper.Low(): TVideoColor;
 begin
-   if (self > 7) then
+   if Self > 7 then
       Result := self - 8
    else
-      Result := self;
+      Result := Self;
 end;
 
 function TVideoColorHelper.ShadeDown(): TVideoColor;
 begin
-   if self > 7 then
-      Result := self - 8
+   if Self > 7 then
+      Result := Self - 8
    else
       Result := 0;
 end;
 
 function TVideoColorHelper.ShadeUp(): TVideoColor;
 begin
-   if self < 8 then
-      Result := self + 8
+   if Self < 8 then
+      Result := Self + 8
    else
       Result := 15;
 end;
 
 function TVideoColorHelper.Invert(): TVideoColor;
 begin
-   Result := self xor $0F;
+   Result := Self xor $0F;
 end;
 
 {ATTRIBUTE MANAGEMENT}
@@ -855,14 +858,14 @@ end;
 procedure TVideoAttributeHelper.Break(out color: byte; out bkcolor: byte; out blink: boolean);
 begin
    {$ifdef ENDIAN_LITTLE}
-   color := (self shl 4) shr 4;
-   bkcolor := (self shr 4) shl 4;
+   color := (Self shl 4) shr 4;
+   bkcolor := (Self shr 4) shl 4;
    {$else}
-   color := (self shr 4) shl 4;
-   bkcolor := (self shl 4) shr 4;
+   color := (Self shr 4) shl 4;
+   bkcolor := (Self shl 4) shr 4;
    {$endif}
 
-   blink := self and video.Blink > 0;
+   blink := Self and video.Blink > 0;
 end;
 
 procedure TVideoAttributeHelper.Break(out color: byte; out bkcolor: byte);
@@ -870,7 +873,7 @@ var
    blink: boolean;
 
 begin
-   self.Break(color, bkcolor, blink);
+   Self.Break(color, bkcolor, blink);
 end;
 
 procedure TVideoAttributeHelper.Break(out color: byte);
@@ -879,7 +882,7 @@ var
    bkcolor: byte;
 
 begin
-   self.Break(color, bkcolor, blink);
+   Self.Break(color, bkcolor, blink);
 end;
 
 { TVideoGlobal }
@@ -909,7 +912,7 @@ begin
 
    if(not Initialized) then begin
       InitVideo();
-      log.i('tv > init video');
+//      log.i('tv > init video');
 
       if(video.ErrorCode <> vioOk) then begin
          eRaise(tveINIT_FAIL);
@@ -1049,13 +1052,13 @@ var
 begin
    {make the cell}
    {$ifdef ENDIAN_LITTLE}
-      ch       := char(lo(self));
-      attr     := hi(self);
+      ch       := char(lo(Self));
+      attr     := hi(Self);
       color    := (attr shl 4) shr 4;
       bkcolor  := (attr shr 4) shl 4;
    {$else}
-      ch       := char(hi(self))s;
-      attr     := lo(self);
+      ch       := char(hi(Self))s;
+      attr     := lo(Self);
       color    := (attr shr 4) shl 4;
       bkcolor  := (attr shl 4) shr 4;
    {$endif}
@@ -1092,12 +1095,12 @@ end;
 
 function TVideoCellHelper.GetChar(): char;
 begin
-   result := char(low(self));
+   result := char(low(Self));
 end;
 
 function TVideoCellHelper.GetColor(): byte;
 begin
-   TVideoAttribute(high(self)).Break(result);
+   TVideoAttribute(high(Self)).Break(result);
 end;
 
 function TVideoCellHelper.GetBkColor(): byte;
@@ -1105,12 +1108,12 @@ var
   color: byte = 0;
 
 begin
-   TVideoAttribute(high(self)).Break(color, result);
+   TVideoAttribute(high(Self)).Break(color, result);
 end;
 
 function TVideoCellHelper.GetBlink(): boolean;
 begin
-   Result := high(self) and Video.Blink <> 0;
+   Result := high(Self) and Video.Blink <> 0;
 end;
 
 {CHARACTER PLOTTING}
