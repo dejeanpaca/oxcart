@@ -67,6 +67,20 @@ TYPE
       class procedure Init(out buf: TSimpleAnsiStringBuffer); static;
    end;
 
+   { TExtendedStringHelper }
+
+   TExtendedStringHelper = type helper(TStringHelper) for string
+      {check if the string has line ending characters in it}
+      function IsMultiLine(): boolean;
+   end;
+
+   { TStdStringStringHelper }
+
+   TStdStringStringHelper = type helper for StdString
+      {check if the string has line ending characters in it}
+      function IsMultiLine(): boolean;
+   end;
+
 {NUMERICAL VALUE TO STRING}
 {make a string out of a value}
 
@@ -228,11 +242,6 @@ function GetKeyValue(const s: string; out key, value: string; const separator: c
 function GetKeyValue(const s: StdString; out key, value: StdString; const separator: char = '='): boolean;
 
 function GetAnsiStrings(const s: array of StdString): TAnsiStringArray;
-
-{check if the string has line ending characters in it}
-function IsMultiLine(const s: string): boolean;
-{check if the string has line ending characters in it}
-function IsMultiLine(const s: StdString): boolean;
 
 IMPLEMENTATION
 
@@ -2166,14 +2175,18 @@ begin
       Result[i] := s[i];
 end;
 
-function IsMultiLine(const s: string): boolean;
+{ TStdStringStringHelper }
+
+function TStdStringStringHelper.IsMultiLine(): boolean;
 begin
-   Result := Pos(LineEnding, s) > 0;
+   Result := Pos(LineEnding, Self) > 0;
 end;
 
-function IsMultiLine(const s: StdString): boolean;
+{ TExtendedStringHelper }
+
+function TExtendedStringHelper.IsMultiLine(): boolean;
 begin
-   Result := Pos(LineEnding, s) > 0;
+   Result := Pos(LineEnding, Self) > 0;
 end;
 
 { TPackedStrings }
