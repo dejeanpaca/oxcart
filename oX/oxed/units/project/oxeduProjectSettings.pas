@@ -42,9 +42,11 @@ VAR
    dvOrganizationShort,
    dvMainUnit,
    dvRunParameter,
+   dvFeature,
    dvLineEndings: TDVar;
 
-   runParameter: StdString;
+   runParameter,
+   feature: StdString;
 
 { oxedTProjectSettings }
 
@@ -109,6 +111,17 @@ begin
    end;
 end;
 
+procedure dvFeatureNotify(var context: TDVarNotificationContext);
+begin
+   if(context.What = DVAR_NOTIFICATION_READ) then
+      oxedProject.Features.Add(runParameter)
+   else if(context.What = DVAR_NOTIFICATION_WRITE) then begin
+      context.Result := 0;
+
+      dvarPFileData(context.f)^.Write(context.Parent, dvFeature, oxedProject.Features.List, oxedProject.Features.n);
+   end;
+end;
+
 procedure dvMainUnitNotify(var context: TDVarNotificationContext);
 begin
    if(context.What = DVAR_NOTIFICATION_WRITE) then begin
@@ -135,5 +148,8 @@ INITIALIZATION
 
    dvGroup.Add(dvRunParameter, 'run_parameter', dtcSTRING, @runParameter, [dvarNOTIFY_WRITE]);
    dvRunParameter.pNotify := @dvRunParameterNotify;
+
+   dvGroup.Add(dvFeature, 'feature', dtcSTRING, @feature, [dvarNOTIFY_WRITE]);
+   dvFeature.pNotify := @dvFeatureNotify;
 
 END.
