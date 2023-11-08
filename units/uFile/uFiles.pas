@@ -69,9 +69,10 @@ begin
    SetDefaults(false, fcfREAD, fName);
 
    {assign a standard file handler}
-   AssignHandler(h.handler^);
+   AssignHandler(h.Handler^);
+
    if(error = 0) then begin
-      pHandler^.open(self);
+      pHandler^.Open(self);
 
       if(error <> 0) then
          Dispose();
@@ -92,10 +93,10 @@ begin
    SetDefaults(true, fcfWRITE, fName);
 
    {assign a standard file handler}
-   AssignHandler(h.handler^);
+   AssignHandler(h.Handler^);
 
    if(error = 0) then
-      pHandler^.new(self);
+      pHandler^.New(self);
 end;
 
 procedure TFileOperationsHelper.New(const fName: StdString);
@@ -115,13 +116,15 @@ begin
    SetDefaults(false, fcfREAD, '');
 
    {assign a standard file handler}
-   AssignHandler(h.handler^);
+   AssignHandler(h.Handler^);
+
    if(error = 0) then begin
       {setup the file}
-      h.open(self, mem, size);
+      h.Open(self, mem, size);
 
       {open the file}
-      pHandler^.open(self);
+      pHandler^.Open(self);
+
       if(error <> 0) then
          Dispose();
    end;
@@ -141,11 +144,11 @@ begin
    SetDefaults(true, fcfWRITE, '');
 
    {assign a memory handler}
-   AssignHandler(h.handler^);
+   AssignHandler(h.Handler^);
    if(error = 0) then begin
       {create a new file}
-      h.new(self, size);
-      pHandler^.new(self);
+      h.New(self, size);
+      pHandler^.New(self);
    end;
 end;
 
@@ -166,13 +169,13 @@ begin
    SetDefaults(false, fcfREAD, '');
 
    {assign a standard file handler}
-   AssignHandler(h.handler^);
+   AssignHandler(h.Handler^);
    if(error = 0) then begin
       {setup the file}
-      h.open(self, parent, pos, size);
+      h.Open(self, parent, pos, size);
 
       {open the file}
-      pHandler^.open(self);
+      pHandler^.Open(self);
       if(error <> 0) then
          Dispose();
    end;
@@ -192,11 +195,12 @@ begin
    SetDefaults(true, fcfWRITE, '');
 
    {assign a memory handler}
-   AssignHandler(h.handler^);
+   AssignHandler(h.Handler^);
+
    if(error = 0) then begin
       {create a new file}
-      h.new(self, parent, pos, size);
-      pHandler^.new(self);
+      h.New(self, parent, pos, size);
+      pHandler^.New(self);
    end;
 end;
 
