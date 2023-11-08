@@ -58,33 +58,27 @@ IMPLEMENTATION
 VAR
    ProgramInitStartTime: TDateTime;
 
-
-function Init(): boolean;
+function oxTRunGlobal.Initialize(): boolean;
 begin
    Result := false;
 
    oxInitialization.Initialize();
-   if(ox.Error <> 0) then
-      exit;
 
-   ProgramInitStartTime := Time();
+   if(ox.Error = 0) then begin
+      ProgramInitStartTime := Time();
 
-   log.Enter('oX > Initializing the program...');
+      log.Enter('oX > Initializing the program...');
 
-   ox.OnInitialize.iCall();
+      ox.OnInitialize.iCall();
 
-   log.i('Program initialization done. Elapsed time: ' + ProgramInitStartTime.ElapsedfToString() + 's');
-   log.Leave();
+      log.i('Program initialization done. Elapsed time: ' + ProgramInitStartTime.ElapsedfToString() + 's');
+      log.Leave();
 
-   log.i('Total startup time: ' + GlobalStartTime.ElapsedfToString() + 's');
+      log.i('Total startup time: ' + GlobalStartTime.ElapsedfToString() + 's');
 
-   if(ox.Error = 0) then
-      Result := true;
-end;
-
-function oxTRunGlobal.Initialize(): boolean;
-begin
-   Result := Init();
+      if(ox.Error = 0) then
+         Result := true;
+   end;
 
    log.Flush();
 end;
