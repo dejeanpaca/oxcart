@@ -16,6 +16,7 @@ INTERFACE
       uOXED, oxeduPlatform, oxeduPlatformConfiguration;
 
 TYPE
+
    { oxedTEditorPlatform }
 
    oxedTEditorPlatform = class(oxedTPlatform)
@@ -55,7 +56,7 @@ begin
    Enabled := true;
 
    Configuration := oxedTPlatformConfiguration.Create();
-   AddArchitecture(oxedTPlatformArchitecture.Create());
+   AddArchitecture(oxedTEditorPlatformArchitecture.Create());
 end;
 
 procedure oxedTEditorPlatform.Load();
