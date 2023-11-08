@@ -52,6 +52,8 @@ TYPE
 
       { RENDERING }
       procedure TextureCoords(var {%H-}v: TVector2f); virtual;
+      procedure DisableTextureCoords(); virtual;
+
 
       procedure Vertex(var {%H-}v: TVector2f); virtual;
       procedure Vertex(var {%H-}v: TVector3f); virtual;
@@ -120,7 +122,7 @@ procedure oxTRender.BlendFunction(blendFunc: oxTBlendFunction);
 begin
 end;
 
-procedure oxTRender.BlendDefault;
+procedure oxTRender.BlendDefault();
 begin
    EnableBlend();
    BlendFunction(oxBLEND_DEFAULT);
@@ -135,7 +137,7 @@ procedure oxTRender.DepthWrite(on: boolean);
 begin
 end;
 
-procedure oxTRender.DepthDefault;
+procedure oxTRender.DepthDefault();
 begin
    DepthWrite(true);
    DepthTest(oxTEST_FUNCTION_DEFAULT);
@@ -159,6 +161,11 @@ begin
 end;
 
 procedure oxTRender.TextureCoords(var v: TVector2f);
+begin
+
+end;
+
+procedure oxTRender.DisableTextureCoords();
 begin
 
 end;
@@ -193,7 +200,7 @@ begin
 
 end;
 
-procedure oxTRender.DisableColor;
+procedure oxTRender.DisableColor();
 begin
 
 end;
@@ -302,7 +309,7 @@ procedure oxTRender.DrawArrays(primitive: oxTPrimitives; count: longint);
 begin
 end;
 
-procedure oxTRender.CheckError;
+procedure oxTRender.CheckError();
 begin
 
 end;
