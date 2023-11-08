@@ -87,7 +87,7 @@ begin
    wdgDivisor.Add('');
 
    wdgLabel.Add('Buttons: ' + sf(controller.ButtonCount) + ' / Axes: ' + sf(controller.AxisCount) +
-      ' / Triggers: ' + sf(controller.TriggerCount) + ' / Hats: ' + sf(controller.HatCount));
+      ' / Triggers: ' + sf(controller.TriggerCount) + ' / DPad: ' + sf(controller.DPadPresent));
 
    uiWidget.LastRect.NextLine();
 
@@ -176,7 +176,7 @@ end;
 constructor oxTControllerInfoWindow.Create();
 begin
    ID := uiControl.GetID('ox.controller_info');
-   Width := 540;
+   Width := 380;
    Height := 200;
    Title := 'Controller Info';
    Instance := oxuiTControllerInfoWindow;
