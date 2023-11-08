@@ -41,21 +41,20 @@ const
   AASSET_MODE_STREAMING = 2;
   AASSET_MODE_BUFFER = 3;
 
-
 (**
  * Open the named directory within the asset hierarchy.  The directory can then
  * be inspected with the AAssetDir functions.  To open the top-level directory,
  * pass in "" as the dirName.
  *
  * The object returned here should be freed by calling AAssetDir_close().
-  *)
+ *)
 function AAssetManager_openDir(mgr: PAAssetManager; dirName: Pchar): PAAssetDir; cdecl; external;
 
 (**
  * Open an asset.
  *
  * The object returned here should be freed by calling AAsset_close().
-  *)
+ *)
 function AAssetManager_open(mgr: PAAssetManager; filename: Pchar; mode: cint): PAAsset; cdecl; external;
 
 (**
@@ -67,24 +66,24 @@ function AAssetManager_open(mgr: PAAssetManager; filename: Pchar; mode: cint): P
  * The string returned here is owned by the AssetDir implementation and is not
  * guaranteed to remain valid if any other calls are made on this AAssetDir
  * instance.
-  *)
+ *)
 function AAssetDir_getNextFileName(assetDir: PAAssetDir): Pchar; cdecl; external;
 
 (**
  * Reset the iteration state of AAssetDir_getNextFileName() to the beginning.
-  *)
+ *)
 procedure AAssetDir_rewind(assetDir: PAAssetDir); cdecl; external;
 
 (**
  * Close an opened AAssetDir, freeing any related resources.
-  *)
+ *)
 procedure AAssetDir_close(assetDir: PAAssetDir); cdecl; external;
 
 (**
  * Attempt to read 'count' bytes of data from the current offset.
  *
  * Returns the number of bytes read, zero on EOF, or < 0 on error.
-  *)
+ *)
 function AAsset_read(asset: PAAsset; buf: Pointer; count: csize_t): cint; cdecl; external;
 
 (**
@@ -105,38 +104,51 @@ function AAsset_seek64(asset: PAAsset; offset: cint64; whence: cint): cint64; cd
 
 (**
  * Close the asset, freeing all associated resources.
-  *)
+ *)
 procedure AAsset_close(asset: PAAsset); cdecl; external;
 
 (**
  * Get a pointer to a buffer holding the entire contents of the assset.
  *
  * Returns NULL on failure.
-  *)
+ *)
 function AAsset_getBuffer(asset: PAAsset): Pointer; cdecl; external;
 
 (**
  * Report the total size of the asset data.
-  *)
+ *)
 function AAsset_getLength(asset: PAAsset): coff_t; cdecl; external;
 
 (**
  * Report the total amount of asset data that can be read from the current position.
-  *)
+ *)
 function AAsset_getRemainingLength(asset: PAAsset): coff_t; cdecl; external;
+
+(**
+ * Report the total amount of asset data that can be read from the current position.
+ * Uses a 64-bit number instead of a 32-bit number as AAsset_getRemainingLength does.
+ *)
+function AAsset_getRemainingLength64(asset: PAAsset): cint64; cdecl; external;
 
 (**
  * Open a new file descriptor that can be used to read the asset data.
  *
  * Returns < 0 if direct fd access is not possible (for example, if the asset is
  * compressed).
-  *)
+ *)
 function AAsset_openFileDescriptor(asset: PAAsset; outStart, outLength: Poff_t): cint; cdecl; external;
+
+(**
+ * Open a new file descriptor that can be used to read the asset data.
+ * Uses a 64-bit number for the offset and length instead of 32-bit instead of as AAsset_openFileDescriptor does.
+ * Returns < 0 if direct fd access is not possible (for example, if the asset is compressed).
+ *)
+function AAsset_openFileDescriptor64(asset: PAAsset; outStart, outLength: pcint64): cint;
 
 (**
  * Returns whether this asset's internal buffer is allocated in ordinary RAM (i.e. not
  * mmapped).
-  *)
+ *)
 function AAsset_isAllocated(asset: PAAsset): cint; cdecl; external;
 
 (**
