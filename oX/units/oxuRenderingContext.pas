@@ -23,6 +23,8 @@ TYPE
       {rendering context Id of the renderer}
       RC: loopint;
 
+      CanRender: boolean;
+
       Viewport: oxPViewport;
       Projection: oxPProjection;
       Camera: pointer;
@@ -43,6 +45,7 @@ procedure oxTRenderingContext.UseWindow(wnd: oxTWindow);
 begin
    Viewport := @wnd.Viewport;
    Window := Window;
+   CanRender := true;
 end;
 
 END.
