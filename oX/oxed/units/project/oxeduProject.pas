@@ -166,6 +166,7 @@ begin
    Name := 'Project';
    SetIdentifier(Name);
    Session.IncludeThirdPartyUnits := true;
+   Session.EnableConsole := true;
 
    Units.Initialize(Units);
    IncludeFiles.Initialize(IncludeFiles);

@@ -731,13 +731,13 @@ begin
    end;
 end;
 
-procedure TBuildSystem.AutoDetermineConfigPath();
+function tryDetermineConfigPath(startPath: string): boolean;
 var
    path,
    tryPath: String;
 
 begin
-   build.ConfigPath := IncludeTrailingPathDelimiter(GetParentDirectory(appPath.GetExecutablePath()));
+   build.ConfigPath := IncludeTrailingPathDelimiter(startPath);
    path := build.ConfigPath;
 
    {TODO: Make this more robust}
@@ -748,18 +748,27 @@ begin
          build.ConfigPath := path + 'build' + DirectorySeparator;
          break;
       end else begin
-         if(path = IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(path))) or (path = '') then
+         if(path = IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(path))) or (path = '') then begin
+            path := '';
             break;
+         end;
 
          path := IncludeTrailingPathDelimiterNonEmpty(GetParentDirectory(path));
       end;
 
    until (path = '');
 
-   path := build.ConfigPath;
-   AutoDeterminedConfigPath := true;
+   build.ConfigPath := path;
+   Result := path <> '';
+end;
+
+procedure TBuildSystem.AutoDetermineConfigPath();
+begin
+   if(not tryDetermineConfigPath(GetParentDirectory(appPath.GetExecutablePath()))) then
+      tryDetermineConfigPath(GetCurrentDir());
 
    log.w('build > Auto determined config path: ' + build.ConfigPath);
+   AutoDeterminedConfigPath := true;
 end;
 
 
@@ -1638,6 +1647,7 @@ begin
       exit(True);
 end;
 
+{$push}{$warn 5024 off}
 procedure dvUnitNotify({%H-}p: PDVar; {%H-}what: longword);
 begin
    if(processPath(currentValue)) then
@@ -1754,6 +1764,7 @@ begin
       end;
    end;
 end;
+{$pop}
 
 INITIALIZATION
    TFileTraverse.Initialize(Walker);
