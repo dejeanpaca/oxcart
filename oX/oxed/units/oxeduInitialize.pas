@@ -21,7 +21,9 @@ INTERFACE
       oxeduWindow, oxeduSplash, oxeduSplashScreen, oxeduSettingsWindow, oxeduIcons,
       oxeduEntities,
       {build}
-      oxeduBuild, oxeduPlatform, oxeduWindowsPlatform, oxeduLinuxPlatform, oxeduProjectRunner, oxeduSceneClone,
+      oxeduBuild,
+      oxeduPlatform, oxeduWindowsPlatform, oxeduLinuxPlatform, oxeduAndroidPlatform,
+      oxeduProjectRunner, oxeduSceneClone,
       oxeduProjectScanner, oxeduPasScanner,
       {additional}
       oxeduBuildEvents, oxeduLazarus,
