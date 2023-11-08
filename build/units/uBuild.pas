@@ -1563,7 +1563,7 @@ begin
       DefaultLazarus^.Path := 'C:\lazarus\';
       {$ENDIF}
 
-      log.v('build > using auto defaults forlazarus install');
+      log.v('build > using auto defaults for lazarus install');
    end;
 
 end;
