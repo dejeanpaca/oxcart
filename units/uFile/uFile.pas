@@ -309,7 +309,7 @@ end;
 class function TFileGlobal.GetErrorString(code: longint; io: longint): string;
 begin
    if(code < feOPENED) then
-      Result := eGetCodeName(code)
+      Result := GetErrorCodeName(code)
    else if(code >= feOPENED) and (code <= feLAST_ERROR) then
       Result := '[' + sf(code) + '] ' + feSTRINGS[code - feOPENED]
    else

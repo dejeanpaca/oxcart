@@ -150,7 +150,8 @@ begin
    end;
 
    if(Result <> 0) then begin
-      log.e('Error (' + sf(Result) + ', ' + eGetCodeName(Result) + ') reading file: ' + f.fn + ' > ' + pdata^.ErrorDescription);
+      log.e('Error (' + GetErrorCodeName(Result) + ') reading file: ' +
+         f.fn + ' > ' + pdata^.ErrorDescription);
    end else begin
       {$IFDEF DEBUG}
       log.d('Read file: ' + f.fn);
@@ -244,7 +245,7 @@ begin
    end;
 
    if(Result <> 0) then begin
-      log.e('Error (' + sf(Result) + ', ' + eGetCodeName(Result) + ') writing file: ' + f.fn + ' > ' + pdata^.ErrorDescription);
+      log.e('Error (' + GetErrorCodeName(Result) + ') writing file: ' + f.fn + ' > ' + pdata^.ErrorDescription);
    end else begin
       {$IFDEF DEBUG}
       log.d('Write file: ' + f.fn);

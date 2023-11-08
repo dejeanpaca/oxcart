@@ -54,7 +54,7 @@ begin
    Result := CallRenderer(image, wnd, x, y, w, h);
 
    if(Result <> eNONE) then
-      log.w('Failed to take screenshot ' + eGetCodeName(Result));
+      log.w('Failed to take screenshot: ' + GetErrorCodeName(Result));
 end;
 
 function oxTScreenshot.CallRenderer(var image: imgTImage; wnd: oxTWindow; x, y, w, h: loopint): longint;
@@ -111,7 +111,7 @@ begin
       imgError := imgFile.Write(img, fn);
 
       if(imgError <> 0) then begin
-         log.e('Failed to save screenshot (uImage: ' + sf(imgError) + ')');
+         log.e('Failed to save screenshot (uImage: ' + GetErrorCodeName(imgError) + '): ' + fn);
 
          Result := oxeIMAGE;
       end else
