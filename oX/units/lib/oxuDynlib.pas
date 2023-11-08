@@ -123,10 +123,7 @@ end;
 
 procedure oxTLibrary.Deinitialize();
 begin
-   if(ox.Initialized) then
-      oxRun.Done();
-
-   oxInitialization.DeInitialize();
+   oxRun.Teardown();
 
    log.i('lib > deinitialized');
 end;
