@@ -35,7 +35,6 @@ TYPE
      Internal: uiTWidgetClass; static;
    end;
 
-
 VAR
    wdgViewport: wdgTViewportGlobal;
 
@@ -73,7 +72,7 @@ end;
 
 procedure wdgTViewport.UpdateViewport();
 begin
-   Projection.SetViewport(RPosition.x, RPosition.y, Dimensions.w, Dimensions.h);
+   Projection.SetViewport(RPosition, Dimensions);
 end;
 
 procedure wdgTViewport.SizeChanged();
