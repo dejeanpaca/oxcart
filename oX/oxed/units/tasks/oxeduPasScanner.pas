@@ -120,8 +120,8 @@ var
    unitFile: oxedTPackageUnit;
 
 begin
-   unitFile.Name := ExtractFileNameNoExt(f.FileName);
-   unitFile.Path := f.PackageFileName;
+   unitFile.Name := ExtractFileNameNoExt(f.ProjectFileName);
+   unitFile.Path := f.ProjectFileName;
 
    if(f.Extension = '.pas') then begin
       f.Package^.Units.Add(unitFile);
