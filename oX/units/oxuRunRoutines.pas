@@ -34,6 +34,7 @@ TYPE
       procedure Call();
       procedure iCall();
       procedure dCall();
+      class procedure CallNextReverse(current: oxPRunRoutine); static;
       procedure CallPrimary();
       procedure CallSecondary();
       function Find(const routine: oxTRunRoutine): boolean;
@@ -61,8 +62,27 @@ begin
 end;
 
 procedure oxTRunRoutines.dCall();
+var
+   current: oxPRunRoutine;
+
 begin
-   CallSecondary();
+   {call all pre-run routines}
+   current := s;
+
+   if(current <> nil) and (current^.Next <> nil) then
+      CallNextReverse(oxPRunRoutine(current^.Next));
+
+   if(current^.Secondary <> nil) then
+      current^.Secondary();
+end;
+
+class procedure oxTRunRoutines.CallNextReverse(current: oxPRunRoutine);
+begin
+   if(current^.Next <> nil) then
+      CallNextReverse(current^.Next);
+
+   if(current^.Secondary <> nil) then
+      current^.Secondary();
 end;
 
 procedure oxTRunRoutines.CallPrimary();
