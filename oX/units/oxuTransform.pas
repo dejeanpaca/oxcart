@@ -40,6 +40,7 @@ TYPE
       procedure Apply(const m: TMatrix4f); virtual;
 
       procedure Translate(x, y, z: single); virtual;
+      procedure Rotate(const angles: TVector3f);
       procedure Rotate(x, y, z: single);
       procedure Rotate(w, x, y, z: single); virtual;
       procedure RotateX(w: single); virtual;
@@ -132,6 +133,15 @@ begin
    m[2][3] := z;
 
    Matrix := Matrix * m;
+end;
+
+procedure oxTTransform.Rotate(const angles: TVector3f);
+begin
+   vRotation := angles;
+
+   Rotate(angles[1], 0, 1, 0);
+   Rotate(angles[2], 0, 0, 1);
+   Rotate(angles[0], 1, 0, 0);
 end;
 
 procedure oxTTransform.Rotate(x, y, z: single);
