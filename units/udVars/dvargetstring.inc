@@ -2,9 +2,9 @@
 begin
    if(variable <> nil) then
       case DataType of
-         dtcSHORTSTRING:   result := {%H-}shortstring(variable^);
-         dtcANSISTRING:    result := {%H-}ansistring(variable^);
-         dtcWIDESTRING:    result {%H-}:= {%H-}widestring(variable^);
+         dtcSHORTSTRING:   result := {%H-}stringcast(shortstring(variable^));
+         dtcANSISTRING:    result := {%H-}stringcast(ansistring(variable^));
+         dtcWIDESTRING:    result {%H-}:= {%H-}stringcast(widestring(variable^));
          else
             result := '';
       end

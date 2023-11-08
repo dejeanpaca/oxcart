@@ -597,15 +597,23 @@ function TDVar.GetDouble(): single;
 { strings }
 
 function TDVar.GetShortString(): shortstring;
+TYPE
+   stringcast = shortstring;
 {$INCLUDE dvargetstring.inc}
 
 function TDVar.GetAnsiString(): ansistring;
+TYPE
+   stringcast = ansistring;
 {$INCLUDE dvargetstring.inc}
 
 function TDVar.GetWideString(): widestring;
+TYPE
+   stringcast = widestring;
 {$INCLUDE dvargetstring.inc}
 
 function TDVar.GetString(): string;
+TYPE
+   stringcast = string;
 {$INCLUDE dvargetstring.inc}
 
 {will try to convert a string to a suitable data type for }
@@ -696,9 +704,9 @@ begin
          dtcSINGLE: result       := sf(single(variable^));
          dtcDOUBLE: result       := sf(double(variable^));
 
-         dtcSHORTSTRING: result  := shortstring(variable^);
-         dtcANSISTRING: result   := ansistring(variable^);
-         dtcWIDESTRING: result   := {%H-}widestring(variable^);
+         dtcSHORTSTRING: result  := string(shortstring(variable^));
+         dtcANSISTRING: result   := string(ansistring(variable^));
+         dtcWIDESTRING: result   := string(widestring(variable^));
          else
             result := '';
       end;
