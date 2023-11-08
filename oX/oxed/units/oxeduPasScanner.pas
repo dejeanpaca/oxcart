@@ -23,7 +23,7 @@ TYPE
    { oxedTPasScanner }
 
    oxedTPasScanner = record
-      fpcCommandLine: string;
+      FpcCommandLine: string;
 
       function Scan(const fn: string): oxedTPasScanResult;
    end;
@@ -65,6 +65,7 @@ end;
 
 { oxedTPasScanner }
 
+{TODO: Utilize this eventually}
 function oxedTPasScanner.Scan(const fn: string): oxedTPasScanResult;
 var
    M: TPasModule;
@@ -84,7 +85,7 @@ begin
    try
       log.v('Parsing: ' + fn);
 
-      commandLine := fn + ' ' + fpcCommandLine;
+      commandLine := fn + ' ' + FpcCommandLine;
       M := ParseSource(E, commandLine, {$I %FPCTARGETOS%}, {$I %FPCTargetCPU});
 
       if(M.InterfaceSection <> nil) then
@@ -117,7 +118,7 @@ end;
 
 procedure onStart();
 begin
-   oxedPasScanner.fpcCommandLine := build.GetFPCCommandLine();
+   oxedPasScanner.FpcCommandLine := build.GetFPCCommandLine();
 end;
 
 INITIALIZATION
