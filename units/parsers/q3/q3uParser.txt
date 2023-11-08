@@ -1,0 +1,122 @@
+q3Parser
+Version: 0100
+
+Copyright (c) Dejan Boras 2007.
+All rights reserved.
+
+Started on:       10.08.2007.
+Last update:      31.01.2011.
+
+   This document discusses q3Parser which is a freepascal compiler unit that
+deals with parsing q3 or similar language files.
+
+This documentation may be incomplete and/or incorrect.
+
+Index:
+
+1. Introduction
+   1.1 About
+2. Usage
+   2.1 Quick Introduction
+   2.2 Loading
+   2.3 Saving
+   2.4 Structure management routines
+3. Problems
+   3.1 Parser restriction
+   3.2 Errors
+4. Syntax
+
+1. Introduction
+
+1.1 About
+   q3Parser is a parser for files such as Quake 3 .shader and .cfg files, as
+well as any other files using the identical syntax. It is simple, small, has
+a good performance and is easy to use. 
+
+2. Usage
+
+2.1 Quick Introduction
+
+   The usage is quite simple. You only need a few routines for loading,
+disposing off and saving parsed data. Usually only two arguments are used -
+the filename and the (pointer to the)structure.
+
+2.2 Loading
+
+   Using the q3pLoadFile routine is the easiest and only way to load the file.
+Pass the file name of the file to be parsed, and the structure variable into
+which the structure of the file will be loaded. The routine will open, parse
+through the file, fill in the structure with all usable data it finds(and
+unusable if you want to).
+   
+After that you can analyse the structure for required data. This is something
+you need to do manually.
+
+Additionaly, using the secondary q3pLoadFile routine which accepts a listening
+procedure, you can parse a file without the need for loading the structure into
+the memory. However, this is only useful for parsing simple files.
+
+Additionaly the q3pLoadFile routine will let you load regular files as well as
+those in memory.
+
+2.3 Saving
+
+   In case you have a structure filled with data or one you filled yourself,
+you can save it to a file using the routine q3pWriteFile. Just pass it the
+name of the file the data will be saved to, and the structure that contains
+the data. 
+   
+Note that the routine will create a new file(or rewrite the old one). The
+routine has predefined formatting which cannot be influenced too much(you can
+define tab spacing sizes). Note that in any case such formatting looks nice
+and is syntactically correct.
+
+If you do not have a structure filled with data then you need create one
+yourself. Either by loading an existing file, or by using the structure
+management routines.
+  
+2.4 Structure management routines
+
+   These routines are used mostly internally. While they may be useful to
+the programmer, there is no real need for them, at least not if you only want
+to read files.
+  
+3. Problems:
+
+3.1 Parser restrictions
+
+   The parser does not support statements and strings spanning accros the
+line(which by the way, is not allowed by the syntax of these files) or line
+sizes greater than 255 characters(which should not be a problem). It also does
+not support string concatenation or expressions(which is quite unnecessary for
+these kinds of files, and it does not seem that such expressions are allowed
+in the syntax).
+
+3.2 Errors
+
+   The parser has adequate support for error checking. At least to not make
+stupid mistakes and not to crash the program. Note that syntactical errors are
+not allowed and all unparseable sections of the file will be identified
+as garbage.
+
+The syntax of the file must be identical to the Q3 shader files. If not then
+you are using the wrong parser. The parser may fix some errors in the file, 
+but mostly it will ignore syntactically incorrect or erroneous parts of files.
+
+4. Syntax
+
+   This section briefly discusses the syntax of q3-like files. The syntax is
+quite similar to that of the C programming language, but much simpler(e.g.
+complex mathematical expressions are not allowed in the syntax).
+
+- The brackets {} are used to enclose sections of code. Sections do not usually
+  require to have a name. Needles to say a opening '{' bracket requires
+  also a '}' closing bracket.
+- Each statement consists of a keyword and values which are separated by
+  whitespace or separators.
+- Values and keywords can be replaced with a define.
+- A comment can be placed anywhere and is marked with //. // characters within
+  a string are part of that string.
+- Multiple statements are separated with a ';' character.
+- Keywords may have characters allowed in a filename(as frequently there are
+  references to filenames outside a string).

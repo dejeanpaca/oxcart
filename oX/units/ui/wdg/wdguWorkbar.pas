@@ -1,0 +1,174 @@
+{
+   wdguWorkbar, empty bar to place other widgets to, creates a bar of sorts
+   Copyright (C) 2017. Dejan Boras
+
+   Started On:    25.01.2017.
+}
+
+{$INCLUDE oxdefines.inc}
+UNIT wdguWorkbar;
+
+INTERFACE
+
+   USES
+      uColors,
+      {oX}
+      oxuTypes,
+      {ui}
+      uiuWindowTypes, uiuWidget, uiWidgets, uiuDraw, uiuWindow, uiuControl;
+
+CONST
+   wdgWORKBAR_HEIGHT = 20;
+
+TYPE
+   wdgTWorkbarPositionTarget = (
+      wdgWORKBAR_POSITION_NONE,
+      wdgWORKBAR_POSITION_TOP,
+      wdgWORKBAR_POSITION_RIGHT,
+      wdgWORKBAR_POSITION_BOTTOM,
+      wdgWORKBAR_POSITION_LEFT
+   );
+
+   { wdgTWorkbar }
+
+   wdgTWorkbar = class(uiTWidget)
+      Height: longint;
+      {auto position}
+      AutoPositionTarget: wdgTWorkbarPositionTarget;
+      RenderShadows: boolean;
+
+      constructor Create(); override;
+      procedure AutoPosition();
+
+      procedure Initialize; override;
+
+      procedure Render(); override;
+
+      procedure ParentSizeChange; override;
+   end;
+
+   { wdgTWorkbarGlobal }
+
+   wdgTWorkbarGlobal = record
+      {default height}
+      Height: longint;
+      Shadows: boolean;
+
+      class function Add(wnd: uiTWindow): wdgTWorkbar; static;
+      class function Add(): wdgTWorkbar; static;
+   end;
+
+VAR
+   wdgWorkbar: wdgTWorkbarGlobal;
+
+IMPLEMENTATION
+
+CONST
+   WORKBAR_HEIGHT = 20;
+
+VAR
+   internal: uiTWidgetClass;
+
+procedure initializeWidget();
+begin
+   internal.Instance := wdgTWorkbar;
+   internal.Done();
+end;
+
+{ wdgTWorkbar }
+
+constructor wdgTWorkbar.Create;
+begin
+   inherited;
+
+   AutoPositionTarget := wdgWORKBAR_POSITION_TOP;
+
+   {by default, we'll prevent maximization of windows over the workbar}
+   ObscuresMaximization := uiCONTROL_MAXIMIZATION_OBSCURE_VERTICAL;
+
+   Height := wdgWorkbar.Height;
+   RenderShadows := wdgWorkbar.Shadows;
+end;
+
+procedure wdgTWorkbar.AutoPosition();
+var
+   p: oxTPoint;
+   d: oxTDimensions;
+
+begin
+   if(AutoPositionTarget <> wdgWORKBAR_POSITION_NONE) then begin
+      if(Parent.ControlType = uiCONTROL_WINDOW) then
+         uiTWindow(wnd).GetMaximizationCoords(p, d, Self)
+      else begin
+         p.x := 0;
+         p.y := Parent.Dimensions.h - 1;
+
+         d := Parent.Dimensions;
+      end;
+
+      if(AutoPositionTarget = wdgWORKBAR_POSITION_BOTTOM) then
+         p.y := p.y - d.h + wdgWorkbar.Height;
+
+      if(AutoPositionTarget = wdgWORKBAR_POSITION_TOP) or (AutoPositionTarget = wdgWORKBAR_POSITION_BOTTOM) then
+         d.h := wdgWorkbar.Height;
+
+      if(AutoPositionTarget = wdgWORKBAR_POSITION_RIGHT) then
+         p.x := d.w - wdgWorkbar.Height;
+
+      if(AutoPositionTarget = wdgWORKBAR_POSITION_LEFT) or (AutoPositionTarget = wdgWORKBAR_POSITION_RIGHT) then
+         d.w := wdgWorkbar.Height;
+
+      Move(p);
+      Resize(d);
+   end;
+end;
+
+procedure wdgTWorkbar.Initialize;
+begin
+   inherited Initialize;
+
+   Color := uiTWindow(wnd).Skin.Colors.Surface;
+end;
+
+procedure wdgTWorkbar.Render;
+begin
+   SetColor(Color);
+   uiDraw.Box(RPosition, Dimensions);
+
+   if(RenderShadows) then begin
+      SetColor(Color.Lighten(1.4));
+      uiDraw.HLine(RPosition.x, RPosition.y, RPosition.x + Dimensions.w - 1);
+      SetColor(Color.Darken(40));
+      uiDraw.HLine(RPosition.x, RPosition.y - Dimensions.h + 1, RPosition.x + Dimensions.w - 1);
+   end;
+end;
+
+procedure wdgTWorkbar.ParentSizeChange;
+begin
+   inherited ParentSizeChange;
+
+   AutoPosition();
+end;
+
+{ wdgTWorkbarGlobal }
+
+class function wdgTWorkbarGlobal.Add(wnd: uiTWindow): wdgTWorkbar;
+begin
+   uiWidget.SetTarget(wnd);
+   result := Add();
+end;
+
+class function wdgTWorkbarGlobal.Add(): wdgTWorkbar;
+begin
+   result := wdgTWorkbar(uiWidget.Add(internal, oxNullPoint, oxNullDimensions));
+   result.AutoPosition();
+end;
+
+INITIALIZATION
+   internal.Register('widget.workbar', @initializeWidget);
+
+   wdgWorkbar.Height := WORKBAR_HEIGHT;
+   wdgWorkbar.Shadows := true;
+
+END.
+

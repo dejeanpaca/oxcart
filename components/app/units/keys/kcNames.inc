@@ -1,0 +1,316 @@
+{
+   File created with keycodenames program from appKeyCodes.inc.
+   On date: 13.03.2011.
+}
+
+   appkcKeyCodeNames = 181;
+
+   {keycode name strings}
+   kcsESC: string[5] = 'kcESC'; {001}
+   kcsENTER: string[7] = 'kcENTER'; {002}
+   kcsTAB: string[5] = 'kcTAB'; {003}
+   kcsSPACE: string[7] = 'kcSPACE'; {004}
+   kcsBACKSPACE: string[11] = 'kcBACKSPACE'; {005}
+   kcsDEL: string[5] = 'kcDEL'; {006}
+   kcsLSHIFT: string[8] = 'kcLSHIFT'; {007}
+   kcsRSHIFT: string[8] = 'kcRSHIFT'; {008}
+   kcsLCTRL: string[7] = 'kcLCTRL'; {009}
+   kcsRCTRL: string[7] = 'kcRCTRL'; {010}
+   kcsLALT: string[6] = 'kcLALT'; {011}
+   kcsRALT: string[6] = 'kcRALT'; {012}
+   kcsNUMLOCK: string[9] = 'kcNUMLOCK'; {013}
+   kcsSCROLLLOCK: string[12] = 'kcSCROLLLOCK'; {014}
+   kcsCAPSLOCK: string[10] = 'kcCAPSLOCK'; {015}
+   kcsINSERT: string[8] = 'kcINSERT'; {016}
+   kcsPGUP: string[6] = 'kcPGUP'; {031}
+   kcsPGDN: string[6] = 'kcPGDN'; {032}
+   kcsEND: string[5] = 'kcEND'; {033}
+   kcsHOME: string[6] = 'kcHOME'; {034}
+   kcsLEFT: string[6] = 'kcLEFT'; {035}
+   kcsUP: string[4] = 'kcUP'; {036}
+   kcsRIGHT: string[7] = 'kcRIGHT'; {037}
+   kcsDOWN: string[6] = 'kcDOWN'; {038}
+   kcs0: string[3] = 'kc0'; {048}
+   kcs1: string[3] = 'kc1'; {049}
+   kcs2: string[3] = 'kc2'; {050}
+   kcs3: string[3] = 'kc3'; {051}
+   kcs4: string[3] = 'kc4'; {052}
+   kcs5: string[3] = 'kc5'; {053}
+   kcs6: string[3] = 'kc6'; {054}
+   kcs7: string[3] = 'kc7'; {055}
+   kcs8: string[3] = 'kc8'; {056}
+   kcs9: string[3] = 'kc9'; {057}
+   kcsA: string[3] = 'kcA'; {065}
+   kcsB: string[3] = 'kcB'; {066}
+   kcsC: string[3] = 'kcC'; {067}
+   kcsD: string[3] = 'kcD'; {068}
+   kcsE: string[3] = 'kcE'; {069}
+   kcsF: string[3] = 'kcF'; {070}
+   kcsG: string[3] = 'kcG'; {071}
+   kcsH: string[3] = 'kcH'; {072}
+   kcsI: string[3] = 'kcI'; {073}
+   kcsJ: string[3] = 'kcJ'; {074}
+   kcsK: string[3] = 'kcK'; {075}
+   kcsL: string[3] = 'kcL'; {076}
+   kcsM: string[3] = 'kcM'; {077}
+   kcsN: string[3] = 'kcN'; {078}
+   kcsO: string[3] = 'kcO'; {079}
+   kcsP: string[3] = 'kcP'; {080}
+   kcsQ: string[3] = 'kcQ'; {081}
+   kcsR: string[3] = 'kcR'; {082}
+   kcsS: string[3] = 'kcS'; {083}
+   kcsT: string[3] = 'kcT'; {084}
+   kcsU: string[3] = 'kcU'; {085}
+   kcsV: string[3] = 'kcV'; {086}
+   kcsW: string[3] = 'kcW'; {087}
+   kcsX: string[3] = 'kcX'; {088}
+   kcsY: string[3] = 'kcY'; {089}
+   kcsZ: string[3] = 'kcZ'; {090}
+   kcsNUMENTER: string[10] = 'kcNUMENTER'; {095}
+   kcsNUM0: string[6] = 'kcNUM0'; {096}
+   kcsNUM1: string[6] = 'kcNUM1'; {097}
+   kcsNUM2: string[6] = 'kcNUM2'; {098}
+   kcsNUM3: string[6] = 'kcNUM3'; {099}
+   kcsNUM4: string[6] = 'kcNUM4'; {100}
+   kcsNUM5: string[6] = 'kcNUM5'; {101}
+   kcsNUM6: string[6] = 'kcNUM6'; {102}
+   kcsNUM7: string[6] = 'kcNUM7'; {103}
+   kcsNUM8: string[6] = 'kcNUM8'; {104}
+   kcsNUM9: string[6] = 'kcNUM9'; {105}
+   kcsNUMMUL: string[8] = 'kcNUMMUL'; {106}
+   kcsNUMADD: string[8] = 'kcNUMADD'; {107}
+   kcsNUMSUBTRACT: string[13] = 'kcNUMSUBTRACT'; {108}
+   kcsNUMSEPARATOR: string[14] = 'kcNUMSEPARATOR'; {109}
+   kcsNUMDIVIDE: string[11] = 'kcNUMDIVIDE'; {110}
+   kcsNUMDECIMAL: string[12] = 'kcNUMDECIMAL'; {111}
+   kcsF1: string[4] = 'kcF1'; {122}
+   kcsF2: string[4] = 'kcF2'; {123}
+   kcsF3: string[4] = 'kcF3'; {124}
+   kcsF4: string[4] = 'kcF4'; {125}
+   kcsF5: string[4] = 'kcF5'; {126}
+   kcsF6: string[4] = 'kcF6'; {127}
+   kcsF7: string[4] = 'kcF7'; {128}
+   kcsF8: string[4] = 'kcF8'; {129}
+   kcsF9: string[4] = 'kcF9'; {130}
+   kcsF10: string[5] = 'kcF10'; {131}
+   kcsF11: string[5] = 'kcF11'; {132}
+   kcsF12: string[5] = 'kcF12'; {133}
+   kcsF13: string[5] = 'kcF13'; {134}
+   kcsF14: string[5] = 'kcF14'; {135}
+   kcsF15: string[5] = 'kcF15'; {136}
+   kcsF16: string[5] = 'kcF16'; {137}
+   kcsF17: string[5] = 'kcF17'; {138}
+   kcsF18: string[5] = 'kcF18'; {139}
+   kcsF19: string[5] = 'kcF19'; {140}
+   kcsF20: string[5] = 'kcF20'; {141}
+   kcsF21: string[5] = 'kcF21'; {142}
+   kcsF22: string[5] = 'kcF22'; {143}
+   kcsF23: string[5] = 'kcF23'; {144}
+   kcsF24: string[5] = 'kcF24'; {145}
+   kcsSYSBACK: string[9] = 'kcSYSBACK';
+   kcsSYSHOME: string[9] = 'kcSYSHOME';
+   kcsSYSMENU: string[9] = 'kcSYSMENU';
+   kcsSYSSEARCH: string[11] = 'kcSYSSEARCH';
+   kcsPAUSEBREAK: string[12] = 'kcPAUSEBREAK'; {160}
+   kcsSYSREQ: string[8] = 'kcSYSREQ'; {161}
+   kcsLOS: string[5] = 'kcLOS'; {162}
+   kcsROS: string[5] = 'kcROS'; {163}
+   kcsLCONTEXT: string[10] = 'kcLCONTEXT'; {164}
+   kcsRCONTEXT: string[10] = 'kcRCONTEXT'; {165}
+   kcsSLEEP: string[7] = 'kcSLEEP'; {166}
+   kcsTILDE: string[7] = 'kcTILDE'; {170}
+   kcsDASH: string[6] = 'kcDASH'; {171}
+   kcsEQUAL: string[7] = 'kcEQUAL'; {172}
+   kcsSLASH: string[7] = 'kcSLASH'; {173}
+   kcsSEMICOLON: string[11] = 'kcSEMICOLON'; {174}
+   kcsAPOSTROPHE: string[12] = 'kcAPOSTROPHE'; {175}
+   kcsBACKSLASH: string[11] = 'kcBACKSLASH'; {176}
+   kcsCOMMA: string[7] = 'kcCOMMA'; {177}
+   kcsPERIOD: string[8] = 'kcPERIOD'; {178}
+   kcsLBRACKET: string[10] = 'kcLBRACKET'; {179}
+   kcsRBRACKET: string[10] = 'kcRBRACKET'; {180}
+
+   {keycode name array}
+   kcKeyCodeNames: array[0..appkcKeyCodeNames-1] of pshortstring = (
+{000}nil,
+{001}@kcsESC,
+{002}@kcsENTER,
+{003}@kcsTAB,
+{004}@kcsSPACE,
+{005}@kcsBACKSPACE,
+{006}@kcsDEL,
+{007}@kcsLSHIFT,
+{008}@kcsRSHIFT,
+{009}@kcsLCTRL,
+{010}@kcsRCTRL,
+{011}@kcsLALT,
+{012}@kcsRALT,
+{013}@kcsNUMLOCK,
+{014}@kcsSCROLLLOCK,
+{015}@kcsCAPSLOCK,
+{016}@kcsINSERT,
+{017}nil,
+{018}nil,
+{019}nil,
+{020}nil,
+{021}nil,
+{022}nil,
+{023}nil,
+{024}nil,
+{025}nil,
+{026}nil,
+{027}nil,
+{028}nil,
+{029}nil,
+{030}nil,
+{031}@kcsPGUP,
+{032}@kcsPGDN,
+{033}@kcsEND,
+{034}@kcsHOME,
+{035}@kcsLEFT,
+{036}@kcsUP,
+{037}@kcsRIGHT,
+{038}@kcsDOWN,
+{039}nil,
+{040}nil,
+{041}nil,
+{042}nil,
+{043}nil,
+{044}nil,
+{045}nil,
+{046}nil,
+{047}nil,
+{048}@kcs0,
+{049}@kcs1,
+{050}@kcs2,
+{051}@kcs3,
+{052}@kcs4,
+{053}@kcs5,
+{054}@kcs6,
+{055}@kcs7,
+{056}@kcs8,
+{057}@kcs9,
+{058}nil,
+{059}nil,
+{060}nil,
+{061}nil,
+{062}nil,
+{063}nil,
+{064}nil,
+{065}@kcsA,
+{066}@kcsB,
+{067}@kcsC,
+{068}@kcsD,
+{069}@kcsE,
+{070}@kcsF,
+{071}@kcsG,
+{072}@kcsH,
+{073}@kcsI,
+{074}@kcsJ,
+{075}@kcsK,
+{076}@kcsL,
+{077}@kcsM,
+{078}@kcsN,
+{079}@kcsO,
+{080}@kcsP,
+{081}@kcsQ,
+{082}@kcsR,
+{083}@kcsS,
+{084}@kcsT,
+{085}@kcsU,
+{086}@kcsV,
+{087}@kcsW,
+{088}@kcsX,
+{089}@kcsY,
+{090}@kcsZ,
+{091}nil,
+{092}nil,
+{093}nil,
+{094}nil,
+{095}@kcsNUMENTER,
+{096}@kcsNUM0,
+{097}@kcsNUM1,
+{098}@kcsNUM2,
+{099}@kcsNUM3,
+{100}@kcsNUM4,
+{101}@kcsNUM5,
+{102}@kcsNUM6,
+{103}@kcsNUM7,
+{104}@kcsNUM8,
+{105}@kcsNUM9,
+{106}@kcsNUMMUL,
+{107}@kcsNUMADD,
+{108}@kcsNUMSUBTRACT,
+{109}@kcsNUMSEPARATOR,
+{110}@kcsNUMDIVIDE,
+{111}@kcsNUMDECIMAL,
+{112}nil,
+{113}nil,
+{114}nil,
+{115}nil,
+{116}nil,
+{117}nil,
+{118}nil,
+{119}nil,
+{120}nil,
+{121}nil,
+{122}@kcsF1,
+{123}@kcsF2,
+{124}@kcsF3,
+{125}@kcsF4,
+{126}@kcsF5,
+{127}@kcsF6,
+{128}@kcsF7,
+{129}@kcsF8,
+{130}@kcsF9,
+{131}@kcsF10,
+{132}@kcsF11,
+{133}@kcsF12,
+{134}@kcsF13,
+{135}@kcsF14,
+{136}@kcsF15,
+{137}@kcsF16,
+{138}@kcsF17,
+{139}@kcsF18,
+{140}@kcsF19,
+{141}@kcsF20,
+{142}@kcsF21,
+{143}@kcsF22,
+{144}@kcsF23,
+{145}@kcsF24,
+{146}@kcsSYSBACK,
+{147}@kcsSYSHOME,
+{148}@kcsSYSMENU,
+{149}@kcsSYSSEARCH,
+{150}nil,
+{151}nil,
+{152}nil,
+{153}nil,
+{154}nil,
+{155}nil,
+{156}nil,
+{157}nil,
+{158}nil,
+{159}nil,
+{160}@kcsPAUSEBREAK,
+{161}@kcsSYSREQ,
+{162}@kcsLOS,
+{163}@kcsROS,
+{164}@kcsLCONTEXT,
+{165}@kcsRCONTEXT,
+{166}@kcsSLEEP,
+{167}nil,
+{168}nil,
+{169}nil,
+{170}@kcsTILDE,
+{171}@kcsDASH,
+{172}@kcsEQUAL,
+{173}@kcsSLASH,
+{174}@kcsSEMICOLON,
+{175}@kcsAPOSTROPHE,
+{176}@kcsBACKSLASH,
+{177}@kcsCOMMA,
+{178}@kcsPERIOD,
+{179}@kcsLBRACKET,
+{180}@kcsRBRACKET
+);

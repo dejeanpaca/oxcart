@@ -1,0 +1,2 @@
+@call setfpcpath.cmd
+make clean crossinstall CPU_TARGET=arm OS_TARGET=linux CROSSBINDIR="C:\Programming\fpc\cbin" OPT="-dFPC_ARMEL -O- -gl" CROSSOPT="-dANDROID -CpARMv6 -gl -CfSOFT -O-" INSTALL_PREFIX="c:\fpcandroidarmv6"

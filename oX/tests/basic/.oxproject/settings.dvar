@@ -1,0 +1,8 @@
+# DVAR
+
+project.name = basic tests
+project.short_name = basic_tests
+project.identifier = basic_tests
+project.organization = oX
+project.organization_short = ox
+project.main_unit = scene_json

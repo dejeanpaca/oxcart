@@ -1,0 +1,76 @@
+-dINI_Parser
+Version: 1.30
+
+Document Updated: 31.10.2011.
+
+Index:
+   1. Introduction
+      1.1 Supported Syntax
+      1.2 Syntax Exceptions
+      1.3 Performance
+   2. Usage
+      2.1 Quick Tour
+   3. Problems
+      3.1 Introduction
+      3.2 Common
+      3.3 Reading
+      3.4 Writing
+      3.5 Unicode
+   4. Version Changes
+
+1. Introduction:
+  
+   This is a simple parser for .ini and .inf files(from now on refered to as .ini files). While these files are mostly used on DOS, OS/2 and Windows platforms, the parser is usable on any other platform supported by FPC.
+
+1.1 Supported Syntax
+
+   The parser supports the official .ini and .inf file syntax(Microsoft syntax). Files with different syntax and with syntax errors are not supported. For a detailed description of .ini format consult other documentation(like MSDN).
+
+1.2 Syntax Exceptions
+
+   Although .ini syntax must be followed, here are a few supported exceptions:
+
+ - Leading and trailing whitespace is allowed at a line containing a section name, but characters are not.
+
+1.3 Performance
+
+   The memory usage is quite low. It is somewhat higher on 64-bit systems considering that pointers are double in size than 32-bit systems, but due to the use of dynamic arrays the amount of pointers used is at minimum.
+   
+   The parser is reasonably fast taking into consideration that is deals with strings instead of raw data. It takes up to 150 ms to parse through a 400 KiB file on a PII-333. While this may not be something to brag about, it is sufficiently fast. Note that however that this time was the worst time in the test, and it will most likely take less time. Variations in timing can and will occur depending of the structure of the file, and naturaly it's size.
+
+2. Usage
+
+2.1 Quick Tour
+
+3. Problems
+
+3.1 Introduction
+
+   Problems discussed here only refer to .ini and .inf files with default syntax. Files with modified syntaxes are not supported by this parser.
+
+3.2 Reading:  
+
+   The parser has error detection mechanisms which prevent parsing of bad strings. The parser only recognises space and tabs as whitespace, and does not support entries that span over more than one line and which are not accomplished by line continuators. Strings and comments must not span over more than 1 line.
+   
+If the parser cannot read something for any reason it will either disregard it as garbage, or will read it badly. The parser will read through the entire file, regardless if there are any errors in the file. Do not try to parse binary files, as most likely nothing useable will be found in them.
+
+Since version 1.2, the parser can also read files from memory. It also supports two parsing modes, a normal one, which is unchanged since version 1.0, and listening mode, where the parsed contents are not stored into a structure, but significant items are reported to a monitoring routine.
+
+3.3 Writing
+
+   The parser is primarily intended to read files. Although it supports writting there are several problems, primarily concerning formatting options(or lack thereof).
+
+Formatting of elements is done by predefined defaults and cannot be changed or influenced in the current version(but additional options may be provided in the future).
+
+3.4 Unicode
+
+The parser can not read or write unicode files.
+
+4. Version Changes
+
+Version 1.3:
+ - added support for searching through the structure to find sections(by their name) and lines(by the key).
+
+Version 1.2 now also supports the following:
+ - Reading from memory or a file, writing cannot be performed in memory.
+ - Listening mode in which the file contents are parsed but not stored into a structure, while a routine monitors the parsing. This is useful when you want to parse files without loading data into memory.

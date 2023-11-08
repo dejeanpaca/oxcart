@@ -1,0 +1,11 @@
+# oX shader
+
+# all properties must come before the uniforms section
+
+name: test/simple/simple
+
+# uniforms section, everything after will be considered a uniform
+# the value is the number of uniforms, and must be exact
+uniforms: 1
+
+color: RGBA

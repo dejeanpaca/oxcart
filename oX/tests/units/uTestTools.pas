@@ -1,0 +1,78 @@
+{
+   Commmon tools for tests.
+
+   Started On:    18.02.2011.
+}
+
+
+{$INCLUDE oxdefines.inc}
+UNIT uTestTools;
+
+INTERFACE
+
+   USES uLog,
+     appuKeys, appuActionEvents,
+     uOX, oxuTypes, oxuWindowTypes, oxuTexture, oxuTextureGenerate,
+     oxuKeyboardControl, oxuTimer, vmVector, oxuTransform;
+
+CONST
+   rotSpeed: TVector3f = (20, 30, 40);
+
+   lightAmbient:  array[0..2] of single  = (0.2, 0.2, 0.2);
+   lightDiffuse:  array[0..2] of single  = (1.0, 1.0, 1.0);
+   lightPosition: array[0..3] of single  = (0.0, 0.0, 10.0, 1.0);
+
+TYPE
+   TTestTools = record
+      rot: TVector3f;
+
+      procedure RotateXYZ(x, y, z: single);
+      procedure RotateXYZ();
+      procedure dtRotateXYZ();
+      function LoadTexture(const name: string; var t: oxTTextureID): boolean;
+      class procedure DefaultKeyUp(var key: appTKeyEvent; wnd: oxTWindow); static;
+   end;
+
+VAR
+   tt: TTestTools;
+
+
+IMPLEMENTATION
+
+procedure TTestTools.RotateXYZ(x, y, z: single);
+begin
+   oxTransform.Rotate(x, y, z);
+   oxTransform.Apply();
+end;
+
+procedure TTestTools.RotateXYZ();
+begin
+   RotateXYZ(rot[0], rot[1], rot[2])
+end;
+
+procedure TTestTools.dtRotateXYZ();
+begin
+   rot[0] := rot[0] + rotSpeed[0] * oxMainTimeFlow;
+   rot[1] := rot[1] + rotSpeed[1] * oxMainTimeFlow;
+   rot[2] := rot[2] + rotSpeed[2] * oxMainTimeFlow;
+end;
+
+function TTestTools.loadTexture(const name: string; var t: oxTTextureID): boolean;
+begin
+   log.i('loading texture: ' + name + ' ...');
+   Result := oxTextureGenerate.Generate(name, t) <> 0;
+
+   if(Result) then
+      log.i('ok');
+end;
+
+class procedure TTestTools.DefaultKeyUp(var key: appTKeyEvent; wnd: oxTWindow);
+begin
+   if(key.Key.Equal(kcESC)) then
+      appActionEvents.QueueQuitEvent();
+end;
+
+INITIALIZATION
+   oxKeyUpRoutine := @TTestTools.DefaultKeyUp;
+
+END.

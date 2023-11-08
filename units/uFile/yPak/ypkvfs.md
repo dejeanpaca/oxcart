@@ -1,0 +1,3 @@
+# YPAK Virtual Filesystem
+
+The VFS is based on uFS. It can use multiple files .ypk files for the file system. Files that will form the filesystem can be added to the file pool. Mounting the filesystem will cause the VFS to scan all files in the pool. Once this is done, you should not make any changes to the files or assume the VFS will be able to detect such changes. Likely the VFS will keep all .ypk files open, but may not necessarily do so. Current implementation is limited to a single .ypk file only. Unmounting the filesystem will close all files, but may not free all resources used until program exits or manual request. It is currently not possible to remove files from the pool.
