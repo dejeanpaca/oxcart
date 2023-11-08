@@ -115,7 +115,7 @@ TYPE
       procedure ResetOptions();
 
       {get the target name with which the current build was made}
-      class function GetBuiltWithTarget(): StdString; static;
+      class function GetBuiltWithTarget(): TFPCPlatformString; static;
       {get the name of an executable}
       function GetExecutableName(const name: StdString; isLibrary: boolean = false): StdString;
    end;
@@ -361,7 +361,7 @@ begin
    Options.Rebuild := false;
 end;
 
-class function TBuildSystem.GetBuiltWithTarget(): StdString;
+class function TBuildSystem.GetBuiltWithTarget(): TFPCPlatformString;
 begin
    Result := LowerCase(FPC_TARGETCPU + '-' + FPC_TARGETOS);
 end;
