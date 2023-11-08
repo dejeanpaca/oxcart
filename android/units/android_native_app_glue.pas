@@ -22,7 +22,7 @@ interface
 
 uses ctypes, baseunix, unixtype,
      configuration, looper, input, rect, native_window, native_activity,
-     uLogAndroid, StringUtils;
+     android_log_helper, StringUtils;
 
 (**
  * The native activity interface provided by <android/native_activity.h>
