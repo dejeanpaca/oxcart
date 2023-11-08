@@ -38,7 +38,8 @@ INTERFACE
       {initialize keys last}
       oxeduKeys,
       {ui}
-      oxeduWindowTitle, oxuStandardFilePreviewers, oxeduSceneScreenshot, oxeduPreviewGenerator,
+      oxeduWindowTitle, oxeduProjectNotification,
+      oxuStandardFilePreviewers, oxeduSceneScreenshot, oxeduPreviewGenerator,
       {android}
       oxeduAndroidPlatform, oxeduAndroidSettingsFile, oxeduAndroidSettingsWindow,
       {plugins}
