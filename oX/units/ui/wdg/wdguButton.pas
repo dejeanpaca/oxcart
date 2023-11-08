@@ -182,12 +182,12 @@ begin
 
    {render button block}
    renderProperties  := wdgRENDER_BLOCK_SURFACE;
-   if(ButtonGridPosition <> []) then begin
+   if(ButtonGridPosition <> []) and (Border > 0)then begin
       renderProperties := renderProperties or wdgRENDER_CORNERS;
       renderProperties := renderProperties or CurvedFrameProperties;
    end;
 
-   if((not Hovering()) or (not Pressed)) then
+   if((not Hovering()) or (not Pressed)) and (Border > 0) then
       renderProperties.Prop(wdgRENDER_BLOCK_BORDER);
 
    {if no textures present then render normally}
