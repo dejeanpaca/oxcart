@@ -819,7 +819,7 @@ begin
    if(selected > -1) then
       Result := IncludeTrailingPathDelimiter(CurrentPath) + Files[selected].Name
    else
-      Result := CurrentPath;
+      Result := ExcludeTrailingPathDelimiter(CurrentPath);
 end;
 
 procedure wdgTFileList.GoUp();
