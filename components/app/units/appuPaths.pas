@@ -185,7 +185,7 @@ begin
    {$IFDEF UNIX}
      {$IFDEF DARWIN}
      proc_pidpath(FpGetpid(), @path[0], length(path));
-     Result := ExtractFilePath(pchar(path));
+     Result := ExtractFilePath(StdString(pchar(path)));
      {$ELSE}
      Result := ExtractFilePath(UTF8String(fpReadLink('/proc/self/exe')));
      {$ENDIF}
