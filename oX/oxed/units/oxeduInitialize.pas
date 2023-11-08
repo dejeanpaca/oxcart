@@ -40,7 +40,7 @@ INTERFACE
       {ui}
       oxeduWindowTitle, oxuStandardFilePreviewers, oxeduSceneScreenshot, oxeduPreviewGenerator,
       {android}
-      oxeduAndroidPlatform, oxeduAndroidSettingsWindow,
+      oxeduAndroidPlatform, oxeduAndroidSettingsFile, oxeduAndroidSettingsWindow,
       {plugins}
       oxeduPluginsUI
       {$INCLUDE ../plugins/oxed_plugins.inc};
