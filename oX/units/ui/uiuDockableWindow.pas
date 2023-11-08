@@ -953,6 +953,7 @@ end;
 procedure uiTDockableWindow.Undock();
 var
    ratio: single;
+   offset: loopint;
 
    cur: uiTWindow;
 
@@ -966,6 +967,7 @@ var
    right: uiTSimpleWindowList;
 
    i,
+   leftMost,
    totalWidth,
    totalWidthLeft,
    totalWidthRight,
@@ -989,12 +991,15 @@ begin
       totalWidth := d.w + totalWidthLeft + totalWidthRight;
 
       ratio := getRatio(totalWidth, totalWidthLeft + totalWidthRight);
+      leftMost := left.GetLeftmostCoordinate();
 
       for i := 0 to (left.n - 1) do begin
          cur := left.List[i];
          curD := cur.GetTotalDimensions();
 
-         cur.Move(round(cur.Position.x * ratio), cur.Position.y);
+         offset := leftMost + round((cur.Position.x - leftMost) * ratio);
+
+         cur.Move(offset, cur.Position.y);
          cur.ResizeAdjusted(round(curD.w * ratio), curD.h);
       end;
 
@@ -1003,8 +1008,10 @@ begin
          curD := cur.GetTotalDimensions();
 
          width := round(curD.w * ratio);
+         offset := cur.Position.x - d.w;
+         offset := round(offset * ratio);
 
-         cur.Move(cur.Position.x - (width - curD.w), cur.Position.y);
+         cur.Move(offset, cur.Position.y);
          cur.ResizeAdjusted(width, curD.h);
       end;
 
@@ -1048,7 +1055,7 @@ begin
          cur := above.List[i];
          curD := cur.GetTotalDimensions();
 
-         cur.Move(cur.Position.x, round(totalHeight - 1 - ((totalHeight - 1 - cur.Position.y) * ratio)));
+         cur.Move(cur.Position.x, round(totalHeight - ((totalHeight - cur.Position.y) * ratio)));
          cur.ResizeAdjusted(curD.w, round(curD.h * ratio));
       end;
 
