@@ -71,6 +71,8 @@ TYPE
       BuildStart: TDateTime;
       BuildArch: oxedTPlatformArchitecture;
 
+      Features: oxTFeaturePDescriptorList;
+
       {is there a task currently running}
       Task: oxedTBuildTask;
       InitializationTask: oxedTBuildInitializationTask;
@@ -95,6 +97,10 @@ TYPE
       function BuildEnabled(): boolean;
       {tells whether the project is currently buildable}
       function Buildable(ignoreRunning: boolean = false): boolean;
+      {get a list of features for this build}
+      function GetFeatures(): oxTFeaturePDescriptorList;
+      {are we building a library}
+      function IsLibrary(): boolean;
 
       {recreate project files}
       class function Recreate(): boolean; static;
@@ -315,26 +321,24 @@ begin
    Result := (not Result) and oxedBuild.BuildEnabled() and oxedProjectValid() and (not oxedProject.Running);
 end;
 
-function getRelativePath(const unitFile: oxedTProjectUnit): string;
-begin
-   Result := ExtractRelativepath(oxedBuild.WorkingArea, oxedProject.Path + ExtractFilePath(unitFile.Path));
-end;
-
-function getFeatures(isLibrary: boolean = false): oxTFeaturePDescriptorList;
+function oxedTBuildGlobal.GetFeatures(): oxTFeaturePDescriptorList;
 var
    i: loopint;
    feature: oxPFeatureDescriptor;
    platform: string;
+   lib: boolean;
 
 begin
    Result.Initialize(Result);
+   lib := IsLibrary();
+
    platform := build.GetCurrentPlatform();
 
    for i := 0 to oxFeatures.List.n - 1 do begin
       feature := @oxFeatures.List.List[i];
 
       if(oxFeatures.IsSupportedFeature(feature^, platform, isLibrary)) then begin
-         if(isLibrary) then begin
+         if(lib) then begin
             {skip renderer features as we'll include only a single renderer}
             if(pos('renderer.', feature^.Name) = 1) then
                continue;
@@ -352,7 +356,7 @@ begin
       end;
    end;
 
-   if(isLibrary) then begin
+   if(lib) then begin
       {only include renderer we need}
       feature := oxFeatures.Find(oxRenderer.Id);
       assert(feature <> nil, 'Renderer ' + oxRenderer.Id +  ' feature must never be nil');
@@ -360,16 +364,23 @@ begin
    end;
 end;
 
+function oxedTBuildGlobal.IsLibrary(): boolean;
+begin
+   Result := BuildTarget <> OXED_BUILD_STANDALONE;
+end;
+
+function getRelativePath(const unitFile: oxedTProjectUnit): string;
+begin
+   Result := ExtractRelativepath(oxedBuild.WorkingArea, oxedProject.Path + ExtractFilePath(unitFile.Path));
+end;
+
 procedure recreateSymbols(var f: TLPIFile; isLibrary: boolean);
 var
    i: loopint;
-   features: oxTFeaturePDescriptorList;
 
 begin
-   features := getFeatures(isLibrary);
-
-   for i := 0 to features.n - 1 do begin
-      f.AddCustomOption('-d' + features.List[i]^.Symbol);
+   for i := 0 to oxedBuild.Features.n - 1 do begin
+      f.AddCustomOption('-d' + oxedBuild.Features.List[i]^.Symbol);
    end;
 end;
 
@@ -498,11 +509,8 @@ end;
 function getSourceHeader(includeFunctional: boolean = true): TAppendableString;
 var
    i: loopint;
-   features: oxTFeaturePDescriptorList;
 
 begin
-   features := getFeatures(oxedBuild.BuildTarget <> OXED_BUILD_STANDALONE);
-
    Result := '{';
    Result.Add('   ' + oxedProject.Name + ' (' + oxedProject.Identifier + ')');
 
@@ -513,8 +521,8 @@ begin
 
    Result.Add('   Features included:');
 
-   for i := 0 to features.n - 1 do begin
-      Result.Add('   - ' + features.List[i]^.Name);
+   for i := 0 to oxedBuild.Features.n - 1 do begin
+      Result.Add('   - ' + oxedBuild.Features.List[i]^.Name);
    end;
 
    Result.Add('}');
@@ -715,12 +723,12 @@ begin
    if(not Buildable(true)) then
       exit;
 
-   BuildStart := Now;
-
    if(not oxedProject.Valid()) then
       exit;
 
-   build.Options.IsLibrary := BuildTarget = OXED_BUILD_LIB;
+   build.Options.IsLibrary := IsLibrary();
+   BuildStart := Now;
+   Features := GetFeatures();
 
    TargetPath := GetTargetPath();
    WorkingArea := GetWorkingAreaPath();
