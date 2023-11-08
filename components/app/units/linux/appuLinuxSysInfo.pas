@@ -32,8 +32,7 @@ label
 
 begin
    if(handler <> nil) then begin
-      assign(f, fn);
-      reset(f);
+      FileReset(f);
       if(IOResult() = 0) then begin
          repeat
             readln(f, s);

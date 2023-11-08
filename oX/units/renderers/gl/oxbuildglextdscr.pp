@@ -63,9 +63,7 @@ var
 begin
    writeln('Writing file: ', outFN);
 
-   Assign(f, outFN);
-   Rewrite(f);
-   if(ioerror() = 0) then begin
+   if(FileRewrite(f, outFN) = 0) then begin
       writeln(f, '{File generated via oxbuildglextdscr.}');
       writeln(f);
 
