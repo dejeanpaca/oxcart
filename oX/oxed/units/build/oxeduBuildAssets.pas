@@ -171,11 +171,11 @@ begin
    oxedBuildLog.v('Deploying package: ' + Current.Path);
 
    if(@package = @oxedAssets.oxDataPackage) then begin
-      CurrentTarget := IncludeTrailingPathDelimiter(Target + TargetSuffix);
       TargetSuffix := 'data';
+      CurrentTarget := IncludeTrailingPathDelimiterNonEmpty(Target) + IncludeTrailingPathDelimiterNonEmpty(TargetSuffix);
    end else begin
       TargetSuffix := '';
-      CurrentTarget := Target;
+      CurrentTarget := IncludeTrailingPathDelimiterNonEmpty(Target);
    end;
 end;
 
