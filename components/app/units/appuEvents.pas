@@ -182,7 +182,7 @@ end;
 
 function appTEvent.GetData(): Pointer;
 begin
-   if(Data <> nil) then
+   if Data <> nil then
       Result := Data
    else
       Result := ExternalData;
@@ -191,8 +191,8 @@ end;
 {EVENT HELPER}
 procedure appTEvent.Dispose();
 begin
-   if(hID <> nil) then begin
-      if(hID^.Dispose <> nil) then
+   if hID <> nil then begin
+      if hID^.Dispose <> nil then
          hID^.Dispose(Self);
    end;
 
@@ -211,7 +211,7 @@ end;
 
 procedure appTEventQueue.Dispose(var ev: appPEvent);
 begin
-   if(ev <> nil) then begin
+   if ev <> nil then begin
       ev^.Dispose();
       ev := nil;
    end;
@@ -229,7 +229,7 @@ begin
    try
       SetLength(q, Allocated);
 
-      if(Allocated > 0) then
+      if Allocated > 0 then
          ZeroOut(q[0], SizeOf(appPEvent) * int64(Allocated));
 
       Result := true;
@@ -261,7 +261,7 @@ begin
 
    nq := nil;
 
-   if(count > 0) then begin
+   if count > 0 then begin
       pn := Allocated;
       inc(Allocated, count);
 
@@ -272,7 +272,7 @@ begin
 
          {reorder elements into the new array}
          pi := 0;
-         if(n > 0) then begin
+         if n > 0 then begin
             i := Head;
 
             repeat
@@ -308,7 +308,7 @@ var
    ev: appTEvent;
 
 begin
-   if(n > 0) then
+   if n > 0 then
       repeat
          Dequeue(ev);
          ev.Dispose();
@@ -319,7 +319,7 @@ end;
 
 function appTEventQueue.Get(): appPEvent;
 begin
-   if(n > 0) then
+   if n > 0 then
       Result := @q[Head]
    else
       Result := nil;
@@ -332,11 +332,11 @@ begin
    {$ENDIF}
 
    {if we're out of memory, increase the event queue}
-   if(n >= Allocated - 1) then
+   if n >= Allocated - 1 then
       IncreaseSize(settings.IncreaseStep);
 
    {if the event can fit into the queue}
-   if(n < Allocated) then begin
+   if n < Allocated then begin
       q[Tail]  := ev;
       Result   := @q[Tail];
 
@@ -356,10 +356,10 @@ end;
 function appTEventQueue.Queue(var ev: appTEvent; var eventData; dataSize: loopint): appPEvent;
 begin
    {get memory for the data and place it}
-   if(dataSize > 0) then begin
+   if dataSize > 0 then begin
       GetMem(ev.Data, dataSize);
 
-      if(ev.Data <> nil) then
+      if ev.Data <> nil then
          Move(eventData, ev.Data^, dataSize)
       else begin
          error := eNO_MEMORY;
@@ -377,7 +377,7 @@ begin
    EnterCriticalsection(CS);
    {$ENDIF}
 
-   if(n > 0) then begin
+   if n > 0 then begin
       ev := q[Head];
 
       RemovedEvent();
@@ -394,7 +394,7 @@ begin
    EnterCriticalsection(CS);
    {$ENDIF}
 
-   if(n > 0) then
+   if n > 0 then
       RemovedEvent();
 
    {$IFNDEF NO_THREADS}
@@ -412,7 +412,7 @@ begin
    {$ENDIF}
 
    pev := Get();
-   if(pev <> nil) then begin
+   if pev <> nil then begin
       pev^.Dispose();
       pev^ := ev;
    end;
@@ -432,13 +432,13 @@ begin
    {$ENDIF}
 
    pev := Get();
-   if(pev <> nil) then begin
+   if pev <> nil then begin
       {dispose the previous event}
       pev^.Dispose();
 
       {get memory for the data and place it}
       GetMem(ev.Data, dataSize);
-      if(ev.Data <> nil) then
+      if ev.Data <> nil then
          move(eventData, ev.Data^, dataSize)
       else
          error := eNO_MEMORY;
@@ -457,7 +457,7 @@ begin
    dec(n);
    inc(Head);
 
-   if(Head > Allocated - 1) then
+   if Head > Allocated - 1 then
       Head := 0;
 end;
 
@@ -470,11 +470,11 @@ begin
    EnterCriticalsection(CS);
    {$ENDIF}
 
-   if(n > 0) then begin
+   if n > 0 then begin
       i := Head;
 
       repeat
-         if((q[i].evID = evID) and (q[i].hID = hID)) then begin
+         if (q[i].evID = evID) and (q[i].hID = hID) then begin
             {$IFNDEF NO_THREADS}
             LeaveCriticalsection(CS);
             {$ENDIF}
@@ -482,7 +482,7 @@ begin
          end;
 
          inc(i);
-         if(i >= Allocated) then
+         if i >= Allocated then
             i := 0;
       until(i = Tail);
    end;
@@ -505,7 +505,7 @@ procedure nilHandlerInitialize();
 begin
    ZeroOut(appEvents.NilHandler, SizeOf(appEvents.NilHandler));
 
-   appEvents.NilHandler.sName          := 'NIL';
+   appEvents.NilHandler.sName := 'NIL';
 
    appEvents.NilHandler.Initialize     := @nilInitialize;
    appEvents.NilHandler.DeInitialize   := @nilInitialize;
@@ -526,7 +526,7 @@ begin
 
    evh.Next := nil;
 
-   if(handlers.s = nil) then
+   if handlers.s = nil then
       handlers.s := @evh
    else
       handlers.e^.Next := @evh;
@@ -552,12 +552,12 @@ begin
    Result := nil;
    cur := Handlers.s;
 
-   if(cur <> nil) then repeat
-      if(cur^.sName = name) then
+   if cur <> nil then repeat
+      if cur^.sName = name then
          exit(cur);
 
       cur := cur^.Next;
-   until (cur = nil);
+   until cur = nil;
 end;
 
 procedure appTEventQueue.InitializeHandlers();
@@ -567,11 +567,11 @@ var
 begin
    cur := Handlers.s;
 
-   if(cur <> nil) then repeat
+   if cur <> nil then repeat
       cur^.Initialize();
 
       cur := cur^.Next;
-   until (cur = nil);
+   until cur = nil;
 end;
 
 procedure appTEventQueue.DeInitializeHandlers();
@@ -581,10 +581,10 @@ var
 begin
    cur := Handlers.s;
 
-   if(cur <> nil) then repeat
+   if cur <> nil then repeat
       cur^.DeInitialize();
       cur := cur^.Next;
-   until (cur = nil);
+   until cur = nil;
 end;
 
 procedure appTEventQueue.DisableForWindow(wnd: pointer; hID: appPEventHandler; evID: loopint);
@@ -595,15 +595,14 @@ var
 begin
    i := 0;
 
-   if(n > 0) then repeat
+   if n > 0 then repeat
       c := (i + Head) mod Allocated;
 
-      if(q[c].wnd = wnd) and ((hID = nil) or (q[c].hID = hID)) and ((evID = -1) or (q[c].evID = evID)) then begin
+      if(q[c].wnd = wnd) and ((hID = nil) or (q[c].hID = hID)) and ((evID = -1) or (q[c].evID = evID)) then
          q[c].Properties := q[c].Properties or appEVENT_PROP_DISABLED;
-      end;
 
       inc(i);
-   until (i >= n);
+   until i >= n;
 end;
 
 procedure appTEventQueue.DisableWithData(data: pointer; hID: appPEventHandler; evID: loopint);
@@ -614,15 +613,14 @@ var
 begin
    i := 0;
 
-   if(n > 0) then repeat
+   if n > 0 then repeat
       c := (i + Head) mod Allocated;
 
-      if((hID = nil) or (q[c].hID = hID)) and (data = q[c].Data) and ((evID = -1) or (q[c].evID = evID)) then begin
+      if((hID = nil) or (q[c].hID = hID)) and (data = q[c].Data) and ((evID = -1) or (q[c].evID = evID)) then
          q[c].Properties := q[c].Properties or appEVENT_PROP_DISABLED;
-      end;
 
       inc(i);
-   until (i >= n);
+   until i >= n;
 end;
 
 procedure appTEventQueue.DisableWithExternalData(externalData: pointer; hID: appPEventHandler; evID: loopint);
@@ -633,15 +631,14 @@ var
 begin
    i := 0;
 
-   if(n > 0) then repeat
+   if n > 0 then repeat
       c := (i + Head) mod Allocated;
 
-      if((hID = nil) or (q[c].hID = hID)) and (externalData = q[c].externalData) and ((evID = -1) or (q[c].evID = evID)) then begin
+      if((hID = nil) or (q[c].hID = hID)) and (externalData = q[c].externalData) and ((evID = -1) or (q[c].evID = evID)) then
          q[c].Properties := q[c].Properties or appEVENT_PROP_DISABLED;
-      end;
 
       inc(i);
-   until (i >= n);
+   until i >= n;
 end;
 
 { INITIALIZATION }
