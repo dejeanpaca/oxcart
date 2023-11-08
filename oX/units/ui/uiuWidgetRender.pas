@@ -49,12 +49,14 @@ TYPE
       class function GetCurvedFrameProperties(pos: uiTControlGridPosition): TBitSet; static;
 
       class procedure CurvedFrame(x1, y1, x2, y2: loopint); static;
+      class procedure CurvedFrame(r: oxTRect); static;
       class procedure CurvedFrameCorners(x1, y1, x2, y2: loopint; corners: longword); static;
 
       {render the widget surface with bound lines}
       class procedure Box(x1, y1, x2, y2: longint; const sColor, bColor: TColor4ub; properties: TBitSet = wdgRENDER_BLOCK_ALL; opacity: single = 1.0); static;
       class procedure Box(wdg: uiTWidget; const sColor, bColor: TColor4ub; properties: TBitSet = wdgRENDER_BLOCK_ALL; opacity: single = 1.0); static;
       class procedure Box(const p: oxTPoint; const d: oxTDimensions; const sColor, bColor: TColor4ub; Properties: TBitSet = wdgRENDER_BLOCK_ALL; opacity: single = 1.0); static;
+      class procedure Box(const r: oxTRect; const sColor, bColor: TColor4ub; Properties: TBitSet = wdgRENDER_BLOCK_ALL; opacity: single = 1.0); static;
    end;
 
 
@@ -167,6 +169,11 @@ begin
 
    oxRender.Vertex(lines[0, 0]);
    oxRender.DrawArrays(oxPRIMITIVE_LINES, 4 * 2);
+end;
+
+class procedure uiRenderWidget.CurvedFrame(r: oxTRect);
+begin
+   CurvedFrame(r.x, r.y - r.h + 1, r.x + r.w - 1, r.y);
 end;
 
 class procedure uiRenderWidget.CurvedFrameCorners(x1, y1, x2, y2: loopint; corners: longword);
@@ -349,15 +356,19 @@ class procedure uiRenderWidget.Box(wdg: uiTWidget;
 
 begin
    Box( wdg.RPosition.x, wdg.RPosition.y - wdg.Dimensions.h + 1,
-                        wdg.RPosition.x + wdg.Dimensions.w - 1, wdg.RPosition.y,
-                        sColor, bColor, properties, opacity);
+      wdg.RPosition.x + wdg.Dimensions.w - 1, wdg.RPosition.y,
+      sColor, bColor, properties, opacity);
 end;
 
 class procedure uiRenderWidget.Box(const p: oxTPoint; const d: oxTDimensions;
    const sColor, bColor: TColor4ub; Properties: TBitSet; opacity: single);
 begin
-   Box( p.x, p.y - d.h + 1, p.x + d.w - 1, p.y,
-                        sColor, bColor, properties, opacity);
+   Box( p.x, p.y - d.h + 1, p.x + d.w - 1, p.y, sColor, bColor, properties, opacity);
+end;
+
+class procedure uiRenderWidget.Box(const r: oxTRect; const sColor, bColor: TColor4ub; Properties: TBitSet; opacity: single);
+begin
+   Box(r.x, r.y - r.h + 1, r.x + r.w - 1, r.y, sColor, bColor, properties, opacity);
 end;
 
 END.
