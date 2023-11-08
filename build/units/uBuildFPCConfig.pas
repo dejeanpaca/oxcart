@@ -100,7 +100,7 @@ begin
       AddArgument('-T' + build.TargetOS);
 
    if(build.TargetCPU <> '') then
-      AddArgument('-p' + build.TargetCPU);
+      AddArgument('-P' + build.TargetCPU);
 
    if(build.IncludeDebugInfo) then
       AddArgument('-g');
@@ -150,7 +150,7 @@ begin
 
    if(build.TargetCPU <> '') then begin
       add('# target CPU');
-      add('-p' + build.TargetCPU);
+      add('-P' + build.TargetCPU);
    end;
 
    if(build.IncludeDebugInfo) then begin
