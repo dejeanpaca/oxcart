@@ -200,7 +200,9 @@ begin
          path := oxPaths.Find(fn);
 
          if(not fd.Handler^.DoNotOpenFile) then
-            f.Open(path);
+            f.Open(path)
+         else
+            f.fn := fn;
 
          if(f.Error = 0) then begin
             exit(Read(f, fd.Handler^, options, pdata));
@@ -293,7 +295,9 @@ begin
          path := oxPaths.Find(fn);
 
          if(not fd.Handler^.DoNotOpenFile) then
-            f.New(path);
+            f.New(path)
+         else
+            f.fn := fn;
 
          if(f.Error = 0) then begin
             exit(Write(f, fd.Handler^, options, pdata));
