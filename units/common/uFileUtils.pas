@@ -788,7 +788,7 @@ begin
    if (ioerror() <> 0) then
       Result := -error
    else
-      Result := eNONE;
+      Result := countWritten;
 end;
 
 class function TFileUtilsGlobal.WriteString(const fn: StdString; const data: StdString): longint;
@@ -1325,7 +1325,10 @@ end;
 
 INITIALIZATION
    {$IFDEF UNIX}
-   HomePath := GetEnvironmentVariable('HOME');
+   HomePath := GetUTF8EnvironmentVariable('XDG_DATA_HOME');
+
+   if(HomePath = '') then
+      HomePath := GetEnvironmentVariable('HOME');
    {$ENDIF}
 
 END.
