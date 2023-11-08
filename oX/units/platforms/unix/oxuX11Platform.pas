@@ -14,8 +14,8 @@ INTERFACE
       uStd, uLog, StringUtils,
       x, xlib, xutil, xkb, xkblib, cursorfont,
       {app}
-      uAppInfo, appuKeys, appuEvents, appuKeyEvents,
-      appuMouse, appuMouseEvents,
+      uAppInfo,
+      appuInputTypes, appuKeys, appuEvents, appuKeyEvents, appuMouse, appuMouseEvents,
       {oX}
       oxuTypes, oxuWindowTypes, oxuWindows, oxuWindow, oxuPlatform, oxuPlatforms, oxuRenderer,
       oxuGlobalInstances, uiuWindowTypes,
