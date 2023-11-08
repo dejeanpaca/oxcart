@@ -11,7 +11,7 @@ UNIT oxeduStatusInfo;
 INTERFACE
 
    USES
-      uStd, StringUtils, uBinarySize,
+      uStd, uBinarySize,
       {widgets}
       uiWidgets, wdguToolbar,
       {oxed}
