@@ -10,7 +10,8 @@ INTERFACE
 
    USES
       {oX}
-      oxuUIHooks, oxuTypes, oxuWindowTypes, oxuWindow, oxuWindows, oxuRenderer,
+      oxuUIHooks, oxuTypes, oxuWindowTypes, oxuWindow, oxuWindows,
+      oxuRenderer, oxuSurfaceRender, oxuRenderingContext,
       {ui}
       uiuCursor,
       uiuWindowTypes, uiuWindow, uiuWindowRender;
@@ -31,7 +32,7 @@ TYPE
       procedure SetDimensions(wnd: oxTWindow; const dimensions: oxTDimensions); override;
 
       procedure Select(wnd: oxTWindow); override;
-      procedure Render(wnd: oxTWindow); override;
+      procedure Render(var context: oxTRenderingContext); override;
 
       procedure Minimize(wnd: oxTWindow; fromSystem: boolean = false); override;
       procedure Maximize(wnd: oxTWindow; fromSystem: boolean = false); override;
@@ -39,6 +40,9 @@ TYPE
    end;
 
 IMPLEMENTATION
+
+VAR
+   surfaceRenderer: oxTSurfaceRenderer;
 
 { uiTOXHooks }
 
@@ -69,10 +73,10 @@ begin
    wnd.Select();
 end;
 
-procedure uiTOXHooks.Render(wnd: oxTWindow);
+procedure uiTOXHooks.Render(var context: oxTRenderingContext);
 begin
    if(uiWindow.AutoRender) then
-      uiWindowRender.Render(wnd);
+      uiWindowRender.Render(context);
 end;
 
 procedure uiTOXHooks.Minimize(wnd: oxTWindow; fromSystem: boolean);
@@ -116,13 +120,14 @@ begin
    Exclude(wnd.Properties, uiwndpQUIT_ON_CLOSE);
 end;
 
-procedure renderWindow(wnd: oxTWindow);
+procedure render(var context: oxTRenderingContext);
 begin
-   oxUIHooks.Render(wnd);
+   oxUIHooks.Render(context);
 end;
 
 INITIALIZATION
    oxUIHooksInstance := uiTOXHooks;
-   oxWindows.Internal.OnPostRender.Add(@renderWindow);
+   oxSurfaceRender.Get(surfaceRenderer, @render);
+   surfaceRenderer.Name := 'UI';
 
 END.

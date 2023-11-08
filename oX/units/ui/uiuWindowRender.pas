@@ -13,7 +13,8 @@ INTERFACE
       {oX}
       oxuTypes, oxuWindowTypes, oxuFont,
       oxuPrimitives, oxuTexture,
-      oxuRenderer, oxuRender, oxuProjectionType, oxuProjection,
+      oxuProjectionType, oxuProjection,
+      oxuRenderer, oxuRender, oxuRenderingContext,
       {ui}
       oxuUI, uiuTypes, uiuSkinTypes,
       uiuWindowTypes, uiuWidget, uiuDraw, uiuDrawUtilities, uiWidgets, uiuWindow,
@@ -34,7 +35,7 @@ TYPE
       { WINDOW RENDERING }
       {render an oX window}
       procedure Prepare(wnd: oxTWindow);
-      procedure Render(wnd: oxTWindow);
+      procedure Render(var context: oxTRenderingContext);
    end;
 
 VAR
@@ -328,12 +329,21 @@ begin
    uiRender.Prepare(Projection, wnd.Viewport);
 end;
 
-procedure uiTWindowRenderGlobal.Render(wnd: oxTWindow);
+procedure uiTWindowRenderGlobal.Render(var context: oxTRenderingContext);
+var
+   wnd: oxTWindow;
+
 begin
-   if(uiwndpVISIBLE in uiTWindow(wnd).Properties) then begin
-      Prepare(wnd);
-      uiTWindow(wnd).RenderWindow();
-      uiWindow.OxwPostRender.Call(wnd);
+   wnd := context.Window;
+
+   if(wnd <> nil) then begin
+      if(uiwndpVISIBLE in uiTWindow(wnd).Properties) then begin
+         Prepare(wnd);
+         uiTWindow(wnd).RenderWindow();
+         uiWindow.OxwPostRender.Call(wnd);
+      end;
+   end else begin
+      {TODO: Allow rendering for any kind of surface}
    end;
 end;
 
