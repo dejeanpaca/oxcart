@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd,
       {ox}
-      oxuLightComponent, oxeduEditRenderers;
+      oxuLightComponent, oxeduEditRenderers, oxeduComponent, oxeduComponentGlyphs;
 
 TYPE
    { oxedTLightEditRenderer }
@@ -32,8 +32,9 @@ IMPLEMENTATION
 constructor oxedTLightEditRenderer.Create();
 begin
    Name := 'Light';
-   GlyphCode := $f0eb;
-   ComponentType := oxTLightComponent;
+
+   oxedComponentGlyphs.Add(oxTLightComponent, '', $f0eb);
+   Component := oxedComponents.Find(oxTLightComponent);
 end;
 
 procedure init();
