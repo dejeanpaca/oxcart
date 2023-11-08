@@ -29,9 +29,9 @@ INTERFACE
       {additional}
       oxeduBuildEvents, oxeduLazarus,
       {windows}
+      oxuwndBuildSettings, oxuwndAbout,
       oxeduMenubar, oxeduMenubarBuild,
       oxeduProjectManagement, oxeduMessages,
-      oxuwndBuildSettings,
       oxeduToolbar, oxeduWorkbar, oxeduStatusbar, oxeduDockableArea, oxeduMenuToolbar,
       oxeduTasksUI, oxeduProjectContextMenu, oxeduProjectSettingsWindow,
       oxeduViewScene, oxeduSceneView, oxeduProjectDialog, oxeduSceneEditTools,
@@ -90,6 +90,8 @@ end;
 
 procedure oxedInitialize();
 begin
+   oxwndAbout.ShowBuiltWith := true;
+
    oxedMenubar.Deinitialize();
    oxed.Init.iCall();
    oxedPlatforms.Initialize();
