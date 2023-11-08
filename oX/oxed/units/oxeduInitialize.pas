@@ -25,9 +25,10 @@ INTERFACE
       oxeduProjectScanner, oxeduPasScanner,
       {windows}
       oxeduMenubar, oxeduProjectManagement, oxeduMessages,
-      oxuwndBuildSettings, oxeduToolbar, oxeduWorkbar, oxeduStatusbar, oxeduDockableArea, oxeduMenuToolbar, oxeduRunButtons,
+      oxuwndBuildSettings, oxeduToolbar, oxeduWorkbar, oxeduStatusbar, oxeduDockableArea, oxeduMenuToolbar,
       oxeduTasksUI, oxeduProjectContextMenu, oxeduProjectSettingsWindow,
       oxeduViewScene, oxeduSceneView, oxeduProjectDialog, oxeduSceneEditTools,
+      oxeduRunButtons, oxeduStatusInfo,
       {components}
       oxeduNilComponent, oxeduCameraComponent, oxeduLightComponent,
       {initialize keys last}
@@ -74,6 +75,8 @@ begin
 
    {setup default workspace}
    SetupWorkspace();
+
+   oxed.PostInit.iCall();
 end;
 
 procedure oxedDeInitialize();
@@ -83,6 +86,7 @@ begin
    oxedProjectManagement.Destroy();
 
    oxedPlatforms.DeInitialize();
+   oxed.PostInit.iCall();
    oxed.Init.dCall();
 end;
 

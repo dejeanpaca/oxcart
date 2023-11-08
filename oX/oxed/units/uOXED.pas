@@ -67,6 +67,7 @@ TYPE
 
       {initialization/deinitialization routines for OXED}
       Init: TInitializationProcs;
+      PostInit: TInitializationProcs;
       {dockable area into which windows are created by default}
       DockableArea: uiTDockableWindow;
 
@@ -116,6 +117,7 @@ end;
 
 INITIALIZATION
    oxed.Init.Init('oxed');
+   oxed.PostInit.Init('oxed.post');
    dvar.Add('oxed', dvgOXED);
 
    TProcedures.Initialize(oxed.OnSceneChange);
