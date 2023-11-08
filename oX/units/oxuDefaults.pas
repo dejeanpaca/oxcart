@@ -27,10 +27,10 @@ INTERFACE
       {$ENDIF}
       { app }
       appuKeyStateUpdater,
+      {$IFNDEF MOBILE}
+      appuCtrlBreak,
+      {$ENDIF}
       {$IFNDEF OX_LIBRARY}
-        {$IFNDEF ANDROID}
-        appuCtrlBreak,
-        {$ENDIF}
       appuCrashDetect,
       {$ENDIF}
       appuPaths,
@@ -102,9 +102,9 @@ INTERFACE
 
       oxuKeyboardControl,
       oxuPointerControl,
-      oxuScreenshot,
       {$IFNDEF OX_LIBRARY}
-      {$IFNDEF ANDROID}
+      {$IFNDEF MOBILE}
+      oxuScreenshot,
       oxuDefaultSplashScreen,
       {$ENDIF}
       {$ENDIF}
