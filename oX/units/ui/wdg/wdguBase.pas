@@ -13,7 +13,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuFont,
       {ui}
-      uiuWidget, uiWidgets, uiuWindow;
+      uiuWidget, uiWidgets, uiuWindow, uiuRegisteredWidgets;
 
 TYPE
 
@@ -23,7 +23,7 @@ TYPE
       public
       Internal: uiTWidgetClass;
 
-      constructor Create();
+      constructor Create(const name: StdString);
 
       function Add(const Pos: oxTPoint; const Dim: oxTDimensions): T;
       function Add(const Pos: oxTPoint): T;
@@ -46,9 +46,9 @@ IMPLEMENTATION
 
 { wdgTBase }
 
-constructor wdgTBase.Create();
+constructor wdgTBase.Create(const name: StdString);
 begin
-   Internal.Instance := T;
+   Internal.Register(name, T);
 end;
 
 function wdgTBase.Add(const Pos: oxTPoint; const Dim: oxTDimensions): T;

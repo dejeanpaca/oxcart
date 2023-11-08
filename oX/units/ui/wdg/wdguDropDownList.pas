@@ -323,25 +323,12 @@ end;
 
 procedure wdgTDropDownList.SelectedItemChanged();
 begin
-
-end;
-
-procedure init();
-begin
-   wdgDropDownList.Internal.Done(wdgTDropDownList);
-end;
-
-procedure initMenu();
-begin
-   wdgDropDownListMenu.Internal.Done(wdgTDropDownListMenu);
 end;
 
 INITIALIZATION
-   wdgDropDownList.Create();
-   wdgDropDownList.Internal.Register('drop_down_list', @init);
+   wdgDropDownList.Create('drop_down_list');
    wdgDropDownList.DropAreaWidth := 16;
 
-   wdgDropDownListMenu.Create();
-   wdgDropDownListMenu.Internal.Register('drop_down_list_menu', @initMenu);
+   wdgDropDownListMenu.Create('drop_down_list_menu');
 
 END.

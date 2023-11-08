@@ -477,14 +477,8 @@ begin
    wdg.AutoPosition();
 end;
 
-procedure init();
-begin
-   wdgMenubar.Internal.Done(wdgTMenubar);
-end;
-
 INITIALIZATION
-   wdgMenubar.Create();
-   wdgMenubar.Internal.Register('menubar', @init);
+   wdgMenubar.Create('menubar');
 
    wdgMenubar.Color.Assign(28, 28, 36, 255);
    wdgMenubar.Height := MENUBAR_HEIGHT;

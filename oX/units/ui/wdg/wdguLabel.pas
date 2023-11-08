@@ -231,14 +231,8 @@ begin
    end;
 end;
 
-procedure init();
-begin
-   wdgLabel.Internal.NonSelectable := true;
-   wdgLabel.Internal.Done(wdgTLabel);
-end;
-
 INITIALIZATION
-   wdgLabel.Create();
-   wdgLabel.Internal.Register('label', @init);
+   wdgLabel.Create('label');
+   wdgLabel.Internal.NonSelectable := true;
 
 END.

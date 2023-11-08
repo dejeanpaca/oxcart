@@ -1053,12 +1053,6 @@ begin
    InsertIndex := -1;
 end;
 
-procedure initializeWidget();
-begin
-   internalWidget.Instance := wdgTContextMenu;
-   internalWidget.Done();
-end;
-
 INITIALIZATION
    uiContextMenu.Instance := uiTContextMenuWindow;
    uiContextMenu.ItemHeight := ITEM_HEIGHT;
@@ -1071,5 +1065,5 @@ INITIALIZATION
    uiContextMenu.BackgroundColor.Assign(48, 48, 48, 244);
    uiContextMenu.BorderColor.Assign(8, 8, 8, 255);
 
-   internalWidget.Register('context_menu', @initializeWidget);
+   internalWidget.Register('context_menu', wdgTContextMenu);
 END.

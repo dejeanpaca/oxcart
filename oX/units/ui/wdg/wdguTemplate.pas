@@ -45,13 +45,7 @@ begin
    end;
 end;
 
-procedure init();
-begin
-   wdgTemplate.internal.Done(wdgTTemplate);
-end;
-
 INITIALIZATION
-   wdgTemplate.Create();
-   wdgTemplate.Internal.Register('template', @init);
+   wdgTemplate.Create('template');
 
 END.

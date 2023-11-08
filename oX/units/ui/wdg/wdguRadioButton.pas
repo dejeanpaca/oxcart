@@ -165,17 +165,10 @@ begin
    end;
 end;
 
-procedure init();
-begin
-   wdgRadioButton.Internal.Done(wdgTRadioButton);
-end;
-
 INITIALIZATION
-   wdgRadioButton.Create();
+   wdgRadioButton.Create('radio_button');
    wdgRadioButton.SetSize(16, 16);
    wdgRadioButton.CaptionSpace := 4;
    wdgRadioButton.clrDisabled.Assign(96, 96, 96, 255);
-
-   wdgRadioButton.Internal.Register('radio_button', @init);
 
 END.

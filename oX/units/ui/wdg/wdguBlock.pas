@@ -38,13 +38,8 @@ begin
    uiDraw.Box(RPosition, Dimensions);
 end;
 
-procedure init();
-begin
-   wdgBlock.Internal.Done(wdgTBlock);
-end;
 
 INITIALIZATION
-   wdgBlock.Create();
-   wdgBlock.Internal.Register('block', @init);
+   wdgBlock.Create('block');
 
 END.

@@ -1559,21 +1559,8 @@ begin
       uiDraw.Scissor(sRect, false);
 end;
 
-procedure init();
-begin
-   wdgList.Internal.Done(wdgTList);
-end;
-
-procedure initString();
-begin
-   wdgStringList.Internal.Done(wdgTStringList);
-end;
-
 INITIALIZATION
-   wdgList.Create();
-   wdgStringList.Create();
-
-   wdgList.Internal.Register('.list', @init);
-   wdgStringList.Internal.Register('string_list', @initString);
+   wdgList.Create('list');
+   wdgStringList.Create('string_list');
 
 END.

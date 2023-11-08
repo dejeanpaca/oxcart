@@ -66,13 +66,7 @@ begin
       oxwndColorPicker.ObjectCallback := nil;
 end;
 
-procedure init();
-begin
-   wdgColorPick.Internal.Done(wdgTColorPick);
-end;
-
 INITIALIZATION
-   wdgColorPick.Create();
-   wdgColorPick.Internal.Register('color_pick', @init);
+   wdgColorPick.Create('color_pick');
 
 END.

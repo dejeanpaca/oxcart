@@ -757,21 +757,8 @@ begin
    SelectedGridItem := -1;
 end;
 
-procedure init();
-begin
-   wdgGrid.Internal.Done(wdgTGrid);
-end;
-
-procedure initString();
-begin
-   wdgStringGrid.Internal.Done(wdgTStringGrid);
-end;
-
 INITIALIZATION
-   wdgGrid.Create();
-   wdgGrid.Internal.Register('grid', @init);
-
-   wdgStringGrid.Create();
-   wdgStringGrid.Internal.Register('string_grid', @initString);
+   wdgGrid.Create('grid');
+   wdgStringGrid.Create('string_grid');
 
 END.

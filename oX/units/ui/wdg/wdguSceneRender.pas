@@ -116,13 +116,7 @@ begin
 
 end;
 
-procedure init();
-begin
-   wdgSceneRender.internal.Done(wdgTSceneRender);
-end;
-
 INITIALIZATION
-   wdgSceneRender.Create();
-   wdgSceneRender.Internal.Register('scene_render', @init);
+   wdgSceneRender.Create('scene_render');
 
 END.

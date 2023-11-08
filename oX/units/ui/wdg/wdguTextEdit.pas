@@ -600,14 +600,7 @@ begin
    ib.VerticalSpacing := CachedFont.GetHeight() div 8;
 end;
 
-procedure init();
-begin
-   wdgTextEdit.Internal.SkinDescriptor := wdgInputBox.Internal.SkinDescriptor;
-   wdgTextEdit.Internal.Done(wdgTTextEdit);
-end;
-
 INITIALIZATION
-   wdgTextEdit.Create();
-   wdgTextEdit.Internal.Register('text_edit', @init);
+   wdgTextEdit.Create('text_edit');
 
 END.

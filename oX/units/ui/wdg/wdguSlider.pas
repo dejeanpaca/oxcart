@@ -72,13 +72,7 @@ begin
    end;
 end;
 
-procedure init();
-begin
-   wdgSlider.Internal.Done(wdgTSlider);
-end;
-
 INITIALIZATION
-   wdgSlider.Create();
-   wdgSlider.Internal.Register('slider', @init);
+   wdgSlider.Create('slider');
 
 END.

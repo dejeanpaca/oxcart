@@ -470,13 +470,7 @@ begin
 
 end;
 
-procedure init();
-begin
-   wdgHierarchyList.Internal.Done(wdgTHierarchyList);
-end;
-
 INITIALIZATION
-   wdgHierarchyList.Create();
-   wdgHierarchyList.Internal.Register('hierarchy_list', @init);
+   wdgHierarchyList.Create('hierarchy_list');
 
 END.

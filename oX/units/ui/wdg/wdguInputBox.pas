@@ -684,15 +684,9 @@ begin
    wdgSkin^.SetColor(wdgscINPUT_BORDER_SELECTED, skin.Colors.SelectedBorder);
 end;
 
-procedure init();
-begin
-   wdgInputBox.Internal.Done(wdgTInputBox);
-end;
-
 INITIALIZATION
-   wdgInputBox.Create();
+   wdgInputBox.Create('input_box');
 
-   wdgInputBox.Internal.Register('inputbox', @init);
    wdgInputBox.Internal.SkinDescriptor.UseColors(wdgInputSkinColorDescriptor);
    wdgInputBox.Internal.SkinDescriptor.Setup := @setupSkin;
 

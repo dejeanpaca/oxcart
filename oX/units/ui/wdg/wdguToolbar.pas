@@ -664,16 +664,10 @@ begin
    Result.Recalculate();
 end;
 
-procedure init();
-begin
-   wdgToolbar.Internal.Done(wdgTToolbar);
-end;
-
 INITIALIZATION
-   wdgToolbar.Create();
+   wdgToolbar.Create('toolbar');
    wdgToolbar.Height := wdgWORKBAR_HEIGHT;
 
-   wdgToolbar.Internal.Register('toolbar', @init);
    wdgToolbar.Internal.SkinDescriptor.UseColors(wdgToolbarSkinColorDescriptor);
 
 END.

@@ -264,17 +264,9 @@ begin
    Progress.ItemsDone := -1;
 end;
 
-procedure init();
-begin
-   wdgProgressBar.Internal.SkinDescriptor := @wdgProgressBarSkinDescriptor;
-   wdgProgressBar.Internal.Done(wdgTProgressBar);
-end;
-
 INITIALIZATION
-   wdgProgressBar.Create();
-   wdgProgressBar.Internal.Register('progressbar', @init);
+   wdgProgressBar.Create('progress_bar');
 
-   uiTWidgetSkinDescriptor.Initialize(wdgProgressBar.SkinDescriptor, 'progressbar');
    wdgProgressBar.SkinDescriptor.UseColors(wdgProgressBarSkinColorDescriptor);
 
 END.

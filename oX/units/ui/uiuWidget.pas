@@ -247,7 +247,7 @@ TYPE
    {widget class, not a real class,
     only stuff common to a specific type of widget}
    uiTWidgetClass = record
-      sName: StdString; {name}
+      Name: StdString; {name}
       cID: longword; {ID}
 
       {settings}
@@ -258,6 +258,9 @@ TYPE
       InitRoutines: oxTRunRoutine;
 
       Instance: uiTWidgetClassType;
+
+      {link to the next widget class}
+      Next: uiPWidgetClass;
    end;
 
    uiTWidgetClasses = array of uiPWidgetClass;
