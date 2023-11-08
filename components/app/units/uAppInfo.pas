@@ -41,20 +41,20 @@ TYPE
       Org,
       OrgShort,
       Website,
-      Description: string;
+      Description: StdString;
       VersionFields: longint;
       Version: array[0..3] of longword;
-      sVersion: string;
-      Title: string;
+      sVersion,
+      Title: StdString;
 
-      procedure SetName(const s: string);
-      procedure SetOrganization(const s: string);
-      procedure SetName(const n, o: string);
+      procedure SetName(const s: StdString);
+      procedure SetOrganization(const s: StdString);
+      procedure SetName(const n, o: StdString);
       procedure SetVersion(major: longword; minor: longint = -1; fix: longint = -1; revision: longint = -1);
-      procedure SetVersion(const v: string);
-      function GetVersionString(properties: longword = 0): string;
+      procedure SetVersion(const v: StdString);
+      function GetVersionString(properties: longword = 0): StdString;
 
-      class function GetShort(const s: string): string; static;
+      class function GetShort(const s: StdString): StdString; static;
    end;
 
 VAR
@@ -62,19 +62,19 @@ VAR
 
 IMPLEMENTATION
 
-procedure appTInfo.SetName(const s: string);
+procedure appTInfo.SetName(const s: StdString);
 begin
    Name := s;
    NameShort := GetShort(s);
 end;
 
-procedure appTInfo.SetOrganization(const s: string);
+procedure appTInfo.SetOrganization(const s: StdString);
 begin
    Org := s;
    OrgShort := GetShort(s);
 end;
 
-procedure appTInfo.SetName(const n, o: string);
+procedure appTInfo.SetName(const n, o: StdString);
 begin
    setName(n);
    setOrganization(o);
@@ -101,9 +101,9 @@ begin
    end;
 end;
 
-procedure appTInfo.SetVersion(const v: string);
+procedure appTInfo.SetVersion(const v: StdString);
 var
-   vs: array of string;
+   vs: array of StdString;
    n, i, code: longint;
 
 begin
@@ -133,11 +133,11 @@ begin
 end;
 
 { INFO }
-function appTInfo.GetVersionString(properties: longword = 0): string;
+function appTInfo.GetVersionString(properties: longword = 0): StdString;
 var
    i: longint;
-   sver: string = '';
-   short: string;
+   sver: StdString = '';
+   short: StdString;
 
 begin
    if(sVersion = '') then begin
@@ -172,12 +172,12 @@ begin
       result := sver
 end;
 
-class function appTInfo.GetShort(const s: string): string;
+class function appTInfo.GetShort(const s: StdString): StdString;
 var
-   short: string;
+   short: StdString;
 
 begin
-   short := lowerCase(s);
+   short := utf8string(lowerCase(s));
    EliminateWhiteSpace(short);
 
    result := short;
