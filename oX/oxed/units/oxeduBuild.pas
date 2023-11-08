@@ -518,8 +518,10 @@ function GetUsesString(): TAppendableString;
 begin
    Result := '';
 
-   if(isCMEM()) then
-      Result.Add('cmem,');
+   if(isCMEM()) then begin
+      {include cmem only if not already included by something else}
+      Result.Add('{$IF NOT DECLARED(cmem)}cmem,{$ENDIF}');
+   end;
 
    Result.Add('{$INCLUDE oxappuses.inc},');
    Result.Add(GetComponentUses());
