@@ -936,7 +936,7 @@ begin
    ErrorReset();
 
    if(Initialized) then begin
-      DoneVideo;
+      DoneVideo();
       Initialized := false;
    end;
 end;
