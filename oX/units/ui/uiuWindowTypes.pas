@@ -39,8 +39,7 @@ TYPE
    end;
 
    {the window handler procedure}
-   uiTWindowListener = function(wnd: uiTControl; const event: appTEvent): longint;
-
+   uiTWindowListener = function(wnd: uiTControl; const event: appTEvent): loopint;
    uiTWindowListeners = specialize TSimpleList<uiTWindowListener>;
 
    {a window}
@@ -131,7 +130,7 @@ TYPE
       Widgets: uiTControls;
 
       {error code}
-      ErrorCode: longint;
+      ErrorCode: loopint;
 
       constructor Create(); override;
 
@@ -162,6 +161,8 @@ TYPE
          {called when dragging stops}
          procedure OnStopDrag(); virtual;
    end;
+
+   uiTWindowListenerMethod = function(wnd: uiTWindow; const event: appTEvent): loopint;
 
    uiTSimpleWindowList = specialize TSimpleList<uiTWindow>;
 
