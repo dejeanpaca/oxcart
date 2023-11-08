@@ -188,12 +188,12 @@ begin
       height := r.h - padding * 2;
 
       if(glyph.Glyph <> nil) and (glyph.Glyph.rId <> 0) then begin
-         inc(r.x, height + padding * 2);
+         inc(r.x, height + padding * 2 + 4 {glyph and text spacing});
          f.WriteCentered(s, r, [oxfpCenterVertical]);
 
          oxRender.BlendDefault();
          SetColorBlended(glyph.Color);
-         uiDrawUtilities.Glyph(r.x - height - padding, r.y - padding, height, height, glyph.Glyph);
+         uiDrawUtilities.Glyph(r.x - height - padding - 4, r.y - padding, height, height, glyph.Glyph);
          oxui.Material.ApplyTexture('texture', f.Texture);
       end else
          f.WriteCentered(s, r, [oxfpCenterVertical]);
@@ -225,22 +225,22 @@ end;
 
 function wdgTHierarchyList.GetValue(index: loopint): StdString;
 begin
-   result := '';
+   Result := '';
 end;
 
 function wdgTHierarchyList.Expandable(index: loopint): boolean;
 begin
-   result := false;
+   Result := false;
 end;
 
 function wdgTHierarchyList.Expanded(index: loopint): boolean;
 begin
-   result := (index < Visible.n - 1) and (Visible.List[index + 1].Level = (Visible.List[index].Level + 1));
+   Result := (index < Visible.n - 1) and (Visible.List[index + 1].Level = (Visible.List[index].Level + 1));
 end;
 
 function wdgTHierarchyList.GetItemCount(): loopint;
 begin
-   result := Visible.n;
+   Result := Visible.n;
 end;
 
 procedure wdgTHierarchyList.ItemClicked(index: loopint;  button: TBitSet);
@@ -257,7 +257,7 @@ begin
    w := ItemHeight;
    inc(w, l * ItemIndentationWidth);
 
-   result := LastPointerPosition.x - (UnusableWidth div 2) <=  w;
+   Result := LastPointerPosition.x - (UnusableWidth div 2) <=  w;
 end;
 
 begin
@@ -292,7 +292,7 @@ end;
 
 function wdgTHierarchyList.GetExpanderWidth(): loopint;
 begin
-   result := ItemHeight;
+   Result := ItemHeight;
 end;
 
 function wdgTHierarchyList.GetHorizontalItemOffset(index: loopint): loopint;
@@ -306,9 +306,9 @@ end;
 function wdgTHierarchyList.GetItem(index: loopint): pointer;
 begin
    if(index >= 0) and (index < Visible.n) then
-      result := Visible.List[index].Item
+      Result := Visible.List[index].Item
    else
-      result := nil;
+      Result := nil;
 end;
 
 function wdgTHierarchyList.GetSubItems(index: loopint; ref: pointer): TSimplePointerList;
@@ -326,7 +326,7 @@ begin
          exit(i);
    end;
 
-   result := -1;
+   Result := -1;
 end;
 
 procedure wdgTHierarchyList.ExpandTo(const items: TSimplePointerList; index: loopint; l: loopint);
