@@ -14,7 +14,7 @@ INTERFACE
       {$INCLUDE usesgl.inc},
       uLog, StringUtils,
       {ox}
-      uOX, oxuWindowTypes, {$IFNDEF OX_LIBRARY}oxuRunRoutines,{$ENDIF}
+      uOX, {$IFNDEF OX_LIBRARY}oxuRunRoutines,{$ENDIF}
       {gl}
       oxuglRenderer, oxuOGL, oxuglExtensions;
 
