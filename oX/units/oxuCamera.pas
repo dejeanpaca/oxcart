@@ -175,9 +175,9 @@ procedure oxTCamera.UpFromView();
 begin
    vUp := oxvCameraUp;
 
-   vRight := vUp.Cross(vView).Normalized();
+   vRight := vView.Cross(vUp).Normalized();
 
-   vUp := vView.Cross(vRight).Normalized();
+   vUp := vRight.Cross(vView).Normalized();
 end;
 
 procedure oxTCamera.GetRotationAngles(out v: TVector3f);
