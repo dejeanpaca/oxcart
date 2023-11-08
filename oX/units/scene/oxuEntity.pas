@@ -589,7 +589,7 @@ begin
       cur := self.Parent;
 
       repeat
-         cP := cP + cur.vScale;
+         cP := cP + cur.vPosition;
 
          cur := cur.Parent;
       until (cur = nil);
