@@ -11,7 +11,7 @@ INTERFACE
    USES
       sysutils, uStd, StringUtils, uLog, uSimpleParser, uFileUtils, ConsoleUtils,
       process, StreamIO,
-      uBuild, uBuildInstalls;
+      uBuild, uBuildInstalls, uBuildFPCConfig;
 
 TYPE
    { TBuildSystemExec }
@@ -209,7 +209,7 @@ begin
 
    p.Executable := build.GetExecutableName(platform^.Path + 'fpc');
 
-   parameters := build.GetFPCCommandLine();
+   parameters := BuildFPCConfiguration.GetFPCCommandLine();
 
    for i := 0 to High(parameters) do begin
       p.Parameters.Add(parameters[i]);
