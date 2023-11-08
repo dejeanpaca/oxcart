@@ -30,8 +30,6 @@ VAR
       ManualFileManagement: wdgTCheckbox;
    end;
 
-
-
 procedure saveCallback();
 var
    p: oxedTAndroidPlatform;
