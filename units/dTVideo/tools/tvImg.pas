@@ -7,8 +7,10 @@
 {$MODE OBJFPC}{$H+}{$I-}
 PROGRAM tvImg;
 
-   USES Crt, dStd, ConsoleUtils, dImage, dTGA, dBMP,
-   dJPEG, uTVideoImg, uTVideo, Video;
+   USES
+      uStd, ConsoleUtils, uImage,
+      {$INCLUDE ../../../components/dimg/units/imgIncludeAllLoaders.inc}
+      uTVideoImg, uTVideo, Video;
 
 CONST
    {operations}
