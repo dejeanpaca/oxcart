@@ -11,7 +11,7 @@ UNIT uiuPointerEvents;
 INTERFACE
 
    USES
-      uStd, uTiming,
+      sysutils, uStd, uTiming,
       {app}
       appuMouse, appuEvents, appuMouseEvents,
       {oX}
@@ -20,8 +20,21 @@ INTERFACE
       uiuWindowTypes, uiuWindow, uiuWidget, uiuTypes, uiWidgets, uiuControl, uiuCursor;
 
 TYPE
+   uiTPointerEvent = record
+      Time: TDateTime;
+      Target: uiTControl;
+      m: appTMouseEvent;
+   end;
+
+   { uiTPointerEventsGlobal }
+
    uiTPointerEventsGlobal = record
+      {last pointer events}
+      nEvents: loopint;
+      Events: array[0..5] of uiTPointerEvent;
+
       procedure Action(oxui: oxTUI; var event: appTEvent);
+      procedure AddEvent(t: uiTControl; m: appTMouseEvent);
    end;
 
 VAR
@@ -421,6 +434,9 @@ begin
 
    {if a button was pressed}
    if(m.Action <> appmcMOVED) then begin
+      {add current event}
+      AddEvent(oxui.mSelect.Selected, m);
+
       changeSelect := nil;
 
       {If the previously seleceted window is not the one currently selected.}
@@ -462,6 +478,29 @@ begin
       end;
    end else
       TryCaptureWindow();
+end;
+
+procedure uiTPointerEventsGlobal.AddEvent(t: uiTControl; m: appTMouseEvent);
+var
+   i: loopint;
+   event: uiTPointerEvent;
+
+begin
+   ZeroPtr(@event, SizeOf(event));
+   event.Time := Now;
+   event.Target := t;
+   event.m := m;
+
+   if(nEvents < High(Events) - 1) then
+      {we have room to add a new event}
+      inc(nEvents)
+   else begin
+      {move all events one place down the list}
+      for i := 0 to nEvents - 2 do
+         Events[i] := Events[i + 1];
+   end;
+
+   Events[nEvents - 1] := event;
 end;
 
 INITIALIZATION
