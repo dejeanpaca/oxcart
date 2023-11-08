@@ -18,7 +18,7 @@ INTERFACE
 
    USES
       sysutils, uStd, uLog, uSimpleParser, uFileUtils, ConsoleUtils,
-      process, StreamIO,
+      classes, process, StreamIO,
       StringUtils,
       uBuild, uBuildInstalls, uBuildFPCConfig
       {$IFDEF UNIX}, BaseUnix{$ENDIF};
@@ -133,6 +133,7 @@ begin
    except
       on e: Exception do begin
          log.e('build > Failed to execute lazbuild: ' + lazarus^.Path + ' (' + e.ToString() + ')');
+         StoreOutput(p);
          p.Free();
          exit;
       end;
@@ -373,9 +374,18 @@ begin
    Output.ExitCode := p.ExitCode;
 
    if(poUsePipes in p.Options) then begin
-      if(not (poStderrToOutPut in p.Options)) then begin
-         if(p.Stderr.NumBytesAvailable > 0) then
-            Output.ErrorDecription := p.Stderr.ReadAnsiString();
+      if(not (poStderrToOutPut in p.Options)) and (p.Stderr <> nil) then begin
+         try
+            p.Stderr.Seek(0, soBeginning);
+
+            if(p.Stderr.NumBytesAvailable > 0) then
+               Output.ErrorDecription := p.Stderr.ReadAnsiString();
+         except
+            on e : Exception do begin
+               log.e('build > Failed to read output: ' + e.ToString());
+               Output.ErrorDecription := '';
+            end;
+         end;
       end;
    end;
 end;
