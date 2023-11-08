@@ -33,8 +33,8 @@ TYPE
    oxTModelFile = class(oxTFileRW)
       class procedure Init(out options: oxTModelFileOptions); static;
 
-      function Load(const name: string): oxTModel;
-      function Load(var f: TFile; const fn: string = '.oxmdl'): oxTModel;
+      function Read(const name: string): oxTModel;
+      function Read(var f: TFile; const fn: string = '.oxmdl'): oxTModel;
 
       function OnRead(var data: oxTFileRWData): loopint; override;
    end;
@@ -52,7 +52,7 @@ begin
    options.ConvertQuads := true;
 end;
 
-function oxTModelFile.Load(const name: string): oxTModel;
+function oxTModelFile.Read(const name: string): oxTModel;
 var
    options: oxTModelFileOptions;
 
@@ -64,7 +64,7 @@ begin
    Result := options.Model;
 end;
 
-function oxTModelFile.Load(var f: TFile; const fn: string): oxTModel;
+function oxTModelFile.Read(var f: TFile; const fn: string): oxTModel;
 var
    options: oxTModelFileOptions;
 
@@ -82,7 +82,8 @@ var
 
 begin
    options := data.Options;
-   if(options^.Model = nil) then
+
+  if(options^.Model = nil) then
       options^.Model := oxModel.Instance();
 
    data.Handler^.CallHandler(@data);

@@ -70,7 +70,7 @@ end;
 procedure oxTModelComponent.LoadResources();
 begin
    if(Model = nil) then
-      Model := oxfModel.Load(Path);
+      Model := oxfModel.Read(Path);
 end;
 
 function oxTModelComponent.GetDescriptor(): oxPComponentDescriptor;
