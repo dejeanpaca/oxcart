@@ -17,7 +17,7 @@ INTERFACE
       oxuFont, oxuTypes,
       {ui}
       uiuControl, uiuControls, uiuWindowTypes, uiuSkinTypes,
-      oxuUI, uiuWidget, uiWidgets, uiuDraw,
+      oxuUI, uiuWidget, uiWidgets, uiuDraw, uiuTypes,
       wdguBase, wdguEmpty;
 
 TYPE
@@ -72,11 +72,12 @@ TYPE
 
          LastPointerPosition: oxTPoint;
 
-      constructor Create; override;
-      procedure DeInitialize; override;
+      constructor Create(); override;
+      procedure DeInitialize(); override;
 
       procedure Point(var {%H-}e: appTMouseEvent; {%H-}x, {%H-}y: longint); override;
       function Key(var k: appTKeyEvent): boolean; override;
+      procedure Hover(x, y: longint; what: uiTHoverEvent); override;
 
       procedure RenderHorizontal();
       procedure RenderVertical();
@@ -119,15 +120,18 @@ TYPE
 
       protected
          Tabs: record
+            Highlighted,
             Selected,
             Spacer,
             TotalWidth,
-            TotalHeight: longint;
+            TotalHeight: loopint;
 
             t: wdgTTabsPreallocatedArrayList;
          end;
 
-         function OnWhat(x, y: longint; out tabIndex: loopint): longint;
+         function GetHighlightedTab(): loopint;
+
+         function OnWhat(x, y: longint; out tabIndex: loopint): loopint;
          {recalculate and store various aspects of the tabs widget}
          procedure Recalculate();
          {setup the container holding the widgets}
@@ -176,10 +180,10 @@ begin
       Widgets := Tabs.Tabs.t.List[0].Widgets;
 end;
 
-function wdgTTabs.OnWhat(x, y: longint; out tabIndex: loopint): longint;
+function wdgTTabs.OnWhat(x, y: longint; out tabIndex: loopint): loopint;
 var
    current: wdgPTabEntry;
-   i: longint;
+   i: loopint;
 
 begin
    Result := ON_NOTHING;
@@ -220,7 +224,7 @@ begin
    end;
 end;
 
-constructor wdgTTabs.Create;
+constructor wdgTTabs.Create();
 begin
    inherited;
 
@@ -229,10 +233,11 @@ begin
    HeaderHeight := wdgTabs.HeaderHeight;
 
    Tabs.t.InitializeValues(Tabs.t);
+   Tabs.Highlighted := -1;
 end;
 
 
-procedure wdgTTabs.DeInitialize;
+procedure wdgTTabs.DeInitialize();
 var
    previousWidgets: uiTWidgets;
    i: loopint;
@@ -335,14 +340,27 @@ begin
    end;
 end;
 
+procedure wdgTTabs.Hover(x, y: longint; what: uiTHoverEvent);
+begin
+   if(what <> uiHOVER_NO) then begin
+      if(OnWhat(x, y, Tabs.Highlighted) <> ON_TAB_HEADER) then
+         Tabs.Highlighted := -1;
+   end else
+      Tabs.Highlighted := -1;
+end;
+
 procedure wdgTTabs.RenderHorizontal();
 var
    i,
    x,
-   y: longint;
+   y,
+   currentHighlight: longint;
+
    current: wdgPTabEntry;
+
    r: oxTRect;
    f: oxTFont;
+
    pSkin: uiTSkin;
 
 begin
@@ -363,6 +381,8 @@ begin
    if(Tabs.t.n < 1) then
       exit;
 
+   currentHighlight := GetHighlightedTab();
+
    {render tab titles}
    for i := 0 to (Tabs.t.n - 1) do begin
       current :=  @Tabs.t.List[i];
@@ -372,14 +392,14 @@ begin
       {draw the tab title border}
       SetColor(pSkin.Colors.Border);
 
-      if(Tabs.Selected <> i) then begin
+      if(currentHighlight <> i) then begin
          uiDraw.Rect(x, y - wdgTabs.HeaderNonSelectedDecrease,
             x + current^.TotalWidth - 1, y - HeaderHeight + 1)
       end else
          uiDraw.Rect(x, y, x + current^.TotalWidth - 1, y - HeaderHeight + 1);
 
       {fill the tab title surface}
-      if(Tabs.Selected <> i) then begin
+      if(currentHighlight <> i) then begin
          SetColor(pSkin.Colors.Surface.Darken(0.3));
 
          uiDraw.Box(x + 1, y - wdgTabs.HeaderNonSelectedDecrease - 1,
@@ -401,13 +421,13 @@ begin
       r.w := current^.TotalWidth;
 
       r.h := HeaderHeight;
-      if(Tabs.Selected <> i) then begin
+      if(currentHighlight <> i) then begin
          dec(r.y, wdgTabs.HeaderNonSelectedDecrease);
          dec(r.h, wdgTabs.HeaderNonSelectedDecrease);
       end;
 
       f.Start();
-         if(Tabs.Selected <> i) then
+         if(currentHighlight <> i) then
             SetColorBlended(pSkin.Colors.Text)
          else
             SetColorBlended(pSkin.Colors.TextInHighlight);
@@ -422,10 +442,14 @@ procedure wdgTTabs.RenderVertical();
 var
    i,
    x,
-   y: loopint;
+   y,
+   currentHighlight: loopint;
+
    current: wdgPTabEntry;
+
    f: oxTFont;
    r: oxTRect;
+
    pSkin: uiTSkin;
 
 begin
@@ -446,6 +470,8 @@ begin
    if(Tabs.t.n < 1) then
       exit;
 
+   currentHighlight := GetHighlightedTab();
+
    {render tab titles}
    for i := 0 to (Tabs.t.n - 1) do begin
       current :=  @Tabs.t.List[i];
@@ -455,14 +481,14 @@ begin
       {draw the tab title border}
       SetColor(pSkin.Colors.Border);
 
-         if(Tabs.Selected <> i) then begin
+         if(currentHighlight <> i) then begin
          uiDraw.Rect(x + wdgTabs.HeaderNonSelectedDecrease, y,
             x + current^.TotalWidth - 1, y - current^.TotalHeight + 1)
       end else
          uiDraw.Rect(x, y, x + current^.TotalWidth - 1, y - current^.TotalHeight + 1);
 
       {fill the tab title surface}
-      if(Tabs.Selected <> i) then begin
+      if(currentHighlight <> i) then begin
          SetColor(pSkin.Colors.Surface.Darken(0.3));
 
          uiDraw.Box(x + 1 + wdgTabs.HeaderNonSelectedDecrease, y - 1,
@@ -483,13 +509,13 @@ begin
       r.y := RPosition.y - current^.y;
 
       r.h := HeaderHeight;
-      if(Tabs.Selected <> i) then
+      if(currentHighlight <> i) then
          dec(r.h, wdgTabs.HeaderNonSelectedDecrease);
 
       r.w := current^.TotalWidth;
 
       f.Start();
-         if(Tabs.Selected <> i) then
+         if(currentHighlight <> i) then
             SetColorBlended(pSkin.Colors.Text)
          else
             SetColorBlended(pSkin.Colors.TextInHighlight);
@@ -777,6 +803,13 @@ end;
 procedure wdgTTabs.OnTabSecondaryClick(index: loopint);
 begin
 
+end;
+
+function wdgTTabs.GetHighlightedTab(): loopint;
+begin
+   Result := Tabs.Selected;
+   if(Tabs.Highlighted > -1) then
+      Result := Tabs.Highlighted;
 end;
 
 INITIALIZATION
