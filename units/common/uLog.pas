@@ -635,7 +635,9 @@ begin
          if(IsConsole) then
             writeln('Failed to initialize stdlog(' + stdlog.FileName + '). Error: ', stdlog.Error, ',', stdlog.IoError);
          {$ELSE}
+         {$IFNDEF NOLOG}
          loge('Failed to initialize stdlog(' + stdlog.FileName + '). Error: ' + sf(stdlog.Error) + ',' + sf(stdlog.IoError));
+         {$ENDIF}
          {$ENDIF}
       end;
    end;
@@ -759,7 +761,7 @@ begin
       end;
    end;
    {$ELSE}
-   h := @log.Handler.Dummy;
+   Handler := @log.Handler.Dummy;
    FileName   := fn;
    LogHeader  := logh;
    FileMode   := mode;
