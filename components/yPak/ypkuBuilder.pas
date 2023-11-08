@@ -74,6 +74,7 @@ var
 
    hdr: ypkfTHeader;
    f: TFile;
+   ypkf: ypkTFile;
 
 procedure raiseError(const description: string);
 begin
@@ -127,9 +128,12 @@ begin
    fFile.Init(f);
    f.New(OutputFN);
 
+   ypkTFile.Initialize(ypkf);
+   ypkf.f := @f;
+
    {copy source files to ypk file}
    if(f.Error = 0) then begin
-      ypkf.WriteHeader(f, hdr);
+      ypkf.WriteHeader(hdr);
 
       if(f.Error <> 0) then begin
          raiseError('Failed to write ypk file header');
@@ -137,7 +141,7 @@ begin
       end;
 
       if(sb.Total > 0) then begin
-         ypkf.WriteBlob(f, sb.Blob, sb.Total);
+         ypkf.WriteBlob(sb.Blob, sb.Total);
 
          if(f.Error <> 0) then begin
             raiseError('Failed to write blob (' + sf(sb.Total) + ') to ypk ' + f.GetErrorString());
@@ -146,7 +150,7 @@ begin
       end;
 
       if(entries.n > 0) then begin
-         ypkf.WriteEntries(f, entries);
+         ypkf.WriteEntries(entries);
 
          if(f.Error <> 0) then begin
             raiseError('Failed to write entries to ypk ' + f.GetErrorString());

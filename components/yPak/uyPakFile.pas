@@ -66,59 +66,64 @@ TYPE
 
    ypkfTEntries = specialize TSimpleList<ypkfTEntry>;
 
-   { ypkfTGlobal }
+   { ypkTFile }
 
-   ypkfTGlobal = record
+   ypkTFile = record
       Error: loopint;
+      f: PFile;
 
       { ERROR HANDLING }
       procedure eRaise(e: longint);
       function eGet(): longint;
       procedure eReset();
 
-      procedure InitializeHeader(out hdr: ypkfTHeader);
+      class procedure Initialize(out ypkf: ypkTFile); static;
+
+      class procedure InitializeHeader(out hdr: ypkfTHeader); static;
 
       { HEADER }
-      procedure ReadHeader(var f: TFile; out hdr: ypkfTHeader);
-      procedure WriteHeader(var f: TFile; const hdr: ypkfTHeader);
+      procedure ReadHeader(out hdr: ypkfTHeader);
+      procedure WriteHeader(const hdr: ypkfTHeader);
 
       { ENTRIES }
-      function ReadEntries(var f: TFile; var e: ypkfTEntries; count: longint): fileint;
-      procedure WriteEntries(var f: TFile; var e: ypkfTEntries);
+      function ReadEntries(var e: ypkfTEntries; count: longint): fileint;
+      procedure WriteEntries(var e: ypkfTEntries);
 
       { FILENAMES BLOB }
-      function ReadBlob(var f: TFile; out blob: PByte; size: fileint): fileint;
-      function WriteBlob(var f: TFile; var blob: PByte; size: fileint): fileint;
+      function ReadBlob(out blob: PByte; size: fileint): fileint;
+      function WriteBlob(var blob: PByte; size: fileint): fileint;
    end;
 
 CONST
    ypkHEADER_SIZE       = SizeOf(ypkfTHeader);
    ypkENTRY_SIZE        = SizeOf(ypkfTEntry);
 
-VAR
-   ypkf: ypkfTGlobal;
-
 IMPLEMENTATION
 
 { ERROR HANDLING }
 
-procedure ypkfTGlobal.eRaise(e: longint);
+procedure ypkTFile.eRaise(e: longint);
 begin
    Error := e;
 end;
 
-function ypkfTGlobal.eGet(): longint;
+function ypkTFile.eGet(): longint;
 begin
    result := error;
    Error := 0;
 end;
 
-procedure ypkfTGlobal.eReset();
+procedure ypkTFile.eReset();
 begin
    Error := 0;
 end;
 
-procedure ypkfTGlobal.InitializeHeader(out hdr: ypkfTHeader);
+class procedure ypkTFile.Initialize(out ypkf: ypkTFile);
+begin
+   ZeroOut(ypkf, SizeOf(ypkf));
+end;
+
+class procedure ypkTFile.InitializeHeader(out hdr: ypkfTHeader);
 begin
    ZeroOut(hdr, SizeOf(hdr));
 
@@ -129,11 +134,11 @@ end;
 
 { HEADER }
 
-procedure ypkfTGlobal.ReadHeader(var f: TFile; out hdr: ypkfTHeader);
+procedure ypkTFile.ReadHeader(out hdr: ypkfTHeader);
 begin
-   f.Read(hdr, SizeOf(hdr));
+   f^.Read(hdr, SizeOf(hdr));
 
-   if(f.Error = 0) then begin
+   if(f^.Error = 0) then begin
       { check if it is a valid and supported file }
       if(hdr.ID = ypkID) then begin
          if(hdr.Endian = ypkENDIAN) then begin
@@ -146,14 +151,14 @@ begin
    end;
 end;
 
-procedure ypkfTGlobal.WriteHeader(var f: TFile; const hdr: ypkfTHeader);
+procedure ypkTFile.WriteHeader(const hdr: ypkfTHeader);
 begin
-   f.Write(hdr, SizeOf(hdr));
+   f^.Write(hdr, SizeOf(hdr));
 end;
 
 { ENTRIES }
 
-function ypkfTGlobal.ReadEntries(var f: TFile; var e: ypkfTEntries; count: longint): fileint;
+function ypkTFile.ReadEntries(var e: ypkfTEntries; count: longint): fileint;
 begin
    if(count > 0) then begin
       e.n := count;
@@ -164,19 +169,19 @@ begin
          exit(eNO_MEMORY);
       end;
 
-      f.Read(e.List[0], int64(count) * ypkENTRY_SIZE);
+      f^.Read(e.List[0], int64(count) * ypkENTRY_SIZE);
    end;
 
    Result := eNONE;
 end;
 
-procedure ypkfTGlobal.WriteEntries(var f: TFile; var e: ypkfTEntries);
+procedure ypkTFile.WriteEntries(var e: ypkfTEntries);
 begin
    if(e.n > 0) then
-      f.Write(e.List[0], int64(e.n) * ypkENTRY_SIZE);
+      f^.Write(e.List[0], int64(e.n) * ypkENTRY_SIZE);
 end;
 
-function ypkfTGlobal.ReadBlob(var f: TFile; out blob: PByte; size: fileint): fileint;
+function ypkTFile.ReadBlob(out blob: PByte; size: fileint): fileint;
 begin
    Result := 0;
 
@@ -185,16 +190,16 @@ begin
    if(size > 0) then begin
       XGetMem(blob, size);
 
-      Result := f.Read(blob^, size);
+      Result := f^.Read(blob^, size);
    end;
 end;
 
-function ypkfTGlobal.WriteBlob(var f: TFile; var blob: PByte; size: fileint): fileint;
+function ypkTFile.WriteBlob(var blob: PByte; size: fileint): fileint;
 begin
    Result := 0;
 
    if(size > 0) and (blob <> nil) then
-      Result := f.Write(blob^, size);
+      Result := f^.Write(blob^, size);
 end;
 
 END.
