@@ -571,6 +571,7 @@ var
    pf: PFileDescriptor;
    br: oxTRect;
 
+   glyphOffset: oxTPoint;
    glyph: wdgTListGlyph;
 
 begin
@@ -619,10 +620,11 @@ begin
                height := r.w - (padding * 2);
 
             height := height - textSize;
+            glyphOffset := r.CenterInside(height, textSize + height);
 
             oxRender.BlendDefault();
             SetColorBlended(glyph.Color);
-            uiDrawUtilities.Glyph(r.x + ((r.w - height) div 2), r.y - ((r.h - textSize - height) div 2), height, height, glyph.Glyph);
+            uiDrawUtilities.Glyph(r.x + glyphOffset.x, r.y - glyphOffset.y, height, height, glyph.Glyph);
 
             br.y := br.y - r.h + textSize - fh div 2;
          end;
