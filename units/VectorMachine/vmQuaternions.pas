@@ -17,6 +17,7 @@ TYPE
 
 CONST
    vmqZero: TQuaternion = (0.0, 0.0, 0.0, 0.0);
+   vmqIdentity: TQuaternion = (0.0, 0.0, 0.0, 1.0);
 
 {create a quaternion from a axis and angle}
 function vmqFromAxisAngle(const axis: TVector3; degree: single): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
@@ -34,9 +35,15 @@ procedure vmqFromMatrixAlt(const m: TMatrix4; var qt: TQuaternion); {$IFDEF VM_I
 function vmqSLERP(var q1, q2: TQuaternion; t: single): TQuaternion; {$IFDEF VM_INLINE}inline;{$ENDIF}
 {calculate a quaternion from Euler angle representation}
 procedure vmqFromEuler(roll, pitch, yaw: single; out q: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
+{calculate a quaternion from Euler angle representation}
+procedure vmqFromEuler(const v: TVector3f; out q: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
+{calculate a quaternion from Euler angle representation in degrees}
+procedure vmqFromEulerDeg(x, y, z: single; out q: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
+procedure vmqFromEulerDeg(const v: TVector3f; out q: TQuaternion); {$IFDEF VM_INLINE}inline;{$ENDIF}
 {returns the three Euler angles from a quaternion as a vector}
 function vmqToEuler(var q: TQuaternion): TVector3;
 procedure vmqToEuler(var q: TQuaternion; out v: TVector3);
+procedure vmqToEulerDeg(var q: TQuaternion; out v: TVector3);
 
 {calculate the magnitude of a quaternion}
 function vmqMagnitude(var q: TQuaternion): single; {$IFDEF VM_INLINE}inline;{$ENDIF}
@@ -258,6 +265,28 @@ begin
    q[3] := cr * cpcy + sr * spsy; {w}   
 end;
 
+procedure vmqFromEuler(const v: TVector3f; out q: TQuaternion);
+begin
+   vmqFromEuler(v[0], v[1], v[2], q);
+end;
+
+procedure vmqFromEulerDeg(x, y, z: single; out q: TQuaternion);
+begin
+   vmqFromEuler(x * vmcToRad, y * vmcToRad, z * vmcToRad, q);
+end;
+
+procedure vmqFromEulerDeg(const v: TVector3f; out q: TQuaternion);
+var
+   vd: TVector3f;
+
+begin
+   vd[0] := v[0] * vmcToRad;
+   vd[1] := v[1] * vmcToRad;
+   vd[2] := v[2] * vmcToRad;
+
+   vmqFromEuler(vd, q);
+end;
+
 function vmqToEuler(var q: TQuaternion): TVector3;
 var
    r11, r21, r31, r32, r33, r12, r13,
@@ -323,6 +352,15 @@ begin
    v[0] := arctan2(r32, r33) * vmcToDeg;
    v[1] := arcsin(-r31) * vmcToDeg;
    v[2] := arctan2(r21, r11) * vmcToDeg;
+end;
+
+procedure vmqToEulerDeg(var q: TQuaternion; out v: TVector3);
+begin
+   vmqToEuler(q, v);
+
+   v[0] := v[0] * vmcToDeg;
+   v[1] := v[1] * vmcToDeg;
+   v[2] := v[2] * vmcToDeg;
 end;
 
 function vmqMagnitude(var q: TQuaternion): single; {$IFDEF VM_INLINE}inline;{$ENDIF}
