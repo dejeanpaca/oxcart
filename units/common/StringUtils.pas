@@ -220,10 +220,12 @@ function CopyToDel(var s: string; const chars: array of char): string;
 function CopyToDel(var s: string): string;
 {copy until the specified character is found and delete from string}
 function CopyToDel(var s: string; c: char): string;
+{copy until given chars and delete from string}
+function CopyToDel(var s: StdString; const chars: array of char): StdString;
 {copy until white space and delete from string}
-function CopyToDel(var s: StdString): string;
+function CopyToDel(var s: StdString): StdString;
 {copy until the specified character is found and delete from string}
-function CopyToDel(var s: StdString; c: char): string;
+function CopyToDel(var s: StdString; c: char): StdString;
 
 {copy everything after the first whitespace}
 function CopyAfter(const s: string): string;
@@ -235,9 +237,9 @@ function CopyAfterDel(var s: string): string;
 {copy everything after the first occurence of the specified character, and delete it from string (including the character)}
 function CopyAfterDel(var s: string; c: char): string;
 {copy everything after the first whitespace, and delete it from string (including whitespace)}
-function CopyAfterDel(var s: StdString): string;
+function CopyAfterDel(var s: StdString): StdString;
 {copy everything after the first occurence of the specified character, and delete it from string (including the character)}
-function CopyAfterDel(var s: StdString; c: char): string;
+function CopyAfterDel(var s: StdString; c: char): StdString;
 
 {add the specified leading character to make the string have length n}
 procedure AddLeadingPadding(var s: shortstring; c: char; n: longint);
@@ -1640,7 +1642,37 @@ begin
       Result := '';
 end;
 
-function CopyToDel(var s: StdString): string;
+function CopyToDel(var s: StdString; const chars: array of char): StdString;
+var
+   i,
+   c,
+   slen: longint;
+
+begin
+   if(High(chars) = 0) then
+      exit(s);
+
+   slen := length(s);
+   Result := '';
+
+   if(slen > 0) then begin
+      i := 1;
+
+      while (i <= slen) do begin
+         for c := 0 to high(chars) do begin
+            if(s[i] = chars[c]) then begin
+               Result := copy(s, 1, i - 1);
+               delete(s, 1, i);
+               exit;
+            end;
+         end;
+
+         inc(i);
+      end;
+   end;
+end;
+
+function CopyToDel(var s: StdString): StdString;
 var
    i,
    slen: longint;
@@ -1659,7 +1691,7 @@ begin
       Result := '';
 end;
 
-function CopyToDel(var s: StdString; c: char): string;
+function CopyToDel(var s: StdString; c: char): StdString;
 var
    i,
    slen: longint;
@@ -1752,7 +1784,7 @@ begin
       Result := '';
 end;
 
-function CopyAfterDel(var s: StdString): string;
+function CopyAfterDel(var s: StdString): StdString;
 var
    i,
    slen: longint;
@@ -1771,7 +1803,7 @@ begin
       Result := '';
 end;
 
-function CopyAfterDel(var s: StdString; c: char): string;
+function CopyAfterDel(var s: StdString; c: char): StdString;
 var
    i,
    slen: longint;
