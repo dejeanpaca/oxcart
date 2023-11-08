@@ -11,7 +11,7 @@ INTERFACE
    USES
       uStd, StringUtils, uLog, uColors, uComponentProvider, uThreads, vmVector,
       {ox}
-      oxuRunRoutines, oxuTypes, oxuResourcePool,
+      uOX, oxuRunRoutines, oxuTypes, oxuResourcePool,
       oxuTexture, oxuRenderer, oxuRenderers, oxuShader;
 
 CONST
@@ -274,9 +274,9 @@ var
 
 begin
    if(ValuePool <> nil) and (index > -1) then begin
-      assert(Shader <> nil, 'Shader not set but trying to set value for material ' + Name);
-      assert(Values <> nil, 'Values not set but trying to set value for material ' + Name);
-      assert(ValueIndexes <> nil, 'Values not set but trying to set value for material ' + Name);
+      ox.assert(Shader <> nil, 'Shader not set but trying to set value for material ' + Name);
+      ox.assert(Values <> nil, 'Values not set but trying to set value for material ' + Name);
+      ox.assert(ValueIndexes <> nil, 'Values not set but trying to set value for material ' + Name);
 
       size := Shader.GetUniformSize(index);
       position := ValuePool + ValueIndexes[index];
