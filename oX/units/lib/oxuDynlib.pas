@@ -68,14 +68,14 @@ begin
    oxLibrary := oxTLibrary.Create();
    oxLibrary.LibraryInstances := @oxuGlobalInstances.oxGlobalInstances;
 
-   result := oxLibrary;
+   Result := oxLibrary;
 end;
 
 procedure ox_library_unload();
 begin
    FreeObject(oxLibrary);
 
-   log.v('ox library unloaded');
+   log.v('lib > unloaded');
 end;
 
 function ox_library_version(): string;
@@ -97,29 +97,33 @@ end;
 function oxTLibrary.Initialize(): boolean;
 begin
    ErrorState := false;
-
-   {$IFDEF OX_LIBRARY}
-   log.w('ox library initialize start');
-   {$ENDIF}
    consoleLog.LogEndTimeDate := false;
 
    if(GlobalInstances <> nil) then begin
       GlobalInstances^.CopyOverReferences(oxuGlobalInstances.oxGlobalInstances);
       oxExternalGlobalInstances := Self.GlobalInstances;
 
+      {$IFDEF OX_LIBRARY}
+      log.i('lib > copied global instances');
+      {$ENDIF}
+
+      {$IFDEF OX_LIBRARY}
+      log.i('lib > initialize start');
+      {$ENDIF}
+
       oxRun.Initialize();
 
       exit(ox.Initialized);
    end else
-      log.e('ox library global instances reference not set');
+      log.e('lib > global instances reference not set');
 
-   result := false;
+   Result := false;
 end;
 
 function oxTLibrary.Start(): boolean;
 begin
    if(ox.Initialized) then begin
-      log.i('ox library initialized');
+      log.i('lib > initialized');
 
       oxRun.Start();
    end;
@@ -134,12 +138,12 @@ begin
 
    oxInitialization.DeInitialize();
 
-   log.i('ox library deinitialized');
+   log.i('lib > deinitialized');
 end;
 
 function oxTLibrary.GetAppInfo(): appPInfo;
 begin
-   result := @appInfo;
+   Result := @appInfo;
 end;
 
 function oxTLibrary.IsAppActive(): boolean;
