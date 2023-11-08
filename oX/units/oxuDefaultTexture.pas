@@ -92,18 +92,15 @@ begin
 end;
 {$ENDIF}
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
    oxDefaultTexture.Load := true;
 
    oxGlobalInstances.Add('oxTDefaultTextureGlobal', @oxDefaultTexture);
 
    {$IFNDEF OX_LIBRARY}
-   ox.BaseInit.Add(initRoutines, 'default_texture', @load, @dispose);
+   ox.BaseInit.Add('default_texture', @load, @dispose);
    {$ELSE}
-   ox.BaseInit.Add(initRoutines, 'default_texture', @loadLibrary);
+   ox.BaseInit.Add('default_texture', @loadLibrary);
    {$ENDIF}
 
 END.

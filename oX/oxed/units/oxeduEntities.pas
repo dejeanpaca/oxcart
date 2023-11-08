@@ -131,11 +131,8 @@ begin
    entities.OnComponentAdd.Add(@componentAdd);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'oxed.entities', @init, @deinit);
+   ox.Init.Add('oxed.entities', @init, @deinit);
 
    oxTEntityCallbacks.InitializeValues(oxedEntities.OnCreate);
    oxTEntityCallbacks.InitializeValues(oxedEntities.OnDestroy);

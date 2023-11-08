@@ -104,13 +104,10 @@ begin
    oxTime.Tick();
 end;
 
-VAR
-   tickRoutine: oxTRunRoutine;
-
 INITIALIZATION
    oxTTime.Initialize(oxTime);
    oxTTime.Initialize(oxBaseTime);
 
-   ox.OnRun.Add(tickRoutine, 'ox.tick', @tick);
+   ox.OnRun.Add('ox.tick', @tick);
 
 END.

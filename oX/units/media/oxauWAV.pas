@@ -132,10 +132,7 @@ begin
    oxfAudio.Readers.RegisterExt(ext, '.wav', @handler);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'audio_wav', @init);
+   ox.Init.Add('audio_wav', @init);
 
 END.

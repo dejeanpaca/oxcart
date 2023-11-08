@@ -119,9 +119,6 @@ begin
       uiWindowContextMenu.TargetWnd := nil;
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 { uiTWindowContextMenuWindow }
 
 procedure uiTWindowContextMenuWindow.DeInitialize();
@@ -132,7 +129,7 @@ begin
 end;
 
 INITIALIZATION
-   ui.InitializationProcs.dAdd(initRoutines, 'ui.window_context_menu', @DeInitialize);
+   ui.InitializationProcs.dAdd('ui.window_context_menu', @DeInitialize);
    uiPointerEvents.OpenContextWindow := @openContextWindow;
    uiWindow.OnDestroy.Add(@windowDestroyed);
 

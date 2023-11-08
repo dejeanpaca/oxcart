@@ -242,11 +242,8 @@ begin
    FreeObject(dlgSave);
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.dAdd(oxedInitRoutines, 'oxed.projectdialog', @deinitialize);
+   oxed.Init.dAdd('oxed.projectdialog', @deinitialize);
 
    oxedActions.OPEN_PROJECT := appActionEvents.SetCallback(@oxedProjectDialog.OpenDialog);
    oxedActions.NEW_PROJECT := appActionEvents.SetCallback(@oxedProjectManagement.New);

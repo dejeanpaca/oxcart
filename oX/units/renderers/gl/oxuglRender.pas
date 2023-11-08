@@ -323,8 +323,7 @@ begin
 end;
 
 VAR
-   renderInitRoutines,
-   initRoutines: oxTRunRoutine;
+   glInitRoutines: oxTRunRoutine;
 
 procedure renderInit();
 var
@@ -346,7 +345,7 @@ begin
    oglRender := oglTRender.Create();
 
    oxglRenderer.components.RegisterComponent('render', @componentReturn);
-   oxglRenderer.AfterInit.Add(renderInitRoutines, 'render', @renderInit);
+   oxglRenderer.AfterInit.Add(glInitRoutines, 'render', @renderInit);
 end;
 
 procedure deinit();
@@ -355,6 +354,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add(initRoutines, 'ox.gl.render', @init, @deinit);
+   ox.PreInit.Add('ox.gl.render', @init, @deinit);
 
 END.

@@ -249,11 +249,8 @@ begin
       appActionEvents.Queue(oxedActions.RUN_PLAY);
 end;
 
-VAR
-   projectRunRoutine: oxTRunRoutine;
-
 INITIALIZATION
-   oxRun.AddRoutine(projectRunRoutine, 'oxed.project', @projectRun);
+   oxRun.AddRoutine('oxed.project', @projectRun);
 
    TProcedures.InitializeValues(oxedProjectRunner.OnAfterInitialize);
    TProcedures.InitializeValues(oxedProjectRunner.OnStart);

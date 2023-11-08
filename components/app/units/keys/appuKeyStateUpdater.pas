@@ -17,9 +17,6 @@ INTERFACE
 
 IMPLEMENTATION
 
-VAR
-   runRoutine: oxTRunRoutine;
-
 procedure run();
 begin
    appk.UpdateCycle();
@@ -27,6 +24,6 @@ end;
 
 
 INITIALIZATION
-   oxRun.AddPreRoutine(runRoutine, 'app.keystateupdater', @run);
+   oxRun.AddPreRoutine('app.keystateupdater', @run);
 
 END.

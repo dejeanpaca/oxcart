@@ -211,16 +211,13 @@ begin
    Result := sf(index) + 'x' + sf(column);
 end;
 
-VAR
-   initRoutine: oxTRunRoutine;
-
 BEGIN
    appInfo.SetName('UI Test');
    appInfo.SetVersion(1, 0, 0);
 
    oxwndSplash.Link := 'https://www.google.hr';
 
-   ox.OnInitialize.Add(initRoutine, 'ui', @onInitialize, @onDeinitialize);
+   ox.OnInitialize.Add('ui', @onInitialize, @onDeinitialize);
    InitWindow();
 
    oxRun.Go();

@@ -108,15 +108,12 @@ begin
       oxwndSplash.Close();
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
    oxwndSplash.OnInit.Add(@InitSplash);
    oxwndSplash.ShowBuildInformation := true;
    oxwndSplash.ImageFileName := 'oxed' + DirectorySeparator + 'data' + DirectorySeparator + 'oxed.jpg';
 
-   ui.BaseInitializationProcs.dAdd(initRoutines, 'oxed.splash', @DeInitialize);
+   ui.BaseInitializationProcs.dAdd('oxed.splash', @DeInitialize);
 
    oxedMenubar.OnInit.Add(@initMenu);
 

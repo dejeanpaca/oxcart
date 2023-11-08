@@ -74,15 +74,11 @@ begin
    end;
 end;
 
-VAR
-   updateRoutine: oxTRunRoutine;
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
    TTimerInterval.Initialize(interval);
 
-   oxed.PostInit.Add(oxedInitRoutines, 'status_info', @initialize);
+   oxed.PostInit.Add('status_info', @initialize);
 
-   ox.OnRun.Add(updateRoutine, 'oxed.update_status_info', @updateInfo);
+   ox.OnRun.Add('oxed.update_status_info', @updateInfo);
 
 END.

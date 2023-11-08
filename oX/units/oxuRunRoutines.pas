@@ -25,6 +25,11 @@ TYPE
       Next: pointer;
    end;
 
+   oxTRunRoutinePool = record
+      count: loopint;
+      all: array[0..2047] of oxTRunRoutine;
+   end;
+
    { oxTRunRoutines }
 
    oxTRunRoutines = record
@@ -46,9 +51,18 @@ TYPE
       procedure dAdd(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
       procedure Add(out routine: oxTRunRoutine; const name: string; exec: TProcedure);
       procedure Add(out routine: oxTRunRoutine; const name: string; init, deinit: TProcedure);
+
+      function GetFromPool(): oxPRunRoutine;
+
+      procedure dAdd(const name: string; exec: TProcedure);
+      procedure Add(const name: string; exec: TProcedure);
+      procedure Add(const name: string; init, deinit: TProcedure);
    end;
 
 IMPLEMENTATION
+
+VAR
+   pool: oxTRunRoutinePool;
 
 { oxTRunRoutines }
 
@@ -203,5 +217,55 @@ begin
    Add(routine, name, init);
    routine.Secondary := deinit;
 end;
+
+function oxTRunRoutines.GetFromPool(): oxPRunRoutine;
+begin
+   Result := @pool.all[pool.count];
+   ZeroPtr(Result, SizeOf(oxTRunRoutine));
+   inc(pool.count);
+end;
+
+procedure oxTRunRoutines.dAdd(const name: string; exec: TProcedure);
+var
+   r: oxPRunRoutine;
+
+begin
+   r := GetFromPool();
+
+   r^.Name := name;
+   r^.Secondary := exec;
+
+   Add(r^);
+end;
+
+procedure oxTRunRoutines.Add(const name: string; exec: TProcedure);
+var
+   r: oxPRunRoutine;
+
+begin
+   r := GetFromPool();
+
+   r^.Name := name;
+   r^.Exec := exec;
+
+   Add(r^);
+end;
+
+procedure oxTRunRoutines.Add(const name: string; init, deinit: TProcedure);
+var
+   r: oxPRunRoutine;
+
+begin
+   r := GetFromPool();
+
+   r^.Name := name;
+   r^.Exec := init;
+   r^.Secondary := deinit;
+
+   Add(r^);
+end;
+
+INITIALIZATION
+   pool.count := 0;
 
 END.

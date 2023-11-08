@@ -285,10 +285,7 @@ begin
    oxglRenderer.components.RegisterComponent('shader', @componentReturn);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.PreInit.Add(initRoutines, 'ox.gl.shader', @init);
+   ox.PreInit.Add('ox.gl.shader', @init);
 
 END.

@@ -104,14 +104,9 @@ begin
    oxglRenderer.OnWindowInit.Add(@initWindow);
 end;
 
-{$IFNDEF OX_LIBRARY}
-VAR
-   initRoutines: oxTRunRoutine;
-{$ENDIF}
-
 INITIALIZATION
    {$IFNDEF OX_LIBRARY}
-   ox.PreInit.Add(initRoutines, 'ox.gl.debug_output', @init);
+   ox.PreInit.Add('ox.gl.debug_output', @init);
    {$ENDIF}
 
 END.

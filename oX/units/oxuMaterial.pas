@@ -978,12 +978,9 @@ begin
    oxCurrentMaterial := oxMaterial.Default;
 end;
 
-VAR
-   initRoutine: oxTRunRoutine;
-
 INITIALIZATION
    oxRenderers.PostUseRoutines.Add(@onUse);
-   oxRenderers.Init.dAdd(initRoutine, 'material', @deinit);
+   oxRenderers.Init.dAdd('material', @deinit);
 
    Threads.GetHandlerIndex(@threadInitialize);
 

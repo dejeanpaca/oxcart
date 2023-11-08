@@ -324,10 +324,7 @@ begin
    FreeObject(oxwndDVarEditor);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'ox.wnd.dvar_edit', @initialize, @deinitialize);
+   ox.Init.Add('ox.wnd.dvar_edit', @initialize, @deinitialize);
 
 END.

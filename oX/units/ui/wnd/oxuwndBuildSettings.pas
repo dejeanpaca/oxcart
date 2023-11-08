@@ -134,10 +134,7 @@ begin
    oxwndSettings.PreAddTabs.Add(@PreAddTabs);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'settings', @init);
+   ox.Init.Add('settings', @init);
 
 END.

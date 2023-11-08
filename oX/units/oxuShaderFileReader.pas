@@ -142,10 +142,7 @@ begin
    oxfShader.Readers.RegisterExt(ext, '.oxs', @handler);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'shader_reader', @init);
+   ox.Init.Add('shader_reader', @init);
 
 END.

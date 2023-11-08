@@ -130,11 +130,6 @@ begin
    Result := oxTScene.Create();
 end;
 
-{$IFNDEF OX_LIBRARY}
-VAR
-   initRoutines: oxTRunRoutine;
-{$ENDIF}
-
 INITIALIZATION
    oxSceneManagement.Enabled := True;
 
@@ -147,7 +142,7 @@ INITIALIZATION
    oxSceneManagement.Serialization.Inherits := oxEntity.Serialization;
 
    {$IFNDEF OX_LIBRARY}
-   ox.Init.Add(initRoutines, 'ox.scene', @init, @deinit);
+   ox.Init.Add('ox.scene', @init, @deinit);
    {$ENDIF}
 
 FINALIZATION

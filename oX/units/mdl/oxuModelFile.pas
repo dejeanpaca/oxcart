@@ -100,11 +100,7 @@ begin
    FreeObject(oxfModel);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-
-   ox.Init.Add(initRoutines, 'model_file', @init, @deinit);
+   ox.Init.Add('model_file', @init, @deinit);
 
 END.

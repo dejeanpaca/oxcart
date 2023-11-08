@@ -111,10 +111,7 @@ begin
    FreeObject(oxwndSystemInformation);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'ox.system_information', @initialize, @deinitialize);
+   ox.Init.Add('ox.system_information', @initialize, @deinitialize);
 
 END.

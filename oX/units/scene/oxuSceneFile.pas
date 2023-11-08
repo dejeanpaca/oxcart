@@ -119,10 +119,7 @@ begin
    FreeObject(oxfScene);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'scene_file', @init, @deinit);
+   ox.Init.Add('scene_file', @init, @deinit);
 
 END.

@@ -233,11 +233,8 @@ begin
    end;
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.dAdd(oxedInitRoutines, 'oxed.window', @deinit);
+   oxed.Init.dAdd('oxed.window', @deinit);
 
    oxedWindows.InitializeValues(oxedWindows);
 

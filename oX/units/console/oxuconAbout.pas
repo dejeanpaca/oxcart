@@ -60,10 +60,7 @@ begin
    console.Selected^.AddCommand('about', @command);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'console.about', @Initialize);
+   ox.Init.Add('console.about', @Initialize);
 
 END.

@@ -230,9 +230,6 @@ begin
    FreeObject(oxedTests.Task);
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
    dvgOXED.Add('tests', dvgTests);
    dvgTests.Add(dvIncludeOx, 'include_ox', dtcBOOL, @oxedTests.IncludeOx);
@@ -241,7 +238,7 @@ INITIALIZATION
    TProcedures.InitializeValues(oxedTests.OnTaskStart);
    TProcedures.InitializeValues(oxedTests.OnTaskDone);
 
-   oxed.Init.Add(oxedInitRoutines, 'plugin.tests', @init, @deinit);
+   oxed.Init.Add('plugin.tests', @init, @deinit);
    oxedPlugins.Add('Tests', 'Testing framework');
 
 END.

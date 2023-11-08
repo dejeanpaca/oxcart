@@ -40,9 +40,6 @@ begin
    FreeObject(oxTexturePool);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 { oxTTexturePool }
 
 constructor oxTTexturePool.Create();
@@ -53,6 +50,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'texture-pool', @init, @deinit);
+   ox.Init.Add('texture-pool', @init, @deinit);
 
 END.

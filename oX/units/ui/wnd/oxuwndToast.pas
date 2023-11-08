@@ -251,12 +251,10 @@ begin
    FreeObject(oxToast);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
    wdgidLABEL := uiControl.GetID('toast.label');
    wdgidTITLE := uiControl.GetID('toast.label');
 
-   ox.Init.Add(initRoutines, 'toast', @initToast, @deInitToast);
+   ox.Init.Add('toast', @initToast, @deInitToast);
+
 END.

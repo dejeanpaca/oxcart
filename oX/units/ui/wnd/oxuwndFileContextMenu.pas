@@ -345,10 +345,7 @@ begin
    OpenMenu := Menu;
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ui.BaseInitializationProcs.Add(initRoutines, 'ox.wnd.file_context_menu', @init, @deinit);
+   ui.BaseInitializationProcs.Add('ox.wnd.file_context_menu', @init, @deinit);
 
 END.

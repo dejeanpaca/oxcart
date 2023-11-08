@@ -52,9 +52,6 @@ begin
    Result := uiWindowsPlatform;
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 procedure init();
 var
     p: oxTWindowsPlatform;
@@ -72,6 +69,6 @@ begin
 end;
 
 INITIALIZATION
-   oxPlatforms.OnComponent.Add(initRoutines, 'ui.win.platform', @init, @deinit);
+   oxPlatforms.OnComponent.Add('ui.win.platform', @init, @deinit);
 
 END.

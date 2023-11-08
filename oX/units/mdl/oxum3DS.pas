@@ -731,10 +731,7 @@ begin
    oxfModel.Readers.RegisterExt(m3DSExt, '.3ds', @m3DSLoader);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'model.3ds', @init);
+   ox.Init.Add('model.3ds', @init);
 
 END.

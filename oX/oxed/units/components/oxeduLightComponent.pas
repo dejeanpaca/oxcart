@@ -48,10 +48,7 @@ begin
    FreeObject(oxedLightEditRenderer);
 end;
 
-VAR
-   initRoutine: oxTRunRoutine;
-
 INITIALIZATION
-   oxedEditRenderers.Init.Add(initRoutine, 'light', @init, @deinit);
+   oxedEditRenderers.Init.Add('light', @init, @deinit);
 
 END.

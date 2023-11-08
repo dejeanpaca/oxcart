@@ -408,10 +408,7 @@ begin
    FreeObject(oxedwndProjectSettings);
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'oxed.project_settings', @init, @deinit);
+   oxed.Init.Add('oxed.project_settings', @init, @deinit);
 
 END.

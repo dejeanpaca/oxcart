@@ -249,11 +249,8 @@ begin
    FreeObject(oxedwndTests);
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'ox.settings', @init, @deinit);
+   oxed.Init.Add('ox.settings', @init, @deinit);
    oxedMenubar.OnInit.Add(@menubarInit);
 
    oxedTests.OnTaskStart.Add(@update);

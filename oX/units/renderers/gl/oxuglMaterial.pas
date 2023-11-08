@@ -33,10 +33,7 @@ begin
    oxglRenderer.components.RegisterComponent('material', @componentReturn);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.PreInit.Add(initRoutines, 'ox.gl.material', @init);
+   ox.PreInit.Add('ox.gl.material', @init);
 
 END.

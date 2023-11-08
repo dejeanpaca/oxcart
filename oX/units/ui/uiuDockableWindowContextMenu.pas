@@ -99,11 +99,8 @@ begin
    uiTDockableWindowContextMenuWindow(uiContextMenu.LastWindow).TabIndex := index;
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ui.BaseInitializationProcs.Add(initRoutines, 'ui.dockable_window', @init, @deinit);
+   ui.BaseInitializationProcs.Add('ui.dockable_window', @init, @deinit);
 
    {self destroy windows by default}
    uiDockableWindow.SelfDestroy := true;

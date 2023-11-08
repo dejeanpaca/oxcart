@@ -502,8 +502,6 @@ begin
    oxTFreetypeManager.Deinitialize();
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
 {$ENDIF}
 
 INITIALIZATION
@@ -511,7 +509,7 @@ INITIALIZATION
       CopyOverReference := true;
 
    {$IFNDEF OX_LIBRARY}
-   ox.Init.Add(initRoutines, 'ox.freetype', @initialize, @deinitialize);
+   ox.Init.Add('ox.freetype', @initialize, @deinitialize);
    {$ENDIF}
 
 END.

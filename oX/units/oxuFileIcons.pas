@@ -140,11 +140,8 @@ begin
    oxFileIcons.Icons.Dispose();
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.dAdd(initRoutines, 'ox.file_icons', @deinit);
+   ox.Init.dAdd('ox.file_icons', @deinit);
    oxFileIcons.Icons.Initialize(oxFileIcons.Icons);
 
 END.

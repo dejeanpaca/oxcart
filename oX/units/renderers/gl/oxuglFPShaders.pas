@@ -44,8 +44,7 @@ CONST
    fpuMax = 2;
 
 VAR
-   glInitRoutines,
-   initRoutines: oxTRunRoutine;
+   glInitRoutines: oxTRunRoutine;
 
 { oxglTFPShader }
 
@@ -136,6 +135,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add(initRoutines, 'ox.gl.render', @preinit);
+   ox.PreInit.Add('ox.gl.render', @preinit);
 
 END.

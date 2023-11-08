@@ -137,10 +137,7 @@ begin
    oglTextureGenerate.Free();
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.PreInit.Add(initRoutines, 'ox.gl.texture_generate', @init, @deinit);
+   ox.PreInit.Add('ox.gl.texture_generate', @init, @deinit);
 
 END.

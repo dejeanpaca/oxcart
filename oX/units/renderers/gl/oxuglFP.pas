@@ -33,7 +33,6 @@ VAR
 IMPLEMENTATION
 
 VAR
-   initRoutines,
    glInitRoutines: oxTRunRoutine;
 
 { oxglTFP }
@@ -54,6 +53,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.PreInit.Add(initRoutines, 'ox.gl.fos', @init);
+   ox.PreInit.Add('ox.gl.fos', @init);
 
 END.

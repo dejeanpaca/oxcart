@@ -70,10 +70,7 @@ begin
    FreeObject(oxfShader);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'shader_file', @init, @deinit);
+   ox.Init.Add('shader_file', @init, @deinit);
 
 END.

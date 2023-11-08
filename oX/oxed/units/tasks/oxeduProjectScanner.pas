@@ -208,11 +208,8 @@ begin
    oxedProjectScanner.Run();
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'project_scanner', @oxedProjectScanner.Initialize, @deinit);
+   oxed.Init.Add('project_scanner', @oxedProjectScanner.Initialize, @deinit);
 
    TProcedures.InitializeValues(oxedProjectScanner.OnStart);
    TProcedures.InitializeValues(oxedProjectScanner.OnDone);

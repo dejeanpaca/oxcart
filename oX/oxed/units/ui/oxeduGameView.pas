@@ -231,11 +231,8 @@ begin
    projectPointer := nil;
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'scene.game', @init, @deinit);
+   oxed.Init.Add('scene.game', @init, @deinit);
    oxedMenubar.OnInit.Add(@initMenubar);
 
    oxedProjectRunner.OnBeforeStart.Add(@beforeProjectStart);

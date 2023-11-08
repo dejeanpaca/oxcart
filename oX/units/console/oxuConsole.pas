@@ -727,13 +727,9 @@ begin
    oxConsole.SetFont(oxui.GetDefaultFont());
 end;
 
-VAR
-   initRoutines,
-   uiInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'console', @Initialize, @DeInitialize);
-   ui.InitializationProcs.Add(uiInitRoutines, 'console', @uiInitialize);
+   ox.Init.Add('console', @Initialize, @DeInitialize);
+   ui.InitializationProcs.Add('console', @uiInitialize);
 
    oxConsole.Height        := 0.6;
    oxConsole.IbHeight      := 20;

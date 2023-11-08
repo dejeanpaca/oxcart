@@ -47,10 +47,7 @@ begin
    FreeObject(oxedCameraEditRenderer);
 end;
 
-VAR
-   initRoutine: oxTRunRoutine;
-
 INITIALIZATION
-   oxedEditRenderers.Init.Add(initRoutine, 'camera', @init, @deinit);
+   oxedEditRenderers.Init.Add('camera', @init, @deinit);
 
 END.

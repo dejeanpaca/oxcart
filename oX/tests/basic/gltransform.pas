@@ -143,11 +143,8 @@ begin
    primitive.Dispose();
 end;
 
-var
-   initRoutine: oxTRunRoutine;
-
 INITIALIZATION
-   ox.OnInitialize.Add(initRoutine, 'init', @init, @deinit);
+   ox.OnInitialize.Add('init', @init, @deinit);
 
    oxSceneManagement.Enabled := false;
 

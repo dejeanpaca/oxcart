@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       oxuRunRoutines,
       {ui}
-      uiuBase, oxuUI, uiuTypes, uiuWidget, uiuSkinTypes, uiuSkin;
+      uiuBase, uiuTypes, uiuWidget, uiuSkinTypes, uiuSkin, oxuUI;
 
 TYPE
 
@@ -33,7 +33,7 @@ TYPE
       WidgetClasses: uiTWidgetClasses;
 
       {registers a widget class}
-      procedure RegisterClass(var wc: uiTWidgetClass);
+         procedure RegisterClass(var wc: uiTWidgetClass);
 
       procedure SetupDefaultWidget(skin: uiTSkin);
 
@@ -89,6 +89,8 @@ begin
 
       skin := oxui.GetDefaultSkin();
 
+      writeln('shit');
+
       if(WidgetClasses[n]^.SkinDescriptor <> nil) then
          uiSkin.SetupWidget(skin, skin.wdgSkins[n], WidgetClasses[n]^.SkinDescriptor^);
    end;
@@ -97,6 +99,7 @@ end;
 procedure uiTRegisteredWidgets.SetupDefaultWidget(skin: uiTSkin);
 begin
    if(nWidgetTypes > 0) then begin
+      writeln('WTF');
       SetLength(skin.wdgSkins, nWidgetTypes);
 
       ZeroOut(skin.wdgSkins[0], int64(SizeOf(uiTWidgetSkin)) * int64(nWidgetTypes));
@@ -145,7 +148,7 @@ begin
    Init(self, CopyAfter(name, '.'));
 
    if(initProc <> nil) then begin
-      ui.BaseInitializationProcs.Add(InitRoutines, name, initProc, deinitProc);
+      ui.WidgetInitializationProcs.Add(InitRoutines, name, initProc, deinitProc);
    end;
 
    inc(uiRegisteredWidgets.nWidgetTypes);
@@ -164,14 +167,12 @@ end;
 
 procedure skinInitialize();
 begin
+   writeln('but why');
    uiRegisteredWidgets.SetupDefaultWidget(oxui.GetDefaultSkin());
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ui.BaseInitializationProcs.Add(initRoutines, 'widget.skin', @skinInitialize);
+   ui.BaseInitializationProcs.Add('widget.skin', @skinInitialize);
 
    InitDummyWidgetClass();
 

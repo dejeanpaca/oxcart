@@ -40,13 +40,8 @@ begin
    end;
 end;
 
-VAR
-   initRoutines,
-   routine: oxTRunRoutine;
-
 INITIALIZATION
-   oxRun.AddRoutine(routine, 'ox.lib.update_input', @updateInput);
-
-   ox.Init.iAdd(initRoutines, 'ox.lib.update_input', @init);
+   oxRun.AddRoutine('ox.lib.update_input', @updateInput);
+   ox.Init.iAdd('ox.lib.update_input', @init);
 
 END.

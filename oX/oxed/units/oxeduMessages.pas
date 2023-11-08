@@ -101,10 +101,7 @@ begin
    con.Clear();
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'messages', @init, @deinit);
+   oxed.Init.Add('messages', @init, @deinit);
 
 END.

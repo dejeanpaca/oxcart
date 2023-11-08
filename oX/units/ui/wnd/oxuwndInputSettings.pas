@@ -79,10 +79,7 @@ begin
    oxwndSettings.PostAddTabs.Add(@addTabs);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'ox.wnd:settings.input', @init);
+   ox.Init.Add('ox.wnd:settings.input', @init);
 
 END.

@@ -75,14 +75,11 @@ begin
    end;
 end;
 
-VAR
-   updateRoutine: oxTRunRoutine;
-
 INITIALIZATION
    oxedMenubar.OnInit.Add(@initialize);
    oxedMenubar.OnDeInit.Add(@deinitialize);
    oxedMenubar.OnResize.Add(@oxedMenuToolbar.OnResize);
 
-   ox.OnRun.Add(updateRoutine, 'oxed.menubar_update', @updateFramerate);
+   ox.OnRun.Add('oxed.menubar_update', @updateFramerate);
 
 END.

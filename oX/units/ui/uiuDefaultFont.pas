@@ -90,9 +90,6 @@ begin
 end;
 {$ENDIF}
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
    uiDefaultFont.Path := oxPaths.Fonts + 'Inconsolata.ttf';
    uiDefaultFont.Size := 12;
@@ -100,9 +97,9 @@ INITIALIZATION
    oxGlobalInstances.Add('uiTDefaultFontManager', @uiDefaultFont);
 
    {$IFNDEF OX_LIBRARY}
-   ui.InitializationProcs.Add(initRoutines, 'default_font', @initialize, @deinitialize);
+   ui.InitializationProcs.Add('default_font', @initialize, @deinitialize);
    {$ELSE}
-   ui.InitializationProcs.Add(initRoutines, 'default_font', @initializeLibrary);
+   ui.InitializationProcs.Add('default_font', @initializeLibrary);
    {$ENDIF}
 
 END.

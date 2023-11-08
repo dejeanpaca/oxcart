@@ -209,11 +209,9 @@ begin
    oxedProblems.Clear();
 end;
 
-VAR
-   oxedInitRoutines: oxTRunRoutine;
 
 INITIALIZATION
-   oxed.Init.Add(oxedInitRoutines, 'scene.Problems', @init, @deinit);
+   oxed.Init.Add('scene.Problems', @init, @deinit);
    oxedMenubar.OnInit.Add(@initMenubar);
 
    oxedProjectRunner.OnBeforeStart.Add(@onStart);

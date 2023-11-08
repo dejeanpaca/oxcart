@@ -84,10 +84,7 @@ begin
    oxKey.UpRoutine := @TTestTools.DefaultKeyUp;
 end;
 
-VAR
-   initRoutine: oxTRunRoutine;
-
 INITIALIZATION
-   ox.OnInitialize.Add(initRoutine, 'test_tools', @init);
+   ox.OnInitialize.Add('test_tools', @init);
 
 END.

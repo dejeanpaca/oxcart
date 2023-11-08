@@ -51,10 +51,7 @@ begin
    FreeObject(oxNilRenderer);
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.PreInit.Add(initRoutines, 'ox.gl.renderer', @init, @deinit);
+   ox.PreInit.Add('ox.gl.renderer', @init, @deinit);
 
 END.

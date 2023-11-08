@@ -198,9 +198,6 @@ begin
    oxPaths.List.Dispose();
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
    oxPaths.Data         := oxDataPath;
    oxPaths.Textures     := oxTexturesDefaultPath;
@@ -210,9 +207,9 @@ INITIALIZATION
 
    oxPaths.List.Initialize(oxPaths.List);
    {$IFNDEF OX_LIBRARY}
-   ox.PreInit.Add(initRoutines, 'ox.paths', @init, @deinit);
+   ox.PreInit.Add('ox.paths', @init, @deinit);
    {$ELSE}
-   ox.PreInit.Add(initRoutines, 'ox.paths', @initLibrary, @deinit);
+   ox.PreInit.Add('ox.paths', @initLibrary, @deinit);
    {$ENDIF}
 
    oxGlobalInstances.Add('oxTPaths', @oxPaths);

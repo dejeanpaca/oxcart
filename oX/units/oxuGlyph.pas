@@ -175,10 +175,7 @@ begin
    oxGlyphs.Destroy();
 end;
 
-VAR
-   initRoutines: oxTRunRoutine;
-
 INITIALIZATION
-   ox.Init.Add(initRoutines, 'ox.glyphs', @init, @deinit);
+   ox.Init.Add('ox.glyphs', @init, @deinit);
 
 END.

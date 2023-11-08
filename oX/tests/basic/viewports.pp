@@ -20,9 +20,6 @@ VAR
    primitive: oxTPrimitiveModel;
    projections: array[0..3] of oxTProjection;
 
-   initRoutines,
-   runRoutine: oxTRunRoutine;
-
 procedure RenderScene(var projection: oxTProjection);
 var
    f: oxTFont;
@@ -105,8 +102,8 @@ end;
 BEGIN
    appInfo.setName('Viewports');
 
-   ox.OnInitialize.Add(initRoutines, 'init', @initialize, @deinitialize);
-   ox.OnRun.Add(runRoutine, 'run', @run);
+   ox.OnInitialize.Add('init', @initialize, @deinitialize);
+   ox.OnRun.Add('run', @run);
 
    oxRun.Go();
 END.
