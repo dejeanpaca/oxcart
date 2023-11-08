@@ -220,8 +220,8 @@ begin
    mSelect.l             := -1;
    Select.l              := -1;
 
-   mSelectHoverTime := timer.Cur();
-   mLastEventTime := timer.Cur();
+   mSelectHoverTime := TTimer.Current();
+   mLastEventTime := TTimer.Current();
 end;
 
 procedure uiTUI.Start();

@@ -101,7 +101,7 @@ procedure oxuiTToastWindow.Update();
 begin
    inherited;
 
-   if(Duration > 0) and (timer.Cur() - StartTime > Duration) then
+   if(Duration > 0) and (TTimer.Current() - StartTime > Duration) then
       CloseQueue();
 end;
 
@@ -225,7 +225,7 @@ begin
          duration    := oxcTOAST_DURATION_NORMAL;
 
       oxuiTToastWindow(Window).Duration := Durations[duration];
-      oxuiTToastWindow(Window).StartTime := timer.Cur();
+      oxuiTToastWindow(Window).StartTime := TTimer.Current();
    end;
 end;
 

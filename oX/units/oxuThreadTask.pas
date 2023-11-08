@@ -323,7 +323,7 @@ end;
 
 procedure oxTThreadTask.Start();
 begin
-   StartTime := timer.Cur();
+   StartTime := TTimer.Current();
 
    if(Started) then
       exit;

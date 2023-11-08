@@ -129,7 +129,7 @@ begin
       if(Progress.ShowProgressWith = oxPROGRESS_INDICATOR_NONE) then begin
          if(Speed <> 0) then begin
             r.w := round((Dimensions.w - 2) / 3);
-            cur := timer.Cur() mod Speed;
+            cur := TTimer.Current() mod Speed;
 
             p := 1 / Speed * cur;
 

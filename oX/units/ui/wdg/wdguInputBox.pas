@@ -263,7 +263,7 @@ begin
 
    {render the input cursor}
    if(not CustomDrawnCursor) then begin
-      if IsEnabled() and IsSelected() and (timer.Cur() mod 1000 > 500) then begin
+      if IsEnabled() and IsSelected() and (TTimer.Current() mod 1000 > 500) then begin
          SetColor(wdgscINPUT_CURSOR);
 
          if(InputCursorType = wdgINPUT_BOX_CURSOR_NORMAL) then

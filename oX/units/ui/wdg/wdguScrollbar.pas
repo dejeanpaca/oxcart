@@ -355,7 +355,7 @@ begin
    inherited;
 
    Standard();
-   timer.Init(OpacityStart);
+   TTimer.Init(OpacityStart);
 end;
 
 procedure wdgTScrollbar.Point(var e: appTMouseEvent; x, y: longint);
