@@ -145,11 +145,11 @@ TYPE
 
       { INPUT }
       {translate a key event into a character}
-      function Translate(var k: appTKey): char;
+      function Translate(const k: appTKey): char;
 
       {Return a platform translated character based on the key record. Useful if the platform translation code
       returns characters for keys you might want to handle differently (tab, enter)}
-      function Translate(var k: appTKey; c: char): char;
+      function Translate(const k: appTKey; c: char): char;
 
       {KEYBOARD ROUTINES}
       {checks whether any of the SHIFT keys is being held or not}
@@ -368,7 +368,7 @@ end;
 
 { INPUT }
 
-function appTKeyGlobal.Translate(var k: appTKey): char;
+function appTKeyGlobal.Translate(const k: appTKey): char;
 var
    shiftPressed: boolean = false;
    isCaps: boolean = false;
@@ -479,7 +479,7 @@ begin
    end;
 end;
 
-function appTKeyGlobal.Translate(var k: appTKey; c: char): char;
+function appTKeyGlobal.Translate(const k: appTKey; c: char): char;
 var
    shiftPressed: boolean = false;
    isCaps: boolean = false;

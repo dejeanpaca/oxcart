@@ -68,7 +68,7 @@ TYPE
       procedure SetCursor({%H-}cursorType: uiTCursorType); virtual;
 
       {translate key into character}
-      function TranslateKey(k: appTKeyEvent): char; virtual;
+      function TranslateKey(const k: appTKeyEvent): char; virtual;
 
       {checks if the platform supports a file trash/recycle mechanism}
       function FileTrashCapability(): boolean; virtual;
@@ -232,7 +232,7 @@ procedure oxTPlatform.SetCursor(cursorType: uiTCursorType);
 begin
 end;
 
-function oxTPlatform.TranslateKey(k: appTKeyEvent): char;
+function oxTPlatform.TranslateKey(const k: appTKeyEvent): char;
 begin
    Result := appk.Translate(k.Key);
 end;
