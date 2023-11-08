@@ -13,7 +13,7 @@ INTERFACE
    USES
       uStd, uColors, StringUtils,
       {oX}
-      oxuTypes, oxuTexture, uiuTypes;
+      oxuTypes, oxuTexture, uiuTypes, oxuResourcePool;
 
 TYPE
    { SKINS }
@@ -151,7 +151,7 @@ TYPE
       Bools: array of uiTWidgetSkinBool;
       Strings: TStringArray;
 
-      procedure setColor(which: longint; var clr: TColor4ub);
+      procedure SetColor(which: longint; var clr: TColor4ub);
    end;
 
 
@@ -177,12 +177,16 @@ TYPE
    uiTSkin = class
       Name: string;
       Window: uiTWindowSkin;
+      {path for this skins resources}
+      ResourcePath: string;
 
       {widget skins}
       wdgSkins: array of uiTWidgetSkin;
 
       Colors,
       DisabledColors: uiTSkinColorSet;
+
+      destructor Destroy(); override;
 
       function Get(cID: longint): uiPWidgetSkin;
    end;
@@ -201,6 +205,13 @@ end;
 
 { uiTSkin }
 
+destructor uiTSkin.Destroy();
+begin
+   inherited Destroy;
+
+   oxResource.Destroy(Window.Textures.Background);
+end;
+
 function uiTSkin.Get(cID: longint): uiPWidgetSkin;
 begin
    if(wdgSkins <> nil) and (cID >= 0) and (cID < Length(wdgSkins)) then
@@ -211,7 +222,7 @@ end;
 
 { uiTWidgetSkin }
 
-procedure uiTWidgetSkin.setColor(which: longint; var clr: TColor4ub);
+procedure uiTWidgetSkin.SetColor(which: longint; var clr: TColor4ub);
 begin
    if(Colors <> nil) then
       Colors[which] := clr;
