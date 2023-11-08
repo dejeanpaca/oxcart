@@ -14,9 +14,10 @@ INTERFACE
       {app}
       uStd, appuKeys,
       {oX}
-      uOX, oxuTypes, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
+      oxuTypes, {$IFNDEF NO_OXCONSOLE}oxuConsoleBackend,{$ENDIF}
       {ui}
-      uiuWindow, uiWidgets, uiuControl, uiuWidget,
+      uiuWindow, uiWidgets, uiuControl, uiuWidget, uiuKeyMappings,
+      {wnd}
       oxuwndSettingsBase, oxuwndBase,
       {widgets}
       wdguLabel, wdguInputBox, wdguButton, wdguDropDownList, wdguDivisor, wdguCheckbox, wdguList,
@@ -370,7 +371,7 @@ begin
 
    inherited Create;
 
-   ox.KeyMappings.AddKey('ox.open_project_settings', 'Open project settings', kcS, kmSHIFT or kmALT)^.
+   oxKeyMappings.AddKey('ox.open_project_settings', 'Open project settings', kcS, kmSHIFT or kmALT)^.
       Action := OpenWindowAction;
 
    OnValidate.Add(@validateCallback);
