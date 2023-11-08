@@ -97,6 +97,8 @@ begin
    WindowInstance := oglTWindow;
    {$IFNDEF OX_LIBRARY}
    PlatformInstance := glSystemPlatform;
+   {$ELSE}
+   Name := Name + ' Lib';
    {$ENDIF}
 
    {no support for render scaling for classic gl}
