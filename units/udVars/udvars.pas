@@ -56,7 +56,7 @@ TYPE
 
       Result: loopint;
 
-      procedure Initialize(out c: TDVarNotificationContext);
+      class procedure Initialize(out c: TDVarNotificationContext); static;
    end;
 
    {a type of routine which is notified when something is done on a dvar}
@@ -249,7 +249,7 @@ IMPLEMENTATION
 
 { TDVarNotificationContext }
 
-procedure TDVarNotificationContext.Initialize(out c: TDVarNotificationContext);
+class procedure TDVarNotificationContext.Initialize(out c: TDVarNotificationContext);
 begin
    ZeroPtr(@c, SizeOf(c));
 end;
