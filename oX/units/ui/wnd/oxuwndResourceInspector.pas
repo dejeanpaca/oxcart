@@ -148,10 +148,10 @@ end;
 
 constructor oxTResourceInspectorWindow.Create();
 begin
-   ID := uiControl.GetID('ox.dvar_editor');
+   ID := uiControl.GetID('ox.resource_inspector');
    Width := 480;
    Height := 360;
-   Title := 'DVar Editor';
+   Title := 'Resource inspector';
    Instance := oxuiTResourceInspectorWindow;
 
    inherited Create;
@@ -185,6 +185,6 @@ begin
 end;
 
 INITIALIZATION
-   ox.Init.Add('ox.wnd.dvar_edit', @initialize, @deinitialize);
+   ox.Init.Add('ox.wnd.resource_inspector', @initialize, @deinitialize);
 
 END.
