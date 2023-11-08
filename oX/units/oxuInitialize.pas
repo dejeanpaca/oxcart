@@ -185,7 +185,7 @@ begin
    {$IF NOT DEFINED(OX_LIBRARY)}
       {$IFNDEF NO_THREADS}
       {get an additional rendering context}
-      oxRenderer.GetContext(oxWindow.Current);
+      oxRenderer.GetRenderingContext(oxWindow.Current);
       {$ENDIF}
 
       {$IF NOT DEFINED(MOBILE)}
