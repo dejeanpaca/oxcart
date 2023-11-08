@@ -633,9 +633,15 @@ begin
 
    uBuild.build.Options.IsLibrary := oxedBuild.BuildTarget = OXED_BUILD_LIB;
 
-   if(uBuild.build.Options.IsLibrary) then
-      BuildLPI(oxPROJECT_LIB_LPI)
-   else
+   if(uBuild.build.Options.IsLibrary) then begin
+      {check if used fpc version matches us}
+      if(uBuild.build.CurrentPlatform^.Version <> FPC_VERSION) then begin
+         oxedMessages.e('Library fpc version mismatch. Got ' + uBuild.build.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
+         exit;
+      end;
+
+      BuildLPI(oxPROJECT_LIB_LPI);
+   end else
       BuildLPI(oxPROJECT_MAIN_LPI);
 
    if(build.Output.Success) then begin
