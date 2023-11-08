@@ -71,8 +71,8 @@ end;
 
 procedure appTInfo.SetName(const n, o: StdString);
 begin
-   setName(n);
-   setOrganization(o);
+   SetName(n);
+   SetOrganization(o);
 end;
 
 procedure appTInfo.SetVersion(major: longword; minor: longint; fix: longint; revision: longint);

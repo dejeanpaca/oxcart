@@ -111,7 +111,7 @@ begin
 end;
 
 INITIALIZATION
-   appInfo.setOrganization('ox');
+   appInfo.SetOrganization('ox');
 
    dvar.Add('ox', ox.dvar);
    ox.dvar.Add(dv_version, 'version', dtcSTRING, @ox_version);
