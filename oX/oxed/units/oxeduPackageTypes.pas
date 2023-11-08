@@ -45,7 +45,9 @@ TYPE
       procedure AddUnit(const unitFile: oxedTPackageUnit);
 
       {add a new path}
-      function New(const p: StdString): oxedPPackagePath;
+      function Get(const p: StdString): oxedPPackagePath;
+      {add a new path}
+      function NewPath(const p: StdString): oxedPPackagePath;
       {find an existing path (if any)}
       function FindPackagePath(const p: StdString): oxedPPackagePath;
 
@@ -90,30 +92,30 @@ var
    p: oxedPPackagePath;
 
 begin
-   if(unitFile.Path <> '') then begin
-      unitPath := ExtractFilePath(unitFile.Path);
+   unitPath := ExtractFilePath(unitFile.Path);
 
-      writeln(unitFile.Name);
-
-      p := New(unitPath);
-      p^.Units.Add(unitFile.Name);
-   end;
+   p := Get(unitPath);
+   p^.Units.Add(unitFile.Name);
 end;
 
-function oxedTPackagePathsHelper.New(const p: StdString): oxedPPackagePath;
+function oxedTPackagePathsHelper.Get(const p: StdString): oxedPPackagePath;
+begin
+   Result := FindPackagePath(p);
+
+   if(Result = nil) then
+      Result := NewPath(p);
+end;
+
+function oxedTPackagePathsHelper.NewPath(const p: StdString): oxedPPackagePath;
 var
    units: oxedTPackagePath;
 
 begin
-   Result := FindPackagePath(p);
+   oxedTPackagePath.Initialize(units);
+   units.Path := p;
 
-   if(Result = nil) then begin
-      oxedTPackagePath.Initialize(units);
-      units.Path := p;
-
-      Add(units);
-      Result := GetLast();
-   end;
+   Add(units);
+   Result := GetLast();
 end;
 
 function oxedTPackagePathsHelper.FindPackagePath(const p: StdString): oxedPPackagePath;
