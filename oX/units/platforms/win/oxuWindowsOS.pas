@@ -83,6 +83,8 @@ TYPE
 
       function MessageBox(wParent: uiTWindow; const Title, Say: StdString;
          Style: uiTMessageBoxStyle; Buttons: longword): longword;
+
+      function LoadIcon(const fn: StdString; w: windows.UINT = 0; h: windows.UINT = 0; flags: windows.UINT = 0): HICON;
    end;
 
 VAR
@@ -185,6 +187,15 @@ begin
       IDIGNORE:   Result := uimbcIGNORE;
       IDABORT:    Result := uimbcABORT;
    end;
+end;
+
+function winTWindowsOSGlobal.LoadIcon(const fn: StdString; w: windows.UINT; h: windows.UINT; flags: windows.UINT): HICON;
+begin
+   if(w = 0) or (h = 0) then
+      flags := flags or LR_DEFAULTSIZE;
+
+   Result := Windows.LoadImage(0, pchar(fn), IMAGE_ICON, 0, 0,
+      LR_LOADFROMFILE or flags);
 end;
 
 END.
