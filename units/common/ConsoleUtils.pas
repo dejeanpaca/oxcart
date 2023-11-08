@@ -397,6 +397,8 @@ var
    clr: byte;
 
 begin
+   SetConsoleCP(CP_UTF8);
+
    if(pos('bash', sysutils.GetEnvironmentVariable('SHELL')) > 0) then begin
       console.ansiSupported := true;
       exit;
