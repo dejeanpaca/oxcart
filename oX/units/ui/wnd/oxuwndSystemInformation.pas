@@ -44,17 +44,32 @@ var
    btnClose: wdgTButton;
 
 begin
-   {add the label}
-   wdgDivisor.Add('Information', uiWidget.LastRect.BelowOf());
+   wdgDivisor.Add('OS Information', uiWidget.LastRect.BelowOf());
+   wdgLabel.Add('OS: ' + appSI.SystemName);
 
-   wdgLabel.Add('CPU: ' + appSI.GetProcessorName());
-   wdgLabel.Add('Memory: ' + appSI.GetMemorySize());
+   if(appSI.SystemDeviceName <> '') then
+      wdgLabel.Add('System: ' + appSI.SystemDeviceName);
+
+   {$IFNDEF WINDOWS}
+   wdgLabel.Add('Kernel: ' + appSI.KernelVersion);
+   {$ENDIF}
+
+   wdgDivisor.Add('Hardware Information', uiWidget.LastRect.BelowOf());
+
+   if(appSI.HasProcessorInfo) then begin
+      wdgLabel.Add('CPU: ' + appSI.GetProcessorName());
+      wdgLabel.Add('CPU Vendor: ' + appSI.GetProcessorVendor());
+      wdgLabel.Add('CPU Model: ' + appSI.GetProcessorModel());
+   end;
+
+   if(appSI.HasMemoryInfo) then begin
+      wdgLabel.Add('Memory: ' + appSI.GetMemorySize());
+   end;
 
    wdgDivisor.Add('Renderer Information', uiWidget.LastRect.BelowOf());
    wdgLabel.Add(oxRenderer.GetSummary(oxTWindow(Window.oxwParent)),
       uiWidget.LastRect.BelowOf(), oxNullDimensions);
 
-   {add a cancel button}
    btnClose := wdgButton.Add('Close', uiWidget.LastRect.BelowOf(), oxDimensions(80, 20), @Close);
 
    Window.ContentAutoSize();
