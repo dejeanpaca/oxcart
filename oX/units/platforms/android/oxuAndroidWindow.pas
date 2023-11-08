@@ -11,16 +11,10 @@ INTERFACE
    USES
       egl,
       {oX}
-      oxuWindowTypes;
+      oxuEGLWindow;
 
 TYPE
-   androidTWindow = class(oxTWindow)
-      wd: record
-         Surface: EGLSurface;
-         Context: EGLContext;
-         Display: EGLDisplay;
-         Config: EGLConfig;
-      end;
+   androidTWindow = class(eglTWindow)
    end;
 
 IMPLEMENTATION
