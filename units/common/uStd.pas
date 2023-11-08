@@ -1315,9 +1315,8 @@ begin
    {$IFDEF WINDOWS}
    Result := UTF8Encode(GetEnvironmentVariable(UnicodeString(v)));
    {$ELSE}
-   // Result := GetEnvironmentVariable(v);
+   Result := GetEnvironmentVariable(v);
    {$ENDIF}
-   writeln('Result: ', Result);
 end;
 
 procedure UTF8Assign(var f: text; const fn: UTF8String);
