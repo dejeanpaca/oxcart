@@ -75,7 +75,6 @@ TYPE
 
       protected
       procedure SizeChanged(); override;
-      procedure RPositionChanged; override;
    end;
 
    oxedTSimpleSceneWindowsList = specialize TSimpleList<oxedTSceneWindow>;
@@ -325,12 +324,6 @@ begin
    UpdateSceneRenderWidget();
 end;
 
-procedure oxedTSceneWindow.RPositionChanged;
-begin
-   inherited RPositionChanged;
-
-   UpdateSceneRenderWidget();
-end;
 
 procedure resetCamera();
 begin
