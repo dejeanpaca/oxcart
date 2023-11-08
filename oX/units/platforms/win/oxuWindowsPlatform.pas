@@ -340,6 +340,9 @@ begin
             SmallInt(hi(lParam)) - oxPlatform.TitleHeight(wnd), false);
       end;
 
+      WM_SIZE:
+         wnd.SetDimensions(lo(LParam), hi(LParam), false);
+
       {a key has been pressed}
       WM_KEYDOWN, WM_KEYUP, WM_SYSKEYDOWN, WM_SYSKEYUP:
          queueKeyEvent(wnd, AMessage, WParam, LParam);
