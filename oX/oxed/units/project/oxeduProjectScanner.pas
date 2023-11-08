@@ -214,9 +214,9 @@ VAR
 INITIALIZATION
    oxed.Init.Add(oxedInitRoutines, 'project_scanner', @oxedProjectScanner.Initialize, @deinit);
 
-   TProcedures.Initialize(oxedProjectScanner.OnStart);
-   TProcedures.Initialize(oxedProjectScanner.OnDone);
-   oxedTProjectScannerFileProcedures.Initialize(oxedProjectScanner.OnFile);
+   TProcedures.InitializeValues(oxedProjectScanner.OnStart);
+   TProcedures.InitializeValues(oxedProjectScanner.OnDone);
+   oxedTProjectScannerFileProcedures.InitializeValues(oxedProjectScanner.OnFile);
 
    oxedProjectManagement.OnOpen.Add(@projectOpen);
    oxedProjectManagement.OnClosed.Add(@projectClosed);

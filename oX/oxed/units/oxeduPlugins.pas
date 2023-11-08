@@ -52,7 +52,7 @@ begin
 end;
 
 INITIALIZATION
-   oxedTPluginsList.Initialize(oxedPlugins.List);
+   oxedTPluginsList.InitializeValues(oxedPlugins.List);
 
    oxedPlugins.Add('OXED', 'oX Editor');
 

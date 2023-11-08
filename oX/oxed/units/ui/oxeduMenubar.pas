@@ -415,9 +415,9 @@ begin
 end;
 
 INITIALIZATION
-   TProcedures.Initialize(oxedMenubar.OnInit);
-   TProcedures.Initialize(oxedMenubar.OnDeinit);
-   TProcedures.Initialize(oxedMenubar.OnResize);
+   TProcedures.InitializeValues(oxedMenubar.OnInit);
+   TProcedures.InitializeValues(oxedMenubar.OnDeinit);
+   TProcedures.InitializeValues(oxedMenubar.OnResize);
 
    oxedMenubar.CLEAR_RECENTS_EVENT := appActionEvents.SetCallback(@clearRecents);
    oxedMenubar.UPDATE_RECENTS_EVENT := appActionEvents.SetCallback(@updateRecents);

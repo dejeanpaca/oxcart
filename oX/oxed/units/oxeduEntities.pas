@@ -137,13 +137,13 @@ VAR
 INITIALIZATION
    ox.Init.Add(initRoutines, 'oxed.entities', @init, @deinit);
 
-   oxTEntityCallbacks.Initialize(oxedEntities.OnCreate);
-   oxTEntityCallbacks.Initialize(oxedEntities.OnDestroy);
-   oxTEntityCallbacks.Initialize(oxedEntities.OnAdd);
-   oxTEntityCallbacks.Initialize(oxedEntities.OnRemove);
-   oxTEntityCallbacks.Initialize(oxedEntities.OnClone);
+   oxTEntityCallbacks.InitializeValues(oxedEntities.OnCreate);
+   oxTEntityCallbacks.InitializeValues(oxedEntities.OnDestroy);
+   oxTEntityCallbacks.InitializeValues(oxedEntities.OnAdd);
+   oxTEntityCallbacks.InitializeValues(oxedEntities.OnRemove);
+   oxTEntityCallbacks.InitializeValues(oxedEntities.OnClone);
 
-   oxTComponentCallbacks.Initialize(oxedEntities.OnComponentAdd);
-   oxTComponentCallbacks.Initialize(oxedEntities.OnComponentRemove);
+   oxTComponentCallbacks.InitializeValues(oxedEntities.OnComponentAdd);
+   oxTComponentCallbacks.InitializeValues(oxedEntities.OnComponentRemove);
 
 END.

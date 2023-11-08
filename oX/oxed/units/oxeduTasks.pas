@@ -177,9 +177,9 @@ VAR
 INITIALIZATION
    oxed.Init.dAdd(oxedInitRoutines, 'oxed.tasks', @deinit);
 
-   oxedTasks.List.Initialize(oxedTasks.List);
+   oxedTasks.List.InitializeValues(oxedTasks.List);
 
-   TProcedures.Initialize(oxedTasks.OnTaskDone);
-   TProcedures.Initialize(oxedTasks.OnTaskStart);
+   TProcedures.InitializeValues(oxedTasks.OnTaskDone);
+   TProcedures.InitializeValues(oxedTasks.OnTaskStart);
 
 END.

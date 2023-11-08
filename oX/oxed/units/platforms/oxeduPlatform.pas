@@ -141,6 +141,6 @@ VAR
 INITIALIZATION
    oxed.Init.dAdd(oxedInitRoutines, 'platforms', @deinit);
 
-   oxedPlatforms.List.Initialize(oxedPlatforms.List);
+   oxedPlatforms.List.InitializeValues(oxedPlatforms.List);
 
 END.

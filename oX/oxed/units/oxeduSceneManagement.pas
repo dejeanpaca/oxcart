@@ -129,10 +129,10 @@ begin
 end;
 
 INITIALIZATION
-   TProcedures.Initialize(oxedSceneManagement.OnNewScene);
-   TProcedures.Initialize(oxedSceneManagement.OnSceneOpen);
-   TProcedures.Initialize(oxedSceneManagement.OnSceneClosed);
-   TProcedures.Initialize(oxedSceneManagement.OnSceneSaved);
+   TProcedures.InitializeValues(oxedSceneManagement.OnNewScene);
+   TProcedures.InitializeValues(oxedSceneManagement.OnSceneOpen);
+   TProcedures.InitializeValues(oxedSceneManagement.OnSceneClosed);
+   TProcedures.InitializeValues(oxedSceneManagement.OnSceneSaved);
 
    oxedProjectManagement.OnNew.Add(@onProjectCreated);
    oxedProjectManagement.OnOpen.Add(@onProjectOpened);

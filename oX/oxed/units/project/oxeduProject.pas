@@ -237,6 +237,6 @@ begin
 end;
 
 INITIALIZATION
-   TProcedures.Initialize(oxedTProject.OnProjectModified);
+   TProcedures.InitializeValues(oxedTProject.OnProjectModified);
 
 END.

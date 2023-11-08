@@ -236,7 +236,7 @@ VAR
 INITIALIZATION
    oxed.Init.Add(oxedInitRoutines, 'entity_menu', @init, @deinit);
 
-   oxedEntityMenu.EntityList.Initialize(oxedEntityMenu.EntityList);
+   oxedEntityMenu.EntityList.InitializeValues(oxedEntityMenu.EntityList);
 
 END.
 

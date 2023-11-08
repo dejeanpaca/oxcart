@@ -255,12 +255,12 @@ VAR
 INITIALIZATION
    oxRun.AddRoutine(projectRunRoutine, 'oxed.project', @projectRun);
 
-   TProcedures.Initialize(oxedProjectRunner.OnAfterInitialize);
-   TProcedures.Initialize(oxedProjectRunner.OnStart);
-   TProcedures.Initialize(oxedProjectRunner.OnBeforeStart);
-   TProcedures.Initialize(oxedProjectRunner.OnPauseToggle);
-   TProcedures.Initialize(oxedProjectRunner.OnBeforeStop);
-   TProcedures.Initialize(oxedProjectRunner.OnStop);
+   TProcedures.InitializeValues(oxedProjectRunner.OnAfterInitialize);
+   TProcedures.InitializeValues(oxedProjectRunner.OnStart);
+   TProcedures.InitializeValues(oxedProjectRunner.OnBeforeStart);
+   TProcedures.InitializeValues(oxedProjectRunner.OnPauseToggle);
+   TProcedures.InitializeValues(oxedProjectRunner.OnBeforeStop);
+   TProcedures.InitializeValues(oxedProjectRunner.OnStop);
 
    oxedActions.RUN_PLAY := appActionEvents.SetCallback(@oxedProjectRunner.Run);
    oxedActions.RUN_PAUSE := appActionEvents.SetCallback(@oxedProjectRunner.Pause);

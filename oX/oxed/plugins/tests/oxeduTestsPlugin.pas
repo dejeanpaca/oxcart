@@ -237,9 +237,9 @@ INITIALIZATION
    dvgOXED.Add('tests', dvgTests);
    dvgTests.Add(dvIncludeOx, 'include_ox', dtcBOOL, @oxedTests.IncludeOx);
 
-   oxedTests.Paths.Initialize(oxedTests.Paths);
-   TProcedures.Initialize(oxedTests.OnTaskStart);
-   TProcedures.Initialize(oxedTests.OnTaskDone);
+   oxedTests.Paths.InitializeValues(oxedTests.Paths);
+   TProcedures.InitializeValues(oxedTests.OnTaskStart);
+   TProcedures.InitializeValues(oxedTests.OnTaskDone);
 
    oxed.Init.Add(oxedInitRoutines, 'plugin.tests', @init, @deinit);
    oxedPlugins.Add('Tests', 'Testing framework');

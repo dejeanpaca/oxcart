@@ -419,7 +419,7 @@ end;
 INITIALIZATION
    oxedActions.RESET_CAMERA := appActionEvents.SetCallback(@resetCamera);
 
-   oxedSceneWindows.List.Initialize(oxedSceneWindows.List);
+   oxedSceneWindows.List.InitializeValues(oxedSceneWindows.List);
 
    oxedProjectRunner.OnStart.Add(@onStart);
    oxedProjectRunner.OnStop.Add(@onStop);

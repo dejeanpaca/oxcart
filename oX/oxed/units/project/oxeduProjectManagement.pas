@@ -154,10 +154,10 @@ begin
 end;
 
 INITIALIZATION
-   TProcedures.Initialize(oxedProjectManagement.OnNew);
-   TProcedures.Initialize(oxedProjectManagement.OnOpen);
-   TProcedures.Initialize(oxedProjectManagement.OnClosed);
-   TProcedures.Initialize(oxedProjectManagement.OnSaved);
-   TProcedures.Initialize(oxedProjectManagement.OnOverwritten);
+   TProcedures.InitializeValues(oxedProjectManagement.OnNew);
+   TProcedures.InitializeValues(oxedProjectManagement.OnOpen);
+   TProcedures.InitializeValues(oxedProjectManagement.OnClosed);
+   TProcedures.InitializeValues(oxedProjectManagement.OnSaved);
+   TProcedures.InitializeValues(oxedProjectManagement.OnOverwritten);
 
 END.
