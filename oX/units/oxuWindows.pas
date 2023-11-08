@@ -174,7 +174,7 @@ procedure oxTWindows.Setup(var wnd: oxTWindow; const settings: oxTWindowSettings
 begin
    wnd.Viewport.Initialize();
 
-   if(not ox.LibraryMode) then
+   if(not ox.LibraryMode) and (not ox.Mobile) then
       settings.Load(wnd);
 
    oxWindow.Init(wnd, contextWindow);

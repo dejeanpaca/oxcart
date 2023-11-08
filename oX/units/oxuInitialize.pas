@@ -16,7 +16,7 @@ INTERFACE
      uOX, oxuWindow, oxuWindows,
      oxuPlatform, oxuUIHooks, oxuGlobalInstances, oxuPlatforms,
      oxuRenderer, oxuRenderers,
-     {$IFNDEF OX_LIBRARY}
+     {$IF NOT DEFINED(OX_LIBRARY) AND NOT DEFINED(MOBILE)}
      oxuContextWindow,
      {$ENDIF}
      uiuBase;
@@ -169,7 +169,7 @@ begin
 
    elapsedTime := Time();
 
-   {$IFNDEF OX_LIBRARY}
+   {$IF NOT DEFINED(OX_LIBRARY) AND NOT DEFINED(MOBILE)}
    {create a context window and gather information if required}
    if(oxContextWindow.Required()) then begin
       log.v('Will create a context window');
@@ -183,6 +183,7 @@ begin
    {create windows}
    if(not oxWindows.Initialize()) then begin
       RaiseError('Failed to create windows');
+
       {we'll still let the renderer do anything it needs to in case of initialization failure}
       oxRenderer.AfterInitialize();
       exit(oxeGENERAL);
@@ -192,17 +193,19 @@ begin
    oxRenderers.Use(oxRenderer);
    oxRenderer.AfterInitialize();
 
-   {$IFNDEF OX_LIBRARY}
+   {$IF NOT DEFINED(OX_LIBRARY)}
 
    {$IFNDEF NO_THREADS}
    {get an additional rendering context}
    oxRenderer.GetContext(oxWindow.Current);
    {$ENDIF}
 
-   if(oxContextWindow.Require) then begin
-      oxContextWindow.Destroy();
-      oxWindows.SetCurrent(oxWindows.w[0]);
-   end;
+      {$IF NOT DEFINED(MOBILE)}
+      if(oxContextWindow.Require) then begin
+         oxContextWindow.Destroy();
+         oxWindows.SetCurrent(oxWindows.w[0]);
+      end;
+      {$ENDIF}
    {$ENDIF}
 
    log.i('Window setup done (Elapsed: ' + elapsedTime.ElapsedfToString() + 's)');
@@ -299,10 +302,9 @@ begin
 
    {save configuration only if we were initialized}
    if(ox.Initialized) then begin
-      {$IFNDEF OX_LIBRARY}
-         {save window configuration}
+      {save window configuration}
+      if(not ox.LibraryMode) and (not ox.Mobile) then
          oxWindows.StoreConfiguration();
-      {$ENDIF}
 
       {save configuration before objects are destroyed}
       appdvarConfiguration.DvarFile.Save();
