@@ -99,6 +99,8 @@ TYPE
       {start cursor control}
       procedure Start();
       {cursor control}
+      procedure GetPointerMovement(wnd: uiTWindow; var camera: oxTCamera; out mx, my: single; center: boolean = true);
+      {cursor control}
       procedure Control(wnd: uiTWindow; var camera: oxTCamera; center: boolean = true);
       {cursor control}
       procedure OrbitControl(wnd: uiTWindow; var camera: oxTCamera; center: boolean = true);
@@ -313,16 +315,17 @@ begin
    appm.GetPosition(nil, LastPointerPosition[0], LastPointerPosition[1]);
 end;
 
-procedure oxTCameraCursorControl.Control(wnd: uiTWindow; var camera: oxTCamera; center: boolean);
+procedure oxTCameraCursorControl.GetPointerMovement(wnd: uiTWindow; var camera: oxTCamera; out mx, my: single; center: boolean);
 var
-   mx,
-   my,
    ox,
    oy,
    nx,
    ny: single;
 
 begin
+   mx := 0;
+   my := 0;
+
    ox := 0;
    oy := 0;
 
@@ -348,7 +351,18 @@ begin
 
       LastPointerPosition[0] := nx;
       LastPointerPosition[1] := ny;
+   end;
+end;
 
+procedure oxTCameraCursorControl.Control(wnd: uiTWindow; var camera: oxTCamera; center: boolean);
+var
+   mx,
+   my: single;
+
+begin
+   GetPointerMovement(wnd, camera, mx, my, center);
+
+   if(mx <> 0) or (my <> 0) then begin
       Camera.IncPitchYaw(my / CursorAngleSpeed, mx / CursorAngleSpeed);
    end;
 end;
@@ -356,39 +370,12 @@ end;
 procedure oxTCameraCursorControl.OrbitControl(wnd: uiTWindow; var camera: oxTCamera; center: boolean);
 var
    mx,
-   my,
-   ox,
-   oy,
-   nx,
-   ny: single;
+   my: single;
 
 begin
-   ox := 0;
-   oy := 0;
+   GetPointerMovement(wnd, camera, mx, my, center);
 
-   if(center) then
-      appm.GetPosition(nil, ox, oy);
-
-   if(ox <> LastPointerPosition[0]) or (oy <> LastPointerPosition[1]) then begin
-      if(center) then
-         wnd.SetPointerCentered()
-      else begin
-         ox := LastPointerPosition[0];
-         oy := LastPointerPosition[1];
-      end;
-
-      appm.GetPosition(nil, nx, ny);
-      if(center) then begin
-         mx := nx - ox;
-         my := ny - oy;
-      end else begin
-         mx := ox - nx;
-         my := oy - ny;
-      end;
-
-      LastPointerPosition[0] := nx;
-      LastPointerPosition[1] := ny;
-
+   if(mx <> 0) or (my <> 0) then begin
       vmRotateAroundPoint(mx / CursorAngleSpeed / 3.14, 0, 1, 0, vmvZero3f, Camera.vPos);
       vmRotateAroundPoint(my / CursorAngleSpeed / 3.14, 1, 0, 0, vmvZero3f, Camera.vPos);
 
