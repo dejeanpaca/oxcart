@@ -718,77 +718,78 @@ var
 
 begin
    if(Valid() and img.Valid(dst)) then begin
-      if(w > 0) and (h > 0) and (px >= 0) and (py >= 0) and (PixF = dst.PixF) then begin
-         {get pixel depth}
-         psize := img.PIXFDepth(PixF);
+      if(w <= 0) or (h <= 0) or (px < 0) or (py < 0) or (PixF <> dst.PixF) then
+         exit(eUNSUPPORTED);
 
-         if(psize mod 8 = 0) then begin
-            if(dx < 0) then begin
-               w := w + dx - 1;
-               dx := 0;
+      {get pixel depth}
+      psize := img.PIXFDepth(PixF);
 
-               if(w < 0) then
-                  exit(eNONE);
-            end;
+      if(psize mod 8 = 0) then begin
+         if(dx < 0) then begin
+            w := w + dx - 1;
+            dx := 0;
 
-            if(dy < 0) then begin
-               h := h + dy - 1;
-               dy := 0;
+            if(w < 0) then
+               exit(eNONE);
+         end;
 
-               if(h < 0) then
-                  exit(eNONE);
-            end;
+         if(dy < 0) then begin
+            h := h + dy - 1;
+            dy := 0;
 
-            if(w > Width) then
-               w := Width;
-            if(h > Height) then
-               h := Height;
+            if(h < 0) then
+               exit(eNONE);
+         end;
 
-            if(dx + w > dst.Width) then
-               w := dst.Width - dx;
+         if(w > Width) then
+            w := Width;
 
-            if(dy + h > dst.Height) then
-               h := dst.Height - dy;
+         if(h > Height) then
+            h := Height;
 
-            {check that the position does not go out of the boundaries}
-            if(px + w > Width) or (dx + w > dst.Width) or (w <= 0) then
-               exit(eINVALID_ARG)
-            else if(py + h > Height) or (dy + h > dst.Height) or (h <= 0) then
-               exit(eINVALID_ARG);
+         if(dx + w > dst.Width) then
+            w := dst.Width - dx;
 
-            psize       := psize div 8; {get pixel size in bytes}
-            len         := psize * w; {figure out how many bytes to copy at a time}
+         if(dy + h > dst.Height) then
+            h := dst.Height - dy;
 
-            {calculate row lengths in bytes}
-            srcrowlen   := (Width * psize) + RowAlignBytes;
-            dstrowlen   := (dst.Width * psize) + dst.RowAlignBytes;
+         {check that the position does not go out of the boundaries}
+         if(px + w > Width) or (dx + w > dst.Width) or (w <= 0) then
+            exit(eINVALID_ARG)
+         else if(py + h > Height) or (dy + h > dst.Height) or (h <= 0) then
+            exit(eINVALID_ARG);
 
-            {position at source}
-            algn        := RowAlignBytes * py;
-            {$PUSH}{$HINTS OFF}
-            p           := pbyte((py * Width + px) * psize + algn);
-            s           := Image + ptruint(p);
-            {$POP}
+         psize       := psize div 8; {get pixel size in bytes}
+         len         := psize * w; {figure out how many bytes to copy at a time}
 
-            {position at destination}
-            algn        := dst.RowAlignBytes * dy;
-            {$PUSH}{$HINTS OFF}
-            p           := pbyte((dy * dst.Width + dx) * psize + algn);
-            d           := pbyte(dst.Image) + ptruint(p);
-            {$POP}
+         {calculate row lengths in bytes}
+         srcrowlen   := (Width * psize) + RowAlignBytes;
+         dstrowlen   := (dst.Width * psize) + dst.RowAlignBytes;
 
-            {copy rows one at a time}
-            for i := 0 to (h-1) do begin
-               move(s^, d^, len);
+         {position at source}
+         algn        := RowAlignBytes * py;
+         {$PUSH}{$HINTS OFF}
+         p           := pbyte((py * Width + px) * psize + algn);
+         s           := Image + ptruint(p);
+         {$POP}
 
-               {move to next row}
-               inc(s, srcrowlen);
-               inc(d, dstrowlen);
-            end;
+         {position at destination}
+         algn        := dst.RowAlignBytes * dy;
+         {$PUSH}{$HINTS OFF}
+         p           := pbyte((dy * dst.Width + dx) * psize + algn);
+         d           := pbyte(dst.Image) + ptruint(p);
+         {$POP}
 
-            Result := eNONE;
-         end else
-            Result := eUNSUPPORTED;
+         {copy rows one at a time}
+         for i := 0 to h - 1 do begin
+            move(s^, d^, len);
+
+            {move to next row}
+            inc(s, srcrowlen);
+            inc(d, dstrowlen);
+         end;
+
+         Result := eNONE;
       end else
          Result := eUNSUPPORTED;
    end else
