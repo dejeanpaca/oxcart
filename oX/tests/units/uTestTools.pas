@@ -9,10 +9,14 @@ UNIT uTestTools;
 
 INTERFACE
 
-   USES uLog,
+   USES
+     uLog,
+     {app}
      appuKeys, appuActionEvents,
+     {ox}
      uOX, oxuTypes, oxuWindowTypes, oxuTexture, oxuTextureGenerate, oxuRunRoutines,
-     oxuKeyboardControl, oxuTimer, vmVector, oxuTransform;
+     oxuKeyboardControl, oxuTimer, vmVector, oxuTransform,
+     uiuUI;
 
 CONST
    rotSpeed: TVector3f = (20, 30, 40);
@@ -30,7 +34,7 @@ TYPE
       procedure dtRotateXYZ();
       function LoadTexture(const name: string; var t: oxTTextureID): boolean;
 
-      class function DefaultKeyUp(var key: appTKeyEvent; {%H-}wnd: oxTWindow): boolean; static;
+      class function DefaultKeyUp(oxui: uiTUI; var key: appTKeyEvent; {%H-}wnd: oxTWindow): boolean; static;
    end;
 
 VAR
@@ -66,7 +70,7 @@ begin
       log.i('ok');
 end;
 
-class function TTestTools.DefaultKeyUp(var key: appTKeyEvent; wnd: oxTWindow): boolean;
+class function TTestTools.DefaultKeyUp(oxui: uiTUI; var key: appTKeyEvent; wnd: oxTWindow): boolean;
 begin
    if(key.Key.Equal(kcESC)) then begin
       if(key.Key.Released()) then
