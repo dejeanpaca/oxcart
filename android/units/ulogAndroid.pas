@@ -75,4 +75,7 @@ INITIALIZATION
    loghAndroid.Create();
    log.SetDefaultHandler(loghAndroid);
 
+   {redirect console log to android log}
+   consoleLog.QuickOpen('console', '', logcREWRITE, loghAndroid);
+
 END.
