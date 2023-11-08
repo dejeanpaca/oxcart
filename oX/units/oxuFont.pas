@@ -96,7 +96,7 @@ TYPE
       procedure Start();
 
       {cache a string into buffers}
-      function Cache(const s: string; out v: TVector3f; out t: TVector2f; out indices: Word; maxlen: longint = 0): boolean;
+      function Cache(const s: string; out v: TVector3f; out t: TVector2f; out indices: Word; out actualLength: loopint; maxlen: longint = 0): boolean;
 
       {write text using a font}
       procedure Write(x, y: single; const s: string);
@@ -357,17 +357,23 @@ begin
    end;
 end;
 
-function oxTFont.Cache(const s: string; out v: TVector3f; out t: TVector2f; out indices: Word; maxlen: longint = 0): boolean;
+function oxTFont.Cache(const s: string; out v: TVector3f; out t: TVector2f; out indices: Word; out actualLength: loopint; maxlen: longint = 0): boolean;
 var
+   {length of string}
    len,
+   {current character}
    i,
+   {current computed index into vectors or texture coordinates}
    index,
-   charIndex: loopint;
+   {current character index}
+   charIndex,
+   {current length of string (we may skip some characters), to be stored into actualLength}
+   currentLength: loopint;
 
 
-   pvector: PVector3f;
-   ptexture: PVector2f;
-   pindice: PWord;
+   pVector: PVector3f;
+   pTexture: PVector2f;
+   pIndice: PWord;
 
    px,
    py: single;
@@ -378,6 +384,8 @@ var
 
 begin
    Result := false;
+   actualLength := 0;
+   indices := 0;
 
    if(Valid()) then begin
       len := Length(s);
@@ -398,9 +406,10 @@ begin
          currentWidth := Width;
          currentHeight := Height;
 
-         pvector := @v;
-         ptexture := @t;
-         pindice := @indices;
+         pVector := @v;
+         pTexture := @t;
+         pIndice := @indices;
+         currentLength := 0;
 
          while(i <= len) do begin
             b := ord(s[i]);
@@ -408,6 +417,7 @@ begin
             charIndex := i - 1;
 
             if(b >= Base) and (b < Base + Chars) then begin
+               inc(currentLength);
                b := b - Base;
 
                if(Characters <> nil) then begin
@@ -423,44 +433,44 @@ begin
                {build quad coordinates}
                index := charIndex * 4 + 0;
 
-               pvector[index][0] := px;
-               pvector[index][1] := py;
-               pvector[index][2] := 0.0;
+               pVector[index][0] := px;
+               pVector[index][1] := py;
+               pVector[index][2] := 0.0;
 
                index := charIndex * 4 + 1;
 
-               pvector[index][0] := px + currentWidth;
-               pvector[index][1] := py;
-               pvector[index][2] := 0.0;
+               pVector[index][0] := px + currentWidth;
+               pVector[index][1] := py;
+               pVector[index][2] := 0.0;
 
                index := charIndex * 4 + 2;
 
-               pvector[index][0] := px + currentWidth;
-               pvector[index][1] := py + currentHeight;
-               pvector[index][2] := 0.0;
+               pVector[index][0] := px + currentWidth;
+               pVector[index][1] := py + currentHeight;
+               pVector[index][2] := 0.0;
 
                index := charIndex * 4 + 3;
 
-               pvector[index][0] := px;
-               pvector[index][1] := py + currentHeight;
-               pvector[index][2] := 0.0;
+               pVector[index][0] := px;
+               pVector[index][1] := py + currentHeight;
+               pVector[index][2] := 0.0;
 
                {build texture coordinates}
                index := charIndex * 4;
-               ptexture[index + 0] := Buf.t[b * 4 + 0];
-               ptexture[index + 1] := Buf.t[b * 4 + 1];
-               ptexture[index + 2] := Buf.t[b * 4 + 2];
-               ptexture[index + 3] := Buf.t[b * 4 + 3];
+               pTexture[index + 0] := Buf.t[b * 4 + 0];
+               pTexture[index + 1] := Buf.t[b * 4 + 1];
+               pTexture[index + 2] := Buf.t[b * 4 + 2];
+               pTexture[index + 3] := Buf.t[b * 4 + 3];
 
                {build indices}
                index := charIndex * 6;
 
-               pindice[index + 0] := charIndex * 4 + QuadIndicesus[0];
-               pindice[index + 1] := charIndex * 4 + QuadIndicesus[1];
-               pindice[index + 2] := charIndex * 4 + QuadIndicesus[2];
-               pindice[index + 3] := charIndex * 4 + QuadIndicesus[3];
-               pindice[index + 4] := charIndex * 4 + QuadIndicesus[4];
-               pindice[index + 5] := charIndex * 4 + QuadIndicesus[5];
+               pIndice[index + 0] := charIndex * 4 + QuadIndicesus[0];
+               pIndice[index + 1] := charIndex * 4 + QuadIndicesus[1];
+               pIndice[index + 2] := charIndex * 4 + QuadIndicesus[2];
+               pIndice[index + 3] := charIndex * 4 + QuadIndicesus[3];
+               pIndice[index + 4] := charIndex * 4 + QuadIndicesus[4];
+               pIndice[index + 5] := charIndex * 4 + QuadIndicesus[5];
 
                if(Characters <> nil) then begin
                   px := px + Characters[b].Advance;
@@ -473,6 +483,8 @@ begin
             inc(i);
          end;
 
+         actualLength := currentLength;
+
          Result := true;
       end;
    end;
@@ -480,7 +492,8 @@ end;
 
 procedure oxTFont.Write(x, y: single; const s: string);
 var
-   len: loopint;
+   len,
+   cachedLength: loopint;
    px,
    py: single;
 
@@ -500,7 +513,12 @@ begin
          len := Length(v) div 4;
 
       if(len > 0) then begin
-         if(not Cache(s, v[0], t[0], indices[0])) then
+         cachedLength := len;
+
+         if(not Cache(s, v[0], t[0], indices[0], cachedLength)) then
+            exit;
+
+         if(cachedLength = 0) then
             exit;
 
          if(not oxFont.writeUpsideDown) then
@@ -516,7 +534,7 @@ begin
          oxCurrentMaterial.ApplyTexture('texture', Texture);
          oxRender.TextureCoords(t[0]);
          oxRender.Vertex(v[0]);
-         oxRender.Primitives(oxPRIMITIVE_TRIANGLES, 6 * len, pword(@indices[0]));
+         oxRender.Primitives(oxPRIMITIVE_TRIANGLES, 6 * cachedLength, pword(@indices[0]));
 
          {return to origin}
          oxTransform.Apply(m);
