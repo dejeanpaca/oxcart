@@ -51,7 +51,7 @@ begin
          log.v('Build log at ' + oxedBuildLog.Log.FileName);
 
       oxedBuildLog.Log.ChainLog := @consoleLog;
-      BuildExec.log := @oxedBuildLog.Log;
+      BuildExec.Log := @oxedBuildLog.Log;
    end;
 
    {call the old log callback}
