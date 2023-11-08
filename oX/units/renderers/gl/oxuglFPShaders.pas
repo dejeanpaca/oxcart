@@ -23,6 +23,8 @@ TYPE
    { oxglTFPShader }
 
    oxglTFPShader = class(oxTShader)
+      Instance: oxglTFPShader; static;
+
       constructor Create; override;
 
       function Compile(): boolean; override;
@@ -33,9 +35,6 @@ TYPE
 
       function SetupUniforms(): boolean; override;
    end;
-
-VAR
-   oxglFPShader: oxglTFPShader;
 
 IMPLEMENTATION
 
@@ -108,16 +107,16 @@ end;
 
 procedure onUse();
 begin
-   oxResource.Free(oxglFPShader);
+   oxResource.Free(oxglTFPShader.Instance);
 
-   oxglFPShader := oxglTFPShader.Create();
-   oxglFPShader.MarkPermanent();
+   oxglTFPShader.Instance := oxglTFPShader.Create();
+   oxglTFPShader.Instance.MarkPermanent();
 
-   oxglFPShader.Name := 'gl.fp';
-   oxglFPShader.SetupUniforms();
-   oxglFPShader.Compile();
+   oxglTFPShader.Instance.Name := 'gl.fp';
+   oxglTFPShader.Instance.SetupUniforms();
+   oxglTFPShader.Instance.Compile();
 
-   oxShader.SetDefault(oxglFPShader, true);
+   oxShader.SetDefault(oxglTFPShader.Instance, true);
 end;
 
 procedure init();
@@ -126,8 +125,8 @@ end;
 
 procedure deinit();
 begin
-   oxShader.Free(oxTShader(oxglFPShader));
-   oxResource.Free(oxglFPShader);
+   oxShader.Free(oxTShader(oxglTFPShader.Instance));
+   oxResource.Free(oxglTFPShader.Instance);
 end;
 
 procedure preinit();
