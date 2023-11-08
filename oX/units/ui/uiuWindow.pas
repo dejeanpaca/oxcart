@@ -274,7 +274,7 @@ TYPE
       {updates positions for all child windows}
       procedure UpdatePositions();
       {notifies all children that the parent resized}
-      procedure UpdateParentSize();
+      procedure UpdateParentSize(selfNotify: boolean = true);
 
       {adjusts the window position}
       procedure AdjustPosition();
@@ -1841,7 +1841,7 @@ begin
    RPositionChanged();
 end;
 
-procedure uiTWindowHelper.UpdateParentSize();
+procedure uiTWindowHelper.UpdateParentSize(selfNotify: boolean = true);
 var
    i: loopint;
    child: uiTWindow;
@@ -1858,6 +1858,9 @@ begin
       if(child <> nil) then
          child.UpdateParentSize();
    end;
+
+   if(selfNotify) then
+      ParentSizeChange();
 end;
 
 procedure uiTWindowHelper.AdjustPosition();
