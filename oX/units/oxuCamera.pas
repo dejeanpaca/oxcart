@@ -175,8 +175,7 @@ procedure oxTCamera.UpFromView();
 begin
    vUp := oxvCameraUp;
 
-   vRight := vView.Cross(vUp).Normalized();
-
+   vRight := vUp.Cross(vView).Normalized() * -1;
    vUp := vRight.Cross(vView).Normalized();
 end;
 
