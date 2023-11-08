@@ -16,7 +16,8 @@ INTERFACE
       oxuRenderer, oxuRender, oxuProjectionType, oxuProjection,
       {ui}
       oxuUI, uiuTypes, uiuSkinTypes,
-      uiuWindowTypes, uiuWidget, uiuDraw, uiuDrawUtilities, uiWidgets, uiuWindow;
+      uiuWindowTypes, uiuWidget, uiuDraw, uiuDrawUtilities, uiWidgets, uiuWindow,
+      uiuRender;
 
 TYPE
    uiTWindowRenderHelper = class helper(uiTWindowHelper) for uiTWindow
@@ -324,12 +325,7 @@ end;
 
 procedure uiTWindowRenderGlobal.Prepare(wnd: oxTWindow);
 begin
-   oxTProjection.Create(Projection, @wnd.Viewport);
-
-   Projection.Ortho(0.375, wnd.Dimensions.w + 0.375, 0.375, wnd.Dimensions.h + 0.375, -1.0, 1.0);
-   Projection.Apply();
-
-   uiDraw.Start();
+   uiRender.Prepare(Projection, wnd.Viewport);
 end;
 
 procedure uiTWindowRenderGlobal.Render(wnd: oxTWindow);
