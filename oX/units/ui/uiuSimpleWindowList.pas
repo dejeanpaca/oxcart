@@ -21,21 +21,25 @@ TYPE
    uiTSimpleWindowListHelper = record helper for uiTSimpleWindowList
       function FindLeftOf(x: loopint): uiTSimpleWindowList;
       function FindRightOf(x: loopint): uiTSimpleWindowList;
-
       function FindAbove(y: loopint): uiTSimpleWindowList;
       function FindBelow(y: loopint): uiTSimpleWindowList;
+
+      procedure FindLeftOf(x: loopint; var list: uiTSimpleWindowList);
+      procedure FindRightOf(x: loopint; var list: uiTsimpleWindowList);
+      procedure FindAbove(y: loopint; var list: uiTsimpleWindowList);
+      procedure FindBelow(y: loopint; var list: uiTsimpleWindowList);
 
       function FindFirstLeftOf(x: loopint): uiTWindow;
       function FindFirstRightOf(x: loopint): uiTWindow;
 
       {finds other windows in contact with the given one on the left side}
-      function FindContactsLeft(wnd: uiTWindow): uiTSimpleWindowList;
+      procedure FindContactsLeft(wnd: uiTWindow; var result: uiTSimpleWindowList);
       {finds other windows in contact with the given one on the right side}
-      function FindContactsRight(wnd: uiTWindow): uiTSimpleWindowList;
+      procedure FindContactsRight(wnd: uiTWindow; var result: uiTSimpleWindowList);
       {finds other windows in contact with the given one on the left side}
-      function FindContactsAbove(wnd: uiTWindow): uiTSimpleWindowList;
+      procedure FindContactsAbove(wnd: uiTWindow; var result: uiTSimpleWindowList);
       {finds other windows in contact with the given one on the right side}
-      function FindContactsBelow(wnd: uiTWindow): uiTSimpleWindowList;
+      procedure FindContactsBelow(wnd: uiTWindow; var result: uiTSimpleWindowList);
 
       function GetLeftmostCoordinate(): loopint;
 
@@ -58,6 +62,10 @@ TYPE
    { uiTWindowListHelpers }
 
    uiTWindowListHelpers = record
+      {find all windows lined up horizontally with us (including windows that can fit within ours vertically)}
+      procedure FindHorizontalLineup(wnd: uiTWindow; var result: uiTSimpleWindowList; fitWithin: boolean = false);
+      {find all windows lined up horizontally with us (including windows that can fit within ours horizontally)}
+      procedure FindVerticalLineup(wnd: uiTWindow; var result: uiTSimpleWindowList; fitWithin: boolean = false);
       {find all windows lined up horizontally with us}
       function FindHorizontalLineup(wnd: uiTWindow; fitWithin: boolean = false): uiTSimpleWindowList;
       {find all windows lined up horizontally with us}
@@ -72,54 +80,78 @@ IMPLEMENTATION
 { uiTSimpleWindowListHelper }
 
 function uiTSimpleWindowListHelper.FindLeftOf(x: loopint): uiTSimpleWindowList;
-var
-   i: loopint;
-
 begin
-   Result.Initialize(Result);
-
-   for i := 0 to (n - 1) do begin
-      if(List[i].Position.x < x) then
-         Result.Add(List[i]);
-   end;
+   uiTSimpleWindowList.Initialize(Result);
+   FindLeftOf(x, Result);
 end;
 
 function uiTSimpleWindowListHelper.FindRightOf(x: loopint): uiTSimpleWindowList;
-var
-   i: loopint;
-
 begin
-   Result.Initialize(Result);
-
-   for i := 0 to (n - 1) do begin
-      if(List[i].Position.x > x) then
-         Result.Add(List[i]);
-   end;
+   uiTSimpleWindowList.Initialize(Result);
+   FindRightOf(x, Result);
 end;
 
 function uiTSimpleWindowListHelper.FindAbove(y: loopint): uiTSimpleWindowList;
-var
-   i: loopint;
-
 begin
-   Result.Initialize(Result);
-
-   for i := 0 to (n - 1) do begin
-      if(List[i].Position.y > y) then
-         Result.Add(List[i]);
-   end;
+   uiTSimpleWindowList.Initialize(Result);
+   FindAbove(y, Result);
 end;
 
 function uiTSimpleWindowListHelper.FindBelow(y: loopint): uiTSimpleWindowList;
+begin
+   uiTSimpleWindowList.Initialize(Result);
+   FindBelow(y, Result);
+end;
+
+procedure uiTSimpleWindowListHelper.FindLeftOf(x: loopint; var list: uiTsimpleWindowList);
 var
    i: loopint;
 
 begin
-   Result.Initialize(Result);
+   list.RemoveAll();
+
+   for i := 0 to (n - 1) do begin
+      if(List[i].Position.x < x) then
+         list.Add(List[i]);
+   end;
+end;
+
+procedure uiTSimpleWindowListHelper.FindRightOf(x: loopint; var list: uiTsimpleWindowList);
+var
+   i: loopint;
+
+begin
+   list.RemoveAll();
+
+   for i := 0 to (n - 1) do begin
+      if(List[i].Position.x > x) then
+         list.Add(List[i]);
+   end;
+end;
+
+procedure uiTSimpleWindowListHelper.FindAbove(y: loopint; var list: uiTsimpleWindowList);
+var
+   i: loopint;
+
+begin
+   list.RemoveAll();
+
+   for i := 0 to (n - 1) do begin
+      if(List[i].Position.y > y) then
+         list.Add(List[i]);
+   end;
+end;
+
+procedure uiTSimpleWindowListHelper.FindBelow(y: loopint; var list: uiTsimpleWindowList);
+var
+   i: loopint;
+
+begin
+   list.RemoveAll();
 
    for i := 0 to (n - 1) do begin
       if(List[i].Position.y < y) then
-         Result.Add(List[i]);
+         list.Add(List[i]);
    end;
 end;
 
@@ -166,12 +198,12 @@ begin
    end;
 end;
 
-function uiTSimpleWindowListHelper.FindContactsLeft(wnd: uiTWindow): uiTSimpleWindowList;
+procedure uiTSimpleWindowListHelper.FindContactsLeft(wnd: uiTWindow; var result: uiTSimpleWindowList);
 var
    i: loopint;
 
 begin
-   Result.Initialize(Result);
+   Result.RemoveAll();
 
    for i := 0 to n - 1 do begin
       if(List[i] <> wnd) then begin
@@ -181,12 +213,12 @@ begin
    end;
 end;
 
-function uiTSimpleWindowListHelper.FindContactsRight(wnd: uiTWindow): uiTSimpleWindowList;
+procedure uiTSimpleWindowListHelper.FindContactsRight(wnd: uiTWindow; var result: uiTSimpleWindowList);
 var
    i: loopint;
 
 begin
-   Result.Initialize(Result);
+   Result.RemoveAll();
 
    for i := 0 to n - 1 do begin
       if(List[i] <> wnd) then begin
@@ -196,12 +228,12 @@ begin
    end;
 end;
 
-function uiTSimpleWindowListHelper.FindContactsAbove(wnd: uiTWindow): uiTSimpleWindowList;
+procedure uiTSimpleWindowListHelper.FindContactsAbove(wnd: uiTWindow; var result: uiTSimpleWindowList);
 var
    i: loopint;
 
 begin
-   Result.Initialize(Result);
+   Result.RemoveAll();
 
    for i := 0 to n - 1 do begin
       if(List[i] <> wnd) then begin
@@ -211,12 +243,12 @@ begin
    end;
 end;
 
-function uiTSimpleWindowListHelper.FindContactsBelow(wnd: uiTWindow): uiTSimpleWindowList;
+procedure uiTSimpleWindowListHelper.FindContactsBelow(wnd: uiTWindow; var result: uiTSimpleWindowList);
 var
    i: loopint;
 
 begin
-   Result.Initialize(Result);
+   Result.RemoveAll();
 
    for i := 0 to n - 1 do begin
       if(List[i] <> wnd) then begin
@@ -333,7 +365,7 @@ end;
 
 { uiTWindowListHelpers }
 
-function uiTWindowListHelpers.FindHorizontalLineup(wnd: uiTWindow; fitWithin: boolean): uiTSimpleWindowList;
+procedure uiTWindowListHelpers.FindHorizontalLineup(wnd: uiTWindow; var result: uiTSimpleWindowList; fitWithin: boolean);
 var
    i: loopint;
    source,
@@ -343,7 +375,7 @@ var
    compareD: oxTDimensions;
 
 begin
-   Result.Initialize(Result);
+   Result.RemoveAll();
 
    source := uiTWindow(wnd.Parent);
    d := wnd.GetTotalDimensions();
@@ -362,7 +394,7 @@ begin
    end;
 end;
 
-function uiTWindowListHelpers.FindVerticalLineup(wnd: uiTWindow; fitWithin: boolean): uiTSimpleWindowList;
+procedure uiTWindowListHelpers.FindVerticalLineup(wnd: uiTWindow; var result: uiTSimpleWindowList; fitWithin: boolean);
 var
    i: loopint;
    source,
@@ -372,7 +404,7 @@ var
    compareD: oxTDimensions;
 
 begin
-   Result.Initialize(Result);
+   Result.RemoveAll();
 
    source := uiTWindow(wnd.Parent);
    d := wnd.GetTotalDimensions();
@@ -387,6 +419,18 @@ begin
             Result.Add(cur);
       end;
    end;
+end;
+
+function uiTWindowListHelpers.FindHorizontalLineup(wnd: uiTWindow; fitWithin: boolean): uiTSimpleWindowList;
+begin
+   uiTSimpleWindowList.Initialize(Result);
+   FindHorizontalLineup(wnd, Result, fitWithin);
+end;
+
+function uiTWindowListHelpers.FindVerticalLineup(wnd: uiTWindow; fitWithin: boolean): uiTSimpleWindowList;
+begin
+   uiTSimpleWindowList.Initialize(Result);
+   FindVerticalLineup(wnd, Result, fitWithin);
 end;
 
 END.
