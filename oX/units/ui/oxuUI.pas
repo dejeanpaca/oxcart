@@ -16,7 +16,7 @@ INTERFACE
       appuMouse,
       {oX}
       uOX, oxuWindow, oxuWindows, oxuRenderer, oxuRenderers, oxuTypes, oxuResourcePool,
-      oxuShader, oxuMaterial,
+      oxuShader, oxuMaterial, oxuFont,
       {ui}
       uiuTypes, uiuControl, uiuWindowTypes, uiuWidget;
 
@@ -117,23 +117,32 @@ TYPE
       PointerCapture: uiTPointerCapture;
 
       {initialization procedures}
-      BaseInitializationProcs: TInitializationProcs;
+      BaseInitializationProcs,
+      InitializationProcs: TInitializationProcs;
 
       WindowMove: oxTPoint;
 
       {material used for the UI}
       Material: oxTMaterial;
+      {default font, if nil then oxf.Default is used}
+      Font: oxTFont;
 
       {group for ui settings}
       dvg: TDVarGroup; static;
 
       constructor Create();
 
+      procedure Initialize();
+      procedure DeInitialize();
+
       procedure BaseInitialize();
       procedure BaseDeInitialize();
 
       function GetUseWindow(): uiTWindow;
       procedure SetUseWindow(wnd: uiTWindow);
+
+      procedure SetDefaultFont(f: oxTFont);
+      function GetDefaultFont(): oxTFont;
    end;
 
 VAR
@@ -235,7 +244,7 @@ begin
       Result := nil;
 end;
 
-constructor oxTUI.Create;
+constructor oxTUI.Create();
 begin
    inherited;
 
@@ -252,6 +261,21 @@ begin
 
    BaseInitializationProcs.Init('ui.base_initialization');
    BaseInitializationProcs.DontDetermineState();
+
+   InitializationProcs.Init('ui.initialization');
+   InitializationProcs.DontDetermineState();
+end;
+
+procedure oxTUI.Initialize();
+begin
+   InitializationProcs.iCall();
+end;
+
+procedure oxTUI.DeInitialize();
+begin
+   InitializationProcs.dCall();
+
+   FreeObject(Material);
 end;
 
 procedure oxTUI.BaseInitialize();
@@ -262,7 +286,7 @@ begin
    log.i('Initialized UI');
 end;
 
-procedure oxTUI.BaseDeInitialize;
+procedure oxTUI.BaseDeInitialize();
 begin
    if(StartedInitialization) then begin
       StartedInitialization := false;
@@ -287,6 +311,19 @@ end;
 procedure oxTUI.SetUseWindow(wnd: uiTWindow);
 begin
    UseWindow := wnd;
+end;
+
+procedure oxTUI.SetDefaultFont(f: oxTFont);
+begin
+   Font := f;
+end;
+
+function oxTUI.GetDefaultFont(): oxTFont;
+begin
+   if(Font <> nil) then
+      Result := Font
+   else
+      Result := oxf.GetDefault();
 end;
 
 procedure updateControlWdg(wdg: uiTWidget);

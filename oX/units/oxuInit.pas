@@ -214,6 +214,9 @@ begin
 
    log.i('Called all initialization routines (elapsed: ' + elapsedTime.ElapsedfToString() + 's)');
 
+   {call UI initialization routines}
+   oxui.Initialize();
+
    {call application initialization routines}
    if(ox.AppProcs.iList.n > 0) then begin
       elapsedTime := Time();
@@ -291,6 +294,10 @@ begin
       {save configuration before objects are destroyed}
       appDVarTextConfiguration.Save();
    end;
+
+   {done with UI}
+   if(oxui <> nil) then
+      oxui.Deinitialize();
 
    {perform initial de-initialization step}
    ox.OnDeinitialize.Call();
