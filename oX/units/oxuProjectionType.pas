@@ -45,8 +45,6 @@ TYPE
 
       Viewport: oxPViewport;
 
-      {is the projection ortographic}
-      IsOrtographic,
       {use viewport aspect when updating the projection}
       UseViewportAspect: boolean;
 
