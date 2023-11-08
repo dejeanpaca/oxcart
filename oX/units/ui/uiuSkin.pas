@@ -236,7 +236,7 @@ begin
       {window colors}
       Colors.cTitle.Assign(84, 122, 201, 255);
       Colors.cTitleText  := cWhite4ub;
-      Colors.cBackground.Assign(42, 42, 42, 244);
+      Colors.cBackground.Assign(42, 42, 42, 248);
       Colors.cFrame := Colors.cTitle;
       Colors.cInnerFrame.Assign(16, 16, 16, 255);
       Colors.cTitleBt.Assign(255, 255, 255, 255); {close}
@@ -245,11 +245,11 @@ begin
 
       InactiveColors := Colors;
 
-      InactiveColors.cTitle := Colors.cTitle.Darken(0.2);
+      InactiveColors.cTitle.Assign(72, 72, 72, 255);
       InactiveColors.cTitleText.Assign(127, 127, 127, 255);
       InactiveColors.cFrame := InactiveColors.cTitle;
       InactiveColors.cInnerFrame.Assign(0, 0, 0, 255);
-      InactiveColors.cTitleBt.Assign(64, 64, 64, 255);
+      InactiveColors.cTitleBt.Assign(127, 127, 127, 255);
 
       {set up title text offset}
       TitleTextOffset[0] := 5;
