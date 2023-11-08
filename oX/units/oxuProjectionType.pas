@@ -20,7 +20,7 @@ TYPE
    { oxTProjectionSettings }
 
    oxTProjectionSettings = record
-      IsOrtographic: boolean; {is the projection orthographic?}
+      IsOrthographic: boolean; {is the projection orthographic?}
       FovY,
       Aspect,
       ZNear,
@@ -54,7 +54,7 @@ TYPE
 
 CONST
    oxDefaultPerspective: oxTProjectionSettings = (
-      IsOrtographic: false;
+      IsOrthographic: false;
       FovY:       60;
       Aspect:     1.7777777;
       ZNear:      0.5;
@@ -67,7 +67,7 @@ CONST
    );
 
    oxDefaultOrthographic: oxTProjectionSettings = (
-      IsOrtographic: true;
+      IsOrthographic: true;
       FovY:       60;
       Aspect:     1.7777777;
       ZNear:      -1.0;
