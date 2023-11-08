@@ -11,13 +11,13 @@ UNIT appuLog;
 INTERFACE
 
    USES
-      uLog, uFileUtils,
+      uStd, uLog, uFileUtils,
       uAppInfo, appuPaths, uApp,
       oxuRunRoutines;
 
 TYPE
    appTLog = record
-     FileName: string;
+     FileName: StdString;
      {callback for setting up log files}
      SetupCallback: TProcedure;
 
@@ -36,7 +36,7 @@ IMPLEMENTATION
 procedure appTLog.Initialize();
 {$IFNDEF NOLOG}
 var
-   logFN: string;
+   logFN: StdString;
 {$ENDIF}
 
 begin

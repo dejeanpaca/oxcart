@@ -27,7 +27,7 @@ TYPE
    oxTRenderers = record
       StartedInitialization: boolean;
 
-      vSelectedRenderer: string;
+      vSelectedRenderer: StdString;
       OverrideRenderer: oxTRenderer;
 
       n: longint;
@@ -56,7 +56,7 @@ TYPE
       procedure Use(renderer: oxTRenderer);
 
       {find the renderer by name}
-      function Find(const name: string): oxTRenderer;
+      function Find(const name: StdString): oxTRenderer;
       {Give the index of the currently used renderer, or the specified one.
       Returns index if found, or -1 if nothing found}
       function CurrentIndex(renderer: oxTRenderer = nil): longint;
@@ -192,10 +192,10 @@ begin
    oxRenderers.PostUseRoutines.Call();
 end;
 
-function oxTRenderers.Find(const name: string): oxTRenderer;
+function oxTRenderers.Find(const name: StdString): oxTRenderer;
 var
    i: longint;
-   lname: string;
+   lname: StdString;
 
 begin
    if(n > 0) then begin
@@ -233,7 +233,7 @@ VAR
 
 function processParam(const {%H-}paramKey: StdString; var params: array of StdString; n: longint): boolean;
 var
-   name: string;
+   name: StdString;
    renderer: oxTRenderer;
 
 begin

@@ -83,7 +83,7 @@ VAR
 IMPLEMENTATION
 
 VAR
-   ox_version: string = oxsVersion;
+   ox_version: StdString = oxsVersion;
    dv_version: TDVar;
 
 { VERSION }

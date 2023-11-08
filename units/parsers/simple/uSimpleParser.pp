@@ -26,7 +26,7 @@ TYPE
    { TParseData }
 
    TParseData = object(TParserBase)
-      Log: string;
+      Log: StdString;
 
       {current data}
       CurrentLine,
@@ -51,13 +51,13 @@ TYPE
       ExternalData: pointer;
 
       {perform file reading}
-      function Read(const fn: string): Boolean;
-      function Read(const fn: string; readFunction: TParseMethod): Boolean;
+      function Read(const fn: StdString): Boolean;
+      function Read(const fn: StdString; readFunction: TParseMethod): Boolean;
       {write a file}
-      function Write(const fn: string): Boolean;
-      function Write(const fn: string; writeFunction: TParseMethod): Boolean;
+      function Write(const fn: StdString): Boolean;
+      function Write(const fn: StdString; writeFunction: TParseMethod): Boolean;
       {write a single line to the file}
-      procedure WriteLine(const s: string);
+      procedure WriteLine(const s: StdString);
 
       function OnRead(): boolean; virtual;
       function OnWrite(): boolean; virtual;
@@ -131,30 +131,30 @@ begin
    Result := true;
 end;
 
-function TParseData.Read(const fn: string): Boolean;
+function TParseData.Read(const fn: StdString): Boolean;
 begin
    Result := inherited Read(fn);
 end;
 
-function TParseData.Read(const fn: string; readFunction: TParseMethod): Boolean;
+function TParseData.Read(const fn: StdString; readFunction: TParseMethod): Boolean;
 begin
    ReadMethod := readFunction;
 
    Result := inherited Read(fn);
 end;
 
-function TParseData.Write(const fn: string): Boolean;
+function TParseData.Write(const fn: StdString): Boolean;
 begin
    Result := inherited Write(fn);
 end;
 
-function TParseData.Write(const fn: string; writeFunction: TParseMethod): Boolean;
+function TParseData.Write(const fn: StdString; writeFunction: TParseMethod): Boolean;
 begin
    WriteMethod := writeFunction;
    Result := inherited Write(fn);
 end;
 
-procedure TParseData.WriteLine(const s: string);
+procedure TParseData.WriteLine(const s: StdString);
 begin
    f.Writeln(s);
 end;
