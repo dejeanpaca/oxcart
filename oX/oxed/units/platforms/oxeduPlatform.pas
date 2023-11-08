@@ -66,6 +66,8 @@ TYPE
 
       {does this platform require CMEM}
       RequireCMEM,
+      {does this platform require PIC (true by default, but shoudl be false if FPC automatically builds as PIC)}
+      RequiresPIC,
       {does this platform support external debug symbols}
       SupportsExternalDebugSymbols,
       {do not search default library path (-Xd)}
@@ -180,6 +182,7 @@ begin
    TSimpleStringList.InitializeValues(Symbols);
 
    SupportsExternalDebugSymbols := true;
+   RequiresPIC := true;
 end;
 
 destructor oxedTPlatform.Destroy;

@@ -1191,7 +1191,7 @@ begin
    build.Target.FPUType := arch.DefaultFPUType;
    build.Target.BinUtilsPrefix := arch.BinUtilsPrefix;
 
-   if(oxedBuild.IsLibrary()) then
+   if oxedBuild.IsLibrary() and oxedBuild.BuildPlatform.RequiresPIC then
       build.FPCOptions.PositionIndependentCode := true;
 
    {debug checks}

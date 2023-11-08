@@ -93,6 +93,7 @@ begin
    Symbols.Add('GLES');
 
    RequireCMEM := true;
+   RequiresPIC := false;
    SupportsExternalDebugSymbols := false;
    ExcludeDefaultLibraryPath := true;
 
