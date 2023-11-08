@@ -1,6 +1,14 @@
 {
    uBuildExec, executes build processes
    Copyright (C) 2020. Dejan Boras
+
+   NOTE:
+   - Pas() method building will only use some command line options for fpc, if a config file is set in
+   build.FPCOptions.UseConfig, as all other fpc options (included units, target platform ...) are assumed to be
+   provided in the config file.
+   If no config file is provided, all build options are provided via command line options.
+   Command line options can be overriden via the fpcParameters argument, in which case none of the above is performed.
+   - Laz() method building will use the given lpi file and lazbuild to do the build, and the set Options are ignored.
 }
 
 {$INCLUDE oxdefines.inc}
@@ -9,8 +17,9 @@ UNIT uBuildExec;
 INTERFACE
 
    USES
-      sysutils, uStd, StringUtils, uLog, uSimpleParser, uFileUtils, ConsoleUtils,
+      sysutils, uStd, uLog, uSimpleParser, uFileUtils, ConsoleUtils,
       process, StreamIO,
+      StringUtils,
       uBuild, uBuildInstalls, uBuildFPCConfig;
 
 TYPE
@@ -40,7 +49,7 @@ TYPE
       {retrieves the executable name from a lazarus project}
       function GetExecutableNameFromLPI(const path: StdString): StdString;
       {build an fpc program}
-      procedure Pas(const originalPath: StdString);
+      procedure Pas(const originalPath: StdString; fpcParameters: TStringArray = nil);
       {used to report building failed for a process (laz or fpc)}
       procedure BuildingFailed(const p: TProcess);
 
@@ -188,13 +197,13 @@ begin
    Result := executableName;
 end;
 
-procedure TBuildSystemExec.Pas(const originalPath: StdString);
+procedure TBuildSystemExec.Pas(const originalPath: StdString; fpcParameters: TStringArray = nil);
 var
    p: TProcess;
    path: StdString;
    i: loopint;
    platform: PBuildPlatform;
-   parameters: StringUtils.TStringArray;
+   parameters: TStringArray;
 
 begin
    path := originalPath;
@@ -209,7 +218,13 @@ begin
 
    p.Executable := build.GetExecutableName(platform^.Path + 'fpc');
 
-   parameters := BuildFPCConfiguration.GetFPCCommandLine();
+   if(fpcParameters = nil) then begin
+      if(build.FPCOptions.UseConfig = '') then
+         parameters := TBuildFPCConfiguration.GetFPCCommandLine()
+      else
+         parameters := TBuildFPCConfiguration.GetFPCCommandLineForConfig();
+   end else
+      parameters := fpcParameters;
 
    for i := 0 to High(parameters) do begin
       p.Parameters.Add(parameters[i]);
@@ -222,6 +237,7 @@ begin
    except
       on e: Exception do begin
          log.e('build > Failed running: ' + p.Executable + ' (' + e.ToString() + ')');
+         StoreOutput(p);
          p.Free();
          exit();
      end;
