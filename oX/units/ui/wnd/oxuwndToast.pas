@@ -17,7 +17,7 @@ INTERFACE
       {oX}
       uOX, oxuTypes, oxuRunRoutines,
       oxuWindows, oxuFont, oxuPaths, oxuWindow,
-      oxuTexture, oxuTextureGenerate,
+      oxuTexture, oxuTextureGenerate, oxuResourcePool,
       {ui}
       uiuControl, uiuWindowTypes, uiuWindow, uiuTypes, uiuSkinTypes, uiuWidget, uiWidgets, oxuUI,
       oxuwndBase,
@@ -247,7 +247,9 @@ end;
 
 procedure deInitToast();
 begin
-   FreeObject(oxToast.BackgroundTexture);
+   if(oxToast <> nil) then
+      oxResource.Free(oxToast.BackgroundTexture);
+
    FreeObject(oxToast);
 end;
 
