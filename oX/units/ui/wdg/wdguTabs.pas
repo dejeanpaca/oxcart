@@ -28,7 +28,7 @@ TYPE
       {container parent}
       TabsParent: uiTWidget;
 
-      procedure DeInitialize; override;
+      procedure DeInitialize(); override;
    end;
 
 
@@ -73,6 +73,7 @@ TYPE
          LastPointerPosition: oxTPoint;
 
       constructor Create(); override;
+      procedure OnDestroy(); override;
       procedure DeInitialize(); override;
 
       procedure Point(var {%H-}e: appTMouseEvent; {%H-}x, {%H-}y: longint); override;
@@ -165,17 +166,21 @@ CONST
 
 { wdgTTabContainer }
 
-procedure wdgTTabContainer.DeInitialize;
+procedure wdgTTabContainer.DeInitialize();
 var
    tabs: wdgTTabs;
 
 begin
    inherited DeInitialize;
 
-   Tabs := wdgTTabs(TabsParent);
+   tabs := wdgTTabs(TabsParent);
 
-   if(tabs.Tabs.t.n > 0) then
-      Widgets := Tabs.Tabs.t.List[0].Widgets;
+   if(tabs <> nil) then begin
+      if(tabs.Tabs.t.n > 0) then
+         Widgets := Tabs.Tabs.t.List[0].Widgets;
+
+      tabs.Container := nil;
+   end;
 end;
 
 function wdgTTabs.OnWhat(x, y: longint; out tabIndex: loopint): loopint;
@@ -234,32 +239,37 @@ begin
    Tabs.Highlighted := -1;
 end;
 
-
-procedure wdgTTabs.DeInitialize();
+procedure wdgTTabs.OnDestroy();
 var
-   previousWidgets: uiTWidgets;
    i: loopint;
 
 begin
    inherited;
 
+   if(not RequiresWidgets) then
+      exit;
+
    SelectByNum(0);
 
    {destroy all tab widgets, except the first one as that's used by container widgets}
-   if(Tabs.t.n > 1) then begin
-      previousWidgets := Container.Widgets;
-
+   if(Tabs.t.n > 0) then begin
       {destroy the rest}
       for i := 1 to (Tabs.t.n - 1) do begin
          Container.Widgets := Tabs.t.List[i].Widgets;
 
-         uiWidget.Dispose(Self.Widgets);
+         uiWidget.Dispose(Container.Widgets);
       end;
 
-      Container.Widgets := previousWidgets;
+      Container.Widgets := Tabs.t.List[0].Widgets;
    end;
 
    Tabs.t.Dispose();
+end;
+
+
+procedure wdgTTabs.DeInitialize();
+begin
+   Container := nil;
 end;
 
 procedure wdgTTabs.Point(var e: appTMouseEvent; x, y: longint);
@@ -634,6 +644,7 @@ begin
       Container := wdgTTabContainer(wdgEmpty.Add(oxNullPoint, oxNullDimensions));
       Container.TabsParent := Self;
       Container.SetTarget();
+
       SetupContainer();
    end;
 
@@ -714,7 +725,7 @@ begin
       Tabs.Selected := index;
       Result := true;
 
-      if(RequiresWidgets) then
+      if(RequiresWidgets and (Container <> nil)) then
          Container.Widgets := Tabs.t.List[index].Widgets;
 
       if(not (wdgpDESTROY_IN_PROGRESS in Properties)) then
