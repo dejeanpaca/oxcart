@@ -101,7 +101,7 @@ TYPE
 
    TFileDescriptor = record
       {file name}
-      Name: UnicodeString;
+      Name: UTF8String;
       {last modification time}
       Time: LongInt;
       {file size}
