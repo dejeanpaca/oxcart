@@ -64,7 +64,6 @@ VAR
    dvFPC,
    dvLazarus,
    dvPlatform,
-   dvCPU,
    dvPath,
    dvConfigPath,
    dvUseFPC,
@@ -381,14 +380,6 @@ begin
    currentLazarus := getdvCurrentLazInstall();
 end;
 
-procedure dvCPUNotify(var {%H-}context: TDVarNotificationContext);
-begin
-   if(currentMode = 'fpc') and (currentPlatform <> nil) then begin
-      if(currentValue = '64') then
-         currentPlatform^.x64 := True;
-   end;
-end;
-
 procedure dvPlatformNotify(var {%H-}context: TDVarNotificationContext);
 begin
    if(currentMode = 'fpc') and (currentPlatform <> nil) then
@@ -473,10 +464,6 @@ INITIALIZATION
    { LAZARUS }
    BuildConfiguration.dvgConfig.Add(dvLazarus, 'lazarus', dtcSTRING, @currentValue);
    dvLazarus.pNotify := @dvLazarusNotify;
-
-   { CPU }
-   BuildConfiguration.dvgConfig.Add(dvCPU, 'cpu', dtcSTRING, @currentValue);
-   dvCPU.pNotify := @dvCPUNotify;
 
    { PLATFORM }
    BuildConfiguration.dvgConfig.Add(dvPlatform, 'platform', dtcSTRING, @currentValue);
