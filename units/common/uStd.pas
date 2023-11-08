@@ -162,6 +162,9 @@ TYPE
    TProcedures = specialize TSimpleList<TProcedure>;
    TBoolFunctions = specialize TSimpleList<TBoolFunction>;
 
+   PStringPairs = ^TStringPairs;
+   TStringPairs = specialize TSimpleList<TStringPair>;
+
    { TProceduresHelper }
 
    TProceduresHelper = record helper for TProcedures
