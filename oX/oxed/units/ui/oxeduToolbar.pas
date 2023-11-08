@@ -11,7 +11,7 @@ UNIT oxeduToolbar;
 INTERFACE
 
    USES
-      uStd,
+      uStd, uColors,
       {ox}
       oxuTexture,
       {ui}
@@ -48,6 +48,10 @@ VAR
    oxedToolbar: oxedTToolbarGlobal;
 
 IMPLEMENTATION
+
+CONST
+   ToolButtonColor: TColor4ub = (192, 192, 255, 255);
+   ViewButtonColor: TColor4ub = (192, 255, 192, 255);
 
 { wdgTOXEDToolbar }
 
@@ -91,23 +95,29 @@ begin
    Buttons.Translate := Toolbar.AddButton(oxedIcons.Create($f245), oxedActions.TOOL_TRANSLATE);
    Buttons.Translate^.Hint := 'Move the selected object';
    Buttons.Translate^.Activate(true);
+   Buttons.Translate^.Color := ToolButtonColor;
 
    Buttons.Rotate := Toolbar.AddButton(oxedIcons.Create($f01e), oxedActions.TOOL_ROTATE);
    Buttons.Rotate^.Hint := 'Rotate the selected object';
+   Buttons.Translate^.Color := ToolButtonColor;
 
    Buttons.Scale := Toolbar.AddButton(oxedIcons.Create($f0b2), oxedActions.TOOL_SCALE);
    Buttons.Scale^.Hint := 'Scale the selected object';
+   Buttons.Translate^.Color := ToolButtonColor;
 
    Toolbar.AddSeparator();
 
    btn := Toolbar.AddButton(oxedIcons.Create($f060), oxedActions.VIEW_LEFT);
    btn^.Hint := 'Set the view left (CONTROL for right)';
+   btn^.Color := ViewButtonColor;
 
    btn := Toolbar.AddButton(oxedIcons.Create($f062), oxedActions.VIEW_UP);
    btn^.Hint := 'Set the view up (CONTROL for down)';
+   btn^.Color := ViewButtonColor;
 
    btn := Toolbar.AddButton(oxedIcons.Create($f0aa), oxedActions.VIEW_FRONT);
    btn^.Hint := 'Set the view front (CONTROL for back)';
+   btn^.Color := ViewButtonColor;
 
    Toolbar.EnableItems(false);
 end;
