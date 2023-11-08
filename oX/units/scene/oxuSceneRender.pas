@@ -35,6 +35,8 @@ TYPE
    oxTSceneRenderer = class
       Scene: oxTScene;
 
+      constructor Create();
+
       procedure RenderLayer(layer: oxTRenderLayerComponent; var params: oxTSceneRenderParameters; const cameras: oxTComponentsList);
 
       procedure RenderCamera(var params: oxTSceneRenderParameters; camera: oxTCameraComponent; entity: oxTEntity = nil);
@@ -96,6 +98,11 @@ begin
 end;
 
 { oxTSceneRenderer }
+
+constructor oxTSceneRenderer.Create();
+begin
+   Scene := oxScene;
+end;
 
 procedure oxTSceneRenderer.RenderLayer(layer: oxTRenderLayerComponent; var params: oxTSceneRenderParameters; const cameras: oxTComponentsList);
 var
