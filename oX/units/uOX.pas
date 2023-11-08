@@ -41,6 +41,9 @@ TYPE
       {are we running as part of a library}
       LibraryMode: boolean;
 
+      {initialization failed}
+      InitializationFailed: boolean;
+
       Error: loopint;
 
       {list of all do routines}
@@ -95,11 +98,11 @@ begin
 
    if(properties and oxVERSION_STR_ONLY = 0) then begin
       if(properties and oxVERSION_STR_SHORT > 0) then
-         result := oxEngineName + ' ' + vstr
+         Result := oxEngineName + ' ' + vstr
       else
-         result := oxEngineName + ' Engine ' + vstr;
+         Result := oxEngineName + ' Engine ' + vstr;
    end else
-      result := vstr;
+      Result := vstr;
 end;
 
 function oxTGlobal.GetErrorDescription(errcode: longint): string;
