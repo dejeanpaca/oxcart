@@ -14,7 +14,7 @@ USES
    {app}
    uApp,
    {ox}
-   uOX, oxuRun, oxuPlatform, oxuAndroidPlatform;
+   uOX, oxuRun, oxuInitialize, oxuPlatform, oxuAndroidPlatform;
 
 procedure android_main(app: Pandroid_app); cdecl;
 
@@ -34,23 +34,53 @@ begin
    finished := false;
    uApp.app.Active := true;
 
+   oxAndroidPlatform.fStarted := true;
+
    repeat
       cycledEvents := false;
 
-      if(ox.Initialized) and (not finished) then begin
-         if(not ox.Started) then
-            oxRun.Start();
+      if(not ox.Initialized) and (not ox.InitializationFailed) then begin
+         if(not ox.Started) and (oxAndroidPlatform.fInitWindow) then begin
+            oxRun.Initialize();
+            oxAndroidPlatform.fInitWindow := false;
+         end;
+      end;
 
-         if(not finished) then begin
-            oxRun.GoCycle(true);
-            cycledEvents := true;
+      if(oxAndroidPlatform.fDone) then begin
+         oxRun.Done();
+         oxInitialization.Deinitialize();
+         oxAndroidPlatform.fDone := false;
+      end;
+
+      if(ox.Initialized) and (not finished) then begin
+         if(not ox.Started) then begin
+            oxRun.Start();
+         end else begin
+            if(oxAndroidPlatform.fLostWindow) then begin
+               oxAndroidPlatform.DestroyWindow();
+            end;
+
+            if(not finished) then begin
+               oxRun.GoCycle(true);
+               cycledEvents := true;
+            end;
          end;
       end;
 
       if(ox.Started) then begin
-         if(app^.hideNavbar) then begin
+         if(oxAndroidPlatform.HideNavbar) then begin
             androidAutoHideNavBar(app);
-            app^.hideNavbar := false;
+            oxAndroidPlatform.HideNavbar := false;
+         end;
+
+         if(oxAndroidPlatform.fRegainedFocus) then begin
+            if(oxAndroidPlatform.fStarted) then begin
+               oxAndroidPlatform.fRegainedFocus := false;
+            end else begin
+               oxAndroidPlatform.fRecreateSurface := true;
+               oxAndroidPlatform.RecreateSurface();
+               oxAndroidPlatform.RegainedFocus();
+            end;
          end;
       end;
 
