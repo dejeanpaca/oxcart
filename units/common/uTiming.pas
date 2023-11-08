@@ -110,6 +110,9 @@ TYPE
       procedure Start(setInterval: single = 1);
       procedure Start(setInterval: loopint = 1);
       function Elapsed(): boolean;
+
+      {reset the timer to behave as it just started}
+      procedure Reset();
    end;
 
    {note: goal and elapsed time is relative of start time}
@@ -382,6 +385,12 @@ begin
    end;
 
    Result := false;
+end;
+
+procedure TTimerInterval.Reset();
+begin
+   Timer.Start();
+   LeftOver := 0;
 end;
 
 INITIALIZATION
