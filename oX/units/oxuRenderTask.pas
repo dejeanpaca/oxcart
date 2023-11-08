@@ -41,7 +41,7 @@ TYPE
       procedure Load(); virtual;
       {unload all resources}
       procedure Unload(); virtual;
-      {renders the splash screen, with content and overlay}
+      {render the content}
       procedure Render(); virtual;
       {renders content here}
       procedure RenderContent(var {%H-}context: oxTRenderingContext); virtual;
@@ -51,12 +51,12 @@ TYPE
       {restore rendering context to the associated window}
       procedure RestoreRender();
 
-      {called to update the splash screen (animate, calculate, and what else, but not render)}
+      {called to update the content (animate, calculate, and what else, but not render)}
       procedure Update(); virtual;
       {waits until display time passsed}
       procedure WaitForDisplayTime();
 
-      {runs the splash screen task}
+      {runs the task main logic}
       procedure Run(); override;
 
       procedure TaskStart(); override;
@@ -166,25 +166,11 @@ begin
    if(AssociatedWindow <> nil) then
       oxRenderThread.StopThread(AssociatedWindow);
 
-   log.v('Ended splash screen: ' + Name);
+   log.v('Ended render task: ' + Name);
 end;
 
 procedure oxTRenderTask.ThreadStart();
-var
-   rtc: oxTRenderTargetContext;
-   renderer: oxTRenderer;
-
 begin
-   renderer := oxTRenderer(AssociatedWindow.Renderer);
-
-   {get an RC to render the splash screen}
-   RC := renderer.GetRenderingContext(AssociatedWindow);
-
-   {mark current context for use only (since we'll render in the splash)}
-   AssociatedWindow.FromWindow(rtc);
-   rtc.ContextType := oxRENDER_TARGET_CONTEXT_USE;
-
-   renderer.ContextCurrent(rtc);
 end;
 
 END.
