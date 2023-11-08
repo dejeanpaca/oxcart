@@ -420,8 +420,6 @@ begin
 
    if(style <> uimbsNONE) then
       AddIcon();
-
-   uiWidget.ClearTarget();
 end;
 
 function instanceWindow(): uiTWindow;

@@ -111,8 +111,6 @@ begin
 
       setupWidget();
    end;
-
-   uiWidget.ClearTarget();
 end;
 
 procedure oxTQuickMenuWindow.CreateWindow();

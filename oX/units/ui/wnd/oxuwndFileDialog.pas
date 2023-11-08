@@ -589,8 +589,6 @@ begin
 
          wdg.Files.SetupRequireFile();
 
-         uiWidget.ClearTarget();
-
          SetPath(GetCurrentDir());
 
          OnResize();

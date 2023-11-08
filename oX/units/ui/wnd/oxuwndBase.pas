@@ -14,7 +14,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuRenderer,
       {ui}
-      uiuTypes, uiuControl, oxuUI, uiuWindowTypes, uiuWindow, uiuSurface;
+      uiuTypes, uiuControl, oxuUI, uiuWindowTypes, uiuWindow, uiuSurface, uiWidgets;
 
 TYPE
 
@@ -136,6 +136,7 @@ begin
 
       {add widgets}
       AddWidgets();
+      uiWidget.ClearTarget();
    end;
 end;
 

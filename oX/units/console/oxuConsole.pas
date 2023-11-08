@@ -596,7 +596,6 @@ begin
       oxConsole.wdgInput.InputCursorType := wdgINPUT_BOX_CURSOR_BLOCK;
       oxConsole.wdgInput.Skin := @consoleInputSkin;
 
-      uiWidget.ClearTarget();
       adjustSize();
 
       {prepare console for input and display}
