@@ -438,6 +438,7 @@ var
 
 begin
    ZeroOut(context, SizeOf(context));
+
    if(lib) then
       context.Loaded := @libLPILoaded
    else
@@ -592,6 +593,10 @@ begin
 end;
 
 class function oxedTBuildGlobal.Recreate(): boolean;
+var
+   lpiFile,
+   source: StdString;
+
 begin
    oxedProject.RecreateTempDirectory();
 
@@ -607,26 +612,27 @@ begin
    end;
 
    {recreate library}
-   if(oxedBuild.BuildTarget = OXED_BUILD_LIB) then begin
-      if(ShouldRecreate(oxPROJECT_LIB_SOURCE)) then
-         RecreateLib();
+   if(oxedBuild.IsLibrary()) then begin
+      lpiFile := oxPROJECT_LIB_LPI;
+      source := oxPROJECT_LIB_SOURCE;
+   end else begin
+      lpiFile := oxPROJECT_MAIN_LPI;
+      source := oxPROJECT_MAIN_SOURCE;
+   end;
 
-      if(ShouldRecreate(oxPROJECT_LIB_LPI)) then begin
-         if(not RecreateLPI(true)) then begin
-            oxedConsole.e('Failed to create project library lpi file. lpi error: ' + sf(lpi.Error));
-            exit(false);
-         end;
-      end;
-   {recreate standalone project}
-   end else if(oxedBuild.BuildTarget = OXED_BUILD_STANDALONE) then begin
-      if(ShouldRecreate(oxPROJECT_MAIN_SOURCE)) then
+   {recreate library}
+
+   if(ShouldRecreate(source)) then begin
+      if(oxedBuild.BuildTarget = OXED_BUILD_LIB) then
+         RecreateLib()
+      else
          RecreateProgram();
+   end;
 
-      if(ShouldRecreate(oxPROJECT_MAIN_LPI)) then begin
-         if(not RecreateLPI(false)) then begin
-            oxedConsole.e('Failed to create project lpi file. lpi error: ' + sf(lpi.Error));
-            exit(false);
-         end;
+   if(ShouldRecreate(lpiFile)) then begin
+      if(not RecreateLPI(oxedBuild.IsLibrary())) then begin
+         oxedConsole.e('Failed to create project library lpi file. lpi error: ' + sf(lpi.Error));
+         exit(false);
       end;
    end;
 
@@ -720,7 +726,7 @@ begin
    else if(BuildType = OXED_BUILD_TASK_STANDALONE) then
       modeString := 'build';
 
-   if(BuildTarget = OXED_BUILD_LIB) then
+   if(IsLibrary()) then
       targetString := 'lib'
    else
       targetString := 'standalone';
@@ -732,7 +738,7 @@ begin
       exit;
    end;
 
-   if(BuildTarget = OXED_BUILD_LIB) then begin
+   if(IsLibrary()) then begin
       {check if used fpc version matches us}
       if(pos(FPC_VERSION, build.CurrentPlatform^.Version) <> 1) then begin
          oxedConsole.e('Library fpc version mismatch. Got ' + build.CurrentPlatform^.Version + ' but require ' + FPC_VERSION);
@@ -886,7 +892,7 @@ begin
       BuildTarget := OXED_BUILD_STANDALONE;
 
    BuildType := taskType;
-   build.Options.IsLibrary := BuildTarget = OXED_BUILD_LIB;
+   build.Options.IsLibrary := IsLibrary();
 
    {determine if we need third party units}
    oxedBuild.IncludeThirdParty := (not oxedProject.Session.ThirdPartyBuilt) or oxedProject.Session.IncludeThirdPartyUnits;
@@ -952,7 +958,7 @@ var
 begin
    Result := false;
 
-   if(BuildTarget = OXED_BUILD_LIB) then begin
+   if(IsLibrary()) then begin
       platform := build.FindPlatform(build.BuiltWithTarget, build.BuiltWithVersion);
 
       if(platform = nil) then begin
@@ -1000,7 +1006,7 @@ function oxedTBuildGlobal.GetTargetExecutableFileName(): StdString;
 begin
    Result := WorkArea;
 
-   if(BuildTarget = OXED_BUILD_LIB) then
+   if(IsLibrary()) then
       Result := Result + build.GetExecutableName(oxPROJECT_LIBRARY_NAME, true)
    else
       Result := Result + build.GetExecutableName(oxedProject.ShortName, false);
