@@ -736,9 +736,15 @@ begin
    {$ELSEIF DEFINED(WINDOWS)}
    fn := 'C:\lazarus\fpc\' + FPC_VERSION + '\bin\' + build.BuiltWithTarget + DirectorySeparator;
 
-   if not FileExists(fn + build.GetExecutableName(executable)) then
-      fn := 'C:\fpc\' + FPC_VERSION + '\bin\' + build.BuiltWithTarget + DirectorySeparator
-   else
+   if not FileExists(fn + build.GetExecutableName(executable)) then begin
+      fn := 'C:\fpc\' + FPC_VERSION + '\bin\' + build.BuiltWithTarget + DirectorySeparator;
+
+      {$IFDEF CPU64}
+      {some fpc executables can be found in a 32-bit location even on a 64-bit windows}
+      if not FileExists(fn + build.GetExecutableName(executable)) then
+         fn := 'C:\fpc\' + FPC_VERSION + '\bin\i386-win32' + DirectorySeparator;
+      {$ENDIF}
+   end else
       exit(fn);
    {$ENDIF}
 
