@@ -261,7 +261,7 @@ begin
    if(build.Debug.External) then
       add('-Xg');
 
-   if(build.Debug.LineInfo) then
+   if(build.Debug.Valgrind) then
       add('-gv');
 
    { optimization }
