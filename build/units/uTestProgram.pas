@@ -131,26 +131,26 @@ procedure getNameAndDescription();
 begin
    name := '';
 
-   idx := pos('''', p.currentLine);
-   Delete(p.currentLine, 1, idx);
-   idx := pos('''', p.currentLine);
-   name := copy(p.currentLine, 1, idx - 1);
+   idx := pos('''', p.CurrentLine);
+   Delete(p.CurrentLine, 1, idx);
+   idx := pos('''', p.CurrentLine);
+   name := copy(p.CurrentLine, 1, idx - 1);
 
    description := '';
-   Delete(p.currentLine, 1, idx);
+   Delete(p.CurrentLine, 1, idx);
 
-   idx := pos('''', p.currentLine);
+   idx := pos('''', p.CurrentLine);
    if(idx > 0) then begin
-      Delete(p.currentLine, 1, idx);
-      idx := pos('''', p.currentLine);
-      description := copy(p.currentLine, 1, idx - 1);
+      Delete(p.CurrentLine, 1, idx);
+      idx := pos('''', p.CurrentLine);
+      description := copy(p.CurrentLine, 1, idx - 1);
    end;
 end;
 
 begin
-   tp := TUnitTestProgram(p.externalData);
+   tp := TUnitTestProgram(p.ExternalData);
 
-   currentLine := lowercase(p.currentLine);
+   currentLine := lowercase(p.CurrentLine);
    name := '';
    description := '';
 
@@ -192,7 +192,7 @@ begin
       fn := ExtractAllNoExt(fn) + '.lpr';
 
    TParseData.Init(p);
-   p.externalData := Self;
+   p.ExternalData := Self;
    p.Read(fn, TParseMethod(@analyzeFile));
 end;
 

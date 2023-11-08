@@ -91,9 +91,9 @@ var
    code: loopint;
 
 begin
-   options := d.externalData;
+   options := d.ExternalData;
 
-   if(StringUtils.GetKeyValue(d.currentLine, key, value, ':')) then begin
+   if(StringUtils.GetKeyValue(d.CurrentLine, key, value, ':')) then begin
       if(key = 'version') then begin
          val(value, glslVersion, code);
 
@@ -145,7 +145,7 @@ begin
    parseOptions.Data := @data;
 
    TParseData.Init(parseData);
-   parseData.externalData := @parseOptions;
+   parseData.ExternalData := @parseOptions;
    parseData.ReadMethod := TParseMethod(@parseShaderFile);
    parseData.StripWhitespace := false;
 
