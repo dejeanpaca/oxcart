@@ -17,6 +17,8 @@ INTERFACE
       uStd, StringUtils, oxeduPackageTypes;
 
 TYPE
+   oxedPPackage = ^oxedTPackage;
+
    { oxedTPackage }
 
    oxedTPackage = record
