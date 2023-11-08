@@ -158,6 +158,8 @@ end;
 
 procedure onInitialize();
 begin
+   oxWindows.OnRender.Add(@RenderWnd);
+
    loadQuad();
    createSurface();
    createStandardWidgets();
@@ -212,20 +214,13 @@ end;
 VAR
    initRoutine: oxTRunRoutine;
 
-procedure init();
-begin
-   oxWindows.onRender.Add(@RenderWnd);
-
-   ox.OnInitialize.Add(initRoutine, 'ui', @onInitialize, @onDeinitialize);
-end;
-
 BEGIN
    appInfo.SetName('UI Test');
    appInfo.SetVersion(1, 0, 0);
 
    oxwndSplash.Link := 'https://www.google.hr';
 
-   ox.AppProcs.iAdd('init', @init);
+   ox.OnInitialize.Add(initRoutine, 'ui', @onInitialize, @onDeinitialize);
    InitWindow();
 
    oxRun.Go();
