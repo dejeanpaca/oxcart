@@ -416,14 +416,6 @@ begin
 end;
 
 begin
-   if(build.IncludeDebugInfo) then begin
-      oxedBuildLog.w('Including debug info');
-
-      f.AddCustomOption('-g');
-      f.AddCustomOption('-gl');
-      f.AddCustomOption('-Xg');
-   end;
-
    f.SetTitle(oxedProject.Name);
    f.compiler.applyConventions := false;
 
@@ -548,12 +540,6 @@ var
 
 begin
    TBuildFPCConfiguration.Initialize(config);
-
-   build.Checks.IO := true;
-   build.Checks.Range := true;
-   build.Checks.Overflow := true;
-   build.Checks.Stack := true;
-   build.Checks.Assertions := true;
 
    {construct defaults}
    config.Construct();
@@ -791,13 +777,6 @@ begin
    parameters.Add('-vewnhi');
    {output FPC logo}
    parameters.Add('-l');
-
-   if(build.IncludeDebugInfo) then begin
-      {include debug information}
-      parameters.Add('-g');
-      parameters.Add('-gl');
-      parameters.Add('-Xg');
-   end;
 
    {include checks}
 
@@ -1102,11 +1081,34 @@ begin
    oxedBuild.RecreateConfig(OXED_BUILD_VIA_LAZ, true);
 end;
 
-procedure oxedTBuildGlobal.RunTask();
+procedure SetupFPCBuildOptions();
 var
    cpu,
-   os: TFPCPlatformString;
+   os: StdString;
 
+begin
+   oxedBuild.BuildArch.GetPlatformString().Separate(cpu, os);
+
+   {setup build options}
+   build.ResetOptions();
+   build.Options.IsLibrary := oxedBuild.IsLibrary();
+
+   build.FPCOptions.UnitOutputPath := oxedBuild.WorkArea  + 'lib';
+
+   build.Checks.IO := true;
+   build.Checks.Range := true;
+   build.Checks.Overflow := true;
+   build.Checks.Stack := true;
+   build.Checks.Assertions := true;
+
+   {$IFDEF D+}
+   build.Debug.Include := true;
+   build.Debug.LineInfo := true;
+   build.Debug.External := true;
+   {$ENDIF}
+end;
+
+procedure oxedTBuildGlobal.RunTask();
 begin
    if(not oxedBuild.Buildable(true)) or (not oxedProject.Valid()) then begin
       Reset();
@@ -1123,9 +1125,6 @@ begin
    BuildOk := true;
    BuildFailed := false;
    BuildStart := Now;
-
-   build.ResetOptions();
-   build.Options.IsLibrary := IsLibrary();
 
    {determine if we need third party units}
    oxedBuild.IncludeThirdParty := (not oxedProject.Session.ThirdPartyBuilt) or
@@ -1156,17 +1155,9 @@ begin
 
    InEditor := IsLibrary() and (BuildArch.Name = 'editor');
 
-   {$IFOPT D+}
-   build.IncludeDebugInfo := true;
-   {$ELSE}
-   build.IncludeDebugInfo := false;
-   {$ENDIf}
+   SetupFPCBuildOptions();
 
-   BuildArch.GetPlatformString().Separate(cpu, os);
-   build.TargetCPU := cpu;
-   build.TargetOS := os;
-   build.FPCOptions.UnitOutputPath := oxedBuild.WorkArea  + 'lib';
-
+   {run tasks}
    if(BuildType = OXED_BUILD_TASK_RECODE) then begin
       build.Options.Rebuild := false;
       RunBuild();
