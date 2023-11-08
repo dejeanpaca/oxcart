@@ -127,8 +127,6 @@ TYPE
       procedure ResizeAdjusted(w, h: loopint; ignoreRestrictions: boolean = false);
       procedure ResizeAdjusted(const newSize: oxTDimensions; ignoreRestrictions: boolean = false);
 
-      procedure UpdateResize();
-
       {adjust width and height according to window restrictions}
       procedure AdjustSizesWithRestrictions(var w, h: loopint);
       procedure AdjustSizesWithRestrictions(var d: oxTDimensions);
@@ -275,6 +273,8 @@ TYPE
       procedure UpdatePositions();
       {notifies all children that the parent resized}
       procedure UpdateParentSize(selfNotify: boolean = true);
+      {update when resize is performed}
+      procedure UpdateResize();
 
       {adjusts the window position}
       procedure AdjustPosition();
@@ -1166,13 +1166,6 @@ begin
    Resize(d.w, d.h, ignoreRestrictions);
 end;
 
-procedure uiTWindowHelper.UpdateResize();
-begin
-   Notification(uiWINDOW_RESIZE);
-   UpdateParentSize(false);
-   SizeChanged();
-end;
-
 procedure uiTWindowHelper.AdjustSizesWithRestrictions(var w, h: loopint);
 begin
    if(w < MinimumSize.w) then
@@ -1861,6 +1854,13 @@ begin
 
    if(selfNotify) then
       ParentSizeChange();
+end;
+
+procedure uiTWindowHelper.UpdateResize();
+begin
+   Notification(uiWINDOW_RESIZE);
+   UpdateParentSize(false);
+   SizeChanged();
 end;
 
 procedure uiTWindowHelper.AdjustPosition();

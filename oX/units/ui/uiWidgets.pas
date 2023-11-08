@@ -138,6 +138,11 @@ TYPE
 
       {fill the window}
       procedure FillWindow();
+
+
+      { INTERNAL }
+
+      procedure UpdateResize();
    end;
 
    uiTWidgetTarget = record
@@ -275,8 +280,9 @@ TYPE
       {set target window/widget and control procedure}
       procedure SetTarget(wnd: uiTWindow; cp: uiTWidgetControlMethod);
 
-      {set or clear a target control procedure}
+      {set control procedure}
       procedure SetTargetCP(cp: uiTWidgetControlMethod);
+      {clear target control procedure}
       procedure ClearTargetCP();
 
       procedure SetTargetFont(font: oxTFont);
@@ -427,6 +433,8 @@ begin
    else
       dec(r.y, spacing);
 end;
+
+{ uiTWidgetGlobal }
 
 { WIDGET CREATION AND ADDING }
 
@@ -1204,6 +1212,23 @@ begin
    SetTargetCP(cp);
 end;
 
+procedure uiTWidgetGlobal.Created(wdg: uiTWidget);
+begin
+   wdg.Level := wdg.Parent.Level + 1;
+
+   if(wdg.Skin = nil) then
+      wdg.Skin := wdg.GetSkin();
+
+   if(wdg.Dimensions.w <> 0) or (wdg.Dimensions.h <> 0) then
+      wdg.DimensionsSet := true;
+
+   {update the position}
+   wdg.PositionUpdate();
+
+   {initialize the widget}
+   wdg.Initialize();
+end;
+
 { uiTWidgetHelper }
 
 procedure uiTWidgetHelper.SetTarget(cp: uiTWidgetControlMethod);
@@ -1423,8 +1448,7 @@ begin
 
       DimensionsSet := true;
 
-      SizeChanged();
-      UpdateParentSize(false);
+      UpdateResize();
    end;
 
    if(wdgpVISIBLE in Properties) then
@@ -1483,21 +1507,10 @@ begin
    Resize(wnd.Dimensions.w, wnd.Dimensions.h);
 end;
 
-procedure uiTWidgetGlobal.Created(wdg: uiTWidget);
+procedure uiTWidgetHelper.UpdateResize();
 begin
-   wdg.Level := wdg.Parent.Level + 1;
-
-   if(wdg.Skin = nil) then
-      wdg.Skin := wdg.GetSkin();
-
-   if(wdg.Dimensions.w <> 0) or (wdg.Dimensions.h <> 0) then
-      wdg.DimensionsSet := true;
-
-   {update the position}
-   wdg.PositionUpdate();
-
-   {initialize the widget}
-   wdg.Initialize();
+   SizeChanged();
+   UpdateParentSize(false);
 end;
 
 { WIDGET ID OPERATORS }
