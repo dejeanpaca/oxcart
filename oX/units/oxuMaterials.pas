@@ -15,12 +15,25 @@ INTERFACE
       oxuResourcePool;
 
 TYPE
+
+   { oxTMaterialPool }
+
    oxTMaterialPool = class(oxTResourcePool)
+     constructor Create(); override;
    end;
 
 VAR
    oxMaterialPool: oxTMaterialPool;
 
 IMPLEMENTATION
+
+{ oxTMaterialPool }
+
+constructor oxTMaterialPool.Create();
+begin
+   inherited;
+
+   Name := 'material';
+end;
 
 END.

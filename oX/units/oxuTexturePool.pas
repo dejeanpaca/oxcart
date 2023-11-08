@@ -17,7 +17,11 @@ INTERFACE
       uOX, oxuRunRoutines, oxuResourcePool;
 
 TYPE
+
+   { oxTTexturePool }
+
    oxTTexturePool = class(oxTResourcePool)
+      constructor Create(); override;
    end;
 
 VAR
@@ -28,6 +32,7 @@ IMPLEMENTATION
 procedure init();
 begin
    oxTexturePool := oxTTexturePool.Create();
+   oxTexturePool.Name := 'texture.default';
 end;
 
 procedure deinit();
@@ -37,6 +42,15 @@ end;
 
 VAR
    initRoutines: oxTRunRoutine;
+
+{ oxTTexturePool }
+
+constructor oxTTexturePool.Create();
+begin
+   inherited;
+
+   Name := 'texture';
+end;
 
 INITIALIZATION
    ox.Init.Add(initRoutines, 'texture-pool', @init, @deinit);
