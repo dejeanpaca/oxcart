@@ -78,6 +78,8 @@ INTERFACE
       {%H-}oxuRendererDX,
       {$ENDIF}
 
+      oxuProgramConfig,
+
       { default handlers }
       oxuDefaultFont,
       oxuDefaultTexture,
