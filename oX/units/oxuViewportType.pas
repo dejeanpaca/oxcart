@@ -43,9 +43,6 @@ TYPE
        ClearColor: TColor4f;
 
        a: oxTAspect;
-
-      {called when viewport changes}
-      OnChange: oxTOnViewportChangeCallbacks;
     end;
 
     oxTRelativeViewport = record
