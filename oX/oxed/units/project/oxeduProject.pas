@@ -131,7 +131,7 @@ TYPE
       function GetConfigFilePath(const fn: StdString): StdString;
       function GetTempFilePath(const fn: StdString): StdString;
 
-      procedure AddPackage(const packageName: string);
+      procedure AddPackage(const packageId: string);
       procedure AddPackagePath(const packagePath: string);
    end;
 
@@ -255,13 +255,13 @@ begin
    Result := oxedProject.TempPath + fn;
 end;
 
-procedure oxedTProject.AddPackage(const packageName: string);
+procedure oxedTProject.AddPackage(const packageId: string);
 var
    p: oxedTPackage;
 
 begin
    ZeroPtr(@p, SizeOf(p));
-   p.Name := packageName;
+   p.Id := packageId;
 
    Packages.Add(p);
 end;
