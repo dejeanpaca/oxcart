@@ -162,7 +162,8 @@ TYPE
       Bools: array of uiTWidgetSkinBool;
       Strings: TStringArray;
 
-      procedure SetColor(which: longint; var clr: TColor4ub);
+      procedure SetColor(which: loopint; var clr: TColor4ub);
+      function GetColor(which: loopint): TColor4ub;
    end;
 
 
@@ -275,10 +276,18 @@ end;
 
 { uiTWidgetSkin }
 
-procedure uiTWidgetSkin.SetColor(which: longint; var clr: TColor4ub);
+procedure uiTWidgetSkin.SetColor(which: loopint; var clr: TColor4ub);
 begin
    if(Colors <> nil) then
       Colors[which] := clr;
+end;
+
+function uiTWidgetSkin.GetColor(which: loopint): TColor4ub;
+begin
+   if(Colors <> nil) then
+      Result := Colors[which]
+   else
+      Result := cWhite4ub;
 end;
 
 END.
