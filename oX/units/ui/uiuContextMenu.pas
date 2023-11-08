@@ -18,7 +18,7 @@ INTERFACE
       oxuTypes, oxuFont, oxuRender, oxuUI, oxuTexture, oxuRenderUtilities, oxuResourcePool,
       {ui}
       uiuTypes, uiuWindowTypes, uiuSkinTypes,
-      uiuWindow, uiuWidget, uiWidgets, uiuControl, uiuWidgetWindow, uiuDraw,
+      uiuWindow, uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuControl, uiuWidgetWindow, uiuDraw,
       {wdg}
       wdguList, wdguCheckbox;
 

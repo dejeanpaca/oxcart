@@ -15,7 +15,7 @@ INTERFACE
       {oX}
       oxuTypes, oxuTexture,
       {ui}
-      uiuWidget, uiWidgets,
+      uiuWidget, uiWidgets, uiuRegisteredWidgets,
       {wdg}
       wdguHierarchyList, wdguCheckbox, wdguBase;
 

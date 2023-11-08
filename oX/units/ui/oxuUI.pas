@@ -87,11 +87,6 @@ TYPE
       StartedInitialization,
       PointerHover: boolean;
 
-      {total number of widget types}
-      nWidgetTypes: longint;
-      {widget classes}
-      WidgetClasses: uiTWidgetClasses;
-
       {currently selected window}
       Select: uiTSelectInfo;
       {which window to use for further actions}

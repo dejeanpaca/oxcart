@@ -18,7 +18,7 @@ INTERFACE
       oxuTypes, oxuFont,
       {ui}
       uiuWindow, uiuWindowTypes, uiuTypes, uiuSkinTypes,
-      uiuWidget, uiWidgets, wdguBase;
+      uiuWidget, uiWidgets, uiuRegisteredWidgets, wdguBase;
 
 TYPE
    { wdgTTitleButton }

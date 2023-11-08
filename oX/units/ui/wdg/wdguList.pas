@@ -18,7 +18,7 @@ INTERFACE
       oxuTypes, oxuFont, oxuTexture,
       {ui}
       uiuTypes, uiuWindowTypes, uiuWidget, uiWidgets, uiuSkinTypes,
-      uiuDraw, uiuWidgetRender, uiuWindow, uiuSettings,
+      uiuDraw, uiuWidgetRender, uiuWindow, uiuSettings, uiuRegisteredWidgets,
       uiuPointer,
       wdguBase, wdguScrollbar;
 

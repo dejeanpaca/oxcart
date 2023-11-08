@@ -16,7 +16,7 @@ INTERFACE
       oxuTypes, oxuRender, oxuTransform, oxuTexture, oxuTextureGenerate, oxumPrimitive, oxuPaths, oxuPrimitives,
       oxuResourcePool, oxuUI,
       {ui}
-      uiuWidget, uiWidgets, uiuDraw, uiuWindow, wdguBase;
+      uiuWidget, uiWidgets, uiuRegisteredWidgets, uiuDraw, uiuWindow, wdguBase;
 
 TYPE
 

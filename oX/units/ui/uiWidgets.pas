@@ -11,11 +11,11 @@ UNIT uiWidgets;
 INTERFACE
 
    USES
-      uStd, StringUtils, uColors, appuEvents,
+      uStd, uColors, appuEvents,
       {oX}
       oxuRunRoutines, oxuTypes, oxuUI, oxuWindows, oxuWindow, oxuWindowTypes,
       {ui}
-      uiuTypes, oxuFont, uiuWindowTypes, uiuWidget, uiuControl, uiuSkin, uiuSkinTypes, uiuDraw;
+      uiuTypes, oxuFont, uiuWindowTypes, uiuWidget, uiuControl, uiuSkin, uiuSkinTypes, uiuDraw, uiuRegisteredWidgets;
 
 CONST
    wdgevDISPOSE = 1;
@@ -179,9 +179,6 @@ TYPE
 
       DefaultProperties: uiTWidgetProperties;
 
-      {dummy widget class}
-      DummyWidgetClass: uiTWidgetClass;
-
       {target}
       Target: uiTWidgetTarget;
       TargetStack: record
@@ -210,17 +207,6 @@ TYPE
 
       EventHandler: appTEventHandler;
       evh: appPEventHandler;
-
-      { GENERAL }
-
-         {initialize a uiTWidgetClass record}
-      procedure Init(out wc: uiTWidgetClass);
-      procedure Init(out wc: uiTWidgetClass; const name: string);
-
-      { WIDGET REGISTERING }
-
-      {registers a widget class}
-      procedure RegisterClass(var wc: uiTWidgetClass);
 
       { WIDGET CREATION AND ADDING }
 
@@ -303,14 +289,6 @@ TYPE
          procedure Created(wdg: uiTWidget);
    end;
 
-   { uiTWidgetInternal }
-
-   uiTWidgetInternal = record helper for uiTWidgetClass
-      procedure Register(const name: string; initProc: TProcedure);
-      procedure Done(widgetClass: uiTWidgetClassType);
-      procedure Done();
-   end;
-
 VAR
    uiWidget: uiTWidgetGlobal;
 
@@ -321,9 +299,6 @@ IMPLEMENTATION
 
 USES
    uiuWindow;
-
-VAR
-   nWidgetTypes: longint;
 
 { uiTWidgetLastRect }
 
@@ -435,38 +410,6 @@ begin
       dec(r.y, wdgDEFAULT_SPACING)
    else
       dec(r.y, spacing);
-end;
-
-{ GENERAL }
-procedure uiTWidgetGlobal.Init(out wc: uiTWidgetClass);
-begin
-   wc := DummyWidgetClass;
-end;
-
-procedure uiTWidgetGlobal.Init(out wc: uiTWidgetClass; const name: string);
-begin
-   Init(wc);
-   wc.sName := name;
-end;
-
-{ WIDGET REGISTERING }
-procedure uiTWidgetGlobal.RegisterClass(var wc: uiTWidgetClass);
-var
-   n: longint;
-
-begin
-   assert(nWidgetTypes < oxui.nWidgetTypes, 'uiWidgets > More classes registered than reported(' + sf(oxui.nWidgetTypes) + '). While registering: ' + wc.sName);
-
-   inc(nWidgetTypes);
-   if(nWidgetTypes <= oxui.nWidgetTypes) then begin
-      n := nWidgetTypes - 1;
-
-      oxui.WidgetClasses[n] := @wc;
-      oxui.WidgetClasses[n]^.cID := n;
-
-      if(oxui.WidgetClasses[n]^.SkinDescriptor <> nil) then
-         uiSkin.SetupWidget(oxui.DefaultSkin, oxui.DefaultSkin.wdgSkins[n], oxui.WidgetClasses[n]^.SkinDescriptor^);
-   end;
 end;
 
 { WIDGET CREATION AND ADDING }
@@ -1127,16 +1070,6 @@ begin
    Deselected();
 end;
 
-procedure InitDummyWidgetClass();
-begin
-   ZeroOut(uiWidget.DummyWidgetClass, SizeOf(uiTWidgetClass));
-
-   uiWidget.DummyWidgetClass.sName        := 'wdgDUMMY';
-   uiWidget.DummyWidgetClass.SelectOnAdd  := true;
-   uiWidget.DummyWidgetClass.Instance := uiTWidget;
-   uiWidget.DummyWidgetClass.SkinDescriptor := nil;
-end;
-
 {event handler}
 procedure eventAction(var event: appTEvent);
 begin
@@ -1182,27 +1115,13 @@ begin
    uiWindow.OnCreate.Add(@onwndCreateSetTarget);
    uiWidget.GetCreateData(uiWidget.Create);
 
-   if(oxui.nWidgetTypes > 0) then begin
-      {allocate memory for widget classes}
-      try
-         SetLength(oxui.WidgetClasses, oxui.nWidgetTypes);
-      except
-         {eNO_MEMORY}
-         exit;
-      end;
-
-      ZeroOut(oxui.WidgetClasses[0], int64(oxui.nWidgetTypes) * int64(SizeOf(uiPWidgetClass)));
-   end;
+   uiRegisteredWidgets.Initialize();
 end;
 
 {de-initializes widgets}
 procedure DeInitWidgets();
 begin
-   {dispose of widget class and renderer pointer memory}
-   SetLength(oxui.WidgetClasses, 0);
-   oxui.WidgetClasses := nil;
-
-   nWidgetTypes := 0;
+   uiRegisteredWidgets.DeInitialize();
 end;
 
 { TARGET }
@@ -1550,30 +1469,6 @@ begin
    wdg.Initialize();
 end;
 
-{ uiTWidgetInternal }
-
-procedure uiTWidgetInternal.Register(const name: string; initProc: TProcedure);
-begin
-   uiWidget.Init(self, CopyAfter(name, '.'));
-
-   if(initProc <> nil) then begin
-      oxui.BaseInitializationProcs.iAdd(InitRoutines, name, initProc);
-   end;
-
-   inc(oxui.nWidgetTypes);
-end;
-
-procedure uiTWidgetInternal.Done(widgetClass: uiTWidgetClassType);
-begin
-   Self.Instance := widgetClass;
-   Done();
-end;
-
-procedure uiTWidgetInternal.Done();
-begin
-   uiWidget.RegisterClass(self);
-end;
-
 { WIDGET ID OPERATORS }
 
 operator = (wdg: uiTWidget; var id: uiTControlID): boolean;
@@ -1588,6 +1483,5 @@ INITIALIZATION
    uiWidget.evh := appEvents.AddHandler(uiWidget.EventHandler, 'ox.widget', @eventAction);
 
    oxui.BaseInitializationProcs.Add(initRoutines, 'widgets', @InitWidgets, @DeInitWidgets);
-   InitDummyWidgetClass();
 
 END.

@@ -14,7 +14,7 @@ INTERFACE
    {oX}
    oxuTypes,
    {ui}
-   uiuWidget, uiWidgets, uiuDraw,
+   uiuWidget, uiWidgets, uiuDraw, uiuRegisteredWidgets,
    wdguBase;
 
 

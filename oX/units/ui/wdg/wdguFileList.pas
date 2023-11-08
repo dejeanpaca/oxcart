@@ -20,7 +20,7 @@ INTERFACE
       oxuTypes, oxuFont, oxuFileIcons, oxuRender, oxuTexture, oxuRenderUtilities,
       {ui}
       uiuTypes, uiuWindowTypes, uiuSkinTypes, uiuFiles,
-      uiuWidget, uiWidgets,
+      uiuWidget, uiWidgets, uiuRegisteredWidgets,
       wdguBase, wdguGrid, wdguList, wdguHierarchyList;
 
 TYPE
