@@ -177,8 +177,10 @@ function CopyAfterDel(var s: string): string;
 function CopyAfterDel(var s: string; c: char): string;
 
 {add the specified leading character to make the string have length n}
+procedure AddLeadingPadding(var s: shortstring; c: char; n: longint);
 procedure AddLeadingPadding(var s: string; c: char; n: longint);
 {add the specified trailing character to make the string have length n}
+procedure AddTrailingPadding(var s: shortstring; c: char; n: longint);
 procedure AddTrailingPadding(var s: string; c: char; n: longint);
 
 {add the specified leading character to the start of the string the specified amount of times}
@@ -1264,6 +1266,28 @@ begin
       Result := '';
 end;
 
+procedure AddLeadingPadding(var s: shortstring; c: char; n: longint);
+var
+   i,
+   l,
+   m: longint;
+
+begin
+   l := Length(s);
+
+   if(n > l) then begin
+      m := n - l;
+      {set the new length}
+      SetLength(s, n);
+      {move characters}
+      Move(s[1], s[1 + m], l);
+
+      {add leading padding}
+      for i := 1 to m do
+         s[i] := c;
+   end;
+end;
+
 procedure AddLeadingPadding(var s: string; c: char; n: longint);
 var
    i, 
@@ -1278,10 +1302,28 @@ begin
       {set the new length}
       SetLength(s, n);
       {move characters}
-      move(s[1], s[1 + m], l);
+      Move(s[1], s[1 + m], l);
 
       {add leading padding}
       for i := 1 to m do 
+         s[i] := c;
+   end;
+end;
+
+procedure AddTrailingPadding(var s: shortstring; c: char; n: longint);
+var
+   i,
+   l,
+   m: longint;
+
+begin
+   l := Length(s);
+   if(n > l) then begin
+      m := n - (n - l);
+      {set the new length}
+      SetLength(s, n);
+      {add trailing padding}
+      for i := m + 1 to n do
          s[i] := c;
    end;
 end;
