@@ -265,7 +265,4 @@ begin
    Add(r^);
 end;
 
-INITIALIZATION
-   pool.count := 0;
-
 END.
