@@ -26,6 +26,9 @@ TYPE
    { oxedTTask }
 
    oxedTTask = class(oxTRoutineThreadTask)
+      {this task runs in the background and does not block other operations}
+      Background: boolean;
+
       constructor Create; override;
       destructor Destroy; override;
 
@@ -33,23 +36,25 @@ TYPE
       procedure ThreadDone(); override;
    end;
 
+   oxedTThreadTasksList = specialize TPreallocatedArrayList<oxedTTask>;
+
    { oxedTTasks }
 
    oxedTTasks = record
-      List: oxTThreadTasksList;
+      List: oxedTThreadTasksList;
 
       OnTaskDone,
       OnTaskStart: TProcedures;
 
-      procedure Add(task: oxTThreadTask);
-      procedure Remove(task: oxTThreadTask);
-      procedure TaskStarted(task: oxTThreadTask);
-      procedure TaskDone(task: oxTThreadTask);
+      procedure Add(task: oxedTTask);
+      procedure Remove(task: oxedTTask);
+      procedure TaskStarted(task: oxedTTask);
+      procedure TaskDone(task: oxedTTask);
 
       {are any tasks of the specified type running}
       function Running(taskType: TClass; exceptType: TClass = nil): loopint;
-      {how many tasks are running}
-      function RunningCount(): loopint;
+      {how many tasks are running (and whether foreground only are couned)}
+      function RunningCount(foregroundOnly: boolean = true): loopint;
    end;
 
 VAR
@@ -64,6 +69,7 @@ begin
    inherited Create;
 
    SingleRun := true;
+   Background := false;
    TaskType := oxedTBaseTask;
 
    oxedTasks.Add(Self);
@@ -88,7 +94,7 @@ end;
 
 { oxedTTasks }
 
-procedure oxedTTasks.Add(task: oxTThreadTask);
+procedure oxedTTasks.Add(task: oxedTTask);
 var
    i: loopint;
 
@@ -101,7 +107,7 @@ begin
    List.Add(task);
 end;
 
-procedure oxedTTasks.Remove(task: oxTThreadTask);
+procedure oxedTTasks.Remove(task: oxedTTask);
 var
    i: loopint;
 
@@ -114,7 +120,7 @@ begin
    end;
 end;
 
-procedure oxedTTasks.TaskStarted(task: oxTThreadTask);
+procedure oxedTTasks.TaskStarted(task: oxedTTask);
 var
    i: loopint;
 
@@ -126,7 +132,7 @@ begin
    end;
 end;
 
-procedure oxedTTasks.TaskDone(task: oxTThreadTask);
+procedure oxedTTasks.TaskDone(task: oxedTTask);
 var
    i: loopint;
 
@@ -153,7 +159,7 @@ begin
    end;
 end;
 
-function oxedTTasks.RunningCount(): loopint;
+function oxedTTasks.RunningCount(foregroundOnly: boolean): loopint;
 var
    i: loopint;
 
@@ -161,7 +167,7 @@ begin
    Result := 0;
 
    for i := 0 to List.n - 1 do begin
-      if(List.List[i].IsRunning()) then
+      if List.List[i].IsRunning() and ((not List.List[i].Background) and foregroundOnly) then
          inc(Result);
    end;
 end;
