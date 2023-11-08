@@ -164,7 +164,7 @@ begin
 
    repeat
       {no need for event to be initialized, since we read it}
-      count := fpRead(fileHandle, {%H-}jsevent, SizeOf(js_event));
+      count := FpRead(fileHandle, jsevent, SizeOf(js_event));
 
       if(count > 0) then begin
          event.MappedFunction := appCONTROLLER_NONE;
