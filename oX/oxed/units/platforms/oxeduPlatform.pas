@@ -182,7 +182,7 @@ begin
    TSimpleStringList.InitializeValues(Symbols);
 
    SupportsExternalDebugSymbols := true;
-   RequiresPIC := true;
+   RequiresPIC := false;
 end;
 
 destructor oxedTPlatform.Destroy;
