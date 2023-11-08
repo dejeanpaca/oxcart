@@ -20,6 +20,7 @@ TYPE
    { oxglTPlatformWGL }
 
    oxglTPlatformWGL = object(oxglTPlatform)
+      constructor Create();
       function PreInitWindow(wnd: oglTWindow): boolean; virtual;
       procedure OnInitWindow({%H-}wnd: oglTWindow); virtual;
       procedure SwapBuffers(wnd: oglTWindow); virtual;
@@ -289,6 +290,11 @@ begin
 end;
 
 { oxglTPlatformWGL }
+
+constructor oxglTPlatformWGL.Create();
+begin
+   Name := 'wgl';
+end;
 
 function oxglTPlatformWGL.PreInitWindow(wnd: oglTWindow): boolean;
 var

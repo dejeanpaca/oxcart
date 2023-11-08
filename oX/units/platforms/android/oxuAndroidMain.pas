@@ -38,7 +38,8 @@ begin
          if(not ox.Started) then
             oxRun.Start();
 
-         oxRun.GoCycle(true)
+         if(not finished) then
+            oxRun.GoCycle(true)
       end else
          AndroidProcessEvents();
 
