@@ -70,6 +70,7 @@ TYPE
                   const Pos: oxTPoint;
                   value: boolean = false): wdgTCheckbox;
       function Add(const Caption: StdString): wdgTCheckbox;
+      function Add(const Caption: StdString; value: boolean): wdgTCheckbox;
    end;
 
 VAR
@@ -292,6 +293,11 @@ end;
 function wdgTCheckboxGlobal.Add(const Caption: StdString): wdgTCheckbox;
 begin
    Result := Add(Caption, uiWidget.LastRect.BelowOf());
+end;
+
+function wdgTCheckboxGlobal.Add(const Caption: StdString; value: boolean): wdgTCheckbox;
+begin
+   Result := Add(Caption).Check(value);
 end;
 
 INITIALIZATION
