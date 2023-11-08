@@ -1862,17 +1862,24 @@ var
    source,
    cur: uiTWindow;
 
+   d,
+   compareD: oxTDimensions;
+
 begin
    Result.Initialize(Result);
 
    source := uiTWindow(Parent);
+   d := GetTotalDimensions();
+
    for i := 0 to (source.W.w.n - 1) do begin
       cur := uiTWindow(source.W.w[i]);
 
       if(cur <> nil) and (cur <> Self) and (cur.IsVisible()) then begin
-         if(not fitWithin) and (cur.Dimensions.h = Dimensions.h) and (cur.Position.y = Position.y) then
+         compareD := cur.GetTotalDimensions();
+
+         if(not fitWithin) and (compareD.h = d.h) and (cur.Position.y = Position.y) then
             Result.Add(cur)
-         else if(fitWithin) and (cur.Position.y <= Position.y) and (cur.Position.y - cur.Dimensions.h >= Position.y - Dimensions.h) then
+         else if(fitWithin) and (cur.Position.y <= Position.y) and (cur.Position.y - compareD.h >= Position.y - d.h) then
             Result.Add(cur);
       end;
    end;
@@ -1884,17 +1891,22 @@ var
    source,
    cur: uiTWindow;
 
+   d,
+   compareD: oxTDimensions;
+
 begin
    Result.Initialize(Result);
 
    source := uiTWindow(Parent);
+   d := GetTotalDimensions();
    for i := 0 to (source.W.w.n - 1) do begin
       cur := uiTWindow(source.W.w[i]);
+      compareD := cur.GetTotalDimensions();
 
       if(cur <> nil) and (cur <> Self) and (cur.IsVisible()) then begin
-         if(not fitWithin) and (cur.Dimensions.w = Dimensions.w) and (cur.Position.x = Position.x) then
+         if(not fitWithin) and (compareD.w = d.w) and (cur.Position.x = Position.x) then
             Result.Add(cur)
-         else if(fitWithin) and (cur.Position.x >= Position.x) and (cur.Position.x + cur.Dimensions.w <= Position.x + Dimensions.w) then
+         else if(fitWithin) and (cur.Position.x >= Position.x) and (cur.Position.x + compareD.w <= Position.x + d.w) then
             Result.Add(cur);
       end;
    end;
