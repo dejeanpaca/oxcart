@@ -678,9 +678,9 @@ begin
       BuildLPI(oxPROJECT_MAIN_LPI);
 
    if(build.Output.Success) then begin
-      oxedMessages.k(modestring + ' success (elapsed: ' + sf(oxedBuild.BuildStart.Elapsedf(), 2) + 's)');
+      oxedMessages.k(modestring + ' success (elapsed: ' + oxedBuild.BuildStart.ElapsedfToString() + 's)');
    end else
-      oxedMessages.e(modestring + ' failed (elapsed: ' + sf(oxedBuild.BuildStart.Elapsedf(), 2) + 's)');
+      oxedMessages.e(modestring + ' failed (elapsed: ' + oxedBuild.BuildStart.ElapsedfToString() + 's)');
 
    {if successful rebuild, we've made an initial build}
    oxedProject.Session.InitialBuildDone := true;
@@ -726,9 +726,9 @@ begin
       BuildLPI(oxPROJECT_MAIN_LPI);
 
    if(build.Output.Success) then
-      oxedMessages.k(modestring + ' success (elapsed: ' + sf(oxedBuild.BuildStart.Elapsedf(), 2) + 's)')
+      oxedMessages.k(modestring + ' success (elapsed: ' + oxedBuild.BuildStart.ElapsedfToString() + 's)')
    else
-      oxedMessages.e(modestring + ' failed (elapsed: ' + sf(oxedBuild.BuildStart.Elapsedf(), 2) + 's)');
+      oxedMessages.e(modestring + ' failed (elapsed: ' + oxedBuild.BuildStart.ElapsedfToString() + 's)');
 end;
 
 procedure DoCleanup();

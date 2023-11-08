@@ -200,5 +200,5 @@ BEGIN
    end;
 
    timer.Update();
-   log.w('Elapsed: ' + sf(timer.Elapsedf(), 2) + 's');
+   log.w('Elapsed: ' + timer.ElapsedfToString() + 's');
 END.

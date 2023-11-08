@@ -410,6 +410,7 @@ begin
       if(not Permanent) then begin
          OpacityStart.Update();
          OpacityMul := OpacityStart.Elapsedf();
+
          if(OpacityMul > 1) then
             OpacityMul := 1;
       end;
