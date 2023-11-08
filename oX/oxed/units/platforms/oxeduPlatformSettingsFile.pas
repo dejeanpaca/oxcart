@@ -11,7 +11,7 @@ UNIT oxeduPlatformSettingsFile;
 INTERFACE
 
    USES
-      dvaruFile, udvars,
+      uStd, uLog, udvars, dvaruFile,
       {oxed}
       oxeduProjectManagement, oxeduProject, oxeduPlatform;
 
@@ -19,30 +19,55 @@ TYPE
    { oxedTPlatformSettingsFile }
 
    oxedTPlatformSettingsFile = record
-     class function GetFn(var platform: oxedTPlatform): string; static;
-     class procedure Load(var platform: oxedTPlatform; var dvg: TDVarGroup); static;
-     class procedure Save(var platform: oxedTPlatform; var dvg: TDVarGroup); static;
+      function GetFn(var platform: oxedTPlatform): string;
+      procedure Load(var platform: oxedTPlatform);
+      procedure Save(var platform: oxedTPlatform);
    end;
+
+VAR
+   oxedPlatformSettingsFile: oxedTPlatformSettingsFile;
 
 IMPLEMENTATION
 
 { oxedTPlatformSettingsFile }
 
-class function oxedTPlatformSettingsFile.GetFn(var platform: oxedTPlatform): string;
+function oxedTPlatformSettingsFile.GetFn(var platform: oxedTPlatform): string;
 begin
    Result := oxedProject.GetConfigFilePath(platform.Id + '.dvar');
 end;
 
-class procedure oxedTPlatformSettingsFile.Load(var platform: oxedTPlatform; var dvg: TDVarGroup);
+procedure oxedTPlatformSettingsFile.Load(var platform: oxedTPlatform);
+var
+   dvg: PDVarGroup;
+   fn: StdString;
+
 begin
-   if(platform.Enabled) then
-      dvarf.ReadText(dvg, GetFn(platform));
+   if(platform.Enabled) then begin
+      dvg := platform.GetDvarGroup();
+
+      if(dvg <> nil) then begin
+         fn := GetFn(platform);
+         dvarf.ReadText(dvg^, fn);
+         log.v('Loaded ' + fn);
+      end;
+   end;
 end;
 
-class procedure oxedTPlatformSettingsFile.Save(var platform: oxedTPlatform; var dvg: TDVarGroup);
+procedure oxedTPlatformSettingsFile.Save(var platform: oxedTPlatform);
+var
+   dvg: PDVarGroup;
+   fn: StdString;
+
 begin
-   if(platform.Enabled) then
-      dvarf.WriteText(dvg, GetFn(platform));
+   if(platform.Enabled) then begin
+      dvg := platform.GetDvarGroup();
+
+      if(dvg <> nil) then begin
+         fn := GetFn(platform);
+         dvarf.WriteText(dvg^, fn);
+         log.v('Saved ' + fn);
+      end;
+   end;
 end;
 
 END.
