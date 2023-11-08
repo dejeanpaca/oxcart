@@ -159,6 +159,8 @@ TYPE
       function DebugCheckType(index: loopint; uniformType: oxTShaderUniformType; alternativeType: oxTShaderUniformType = oxunfSHADER_NONE): boolean;
       procedure DebugFailedType(index: loopint; const what: string);
       {$ENDIF}
+
+      function GetLoader(): POObject;
    end;
 
    oxTMaterials = specialize TSimpleList<oxTMaterial>;
@@ -175,6 +177,8 @@ TYPE
       MaterialInstance: TSingleComponent;
       {default material}
       Default: oxTMaterial;
+      {default resource loader}
+      ResourceLoader: POObject;
 
       function Instance(shader: oxTShader = nil): oxTMaterial;
       {create a material with the given shader (or default if nil)}
@@ -935,6 +939,11 @@ end;
 procedure oxTMaterial.DebugFailedType(index: loopint; const what: string);
 begin
    log.w('Material(' + Name +  ') index ' + sf(index) + ' failed check: ' + what)
+end;
+
+function oxTMaterial.GetLoader(): POObject;
+begin
+   Result := oxMaterial.ResourceLoader;
 end;
 
 procedure onUse();
