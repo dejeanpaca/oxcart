@@ -57,10 +57,17 @@ TYPE
      procedure ScissorCurrent();
      procedure DoneScissor();
 
+     procedure Color(const clr: TColor4ub);
+     procedure Color(r, g, b, a: byte);
+     procedure Color(r, g, b, a: single);
+
      {use the specified texture}
-     procedure Texture(t: oxTTexture);
+     procedure Texture(tex: oxTTexture);
      {remove the specified texture}
-     procedure DisableTexture();
+     procedure ClearTexture();
+
+     {render a quad with a texture and standard texture coorrds and vertices}
+     procedure Quad(tex: oxTTexture);
    end;
 
 VAR
@@ -279,7 +286,7 @@ begin
    oxTransform.Apply();
 
    oxui.Material.Apply();
-   oxui.Material.ApplyTexture('texture', nil);
+   uiDraw.ClearTexture();
 end;
 
 procedure uiTDraw.ScissorNextLevel();
@@ -363,14 +370,36 @@ begin
    ScissorCurrent();
 end;
 
-procedure uiTDraw.Texture(t: oxTTexture);
+procedure uiTDraw.Color(const clr: TColor4ub);
 begin
-   oxui.Material.ApplyTexture('texture', t);
+   oxui.Material.ApplyColor('color', clr);
 end;
 
-procedure uiTDraw.DisableTexture();
+procedure uiTDraw.Color(r, g, b, a: byte);
 begin
-   oxui.Material.ApplyTexture('texture', nil);
+   oxui.Material.ApplyColor('color', TColor4ub.Create(r, g, b, a));
+end;
+
+procedure uiTDraw.Color(r, g, b, a: single);
+begin
+   oxui.Material.ApplyColor('color', TColor4f.Create(r, g, b, a));
+end;
+
+procedure uiTDraw.Texture(tex: oxTTexture);
+begin
+   oxui.Material.ApplyTexture('texture', tex);
+end;
+
+procedure uiTDraw.ClearTexture();
+begin
+   oxui.Material.SetTexture('texture', nil);
+end;
+
+procedure uiTDraw.Quad(tex: oxTTexture);
+begin
+   oxRender.TextureCoords(QuadTexCoords[0]);
+   Texture(tex);
+   oxRender.Primitives(oxPRIMITIVE_TRIANGLES, 6, pword(@QuadIndicesus[0]));
 end;
 
 END.
