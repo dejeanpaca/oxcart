@@ -11,10 +11,10 @@ PROGRAM Shader;
       uStd,
       {$INCLUDE oxappuses.inc},
       {app}
-      uApp, uColors, vmVector,
+      uApp, uColors,
       {oX}
-      oxuWindowTypes, oxuWindows, oxuFont, oxuProjection, oxuRender, oxuPaths, oxuShaderFile,
-      oxuRenderer, oxuTransform, oxuShader, uiuDraw, uiuWindow, uiuWindowRender;
+      oxuWindowTypes, oxuWindows, oxuProjection, oxuPaths, oxuShaderFile,
+      oxuRenderer, oxuShader, uiuWindowRender;
 
 VAR
    shd: oxTShader;
