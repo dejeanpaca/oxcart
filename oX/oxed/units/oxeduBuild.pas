@@ -528,7 +528,7 @@ begin
             if(i < oxedProject.Units.n - 1) then
                Result.Add('   {%H-}' + oxedProject.Units.List[i].Name + ',')
             else
-               Result.Add('   {$H-}' + oxedProject.Units.List[i].Name);
+               Result.Add('   {%H-}' + oxedProject.Units.List[i].Name);
          end;
       end;
    end;
