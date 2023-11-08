@@ -10,32 +10,12 @@ INTERFACE
 
    USES
       uStd, uLog, StringUtils,
-      appuController,
+      {app}
+      appuController, appuControllers, appuControllerWindows,
       {windows}
       windows, JwaWinError, DX12.XInput;
 
 TYPE
-   { appTXInputControllerHandler }
-
-   appTXInputControllerHandler = object(appTControllerHandler)
-      public
-         {XInput specific properties}
-
-         {identifier}
-         GUID: string;
-         {is the controller a game controller (gamepad, joystick)}
-         GameController: boolean;
-
-      procedure Initialize(); virtual;
-      procedure Reset(); virtual;
-      procedure Run(); virtual;
-
-      function GetName(): StdString; virtual;
-
-      private
-         function Add(index: loopint): boolean;
-   end;
-
    { appTXInputControllerDevice }
 
    appTXInputControllerDevice = class(appTControllerDevice)
@@ -47,6 +27,27 @@ TYPE
       procedure Initialize(index: loopint; var capabilities: TXINPUT_CAPABILITIES);
       procedure Update(); override;
       procedure DeInitialize(); override;
+   end;
+
+   { appTXInputControllerHandler }
+
+   appTXInputControllerHandler = object(appTControllerHandler)
+      public
+         {XInput specific properties}
+
+         {identifier}
+         GUID: string;
+         {is the controller a game controller (gamepad, joystick)}
+         GameController: boolean;
+
+      procedure Scan(); virtual;
+      procedure Rescan(); virtual;
+
+      function GetName(): StdString; virtual;
+
+      private
+         function Add(index: loopint): boolean;
+         function FindByXIndex(index: loopint): appTXInputControllerDevice;
    end;
 
 VAR
@@ -158,30 +159,22 @@ end;
 
 { appTXInputControllerHandler }
 
-procedure appTXInputControllerHandler.Initialize();
+procedure appTXInputControllerHandler.Scan();
 begin
-   Reset();
+   Rescan();
 end;
 
-procedure appTXInputControllerHandler.Reset();
+procedure appTXInputControllerHandler.Rescan();
 var
    i: loopint;
 
 begin
-   inherited;
-
    for i := 0 to 3 do begin
-      if(not Add(i)) then begin
-         if(i = 0) then
-            log.v('No XInput devices detected');
-
-         break;
+      if FindByXIndex(i) = nil then begin
+         if(not Add(i)) then
+            break;
       end;
    end;
-end;
-
-procedure appTXInputControllerHandler.Run();
-begin
 end;
 
 function appTXInputControllerHandler.GetName(): StdString;
@@ -202,17 +195,29 @@ begin
 
       appControllers.Add(device);
 
-      log.Collapsed(device.Name);
-      device.LogDevice();
-      log.Leave();
-
       exit(true);
    end;
 
    Result := false;
 end;
 
+function appTXInputControllerHandler.FindByXIndex(index: loopint): appTXInputControllerDevice;
+var
+   i: loopint;
+
+begin
+   for i := 0 to appControllers.List.n - 1 do begin
+      if(appControllers.List[i].ClassType = appTXInputControllerDevice.ClassType) then begin
+         if(appTXInputControllerDevice(appControllers.List[i]).XInputIndex = index) then
+            exit(appTXInputControllerDevice(appControllers.List[i]));
+      end;
+   end;
+
+   Result := nil;
+end;
+
 INITIALIZATION
+   appControllerWindows.XInputHandlerPresent := true;
    appXInputControllerHandler.Create();
    appControllers.AddHandler(appXInputControllerHandler);
 
