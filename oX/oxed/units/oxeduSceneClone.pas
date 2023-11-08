@@ -36,7 +36,7 @@ end;
 
 procedure onStart();
 var
-   sceneRender: oxTSceneRender;
+   sceneRender: oxPSceneRender;
    scene: oxTScene;
    externalSceneManagement: oxPSceneManagement;
 
@@ -48,10 +48,10 @@ begin
       oxWorld := scene.World;
       oxSceneManagement.SetScene(scene);
 
-      sceneRender := oxTSceneRender(oxLibReferences^.FindInstance('oxTSceneRender'));
+      sceneRender := oxPSceneRender(oxLibReferences^.FindInstancePtr('oxTSceneRender'));
 
       if(sceneRender <> nil) then
-         sceneRender.Scenes[0].Scene := oxScene;
+         sceneRender^.Scenes[0].Scene := oxScene;
    end;
 end;
 
