@@ -16,6 +16,9 @@ INTERFACE
    USES
       uStd,
       oxuglRenderer,
+      {$IFDEF WINDOWS}
+      oxuglRendererWin,
+      {$ENDIF}
       oxuglTextureComponent,
       oxuglTextureGenerate,
       oxuglTransform,
