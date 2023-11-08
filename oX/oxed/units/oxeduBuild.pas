@@ -16,7 +16,7 @@ INTERFACE
       {ox}
       oxuRunRoutines, oxuThreadTask, oxuFeatures, oxuRenderer,
       {oxed}
-      uOXED, oxeduMessages, oxeduProject, oxeduTasks, oxeduActions, oxeduSettings, oxeduProjectScanner;
+      uOXED, oxeduMessages, oxeduProject, oxeduPlatform, oxeduTasks, oxeduActions, oxeduSettings, oxeduProjectScanner;
 
 CONST
    OXED_BUILD_3RDPARTY_PATH = '3rdparty';
@@ -31,6 +31,8 @@ TYPE
       OXED_BUILD_TASK_CLEANUP,
       {recreates required project files}
       OXED_BUILD_TASK_RECREATE,
+      {builds a standalone project}
+      OXED_BUILD_TASK_STANDALONE,
       {recreates third party units}
       OXED_BUILD_TASK_REBUILD_THIRD_PARTY
    );
@@ -67,6 +69,7 @@ TYPE
       BuildType: oxedTBuildTaskType;
       BuildTarget: oxedTBuildTarget;
       BuildStart: TDateTime;
+      BuildArch: oxedTPlatformArchitecture;
 
       {is there a task currently running}
       Task: oxedTBuildTask;
@@ -107,6 +110,8 @@ TYPE
       class procedure RecreateTask(); static;
       {run cleanup in a task}
       class procedure RebuildThirdPartyTask(); static;
+      {run cleanup in a task}
+      class procedure BuildStandaloneTask(arch: oxedTPlatformArchitecture); static;
 
       {run currently set build task}
       procedure RunTask(taskType: oxedTBuildTaskType);
@@ -818,6 +823,11 @@ end;
 class procedure oxedTBuildGlobal.RebuildThirdPartyTask();
 begin
    oxedBuild.StartTask(OXED_BUILD_TASK_REBUILD_THIRD_PARTY);
+end;
+
+class procedure oxedTBuildGlobal.BuildStandaloneTask(arch: oxedTPlatformArchitecture);
+begin
+
 end;
 
 procedure oxedTBuildGlobal.RunTask(taskType: oxedTBuildTaskType);
