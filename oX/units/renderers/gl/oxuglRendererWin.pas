@@ -13,7 +13,10 @@ INTERFACE
 	USES uStd, uLog, StringUtils,
      {$INCLUDE usesglext.inc},
      windows, oxuWindowsOS, oxuRenderer,
-     oxuOGL, oxuglExtensions, oxuWGL;
+     oxuOGL, oxuglExtensions
+     {$IFNDEF GLES}
+     ,oxuWGL
+     {$ENDIF};
 
 TYPE
    { oxwglTGlobal }
@@ -269,7 +272,11 @@ var
 
 begin
    ogl.InitializePre();
+   {$IFNDEF GLES}
    extPixelFormat := oglExtensions.PlatformSupported(cWGL_ARB_pixel_format);
+   {$ELSE}
+   extPixelFormat := false;
+   {$ENDIF}
 
    buildPFD(wnd, pfd);
 
